@@ -16,6 +16,8 @@ import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesV
 
 public class DatasetVersionUtils extends DatasetVersionSharedUtils {
 
+    protected static final String VIEW_IDENTIFIER_PREFIX = "DV_";
+
     public static String generateDatasetRepositoryTableName(SiemacMetadataStatisticalResource datasetVersion) {
         StringBuilder tableName = new StringBuilder();
         tableName.append(DATASET_REPOSITORY_TABLE_NAME_PREFIX);
@@ -35,5 +37,9 @@ public class DatasetVersionUtils extends DatasetVersionSharedUtils {
                 return sdmxComparator.compare(new TimeSdmx(o2.getIdentifier()), new TimeSdmx(o1.getIdentifier()));
             }
         });
+    }
+
+    public static String generateViewCode(String code) {
+        return VIEW_IDENTIFIER_PREFIX + code;
     }
 }

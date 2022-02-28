@@ -292,6 +292,7 @@ public class DatasetsAsserts extends BaseAsserts {
 
                 assertEqualsInternationalString(entity.getBibliographicCitation(), dto.getBibliographicCitation());
                 assertEquals(entity.isKeepAllData(), dto.isKeepAllData());
+                assertEquals(entity.getDataset().getViewCode(), dto.getViewCode());
                 break;
             case DTO2DO:
                 assertEqualsExternalItemCollectionMapper(entity.getStatisticalUnit(), dto.getStatisticalUnit());

@@ -199,6 +199,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
@@ -259,26 +260,26 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 @Transactional
 public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesBaseTest implements StatisticalResourcesServiceFacadeTestBase {
 
-    private static final String SIEMAC_METADATA_URN_FIELD = "siemacMetadataStatisticalResource.urn";
-    private static final String URN_FIELD = "urn";
+    private static final String               SIEMAC_METADATA_URN_FIELD = "siemacMetadataStatisticalResource.urn";
+    private static final String               URN_FIELD                 = "urn";
 
     @Autowired
     private StatisticalResourcesServiceFacade statisticalResourcesServiceFacade;
 
     @Autowired
-    private QuerySelectionItemRepository querySelectionItemRepository;
+    private QuerySelectionItemRepository      querySelectionItemRepository;
 
     @Autowired
-    private CodeItemRepository codeItemRepository;
+    private CodeItemRepository                codeItemRepository;
 
     @Autowired
-    private SrmRestInternalService srmRestInternalService;
+    private SrmRestInternalService            srmRestInternalService;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
+    private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
 
     @Autowired
-    StreamMessagingServiceFacade streamMessagingServiceFacade;
+    StreamMessagingServiceFacade              streamMessagingServiceFacade;
 
     @Before
     public void onBeforeTest() throws Exception {
@@ -1300,6 +1301,8 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         DatasetVersionDto newDatasetVersionDto = statisticalResourcesServiceFacade.createDataset(getServiceContextAdministrador(), datasetVersionDto, statisticalOperation);
         assertNotNull(newDatasetVersionDto);
         assertNotNull(newDatasetVersionDto.getUrn());
+        assertNotNull(newDatasetVersionDto.getViewCode());
+        assertEquals(DatasetVersionUtils.generateViewCode(newDatasetVersionDto.getCode()), newDatasetVersionDto.getViewCode());
     }
 
     @MetamacMock(STATISTIC_OFFICIALITY_01_BASIC_NAME)

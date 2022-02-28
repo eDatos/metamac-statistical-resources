@@ -7,5 +7,8 @@
 	<entry key="metamac.statistical_resources.dot_code_mapping">ONE_DOT=CODE_ONE,TWO_DOT=CODE_TWO,THREE_DOT=THREE_DOT,FOUR_DOT=FOUR_CODE,FIVE_DOT=FIVE_CODE,SIX_DOT=SIX_CODE</entry>
 	
 	<entry key="metamac.statistical_resources.data_import.cron_expression">0 0 0 * * ?</entry>
+	
+	<!-- TODO EDATOS-3555 Revisar esto con el rol y el script de BBDD -->
+	<entry key="metamac.statistical_resources.bbbd.data_views_role">STAT_RESOURCES_DATA_ROLE_TEST</entry>
 
 </properties>

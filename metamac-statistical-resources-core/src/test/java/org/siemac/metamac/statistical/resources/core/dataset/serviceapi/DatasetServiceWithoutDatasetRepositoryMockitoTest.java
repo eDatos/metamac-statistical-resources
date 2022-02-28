@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.dataset.serviceapi;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.sql.Connection;
@@ -14,6 +15,7 @@ import org.junit.runner.RunWith;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.mock.Mocks;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesNotPersistedDoMocks;
@@ -88,5 +90,8 @@ public class DatasetServiceWithoutDatasetRepositoryMockitoTest extends Statistic
 
         DatasetVersion actual = datasetService.createDatasetVersion(getServiceContextWithoutPrincipal(), expected, statisticalOperation);
         assertNotNull(actual.getDatasetRepositoryId());
+        assertNotNull(actual.getDataset().getViewCode());
+        assertEquals(DatasetVersionUtils.generateViewCode(actual.getSiemacMetadataStatisticalResource().getCode()), actual.getDataset().getViewCode());
+
     }
 }

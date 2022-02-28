@@ -126,6 +126,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMappingRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
@@ -244,6 +245,8 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertTrue(actual.getSiemacMetadataStatisticalResource().getCreatedDate().equals(actual.getSiemacMetadataStatisticalResource().getCreationDate()));
         assertTrue(actual.getSiemacMetadataStatisticalResource().getCreatedBy().equals(actual.getSiemacMetadataStatisticalResource().getCreationUser()));
         assertNotNull(actual.getDatasetRepositoryId());
+        assertNotNull(actual.getDataset().getViewCode());
+        assertEquals(DatasetVersionUtils.generateViewCode(actual.getSiemacMetadataStatisticalResource().getCode()), actual.getDataset().getViewCode());
     }
 
     @Test
@@ -1931,5 +1934,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
     private void mockFindNotPublishedAgency(String urn) throws MetamacException {
         Mockito.when(srmRestInternalService.findOrganisationsAsUrnsList(anyString())).thenReturn(new ArrayList<String>());
+    }
+
+    @Override
+    public void testManageDatabaseView() throws Exception {
+        // TODO EDATOS-3555 Revisar para ver si es necesario hacer algo aquí
+
     }
 }
