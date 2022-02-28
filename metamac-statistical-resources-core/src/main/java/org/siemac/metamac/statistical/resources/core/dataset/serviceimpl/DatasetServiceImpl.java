@@ -409,7 +409,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             DatasetRepositoryDto datasetRepositoryDto2 = statisticsDatasetRepositoriesServiceFacade.createDatasetRepository(datasetRepositoryDto);
 
-            // TODO EDATOS-3555 Aqui la gestión de la vista
             manageDatabaseView(ctx, datasetRepositoryDto2.getDatasetId(), datasetVersion);
 
             return datasetRepositoryDto2;
@@ -604,15 +603,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             Dataset dataset = datasetVersion.getDataset();
             getDatasetRepository().delete(dataset);
 
-            // TODO EDATOS-3555 Más gestión de la vista
             tryDeleteDatabaseView(viewCode);
         } else {
             // Previous version
             updateReplacedVersionIsReplacedByVersion(datasetVersion);
 
-            // TODO EDATOS-3555 Más gestión de la vista
-            // TODO EDATOS-3555 Mucho ojo con esto!!! viene ordenado? estas cogiendo la versión de dataset correcto? Revisa el metodo updateReplacedVersionIsReplacedByVersion para ver como lo hace
-            // Update view for the last version of the dataset
             manageDatabaseView(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getReplacesVersion().getDatasetVersion().getDatasetRepositoryId(), datasetVersion);
 
             // Delete version

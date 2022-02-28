@@ -1886,6 +1886,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertEqualsDimensionRepresentationMapping(expected, actual);
     }
 
+    @Override
+    public void testManageDatabaseView() throws Exception {
+        // Not tested
+    }
+
     // ------------------------------------------------------------------------
     // PRIVATE UTILS
     // ------------------------------------------------------------------------
@@ -1934,11 +1939,5 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
     private void mockFindNotPublishedAgency(String urn) throws MetamacException {
         Mockito.when(srmRestInternalService.findOrganisationsAsUrnsList(anyString())).thenReturn(new ArrayList<String>());
-    }
-
-    @Override
-    public void testManageDatabaseView() throws Exception {
-        // TODO EDATOS-3555 Revisar para ver si es necesario hacer algo aquí
-
     }
 }
