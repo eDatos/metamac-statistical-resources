@@ -1751,7 +1751,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             statisticsDatasetRepositoriesServiceFacade.dropDatasetRepositoryView(viewCode);
         } catch (ApplicationException e) {
-            // TODO EDATOS-3555 No elevar error si peta el borrado de la vista al igual que se hace con el repo?
             log.warn("Dataset view [" + viewCode + "] could not be deleted", e);
         }
     }
