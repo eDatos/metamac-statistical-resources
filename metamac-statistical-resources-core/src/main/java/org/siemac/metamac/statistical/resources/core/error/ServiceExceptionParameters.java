@@ -24,6 +24,7 @@ public class ServiceExceptionParameters extends ServiceExceptionBaseParameters {
     public static final String       DATASET_ATTRIBUTE_VALUE                  = "parameter.resources.dataset_attribute_value";
     public static final String       DATASET_ATTRIBUTE_UUID                   = "parameter.resources.dataset_attribute_uuid";
     public static final String       DATASET_DIMENSION_REPRESENTATION_MAPPING = "parameter.resources.dataset_dimension_representation_mapping";
+    public static final String       DATASET_REPOSITORY_ID                    = "parameter.resources.dataset_repository_id";
 
     // Publication
     public static final String       PUBLICATION_URN                          = "parameter.resources.publication_urn";

@@ -22,6 +22,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
@@ -206,7 +207,9 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
 
         fillNeededMetadataToGenerateDatasetCode(dataset);
 
-        dataset.getIdentifiableStatisticalResource().setCode(buildSequentialResourceCode(dataset.getIdentifiableStatisticalResource().getStatisticalOperation().getCode(), dataset.getSequentialId()));
+        String code = buildSequentialResourceCode(dataset.getIdentifiableStatisticalResource().getStatisticalOperation().getCode(), dataset.getSequentialId());
+        dataset.getIdentifiableStatisticalResource().setCode(code);
+        dataset.setViewCode(DatasetVersionUtils.generateViewCode(code));
 
         mockIdentifiableStatisticalResource(dataset.getIdentifiableStatisticalResource(), TypeRelatedResourceEnum.DATASET);
 
@@ -303,6 +306,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
                 datasetVersion.getDataset().addVersion(datasetVersion);
             }
         }
+
+        datasetVersion.getDataset().setViewCode(DatasetVersionUtils.generateViewCode(datasetCode));
 
         computeCoverageRelatedMetadata(datasetVersion);
 

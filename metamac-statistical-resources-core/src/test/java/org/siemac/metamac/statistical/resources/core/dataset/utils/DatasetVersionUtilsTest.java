@@ -14,6 +14,12 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.Stati
 public class DatasetVersionUtilsTest {
 
     @Test
+    public void testGenerateViewCode() {
+        String viewCode = DatasetVersionUtils.generateViewCode("C00025A_000001");
+        assertEquals(DatasetVersionUtils.VIEW_IDENTIFIER_PREFIX + "C00025A_000001", viewCode);
+    }
+
+    @Test
     public void testGenerateDatasetRepositoryTableName() throws Exception {
         SiemacMetadataStatisticalResource datasetVersion = mockRequieredDatasetVersionFieldsForGenerateRepositoryTableName("C00025A_000001", StatisticalResourcesMockFactory.INIT_VERSION);
         assertEquals("DATA_C00025A_000001_10", DatasetVersionUtils.generateDatasetRepositoryTableName(datasetVersion));

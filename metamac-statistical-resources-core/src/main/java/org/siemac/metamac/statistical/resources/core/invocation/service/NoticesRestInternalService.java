@@ -20,4 +20,7 @@ public interface NoticesRestInternalService {
     // Stream Messaging Notifications
     public void createErrorOnStreamMessagingService(String user, String actionCode, HasSiemacMetadata affectedResource, String errorMessageCode, Serializable... extraParameters);
     public void createErrorOnStreamMessagingService(String user, String actionCode, QueryVersion affectedResource, String errorMessageCode, Serializable... extraParameters);
+
+    void createAssignRolePermissionsDatasetErrorBackgroundNotification(String dataViewsRole, String viewCode);
+    void createCreateReplaceDatasetErrorBackgroundNotification(DatasetVersion datasetVersion, String viewCode, String datasetRepositoryId);
 }

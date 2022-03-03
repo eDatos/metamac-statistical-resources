@@ -32,4 +32,6 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
      * Checks if Database is PostgreSQL
      */
     public Boolean isDatabasePostgreSQL() throws MetamacException;
+
+    public String retrieveDbDataViewsRole() throws MetamacException;
 }
