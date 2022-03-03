@@ -8,7 +8,6 @@
 	
 	<entry key="metamac.statistical_resources.data_import.cron_expression">0 0 0 * * ?</entry>
 	
-	<!-- TODO EDATOS-3555 Revisar esto con el rol y el script de BBDD -->
 	<entry key="metamac.statistical_resources.bbbd.data_views_role">STAT_RESOURCES_DATA_ROLE_TEST</entry>
 
 </properties>
