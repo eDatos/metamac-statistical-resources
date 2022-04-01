@@ -172,7 +172,7 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
 
             @Override
             public void onWaitSuccess(DeleteDatasourcesResult result) {
-                fireSuccessMessage(getMessages().datasourcesDeleted());
+                fireSuccessMessage(getMessages().datasourcesDeleted(String.valueOf(result.getObservationsDeleted())));
                 retrieveDatasourcesByDataset(datasetVersion.getUrn(), 0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
             }
         });
