@@ -653,7 +653,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void deleteDatasource(ServiceContext ctx, String urn, boolean deleteAttributes) throws MetamacException {
+    public int deleteDatasource(ServiceContext ctx, String urn, boolean deleteAttributes) throws MetamacException {
         // Retrieve
         String operationCode = getDatasetService().retrieveDatasourceByUrn(ctx, urn).getIdentifiableStatisticalResource().getStatisticalOperation().getCode();
 
@@ -661,7 +661,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canDeleteDatasource(ctx, operationCode);
 
         // Delete
-        getDatasetService().deleteDatasource(ctx, urn, deleteAttributes);
+        return getDatasetService().deleteDatasource(ctx, urn, deleteAttributes);
     }
 
     @Override

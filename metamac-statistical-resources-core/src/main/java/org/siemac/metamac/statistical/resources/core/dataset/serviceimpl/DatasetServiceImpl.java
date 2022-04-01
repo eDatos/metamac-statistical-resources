@@ -235,7 +235,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void deleteDatasource(ServiceContext ctx, String urn, boolean deleteAttributes) throws MetamacException {
+    public int deleteDatasource(ServiceContext ctx, String urn, boolean deleteAttributes) throws MetamacException {
 
         // Validation
         datasetServiceInvocationValidator.checkDeleteDatasource(ctx, urn, deleteAttributes);
@@ -255,7 +255,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         deleteDatasourceDimensionRepresentationMappings(datasetVersion, datasource);
 
-        deleteDatasourceData(datasetVersion.getDatasetRepositoryId(), datasource);
+        int observationsDeleted = deleteDatasourceData(datasetVersion.getDatasetRepositoryId(), datasource);
+
+        log.debug("Number of deleted observations: {} corresponding to the datasource: {}", observationsDeleted, urn);
 
         if (deleteAttributes) {
             deleteAttributeInstancesLowerThanDatasetLevel(datasetVersion);
@@ -270,6 +272,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             // it has not been released datasetversion. Therefore, you can remove the constraint.
             constraintsService.revertContentConstraintsForArtefactToDraft(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         }
+
+        return observationsDeleted;
     }
 
     @Override
@@ -332,7 +336,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void deleteDatasourceData(String datasetId, Datasource datasource) throws MetamacException {
+    private int deleteDatasourceData(String datasetId, Datasource datasource) throws MetamacException {
         try {
             InternationalStringDto internationalStringDto = new InternationalStringDto();
             LocalisedStringDto localisedStringDto = new LocalisedStringDto();
@@ -340,7 +344,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
             internationalStringDto.addText(localisedStringDto);
 
-            statisticsDatasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(datasetId, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, internationalStringDto);
+            return statisticsDatasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(datasetId, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, internationalStringDto);
 
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.DATASOURCE_DATA_DELETE_ERROR, datasource.getIdentifiableStatisticalResource().getCode());
