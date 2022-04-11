@@ -33,7 +33,7 @@ Application DatasetsStatisticalResources {
 			@Datasource createDatasource(String datasetVersionUrn, @Datasource datasource) throws MetamacException;
 	    	@Datasource updateDatasource(@Datasource datasource) throws MetamacException;
 	    	@Datasource retrieveDatasourceByUrn(String urn) throws MetamacException;
-	    	deleteDatasource(String urn, boolean deleteAttributes) throws MetamacException;
+	    	int deleteDatasource(String urn, boolean deleteAttributes) throws MetamacException;
 	    	List<@Datasource> retrieveDatasourcesByDatasetVersion(String datasetVersionUrn) throws MetamacException;
 	    	
 	    	// Datasets Versions
@@ -53,6 +53,9 @@ Application DatasetsStatisticalResources {
     		PagedResult<@DatasetVersion> findDatasetVersionsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
+    		
+    		"Link a dataset view to the latest version of the indicator"
+	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;
     		
     		proccessDatasetFileImportationResult(String datasetImportationId, List<@FileDescriptorResult> fileDescriptors) throws MetamacException;
     		importDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
@@ -149,6 +152,9 @@ Application DatasetsStatisticalResources {
 
 			"Added explicitly to avoid that Sculptor generate UUID"
 			Long id key;
+			
+			"Code for dataset view"
+			String viewCode not nullable length="30";
 
 			"Root dataset will be identifiable to be referenced instead of referencing specific versions"
 			- @IdentifiableStatisticalResource identifiableStatisticalResource databaseColumn="IDENTIFIABLE_RESOURCE_FK" not nullable cascade="all";

@@ -6,6 +6,7 @@ public class DatasetDS extends SiemacMetadataDS {
 
     // IDENTIFIERS
     public static final String DATASET_REPOSITORY_ID      = "ds-rep-id";
+    public static final String VIEW_CODE                  = "ds-view-code";
 
     // CONTENT DESCRIPTORS
     public static final String GEOGRAPHIC_COVERAGE        = "ds-geo-cov";

@@ -26,6 +26,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
@@ -57,33 +58,33 @@ import org.siemac.metamac.statistical.resources.core.stream.messages.Versionable
 
 public class MappersMockUtils {
 
-    private static final boolean EXPECTED_TRUE = true;
-    protected static final boolean EXPECTED_FALSE = false;
-    protected static final String EXPECTED_TITLE = "EXPECTED_TITLE";
-    protected static final String EXPECTED_FILENAME = "EXPECTED_FILENAME";
-    protected static final String EXPECTED_IDENTIFIER = "EXPECTED_IDENTIFIER";
-    protected static final TypeRelatedResourceEnum EXPECTED_RELATED_RESOURCE_TYPE = TypeRelatedResourceEnum.DATASET;
-    protected static final ProcStatusEnum PRODUCTION_VALIDATION = ProcStatusEnum.PRODUCTION_VALIDATION;
-    protected static final boolean EXPECTED_LAST_VERSION = true;
-    protected static final String EXPECTED_USER = "Expected User Name";
-    protected static final NextVersionTypeEnum EXPECTED_NEXT_VERSION_TYPE = NextVersionTypeEnum.NON_SCHEDULED_UPDATE;
-    protected static final DateTime EXPECTED_PAST_DATE = new DateTime(2016, 06, 01, 0, 0, 0, 0).minusDays(30);
-    protected static final DateTime EXPECTED_FUTURE_DATE = new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30);
-    protected static final String EXPECTED_VERSION_LOGIC = "EXPECTED_VERSION_LOGIC";
-    protected static final long EXPECTED_VERSION = 33l;
-    protected static final String EXPECTED_URI = "/EXPECTED_URI";
-    protected static final String EXPECTED_URN = "EXPECTED_URN";
-    protected static final String EXPECTED_URN_PROVIDER = "EXPECTED_URN_PROVIDER";
-    protected static final TypeExternalArtefactsEnum EXPECTED_TYPE = TypeExternalArtefactsEnum.CONFIGURATION;
-    protected static final TypeExternalArtefactsEnumAvro EXPECTED_TYPE_AVRO = TypeExternalArtefactsEnumAvro.CONFIGURATION;
-    protected static final String EXPECTED_LOCALE = "EXPECTED_LOCALE";
-    protected static final String EXPECTED_LABEL = "EXPECTED_LABEL";
-    protected static final String EXPECTED_MANAGEMENT_APP_URL = "EXPECTED_MANAGEMENT_APP_URL";
-    protected static final String EXPECTED_CODE_NESTED = "EXPECTED_CODE_NESTED";
-    protected static final String EXPECTED_CODE = "EXPECTED_CODE";
-    public static final String EXPECTED_API_BASE = "http://EXPECTED_API_BASE";
-    protected static final String EXPECTED_SELF_LINK = EXPECTED_API_BASE + EXPECTED_URI;
-    private static final int EXPECTED_COPYRIGHT = 0;
+    private static final boolean                         EXPECTED_TRUE                  = true;
+    protected static final boolean                       EXPECTED_FALSE                 = false;
+    protected static final String                        EXPECTED_TITLE                 = "EXPECTED_TITLE";
+    protected static final String                        EXPECTED_FILENAME              = "EXPECTED_FILENAME";
+    protected static final String                        EXPECTED_IDENTIFIER            = "EXPECTED_IDENTIFIER";
+    protected static final TypeRelatedResourceEnum       EXPECTED_RELATED_RESOURCE_TYPE = TypeRelatedResourceEnum.DATASET;
+    protected static final ProcStatusEnum                PRODUCTION_VALIDATION          = ProcStatusEnum.PRODUCTION_VALIDATION;
+    protected static final boolean                       EXPECTED_LAST_VERSION          = true;
+    protected static final String                        EXPECTED_USER                  = "Expected User Name";
+    protected static final NextVersionTypeEnum           EXPECTED_NEXT_VERSION_TYPE     = NextVersionTypeEnum.NON_SCHEDULED_UPDATE;
+    protected static final DateTime                      EXPECTED_PAST_DATE             = new DateTime(2016, 06, 01, 0, 0, 0, 0).minusDays(30);
+    protected static final DateTime                      EXPECTED_FUTURE_DATE           = new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30);
+    protected static final String                        EXPECTED_VERSION_LOGIC         = "EXPECTED_VERSION_LOGIC";
+    protected static final long                          EXPECTED_VERSION               = 33l;
+    protected static final String                        EXPECTED_URI                   = "/EXPECTED_URI";
+    protected static final String                        EXPECTED_URN                   = "EXPECTED_URN";
+    protected static final String                        EXPECTED_URN_PROVIDER          = "EXPECTED_URN_PROVIDER";
+    protected static final TypeExternalArtefactsEnum     EXPECTED_TYPE                  = TypeExternalArtefactsEnum.CONFIGURATION;
+    protected static final TypeExternalArtefactsEnumAvro EXPECTED_TYPE_AVRO             = TypeExternalArtefactsEnumAvro.CONFIGURATION;
+    protected static final String                        EXPECTED_LOCALE                = "EXPECTED_LOCALE";
+    protected static final String                        EXPECTED_LABEL                 = "EXPECTED_LABEL";
+    protected static final String                        EXPECTED_MANAGEMENT_APP_URL    = "EXPECTED_MANAGEMENT_APP_URL";
+    protected static final String                        EXPECTED_CODE_NESTED           = "EXPECTED_CODE_NESTED";
+    protected static final String                        EXPECTED_CODE                  = "EXPECTED_CODE";
+    public static final String                           EXPECTED_API_BASE              = "http://EXPECTED_API_BASE";
+    protected static final String                        EXPECTED_SELF_LINK             = EXPECTED_API_BASE + EXPECTED_URI;
+    private static final int                             EXPECTED_COPYRIGHT             = 0;
 
     public static ExternalItem mockExternalItem() {
         ExternalItem source = new ExternalItem();
@@ -315,6 +316,7 @@ public class MappersMockUtils {
         Dataset dataset = new Dataset();
         dataset.setIdentifiableStatisticalResource(mockNameableStatisticalResource());
         dataset.getIdentifiableStatisticalResource().setCode(EXPECTED_CODE);
+        dataset.setViewCode(DatasetVersionUtils.generateViewCode(EXPECTED_CODE));
         dataset.setVersion(EXPECTED_VERSION);
         dataset.addDimensionRepresentationMapping(mockDimensionRepresentationMapping(false));
         if (datasetVersion != null) {

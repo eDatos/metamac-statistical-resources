@@ -14,4 +14,7 @@ public class ServiceNoticeMessage {
 
     // Stream messaging
     public static final String STREAM_MESSAGE_SEND_ERROR              = "notice_message.resources.stream_messaging.action.send.error";
+
+    public static final String CREATE_REPLACE_DATASET_ERROR           = "notice_message.resources.message.create_replace_dataset.error";
+    public static final String ASSIGN_ROLE_PERMISSIONS_DATASET_ERROR  = "notice_message.resources.message.assign_role_permissions_dataset.error";
 }

@@ -723,6 +723,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         try {
             datasetRepositoriesServiceFacade.duplicateDatasetRepository(taskInfoDataset.getDatasetVersionId(), newDatasetId, datasourceMappings);
+
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, taskInfoDataset.getDatasetVersionId());
+            datasetService.manageDatabaseView(ctx, newDatasetId, datasetVersion);
+
         } catch (Exception e) {
             // Convert parser exception to metamac exception
             MetamacException throwableMetamacException = null;
@@ -736,6 +740,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         markTaskAsFinished(ctx, duplicationJobKey); // Finish the importation
+    }
+
+    private String getDataViewsRole() throws MetamacException {
+        return configurationService.retrieveDbDataViewsRole();
     }
 
     private void processRollbackDuplicationTask(ServiceContext ctx, Task task) throws MetamacException {
