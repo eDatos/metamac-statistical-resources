@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>3.11.0</version>
+        <version>3.11.1-SNAPSHOT</version>
         <relativePath>metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 
@@ -17,7 +17,7 @@
         <connection>scm:git:http://git.arte-consultores.com/istac/metamac-statistical-resources</connection>
         <developerConnection>scm:git:http://git.arte-consultores.com/istac/metamac-statistical-resources</developerConnection>
         <url>http://git.arte-consultores.com/istac/metamac-statistical-resources</url>
-        <tag>20220411-1038-v3.11.0</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <modules>
