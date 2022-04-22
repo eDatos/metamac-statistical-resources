@@ -44,6 +44,10 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                     return buildSculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().description().texts().label(), PropertyTypeEnum.STRING, propertyRestriction);
                 case GEOGRAPHIC_COVERAGE_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.geographicCoverage());
+                case GEOGRAPHIC_COVERAGE_TITLE:
+                    return buildSculptorPropertyCriteria(DatasetVersionProperties.geographicCoverage().title().texts().label(), PropertyTypeEnum.STRING, propertyRestriction);
+                case GEOGRAPHIC_COVERAGE_CODE:
+                    return buildSculptorPropertyCriteria(DatasetVersionProperties.geographicCoverage().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 case TEMPORAL_COVERAGE:
                     return buildSculptorPropertyCriteria(DatasetVersionProperties.temporalCoverage().identifier(), PropertyTypeEnum.STRING, propertyRestriction);
                 case GEOGRAPHIC_GRANULARITY_URN:
@@ -80,6 +84,8 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().validTo(), DatasetVersion.class, false);
                 case STATISTICAL_OPERATION_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation());
+                case IS_LAST_VERSION:
+                    return buildSculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }
