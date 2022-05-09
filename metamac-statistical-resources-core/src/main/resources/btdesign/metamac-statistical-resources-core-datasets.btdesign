@@ -108,7 +108,14 @@ Application DatasetsStatisticalResources {
     		List<@Categorisation> retrieveCategorisationsByDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Finds categorisations by criteria"
     		PagedResult<@Categorisation> findCategorisationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
-		}  
+		}
+
+		Service TerritoryCacheService {
+		    > @TerritoriesCacheRepository
+
+		    "Finds territories by criteria"
+    		PagedResult<@TerritoriesCache> findTerritoriesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+		}
 
 		// ----------------------------------------------------------------
 		// 							ENTITIES
@@ -411,6 +418,29 @@ Application DatasetsStatisticalResources {
 				delete;
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
+			}
+    	}
+
+    	"Geographical coverage of datasets cached in a separate table and classified by their variable element, meant to accelerate
+    	requests that filter datasets based on the territory."
+    	Entity TerritoriesCache {
+    		databaseTable="TB_TERRITORIES_CACHE"
+    		hint="idSequence=TERRITORIES_CACHE"
+
+    		"Added explicitly to avoid that Sculptor generate UUID"
+			Long id key;
+
+			- @ExternalItem variableElement nullable="false" cascade="all" fetch="lazy" databaseColumn="VARIABLE_ELEMENT_FK";
+			- Bag<@DatasetVersion> datasets cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_TERRITORIES_CACHE_DATASETS_VERSIONS" databaseColumn="DATASET_VERSION_FK" databaseJoinColumn="TERRITORY_FK";
+
+			Repository TerritoriesCacheRepository {
+				save;
+				delete;
+				findAll;
+				findByQuery;
+				findByCondition;
+				findByCondition(PagingParameter pagingParameter);
+				@TerritoriesCache retrieveByTerritoryId(String id) throws MetamacException;
 			}
     	}
 	}
