@@ -85,6 +85,11 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
         // nothing specific to apply
     }
 
+    @Override
+    protected void saveTerritoriesToCache(ServiceContext ctx, MultidatasetVersion resource) throws MetamacException {
+        // nothing to do
+    }
+
     // ------------------------------------------------------------------------------------------------------
     // >> PUBLISHED
     // ------------------------------------------------------------------------------------------------------

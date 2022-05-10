@@ -2,7 +2,9 @@ package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.data
 
 import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils.addParameter;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,6 +14,8 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
@@ -21,11 +25,14 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.TerritoriesCache;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
@@ -34,6 +41,8 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRe
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +51,7 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 
 @Service("datasetLifecycleService")
 public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<DatasetVersion> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasetLifecycleServiceImpl.class);
 
     @Autowired
     private LifecycleCommonMetadataChecker    lifecycleCommonMetadataChecker;
@@ -69,6 +79,12 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Autowired
     private QueryVersionRepository            queryVersionRepository;
+
+    @Autowired
+    private SrmRestInternalService            srmRestInternalService;
+
+    @Autowired
+    private RestMapper                        restMapper;
 
     @Override
     protected String getResourceMetadataName() throws MetamacException {
@@ -115,6 +131,31 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     @Override
     protected void applySendToValidationRejectedResource(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         // NOTHING
+    }
+
+    @Override
+    protected void saveTerritoriesToCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+        LOGGER.info("Saving territories...");
+        List<ExternalItem> geographicCoverage = resource.getGeographicCoverage();
+        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(resource.getGeographicCoverage().get(0).getUrn()).getCodes(); // hey
+        for (ExternalItem geoCoverage : geographicCoverage) {
+            //ResourceInternal variableElement = srmRestInternalService.retrieveCodeByUrn(geoCoverage.getUrn()).getVariableElement();
+            List<CodeResourceInternal> list = new ArrayList<>();
+            for (CodeResourceInternal elem : codes) {
+                if (Objects.equals(elem.getUrn(), geoCoverage.getUrn())) {
+                    list.add(elem);
+                }
+            }
+            ResourceInternal variableElement = list.get(0).getVariableElement();
+            ExternalItem externalItem = restMapper.buildExternalItemFromResourceInternal(variableElement);
+
+            TerritoriesCache territory = new TerritoriesCache();
+            territory.setVariableElement(externalItem);
+
+            //territory.addDataset(resource);
+            resource.addTerritory(territory);
+        }
+        LOGGER.info("Territories saved.");
     }
 
     // ------------------------------------------------------------------------------------------------------
