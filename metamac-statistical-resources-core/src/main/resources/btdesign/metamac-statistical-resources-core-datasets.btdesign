@@ -251,6 +251,9 @@ Application DatasetsStatisticalResources {
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
 
+			"Territories"
+			- Bag<@TerritoriesCache> territories cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_TERRITORIES_CACHE_DATASETS_VERSIONS" databaseColumn="TERRITORY_FK" databaseJoinColumn="DATASET_VERSION_FK";
+
 			Repository DatasetVersionRepository {
 				save;
 				delete;
