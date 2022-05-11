@@ -61,7 +61,7 @@ Application CommonStatisticalResources {
 			
 			"Added explicitly to avoid that Sculptor generate UUID"
 			Long id key;
-			- Set<@LocalisedString> texts cascade="all-delete-orphan" inverse <-> internationalString;
+			- Set<@LocalisedString> texts cascade="all-delete-orphan" inverse <-> internationalString fetch="subselect";
 			
 			Repository InternationalStringRepository {
 				findById;
