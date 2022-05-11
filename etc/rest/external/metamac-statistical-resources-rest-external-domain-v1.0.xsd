@@ -601,6 +601,8 @@
             <xs:enumeration value="NAME" />
             <xs:enumeration value="DESCRIPTION" />
             <xs:enumeration value="GEOGRAPHIC_COVERAGE_URN" />
+            <xs:enumeration value="GEOGRAPHIC_COVERAGE_TITLE" />
+            <xs:enumeration value="GEOGRAPHIC_COVERAGE_CODE" />
             <xs:enumeration value="TEMPORAL_COVERAGE" />
             <xs:enumeration value="GEOGRAPHIC_GRANULARITY_URN" />
             <xs:enumeration value="TEMPORAL_GRANULARITY_URN" />
@@ -618,6 +620,7 @@
             <xs:enumeration value="VALID_FROM" />
             <xs:enumeration value="VALID_TO" />
             <xs:enumeration value="STATISTICAL_OPERATION_URN" />
+            <xs:enumeration value="IS_LAST_VERSION" />
         </xs:restriction>
     </xs:simpleType>
 
