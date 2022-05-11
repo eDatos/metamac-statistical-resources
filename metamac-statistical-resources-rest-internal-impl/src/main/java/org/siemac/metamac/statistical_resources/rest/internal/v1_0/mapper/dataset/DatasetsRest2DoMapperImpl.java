@@ -87,7 +87,7 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                 case IS_LAST_VERSION:
                     return buildSculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 case TERRITORY_ELEMENT_VARIABLE_ID:
-                    return buildSculptorPropertyCriteria(DatasetVersionProperties.territories().variableElement().code(), PropertyTypeEnum.STRING, propertyRestriction);
+                    return buildSculptorPropertyCriteria(DatasetVersionProperties.territories().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }

@@ -293,4 +293,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
 
     public static final CommonServiceExceptionType FILE_ENCODING_ERROR                                                          = create("exception.resources.dataset.importation.file_encoding_error");
 
+    // Territories
+    public static final CommonServiceExceptionType GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND                                         = create(
+            "geocoverage.resources.exception.geographical_coverage_code_not_found");
+
 }

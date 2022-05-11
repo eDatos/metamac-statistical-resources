@@ -25,7 +25,6 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.TerritoriesCache;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
@@ -135,27 +134,37 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Override
     protected void saveTerritoriesToCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
-        LOGGER.info("Saving territories...");
         List<ExternalItem> geographicCoverage = resource.getGeographicCoverage();
-        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(resource.getGeographicCoverage().get(0).getUrn()).getCodes(); // hey
+
+        if (geographicCoverage.isEmpty()) {
+            return;
+        }
+
+        String geoCodeUrn = geographicCoverage.get(0).getUrn();
+
+        LOGGER.info("Requesting codelist to SRM...");
+        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
+        LOGGER.info("Request to obtain codelist to SRM done");
+
         for (ExternalItem geoCoverage : geographicCoverage) {
-            //ResourceInternal variableElement = srmRestInternalService.retrieveCodeByUrn(geoCoverage.getUrn()).getVariableElement();
-            List<CodeResourceInternal> list = new ArrayList<>();
-            for (CodeResourceInternal elem : codes) {
-                if (Objects.equals(elem.getUrn(), geoCoverage.getUrn())) {
-                    list.add(elem);
+            ResourceInternal variableElement = null;
+
+            // the codes from the API contains the variable element linked to the geographical coverage code of the dataset
+            for (CodeResourceInternal code : codes) {
+                if (Objects.equals(code.getUrn(), geoCoverage.getUrn())) {
+                    variableElement = code.getVariableElement();
+                    break;
                 }
             }
-            ResourceInternal variableElement = list.get(0).getVariableElement();
-            ExternalItem externalItem = restMapper.buildExternalItemFromResourceInternal(variableElement);
 
-            TerritoriesCache territory = new TerritoriesCache();
-            territory.setVariableElement(externalItem);
-
-            //territory.addDataset(resource);
-            resource.addTerritory(territory);
+            if (variableElement != null) {
+                ExternalItem territory = restMapper.buildExternalItemFromResourceInternal(variableElement);
+                resource.addTerritory(territory);
+            } else {
+                LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
+                throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND);
+            }
         }
-        LOGGER.info("Territories saved.");
     }
 
     // ------------------------------------------------------------------------------------------------------
