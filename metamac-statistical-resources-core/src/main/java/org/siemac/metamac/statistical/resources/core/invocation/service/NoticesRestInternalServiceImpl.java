@@ -18,7 +18,6 @@ import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.MessageBuilder;
 import org.siemac.metamac.rest.notices.v1_0.domain.utils.NoticeBuilder;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
-import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
@@ -50,11 +49,6 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
 
     @Autowired
     private RestMapper                        restMapper;
-
-    @Override
-    public ExternalItem buildExternalItemFromResourceInternal(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal resource) throws MetamacException {
-        return this.restMapper.buildExternalItemFromResourceInternal(resource);
-    }
 
     @Override
     public void createErrorBackgroundNotification(String user, String actionCode, MetamacException exception) {

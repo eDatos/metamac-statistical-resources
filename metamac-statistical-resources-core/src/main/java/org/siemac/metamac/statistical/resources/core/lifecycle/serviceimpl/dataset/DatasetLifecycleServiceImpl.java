@@ -2,7 +2,6 @@ package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.data
 
 import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils.addParameter;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;

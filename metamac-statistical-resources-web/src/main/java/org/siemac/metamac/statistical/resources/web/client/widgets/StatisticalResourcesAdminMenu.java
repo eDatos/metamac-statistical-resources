@@ -27,7 +27,24 @@ public class StatisticalResourcesAdminMenu extends ToolStrip {
 
             @Override
             public void onClick(ClickEvent event) {
-                updateTerritoriesCache();
+                final WarningWindow warningWindow = new WarningWindow(getConstants().updateTerritoriesCacheWarning());
+
+                warningWindow.getAcceptButtomItem().addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
+                        warningWindow.destroy();
+                        updateTerritoriesCache();
+                    }
+                });
+
+                warningWindow.getCancelButtomItem().addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
+                        warningWindow.destroy();
+                    }
+                });
             }
         });
 

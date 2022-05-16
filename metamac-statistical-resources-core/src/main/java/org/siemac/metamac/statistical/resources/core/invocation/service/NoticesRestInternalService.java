@@ -24,6 +24,4 @@ public interface NoticesRestInternalService {
     void createAssignRolePermissionsDatasetErrorBackgroundNotification(String dataViewsRole, String viewCode);
     void createCreateReplaceDatasetErrorBackgroundNotification(DatasetVersion datasetVersion, String viewCode, String datasetRepositoryId);
 
-
-    ExternalItem buildExternalItemFromResourceInternal(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal resource) throws MetamacException;
 }

@@ -250,7 +250,7 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
 
             @Override
             public void onWaitSuccess(UpdateTerritoriesCacheResult result) {
-                // TODO(EDATOS-3616) What to do?
+
             }
         });
     }

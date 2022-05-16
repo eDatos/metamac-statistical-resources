@@ -76,6 +76,7 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParam
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -245,10 +246,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
 
     @Autowired
-    private StreamMessagingServiceFacade                              streamMessagingServiceFacade;
-
-    @Autowired
-    private NoticesRestInternalService                                noticesRestInternalService;
+    private RestMapper                                                restMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
 
@@ -1188,9 +1186,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public void updateTerritoriesCache(ServiceContext ctx) throws MetamacException {
-        List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion()).eq(Boolean.TRUE).distinctRoot()
-                                                                        .build();
-        List<DatasetVersion> datasets = datasetVersionRepository.findByCondition(condition);
+        List<DatasetVersion> datasets = datasetVersionRepository.findAll();
 
         for (DatasetVersion dataset : datasets) {
             List<ExternalItem> geographicCoverage = dataset.getGeographicCoverage();
@@ -1205,6 +1201,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
             LOGGER.info("Request to obtain codelist to SRM done");
 
+            dataset.getTerritories().clear();
             for (ExternalItem geoCoverage : geographicCoverage) {
                 ResourceInternal variableElement = null;
 
@@ -1217,7 +1214,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
                 }
 
                 if (variableElement != null) {
-                    ExternalItem territory = noticesRestInternalService.buildExternalItemFromResourceInternal(variableElement);
+                    ExternalItem territory = restMapper.buildExternalItemFromResourceInternal(variableElement);
                     dataset.addTerritory(territory);
                 } else {
                     LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
