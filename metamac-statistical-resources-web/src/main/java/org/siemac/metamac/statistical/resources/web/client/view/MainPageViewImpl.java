@@ -7,6 +7,7 @@ import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalReso
 import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalResourcesToolStripLayoutEnum;
 import org.siemac.metamac.statistical.resources.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.statistical.resources.web.client.view.handlers.MainPageUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.widgets.StatisticalResourcesAdminMenu;
 import org.siemac.metamac.statistical.resources.web.client.widgets.StatisticalResourcesMenu;
 import org.siemac.metamac.web.common.client.enums.MessageTypeEnum;
 import org.siemac.metamac.web.common.client.widgets.BreadCrumbsPanel;
@@ -25,30 +26,33 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> implements MainPagePresenter.MainPageView {
 
-    private static final int               NORTH_HEIGHT   = 85;
-    private static final String            DEFAULT_MARGIN = "0px";
+    private static final int NORTH_HEIGHT = 85;
+    private static final String DEFAULT_MARGIN = "0px";
 
-    private MainPageUiHandlers             uiHandlers;
+    private MainPageUiHandlers uiHandlers;
 
-    private final MasterHead               masterHead;
+    private final MasterHead masterHead;
+    private final StatisticalResourcesAdminMenu adminMenu;
     private final StatisticalResourcesMenu navigationMenu;
-    private final BreadCrumbsPanel         breadCrumbsPanel;
-    private WaitPopup                      waitPopup;
+    private final BreadCrumbsPanel breadCrumbsPanel;
+    private WaitPopup waitPopup;
 
-    private final MessagePanel             messagePanel;
+    private final MessagePanel messagePanel;
 
-    private VLayout                        panel;
-    private VLayout                        northLayout;
-    private HLayout                        southLayout;
-    private FooterLayout                   footerLayout;
+    private VLayout panel;
+    private VLayout northLayout;
+    private HLayout southLayout;
+    private FooterLayout footerLayout;
 
     @Inject
-    public MainPageViewImpl(MasterHead masterHead, StatisticalResourcesMenu navigationMenu, BreadCrumbsPanel breadCrumbsPanel, MessagePanel messagePanel) {
+    public MainPageViewImpl(MasterHead masterHead, StatisticalResourcesAdminMenu adminMenu, StatisticalResourcesMenu navigationMenu, BreadCrumbsPanel breadCrumbsPanel, MessagePanel messagePanel) {
         this.masterHead = masterHead;
+        this.adminMenu = adminMenu;
         this.breadCrumbsPanel = breadCrumbsPanel;
         this.navigationMenu = navigationMenu;
         this.messagePanel = messagePanel;
@@ -70,8 +74,8 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
 
         // Nested layout container
         VLayout vLayout = new VLayout();
+        vLayout.setID("header");
         vLayout.addMember(this.masterHead);
-        vLayout.addMember(this.navigationMenu);
 
         VLayout breadCrumbLayout = new VLayout();
         breadCrumbLayout.addMember(this.breadCrumbsPanel);
@@ -190,6 +194,7 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
     public void setUiHandlers(MainPageUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
         navigationMenu.setUiHandlers(uiHandlers);
+        adminMenu.setUiHandlers(uiHandlers);
     }
 
     @Override
@@ -204,7 +209,14 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
 
     @Override
     public void selectMenuLayout(StatisticalResourcesToolStripLayoutEnum resourceType) {
-        navigationMenu.selectLayout(resourceType);
+        Layout header = (Layout) northLayout.getMember("header");
+        if (resourceType == StatisticalResourcesToolStripLayoutEnum.STATISTIC_DESKTOP) {
+            header.addMember(this.adminMenu);
+            header.removeMember(this.navigationMenu);
+        } else if (resourceType == StatisticalResourcesToolStripLayoutEnum.OPERATION_RESOURCES) {
+            header.addMember(this.navigationMenu);
+            header.removeMember(this.adminMenu);
+        }
     }
 
     @Override

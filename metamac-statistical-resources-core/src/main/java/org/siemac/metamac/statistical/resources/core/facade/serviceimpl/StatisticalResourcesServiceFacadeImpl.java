@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -20,6 +21,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
@@ -115,6 +117,8 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedMulti
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -245,6 +249,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Autowired
     private NoticesRestInternalService                                noticesRestInternalService;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
 
     public StatisticalResourcesServiceFacadeImpl() {
     }
@@ -1178,6 +1184,49 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeId);
 
         return statRepoDto2StatisticalResourcesDtoMapper.attributeDtosToDsdAttributeInstanceDtos(dsdAttribute, instances);
+    }
+
+    @Override
+    public void updateTerritoriesCache(ServiceContext ctx) throws MetamacException {
+        List<ConditionalCriteria> condition = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion()).eq(Boolean.TRUE).distinctRoot()
+                                                                        .build();
+        List<DatasetVersion> datasets = datasetVersionRepository.findByCondition(condition);
+
+        for (DatasetVersion dataset : datasets) {
+            List<ExternalItem> geographicCoverage = dataset.getGeographicCoverage();
+
+            if (geographicCoverage.isEmpty()) {
+                continue; // dataset doesn't have geographical info
+            }
+
+            String geoCodeUrn = geographicCoverage.get(0).getUrn();
+
+            LOGGER.info("Requesting codelist to SRM...");
+            List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
+            LOGGER.info("Request to obtain codelist to SRM done");
+
+            for (ExternalItem geoCoverage : geographicCoverage) {
+                ResourceInternal variableElement = null;
+
+                // the codes from the API contains the variable element linked to the geographical coverage code of the dataset
+                for (CodeResourceInternal code : codes) {
+                    if (Objects.equals(code.getUrn(), geoCoverage.getUrn())) {
+                        variableElement = code.getVariableElement();
+                        break;
+                    }
+                }
+
+                if (variableElement != null) {
+                    ExternalItem territory = noticesRestInternalService.buildExternalItemFromResourceInternal(variableElement);
+                    dataset.addTerritory(territory);
+                } else {
+                    LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
+                    throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND);
+                }
+            }
+
+            datasetVersionRepository.save(dataset);
+        }
     }
 
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {

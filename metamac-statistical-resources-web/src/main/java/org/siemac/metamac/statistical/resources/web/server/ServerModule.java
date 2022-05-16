@@ -37,6 +37,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Save
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveRegionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionsProcStatusActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateTerritoriesCacheActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetAgenciesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetAgencySchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetCategoriesPaginatedListActionHandler;
@@ -120,6 +121,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasourc
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveRegionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateTerritoriesCacheAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgenciesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgencySchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCategoriesPaginatedListAction;
@@ -299,6 +301,8 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetHelpUrlAction.class, GetHelpUrlActionHandler.class);
 
         bindHandler(LoadConfigurationPropertiesAction.class, LoadConfigurationPropertiesActionHandler.class);
+
+        bindHandler(UpdateTerritoriesCacheAction.class, UpdateTerritoriesCacheActionHandler.class);
 
         // This action should be removed to use CAS authentication
         bindHandler(MockCASUserAction.class, MockCASUserActionHandler.class);

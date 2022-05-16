@@ -155,6 +155,9 @@ Application FacadeStatisticalResources {
     		"Retrieve attribute instances given the dataset version URN and the attribute Id"
     		List<@DsdAttributeInstanceDto> retrieveAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
 
+    		// Other actions
+    		void updateTerritoriesCache() throws MetamacException;
+
     		// Statistic officialities
     		List<@StatisticOfficialityDto> findStatisticOfficialities() throws MetamacException;
 

@@ -18,6 +18,8 @@ import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUti
 import org.siemac.metamac.statistical.resources.web.client.view.handlers.MainPageUiHandlers;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateTerritoriesCacheAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateTerritoriesCacheResult;
 import org.siemac.metamac.web.common.client.enums.MessageTypeEnum;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent.ChangeWaitPopupVisibilityHandler;
@@ -238,6 +240,17 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
             @Override
             public void onWaitSuccess(GetHelpUrlResult result) {
                 Window.open(result.getHelpUrl(), "_blank", "");
+            }
+        });
+    }
+
+    @Override
+    public void updateTerritoriesCache() {
+        dispatcher.execute(new UpdateTerritoriesCacheAction(), new WaitingAsyncCallbackHandlingError<UpdateTerritoriesCacheResult>(this) {
+
+            @Override
+            public void onWaitSuccess(UpdateTerritoriesCacheResult result) {
+                // TODO(EDATOS-3616) What to do?
             }
         });
     }
