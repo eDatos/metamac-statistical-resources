@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
+import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalResourcesToolStripButtonEnum;
 import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalResourcesToolStripLayoutEnum;
 import org.siemac.metamac.statistical.resources.web.client.events.DeselectMenuButtonsEvent;
@@ -101,6 +102,8 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
 
         void showWaitPopup();
         void hideWaitPopup();
+
+        void showInformationMessage(String title, String message);
     }
 
     /**
@@ -246,11 +249,17 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
 
     @Override
     public void updateTerritoriesCache() {
-        dispatcher.execute(new UpdateTerritoriesCacheAction(), new WaitingAsyncCallbackHandlingError<UpdateTerritoriesCacheResult>(this) {
+        getView().showInformationMessage(StatisticalResourcesWeb.getMessages().updateTerritoriesCache(), StatisticalResourcesWeb.getMessages().updateTerritoriesCacheInProgress());
+        dispatcher.execute(new UpdateTerritoriesCacheAction(), new AsyncCallback<UpdateTerritoriesCacheResult>() {
 
             @Override
-            public void onWaitSuccess(UpdateTerritoriesCacheResult result) {
+            public void onFailure(Throwable caught) {
+                logger.log(Level.WARNING, "error when updating territories", caught);
+            }
 
+            @Override
+            public void onSuccess(UpdateTerritoriesCacheResult result) {
+                logger.log(Level.INFO, "everything is fine after updating territories");
             }
         });
     }
