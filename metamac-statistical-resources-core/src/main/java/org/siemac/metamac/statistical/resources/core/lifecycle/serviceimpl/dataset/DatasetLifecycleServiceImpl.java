@@ -132,7 +132,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     }
 
     @Override
-    protected void saveTerritoriesToCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+    protected void saveGeographicCoverageVariableElementsToCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         List<ExternalItem> geographicCoverage = resource.getGeographicCoverage();
 
         if (geographicCoverage.isEmpty()) {
@@ -157,8 +157,8 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             }
 
             if (variableElement != null) {
-                ExternalItem territory = restMapper.buildExternalItemFromResourceInternal(variableElement);
-                resource.addTerritory(territory);
+                ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(variableElement);
+                resource.addGeographicCoverageVariableElement(territoryVariableElement);
             } else {
                 LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
                 throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND);

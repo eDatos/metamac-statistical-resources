@@ -245,7 +245,7 @@ Application DatasetsStatisticalResources {
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
 
 			"Variable elements of geographical coverage of datasets"
-			- Bag<@ExternalItem> territories cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_TERRITORIES_CACHE_DATASETS_VERSIONS" databaseColumn="EXTERNAL_ITEM_FK" databaseJoinColumn="DATASET_VERSION_FK";
+			- Bag<@ExternalItem> geographicCoverageVariableElements cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS" databaseColumn="EXTERNAL_ITEM_FK" databaseJoinColumn="DATASET_VERSION_FK";
 
 			Repository DatasetVersionRepository {
 				save;

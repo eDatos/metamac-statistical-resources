@@ -86,7 +86,7 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
     }
 
     @Override
-    protected void saveTerritoriesToCache(ServiceContext ctx, MultidatasetVersion resource) throws MetamacException {
+    protected void saveGeographicCoverageVariableElementsToCache(ServiceContext ctx, MultidatasetVersion resource) throws MetamacException {
         // nothing to do
     }
 

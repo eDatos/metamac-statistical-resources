@@ -4,7 +4,7 @@ import com.smartgwt.client.types.ValueEnum;
 
 public enum StatisticalResourcesToolStripAdminManagementButtonEnum implements ValueEnum {
 
-    UPDATE_TERRITORIES_CACHE("update_territory_cache_button");
+    UPDATE_GEOCOV_VARELEM_CACHE("update_geocov_varelem_cache_button");
 
     private String value;
 

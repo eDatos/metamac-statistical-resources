@@ -21,20 +21,20 @@ public class StatisticalResourcesAdminMenu extends ToolStrip {
         setWidth100();
         setAlign(Alignment.LEFT);
 
-        CustomToolStripButton updateTerritoriesCacheButton = new CustomToolStripButton(getConstants().updateTerritoriesCache(), GlobalResources.RESOURCE.reload().getURL());
-        updateTerritoriesCacheButton.setID(StatisticalResourcesToolStripAdminManagementButtonEnum.UPDATE_TERRITORIES_CACHE.getValue());
-        updateTerritoriesCacheButton.addClickHandler(new ClickHandler() {
+        CustomToolStripButton updateGeographicCoverageVariableElementsCacheButton = new CustomToolStripButton(getConstants().updateGeographicCoverageVariableElementsCache(), GlobalResources.RESOURCE.reload().getURL());
+        updateGeographicCoverageVariableElementsCacheButton.setID(StatisticalResourcesToolStripAdminManagementButtonEnum.UPDATE_GEOCOV_VARELEM_CACHE.getValue());
+        updateGeographicCoverageVariableElementsCacheButton.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                final WarningWindow warningWindow = new WarningWindow(getConstants().updateTerritoriesCacheWarning());
+                final WarningWindow warningWindow = new WarningWindow(getConstants().updateGeographicCoverageVariableElementsCacheWarning());
 
                 warningWindow.getAcceptButtomItem().addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
 
                     @Override
                     public void onClick(com.smartgwt.client.widgets.events.ClickEvent event) {
                         warningWindow.destroy();
-                        updateTerritoriesCache();
+                        updateGeographicCoverageVariableElementsCache();
                     }
                 });
 
@@ -48,7 +48,7 @@ public class StatisticalResourcesAdminMenu extends ToolStrip {
             }
         });
 
-        addButton(updateTerritoriesCacheButton);
+        addButton(updateGeographicCoverageVariableElementsCacheButton);
     }
 
     public void setUiHandlers(MainPageUiHandlers uiHandlers) {
@@ -59,7 +59,7 @@ public class StatisticalResourcesAdminMenu extends ToolStrip {
         return uiHandlers;
     }
 
-    private void updateTerritoriesCache() {
-        getUiHandlers().updateTerritoriesCache();
+    private void updateGeographicCoverageVariableElementsCache() {
+        getUiHandlers().updateGeographicCoverageVariableElementsCache();
     }
 }

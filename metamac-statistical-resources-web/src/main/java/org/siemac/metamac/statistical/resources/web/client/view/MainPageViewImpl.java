@@ -239,9 +239,10 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
     }
 
     @Override
-    public void showInformationMessage(String title, String message) {
+    public InformationWindow showInformationMessage(String title, String message) {
         InformationWindow informationWindow = new InformationWindow(title, message);
         informationWindow.show();
+        return informationWindow;
     }
 
     private String getUserName() {

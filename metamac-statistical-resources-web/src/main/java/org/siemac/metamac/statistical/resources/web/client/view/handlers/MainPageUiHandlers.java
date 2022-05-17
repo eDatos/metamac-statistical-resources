@@ -19,5 +19,5 @@ public interface MainPageUiHandlers extends UiHandlers {
 
     void openHelpUrl();
 
-    void updateTerritoriesCache();
+    void updateGeographicCoverageVariableElementsCache();
 }

@@ -1185,7 +1185,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void updateTerritoriesCache(ServiceContext ctx) throws MetamacException {
+    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
         List<DatasetVersion> datasets = datasetVersionRepository.findAll();
 
         for (DatasetVersion dataset : datasets) {
@@ -1201,7 +1201,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
             LOGGER.info("Request to obtain codelist to SRM done");
 
-            dataset.getTerritories().clear();
+            dataset.getGeographicCoverageVariableElements().clear();
             for (ExternalItem geoCoverage : geographicCoverage) {
                 ResourceInternal variableElement = null;
 
@@ -1213,13 +1213,13 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
                     }
                 }
 
-                if (variableElement != null) {
-                    ExternalItem territory = restMapper.buildExternalItemFromResourceInternal(variableElement);
-                    dataset.addTerritory(territory);
-                } else {
+                if (variableElement == null) {
                     LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
                     throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND);
                 }
+
+                ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(variableElement);
+                dataset.addGeographicCoverageVariableElement(territoryVariableElement);
             }
 
             datasetVersionRepository.save(dataset);

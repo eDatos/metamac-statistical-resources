@@ -19,8 +19,8 @@ import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUti
 import org.siemac.metamac.statistical.resources.web.client.view.handlers.MainPageUiHandlers;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlResult;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateTerritoriesCacheAction;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateTerritoriesCacheResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheResult;
 import org.siemac.metamac.web.common.client.enums.MessageTypeEnum;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent.ChangeWaitPopupVisibilityHandler;
@@ -32,6 +32,7 @@ import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent.ShowMessageHandler;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 import org.siemac.metamac.web.common.client.widgets.BreadCrumbsPanel;
+import org.siemac.metamac.web.common.client.widgets.InformationWindow;
 import org.siemac.metamac.web.common.client.widgets.MasterHead;
 import org.siemac.metamac.web.common.shared.CloseSessionAction;
 import org.siemac.metamac.web.common.shared.CloseSessionResult;
@@ -103,7 +104,7 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
         void showWaitPopup();
         void hideWaitPopup();
 
-        void showInformationMessage(String title, String message);
+        InformationWindow showInformationMessage(String title, String message);
     }
 
     /**
@@ -248,18 +249,22 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     }
 
     @Override
-    public void updateTerritoriesCache() {
-        getView().showInformationMessage(StatisticalResourcesWeb.getMessages().updateTerritoriesCache(), StatisticalResourcesWeb.getMessages().updateTerritoriesCacheInProgress());
-        dispatcher.execute(new UpdateTerritoriesCacheAction(), new AsyncCallback<UpdateTerritoriesCacheResult>() {
+    public void updateGeographicCoverageVariableElementsCache() {
+        final InformationWindow informationWindow = getView().showInformationMessage(StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCache(),
+                StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCacheInProgress());
+        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction(), new AsyncCallback<UpdateGeographicCoverageVariableElementsCacheResult>() {
 
             @Override
             public void onFailure(Throwable caught) {
-                logger.log(Level.WARNING, "error when updating territories", caught);
+                logger.log(Level.WARNING, "Could not update geographic coverage variable elements cache", caught);
+                informationWindow.hide();
+                ShowMessageEvent.fireErrorMessage(MainPagePresenter.this, caught);
             }
 
             @Override
-            public void onSuccess(UpdateTerritoriesCacheResult result) {
-                logger.log(Level.INFO, "everything is fine after updating territories");
+            public void onSuccess(UpdateGeographicCoverageVariableElementsCacheResult result) {
+                logger.log(Level.INFO, "Update of geographic coverage variable elements cache successful");
+                ShowMessageEvent.fireSuccessMessage(MainPagePresenter.this, StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCacheSuccessful());
             }
         });
     }
