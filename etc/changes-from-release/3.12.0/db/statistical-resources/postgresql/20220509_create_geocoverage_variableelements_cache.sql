@@ -1,3 +1,7 @@
+-- ---------------------------------------------------------------------------------------------------
+-- EDATOS-3616 - Permitir la búsqueda de territorios por código de elemento de variable
+-- ---------------------------------------------------------------------------------------------------
+
 CREATE TABLE TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS (
   DATASET_VERSION_FK BIGINT NOT NULL,
   EXTERNAL_ITEM_FK BIGINT NOT NULL
