@@ -136,14 +136,14 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         List<ExternalItem> geographicCoverage = resource.getGeographicCoverage();
 
         if (geographicCoverage.isEmpty()) {
-            return;
+            return; // dataset has no geographical info
         }
 
         String geoCodeUrn = geographicCoverage.get(0).getUrn();
 
-        LOGGER.info("Requesting codelist to SRM...");
+        LOGGER.debug("Requesting codelist to SRM...");
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
-        LOGGER.info("Request to obtain codelist to SRM done");
+        LOGGER.debug("Request to obtain codelist to SRM done");
 
         for (ExternalItem geoCoverage : geographicCoverage) {
             ResourceInternal variableElement = null;

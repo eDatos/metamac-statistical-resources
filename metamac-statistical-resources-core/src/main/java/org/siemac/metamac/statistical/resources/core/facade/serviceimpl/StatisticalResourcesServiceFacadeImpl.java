@@ -1192,14 +1192,14 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             List<ExternalItem> geographicCoverage = dataset.getGeographicCoverage();
 
             if (geographicCoverage.isEmpty()) {
-                continue; // dataset doesn't have geographical info
+                continue; // dataset has no geographical info
             }
 
             String geoCodeUrn = geographicCoverage.get(0).getUrn();
 
-            LOGGER.info("Requesting codelist to SRM...");
+            LOGGER.debug("Requesting codelist to SRM for {}...", geoCodeUrn);
             List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
-            LOGGER.info("Request to obtain codelist to SRM done");
+            LOGGER.debug("Request to obtain codelist to SRM done");
 
             dataset.getGeographicCoverageVariableElements().clear();
             for (ExternalItem geoCoverage : geographicCoverage) {
