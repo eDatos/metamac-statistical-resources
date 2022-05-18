@@ -240,19 +240,7 @@ public class DatabaseImportRepositoryTest extends StatisticalResourcesBaseTest {
 
     // Drop the table and don't throw error if it doesn't exists
     private void dropTable(String tableName) {
-        if (DataBaseProvider.ORACLE.equals(getDatabaseProvider())) {
-            // @formatter:off
-            jdbcTemplate.execute("BEGIN "
-                                  + "EXECUTE IMMEDIATE 'DROP TABLE " + tableName + "'; "
-                                  + "EXCEPTION WHEN OTHERS THEN "
-                                  + "IF SQLCODE != -942 THEN"
-                                  + " RAISE;"
-                                  + " END IF;"
-                                  + "END;");
-            // @formatter:on
-        } else if (DataBaseProvider.POSTGRESQL.equals(getDatabaseProvider()))  {
             jdbcTemplate.execute("DROP TABLE IF EXISTS " + tableName + ";");
-        }
     }
 
     private void populateTable() {

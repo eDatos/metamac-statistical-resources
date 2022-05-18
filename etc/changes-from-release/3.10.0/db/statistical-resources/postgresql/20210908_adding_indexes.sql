@@ -5,7 +5,6 @@
 -- consulta: 
 -- https://git.arte-consultores.com/istac/metamac-statistical-resources/-/blob/develop/metamac-statistical-resources-core/src/main/java/org/siemac/metamac/statistical/resources/core/dataset/repositoryimpl/DatasetVersionRepositoryImpl.java#L170
 -- 
--- En Oracle no existían estos índices de forma explícita debido a que los crea de forma automática 
 -- en memoria a medida que detecta la necesidad.
 -- ---------------------------------------------------------------------------------------------------
 

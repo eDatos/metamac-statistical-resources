@@ -13,7 +13,5 @@
 	<!-- Mocking framework -->
 	<bean id="mockPersister" class="${mockPersister.class}"></bean>
 	<!-- <bean id="mockPersister" class="org.siemac.metamac.core.common.test.utils.sql.DBPostgreSqlMockPersister"></bean> -->
-	<!-- <bean id="mockPersister" class="org.siemac.metamac.core.common.test.utils.sql.DBOracleSqlMockPersister"></bean> -->
-	<!-- <bean id="dbUnitFacade" class="org.siemac.metamac.core.common.test.utils.dbunit.DBUnitOracleFacade"></bean> -->
 	<!-- <bean id="mockPersister" class="org.siemac.metamac.core.common.test.utils.dbunit.DBUnitMockPersister"></bean> -->
 </beans>

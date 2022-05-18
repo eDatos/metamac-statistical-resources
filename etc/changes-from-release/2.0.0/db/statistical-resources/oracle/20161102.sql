@@ -1,6 +1,0 @@
--- Add published stream message status columns  
-  
-ALTER TABLE TB_STAT_RESOURCES
-  ADD PUBLICATION_STREAM_STATUS VARCHAR2(255 CHAR);
-
-COMMIT;

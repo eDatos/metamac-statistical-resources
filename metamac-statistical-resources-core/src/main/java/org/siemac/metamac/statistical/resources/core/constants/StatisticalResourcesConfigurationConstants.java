@@ -35,7 +35,6 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String DB_DATA_IMPORT_PASSWORD               = "metamac.statistical_resources.data_import.db.password";        // NOSONAR
     public static final String DB_DATA_IMPORT_DRIVER_NAME            = "metamac.statistical_resources.data_import.db.driver_name";
 
-    public static final String DB_DRIVER_NAME_ORACLE                 = "oracle.jdbc.OracleDriver";
     public static final String DB_DRIVER_NAME_POSTGRESQL             = "org.postgresql.Driver";
 
 }

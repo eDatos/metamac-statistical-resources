@@ -39,16 +39,6 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     }
 
     @Override
-    public Boolean isDatabaseOracle() throws MetamacException {
-        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
-    }
-
-    @Override
-    public Boolean isDatabasePostgreSQL() throws MetamacException {
-        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
-    }
-
-    @Override
     public String retrieveDbDataViewsRole() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
