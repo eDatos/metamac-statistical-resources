@@ -1215,7 +1215,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
                 if (variableElement == null) {
                     LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
-                    throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND);
+                    throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, geoCoverage.getUrn());
                 }
 
                 ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(variableElement);

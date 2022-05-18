@@ -295,6 +295,6 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
 
     // Geographic Coverage
     public static final CommonServiceExceptionType GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND                                         = create(
-            "geocoverage.resources.exception.geographical_coverage_code_not_found");
+            "exception.resources.dataset_version.geocoverage.geographical_coverage_code_not_found");
 
 }
