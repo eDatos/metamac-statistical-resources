@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.dataset.serviceimpl;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
+import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnByDots;
 import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCollection;
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
 
@@ -14,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -164,6 +166,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private NoticesRestInternalService                noticesRestInternalService;
+
+    private Map<String, Codes>                        geographicCoverageCodelists;
 
     // ------------------------------------------------------------------------
     // DATASOURCES
@@ -1300,11 +1304,18 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void saveGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+        initSrmCacheForGeographicCoverageCodelists();
         updateGeocoverageCache(datasetVersion);
+    }
+
+    private void initSrmCacheForGeographicCoverageCodelists() {
+        log.debug("Init geographic coverage codelist cache for SRM");
+        this.geographicCoverageCodelists = new HashMap<>();
     }
 
     @Override
     public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        initSrmCacheForGeographicCoverageCodelists();
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
                                                                        .eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
         List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
@@ -1314,23 +1325,26 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
+    // ------------------------------------------------------------------------
+    // PRIVATE METHODS
+    // ------------------------------------------------------------------------
+
     private void updateGeocoverageCache(DatasetVersion datasetVersion) throws MetamacException {
+        log.debug("Updating geocoverage cache for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
 
         if (geographicCoverage.isEmpty()) {
-            log.debug("Dataset {} geographic coverage is empty.", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+            log.debug("Dataset geographic coverage is empty");
             return;
         }
 
-        String geoCodeUrn = geographicCoverage.get(0).getUrn();
-
-        log.debug("Requesting codelist to SRM for {}...", geoCodeUrn);
-        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
-        log.debug("Request to obtain codelist to SRM done");
+        String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
+        List<CodeResourceInternal> codes = getGeographicCoverageCodes(geographicCoverageCodelistUrn);
 
         // discard all variable elements present in the array to avoid duplicated data
         datasetVersion.getGeographicCoverageVariableElements().clear();
 
+        log.debug("Processing geographic coverage to create the cache");
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
                 @Override
@@ -1340,6 +1354,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             });
 
             if (code == null || code.getVariableElement() == null) {
+                // FIXME(EDATOS-3616): on fail a kafka message should be sent instead
                 log.error("Could not find variable element for {}", geoCoverage.getUrn());
                 throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, geoCoverage.getUrn());
             }
@@ -1348,12 +1363,41 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             datasetVersion.addGeographicCoverageVariableElement(territoryVariableElement);
         }
 
+        log.debug("Created new {} variable elements for {} geographic codes", datasetVersion.getGeographicCoverageVariableElements().size(), geographicCoverage.size());
         datasetVersionRepository.save(datasetVersion);
     }
 
-    // ------------------------------------------------------------------------
-    // PRIVATE METHODS
-    // ------------------------------------------------------------------------
+    private List<CodeResourceInternal> getGeographicCoverageCodes(String geographicCoverageCodelistUrn) throws MetamacException {
+        log.debug("Requesting codelist to SRM for {}...", geographicCoverageCodelistUrn);
+
+        if (geographicCoverageCodelists.containsKey(geographicCoverageCodelistUrn)) {
+            log.debug("Cache hit");
+            return geographicCoverageCodelists.get(geographicCoverageCodelistUrn).getCodes();
+        }
+
+        Codes codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn);
+        geographicCoverageCodelists.put(geographicCoverageCodelistUrn, codes);
+        return codes.getCodes();
+    }
+
+    private String getCodelistFromCodeUrn(String urn) {
+        if (urn == null) {
+            return null;
+        }
+
+        // e.g.: urn:sdmx:org.sdmx.infomodel.codelist.Code=ISTAC:CL_AREA_ES70_DS_20111120(01.000).ES70 is converted to
+        // [urn:sdmx:org, sdmx, infomodel, codelist, Code=ISTAC:CL_AREA_ES70_DS_20111120(01.000), ES70]
+        // The use of LinkedList is because Arrays.asList returns a fixed-size list
+        List<String> splittedByDotUrn = new LinkedList<>(Arrays.asList(splitUrnByDots(urn)));
+
+        int lastElementIndex = splittedByDotUrn.size() - 1;
+        if (lastElementIndex >= 0) {
+            // remove the element corresponding to the code id
+            splittedByDotUrn.remove(lastElementIndex);
+        }
+
+        return String.join(".", splittedByDotUrn);
+    }
 
     private void checkNotTasksInProgress(ServiceContext ctx, String datasetUrn) throws MetamacException {
         if (getTaskService().existsTaskForResource(ctx, datasetUrn)) {
