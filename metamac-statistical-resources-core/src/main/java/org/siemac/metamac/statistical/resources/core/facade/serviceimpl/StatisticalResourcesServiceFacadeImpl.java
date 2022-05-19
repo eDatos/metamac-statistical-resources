@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -21,6 +21,8 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
+import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
@@ -50,6 +52,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDo2Dt
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatRepoDto2StatisticalResourcesDtoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatisticalResourcesDto2StatRepoDtoMapper;
+import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.ContentConstraintDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueDto;
@@ -72,9 +75,9 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.Publication
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
@@ -117,7 +120,6 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatas
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
-import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -246,7 +248,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
 
     @Autowired
-    private RestMapper                                                restMapper;
+    private DatasetService                                            datasetService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
 
@@ -1186,44 +1188,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
-        List<DatasetVersion> datasets = datasetVersionRepository.findAll();
-
-        for (DatasetVersion dataset : datasets) {
-            List<ExternalItem> geographicCoverage = dataset.getGeographicCoverage();
-
-            if (geographicCoverage.isEmpty()) {
-                continue; // dataset has no geographical info
-            }
-
-            String geoCodeUrn = geographicCoverage.get(0).getUrn();
-
-            LOGGER.debug("Requesting codelist to SRM for {}...", geoCodeUrn);
-            List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
-            LOGGER.debug("Request to obtain codelist to SRM done");
-
-            dataset.getGeographicCoverageVariableElements().clear();
-            for (ExternalItem geoCoverage : geographicCoverage) {
-                ResourceInternal variableElement = null;
-
-                // the codes from the API contains the variable element linked to the geographical coverage code of the dataset
-                for (CodeResourceInternal code : codes) {
-                    if (Objects.equals(code.getUrn(), geoCoverage.getUrn())) {
-                        variableElement = code.getVariableElement();
-                        break;
-                    }
-                }
-
-                if (variableElement == null) {
-                    LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
-                    throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, geoCoverage.getUrn());
-                }
-
-                ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(variableElement);
-                dataset.addGeographicCoverageVariableElement(territoryVariableElement);
-            }
-
-            datasetVersionRepository.save(dataset);
-        }
+        this.datasetService.updateGeographicCoverageVariableElementsCache(ctx);
     }
 
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {

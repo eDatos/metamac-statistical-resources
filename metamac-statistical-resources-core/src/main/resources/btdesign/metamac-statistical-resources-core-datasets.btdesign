@@ -108,6 +108,10 @@ Application DatasetsStatisticalResources {
     		List<@Categorisation> retrieveCategorisationsByDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Finds categorisations by criteria"
     		PagedResult<@Categorisation> findCategorisationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+
+    		// Geocoverage variable elements cache
+    		void saveGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
+    		void updateGeographicCoverageVariableElementsCache() throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------

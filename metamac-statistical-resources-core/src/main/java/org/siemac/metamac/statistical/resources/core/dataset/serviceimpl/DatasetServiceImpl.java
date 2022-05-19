@@ -22,6 +22,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
@@ -33,7 +34,9 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
+import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
@@ -65,6 +68,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisati
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceProperties;
@@ -1288,6 +1292,63 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         Datasource datasource = buildDatasource(tableName);
 
         createDatasource(ctx, datasetVersionUrn, datasource);
+    }
+
+    // ------------------------------------------------------------------------
+    // CACHE
+    // ------------------------------------------------------------------------
+
+    @Override
+    public void saveGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+        updateGeocoverageCache(datasetVersion);
+    }
+
+    @Override
+    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
+                                                                       .eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
+        List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
+
+        for (DatasetVersion datasetVersion : datasetVersions) {
+            updateGeocoverageCache(datasetVersion);
+        }
+    }
+
+    private void updateGeocoverageCache(DatasetVersion datasetVersion) throws MetamacException {
+        List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
+
+        if (geographicCoverage.isEmpty()) {
+            log.debug("Dataset {} geographic coverage is empty.", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+            return;
+        }
+
+        String geoCodeUrn = geographicCoverage.get(0).getUrn();
+
+        log.debug("Requesting codelist to SRM for {}...", geoCodeUrn);
+        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
+        log.debug("Request to obtain codelist to SRM done");
+
+        // discard all variable elements present in the array to avoid duplicated data
+        datasetVersion.getGeographicCoverageVariableElements().clear();
+
+        for (ExternalItem geoCoverage : geographicCoverage) {
+            CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
+                @Override
+                protected boolean eval(CodeResourceInternal code) {
+                    return StringUtils.equals(code.getUrn(), geoCoverage.getUrn());
+                }
+            });
+
+            if (code == null || code.getVariableElement() == null) {
+                log.error("Could not find variable element for {}", geoCoverage.getUrn());
+                throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, geoCoverage.getUrn());
+            }
+
+            ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
+            datasetVersion.addGeographicCoverageVariableElement(territoryVariableElement);
+        }
+
+        datasetVersionRepository.save(datasetVersion);
     }
 
     // ------------------------------------------------------------------------

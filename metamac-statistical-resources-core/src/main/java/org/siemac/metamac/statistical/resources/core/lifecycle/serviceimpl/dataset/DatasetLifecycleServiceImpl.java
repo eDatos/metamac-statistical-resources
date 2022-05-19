@@ -133,37 +133,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Override
     protected void saveGeographicCoverageVariableElementsToCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
-        List<ExternalItem> geographicCoverage = resource.getGeographicCoverage();
-
-        if (geographicCoverage.isEmpty()) {
-            return; // dataset has no geographical info
-        }
-
-        String geoCodeUrn = geographicCoverage.get(0).getUrn();
-
-        LOGGER.debug("Requesting codelist to SRM...");
-        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geoCodeUrn).getCodes();
-        LOGGER.debug("Request to obtain codelist to SRM done");
-
-        for (ExternalItem geoCoverage : geographicCoverage) {
-            ResourceInternal variableElement = null;
-
-            // the codes from the API contains the variable element linked to the geographical coverage code of the dataset
-            for (CodeResourceInternal code : codes) {
-                if (Objects.equals(code.getUrn(), geoCoverage.getUrn())) {
-                    variableElement = code.getVariableElement();
-                    break;
-                }
-            }
-
-            if (variableElement != null) {
-                ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(variableElement);
-                resource.addGeographicCoverageVariableElement(territoryVariableElement);
-            } else {
-                LOGGER.error("Could not find variable element for {}", geoCoverage.getUrn());
-                throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND);
-            }
-        }
+        datasetService.saveGeographicCoverageVariableElementsCache(ctx, resource);
     }
 
     // ------------------------------------------------------------------------------------------------------
