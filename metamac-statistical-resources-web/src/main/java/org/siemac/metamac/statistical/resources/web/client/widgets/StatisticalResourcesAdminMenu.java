@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.web.client.widgets;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalResourcesToolStripAdminManagementButtonEnum;
 import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
 import org.siemac.metamac.statistical.resources.web.client.view.handlers.MainPageUiHandlers;
@@ -41,7 +42,9 @@ public class StatisticalResourcesAdminMenu extends ToolStrip {
             }
         });
 
-        addButton(updateGeographicCoverageVariableElementsCacheButton);
+        if (DatasetClientSecurityUtils.canUpdateGeographicCoverageVariableElementsCache()) {
+            addButton(updateGeographicCoverageVariableElementsCacheButton);
+        }
     }
 
     public void setUiHandlers(MainPageUiHandlers uiHandlers) {

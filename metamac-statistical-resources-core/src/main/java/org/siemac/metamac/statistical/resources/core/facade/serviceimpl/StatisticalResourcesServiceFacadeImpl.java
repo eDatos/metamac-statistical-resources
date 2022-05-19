@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -21,9 +20,6 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
-import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
-import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
@@ -75,11 +71,9 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.Publication
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
-import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
-import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -1188,6 +1182,10 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
+
+        // Operate
         this.datasetService.updateGeographicCoverageVariableElementsCache(ctx);
     }
 

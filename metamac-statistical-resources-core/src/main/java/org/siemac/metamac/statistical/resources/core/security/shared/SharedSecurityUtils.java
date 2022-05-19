@@ -184,4 +184,8 @@ public class SharedSecurityUtils {
         }
     }
 
+    public static boolean canUpdateGeographicCoverageVariableElementsCache(MetamacPrincipal metamacPrincipal) {
+        return isAdministrador(metamacPrincipal);
+    }
+
 }
