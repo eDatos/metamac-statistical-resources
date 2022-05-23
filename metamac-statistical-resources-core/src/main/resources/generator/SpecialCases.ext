@@ -8,10 +8,3 @@ around extensions::dbhelper::isJodaTemporal(Attribute attribute) :
    true
   else
     ctx.proceed();
-
-    
-String useCharactersInsteadBytes(String name) :
-	if (name.toLowerCase().contains("varchar2") || name.toLowerCase().contains("char")) then
-    	name.replaceAll("\\(([^\\)]*)\\)", "($1 CHAR)")
-    else
-    	name;
