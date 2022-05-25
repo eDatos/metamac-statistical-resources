@@ -16,7 +16,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.siemac.metamac.common.test.dbunit.MetamacDBUnitBaseTests.DataBaseProvider;
 import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -240,7 +239,7 @@ public class DatabaseImportRepositoryTest extends StatisticalResourcesBaseTest {
 
     // Drop the table and don't throw error if it doesn't exists
     private void dropTable(String tableName) {
-            jdbcTemplate.execute("DROP TABLE IF EXISTS " + tableName + ";");
+        jdbcTemplate.execute("DROP TABLE IF EXISTS " + tableName + ";");
     }
 
     private void populateTable() {
