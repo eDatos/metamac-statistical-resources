@@ -185,7 +185,7 @@ public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
 
             // Drop table data
             for (String tableName : tableNames) {
-                logger.info("Table deleted cascade. Name = {}", tableName);
+                logger.debug("Table deleted cascade. Name = {}", tableName);
                 jdbcTemplateRepository.update("drop table " + tableName + " CASCADE");
             }
         }
