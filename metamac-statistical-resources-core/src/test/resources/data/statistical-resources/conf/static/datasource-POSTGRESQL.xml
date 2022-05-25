@@ -3,7 +3,7 @@
 <properties>
   <comment>Data sources configuration</comment>
   
-  <entry key="metamac.statistical_resources.db.url">jdbc:postgresql://teide:5432/ARTE</entry>
+  <entry key="metamac.statistical_resources.db.url">jdbc:postgresql://artejenkins.arte.internal:5432/ARTE</entry>
   <entry key="metamac.statistical_resources.db.driver_name">org.postgresql.Driver</entry>
   <entry key="metamac.statistical_resources.db.username">istac_metamac_stat_resources_ci</entry>
   <entry key="metamac.statistical_resources.db.password">istac_metamac_stat_resources_ci</entry>

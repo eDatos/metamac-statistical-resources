@@ -14,7 +14,6 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.SchedulerRepository;
 import org.siemac.metamac.common.test.MetamacBaseTest;
-import org.siemac.metamac.common.test.dbunit.MetamacDBUnitBaseTests.DataBaseProvider;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.lang.LocaleUtil;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockAnnotationRule;
@@ -50,8 +49,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
+    private static Logger       logger              = LoggerFactory.getLogger(StatisticalResourcesBaseTest.class);
 
     protected static String                                 EMPTY                                     = StringUtils.EMPTY;
 
@@ -81,9 +83,6 @@ public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
     protected StatisticalResourcesPersistedDoMocks          persistedDoMocks                          = StatisticalResourcesPersistedDoMocks.getInstance();
 
     protected StatisticOfficialityMockFactory               statisticOfficialityMockFactory           = StatisticOfficialityMockFactory.getInstance();
-
-    @Value("${metamac.statistical_resources.db.provider}")
-    private String                                          databaseProvider;
 
     @Rule
     public MockAnnotationRule                               mockRule                                  = new MockAnnotationRule();
@@ -118,11 +117,6 @@ public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
         metamacPrincipal.setUserId(serviceContext.getUserId());
         metamacPrincipal.getAccesses().add(new MetamacPrincipalAccess(role.getName(), StatisticalResourcesConstants.APPLICATION_ID, null));
         serviceContext.setProperty(SsoClientConstants.PRINCIPAL_ATTRIBUTE, metamacPrincipal);
-    }
-
-    @Override
-    protected DataBaseProvider getDatabaseProvider() {
-        return DataBaseProvider.valueOf(databaseProvider);
     }
 
     protected void waitUntilJobFinished(boolean initializeWait) throws InterruptedException, SchedulerException {
@@ -191,7 +185,8 @@ public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
 
             // Drop table data
             for (String tableName : tableNames) {
-                jdbcTemplateRepository.update("drop table " + tableName);
+                logger.debug("Table deleted cascade. Name = {}", tableName);
+                jdbcTemplateRepository.update("drop table " + tableName + " CASCADE");
             }
         }
 

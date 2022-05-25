@@ -12,7 +12,6 @@
     
     <properties fileName="${environment.metamac.data}/common/conf/static/resources.xml" config-optional="false" />
     <properties fileName="${environment.metamac.data}/statistical-resources/conf/static/datasource-POSTGRESQL.xml" config-optional="false" />
-    <properties fileName="${environment.metamac.data}/statistical-resources/conf/static/datasource-ORACLE.xml" config-optional="false" />
 
   </override>
 </configuration>

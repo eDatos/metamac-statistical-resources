@@ -23,15 +23,10 @@
     «ENDIF»
 «ENDAROUND»
 
-
 «AROUND templates::db::OracleDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
-  «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR2(50 CHAR)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
+  «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR(50)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
   «ENDIF-»
-  «getDatabaseName(prefix, this)» «useCharactersInsteadBytes(getDatabaseType())»«parentIsNullable ? "" : getDatabaseTypeNullability()-»
-«ENDAROUND»
-
-«AROUND templates::db::OracleDDL::enumColumn(String prefix, boolean parentIsNullable) FOR Reference-»
-  «getDatabaseName(prefix, this)» «useCharactersInsteadBytes(getEnumDatabaseType())»«parentIsNullable ? "" : getDatabaseTypeNullability()-»
+  «targetDef.proceed()-»
 «ENDAROUND»
 
 «AROUND templates::db::CustomDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
@@ -142,7 +137,7 @@ CREATE sequence SEQ_«domainObject.getHint('idSequence')»;
 
 
 
-
+«REM»Depence of MetamacOracleDDL.xpt of core-common library «ENDREM»
 «AROUND templates::db::OracleDDL::ddl FOR Application»
 	«EXPAND generatorcommon::MetamacOracleDDL::generateDdl»
 «ENDAROUND»
