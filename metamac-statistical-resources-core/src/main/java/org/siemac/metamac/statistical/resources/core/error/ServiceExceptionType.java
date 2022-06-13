@@ -1,6 +1,9 @@
 package org.siemac.metamac.statistical.resources.core.error;
 
+import java.util.List;
+
 import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 
 public class ServiceExceptionType extends CommonServiceExceptionType {
 
@@ -196,6 +199,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType TASKS_JOB_IMPORTATION_IN_PROCESS                                             = create("exception.resources.task.error.imporation_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_DATABASE_IMPORTATION_IN_PROCESS                                    = create(
             "exception.resources.task.error.database_importation_in_process");
+    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_GEOCOVERAGE_CACHE_IN_PROCESS                                = create(
+            "exception.resources.task.error.update_geocoverage_cache_in_process");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                            = create("exception.resources.task.in_progress");
 
     // Dataset Importation
@@ -296,5 +301,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     // Geographic Coverage
     public static final CommonServiceExceptionType GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND                                         = create(
             "exception.resources.dataset_version.geocoverage.geographical_coverage_code_not_found");
-
-}
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR                                   = create("exception.resources.dataset_version.geocoverage.job_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR            = create(
+        "exception.resources.dataset_version.geocoverage.job_error_and_cant_mark_as_error");
+    }

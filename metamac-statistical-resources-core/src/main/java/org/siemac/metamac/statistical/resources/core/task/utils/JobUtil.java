@@ -49,4 +49,8 @@ public class JobUtil {
         return TaskServiceImpl.PREFIX_JOB_DUPLICATION_DATA + resourceId;
     }
 
+    public static String createJobNameForUpdateGeocoverageCache(String resourceId) {
+        return TaskServiceImpl.PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE + resourceId;
+    }
+
 }
