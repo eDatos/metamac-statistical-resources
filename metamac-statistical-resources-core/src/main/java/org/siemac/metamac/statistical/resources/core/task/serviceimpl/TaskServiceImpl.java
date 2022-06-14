@@ -201,13 +201,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private SchedulerFactory                  schedulerFactory                    = null;
 
-    private Map<String, Codes>                geographicCoverageCodelists;
-
-    private void initSrmCacheForGeographicCoverageCodelists() {
-        logger.debug("Init geographic coverage codelist cache for SRM");
-        this.geographicCoverageCodelists = new HashMap<>();
-    }
-
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (schedulerFactory != null) {
@@ -817,19 +810,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         markTaskAsFinished(ctx, duplicationJobKey); // Finish the importation
     }
 
-    private List<CodeResourceInternal> getGeographicCoverageCodes(String geographicCoverageCodelistUrn) throws MetamacException {
-        logger.debug("Requesting codelist to SRM for {}...", geographicCoverageCodelistUrn);
-
-        if (geographicCoverageCodelists.containsKey(geographicCoverageCodelistUrn)) {
-            logger.debug("Cache hit");
-            return geographicCoverageCodelists.get(geographicCoverageCodelistUrn).getCodes();
-        }
-
-        Codes codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn);
-        geographicCoverageCodelists.put(geographicCoverageCodelistUrn, codes);
-        return codes.getCodes();
-    }
-
     private String getCodelistFromCodeUrn(String urn) {
         if (urn == null) {
             return null;
@@ -851,8 +831,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public void processUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
-        initSrmCacheForGeographicCoverageCodelists(); //FIXME(EDATOS-3616): not needed?
-
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.datasetRepositoryId())
                                                                        .eq(taskInfoDataset.getDatasetVersionId()).distinctRoot().build();
         List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
@@ -874,9 +852,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
-        List<CodeResourceInternal> codes = getGeographicCoverageCodes(geographicCoverageCodelistUrn);
+        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
 
-        // discard all variable elements present in the array to avoid duplicated data
+        // discard all variable elements present in the array to avoid duplicated or outdated data
         datasetVersion.getGeographicCoverageVariableElements().clear();
 
         logger.debug("Processing geographic coverage to create the cache");
