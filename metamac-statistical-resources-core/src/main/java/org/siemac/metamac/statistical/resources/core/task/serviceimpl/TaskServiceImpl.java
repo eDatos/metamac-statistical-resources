@@ -867,7 +867,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             });
 
             if (code == null || code.getVariableElement() == null) {
-                // FIXME(EDATOS-3616): on fail a notice message should be sent instead
                 logger.error("Could not find variable element for {}", geoCoverage.getUrn());
                 throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, geoCoverage.getUrn());
             }
