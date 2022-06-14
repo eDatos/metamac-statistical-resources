@@ -835,13 +835,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                                                                        .eq(taskInfoDataset.getDatasetVersionId()).distinctRoot().build();
         List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
 
-        DatasetVersion datasetVersion;
-        if (datasetVersions.size() == 1) {
-            datasetVersion = datasetVersions.get(0);
-        } else {
-            // FIXME(EDATOS-3616): panic
-            throw new RuntimeException();
+        if (datasetVersions.isEmpty()) {
+            throw new MetamacException(ServiceExceptionType.DATASET_VERSION_NOT_FOUND, taskInfoDataset.getDatasetVersionId());
+        } else if (datasetVersions.size() > 1) {
+            throw new MetamacException(ServiceExceptionType.UNKNOWN, "More than one dataset version with id " + taskInfoDataset.getDatasetVersionId() + " found");
         }
+
+        DatasetVersion datasetVersion = datasetVersions.get(0);
 
         logger.debug("Updating geocoverage cache for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
