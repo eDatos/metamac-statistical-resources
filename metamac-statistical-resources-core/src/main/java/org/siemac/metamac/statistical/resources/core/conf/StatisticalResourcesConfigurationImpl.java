@@ -63,18 +63,6 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
-    public Boolean isDatabaseOracle() throws MetamacException {
-        String database = retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DRIVER_NAME);
-        return StatisticalResourcesConfigurationConstants.DB_DRIVER_NAME_ORACLE.equals(database);
-    }
-
-    @Override
-    public Boolean isDatabasePostgreSQL() throws MetamacException {
-        String database = retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DRIVER_NAME);
-        return StatisticalResourcesConfigurationConstants.DB_DRIVER_NAME_POSTGRESQL.equals(database);
-    }
-
-    @Override
     public String retrieveDbDataViewsRole() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DATA_VIEWS_ROLE);
     }

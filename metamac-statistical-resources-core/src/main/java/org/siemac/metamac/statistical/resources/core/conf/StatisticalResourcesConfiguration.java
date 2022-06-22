@@ -23,15 +23,5 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
 
     public boolean retriveDatabaseDatasetImportJobIsEnabled();
 
-    /**
-     * Checks if Database is Oracle
-     */
-    public Boolean isDatabaseOracle() throws MetamacException;
-
-    /**
-     * Checks if Database is PostgreSQL
-     */
-    public Boolean isDatabasePostgreSQL() throws MetamacException;
-
     public String retrieveDbDataViewsRole() throws MetamacException;
 }

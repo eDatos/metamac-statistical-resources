@@ -206,10 +206,6 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
     }
 
     private String getBooleanValueForDatabase(boolean value) throws MetamacException {
-        if (configuration.isDatabaseOracle()) {
-            return value ? "1" : "0";
-        } else {
             return value ? "true" : "false";
-        }
     }
 }

@@ -47,7 +47,7 @@
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:mem/${datasource.username};MODE=ORACLE;INIT=CREATE SCHEMA IF NOT EXISTS ${datasource.username}" />
+        <property name="url" value="jdbc:h2:mem/${datasource.username};MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS ${datasource.username}" />
         <property name="username" value="sa" />
         <property name="password" value="" />
     </bean>
@@ -58,17 +58,17 @@
     <!-- <property name="user" value="${datasource.username}" /> -->
     <!-- <property name="password" value="${datasource.password}" /> -->
     <!-- </bean> -->
-
-
-    <bean id="dataSourceDatasetRepository" class="oracle.jdbc.pool.OracleDataSource" destroy-method="close">
-        <property name="URL" value="${datasource.repository.url}" />
-        <property name="user" value="${datasource.repository.username}" />
+   
+    <bean id="dataSourceDatasetRepository" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${datasource.driver_name}" />
+        <property name="url" value="${datasource.repository.url}" />
+        <property name="username" value="${datasource.repository.username}" />
         <property name="password" value="${datasource.repository.password}" />
     </bean>
     
     <bean id="dataSourceDatabaseImportRepository" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:mem/${datasource.username};MODE=ORACLE;INIT=CREATE SCHEMA IF NOT EXISTS ${datasource.username}" />
+        <property name="url" value="jdbc:h2:mem/${datasource.username};MODE=PostgreSQL;INIT=CREATE SCHEMA IF NOT EXISTS ${datasource.username}" />
         <property name="username" value="sa" />
         <property name="password" value="" />
     </bean>
