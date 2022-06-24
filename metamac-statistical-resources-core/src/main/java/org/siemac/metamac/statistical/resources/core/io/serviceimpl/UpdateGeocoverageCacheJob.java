@@ -71,25 +71,18 @@ public class UpdateGeocoverageCacheJob implements Job {
             getTaskServiceFacade().executeUpdateGeocoverageCacheTask(serviceContext, taskName, taskInfoDataset);
             logger.info("UpdateGeocoverageCacheJob: {} finished at {}", jobKey, new Date());
 
-            getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
-                    ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_OK, datasetVersionId);
         } catch (MetamacException e) {
-            logger.error("UpdateGeocoverageCacheJob: the duplication with key " + jobKey.getName() + " has failed", e);
+            logger.error("UpdateGeocoverageCacheJob: the cache update job with key " + jobKey.getName() + " has failed", e);
 
             try {
                 getTaskServiceFacade().markTaskAsFailed(serviceContext, taskName, datasetVersionId, datasetUrn, e);
                 logger.info("UpdateGeocoverageCacheJob: {} marked as error at {}", jobKey, new Date());
                 e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionId));
-                getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB, e);
             } catch (MetamacException e1) {
                 logger.error("UpdateGeocoverageCacheJob: the cache update job with key " + jobKey.getName() + " has failed and it can't marked as error", e1);
                 e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR, datasetVersionId));
-                getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB, e1);
             }
         }
     }
 
-    private NoticesRestInternalService getNoticesRestInternalService() {
-        return (NoticesRestInternalService) ApplicationContextProvider.getApplicationContext().getBean(NoticesRestInternalService.BEAN_ID);
-    }
 }
