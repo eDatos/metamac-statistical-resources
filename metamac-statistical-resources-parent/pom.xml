@@ -6,6 +6,7 @@
 		<groupId>org.siemac.metamac</groupId>
 		<artifactId>metamac-parent</artifactId>
 		<version>4.0.1</version>
+		<relativePath/>
 	</parent>
 
 
