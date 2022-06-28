@@ -478,7 +478,6 @@
             <!-- Generates JAR for test classes -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -490,7 +489,6 @@
 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
                 <executions>
                     <execution>
                         <id>${project.artifactId}-client</id>
