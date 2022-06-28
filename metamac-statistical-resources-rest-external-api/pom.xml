@@ -191,9 +191,7 @@
                                     <artifactId>metamac-rest-api</artifactId>
                                 </episode>
                             </episodes>
-                            <bindingFiles>
-                                <bindingFile>${basedir}/../etc/rest/external/binding.xjb</bindingFile>
-                            </bindingFiles>
+                            <!-- Por defecto coge los bindings del schemaDirectory -->
                             <generateDirectory>${basedir}/src/generated/java</generateDirectory>
                             <forceRegenerate>true</forceRegenerate>
                         </configuration>
