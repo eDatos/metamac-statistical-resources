@@ -18,24 +18,24 @@ public class DimensionUtilsTest {
     private Map<String, List<String>> dimensionsGroup3 = initializeDimensionsGroup3();
 
     @Test
-    public void testIntersectValues() {
-        assertNull(DimensionUtils.intersectValues(null, null));
-        assertNull(DimensionUtils.intersectValues(null, dimensionsGroup2));
-        assertEquals(DimensionUtils.intersectValues(dimensionsGroup1, null), dimensionsGroup1);
+    public void testFilterDimensionValues() {
+        assertNull(DimensionUtils.filterDimensions(null, null));
+        assertNull(DimensionUtils.filterDimensions(null, dimensionsGroup2));
+        assertEquals(DimensionUtils.filterDimensions(dimensionsGroup1, null), dimensionsGroup1);
 
         Map<String, List<String>> results1intersect2 = new HashMap<String, List<String>>();
         results1intersect2.put("DIM-a", Arrays.asList("a-1", "a-2"));
         results1intersect2.put("DIM-b", Arrays.asList("b-1"));
         results1intersect2.put("DIM-c", Arrays.asList("c-2"));
 
-        assertEquals(DimensionUtils.intersectValues(dimensionsGroup1, dimensionsGroup2), results1intersect2);
+        assertEquals(DimensionUtils.filterDimensions(dimensionsGroup1, dimensionsGroup2), results1intersect2);
 
         Map<String, List<String>> results1intersect3 = new HashMap<String, List<String>>();
         results1intersect3.put("DIM-a", Arrays.asList("a-2"));
         results1intersect3.put("DIM-b", Arrays.asList("b-1", "b-2"));
         results1intersect3.put("DIM-c", Arrays.asList("c-1", "c-2"));
 
-        assertEquals(DimensionUtils.intersectValues(dimensionsGroup1, dimensionsGroup3), results1intersect3);
+        assertEquals(DimensionUtils.filterDimensions(dimensionsGroup1, dimensionsGroup3), results1intersect3);
     }
 
     private Map<String, List<String>> initializeDimensionsGroup1() {

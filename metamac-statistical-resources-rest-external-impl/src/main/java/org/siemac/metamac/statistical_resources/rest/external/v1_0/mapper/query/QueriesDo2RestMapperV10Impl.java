@@ -217,7 +217,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             return null;
         }
         Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion);
-        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = DimensionUtils.intersectValues(effectiveQueryDimensionValuesToDataByDimension, selectedDimensions);
+        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = DimensionUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension, selectedDimensions);
         return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages);
     }
 

@@ -13,15 +13,15 @@ public final class DimensionUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, List<String>> intersectValues(Map<String, List<String>> queryDimensions, Map<String, List<String>> selectedDimensions) {
-        if (queryDimensions == null) {
+    public static Map<String, List<String>> filterDimensions(Map<String, List<String>> availableDimensions, Map<String, List<String>> selectedDimensions) {
+        if (availableDimensions == null) {
             return null;
         }
         if (selectedDimensions == null) {
-            return queryDimensions;
+            return availableDimensions;
         }
-        Map<String, List<String>> intersectedDimensionValues = new HashMap<String, List<String>>(queryDimensions.size());
-        for (Entry<String, List<String>> queryDimension : queryDimensions.entrySet()) {
+        Map<String, List<String>> filteredDimensionValues = new HashMap<String, List<String>>(availableDimensions.size());
+        for (Entry<String, List<String>> queryDimension : availableDimensions.entrySet()) {
             List<String> intersectedValues = null;
             List<String> selectedValues = selectedDimensions.get(queryDimension.getKey());
             if (selectedValues != null) {
@@ -29,8 +29,8 @@ public final class DimensionUtils {
             } else {
                 intersectedValues = queryDimension.getValue();
             }
-            intersectedDimensionValues.put(queryDimension.getKey(), intersectedValues);
+            filteredDimensionValues.put(queryDimension.getKey(), intersectedValues);
         }
-        return intersectedDimensionValues;
+        return filteredDimensionValues;
     };
 }
