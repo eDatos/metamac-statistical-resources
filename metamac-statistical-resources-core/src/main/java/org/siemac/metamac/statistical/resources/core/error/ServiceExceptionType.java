@@ -1,9 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.error;
 
-import java.util.List;
-
 import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
-import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 
 public class ServiceExceptionType extends CommonServiceExceptionType {
 
