@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -214,7 +215,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             return null;
         }
         Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion);
-        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = DimensionUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension, selectedDimensions);
+        Map<String, List<String>> effectiveSelectionValues = calculateEffectiveSelectionValues(selectedDimensions, effectiveQueryDimensionValuesToDataByDimension);
+        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = DimensionUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension, effectiveSelectionValues);
         return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages);
     }
 
@@ -298,6 +300,25 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             default:
                 throw buildRestException("QueryTypeEnum unsupported: " + source);
         }
+    }
+
+    // calculateEffectiveSelectionValues and calculateEffectiveDimensionValuesToQuery are similar, except that
+    // - calculateEffectiveDimensionValuesToQuery, applies the query selection and special parameters to the whole dataset
+    // - calculateEffectiveSelectionValues, applies the api selection and special parameters to the previously queried results
+    public Map<String, List<String>> calculateEffectiveSelectionValues(Map<String, List<String>> selectedDimensions, Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension) {
+        Map<String, List<String>> effectiveDimensions = new HashMap<String, List<String>>(selectedDimensions.size());
+        for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
+            String dimensionId = selectedDimension.getKey();
+            List<String> selectedValues = selectedDimension.getValue();
+            if (isTemporalDimension(dimensionId)) {
+                List<String> temporalCoverageValues = effectiveQueryDimensionValuesToDataByDimension.get(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
+                List<String> effectiveValues = DimensionUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
+                effectiveDimensions.put(dimensionId, effectiveValues);
+            } else {
+                effectiveDimensions.put(dimensionId, selectedValues);
+            }
+        }
+        return effectiveDimensions;
     }
 
     public Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion) {
