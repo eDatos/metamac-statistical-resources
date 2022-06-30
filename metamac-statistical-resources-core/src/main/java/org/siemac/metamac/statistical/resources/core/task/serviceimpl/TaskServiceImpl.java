@@ -862,7 +862,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
                 @Override
                 protected boolean eval(CodeResourceInternal code) {
-                    return org.apache.commons.lang3.StringUtils.equals(code.getUrn(), geoCoverage.getUrn());
+                    return StringUtils.equals(code.getUrn(), geoCoverage.getUrn());
                 }
             });
 
