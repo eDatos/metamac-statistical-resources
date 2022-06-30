@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.io.serviceimpl;
 
 import java.util.Date;
-import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.quartz.Job;
@@ -13,15 +12,10 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
-import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
-import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
 
 public class UpdateGeocoverageCacheJob implements Job {
 

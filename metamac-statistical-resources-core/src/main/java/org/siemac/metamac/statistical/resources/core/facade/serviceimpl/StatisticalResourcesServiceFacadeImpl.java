@@ -241,9 +241,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
 
-    @Autowired
-    private DatasetService                                            datasetService;
-
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
 
     public StatisticalResourcesServiceFacadeImpl() {
@@ -1186,7 +1183,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
         // Operate
-        this.datasetService.updateGeographicCoverageVariableElementsCache(ctx);
+        getDatasetService().updateGeographicCoverageVariableElementsCache(ctx);
     }
 
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
