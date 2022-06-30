@@ -34,6 +34,11 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     }
 
     @Override
+    public void testExecuteUpdateGeocoverageCacheTask() throws Exception {
+        // No test
+    }
+
+    @Override
     public void testMarkTaskAsFinished() throws Exception {
         // No test
     }
