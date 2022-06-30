@@ -3,7 +3,6 @@ package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.data
 import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils.addParameter;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +12,6 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
@@ -131,11 +128,6 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         // NOTHING
     }
 
-    @Override
-    protected void saveGeographicCoverageVariableElementsToCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
-        datasetService.saveGeographicCoverageVariableElementsCache(ctx, resource);
-    }
-
     // ------------------------------------------------------------------------------------------------------
     // >> PUBLISHED
     // ------------------------------------------------------------------------------------------------------
@@ -180,6 +172,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     @Override
     protected void applySendToPublishedCurrentResource(ServiceContext ctx, DatasetVersion resource, DatasetVersion previousResource) throws MetamacException {
         resource.setBibliographicCitation(buildBibliographicCitation(resource));
+        datasetService.saveGeographicCoverageVariableElementsCache(ctx, resource);
     }
 
     @Override

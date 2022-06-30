@@ -259,7 +259,6 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         checkSendToPublished(ctx, resource, previousResource);
 
         applySendToPublishedCurrentVersion(ctx, resource, previousResource);
-        saveGeographicCoverageVariableElementsToCache(ctx, resource);
         resource = saveResource(resource);
 
         if (previousResource != null) {
@@ -270,8 +269,6 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
 
         return retrieveResourceByResource(resource);
     }
-
-    protected abstract void saveGeographicCoverageVariableElementsToCache(ServiceContext ctx, E resource) throws MetamacException;
 
     protected void checkSendToPublished(ServiceContext ctx, E resource, E previousResource) throws MetamacException {
         List<MetamacExceptionItem> exceptions = new ArrayList<MetamacExceptionItem>();

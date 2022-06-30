@@ -93,11 +93,6 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
         // nothing specific to apply
     }
 
-    @Override
-    protected void saveGeographicCoverageVariableElementsToCache(ServiceContext ctx, QueryVersion resource) throws MetamacException {
-        // nothing to do
-    }
-
     // ------------------------------------------------------------------------------------------------------
     // >> PUBLISHED
     // ------------------------------------------------------------------------------------------------------

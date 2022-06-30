@@ -92,11 +92,6 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
         // nothing specific to apply
     }
 
-    @Override
-    protected void saveGeographicCoverageVariableElementsToCache(ServiceContext ctx, PublicationVersion resource) throws MetamacException {
-        // nothing to do
-    }
-
     // ------------------------------------------------------------------------------------------------------
     // >> PUBLISHED
     // ------------------------------------------------------------------------------------------------------
