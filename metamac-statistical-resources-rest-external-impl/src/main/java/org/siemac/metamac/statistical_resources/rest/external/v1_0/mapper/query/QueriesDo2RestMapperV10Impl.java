@@ -29,7 +29,6 @@ import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResour
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
@@ -145,9 +144,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             return null;
         }
         if (!TypeRelatedResourceEnum.QUERY_VERSION.equals(source.getType())) {
-            logger.error("RelatedResource unsupported: " + source.getType());
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
-            throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+            throw buildRestException("RelatedResource unsupported: " + source.getType());
         }
 
         Resource target = new Resource();
@@ -282,9 +279,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             case DISCONTINUED:
                 return org.siemac.metamac.rest.statistical_resources.v1_0.domain.QueryStatus.DISCONTINUED;
             default:
-                logger.error("QueryStatusEnum unsupported: " + source);
-                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
-                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+                throw buildRestException("QueryStatusEnum unsupported: " + source);
+
         }
     }
 
@@ -300,33 +296,33 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             case LATEST_DATA:
                 return org.siemac.metamac.rest.statistical_resources.v1_0.domain.QueryType.LATEST_DATA;
             default:
-                logger.error("QueryTypeEnum unsupported: " + source);
-                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
-                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+                throw buildRestException("QueryTypeEnum unsupported: " + source);
         }
     }
 
     public Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion) {
         Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(source.getSelection().size());
         for (QuerySelectionItem selection : source.getSelection()) {
-            List<String> dimensionValues = calculateEffectiveDimensionValuesToQuery(source, datasetVersion, selection);
-            dimensionValuesSelected.put(selection.getDimension(), dimensionValues);
+            String dimensionId = selection.getDimension();
+            List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
+            if (isTemporalDimension(dimensionId)) {
+                List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
+                List<String> dimensionValues = calculateEffectiveTemporalDimensionValuesToQuery(source, temporalCoverageCodes, selectionCodes);
+                dimensionValuesSelected.put(dimensionId, dimensionValues);
+            } else {
+                dimensionValuesSelected.put(dimensionId, selectionCodes);
+            }
         }
         return dimensionValuesSelected;
     }
 
-    private List<String> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion, QuerySelectionItem selection) {
+    private List<String> calculateEffectiveTemporalDimensionValuesToQuery(QueryVersion source, List<String> temporalCoverageCodes, List<String> selectionCodes) {
         QueryTypeEnum type = source.getType();
-        String dimensionId = selection.getDimension();
-        List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
-
         if (QueryTypeEnum.FIXED.equals(type)) {
             // return exactly
             return selectionCodes;
         } else if (QueryTypeEnum.AUTOINCREMENTAL.equals(type)) {
-            if (isTemporalDimension(dimensionId)) {
                 List<String> effectiveDimensionValues = new ArrayList<String>();
-                List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
 
                 List<String> sortedSelectionCodes = SdmxTimeUtils.sortTimeList(selectionCodes);
                 List<String> sortedTemporalCoverageCodes = SdmxTimeUtils.sortTimeList(temporalCoverageCodes);
@@ -346,34 +342,28 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                     }
                 }
                 return effectiveDimensionValues;
-            } else {
-                // return exactly
-                return selectionCodes;
-            }
         } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
-            if (isTemporalDimension(dimensionId)) {
                 // return N data
                 int codeLastIndexToReturn = -1;
-                if (datasetVersion.getTemporalCoverage().size() < source.getLatestDataNumber()) {
-                    codeLastIndexToReturn = datasetVersion.getTemporalCoverage().size(); // there is not N data, so return all
+            if (temporalCoverageCodes.size() < source.getLatestDataNumber()) {
+                codeLastIndexToReturn = temporalCoverageCodes.size(); // there is not N data, so return all
                 } else {
                     codeLastIndexToReturn = source.getLatestDataNumber();
                 }
-                List<TemporalCode> temporalCodesLatestDataNumber = datasetVersion.getTemporalCoverage().subList(0, codeLastIndexToReturn);
-                return commonDo2RestMapper.temporalCoverageToString(temporalCodesLatestDataNumber);
-            } else {
-                // return exactly
-                return selectionCodes;
-            }
+            return temporalCoverageCodes.subList(0, codeLastIndexToReturn);
         } else {
-            logger.error("QueryTypeEnum unsupported: " + source);
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
-            throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+            throw buildRestException("QueryTypeEnum unsupported: " + source);
         }
     }
 
     private boolean isTemporalDimension(String dimensionId) {
         return StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId);
+    }
+
+    private RestException buildRestException(String message) {
+        logger.error(message);
+        org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
+        return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
     }
 
 }
