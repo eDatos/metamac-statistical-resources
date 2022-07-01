@@ -1,6 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils;
 
-import static org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD;
+import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestApiExternalUtils.patternAfter;
+import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestApiExternalUtils.patternLast;
+import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestApiExternalUtils.patternRange;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,22 +11,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 
 public final class DimensionUtils {
-
-    // To avoid all the internal regex grouping, we transform all that () into (?:), so they are not capturing
-    private static final String  TIME_PERIOD  = OBSERVATIONAL_TIME_PERIOD.replace("(?:", "(").replace("(", "(?:");
-
-    // Dates after or equals to a date: dim=TIME_PERIOD:~after=1999
-    private static final Pattern afterPattern = Pattern.compile("~after=(" + TIME_PERIOD + ")");
-    // Date range, inclusive: dim=TIME_PERIOD:~range=2009;2010
-    private static final Pattern rangePattern = Pattern.compile("~range=(" + TIME_PERIOD + ");(" + TIME_PERIOD + ")");
-    // Last n elements: dim=TIME_PERIOD:~last=2
-    private static final Pattern lastPattern  = Pattern.compile("~last=(\\d+)");
 
     private DimensionUtils() {
     }
@@ -55,7 +46,7 @@ public final class DimensionUtils {
 
         ArrayList<String> results = new ArrayList<String>();
         for (String value : selectedValues) {
-            Matcher matcherAfter = afterPattern.matcher(value);
+            Matcher matcherAfter = patternAfter.matcher(value);
             if (matcherAfter.matches()) {
                 String startRange = matcherAfter.group(1);
 
@@ -64,7 +55,7 @@ public final class DimensionUtils {
                 continue;
             }
 
-            Matcher matcherLast = lastPattern.matcher(value);
+            Matcher matcherLast = patternLast.matcher(value);
             if (matcherLast.matches()) {
                 int lastN = Integer.parseInt(matcherLast.group(1));
 
@@ -79,7 +70,7 @@ public final class DimensionUtils {
                 continue;
             }
 
-            Matcher matcherRange = rangePattern.matcher(value);
+            Matcher matcherRange = patternRange.matcher(value);
             if (matcherRange.matches()) {
                 String startRange = matcherRange.group(1);
                 String endRange = matcherRange.group(2);

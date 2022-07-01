@@ -13,7 +13,21 @@ import org.apache.commons.lang.StringUtils;
 public class StatisticalResourcesRestApiExternalUtils {
 
     public static final Pattern patternDimension = Pattern.compile("(\\w+):(([\\w\\|-])+)");
+
+    // To truly validate this, patternCode would include org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD
+    // But currently that would mean to include core-common here... and that would be too heavy now
     public static final Pattern patternCode      = Pattern.compile("([\\w-]+)\\|?");
+
+    public static final String  TIME_PERIOD      = "[\\w-]+";
+
+    // Dates after or equals to a date: dim=TIME_PERIOD:~after=1999
+    public static final Pattern patternAfter     = Pattern.compile("~after=(" + TIME_PERIOD + ")");
+
+    // Date range, inclusive: dim=TIME_PERIOD:~range=2009;2010
+    public static final Pattern patternRange     = Pattern.compile("~range=(" + TIME_PERIOD + ");(" + TIME_PERIOD + ")");
+
+    // Last n elements: dim=TIME_PERIOD:~last=2
+    public static final Pattern patternLast      = Pattern.compile("~last=(\\d+)");
 
     protected StatisticalResourcesRestApiExternalUtils() {
 
