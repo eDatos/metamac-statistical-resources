@@ -183,13 +183,4 @@ public class SharedDatasetsSecurityUtils extends SharedSecurityUtils {
         return false;
     }
 
-
-    // ------------------------------------------------------------------------
-    // ADMIN MANAGEMENT
-    // ------------------------------------------------------------------------
-
-    public static boolean canUpdateGeographicCoverageVariableElementsCache(MetamacPrincipal metamacPrincipal) {
-        return SharedSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(metamacPrincipal);
-    }
-
 }
