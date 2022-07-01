@@ -12,22 +12,30 @@ import org.apache.commons.lang.StringUtils;
 
 public class StatisticalResourcesRestApiExternalUtils {
 
-    public static final Pattern patternDimension = Pattern.compile("(\\w+):(([\\w\\|-])+)");
+    public static final String  TIME_PERIOD_REGEX   = "[\\w-]+";
+
+    private static final String RANGE_PATTERN_REGEX = "~range=(" + TIME_PERIOD_REGEX + ");(" + TIME_PERIOD_REGEX + ")";
+
+    private static final String AFTER_PATTERN_REGEX = "~after=(" + TIME_PERIOD_REGEX + ")";
+
+    private static final String LAST_PATTERN_REGEX  = "~last=(\\d+)";
+
+    public static final String  CODE                = TIME_PERIOD_REGEX;
+
+    public static final Pattern patternDimension    = Pattern.compile("(\\w+):(([\\w\\|-])+)");
 
     // To truly validate this, patternCode would include org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD
     // But currently that would mean to include core-common here... and that would be too heavy now
-    public static final Pattern patternCodes      = Pattern.compile("([\\w-]+)\\|?");
-
-    public static final String  TIME_PERIOD      = "[\\w-]+";
+    public static final Pattern patternCodes        = Pattern.compile("(" + CODE + ")\\|?");
 
     // Dates after or equals to a date: dim=TIME_PERIOD:~after=1999
-    public static final Pattern patternAfter     = Pattern.compile("~after=(" + TIME_PERIOD + ")");
+    public static final Pattern patternAfter        = Pattern.compile(AFTER_PATTERN_REGEX);
 
     // Date range, inclusive: dim=TIME_PERIOD:~range=2009;2010
-    public static final Pattern patternRange     = Pattern.compile("~range=(" + TIME_PERIOD + ");(" + TIME_PERIOD + ")");
+    public static final Pattern patternRange        = Pattern.compile(RANGE_PATTERN_REGEX);
 
     // Last n elements: dim=TIME_PERIOD:~last=2
-    public static final Pattern patternLast      = Pattern.compile("~last=(\\d+)");
+    public static final Pattern patternLast         = Pattern.compile(LAST_PATTERN_REGEX);
 
     protected StatisticalResourcesRestApiExternalUtils() {
 
