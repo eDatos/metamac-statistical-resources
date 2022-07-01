@@ -34,6 +34,7 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
 
     private static final int NORTH_HEIGHT = 85;
     private static final String DEFAULT_MARGIN = "0px";
+    public static final String HEADER_ID = "header";
 
     private MainPageUiHandlers uiHandlers;
 
@@ -74,9 +75,10 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
         northLayout.setHeight(NORTH_HEIGHT);
 
         // Nested layout container
+        // this header is for the navbar
+        // what navbar is shown is up to the menu layout
         VLayout vLayout = new VLayout();
-        vLayout.setID("header");
-        vLayout.addMember(this.masterHead);
+        vLayout.setID(HEADER_ID);
 
         VLayout breadCrumbLayout = new VLayout();
         breadCrumbLayout.addMember(this.breadCrumbsPanel);
@@ -210,7 +212,7 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
 
     @Override
     public void selectMenuLayout(StatisticalResourcesToolStripLayoutEnum resourceType) {
-        Layout header = (Layout) northLayout.getMember("header");
+        Layout header = (Layout) northLayout.getMember(HEADER_ID);
         if (resourceType == StatisticalResourcesToolStripLayoutEnum.STATISTIC_DESKTOP) {
             header.addMember(this.adminMenu);
             header.removeMember(this.navigationMenu);
