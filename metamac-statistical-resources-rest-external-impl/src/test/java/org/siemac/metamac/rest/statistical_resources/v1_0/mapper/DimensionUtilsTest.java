@@ -3,6 +3,7 @@ package org.siemac.metamac.rest.statistical_resources.v1_0.mapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestApiExternalUtils.parseDimensionExpression;
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils.calculateEffectiveTemporalSelectionValues;
 
 import java.util.Arrays;
@@ -133,6 +134,106 @@ public class DimensionUtilsTest {
         assertEquals(Arrays.asList("2012-01-01", "2010-M01"), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset2, Arrays.asList("~after=2009-M01")));
         assertEquals(Arrays.asList(), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset2, Arrays.asList("~after=2013")));
         assertEquals(Arrays.asList("2012-01-01", "2010-M01", "2008", "2007-S2"), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset2, Arrays.asList("~after=2005")));
+    }
+
+    @Test
+    public void testParseDimensionExpression() {
+        {
+            Map<String, List<String>> parseDimensionExpression = parseDimensionExpression("");
+
+            assertParamExpression(parseDimensionExpression);
+        }
+
+        {
+            Map<String, List<String>> parseDimensionExpression = parseDimensionExpression(null);
+
+            assertParamExpression(parseDimensionExpression);
+        }
+
+        {
+            Map<String, List<String>> parseDimensionExpression = parseDimensionExpression("MOTIVOS_ESTANCIA:000|001|002:ISLAS_DESTINO_PRINCIPAL:005|006");
+
+            assertParamExpression(parseDimensionExpression, "MOTIVOS_ESTANCIA", "ISLAS_DESTINO_PRINCIPAL");
+            assertCodes(parseDimensionExpression.get("MOTIVOS_ESTANCIA"), "000", "001", "002");
+            assertCodes(parseDimensionExpression.get("ISLAS_DESTINO_PRINCIPAL"), "005", "006");
+        }
+
+        {
+            Map<String, List<String>> parseDimensionExpression = parseDimensionExpression("MEASURE:ABSOLUTE:TIME:2012");
+
+            assertParamExpression(parseDimensionExpression, "MEASURE", "TIME");
+            assertCodes(parseDimensionExpression.get("MEASURE"), "ABSOLUTE");
+            assertCodes(parseDimensionExpression.get("TIME"), "2012");
+        }
+
+        {
+            Map<String, List<String>> parsedParamExpression = parseDimensionExpression("MEASURE:ABSOLUTE:TIME:2020-M06");
+
+            assertParamExpression(parsedParamExpression, "MEASURE", "TIME");
+            assertCodes(parsedParamExpression.get("MEASURE"), "ABSOLUTE");
+            assertCodes(parsedParamExpression.get("TIME"), "2020-M06");
+        }
+
+        {
+            // REPORTING_YEAR_TYPE - REPORTING_SEMESTER_TYPE - REPORTING_TRIMESTER_TYPE - REPORTING_QUARTER_TYPE
+            // @formatter:off
+            Map<String, List<String>> parsedParamExpression = parseDimensionExpression(
+                    "TIME1:2020-A1|2021-A1|2022-A1:"
+                    + "TIME2:2001-S1|2001-S2|2002-S1|2002-S2:"
+                    + "TIME3:2002-T1|2002-T2|2002-T3:"
+                    + "TIME4:2003-Q1|2003-Q2|2003-Q3|2003-Q4");
+            // @formatter:on
+
+            assertParamExpression(parsedParamExpression, "TIME1", "TIME2", "TIME3", "TIME4");
+            assertCodes(parsedParamExpression.get("TIME1"), "2020-A1", "2021-A1", "2022-A1");
+            assertCodes(parsedParamExpression.get("TIME2"), "2001-S1", "2001-S2", "2002-S1", "2002-S2");
+            assertCodes(parsedParamExpression.get("TIME3"), "2002-T1", "2002-T2", "2002-T3");
+            assertCodes(parsedParamExpression.get("TIME4"), "2003-Q1", "2003-Q2", "2003-Q3", "2003-Q4");
+        }
+
+        {
+            // REPORTING_MONTH_TYPE - REPORTING_WEEK_TYPE - REPORTING_DAY_TYPE
+            // @formatter:off
+            Map<String, List<String>> parsedParamExpression = parseDimensionExpression(
+                    "TYPE1:2004-M12|2005-M01|2005-M02|2005-M03|2005-M04|2005-M05:"
+                    + "TYPE2:2005-W52|2006-W01|2006-W02|2006-W03|2006-W04:"
+                    + "TYPE3:2006-D010|2006-D011|2006-D012|2006-D365");
+            // @formatter:on
+
+            assertParamExpression(parsedParamExpression, "TYPE1", "TYPE2", "TYPE3");
+            assertCodes(parsedParamExpression.get("TYPE1"), "2004-M12", "2005-M01", "2005-M02", "2005-M03", "2005-M04", "2005-M05");
+            assertCodes(parsedParamExpression.get("TYPE2"), "2005-W52", "2006-W01", "2006-W02", "2006-W03", "2006-W04");
+            assertCodes(parsedParamExpression.get("TYPE3"), "2006-D010", "2006-D011", "2006-D012", "2006-D365");
+        }
+
+        {
+            // @formatter:off
+            Map<String, List<String>> parsedParamExpression = parseDimensionExpression(
+                    "MULTIPLE_TIME_VALUES_B:2020-A1|2021-A1|2022-A1:"
+                    + "MULTIPLE_TIME_VALUES_A:005|006:"
+                    + "MULTIPLE_TIME_VALUES_A:2006-D010|2006-D011|2006-D012|2006-D365:"
+                    + "MULTIPLE_TIME_VALUES_B:000|001|002");
+            // @formatter:off
+
+            assertParamExpression(parsedParamExpression, "MULTIPLE_TIME_VALUES_A", "MULTIPLE_TIME_VALUES_B");
+            assertCodes(parsedParamExpression.get("MULTIPLE_TIME_VALUES_A"), "2006-D010", "2006-D011", "2006-D012", "2006-D365", "005", "006");
+            assertCodes(parsedParamExpression.get("MULTIPLE_TIME_VALUES_B"), "000", "001", "002", "2020-A1", "2021-A1", "2022-A1");
+        }
+
+    }
+
+    private void assertParamExpression(Map<String, List<String>> parsedParamExpression, String... expectedParamExpressions) {
+        assertEquals(expectedParamExpressions.length, parsedParamExpression.size());
+        for (String expectedParamExpression : expectedParamExpressions) {
+            assertTrue(parsedParamExpression.containsKey(expectedParamExpression));
+        }
+    }
+
+    private void assertCodes(List<String> parsedCodes, String... expectedParsedCodes) {
+        assertEquals(expectedParsedCodes.length, parsedCodes.size());
+        for (String expectedParsedCode : expectedParsedCodes) {
+            assertTrue(parsedCodes.contains(expectedParsedCode));
+        }
     }
 
 }
