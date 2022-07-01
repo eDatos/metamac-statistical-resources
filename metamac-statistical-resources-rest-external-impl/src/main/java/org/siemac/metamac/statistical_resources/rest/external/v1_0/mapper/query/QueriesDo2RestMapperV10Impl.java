@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query;
 
-import static org.siemac.metamac.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
+import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -344,38 +344,38 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             // return exactly
             return selectionCodes;
         } else if (QueryTypeEnum.AUTOINCREMENTAL.equals(type)) {
-                List<String> effectiveDimensionValues = new ArrayList<String>();
+            List<String> effectiveDimensionValues = new ArrayList<String>();
 
-                List<String> sortedSelectionCodes = SdmxTimeUtils.sortTimeList(selectionCodes);
-                List<String> sortedTemporalCoverageCodes = SdmxTimeUtils.sortTimeList(temporalCoverageCodes);
+            List<String> sortedSelectionCodes = SdmxTimeUtils.sortTimeList(selectionCodes);
+            List<String> sortedTemporalCoverageCodes = SdmxTimeUtils.sortTimeList(temporalCoverageCodes);
 
-                String latestSelectionCode = sortedSelectionCodes.get(sortedSelectionCodes.size() - 1);
-                int indexLatestSelectionCode = sortedTemporalCoverageCodes.indexOf(latestSelectionCode);
+            String latestSelectionCode = sortedSelectionCodes.get(sortedSelectionCodes.size() - 1);
+            int indexLatestSelectionCode = sortedTemporalCoverageCodes.indexOf(latestSelectionCode);
 
-                effectiveDimensionValues.addAll(selectionCodes);
-                if (indexLatestSelectionCode >= 0) {
-                    // add codes added after lastest selected code
-                    List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(indexLatestSelectionCode, sortedTemporalCoverageCodes.size());
+            effectiveDimensionValues.addAll(selectionCodes);
+            if (indexLatestSelectionCode >= 0) {
+                // add codes added after lastest selected code
+                List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(indexLatestSelectionCode, sortedTemporalCoverageCodes.size());
 
-                    for (String code : temporalCodesAddedAfterLatestSelectedCodeString) {
-                        if (!effectiveDimensionValues.contains(code)) {
-                            effectiveDimensionValues.add(code);
-                        }
+                for (String code : temporalCodesAddedAfterLatestSelectedCodeString) {
+                    if (!effectiveDimensionValues.contains(code)) {
+                        effectiveDimensionValues.add(code);
                     }
                 }
+            }
 
             // We reverse the array to restore the order after the sortTimeList invocation
             Collections.reverse(effectiveDimensionValues);
 
-                return effectiveDimensionValues;
+            return effectiveDimensionValues;
         } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
-                // return N data
-                int codeLastIndexToReturn = -1;
+            // return N data
+            int codeLastIndexToReturn = -1;
             if (temporalCoverageCodes.size() < source.getLatestDataNumber()) {
                 codeLastIndexToReturn = temporalCoverageCodes.size(); // there is not N data, so return all
-                } else {
-                    codeLastIndexToReturn = source.getLatestDataNumber();
-                }
+            } else {
+                codeLastIndexToReturn = source.getLatestDataNumber();
+            }
             return temporalCoverageCodes.subList(0, codeLastIndexToReturn);
         } else {
             throw buildRestException("QueryTypeEnum unsupported: " + source);
