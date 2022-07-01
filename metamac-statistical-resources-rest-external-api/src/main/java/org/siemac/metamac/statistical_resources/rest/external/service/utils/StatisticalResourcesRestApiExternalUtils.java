@@ -16,7 +16,7 @@ public class StatisticalResourcesRestApiExternalUtils {
 
     // To truly validate this, patternCode would include org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD
     // But currently that would mean to include core-common here... and that would be too heavy now
-    public static final Pattern patternCode      = Pattern.compile("([\\w-]+)\\|?");
+    public static final Pattern patternCodes      = Pattern.compile("([\\w-]+)\\|?");
 
     public static final String  TIME_PERIOD      = "[\\w-]+";
 
@@ -47,7 +47,7 @@ public class StatisticalResourcesRestApiExternalUtils {
         while (matcherDimension.find()) {
             String dimensionIdentifier = matcherDimension.group(1);
             String codes = matcherDimension.group(2);
-            Matcher matcherCode = patternCode.matcher(codes);
+            Matcher matcherCode = patternCodes.matcher(codes);
             while (matcherCode.find()) {
                 List<String> codeDimensions = selectedDimension.get(dimensionIdentifier);
                 if (codeDimensions == null) {
