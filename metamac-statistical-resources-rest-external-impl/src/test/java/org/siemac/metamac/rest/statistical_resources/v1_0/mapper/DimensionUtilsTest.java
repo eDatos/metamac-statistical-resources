@@ -226,13 +226,17 @@ public class DimensionUtilsTest {
             Map<String, List<String>> parsedParamExpression = parseDimensionExpression(
                     "TIME1:~range=2006;2009|~range=2011;2008|~range=2006-M12;2009|~range=2007-M12;2009-M01|~range=2007-01-01;2009-M01:"
                     + "TIME2:~last=2|~last=10|~last=0:"
-                    + "TIME3:~after=2009|~after=2009-M01");
+                    + "TIME3:~after=2009|~after=2009-M01:"
+                 // This will appear as infos on the log.
+                    + "IGNORE_UNMATCHED_CODES:~invalidvalue|2009");
             // @formatter:on
 
             assertParamExpression(parsedParamExpression, "TIME1", "TIME2", "TIME3");
             assertCodes(parsedParamExpression.get("TIME1"), "~range=2006;2009", "~range=2011;2008", "~range=2006-M12;2009", "~range=2007-M12;2009-M01", "~range=2007-01-01;2009-M01");
             assertCodes(parsedParamExpression.get("TIME2"), "~last=2", "~last=10", "~last=0");
             assertCodes(parsedParamExpression.get("TIME3"), "~after=2009", "~after=2009-M01");
+            // If one value is not valid the whole dimension is ignored!
+            assertNull(parsedParamExpression.get("IGNORE_UNMATCHED_CODES"));
         }
 
     }

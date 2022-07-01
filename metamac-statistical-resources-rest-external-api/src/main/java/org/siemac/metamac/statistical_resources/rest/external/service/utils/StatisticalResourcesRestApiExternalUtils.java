@@ -9,8 +9,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StatisticalResourcesRestApiExternalUtils {
+
+    private final static Logger  logger                = LoggerFactory.getLogger(StatisticalResourcesRestApiExternalUtils.class);
 
     // To truly validate this, TIME_PERIOD_REGEX would be org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD
     // But currently that would mean to include core-common here... and that would be too heavy now
@@ -27,7 +31,7 @@ public class StatisticalResourcesRestApiExternalUtils {
     private static final String  CODE                  = removeCapturing(RANGE_PATTERN_REGEX) + "|" + removeCapturing(AFTER_PATTERN_REGEX) + "|" + removeCapturing(LAST_PATTERN_REGEX) + "|"
             + NON_TIME_PERIOD_REGEX + "|" + TIME_PERIOD_REGEX;
 
-    private static final Pattern patternDimension      = Pattern.compile("(\\w+):((" + CODE + "|" + "\\|" + ")+)");
+    private static final Pattern patternDimension      = Pattern.compile("(\\w+):((" + CODE + "|" + "\\|" + ")+):?");
 
     private static final Pattern patternCodes          = Pattern.compile("(" + CODE + ")\\|?");
 
@@ -55,6 +59,7 @@ public class StatisticalResourcesRestApiExternalUtils {
 
         Matcher matcherDimension = patternDimension.matcher(dimExpression);
         Map<String, List<String>> selectedDimension = new HashMap<String, List<String>>();
+        String unmatchedText = dimExpression;
         while (matcherDimension.find()) {
             String dimensionIdentifier = matcherDimension.group(1);
             String codes = matcherDimension.group(2);
@@ -68,6 +73,10 @@ public class StatisticalResourcesRestApiExternalUtils {
                 String codeIdentifier = matcherCode.group(1);
                 codeDimensions.add(codeIdentifier);
             }
+            unmatchedText = unmatchedText.replace(matcherDimension.group(0), "");
+        }
+        if (unmatchedText.length() > 0) {
+            logger.info(String.format("The following text (%s) was unmatched when parsing (%s)", unmatchedText, dimExpression));
         }
         return selectedDimension;
     }
