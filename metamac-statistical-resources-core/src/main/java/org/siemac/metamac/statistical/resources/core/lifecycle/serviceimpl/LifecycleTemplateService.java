@@ -265,6 +265,7 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
             applySendToPublishedPreviousVersion(ctx, resource, previousResource);
             saveResource(previousResource);
         }
+
         sendNewVersionPublishedStreamMessageByResource(ctx, resource);
 
         return retrieveResourceByResource(resource);

@@ -23,5 +23,4 @@ public interface NoticesRestInternalService {
 
     void createAssignRolePermissionsDatasetErrorBackgroundNotification(String dataViewsRole, String viewCode);
     void createCreateReplaceDatasetErrorBackgroundNotification(DatasetVersion datasetVersion, String viewCode, String datasetRepositoryId);
-
 }
