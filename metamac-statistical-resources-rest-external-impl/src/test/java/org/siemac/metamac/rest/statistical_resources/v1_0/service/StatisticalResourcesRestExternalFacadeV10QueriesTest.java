@@ -22,7 +22,9 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentations;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValue;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValues;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDimensionValues;
@@ -364,6 +366,22 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
         // Data
         assertEquals(24, StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length);
+
+        {
+            DimensionRepresentation dimension = query.getData().getDimensions().getDimensions().get(1);
+            assertEquals("TIME_PERIOD", dimension.getDimensionId());
+            assertTrue(dimension.getRepresentations() instanceof CodeRepresentations);
+            {
+                CodeRepresentations dimensionValues = dimension.getRepresentations();
+                assertEquals(BigInteger.valueOf(4), dimensionValues.getTotal());
+                // Order here must be the same as order of dimensionValues
+                assertEquals("2014", dimensionValues.getRepresentations().get(0).getCode());
+                assertEquals("2013", dimensionValues.getRepresentations().get(1).getCode());
+                assertEquals("2012", dimensionValues.getRepresentations().get(2).getCode());
+                assertEquals("2011", dimensionValues.getRepresentations().get(3).getCode());
+
+            }
+        }
     }
 
     @Test
@@ -398,6 +416,19 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
         // Data
         assertEquals(12, StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length);
+
+        {
+            DimensionRepresentation dimension = query.getData().getDimensions().getDimensions().get(1);
+            assertEquals("TIME_PERIOD", dimension.getDimensionId());
+            assertTrue(dimension.getRepresentations() instanceof CodeRepresentations);
+            {
+                CodeRepresentations dimensionValues = dimension.getRepresentations();
+                assertEquals(BigInteger.valueOf(2), dimensionValues.getTotal());
+                // Order here must be the same as order of dimensionValues
+                assertEquals("2014", dimensionValues.getRepresentations().get(0).getCode());
+                assertEquals("2013", dimensionValues.getRepresentations().get(1).getCode());
+            }
+        }
     }
 
     @Test

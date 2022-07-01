@@ -4,6 +4,7 @@ import static org.siemac.metamac.core.common.util.GeneratorUrnUtils.generateSiem
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -362,6 +363,10 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                         }
                     }
                 }
+
+            // We reverse the array to restore the order after the sortTimeList invocation
+            Collections.reverse(effectiveDimensionValues);
+
                 return effectiveDimensionValues;
         } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
                 // return N data
