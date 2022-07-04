@@ -105,13 +105,12 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
             target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, selectedLanguages, fields));
         }
         if (includeData) {
-            target.setData(toDatasetData(commonDo2RestMapper, source, dsdProcessorResult, selectedDimensions, selectedLanguages));
+            target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
         }
         return target;
     }
 
-    public Data toDatasetData(CommonDo2RestMapperV10 commonDo2RestMapperV10, DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected,
-            List<String> selectedLanguages) throws Exception {
+    public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
 
         if (source == null) {
             return null;
