@@ -304,9 +304,10 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
     }
 
-    // calculateEffectiveSelectionValues and calculateEffectiveDimensionValuesToQuery are similar, except that
-    // - calculateEffectiveDimensionValuesToQuery, applies the query selection and special parameters to the whole dataset
-    // - calculateEffectiveSelectionValues, applies the api selection and special parameters to the previously queried results
+    // calculateEffectiveSelectionValues, calculateEffectiveDimensionValuesToQuery and calculateEffectiveDimensionValuesToDataset are similar, except that
+    // - calculateEffectiveSelectionValues, applies the api selection with their special parameters to the previously queried results
+    // - calculateEffectiveDimensionValuesToQuery, applies the query selection with their special parameters to the "whole" dataset (technicaly, only to the temporal coverage)
+    // - calculateEffectiveDimensionValuesToDataset, applies the api selection with their special parameters to the "whole" dataset (technicaly, only to the temporal coverage)
     public Map<String, List<String>> calculateEffectiveSelectionValues(Map<String, List<String>> selectedDimensions, Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension) {
         Map<String, List<String>> effectiveDimensions = new HashMap<String, List<String>>(selectedDimensions.size());
         for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {

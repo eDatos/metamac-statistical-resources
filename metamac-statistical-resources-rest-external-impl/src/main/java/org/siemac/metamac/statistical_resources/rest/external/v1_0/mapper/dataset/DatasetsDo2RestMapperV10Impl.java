@@ -1,10 +1,13 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset;
 
 import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils.containsField;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils.isTemporalDimension;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
@@ -23,6 +26,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DatasetMetadata;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
@@ -39,6 +43,7 @@ import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourc
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,9 +105,35 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
             target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, selectedLanguages, fields));
         }
         if (includeData) {
-            target.setData(commonDo2RestMapper.toData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
+            target.setData(toDatasetData(commonDo2RestMapper, source, dsdProcessorResult, selectedDimensions, selectedLanguages));
         }
         return target;
+    }
+
+    public Data toDatasetData(CommonDo2RestMapperV10 commonDo2RestMapperV10, DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected,
+            List<String> selectedLanguages) throws Exception {
+
+        if (source == null) {
+            return null;
+        }
+        Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
+        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages);
+    }
+
+    public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
+        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(selectedDimensions.size());
+        for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
+            String dimensionId = selectedDimension.getKey();
+            List<String> selectedValues = selectedDimension.getValue();
+            if (isTemporalDimension(dimensionId)) {
+                List<String> temporalCoverageValues = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
+                List<String> effectiveValues = DimensionUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
+                dimensionValuesSelected.put(dimensionId, effectiveValues);
+            } else {
+                dimensionValuesSelected.put(dimensionId, selectedValues);
+            }
+        }
+        return dimensionValuesSelected;
     }
 
     @Override
