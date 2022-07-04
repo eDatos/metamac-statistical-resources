@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query;
 
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils.isTemporalDimension;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -311,7 +312,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
             String dimensionId = selectedDimension.getKey();
             List<String> selectedValues = selectedDimension.getValue();
-            if (isTemporalDimension(dimensionId)) {
+            if (DimensionUtils.isTemporalDimension(dimensionId)) {
                 List<String> temporalCoverageValues = effectiveQueryDimensionValuesToDataByDimension.get(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
                 List<String> effectiveValues = DimensionUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
                 effectiveDimensions.put(dimensionId, effectiveValues);
@@ -380,10 +381,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         } else {
             throw buildRestException("QueryTypeEnum unsupported: " + source);
         }
-    }
-
-    private boolean isTemporalDimension(String dimensionId) {
-        return StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId);
     }
 
     private RestException buildRestException(String message) {

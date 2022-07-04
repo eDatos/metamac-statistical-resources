@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 
 public final class DimensionUtils {
 
@@ -123,5 +124,9 @@ public final class DimensionUtils {
         Collections.reverse(partialResults);
 
         return partialResults;
+    }
+
+    public static boolean isTemporalDimension(String dimensionId) {
+        return StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId);
     }
 }
