@@ -47,12 +47,6 @@
             <artifactId>metamac-statistical-resources-rest-api-common</artifactId>
             <version>${metamac-statistical-resources-rest-api-common.version}</version>
         </dependency>   
-        
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang.version}</version>
-        </dependency>     
     </dependencies>
 
     <build>
@@ -208,12 +202,6 @@
                         <artifactId>cxf-xjc-boolean</artifactId>
                         <version>${cxf-xjc-boolean.version}</version>
                     </dependency>
-        
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>${slf4j.version}</version>
-        </dependency>
                 </dependencies>
             </plugin>            
         </plugins>
