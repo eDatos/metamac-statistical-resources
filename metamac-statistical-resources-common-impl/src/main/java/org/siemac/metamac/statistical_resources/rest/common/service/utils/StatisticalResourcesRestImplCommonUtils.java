@@ -1,8 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.common.v1_0.mapper.utils;
-
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.patternAfter;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.patternLast;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.patternRange;
+package org.siemac.metamac.statistical_resources.rest.common.service.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,13 +8,23 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
+import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
+import org.siemac.metamac.rest.exception.RestException;
+import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public final class DimensionUtils {
+public final class StatisticalResourcesRestImplCommonUtils extends StatisticalResourcesRestApiCommonUtils {
 
-    private DimensionUtils() {
+    private final static Logger logger = LoggerFactory.getLogger(StatisticalResourcesRestApiCommonUtils.class);
+
+    private StatisticalResourcesRestImplCommonUtils() {
     }
 
     @SuppressWarnings("unchecked")
@@ -129,4 +135,27 @@ public final class DimensionUtils {
     public static boolean isTemporalDimension(String dimensionId) {
         return StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId);
     }
+
+    /**
+     * Throws response error, logging exception
+     */
+    public static RestException manageException(Exception e) {
+        logger.error("Error", e);
+        if (e instanceof RestException) {
+            return (RestException) e;
+        } else {
+            // do not show information details about exception to user
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
+            return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public static DateTime isDateAfterNowSetNull(DateTime checkValidTo) {
+        if (checkValidTo == null || checkValidTo.isAfterNow()) {
+            return null;
+        } else {
+            return checkValidTo;
+        }
+    }
+
 }

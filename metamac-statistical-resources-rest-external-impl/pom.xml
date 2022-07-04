@@ -28,6 +28,11 @@
             <artifactId>metamac-statistical-resources-common-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
+		<dependency>
+            <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+            <artifactId>metamac-statistical-resources-common-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
             <artifactId>metamac-statistical-resources-core</artifactId>

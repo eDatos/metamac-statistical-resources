@@ -1,10 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.service;
 
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.hasField;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.manageException;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.parseDimensionExpression;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.parseFieldsParameter;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.hasField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsParameter;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
 import java.util.ArrayList;
 import java.util.Arrays;

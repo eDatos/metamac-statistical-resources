@@ -18,5 +18,17 @@
             <artifactId>metamac-core-common</artifactId>
             <version>${metamac-core-common.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.siemac.metamac</groupId>
+            <artifactId>metamac-rest-common</artifactId>
+            <version>${metamac-rest-common.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>

@@ -1,10 +1,10 @@
-package org.siemac.metamac.rest.statistical_resources.v1_0.mapper;
+package org.siemac.metamac.statistical_resources.rest.common.service.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestApiExternalUtils.parseDimensionExpression;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils.calculateEffectiveTemporalSelectionValues;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,13 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Test;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DimensionUtilsTest {
+public class StatisticalResourcesRestImplCommonUtilsTest {
 
-    private final Logger              logger           = LoggerFactory.getLogger(DimensionUtilsTest.class);
+    private final Logger              logger           = LoggerFactory.getLogger(StatisticalResourcesRestImplCommonUtilsTest.class);
 
     private Map<String, List<String>> dimensionsGroup1 = initializeDimensionsGroup1();
     private Map<String, List<String>> dimensionsGroup2 = initializeDimensionsGroup2();
@@ -26,23 +25,23 @@ public class DimensionUtilsTest {
 
     @Test
     public void testFilterDimensionValues() {
-        assertNull(DimensionUtils.filterDimensions(null, null));
-        assertNull(DimensionUtils.filterDimensions(null, dimensionsGroup2));
-        assertEquals(dimensionsGroup1, DimensionUtils.filterDimensions(dimensionsGroup1, null));
+        assertNull(StatisticalResourcesRestImplCommonUtils.filterDimensions(null, null));
+        assertNull(StatisticalResourcesRestImplCommonUtils.filterDimensions(null, dimensionsGroup2));
+        assertEquals(dimensionsGroup1, StatisticalResourcesRestImplCommonUtils.filterDimensions(dimensionsGroup1, null));
 
         Map<String, List<String>> results1intersect2 = new HashMap<String, List<String>>();
         results1intersect2.put("DIM-a", Arrays.asList("a-1", "a-2"));
         results1intersect2.put("DIM-b", Arrays.asList("b-1"));
         results1intersect2.put("DIM-c", Arrays.asList("c-2"));
 
-        assertEquals(results1intersect2, DimensionUtils.filterDimensions(dimensionsGroup1, dimensionsGroup2));
+        assertEquals(results1intersect2, StatisticalResourcesRestImplCommonUtils.filterDimensions(dimensionsGroup1, dimensionsGroup2));
 
         Map<String, List<String>> results1intersect3 = new HashMap<String, List<String>>();
         results1intersect3.put("DIM-a", Arrays.asList("a-2"));
         results1intersect3.put("DIM-b", Arrays.asList("b-1", "b-2"));
         results1intersect3.put("DIM-c", Arrays.asList("c-1", "c-2"));
 
-        assertEquals(results1intersect3, DimensionUtils.filterDimensions(dimensionsGroup1, dimensionsGroup3));
+        assertEquals(results1intersect3, StatisticalResourcesRestImplCommonUtils.filterDimensions(dimensionsGroup1, dimensionsGroup3));
     }
 
     private Map<String, List<String>> initializeDimensionsGroup1() {

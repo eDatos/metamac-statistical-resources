@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.query;
 
-import static org.siemac.metamac.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
+import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -40,7 +41,6 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
-import org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -205,7 +205,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getLifeCycleStatisticalResource().getStatisticalOperation(), selectedLanguages));
         target.setMaintainer(commonDo2RestMapper.toResourceExternalItemSrm(source.getLifeCycleStatisticalResource().getMaintainer(), selectedLanguages));
         target.setValidFrom(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getValidFrom()));
-        target.setValidTo(commonDo2RestMapper.toDate(StatisticalResourcesRestInternalUtils.isDateAfterNowSetNull(source.getLifeCycleStatisticalResource().getValidTo())));
+        target.setValidTo(commonDo2RestMapper.toDate(isDateAfterNowSetNull(source.getLifeCycleStatisticalResource().getValidTo())));
         target.setRequires(datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages));
         target.setIsPartOf(toQueryIsPartOf(source, selectedLanguages));
         target.setNextVersion(commonDo2RestMapper.toNextVersionType(source.getLifeCycleStatisticalResource().getNextVersion(), selectedLanguages));

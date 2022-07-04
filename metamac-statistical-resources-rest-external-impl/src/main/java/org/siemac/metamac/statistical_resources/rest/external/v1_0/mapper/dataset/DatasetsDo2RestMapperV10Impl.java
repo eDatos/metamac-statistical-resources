@@ -1,7 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset;
 
-import static org.siemac.metamac.statistical_resources.rest.common.v1_0.mapper.utils.DimensionUtils.isTemporalDimension;
-import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils.containsField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isTemporalDimension;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -43,7 +44,6 @@ import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourc
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +126,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
             List<String> selectedValues = selectedDimension.getValue();
             if (isTemporalDimension(dimensionId)) {
                 List<String> temporalCoverageValues = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
-                List<String> effectiveValues = DimensionUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
+                List<String> effectiveValues = calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
                 dimensionValuesSelected.put(dimensionId, effectiveValues);
             } else {
                 dimensionValuesSelected.put(dimensionId, selectedValues);

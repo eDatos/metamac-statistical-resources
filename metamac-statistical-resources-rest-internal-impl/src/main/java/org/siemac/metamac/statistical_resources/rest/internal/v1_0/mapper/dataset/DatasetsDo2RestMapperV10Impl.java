@@ -1,10 +1,13 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.dataset;
 
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.containsField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isTemporalDimension;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
@@ -21,6 +24,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DatasetMetadata;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Datasets;
@@ -38,6 +42,7 @@ import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalRes
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
@@ -104,9 +109,34 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
             target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, selectedLanguages, fields));
         }
         if (includeData) {
-            target.setData(commonDo2RestMapper.toData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
+            target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
         }
         return target;
+    }
+
+    public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
+
+        if (source == null) {
+            return null;
+        }
+        Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
+        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages);
+    }
+
+    public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
+        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(selectedDimensions.size());
+        for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
+            String dimensionId = selectedDimension.getKey();
+            List<String> selectedValues = selectedDimension.getValue();
+            if (isTemporalDimension(dimensionId)) {
+                List<String> temporalCoverageValues = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
+                List<String> effectiveValues = StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
+                dimensionValuesSelected.put(dimensionId, effectiveValues);
+            } else {
+                dimensionValuesSelected.put(dimensionId, selectedValues);
+            }
+        }
+        return dimensionValuesSelected;
     }
 
     @Override

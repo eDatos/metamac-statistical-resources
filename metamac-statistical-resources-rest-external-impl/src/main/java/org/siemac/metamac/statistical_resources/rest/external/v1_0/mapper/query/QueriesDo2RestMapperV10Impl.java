@@ -1,7 +1,9 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query;
 
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils.isTemporalDimension;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.filterDimensions;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isTemporalDimension;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -38,13 +40,12 @@ import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTyp
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
-import org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,7 +186,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getLifeCycleStatisticalResource().getStatisticalOperation(), selectedLanguages));
         target.setMaintainer(commonDo2RestMapper.toResourceExternalItemSrm(source.getLifeCycleStatisticalResource().getMaintainer(), selectedLanguages));
         target.setValidFrom(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getValidFrom()));
-        target.setValidTo(commonDo2RestMapper.toDate(StatisticalResourcesRestExternalUtils.isDateAfterNowSetNull(source.getLifeCycleStatisticalResource().getValidTo())));
+        target.setValidTo(commonDo2RestMapper.toDate(isDateAfterNowSetNull(source.getLifeCycleStatisticalResource().getValidTo())));
         target.setRequires(datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages));
         target.setIsPartOf(toQueryIsPartOf(source, selectedLanguages));
         return target;
@@ -218,7 +219,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion);
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveSelectionValues(selectedDimensions, effectiveQueryDimensionValuesToDataByDimension);
-        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = DimensionUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension, effectiveSelectionValues);
+        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = filterDimensions(effectiveQueryDimensionValuesToDataByDimension, effectiveSelectionValues);
         return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages);
     }
 
@@ -313,9 +314,9 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
             String dimensionId = selectedDimension.getKey();
             List<String> selectedValues = selectedDimension.getValue();
-            if (DimensionUtils.isTemporalDimension(dimensionId)) {
+            if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
                 List<String> temporalCoverageValues = effectiveQueryDimensionValuesToDataByDimension.get(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
-                List<String> effectiveValues = DimensionUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
+                List<String> effectiveValues = StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
                 effectiveDimensions.put(dimensionId, effectiveValues);
             } else {
                 effectiveDimensions.put(dimensionId, selectedValues);
