@@ -1,8 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.common.v1_0.mapper.utils;
 
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiExternalUtils.patternAfter;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiExternalUtils.patternLast;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiExternalUtils.patternRange;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.patternAfter;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.patternLast;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.patternRange;
 
 import java.util.ArrayList;
 import java.util.Collections;
