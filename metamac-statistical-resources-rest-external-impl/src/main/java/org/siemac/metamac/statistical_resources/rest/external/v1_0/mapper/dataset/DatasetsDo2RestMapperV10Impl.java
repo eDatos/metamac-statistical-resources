@@ -1,7 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset;
 
+import static org.siemac.metamac.statistical_resources.rest.common.v1_0.mapper.utils.DimensionUtils.isTemporalDimension;
 import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils.containsField;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.utils.DimensionUtils.isTemporalDimension;
 
 import java.math.BigInteger;
 import java.util.HashMap;
