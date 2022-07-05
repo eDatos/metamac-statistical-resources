@@ -35,8 +35,6 @@ import org.siemac.metamac.statistical_resources.rest.external.exception.RestServ
 
 public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends StatisticalResourcesRestExternalFacadeV10BaseTest {
 
-    private static final String OBSERVATIONS_SEPARATOR = " \\| ";
-    
     @Test
     public void testFindQueries() throws Exception {
         Queries queries = statisticalResourcesRestExternalFacadeClientXml.findQueries(null, null, null, null, null);
@@ -95,8 +93,8 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
         assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
 
         // Ultimo elemento de las observaciones
-        assertEquals(query.getData().getObservations().split(OBSERVATIONS_SEPARATOR).length, 8 * 2 * 3 * 1);
-        assertEquals(query.getData().getObservations().split(OBSERVATIONS_SEPARATOR)[8 * 2 * 3 * 1 - 1], "421");
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 8 * 2 * 3 * 1);
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "421");
     }
 
     @Test
@@ -115,8 +113,8 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
         assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
 
         // Ultimo elemento de las observaciones
-        assertEquals(query.getData().getObservations().split(OBSERVATIONS_SEPARATOR).length, 1);
-        assertEquals(query.getData().getObservations().split(OBSERVATIONS_SEPARATOR)[0], "421");
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 1);
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[0], "421");
     }
 
     private String buildDimParamsForQuery_1() {
