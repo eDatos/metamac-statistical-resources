@@ -14,7 +14,6 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
-import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -288,11 +287,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
         // if is a external API and not is latest search, add public restrictions (in query of latest the restrictions is already added)
         if (!SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (!StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
-                DateTime now = new DateTime();
                 //@formatter:off
-                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
-                        .buildSingle());
-
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                         .withProperty(siemacMetadataStatisticalResourceProperty.procStatus()).eq(ProcStatusEnum.PUBLISHED)
                         .buildSingle());
@@ -341,11 +336,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
         // if is a external API and not is latest search add public restrictions (in query of latest the restrictions is already added)
         if (!SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (!StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
-                DateTime now = new DateTime();
                 //@formatter:off
-                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
-                        .buildSingle());
-
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                         .withProperty(lifeCycleStatisticalResourceProperty.procStatus()).eq(ProcStatusEnum.PUBLISHED)
                         .buildSingle());
@@ -353,5 +344,4 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
             }
         }
     }
-
 }
