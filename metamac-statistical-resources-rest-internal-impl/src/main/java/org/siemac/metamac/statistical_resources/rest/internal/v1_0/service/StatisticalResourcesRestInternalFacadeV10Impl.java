@@ -143,14 +143,15 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields) {
+    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
 
             boolean includeMetadata = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
             boolean includeData = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Query query = queriesDo2RestMapper.toQuery(queryVersion, selectedLanguages, includeMetadata, includeData);
+            Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, includeMetadata, includeData);
             return query;
         } catch (Exception e) {
             throw manageException(e);
