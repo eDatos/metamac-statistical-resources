@@ -219,7 +219,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion);
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveSelectionValues(selectedDimensions, effectiveQueryDimensionValuesToDataByDimension);
-        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = filterDimensions(effectiveQueryDimensionValuesToDataByDimension, effectiveSelectionValues);
+        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = StatisticalResourcesRestImplCommonUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension, effectiveSelectionValues);
         return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages);
     }
 
@@ -285,7 +285,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                 return org.siemac.metamac.rest.statistical_resources.v1_0.domain.QueryStatus.DISCONTINUED;
             default:
                 throw buildRestException("QueryStatusEnum unsupported: " + source);
-
+                
         }
     }
 
@@ -330,7 +330,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         for (QuerySelectionItem selection : source.getSelection()) {
             String dimensionId = selection.getDimension();
             List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
-            if (isTemporalDimension(dimensionId)) {
+            if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
                 List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
                 List<String> dimensionValues = calculateEffectiveTemporalDimensionValuesToQuery(source, temporalCoverageCodes, selectionCodes);
                 dimensionValuesSelected.put(dimensionId, dimensionValues);

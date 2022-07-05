@@ -100,8 +100,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.COLLECTION_NOT_FOUND, resourceID, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND);
             }
-            PublicationVersion publicationVersion = entitiesPagedResult.getValues().get(0);
-            return publicationVersion;
+            return entitiesPagedResult.getValues().get(0);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -158,17 +157,16 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.COLLECTION_NOT_FOUND, resourceID, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND);
             }
-            MultidatasetVersion multidatasetVersion = entitiesPagedResult.getValues().get(0);
-            return multidatasetVersion;
+            return entitiesPagedResult.getValues().get(0);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
     @Override
-    public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) {
+    public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
-            return findMultidatasetVersionsCommon(agencyID, null, conditions, pagingParameter);
+            return findMultidatasetVersionsCommon(agencyID, null, conditionalCriteria, pagingParameter);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -272,7 +270,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
 
         if (SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
-                // Add latest restrictions Last version
+                // Internal API, add latest restrictions Last version
                 //@formatter:off
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                     .withProperty(siemacMetadataStatisticalResourceProperty.lastVersion()).eq(Boolean.TRUE)

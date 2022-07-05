@@ -96,4 +96,5 @@ public interface StatisticalResourcesV1_0 {
     @Produces({"application/xml", "application/json"})
     @Path("multidatasets/{agencyID}/{resourceID}")
     Multidataset retrieveMultidataset(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
+
 }

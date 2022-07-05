@@ -165,20 +165,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         return target;
     }
 
-    @Override
-    public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceDto source) {
-        String agencyID = source.getMaintainer().getCodeNested();
-        String resourceID = source.getCode();
-        return toQuerySelfLink(agencyID, resourceID);
-    }
-
-    @Override
-    public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceBaseDto source) {
-        String agencyID = source.getMaintainerCodeNested();
-        String resourceID = source.getCode();
-        return toQuerySelfLink(agencyID, resourceID);
-    }
-
     private QueryMetadata toQueryMetadata(QueryVersion source, DatasetVersion datasetVersion, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
@@ -318,9 +304,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             case DISCONTINUED:
                 return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryStatus.DISCONTINUED;
             default:
-                logger.error("QueryStatusEnum unsupported: " + source);
-                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
-                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+                throw buildRestException("QueryStatusEnum unsupported: " + source);
+                
         }
     }
 
@@ -426,6 +411,20 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
     }
 
+    @Override
+    public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceDto source) {
+        String agencyID = source.getMaintainer().getCodeNested();
+        String resourceID = source.getCode();
+        return toQuerySelfLink(agencyID, resourceID);
+    }
+
+    @Override
+    public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceBaseDto source) {
+        String agencyID = source.getMaintainerCodeNested();
+        String resourceID = source.getCode();
+        return toQuerySelfLink(agencyID, resourceID);
+    }
+    
     private String toQueryVersionManagementApplicationLink(QueryVersion source) {
         return commonDo2RestMapper.getInternalWebApplicationNavigation().buildQueryVersionUrl(source);
     }

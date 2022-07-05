@@ -36,7 +36,7 @@ import org.siemac.metamac.statistical_resources.rest.external.exception.RestServ
 public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends StatisticalResourcesRestExternalFacadeV10BaseTest {
 
     private static final String OBSERVATIONS_SEPARATOR = " \\| ";
-
+    
     @Test
     public void testFindQueries() throws Exception {
         Queries queries = statisticalResourcesRestExternalFacadeClientXml.findQueries(null, null, null, null, null);
@@ -352,7 +352,6 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
                 assertEquals("2013", dimensionValues.getValues().get(1).getId());
                 assertEquals("2012", dimensionValues.getValues().get(2).getId());
                 assertEquals("2011", dimensionValues.getValues().get(3).getId());
-
             }
         }
         {

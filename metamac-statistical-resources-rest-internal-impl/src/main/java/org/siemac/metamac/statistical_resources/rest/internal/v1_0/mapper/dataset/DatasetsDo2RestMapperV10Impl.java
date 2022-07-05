@@ -140,22 +140,6 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceLink toDatasetSelfLink(LifeCycleStatisticalResourceDto source) {
-        String agencyID = source.getMaintainer().getCodeNested();
-        String resourceID = source.getCode();
-        String version = source.getVersionLogic();
-        return toDatasetSelfLink(agencyID, resourceID, version);
-    }
-
-    @Override
-    public ResourceLink toDatasetSelfLink(LifeCycleStatisticalResourceBaseDto source) {
-        String agencyID = source.getMaintainerCodeNested();
-        String resourceID = source.getCode();
-        String version = source.getVersionLogic();
-        return toDatasetSelfLink(agencyID, resourceID, version);
-    }
-
-    @Override
     public ResourceInternal toResource(DatasetVersion source, List<String> selectedLanguages) {
         return toResource(source, false, selectedLanguages);
     }
@@ -443,6 +427,22 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return targets;
     }
 
+    @Override
+    public ResourceLink toDatasetSelfLink(LifeCycleStatisticalResourceDto source) {
+        String agencyID = source.getMaintainer().getCodeNested();
+        String resourceID = source.getCode();
+        String version = source.getVersionLogic();
+        return toDatasetSelfLink(agencyID, resourceID, version);
+    }
+
+    @Override
+    public ResourceLink toDatasetSelfLink(LifeCycleStatisticalResourceBaseDto source) {
+        String agencyID = source.getMaintainerCodeNested();
+        String resourceID = source.getCode();
+        String version = source.getVersionLogic();
+        return toDatasetSelfLink(agencyID, resourceID, version);
+    }
+    
     private String toDatasetVersionManagementApplicationLink(DatasetVersion source) {
         return commonDo2RestMapper.getInternalWebApplicationNavigation().buildDatasetVersionUrl(source);
     }

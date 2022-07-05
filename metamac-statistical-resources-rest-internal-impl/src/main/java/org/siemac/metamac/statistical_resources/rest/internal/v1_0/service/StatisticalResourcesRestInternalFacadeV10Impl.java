@@ -184,22 +184,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
     }
 
-    private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
-        try {
-            SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
-
-            // Find
-            PagedResult<MultidatasetVersion> entitiesPagedResult = commonService.findMultidatasetVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
-
-            // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
-            return multidatasets;
-        } catch (Exception e) {
-            throw manageException(e);
-        }
-    }
-
     private Datasets findDatasetsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, List<String> lang) {
         try {
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -247,6 +231,22 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             throw manageException(e);
         }
     }
+    
+    private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
+        try {
+            SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            // Find
+            PagedResult<MultidatasetVersion> entitiesPagedResult = commonService.findMultidatasetVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+            // Transform
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            return multidatasets;
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
 
     private List<String> languagesRequestedToEffectiveLanguages(List<String> sources) throws MetamacException {
 
@@ -277,5 +277,4 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
         return result;
     }
-
 }
