@@ -58,6 +58,8 @@
 
 		<!-- WEB -->
 		<jstl.version>1.2</jstl.version>
+        <!-- TESTS -->
+        <mockito-version>2.28.2</mockito-version>
 	</properties>
 
 	<build>
