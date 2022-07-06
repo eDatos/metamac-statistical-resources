@@ -1,8 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.external.service;
 
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 import static org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants.SERVICE_CONTEXT;
-import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils.manageException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
-import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -30,11 +29,9 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
-import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCriteriaUtils;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
@@ -45,25 +42,19 @@ import org.springframework.stereotype.Service;
 @Service("statisticalResourcesRestExternalCommonService")
 public class StatisticalResourcesRestExternalCommonServiceImpl implements StatisticalResourcesRestExternalCommonService {
 
-    private final PagingParameter        pagingParameterOneResult = PagingParameter.pageAccess(1, 1, false);
+    private final PagingParameter pagingParameterOneResult = PagingParameter.pageAccess(1, 1, false);
 
     @Autowired
-    private DatasetService               datasetService;
+    private DatasetService        datasetService;
 
     @Autowired
-    private PublicationService           publicationService;
+    private PublicationService    publicationService;
 
     @Autowired
-    private QueryService                 queryService;
+    private QueryService          queryService;
 
     @Autowired
-    private MultidatasetService          multidatasetService;
-
-    @Autowired
-    private QueryVersionRepository       queryVersionRepository;
-
-    @Autowired
-    private PublicationVersionRepository publicationVersionRepository;
+    private MultidatasetService   multidatasetService;
 
     @Override
     public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version) {
@@ -278,7 +269,7 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
 
         if (SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
-                // External API, add latest restrictions Last version
+                // Internal API, add latest restrictions Last version
                 //@formatter:off
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                     .withProperty(siemacMetadataStatisticalResourceProperty.lastVersion()).eq(Boolean.TRUE)
@@ -296,7 +287,6 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
         // if is a external API and not is latest search, add public restrictions (in query of latest the restrictions is already added)
         if (!SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (!StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
-                DateTime now = new DateTime();
                 //@formatter:off
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                         .withProperty(siemacMetadataStatisticalResourceProperty.procStatus()).eq(ProcStatusEnum.PUBLISHED)
@@ -346,7 +336,6 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
         // if is a external API and not is latest search add public restrictions (in query of latest the restrictions is already added)
         if (!SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (!StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
-                DateTime now = new DateTime();
                 //@formatter:off
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                         .withProperty(lifeCycleStatisticalResourceProperty.procStatus()).eq(ProcStatusEnum.PUBLISHED)

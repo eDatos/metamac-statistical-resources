@@ -1,8 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.internal.service;
 
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 import static org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants.SERVICE_CONTEXT;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.manageException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +14,6 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
-import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -100,8 +99,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.COLLECTION_NOT_FOUND, resourceID, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND);
             }
-            PublicationVersion publicationVersion = entitiesPagedResult.getValues().get(0);
-            return publicationVersion;
+            return entitiesPagedResult.getValues().get(0);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -158,17 +156,16 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.COLLECTION_NOT_FOUND, resourceID, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND);
             }
-            MultidatasetVersion multidatasetVersion = entitiesPagedResult.getValues().get(0);
-            return multidatasetVersion;
+            return entitiesPagedResult.getValues().get(0);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
     @Override
-    public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) {
+    public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
-            return findMultidatasetVersionsCommon(agencyID, null, conditions, pagingParameter);
+            return findMultidatasetVersionsCommon(agencyID, null, conditionalCriteria, pagingParameter);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -272,7 +269,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
 
         if (SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
-                // Add latest restrictions Last version
+                // Internal API, add latest restrictions Last version
                 //@formatter:off
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                     .withProperty(siemacMetadataStatisticalResourceProperty.lastVersion()).eq(Boolean.TRUE)
@@ -290,11 +287,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
         // if is a external API and not is latest search, add public restrictions (in query of latest the restrictions is already added)
         if (!SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (!StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
-                DateTime now = new DateTime();
                 //@formatter:off
-                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
-                        .buildSingle());
-
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                         .withProperty(siemacMetadataStatisticalResourceProperty.procStatus()).eq(ProcStatusEnum.PUBLISHED)
                         .buildSingle());
@@ -343,11 +336,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
         // if is a external API and not is latest search add public restrictions (in query of latest the restrictions is already added)
         if (!SrmRestConstants.WILDCARD_LATEST.equals(version)) {
             if (!StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
-                DateTime now = new DateTime();
                 //@formatter:off
-                conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
-                        .buildSingle());
-
                 conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(entityClass)
                         .withProperty(lifeCycleStatisticalResourceProperty.procStatus()).eq(ProcStatusEnum.PUBLISHED)
                         .buildSingle());
@@ -355,5 +344,4 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
             }
         }
     }
-
 }

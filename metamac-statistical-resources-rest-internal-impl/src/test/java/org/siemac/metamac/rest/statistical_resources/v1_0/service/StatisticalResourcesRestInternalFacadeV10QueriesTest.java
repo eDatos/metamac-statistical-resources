@@ -8,6 +8,7 @@ import static org.siemac.metamac.rest.statistical_resources.constants.RestTestCo
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.QUERY_4_CODE;
 
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.Arrays;
 
 import javax.ws.rs.core.Response;
@@ -21,7 +22,9 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CodeRepresentations;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimension;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedDimensionValue;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedDimensionValues;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValues;
@@ -71,7 +74,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQuery() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null);
 
         assertEquals(QUERY_1_CODE, query.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
@@ -79,11 +82,54 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
         assertEquals("http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1/query1", query.getSelfLink().getHref());
         MetamacRestAsserts.assertEqualsInternationalString("es", "title-query1 en Espanol", null, null, query.getName());
         assertEquals("http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000", query.getMetadata().getRelatedDataset().getSelfLink().getHref());
+
+        assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
+        assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(8));
+        assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
+        assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(2));
+        assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
+        assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(3));
+        assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
+        assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
+
+        // Ultimo elemento de las observaciones
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR).length, 8 * 2 * 3 * 1);
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "421");
+    }
+
+    @Test
+    public void testRetrieveQueryWithDimensions() throws Exception {
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, buildDimParamsForQuery_1());
+
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
+
+        assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
+        assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(1));
+        assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
+        assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(1));
+        assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
+        assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(1));
+        assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
+        assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
+
+        // Ultimo elemento de las observaciones
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR).length, 1);
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR)[0], "421");
+    }
+
+    private String buildDimParamsForQuery_1() {
+        //@formatter:off
+        return "GEO_DIM" + ":" + "fuerteventura" + ":"
+                + "dim01" + ":" + "dim01-codelist01-code01" + ":"
+                + "measure01" + ":" + "measure01-conceptScheme01-concept05" + ":"
+                + "TIME_PERIOD" + ":" + "2013" + ":"
+                ;
+        //@formatter:on
     }
 
     @Test
     public void testRetrieveQueryWithDatasetGlobal() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, defaultLanguages, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, defaultLanguages, null, null);
 
         assertEquals(QUERY_2_CODE, query.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query2", query.getUrn());
@@ -92,7 +138,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryAnotherLanguage() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, Arrays.asList("en"), null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, Arrays.asList("en"), null, null);
 
         MetamacRestAsserts.assertEqualsInternationalString("es", "title-query1 en Espanol", "en", "title-query1 in English", query.getName());
     }
@@ -121,7 +167,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryFixed() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -216,7 +262,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryFixedChangingParentVisualisations() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_4_CODE, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_4_CODE, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -285,7 +331,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryAutoincremental() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -317,11 +363,27 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
         // Data
         assertEquals(24, StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR).length);
+
+        {
+            DimensionRepresentation dimension = query.getData().getDimensions().getDimensions().get(1);
+            assertEquals("TIME_PERIOD", dimension.getDimensionId());
+            assertTrue(dimension.getRepresentations() instanceof CodeRepresentations);
+            {
+                CodeRepresentations dimensionValues = dimension.getRepresentations();
+                assertEquals(BigInteger.valueOf(4), dimensionValues.getTotal());
+                // Order here must be the same as order of dimensionValues
+                assertEquals("2014", dimensionValues.getRepresentations().get(0).getCode());
+                assertEquals("2013", dimensionValues.getRepresentations().get(1).getCode());
+                assertEquals("2012", dimensionValues.getRepresentations().get(2).getCode());
+                assertEquals("2011", dimensionValues.getRepresentations().get(3).getCode());
+
+            }
+        }
     }
 
     @Test
     public void testRetrieveQueryLatestData() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_3_CODE, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_3_CODE, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -351,6 +413,19 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
         // Data
         assertEquals(12, StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR).length);
+
+        {
+            DimensionRepresentation dimension = query.getData().getDimensions().getDimensions().get(1);
+            assertEquals("TIME_PERIOD", dimension.getDimensionId());
+            assertTrue(dimension.getRepresentations() instanceof CodeRepresentations);
+            {
+                CodeRepresentations dimensionValues = dimension.getRepresentations();
+                assertEquals(BigInteger.valueOf(2), dimensionValues.getTotal());
+                // Order here must be the same as order of dimensionValues
+                assertEquals("2014", dimensionValues.getRepresentations().get(0).getCode());
+                assertEquals("2013", dimensionValues.getRepresentations().get(1).getCode());
+            }
+        }
     }
 
     @Test
@@ -358,7 +433,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
         String agencyID = AGENCY_1;
         String resourceID = NOT_EXISTS;
         try {
-            statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(agencyID, resourceID, null, null);
+            statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(agencyID, resourceID, null, null, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.NOT_FOUND.getStatusCode(), e.getStatus());
 
