@@ -30,7 +30,10 @@
             "DATASET",
             "COLLECTION",
             "QUERY",
-            "MULTIDATASET"
+            "MULTIDATASET",
+            "VARIABLE_FAMILY",
+            "VARIABLE",
+            "VARIABLE_ELEMENT"
         ]
     }
     
