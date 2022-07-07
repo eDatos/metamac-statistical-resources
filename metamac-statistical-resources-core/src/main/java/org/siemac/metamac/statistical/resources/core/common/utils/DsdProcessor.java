@@ -30,6 +30,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Represe
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TextFormat;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TimeDimension;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DsdProcessor {
 
@@ -143,6 +145,8 @@ public class DsdProcessor {
         protected TextFormat           textFormat                     = null;
         protected ItemResourceInternal conceptIdentity                = null;
 
+        private static Logger          logger                         = LoggerFactory.getLogger(DsdComponent.class);
+
         protected void setConceptIdentity(ItemResourceInternal conceptIdentity) {
             if (conceptIdentity != null) {
                 this.conceptIdentity = conceptIdentity;
@@ -160,6 +164,8 @@ public class DsdProcessor {
                 throw new RuntimeException("Concept identity can not be null");
             }
 
+            // EDATOS-3227
+            logger.info("getSrmRestInternalService Class: ", getSrmRestInternalService().getClass());
             Concept concept = getSrmRestInternalService().retrieveConceptByUrn(conceptIdentity.getUrn());
             extractRepresentation(conceptIdentity.getUrn(), concept.getCoreRepresentation());
         }
