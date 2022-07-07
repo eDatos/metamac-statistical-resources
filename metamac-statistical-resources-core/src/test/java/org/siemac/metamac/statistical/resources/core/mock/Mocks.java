@@ -796,8 +796,8 @@ public class Mocks {
                 .thenReturn(Mocks.mock_ECB_CONCEPTS());
 
         // CONCEPT
-        Mockito.when(srmRestInternalService.retrieveConceptByUrn("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).FREQ"))
-                .thenReturn(Mocks.mock_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_FREQ());
+        Mockito.doReturn(Mocks.mock_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_FREQ()).when(srmRestInternalService)
+                .retrieveConceptByUrn("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=SDMX:CROSS_DOMAIN_CONCEPTS(1.0).FREQ");
 
         Mockito.when(srmRestInternalService.retrieveConceptByUrn("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=ECB:ECB_CONCEPTS(1.0).CURRENCY_DENOM"))
                 .thenReturn(Mocks.mock_ECB_CONCEPTS_1_0_CURRENCY_DENOM());
