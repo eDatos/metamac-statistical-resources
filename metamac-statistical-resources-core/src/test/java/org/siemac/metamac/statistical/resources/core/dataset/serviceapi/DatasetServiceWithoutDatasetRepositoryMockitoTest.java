@@ -9,9 +9,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -77,6 +79,11 @@ public class DatasetServiceWithoutDatasetRepositoryMockitoTest extends Statistic
         Mocks.mockRestService(srmRestInternalService);
 
         clearDataBase(); // Clear dirty database
+    }
+
+    @After
+    public void after() {
+        Mockito.validateMockitoUsage();
     }
 
     // ------------------------------------------------------------------------
