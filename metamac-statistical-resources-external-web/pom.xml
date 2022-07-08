@@ -27,6 +27,7 @@
 			<artifactId>metamac-statistical-resources-core</artifactId>
 			<version>${project.version}</version>
 			<classifier>client</classifier>
+			<!-- client packages are not loaded by default on eclipse web deployment https://github.com/eclipse-m2e/m2e-core/issues/823 -->
 		</dependency>
 		<dependency>
 			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
