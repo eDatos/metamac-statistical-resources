@@ -523,11 +523,6 @@
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <argLine>-Xms1024m -Xmx2048m</argLine>
-                    <!-- TODO EDATOS-3227 -->
-                    <excludes>
-                        <exclude>**/DataManipulateTest.java</exclude>
-                        <exclude>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</exclude>           
-                     </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -545,27 +540,6 @@
 							<reportsDirectory>${project.build.directory}/surefire-reports/postgresql</reportsDirectory>
 						</configuration>
 					</execution>
-                </executions>
-            </plugin>
-            
-            <!-- TODO EDATOS-3227 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-failsafe-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <includes>
-                        <include>**/DataManipulateTest.java</include>
-                        <include>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>integration-test</goal>
-                            <goal>verify</goal>
-                        </goals>
-                    </execution>
                 </executions>
             </plugin>
             
