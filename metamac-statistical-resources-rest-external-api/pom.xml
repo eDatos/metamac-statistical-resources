@@ -47,12 +47,6 @@
             <artifactId>metamac-statistical-resources-rest-api-common</artifactId>
             <version>${metamac-statistical-resources-rest-api-common.version}</version>
         </dependency>   
-        
-        <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang.version}</version>
-        </dependency>     
     </dependencies>
 
     <build>
@@ -105,7 +99,7 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/classes/META-INF/rest/external</outputDirectory>
                             <includeGroupIds>org.siemac.metamac</includeGroupIds>
-                            <includeArtifacIds>metamac-rest-api</includeArtifacIds>
+                            <includeArtifactIds>metamac-rest-api</includeArtifactIds>
                             <includeClassifiers>resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                             <includes>**/metamac-rest-common-domain-*.xsd,**/xml.xsd,**/*.dtd</includes>
@@ -191,9 +185,7 @@
                                     <artifactId>metamac-rest-api</artifactId>
                                 </episode>
                             </episodes>
-                            <bindingFiles>
-                                <bindingFile>${basedir}/../etc/rest/external/binding.xjb</bindingFile>
-                            </bindingFiles>
+                            <!-- Por defecto coge los bindings del schemaDirectory -->
                             <generateDirectory>${basedir}/src/generated/java</generateDirectory>
                             <forceRegenerate>true</forceRegenerate>
                         </configuration>

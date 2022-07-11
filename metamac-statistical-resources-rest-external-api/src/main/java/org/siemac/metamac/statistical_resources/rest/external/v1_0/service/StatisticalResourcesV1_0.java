@@ -77,7 +77,8 @@ public interface StatisticalResourcesV1_0 {
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("queries/{agencyID}/{resourceID}")
-    Query retrieveQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
+    Query retrieveQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim);
 
     @GET
     @Produces({"application/xml", "application/json"})

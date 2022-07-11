@@ -1,8 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base;
 
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.escapeValueToData;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 import static org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants.KEY_DIMENSIONS_SEPARATOR;
 import static org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants.SERVICE_CONTEXT;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.containsField;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -122,7 +124,6 @@ import org.siemac.metamac.statistical_resources.rest.internal.invocation.CommonM
 import org.siemac.metamac.statistical_resources.rest.internal.invocation.SrmRestInternalFacade;
 import org.siemac.metamac.statistical_resources.rest.internal.invocation.StatisticalOperationsRestInternalFacade;
 import org.siemac.metamac.statistical_resources.rest.internal.service.utils.LookupUtil;
-import org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -293,7 +294,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setVersionRationaleTypes(toVersionRationaleTypes(source.getVersionRationaleTypes(), selectedLanguages));
         target.setVersionRationale(toInternationalString(source.getVersionRationale(), selectedLanguages));
         target.setValidFrom(toDate(source.getValidFrom()));
-        target.setValidTo(toDate(StatisticalResourcesRestInternalUtils.isDateAfterNowSetNull(source.getValidTo())));
+        target.setValidTo(toDate(isDateAfterNowSetNull(source.getValidTo())));
         target.setNextVersion(toNextVersionType(source.getNextVersion(), selectedLanguages));
         target.setNextVersionDate(toDate(source.getNextVersionDate()));
     }
@@ -1536,7 +1537,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
      */
     private String toAttributeInstanceValueToData(AttributeInstanceBasicDto attributeDto) {
         String attributeValue = attributeDto.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE); // all attributes has only one locale
-        return StatisticalResourcesRestInternalUtils.escapeValueToData(attributeValue);
+        return escapeValueToData(attributeValue);
     }
 
     private Map<String, AttributeInstanceDto> buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(List<String> attributeDimensionsOrdered,

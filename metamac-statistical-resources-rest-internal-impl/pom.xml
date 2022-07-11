@@ -25,6 +25,11 @@
 		</dependency>
         <dependency>
             <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+            <artifactId>metamac-statistical-resources-common-impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
             <artifactId>metamac-statistical-resources-core</artifactId>
             <classifier>client</classifier>
             <version>${project.version}</version>
@@ -109,9 +114,12 @@
     <profiles>
     	<profile>
     		<id>include-tests-dependencies</id>
-			<activation>
-				<activeByDefault>false</activeByDefault>
-			</activation>
+    		<activation>
+                <property>
+                    <name>maven.test.skip</name>
+                    <value>!true</value>
+                </property>
+            </activation>
     		<dependencies>
 		    	<!-- Test -->
 		        <dependency>
