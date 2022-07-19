@@ -252,7 +252,7 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     public void updateGeographicCoverageVariableElementsCache() {
         final InformationWindow informationWindow = getView().showInformationMessage(StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCache(),
                 StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCacheInProgress());
-        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction(), new AsyncCallback<UpdateGeographicCoverageVariableElementsCacheResult>() {
+        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction.Builder().build(), new AsyncCallback<UpdateGeographicCoverageVariableElementsCacheResult>() {
 
             @Override
             public void onFailure(Throwable caught) {

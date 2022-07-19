@@ -1173,12 +1173,24 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersionDto dto) throws MetamacException {
+        // Retrieve
+        DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, dto.getDatasetRepositoryId());
+
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
         // Operate
-        getDatasetService().updateGeographicCoverageVariableElementsCache(ctx);
+        getDatasetService().updateGeographicCoverageVariableElementsCache(ctx, datasetVersion);
+    }
+
+    @Override
+    public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
+
+        // Operate
+        getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
     }
 
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {

@@ -43,6 +43,8 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVe
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction.Builder;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListAction;
@@ -285,6 +287,19 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
                 getView().setDataset((DatasetVersionDto) result.getLifeCycleStatisticalResourceResultDto());
             }
         });
+    }
+
+    @Override
+    public void updateGeocoverageCache(DatasetVersionDto dataset) {
+        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction.Builder().datasetVersionDto(dataset).build(),
+                new WaitingAsyncCallbackHandlingError<UpdateGeographicCoverageVariableElementsCacheResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(UpdateGeographicCoverageVariableElementsCacheResult result) {
+                        RequestDatasetVersionsReloadEvent.fire(DatasetMetadataTabPresenter.this, result.getDatasetVersionDto().getUrn());
+                        getView().setDataset(result.getDatasetVersionDto());
+                    }
+                });
     }
 
     @Override

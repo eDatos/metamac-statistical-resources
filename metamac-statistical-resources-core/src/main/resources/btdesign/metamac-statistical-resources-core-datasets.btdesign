@@ -110,8 +110,8 @@ Application DatasetsStatisticalResources {
     		PagedResult<@Categorisation> findCategorisationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 
     		// Geocoverage variable elements cache
-    		void saveGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
-    		void updateGeographicCoverageVariableElementsCache() throws MetamacException;
+    		void updateGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
+    		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
 		}
 
 		// ----------------------------------------------------------------

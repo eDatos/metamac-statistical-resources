@@ -25,8 +25,12 @@ public class UpdateGeographicCoverageVariableElementsCacheActionHandler extends 
     @Override
     public UpdateGeographicCoverageVariableElementsCacheResult executeSecurityAction(UpdateGeographicCoverageVariableElementsCacheAction action) throws ActionException {
         try {
-            statisticalResourcesServiceFacade.updateGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext());
-            return new UpdateGeographicCoverageVariableElementsCacheResult.Builder().build();
+            if (action.getDatasetVersionDto() != null) {
+                statisticalResourcesServiceFacade.updateGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionDto());
+            } else {
+                statisticalResourcesServiceFacade.updateAllGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext());
+            }
+            return new UpdateGeographicCoverageVariableElementsCacheResult.Builder().datasetVersionDto(action.getDatasetVersionDto()).build();
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

@@ -161,7 +161,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     @Override
     protected void applySendToPublishedCurrentResource(ServiceContext ctx, DatasetVersion resource, DatasetVersion previousResource) throws MetamacException {
         resource.setBibliographicCitation(buildBibliographicCitation(resource));
-        datasetService.saveGeographicCoverageVariableElementsCache(ctx, resource);
+        datasetService.updateGeographicCoverageVariableElementsCache(ctx, resource);
     }
 
     @Override

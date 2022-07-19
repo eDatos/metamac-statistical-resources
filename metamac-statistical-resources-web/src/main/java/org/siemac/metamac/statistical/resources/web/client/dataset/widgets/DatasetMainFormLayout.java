@@ -53,6 +53,11 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
     }
 
     @Override
+    protected boolean canUpdateGeocoverageCache() {
+        return DatasetClientSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(datasetVersionDto);
+    }
+
+    @Override
     protected boolean canVersion() {
         return DatasetClientSecurityUtils.canVersionDataset(datasetVersionDto);
     }

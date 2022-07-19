@@ -57,4 +57,9 @@ public class PublicationMainFormLayout extends LifecycleMainFormLayout {
     protected boolean canPreviewData() {
         return PublicationClientSecurityUtils.canPreviewDataPublicationVersion(publicationVersionDto);
     }
+
+    @Override
+    protected boolean canUpdateGeocoverageCache() {
+        return false;
+    }
 }

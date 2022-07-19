@@ -156,7 +156,8 @@ Application FacadeStatisticalResources {
     		List<@DsdAttributeInstanceDto> retrieveAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
 
     		// Other actions
-    		void updateGeographicCoverageVariableElementsCache() throws MetamacException;
+    		void updateGeographicCoverageVariableElementsCache(@DatasetVersionDto dto) throws MetamacException;
+    		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
 
     		// Statistic officialities
     		List<@StatisticOfficialityDto> findStatisticOfficialities() throws MetamacException;

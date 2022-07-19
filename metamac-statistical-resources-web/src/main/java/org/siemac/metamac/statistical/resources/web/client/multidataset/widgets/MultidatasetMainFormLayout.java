@@ -58,4 +58,9 @@ public class MultidatasetMainFormLayout extends LifecycleMainFormLayout {
     protected boolean canPreviewData() {
         return MultidatasetClientSecurityUtils.canPreviewDataMultidatasetVersion(multidatasetVersionDto);
     }
+
+    @Override
+    protected boolean canUpdateGeocoverageCache() {
+        return false;
+    }
 }
