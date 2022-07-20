@@ -1302,7 +1302,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
-        updateGeocoverageCache(ctx, datasetVersion);
+        updateGeocoverageCache(ctx, datasetVersion, true);
     }
 
     @Override
@@ -1312,7 +1312,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
 
         for (DatasetVersion datasetVersion : datasetVersions) {
-            updateGeocoverageCache(ctx, datasetVersion);
+            updateGeocoverageCache(ctx, datasetVersion, false);
         }
     }
 
@@ -1320,11 +1320,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     // PRIVATE METHODS
     // ------------------------------------------------------------------------
 
-    private void updateGeocoverageCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+    private void updateGeocoverageCache(ServiceContext ctx, DatasetVersion datasetVersion, boolean sendNotification) throws MetamacException {
         TaskInfoDataset taskInfo = new TaskInfoDataset();
         taskInfo.setDatasetVersionId(datasetVersion.getDatasetRepositoryId());
         taskInfo.setDatasetUrn(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
-        taskService.planifyUpdateGeocoverageCache(ctx, taskInfo);
+        taskService.planifyUpdateGeocoverageCache(ctx, taskInfo, sendNotification);
     }
 
 

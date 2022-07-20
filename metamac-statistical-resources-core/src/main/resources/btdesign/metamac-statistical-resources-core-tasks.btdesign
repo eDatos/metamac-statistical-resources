@@ -52,7 +52,7 @@ Application DatasetsStatisticalResources {
 			"Plannify a scheduled task to recovery import"
             String planifyDuplicationDataset(@TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
 			"Plannify a scheduled task to update the geographical coverage cache"
-            String planifyUpdateGeocoverageCache(@TaskInfoDataset taskInfoDataset) throws MetamacException;
+            String planifyUpdateGeocoverageCache(@TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException;
 			"Perform the importation task"
     		processImportationTask(String importationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the database importation task"

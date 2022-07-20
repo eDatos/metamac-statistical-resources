@@ -476,9 +476,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     @Override
-    public String planifyUpdateGeocoverageCache(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
+    public String planifyUpdateGeocoverageCache(ServiceContext ctx, TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException {
         // Validation
-        taskServiceInvocationValidator.checkPlanifyUpdateGeocoverageCache(ctx, taskInfoDataset);
+        taskServiceInvocationValidator.checkPlanifyUpdateGeocoverageCache(ctx, taskInfoDataset, sendNotification);
 
         String datasetVersionUrn = taskInfoDataset.getDatasetVersionId();
         String taskName = createJobNameForUpdateGeocoverageCache(taskInfoDataset.getDatasetVersionId());
@@ -497,6 +497,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(UpdateGeocoverageCacheJob.USER, ctx.getUserId())
                     .usingJobData(UpdateGeocoverageCacheJob.DATASET_URN, datasetVersionUrn)
                     .usingJobData(UpdateGeocoverageCacheJob.TASK_NAME, taskName)
+                    .usingJobData(UpdateGeocoverageCacheJob.SEND_NOTIFICATION, sendNotification)
                     .requestRecovery()
                     .build();
             // @formatter:on
