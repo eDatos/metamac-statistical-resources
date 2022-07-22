@@ -883,6 +883,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         logger.debug("Created new {} variable elements for {} geographic codes", datasetVersion.getGeographicCoverageVariableElements().size(), geographicCoverage.size());
         datasetVersionRepository.save(datasetVersion);
+
+        markTaskAsFinished(ctx, jobKey);
     }
 
     private String getDataViewsRole() throws MetamacException {
@@ -1031,7 +1033,19 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processRollbackDuplicationTaskOnApplicationStartup(ctx, task);
         } else if (jobKey.startsWith(PREFIX_JOB_DATABASE_IMPORT_DATA)) {
             processRollbackDatabaseImportTask(ctx, task.getJob());
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
+            processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
         }
+    }
+
+    private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
+        String datasetVersionUrn = extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(jobKey);
+        DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
+        getNoticesRestInternalService().createUpdateGeocoverageCacheNotification(datasetVersion, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
+                ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionUrn);
+
+        markTaskAsFinished(ctx, jobKey);
     }
 
     private String retrieveDatasetUrn(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
@@ -1056,6 +1070,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processRollbackDuplicationTask(ctx, task);
         } else if (jobKey.startsWith(PREFIX_JOB_DATABASE_IMPORT_DATA)) {
             processRollbackDatabaseImportTask(ctx, task.getJob());
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
+            processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
         }
     }
 
@@ -1119,6 +1135,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private String extractDatasetVersionUrnFromDatabaseImportationDatasetJobKey(String jobKeyName) {
         return extractDatasetVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_DATABASE_IMPORT_DATA);
+    }
+
+    private String extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(String jobKeyName) {
+        return extractDatasetVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE);
     }
 
     private String extractDatasetVersionUrnFromJobKey(String jobKeyName, String prefixJob) {

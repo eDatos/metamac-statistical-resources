@@ -1321,9 +1321,14 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     // ------------------------------------------------------------------------
 
     private void updateGeocoverageCache(ServiceContext ctx, DatasetVersion datasetVersion, boolean sendNotification) throws MetamacException {
+        String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        checkNotTasksInProgress(ctx, datasetVersionUrn);
+
         TaskInfoDataset taskInfo = new TaskInfoDataset();
-        taskInfo.setDatasetVersionId(datasetVersion.getDatasetRepositoryId());
-        taskInfo.setDatasetUrn(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+        taskInfo.setDatasetVersionId(datasetVersionUrn);
+        taskInfo.setDatasetUrn(datasetUrn);
         taskService.planifyUpdateGeocoverageCache(ctx, taskInfo, sendNotification);
     }
 
