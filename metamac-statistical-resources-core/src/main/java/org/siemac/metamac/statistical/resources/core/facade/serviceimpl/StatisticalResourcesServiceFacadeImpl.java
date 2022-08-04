@@ -48,7 +48,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDo2Dt
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatRepoDto2StatisticalResourcesDtoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatisticalResourcesDto2StatRepoDtoMapper;
-import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.ContentConstraintDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueDto;
@@ -114,8 +113,6 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatas
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -240,8 +237,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
 
     public StatisticalResourcesServiceFacadeImpl() {
     }
