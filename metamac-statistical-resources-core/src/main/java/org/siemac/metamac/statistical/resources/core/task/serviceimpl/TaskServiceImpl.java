@@ -837,17 +837,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         // Validation
         taskServiceInvocationValidator.checkProcessUpdateGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
 
-        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.datasetRepositoryId())
-                                                                       .eq(taskInfoDataset.getDatasetVersionId()).distinctRoot().build();
-        List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
-
-        if (datasetVersions.isEmpty()) {
-            throw new MetamacException(ServiceExceptionType.DATASET_VERSION_NOT_FOUND, taskInfoDataset.getDatasetVersionId());
-        } else if (datasetVersions.size() > 1) {
-            throw new MetamacException(ServiceExceptionType.UNKNOWN, "More than one dataset version with id " + taskInfoDataset.getDatasetVersionId() + " found");
-        }
-
-        DatasetVersion datasetVersion = datasetVersions.get(0);
+        DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(taskInfoDataset.getDatasetVersionId());
 
         logger.debug("Updating geocoverage cache for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
