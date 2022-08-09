@@ -12,7 +12,7 @@ import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessag
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 
 public class ImportDatasetJob extends AbstractImportDatasetJob {
-
+    public static final String DATASET_IMPORT_JOB_FLAG                  = "dataset_import";
     /**
      * Quartz requires a public empty constructor so that the scheduler can instantiate the class whenever it needs.
      */
@@ -22,6 +22,7 @@ public class ImportDatasetJob extends AbstractImportDatasetJob {
 
     @Override
     protected ServiceContext setAdditionalProperties(ServiceContext serviceContext, JobDataMap jobDataMap) {
+        serviceContext.setProperty(DATASET_IMPORT_JOB_FLAG, Boolean.TRUE);
         return serviceContext;
     }
 

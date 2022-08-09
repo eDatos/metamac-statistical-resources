@@ -740,10 +740,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkValidDataSourceTypeForImportationTask(expectedDataSourceTypeEnum, datasetVersion);
 
-        if (DataSourceTypeEnum.FILE.equals(datasetVersion.getDataSourceType())) {
-            ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion);
-        }
-
         String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
 
         checkFilesCanBeAssociatedWithDataset(datasetUrn, datasetVersionUrn, fileUrls);

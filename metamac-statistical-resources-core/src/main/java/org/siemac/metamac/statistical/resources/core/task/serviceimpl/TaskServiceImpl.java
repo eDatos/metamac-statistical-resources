@@ -442,7 +442,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setExtensionPoint(newDatasetId + JobUtil.SERIALIZATION_SEPARATOR + taskInfoDataset.getDatasetVersionId());
             createTask(ctx, task);
 
-            if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+            if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) && !isDatasetImportJob(ctx) ) {
                 SimpleTrigger duplicationImportTrigger = newTrigger().withIdentity(duplicationTriggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
 
                 try {
@@ -515,12 +515,16 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
         }
     }
-
+    
     @Override
     public void processImportationTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         // Validation
         taskServiceInvocationValidator.checkProcessImportationTask(ctx, importationJobKey, taskInfoDataset);
 
+        processCommonImportationTask(ctx, importationJobKey, taskInfoDataset);
+    }
+
+    private void processDatasetInImportTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         Task task = retrieveTaskByJob(ctx, importationJobKey);
 
         try {
@@ -536,16 +540,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
             throw throwableMetamacException;
         }
-
-        if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
-            markTaskAsFinished(ctx, importationJobKey); // Finish the importation
-        }
     }
-
-    @Override
-    public void processDatabaseImportationTask(ServiceContext ctx, String databaseImportationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
-        taskServiceInvocationValidator.checkProcessDatabaseImportationTask(ctx, databaseImportationJobKey, taskInfoDataset);
-
+    
+    private void processCommonImportationTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         String datasetVersionUrn = taskInfoDataset.getDatasetVersionId();
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
@@ -555,7 +552,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             // After versioning, it's necessary to update the task info because there is a new version of the dataset. The importation task should be applied to this.
             updateImportationTaskInfo(datasetVersionUrn, taskInfoDataset);
 
-            executeImportationTask(ctx, databaseImportationJobKey, taskInfoDataset);
+            executeImportationTask(ctx, importationJobKey, taskInfoDataset);
 
             updateMetadataDatasetVersion(ctx, datasetVersionUrn);
 
@@ -565,10 +562,17 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             publishDatasetVersion(ctx, datasetVersionUrn);
         } else {
-            executeImportationTask(ctx, databaseImportationJobKey, taskInfoDataset);
+            executeImportationTask(ctx, importationJobKey, taskInfoDataset);
         }
 
-        markDatabaseImportTaskAsFinished(ctx, databaseImportationJobKey);
+        markDatabaseImportTaskAsFinished(ctx, importationJobKey);
+    }
+    
+    @Override
+    public void processDatabaseImportationTask(ServiceContext ctx, String databaseImportationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessDatabaseImportationTask(ctx, databaseImportationJobKey, taskInfoDataset);
+        processCommonImportationTask(ctx, databaseImportationJobKey, taskInfoDataset);
+       
     }
 
     private String versioningDatasetVersion(ServiceContext ctx, String datasetVersionUrn) {
@@ -589,14 +593,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         taskInfoDataset.setDatasetVersionId(datasetVersionUrn);
     }
 
-    private void executeImportationTask(ServiceContext ctx, String databaseImportationJobKey, TaskInfoDataset taskInfoDataset) {
+    private void executeImportationTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) {
         logger.debug("Execute importation dataset task {}", taskInfoDataset.getDatasetVersionId());
 
         getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
 
             @Override
             protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                processImportationTask(ctx, databaseImportationJobKey, taskInfoDataset);
+                processDatasetInImportTask(ctx, importationJobKey, taskInfoDataset);
                 return null;
             }
         });
@@ -612,6 +616,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 // Retrieve dataset again to get it updated after importation task
                 DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
+                // TODO EDATOS-3729 poner if para el caso de zip automático ya que los campos vienen.
                 DatabaseDatasetImportUtils.setRequiredMetadataForDatabaseDatasetImportation(datasetVersion);
 
                 // It's necessary to save the new metadata of the dataset before continuing transiting it through the life cycle
@@ -742,10 +747,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         markTaskAsFinished(ctx, duplicationJobKey); // Finish the importation
     }
 
-    private String getDataViewsRole() throws MetamacException {
-        return configurationService.retrieveDbDataViewsRole();
-    }
-
     private void processRollbackDuplicationTask(ServiceContext ctx, Task task) throws MetamacException {
         markTaskAsFinished(ctx, task.getJob());
     }
@@ -787,7 +788,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         taskServiceInvocationValidator.checkExistImportationTaskInResource(ctx, resourceId);
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
-            return sched.checkExists(createJobKeyForImportationResource(resourceId));
+            return !isDatasetImportJob(ctx) && sched.checkExists(createJobKeyForImportationResource(resourceId));
         } catch (SchedulerException e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
         }
@@ -1321,6 +1322,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.IMPORTATION_CSV_FILE_ERROR).withMessageParameters(ExceptionHelper.excMessage(e)).build();
         }
+    }
+    
+    private Boolean isDatasetImportJob(ServiceContext ctx) {
+        return Boolean.TRUE.equals(ctx.getProperty(ImportDatasetJob.DATASET_IMPORT_JOB_FLAG));
     }
     
     private void setContextPropertiesForDbImportJob(ServiceContext ctx, DateTime executionDate, Datasource datasource) {
