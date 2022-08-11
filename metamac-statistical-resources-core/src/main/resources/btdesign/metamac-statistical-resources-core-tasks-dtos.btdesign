@@ -14,7 +14,11 @@ Application DatasetsStatisticalResourcesDto {
 			String datasetVersionId;
 			String datasetUrn;
 			String statisticalOperationUrn;
-			Boolean storeAlternativeRepresentations
+			Boolean storeAlternativeRepresentations;
+			List<String> datasetVersionRationaleTypes;
+			String datasetNextVersion;
+			String datasetNextVersionDate;
+			
  		}
 
 		DataTransferObject FileDescriptor {

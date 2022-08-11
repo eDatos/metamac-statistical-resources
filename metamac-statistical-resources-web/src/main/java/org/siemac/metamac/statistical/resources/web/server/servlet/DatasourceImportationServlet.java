@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -27,9 +29,11 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.client.WebMessageExceptionsConstants;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
@@ -44,6 +48,9 @@ import com.google.inject.Singleton;
 public class DatasourceImportationServlet extends BaseHttpServlet {
 
     private static Logger logger = Logger.getLogger(DatasourceImportationServlet.class.getName());
+    public static final String[] FIELDSVERSIONABLESTATISTICALRESOURCEDTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
+            StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION, VersionableResourceDS.VERSION_RATIONALE_TYPES,
+            VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION};
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -71,7 +78,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         String fileName = new String();
         InputStream inputStream = null;
         Boolean mustBeZip = false;
-
+        BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto = new BasicVersionableStatisticalResourceDto();
         try {
 
             DiskFileItemFactory factory = new DiskFileItemFactory();
@@ -89,7 +96,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             while (itr.hasNext()) {
                 DiskFileItem item = (DiskFileItem) itr.next();
                 if (item.isFormField()) {
-                    args.put(item.getFieldName(), item.getString());
+                    getFormFields(item, basicVersionableStatisticalResourceDto, args);
                 } else {
                     fileName = item.getName();
                     inputStream = item.getInputStream();
@@ -99,13 +106,13 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             String tempZipFilePathName = inputStreamToTempFile(fileName, inputStream);
             File outputFolder = (File) getServletContext().getAttribute("javax.servlet.context.tempdir");
             File uploadedFile = new File(tempZipFilePathName);
+                       
             mustBeZip = BooleanUtils.toBoolean(args.get(StatisticalResourcesSharedTokens.UPLOAD_MUST_BE_ZIP_FILE));
-
             ImportableResourceTypeEnum importableResourceType = getImportableResourceType(args);
             if (ImportableResourceTypeEnum.PUBLICATION_VERSION_STRUCTURE.equals(importableResourceType)) {
                 importPublicationVersionStructure(uploadedFile, args);
             } else {
-                importDatasource(mustBeZip, uploadedFile, outputFolder, args);
+                importDatasource(mustBeZip, uploadedFile, outputFolder, args, basicVersionableStatisticalResourceDto);
             }
 
             sendSuccessImportationResponse(response, fileName, mustBeZip);
@@ -130,7 +137,36 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         }
     }
 
-    private void importDatasource(Boolean mustBeZip, File uploadedFile, File outputFolder, HashMap<String, String> args) throws MetamacWebException, ZipException, IOException, MetamacException {
+    private void getFormFields(DiskFileItem item, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, HashMap<String, String> args) throws ParseException {
+        if (Arrays.asList(FIELDSVERSIONABLESTATISTICALRESOURCEDTO).contains(item.getFieldName())) {
+            fillBasicVersionableStatisticalResourceDto(item, basicVersionableStatisticalResourceDto);
+        } else {
+            args.put(item.getFieldName(), item.getString());
+        }
+    }
+
+    private void fillBasicVersionableStatisticalResourceDto(DiskFileItem item, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws ParseException {
+        if (StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES.equals(item.getFieldName())) {
+            getListVersionRationaleTypeFromRequest(item.getString().split(","), basicVersionableStatisticalResourceDto);
+        }
+
+        if (StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION.equals(item.getFieldName())) {
+            basicVersionableStatisticalResourceDto.setNextVersionDate(item.getString());
+        }
+
+        if (StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION.equals(item.getFieldName())) {
+            basicVersionableStatisticalResourceDto.setNextVersion(item.getString());
+        }
+    }
+
+    private void getListVersionRationaleTypeFromRequest(String[] versionRationaleType, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
+
+        for (String itemVersionRationaleType : versionRationaleType) {
+            basicVersionableStatisticalResourceDto.getVersionRationaleTypes().add((itemVersionRationaleType));
+        }
+    }
+    
+    private void importDatasource(Boolean mustBeZip, File uploadedFile, File outputFolder, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacWebException, ZipException, IOException, MetamacException {
 
         StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(
                 StatisticalResourcesServiceFacade.BEAN_ID);
@@ -163,9 +199,9 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (StringUtils.isNotBlank(datasetVersionUrn)) {
             Map<String, String> dimensionMapping = buildDimensionsMappings(args);
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
-            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping);
+            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping, null);
         } else if (StringUtils.isNotBlank(statisticalOperationCode)) {
-            statisticalResourcesServiceFacade.importDatasourcesInStatisticalOperation(ServiceContextHolder.getCurrentServiceContext(), statisticalOperationCode, fileUrls);
+            statisticalResourcesServiceFacade.importDatasourcesInStatisticalOperation(ServiceContextHolder.getCurrentServiceContext(), statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
         }
     }
 

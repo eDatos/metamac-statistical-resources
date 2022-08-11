@@ -142,10 +142,10 @@ Application FacadeStatisticalResources {
     		List<@CodeItemDto> retrieveCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId) throws MetamacException;
     		List<@CodeItemDto> filterCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId, String filter) throws MetamacException;
     		"Import a set of files provided by urn as datasources in a datasetVersion"
-    		importDatasourcesInDatasetVersion(@DatasetVersionDto datasetVersionDto, List<URL> fileUrls, Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
+    		importDatasourcesInDatasetVersion(@DatasetVersionDto datasetVersionDto, List<URL> fileUrls, Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
     		"Create a database datasource in a datasetVersion"
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
-    		importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls) throws MetamacException;
+    		importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
     		"Create an attribute instance"
     		@DsdAttributeInstanceDto createAttributeInstance(String datasetVersionUrn, @DsdAttributeInstanceDto dsdAttributeInstanceDto) throws MetamacException;
     		"Update an attribute instance"

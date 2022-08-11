@@ -22,4 +22,8 @@ public class StatisticalResourcesSharedTokens extends org.siemac.metamac.web.com
     public static final String UPLOAD_PARAM_DIM_PREFIX              = "dim-";
     public static final String UPLOAD_MUST_BE_ZIP_FILE              = "importation-zip-file";
     public static final String UPLOAD_RESOURCE_TYPE                 = "import-resource-type";
+    public static final String UPLOAD_VERSION_RATIONALE_TYPES       = "import-ver-rat-type";
+    public static final String UPLOAD_NEXT_VERSION                  = "import-ver-next-ver";
+    public static final String UPLOAD_DATE_NEXT_VERSION             = "import-ver-date-next-ver";
+    
 }

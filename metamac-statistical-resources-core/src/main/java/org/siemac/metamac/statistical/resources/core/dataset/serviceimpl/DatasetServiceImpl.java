@@ -73,6 +73,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOff
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
@@ -720,19 +721,19 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void importDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping) throws MetamacException {
-        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.FILE);
+            boolean storeDimensionRepresentationMapping, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.FILE, basicVersionableStatisticalResourceDto);
     }
 
     @Override
     public void importDatabaseDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
             boolean storeDimensionRepresentationMapping) throws MetamacException {
-        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.DATABASE);
+        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.DATABASE, null);
     }
 
     private void importDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping, DataSourceTypeEnum expectedDataSourceTypeEnum) throws MetamacException {
-        datasetServiceInvocationValidator.checkImportDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
+            boolean storeDimensionRepresentationMapping, DataSourceTypeEnum expectedDataSourceTypeEnum, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+        datasetServiceInvocationValidator.checkImportDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, basicVersionableStatisticalResourceDto);
 
         DatasetVersion datasetVersion = getDatasetVersionRepository().retrieveByUrn(datasetVersionUrn);
 
@@ -744,13 +745,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkFilesCanBeAssociatedWithDataset(datasetUrn, datasetVersionUrn, fileUrls);
 
-        TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
+        TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, basicVersionableStatisticalResourceDto);
 
         getTaskService().planifyImportationDataset(ctx, taskInfo);
     }
 
     private TaskInfoDataset buildImportationTaskInfo(DatasetVersion datasetVersion, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping) {
+            boolean storeDimensionRepresentationMapping, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         TaskInfoDataset taskInfo = new TaskInfoDataset();
@@ -759,7 +760,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
         taskInfo.setStoreAlternativeRepresentations(storeDimensionRepresentationMapping);
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-
+        taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
+        taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
+        taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
         for (String dimensionId : dimensionRepresentationMapping.keySet()) {
             AlternativeEnumeratedRepresentation representation = new AlternativeEnumeratedRepresentation();
             representation.setComponentId(dimensionId);
@@ -817,8 +820,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls) throws MetamacException {
-        datasetServiceInvocationValidator.checkImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls);
+    public void importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+        datasetServiceInvocationValidator.checkImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
 
         Map<String, List<URL>> datasetVersionsForFiles = organizeFilesByDatasetVersionCode(statisticalOperationCode, fileUrls);
 
@@ -829,7 +832,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 HashMap<String, String> dimensionRepresentationMapping = new HashMap<String, String>();
                 boolean storeDimensionRepresentationMapping = false;
 
-                importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, urls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
+                importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, urls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, basicVersionableStatisticalResourceDto);
             } catch (MetamacException e) {
                 MetamacExceptionItem item = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_DATASET_VERSION_ERROR, datasetVersionUrn);
                 item.setExceptionItems(e.getExceptionItems());

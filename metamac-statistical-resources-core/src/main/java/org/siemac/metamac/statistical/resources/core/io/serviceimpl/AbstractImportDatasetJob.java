@@ -44,6 +44,9 @@ public abstract class AbstractImportDatasetJob implements Job {
     public static final String         DATASET_VERSION_ID                = "datasetVersionId";
     public static final String         ALTERNATIVE_REPRESENTATIONS       = "alternativeRepresentations";
     public static final String         STORE_ALTERNATIVE_REPRESENTATIONS = "storeAlternativeRepresentations";
+    public static final String         DATASET_VERSION_RATIONALE_TYPES   = "datasetVersionRationaleTypes";
+    public static final String         DATASET_NEXT_VERSION              = "datasetNextVersion";
+    public static final String         DATASET_NEXT_VERSION_DATE          = "datasetNextVersionDate";
     public static final String         TASK_NAME                         = "taskName";
 
     private TaskServiceFacade          taskServiceFacade                 = null;
@@ -76,6 +79,9 @@ public abstract class AbstractImportDatasetJob implements Job {
         Boolean storeAlternativeRepresentations = data.getBoolean(STORE_ALTERNATIVE_REPRESENTATIONS);
         String taskName = data.getString(TASK_NAME);
         String user = data.getString(USER);
+        String datasetVersionRationaleTypes = data.getString(DATASET_VERSION_RATIONALE_TYPES); 
+        String datasetNextVersion = data.getString(DATASET_NEXT_VERSION);
+        String datasetNextVersionDate = data.getString(DATASET_NEXT_VERSION_DATE);
 
         try {
             logger.info("Importation job: {} starting at {}", jobKey, new Date());
@@ -90,6 +96,10 @@ public abstract class AbstractImportDatasetJob implements Job {
             taskInfoDataset.setDatasetVersionId(datasetVersionId);
             taskInfoDataset.getAlternativeRepresentations().addAll(inflateAlternativeRepresentations(alternativeRepresentations));
             taskInfoDataset.setStoreAlternativeRepresentations(storeAlternativeRepresentations);
+            taskInfoDataset.setDatasetVersionRationaleTypes(inflateDatasetVersionRationaleTypes(datasetVersionRationaleTypes));
+            taskInfoDataset.setDatasetNextVersion(datasetNextVersion);
+            taskInfoDataset.setDatasetNextVersionDate(datasetNextVersionDate);
+            
 
             executeImportTask(serviceContext, taskName, taskInfoDataset);
 
@@ -166,5 +176,18 @@ public abstract class AbstractImportDatasetJob implements Job {
         }
 
         return alternativeRepresentationList;
+    }
+    
+    private List<String> inflateDatasetVersionRationaleTypes(String datasetVersionRationaleTypes) {
+        List<String> datasetVersionRationaleTypesList = new ArrayList<String>();
+        if (!StringUtils.isEmpty(datasetVersionRationaleTypes)) {
+            String[] pairs = datasetVersionRationaleTypes.split("\\" + JobUtil.SERIALIZATION_SEPARATOR);
+
+            for (int i = 0; i < pairs.length; i++) {
+                datasetVersionRationaleTypesList.add(pairs[i]);
+            }
+        }
+
+        return datasetVersionRationaleTypesList;
     }
 }

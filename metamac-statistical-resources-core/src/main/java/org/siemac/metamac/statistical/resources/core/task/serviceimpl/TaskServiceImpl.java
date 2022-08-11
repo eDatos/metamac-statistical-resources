@@ -107,6 +107,7 @@ import org.siemac.metamac.statistical.resources.core.task.exception.TaskNotFound
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.validators.TaskServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
+import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -265,9 +266,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             StringBuilder fileNames = new StringBuilder();
             StringBuilder fileFormats = new StringBuilder();
             StringBuilder alternativeRepresentations = new StringBuilder();
+            StringBuilder datasetVersionRationaleTypes = new StringBuilder();
             serializeFilePathsAndNames(taskInfoDataset, filePaths, fileNames, fileFormats);
             serializeAlternativeRepresentations(taskInfoDataset, alternativeRepresentations);
-
+            serializeDatasetVersionRationaleTypes(taskInfoDataset, datasetVersionRationaleTypes);
             checkExistTaskInResource(ctx, jobKey, datasetUrn);
 
             // Checking garbage
@@ -290,7 +292,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 }
             }
 
-            JobDetail job = createJob(ctx, jobKey, taskName, filePaths, fileNames, fileFormats, alternativeRepresentations, taskInfoDataset);
+            JobDetail job = createJob(ctx, jobKey, taskName, filePaths, fileNames, fileFormats, alternativeRepresentations, datasetVersionRationaleTypes, taskInfoDataset);
 
             // No existing Job
             Task newTask = new Task(taskName);
@@ -336,7 +338,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private JobDetail createJob(ServiceContext serviceContext, JobKey jobKey, String taskName, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats,
-            StringBuilder alternativeRepresentations, TaskInfoDataset taskInfoDataset) {
+            StringBuilder alternativeRepresentations, StringBuilder versionRationaleTypes,  TaskInfoDataset taskInfoDataset) {
         // @formatter:off
         JobBuilder jobBuilder = 
                 newJob().withIdentity(jobKey)
@@ -348,6 +350,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(AbstractImportDatasetJob.DATASET_URN, taskInfoDataset.getDatasetUrn())
                     .usingJobData(AbstractImportDatasetJob.DATA_STRUCTURE_URN, taskInfoDataset.getDataStructureUrn())
                     .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION, taskInfoDataset.getDatasetNextVersion())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION_DATE, taskInfoDataset.getDatasetNextVersionDate())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString())
                     .usingJobData(AbstractImportDatasetJob.TASK_NAME, taskName)
                     .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId());
         // @formatter:on
@@ -442,7 +447,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setExtensionPoint(newDatasetId + JobUtil.SERIALIZATION_SEPARATOR + taskInfoDataset.getDatasetVersionId());
             createTask(ctx, task);
 
-            if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) && !isDatasetImportJob(ctx) ) {
+            if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) && !DatasetImportUtils.isDatasetImportJob(ctx) ) {
                 SimpleTrigger duplicationImportTrigger = newTrigger().withIdentity(duplicationTriggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
 
                 try {
@@ -554,7 +559,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             executeImportationTask(ctx, importationJobKey, taskInfoDataset);
 
-            updateMetadataDatasetVersion(ctx, datasetVersionUrn);
+            updateMetadataDatasetVersion(ctx, datasetVersionUrn, taskInfoDataset);
 
             sendDatasetVersionToProductionValidation(ctx, datasetVersionUrn);
 
@@ -606,7 +611,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         });
     }
 
-    private void updateMetadataDatasetVersion(ServiceContext ctx, String datasetVersionUrn) {
+    private void updateMetadataDatasetVersion(ServiceContext ctx, String datasetVersionUrn, TaskInfoDataset taskInfoDataset) {
         logger.debug("Updating required metada for dataset {}", datasetVersionUrn);
 
         getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
@@ -616,8 +621,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 // Retrieve dataset again to get it updated after importation task
                 DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
-                // TODO EDATOS-3729 poner if para el caso de zip automático ya que los campos vienen.
-                DatabaseDatasetImportUtils.setRequiredMetadataForDatabaseDatasetImportation(datasetVersion);
+                if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+                    DatabaseDatasetImportUtils.setRequiredMetadataForDatabaseDatasetImportation(datasetVersion);
+                } else {
+                    DatasetImportUtils.setRequiredMetadataForDatasetImportation(datasetVersion, taskInfoDataset);
+                }
 
                 // It's necessary to save the new metadata of the dataset before continuing transiting it through the life cycle
                 datasetService.updateDatasetVersion(ctx, datasetVersion);
@@ -627,6 +635,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         });
     }
 
+    
+    
     private void sendDatasetVersionToProductionValidation(ServiceContext ctx, String datasetVersionUrn) {
         logger.debug("Sending to production validation dataset {}", datasetVersionUrn);
 
@@ -788,7 +798,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         taskServiceInvocationValidator.checkExistImportationTaskInResource(ctx, resourceId);
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
-            return !isDatasetImportJob(ctx) && sched.checkExists(createJobKeyForImportationResource(resourceId));
+            return !DatasetImportUtils.isDatasetImportJob(ctx) && sched.checkExists(createJobKeyForImportationResource(resourceId));
         } catch (SchedulerException e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
         }
@@ -995,6 +1005,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
+    protected void serializeDatasetVersionRationaleTypes(TaskInfoDataset taskInfoDataset, StringBuilder datasetVersionRationaleTypes) throws IOException, FileNotFoundException {
+        for (String datasetVersionRationaleType : taskInfoDataset.getDatasetVersionRationaleTypes()) {
+            if (datasetVersionRationaleTypes.length() > 0) {
+                datasetVersionRationaleTypes.append(JobUtil.SERIALIZATION_SEPARATOR);
+            }
+            datasetVersionRationaleTypes.append(datasetVersionRationaleType);
+        }
+    }
+    
     private void processDatasets(ServiceContext ctx, TaskInfoDataset taskInfoDataset, DateTime dateTime) throws Exception {
         DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(taskInfoDataset.getDataStructureUrn());
 
@@ -1322,10 +1341,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.IMPORTATION_CSV_FILE_ERROR).withMessageParameters(ExceptionHelper.excMessage(e)).build();
         }
-    }
-    
-    private Boolean isDatasetImportJob(ServiceContext ctx) {
-        return Boolean.TRUE.equals(ctx.getProperty(ImportDatasetJob.DATASET_IMPORT_JOB_FLAG));
     }
     
     private void setContextPropertiesForDbImportJob(ServiceContext ctx, DateTime executionDate, Datasource datasource) {

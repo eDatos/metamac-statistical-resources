@@ -9,6 +9,7 @@ import "classpath:/btdesign/metamac-statistical-resources-core-datasets-dtos.btd
 import "classpath:/btdesign/metamac-statistical-resources-core-datasets.btdesign"
 
 import "classpath:/btdesign/metamac-statistical-resources-core-tasks.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-tasks-dtos.btdesign"
 
 import "classpath:/btdesign/metamac-statistical-resources-core-queries-dtos.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-queries.btdesign"

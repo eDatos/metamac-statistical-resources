@@ -86,7 +86,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
         // Import datasources window
 
-        importDatasourcesWindow = new ImportDatasourcesWindow();
+        importDatasourcesWindow = new ImportDatasourcesWindow(Boolean.TRUE);
         importDatasourcesWindow.setUploadListener(new UploadListener() {
 
             @Override

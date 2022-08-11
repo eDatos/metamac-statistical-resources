@@ -48,6 +48,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDo2Dt
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatRepoDto2StatisticalResourcesDtoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatisticalResourcesDto2StatRepoDtoMapper;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.ContentConstraintDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueDto;
@@ -1090,7 +1091,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public void importDatasourcesInDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping) throws MetamacException {
+            boolean storeDimensionRepresentationMapping, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canImportDatasourcesInDatasetVersion(ctx, datasetVersionDto.getStatisticalOperation().getCode());
 
@@ -1099,15 +1100,15 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Service
         getDatasetService().importDatasourcesInDatasetVersion(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), fileUrls, dimensionRepresentationMapping,
-                storeDimensionRepresentationMapping);
+                storeDimensionRepresentationMapping, basicVersionableStatisticalResourceDto);
     }
 
     @Override
-    public void importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls) throws MetamacException {
+    public void importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode);
 
-        getDatasetService().importDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls);
+        getDatasetService().importDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
     }
 
     @Override

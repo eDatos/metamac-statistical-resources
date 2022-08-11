@@ -84,6 +84,11 @@ Application StatisticalResourcesDto {
 			- @ExternalItemDto maintainer;
 		}
 		
+		DataTransferObject BasicVersionableStatisticalResourceDto {
+			String nextVersionDate;
+			String nextVersion;
+			List<String> versionRationaleTypes;
+		}
 		
 		DataTransferObject SiemacMetadataStatisticalResourceBaseDto extends @LifeCycleStatisticalResourceBaseDto {
 		}
