@@ -97,6 +97,7 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
+import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.CodeDimensionEqualsIdentifierPredicate;
@@ -194,7 +195,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return datasource;
     }
 
-    protected void updateDbDatasource(DatasetVersion datasetVersion) throws MetamacException {
+    protected void updateAutomaticDatasource(DatasetVersion datasetVersion) throws MetamacException {
         datasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime());
 
         computeDataRelatedMetadata(datasetVersion);
@@ -728,7 +729,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     @Override
     public void importDatabaseDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
             boolean storeDimensionRepresentationMapping) throws MetamacException {
-        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.DATABASE, null);
+        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.DATABASE, new BasicVersionableStatisticalResourceDto());
     }
 
     private void importDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
@@ -763,6 +764,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
         taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
         taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
+        taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
         for (String dimensionId : dimensionRepresentationMapping.keySet()) {
             AlternativeEnumeratedRepresentation representation = new AlternativeEnumeratedRepresentation();
             representation.setComponentId(dimensionId);
@@ -896,7 +898,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 createDatasource(ctx, datasetImportationId, datasource);
             }
         } else {
-            updateDbDatasource(datasetVersion);
+            updateAutomaticDatasource(datasetVersion);
         }
     }
 

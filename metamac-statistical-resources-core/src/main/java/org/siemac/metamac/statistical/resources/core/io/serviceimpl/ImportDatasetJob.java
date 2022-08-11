@@ -22,8 +22,12 @@ public class ImportDatasetJob extends AbstractImportDatasetJob {
 
     @Override
     protected ServiceContext setAdditionalProperties(ServiceContext serviceContext, JobDataMap jobDataMap) {
-        serviceContext.setProperty(DATASET_IMPORT_JOB_FLAG, Boolean.TRUE);
+        serviceContext.setProperty(DATASET_IMPORT_JOB_FLAG, isAutomaticLifeCicle(jobDataMap));
         return serviceContext;
+    }
+    
+    private Boolean isAutomaticLifeCicle(JobDataMap jobDataMap) {
+        return jobDataMap.getBoolean(DATASET_AUTOMATIC_LIFE_CICLE);
     }
 
     @Override

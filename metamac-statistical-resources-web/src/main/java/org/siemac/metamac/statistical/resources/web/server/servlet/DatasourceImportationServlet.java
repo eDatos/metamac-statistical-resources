@@ -49,7 +49,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
 
     private static Logger logger = Logger.getLogger(DatasourceImportationServlet.class.getName());
     public static final String[] FIELDSVERSIONABLESTATISTICALRESOURCEDTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
-            StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION, VersionableResourceDS.VERSION_RATIONALE_TYPES,
+            StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS,  StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION, VersionableResourceDS.VERSION_RATIONALE_TYPES,
             VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION};
 
     @Override
@@ -108,6 +108,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             File uploadedFile = new File(tempZipFilePathName);
                        
             mustBeZip = BooleanUtils.toBoolean(args.get(StatisticalResourcesSharedTokens.UPLOAD_MUST_BE_ZIP_FILE));
+           
             ImportableResourceTypeEnum importableResourceType = getImportableResourceType(args);
             if (ImportableResourceTypeEnum.PUBLICATION_VERSION_STRUCTURE.equals(importableResourceType)) {
                 importPublicationVersionStructure(uploadedFile, args);
@@ -157,6 +158,10 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setNextVersion(item.getString());
         }
+        
+        if (StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS.equals(item.getFieldName())) {
+            basicVersionableStatisticalResourceDto.setAutomaticLifeCicle(BooleanUtils.toBoolean(item.getString()));
+        }
     }
 
     private void getListVersionRationaleTypeFromRequest(String[] versionRationaleType, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
@@ -199,7 +204,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (StringUtils.isNotBlank(datasetVersionUrn)) {
             Map<String, String> dimensionMapping = buildDimensionsMappings(args);
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
-            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping, null);
+            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping, new BasicVersionableStatisticalResourceDto());
         } else if (StringUtils.isNotBlank(statisticalOperationCode)) {
             statisticalResourcesServiceFacade.importDatasourcesInStatisticalOperation(ServiceContextHolder.getCurrentServiceContext(), statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
         }

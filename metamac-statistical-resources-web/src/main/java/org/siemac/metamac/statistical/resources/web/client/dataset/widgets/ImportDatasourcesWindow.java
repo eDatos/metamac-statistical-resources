@@ -5,10 +5,13 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import static org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens.UPLOAD_RESOURCE_TYPE;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
@@ -28,13 +31,13 @@ import com.smartgwt.client.widgets.form.fields.HiddenItem;
 public class ImportDatasourcesWindow extends ImportResourceWindow {
 
     protected WarningLabel warningLabel;
+    protected WarningLabel warningLabelVersionRationaleType;
     
     public ImportDatasourcesWindow(Boolean hasExtraFields) {
         super(getConstants().actionLoadDatasources());
         buildExtraFieldsConfiguration(hasExtraFields);
         buildInformationLabel();
         buildWarningLabel();
-
         UploadDatasourceForm form = new UploadDatasourceForm(hasExtraFields);
         setForm(form);
        
@@ -81,7 +84,7 @@ public class ImportDatasourcesWindow extends ImportResourceWindow {
             HiddenItem operationUrnItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_OPERATION_CODE);
             HiddenItem mustBeZip = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_MUST_BE_ZIP_FILE);
             mustBeZip.setDefaultValue(true);
-
+                       
             HiddenItem resourceTypeItem = new HiddenItem(UPLOAD_RESOURCE_TYPE);
             resourceTypeItem.setDefaultValue(ImportableResourceTypeEnum.DATASOURCE.name());
 
@@ -102,20 +105,42 @@ public class ImportDatasourcesWindow extends ImportResourceWindow {
 
         private List<FormItem> addExtraFields() {
          
+            HiddenItem extraFields = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS);
+            extraFields.setDefaultValue(true);
+            
             List<FormItem> extraItemsToAdd = new ArrayList<FormItem>();
             HiddenItem versionRationaleTypeItemInternal = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES);
             final SearchVersionRationaleTypeItem searchVersionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES, getConstants()
                     .versionableStatisticalResourceVersionRationaleTypes(), true);
+            searchVersionRationaleTypeItem.setVersionRationaleTypes(getDefaultVersionRationaleType());
+            //searchVersionRationaleTypeItem.setRequired(true);
             searchVersionRationaleTypeItem.setWidth(350);
             
             HiddenItem nextVersionItemInternal = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION);
             final CustomSelectItem nextVersion = new CustomSelectItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion());
             nextVersion.setValueMap(CommonUtils.getStatisticalResourceNextVersionHashMap());
+            //nextVersion.setRequired(true);
+            nextVersion.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
+
+                @Override
+                public void onChange(com.smartgwt.client.widgets.form.fields.events.ChangeEvent event) {
+                    String nextVersionValue = event.getValue().toString();
+                    CustomDateItem dateNextVersion = ((CustomDateItem) getItem(VersionableResourceDS.DATE_NEXT_VERSION));
+                    if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
+                        dateNextVersion.show();
+                    } else {
+                        if (Boolean.TRUE.equals(dateNextVersion.isVisible())) {
+                            dateNextVersion.hide();
+                        }
+                    }
+                }
+            });
             nextVersion.setWidth(350);
             
             HiddenItem nextVersionDateInternal = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION);
             CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
             
+            extraItemsToAdd.add(extraFields);
             extraItemsToAdd.add(versionRationaleTypeItemInternal);
             extraItemsToAdd.add(searchVersionRationaleTypeItem);
             extraItemsToAdd.add(nextVersionItemInternal);
@@ -125,11 +150,18 @@ public class ImportDatasourcesWindow extends ImportResourceWindow {
             return extraItemsToAdd;
         }
      
+        private List<VersionRationaleTypeDto> getDefaultVersionRationaleType() {
+            List<VersionRationaleTypeDto> versionRationaleTypesDto = new ArrayList<VersionRationaleTypeDto>();
+            versionRationaleTypesDto.add(new VersionRationaleTypeDto(VersionRationaleTypeEnum.MINOR_DATA_UPDATE));
+            return versionRationaleTypesDto;
+        }
+        
         private void prepareRequiredFileCheck() {
             getUploadItem().addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
 
                 @Override
                 public void onChange(com.smartgwt.client.widgets.form.fields.events.ChangeEvent event) {
+                    String displayValue = ImportDatasourcesWindow.this.form.getUploadItem().getDisplayValue();
                     warningLabel.hide();
                 }
             });
@@ -138,11 +170,11 @@ public class ImportDatasourcesWindow extends ImportResourceWindow {
 
                 @Override
                 public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                    String displayValue = ImportDatasourcesWindow.this.form.getUploadItem().getDisplayValue();
+                    String displayValue = ImportDatasourcesWindow.this.form.getUploadItem().getDisplayValue();                                       
                     if (StringUtils.isBlank(displayValue)) {
                         warningLabel.show();
                     }
- 
+    
                     setExtraFields();
                 }
             });
@@ -150,25 +182,33 @@ public class ImportDatasourcesWindow extends ImportResourceWindow {
 
         private void setExtraFields() {
             if (Boolean.TRUE.equals(this.hasExtraFields)) {
-                setVersionRationaleTypeItem();
-                setNextVersion();
-                setDateNextVersion();
+                setFormFieldVersionRationaleTypeItem();
+                setFormFieldNextVersion();
+                setFormFieldDateNextVersion();
             }
         }
 
-        private void setNextVersion() {
-            form.setValue(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION,
-                    !StringUtils.isBlank(getValueAsString(VersionableResourceDS.NEXT_VERSION)) ? getValueAsString(VersionableResourceDS.NEXT_VERSION) : null);
+        private void setFormFieldNextVersion() {
+            form.setValue(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, getFieldNextVersion());
         }
 
-        private void setDateNextVersion() {
-            form.setValue(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,((CustomDateItem) getItem(VersionableResourceDS.DATE_NEXT_VERSION)).getValueAsDate());
+        private String getFieldNextVersion() {
+            return !StringUtils.isBlank(getValueAsString(VersionableResourceDS.NEXT_VERSION)) ? getValueAsString(VersionableResourceDS.NEXT_VERSION) : null;
         }
         
-        private void setVersionRationaleTypeItem() {
+        private void setFormFieldDateNextVersion() {
+            String nextVersionValue = getFieldNextVersion();
+            Date dateNextVersionValue = null;
+            if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
+                dateNextVersionValue = ((CustomDateItem) getItem(VersionableResourceDS.DATE_NEXT_VERSION)).getValueAsDate();
+            }
+            form.setValue(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION, dateNextVersionValue);
+        }
+        
+        private void setFormFieldVersionRationaleTypeItem() {
             List<VersionRationaleTypeDto> versionRationaleTypeDto = new ArrayList<VersionRationaleTypeDto>();
             versionRationaleTypeDto.addAll(((SearchVersionRationaleTypeItem) getItem(VersionableResourceDS.VERSION_RATIONALE_TYPES)).getSelectedVersionRationaleTypeDtos());
-
+            
             StringBuilder versionRationaleTypes = new StringBuilder();
             for (VersionRationaleTypeDto item : versionRationaleTypeDto) {
                 if (versionRationaleTypes.length() != 0) {
@@ -176,7 +216,7 @@ public class ImportDatasourcesWindow extends ImportResourceWindow {
                 }
                 versionRationaleTypes.append(item.getValue().getName());
             }
-
+            
             form.setValue(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString());
         }
     }
@@ -208,7 +248,7 @@ public class ImportDatasourcesWindow extends ImportResourceWindow {
     public void uploadZipFailed(String errorMessage) {
         super.uploadFailed(errorMessage);
     }
- 
+    
     protected native void initZipComplete(ImportDatasourcesWindow upload) /*-{
                                                                           $wnd.uploadZipComplete = function(fileName) {
                                                                           upload.@org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportDatasourcesWindow::uploadZipComplete(Ljava/lang/String;)(fileName);

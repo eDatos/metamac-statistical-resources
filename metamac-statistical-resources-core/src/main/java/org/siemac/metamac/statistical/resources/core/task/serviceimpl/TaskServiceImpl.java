@@ -353,6 +353,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION, taskInfoDataset.getDatasetNextVersion())
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION_DATE, taskInfoDataset.getDatasetNextVersionDate())
                     .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_AUTOMATIC_LIFE_CICLE, taskInfoDataset.getDatasetAutomaticLifeCicle())
                     .usingJobData(AbstractImportDatasetJob.TASK_NAME, taskName)
                     .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId());
         // @formatter:on
@@ -525,8 +527,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public void processImportationTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         // Validation
         taskServiceInvocationValidator.checkProcessImportationTask(ctx, importationJobKey, taskInfoDataset);
-
-        processCommonImportationTask(ctx, importationJobKey, taskInfoDataset);
+        if (Boolean.TRUE.equals(taskInfoDataset.getDatasetAutomaticLifeCicle())) {
+            processCommonImportationTask(ctx, importationJobKey, taskInfoDataset);
+        } else {
+            processDatasetInImportTask(ctx, importationJobKey, taskInfoDataset);
+        }
     }
 
     private void processDatasetInImportTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {

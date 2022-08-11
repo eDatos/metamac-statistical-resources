@@ -88,6 +88,8 @@ Application StatisticalResourcesDto {
 			String nextVersionDate;
 			String nextVersion;
 			List<String> versionRationaleTypes;
+			Boolean automaticLifeCicle;
+			
 		}
 		
 		DataTransferObject SiemacMetadataStatisticalResourceBaseDto extends @LifeCycleStatisticalResourceBaseDto {

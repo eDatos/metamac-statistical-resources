@@ -17,7 +17,7 @@ public class DatasetImportUtils {
         super();
     }
 
-    public static Boolean isDatasetImportJob(ServiceContext ctx) {
+    public static boolean isDatasetImportJob(ServiceContext ctx) {
         return Boolean.TRUE.equals(ctx.getProperty(ImportDatasetJob.DATASET_IMPORT_JOB_FLAG));
     }
 
@@ -36,17 +36,21 @@ public class DatasetImportUtils {
     }
 
     private static void setDatasetVersionNextVersion(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
-        if (taskInfoDataset.getDatasetNextVersion() != null) {
+        if (!isBlank(taskInfoDataset.getDatasetNextVersion())) {
             datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.valueOf(taskInfoDataset.getDatasetNextVersion()));
         }
     }
 
     private static void setDatasetVersionNextVersionDate(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
-        if (taskInfoDataset.getDatasetNextVersionDate() != null) {
+        if (!isBlank(taskInfoDataset.getDatasetNextVersionDate())) {
             datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(getFormattedDateTime(taskInfoDataset.getDatasetNextVersionDate()));
         }
     }
 
+    private static boolean isBlank(String cadena) {
+        return cadena == null || "".equals(cadena);  
+    }
+    
     public static DateTime getFormattedDateTime(String date) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
         return formatter.parseDateTime(date);
