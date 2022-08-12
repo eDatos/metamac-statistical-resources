@@ -98,14 +98,17 @@ public class DatasourceImportationPreviewServlet extends BaseHttpServlet {
                     filename = item.getName();
                 }
             }
-
+            
             String datasetVersionUrn = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
-
+            String message = null;
+            if (datasetVersionUrn != null && !"".equals(datasetVersionUrn) ) {
+            
             DimensionRepresentationMappingDto mapping = statisticalResourcesServiceFacade.retrieveDimensionRepresentationMappings(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn,
                     filename);
             DimensionRepresentationMappingWebDto mappingExternalItem = dimensionRepresentationMappingDto2WebDto(mapping);
 
-            String message = serializeResourceJson(mappingExternalItem).toJSONString();
+             message = serializeResourceJson(mappingExternalItem).toJSONString();
+            }
             sendSuccessImportationResponse(response, StringEscapeUtils.escapeJavaScript(message));
 
         } catch (Exception e) {

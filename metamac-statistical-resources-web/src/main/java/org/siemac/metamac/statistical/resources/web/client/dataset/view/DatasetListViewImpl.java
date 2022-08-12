@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.view;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
 import java.util.List;
+import java.util.Map;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
@@ -14,9 +15,12 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.Data
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetDatasourcesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionSearchSectionStack;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportDatasourceWithMappingWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportDatasourcesWindow;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportZipDatasourceWithMappingWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.NewDatasetWindow;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
@@ -45,7 +49,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
     private CustomToolStripButton            importDatasourcesButton;
 
-    private ImportDatasourcesWindow          importDatasourcesWindow;
+    private ImportZipDatasourceWithMappingWindow  importZipDatasourceWithMappingWindow;
     private NewDatasetWindow                 newDatasetWindow;
 
     @Inject
@@ -86,20 +90,20 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
         // Import datasources window
 
-        importDatasourcesWindow = new ImportDatasourcesWindow(Boolean.TRUE);
-        importDatasourcesWindow.setUploadListener(new UploadListener() {
+        importZipDatasourceWithMappingWindow = new ImportZipDatasourceWithMappingWindow() {
 
             @Override
-            public void uploadFailed(String errorMessage) {
-                getUiHandlers().datasourcesImportationFailed(errorMessage);
+            protected void uploadSuccess(String message) {
+                getUiHandlers().datasourcesImportationSucceed(message);
             }
+
             @Override
-            public void uploadComplete(String fileName) {
-                getUiHandlers().datasourcesImportationSucceed(fileName);
+            protected void uploadFailed(String error) {
+                getUiHandlers().datasourcesImportationFailed(error);
             }
-        });
+        };
     }
-
+     
     @Override
     public void setUiHandlers(DatasetListUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
@@ -266,10 +270,10 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
             @Override
             public void onClick(ClickEvent event) {
-                importDatasourcesWindow.setStatisticalOperation(StatisticalResourcesDefaults.getSelectedStatisticalOperation().getCode());
-                importDatasourcesWindow.show();
+                importZipDatasourceWithMappingWindow.show();
             }
         });
+        
         return importDatasourcesButton;
     }
 

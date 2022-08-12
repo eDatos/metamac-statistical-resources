@@ -1,0 +1,310 @@
+package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
+
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+import static org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens.UPLOAD_RESOURCE_TYPE;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
+import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
+import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
+import org.siemac.metamac.web.common.client.MetamacWebCommon;
+import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
+import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWindow;
+import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+
+import com.google.gwt.core.client.Scheduler;
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.form.fields.HiddenItem;
+import com.smartgwt.client.widgets.form.fields.UploadItem;
+
+public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourceWithPreviewWindow {
+ 
+
+    private static int FORMWIDTH = 450;
+    private static int EXTRAFORMWIDTH = 450;
+    private static int FORMWITHFIELDS = 350;
+
+    public ImportZipDatasourceWithMappingWindow() {
+        super(getConstants().actionLoadDatasource());
+        addExtraFieldsInMainForm();
+        addFieldsInExtraForm();
+        setAutoSize(true);
+    }
+
+    @Override
+    protected UploadForm buildMainUploadForm() {
+        return new UploadDatasourceForm();
+    }
+
+    @Override
+    protected CustomDynamicForm buildExtraForm() {
+        CustomDynamicForm form = new CustomDynamicForm();
+        form.setWidth(EXTRAFORMWIDTH);
+        form.setMargin(2);
+        form.setVisible(false);
+        return form;
+    }
+
+    private void addExtraFieldsInMainForm() {
+
+        List<FormItem> itemsToAdd = new ArrayList<FormItem>();
+
+        HiddenItem datasetVersionUrnItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
+        HiddenItem operationUrnItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_OPERATION_CODE);
+        HiddenItem mustBeZip = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_MUST_BE_ZIP_FILE);
+        mustBeZip.setDefaultValue(true);
+                   
+        HiddenItem resourceTypeItem = new HiddenItem(UPLOAD_RESOURCE_TYPE);
+        resourceTypeItem.setDefaultValue(ImportableResourceTypeEnum.DATASOURCE.name());
+
+        itemsToAdd.add(datasetVersionUrnItem);
+        itemsToAdd.add(operationUrnItem);
+        itemsToAdd.add(mustBeZip);
+        
+        itemsToAdd.addAll(addExtraItemsToMainForm());
+        
+        mainForm.addFields(itemsToAdd.toArray(new HiddenItem[itemsToAdd.size()]));
+    }
+
+    private List<FormItem> addExtraItemsToMainForm() {
+        List<FormItem> extraItemsToAdd = new ArrayList<FormItem>();
+        
+        HiddenItem extraFields = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS);
+        extraFields.setDefaultValue(true);
+        HiddenItem versionRationaleTypeItemInternal = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES);
+        HiddenItem nextVersionItemInternal = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION);
+        HiddenItem nextVersionDateInternal = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION);
+        extraItemsToAdd.add(extraFields);
+        extraItemsToAdd.add(versionRationaleTypeItemInternal);
+        extraItemsToAdd.add(nextVersionItemInternal);
+        extraItemsToAdd.add(nextVersionDateInternal);
+        
+        return extraItemsToAdd;
+    }
+    
+    private void addFieldsInExtraForm() {
+
+        List<FormItem> items = new ArrayList<FormItem>();
+      
+        items.addAll(addExtraFields());
+        
+        CustomButtonItem uploadButton = new CustomButtonItem("button-import", MetamacWebCommon.getConstants().accept());
+        uploadButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+            @Override
+            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                submitIfValid();
+            }
+        });
+
+        items.add(uploadButton);
+
+        extraForm.setFields(items.toArray(new FormItem[items.size()]));
+        
+    }
+
+    private List<FormItem> addExtraFields() {
+
+        List<FormItem> extraItemsToAdd = new ArrayList<FormItem>();
+        extraItemsToAdd.add(addFieldSearchVersionRationaleTypeItem());
+        extraItemsToAdd.add(addFieldNextVersion());
+        extraItemsToAdd.add(addFieldNextVersionDate());
+
+        return extraItemsToAdd;
+    }
+
+    private CustomDateItem addFieldNextVersionDate() {
+        return new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
+   
+    }
+
+    private CustomSelectItem addFieldNextVersion() {
+        final CustomSelectItem nextVersion = new CustomSelectItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion());
+        nextVersion.setValueMap(CommonUtils.getStatisticalResourceNextVersionHashMap());
+        nextVersion.setRequired(true);
+        nextVersion.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
+
+            @Override
+            public void onChange(com.smartgwt.client.widgets.form.fields.events.ChangeEvent event) {
+                String nextVersionValue = event.getValue().toString();
+                CustomDateItem dateNextVersion = ((CustomDateItem) extraForm.getItem(VersionableResourceDS.DATE_NEXT_VERSION));
+                if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
+                    dateNextVersion.show();
+                } else {
+                    if (Boolean.TRUE.equals(dateNextVersion.isVisible())) {
+                        dateNextVersion.hide();
+                    }
+                }
+            }
+        });
+        nextVersion.setWidth(FORMWITHFIELDS);
+
+        return nextVersion;
+    }
+
+    private SearchVersionRationaleTypeItem addFieldSearchVersionRationaleTypeItem() {
+        final SearchVersionRationaleTypeItem searchVersionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES,
+                getConstants().versionableStatisticalResourceVersionRationaleTypes(), true);
+          searchVersionRationaleTypeItem.setValidators(new CustomRequiredValidator() {
+
+            @Override
+            protected boolean condition(Object value) {
+                return !searchVersionRationaleTypeItem.getSelectedVersionRationaleTypeDtos().isEmpty();
+            }
+        });
+        searchVersionRationaleTypeItem.setWidth(FORMWITHFIELDS);
+
+        return searchVersionRationaleTypeItem;
+    }
+    
+    private List<VersionRationaleTypeDto> getDefaultVersionRationaleType() {
+        List<VersionRationaleTypeDto> versionRationaleTypesDto = new ArrayList<VersionRationaleTypeDto>();
+        versionRationaleTypesDto.add(new VersionRationaleTypeDto(VersionRationaleTypeEnum.MINOR_DATA_UPDATE));
+        return versionRationaleTypesDto;
+    }
+
+    @Override
+    protected void copyHiddenValuesToMainForm(UploadForm mainForm, DynamicForm extraForm) {
+               
+        setFormFieldVersionRationaleTypeItem();
+        setFormFieldNextVersion();
+        setFormFieldDateNextVersion();
+
+    }
+
+    private void setFormFieldNextVersion() {
+        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, getFieldNextVersion());
+    }
+
+    private String getFieldNextVersion() {
+        return !StringUtils.isBlank(extraForm.getValueAsString(VersionableResourceDS.NEXT_VERSION)) ? extraForm.getValueAsString(VersionableResourceDS.NEXT_VERSION) : null;
+    }
+
+    private void setFormFieldDateNextVersion() {
+        String nextVersionValue = getFieldNextVersion();
+        Date dateNextVersionValue = null;
+        if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
+            dateNextVersionValue = ((CustomDateItem) extraForm.getItem(VersionableResourceDS.DATE_NEXT_VERSION)).getValueAsDate();
+        }
+        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION, dateNextVersionValue);
+    }
+
+    private void setFormFieldVersionRationaleTypeItem() {
+        List<VersionRationaleTypeDto> versionRationaleTypeDto = new ArrayList<VersionRationaleTypeDto>();
+        versionRationaleTypeDto.addAll(((SearchVersionRationaleTypeItem) extraForm.getItem(VersionableResourceDS.VERSION_RATIONALE_TYPES)).getSelectedVersionRationaleTypeDtos());
+
+        StringBuilder versionRationaleTypes = new StringBuilder();
+        for (VersionRationaleTypeDto item : versionRationaleTypeDto) {
+            if (versionRationaleTypes.length() != 0) {
+                versionRationaleTypes.append(",");
+            }
+            versionRationaleTypes.append(item.getValue().getName());
+        }
+
+        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString());
+    }
+    
+    
+    @Override
+    protected void onPreviewComplete(String response) {
+        extraForm.clearValues();
+        clearExtraFormValues();
+        extraForm.setVisible(true);
+       
+    }
+
+    @Override
+    public String getRelativeURL(String url) {
+        return StatisticalResourcesWeb.getRelativeURL(url);
+    }
+
+    @Override
+    protected void onPreviewFailed(String errorMessage) {
+        uploadFailed(errorMessage);
+    }
+
+    @Override
+    protected void onSubmitComplete(String response) {
+        uploadSuccess(response);
+    }
+
+    @Override
+    protected void onSubmitFailed(String errorMessage) {
+        uploadFailed(errorMessage);
+    }
+
+    protected abstract void uploadFailed(String error);
+    protected abstract void uploadSuccess(String message);
+
+    @Override
+    public void show() {
+        clearExtraFormValues();
+        extraForm.hide();
+        super.show();
+    }
+
+    
+    private void clearExtraFormValues() {
+        SearchVersionRationaleTypeItem searchVersionRationaleTypeItem = ((SearchVersionRationaleTypeItem) extraForm.getItem(VersionableResourceDS.VERSION_RATIONALE_TYPES));
+        searchVersionRationaleTypeItem.setVersionRationaleTypes(getDefaultVersionRationaleType());
+
+        CustomSelectItem nextVersion = ((CustomSelectItem) extraForm.getItem(VersionableResourceDS.NEXT_VERSION));
+        nextVersion.clearValue();
+
+        CustomDateItem nextVersionDate = ((CustomDateItem) extraForm.getItem(VersionableResourceDS.DATE_NEXT_VERSION));
+        nextVersionDate.clearValue();
+        nextVersionDate.hide();
+    }
+
+    private class UploadDatasourceForm extends UploadForm {
+
+        private UploadItem uploadItem;
+
+        public UploadDatasourceForm() {
+            super();
+
+            uploadItem = new UploadItem("file-name");
+            uploadItem.setTitle(getConstants().datasetDatasource());
+            uploadItem.setWidth(FORMWIDTH);
+            uploadItem.setRequired(true);
+            uploadItem.setTitleStyle("requiredFormLabel");
+
+            uploadItem.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
+
+                @Override
+                public void onChange(com.smartgwt.client.widgets.form.fields.events.ChangeEvent event) {
+                    Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+                        @Override
+                        public void execute() {
+                            submitPreviewIfValid();
+                        }
+                    });
+                }
+            });
+
+            HiddenItem datasetVersionUrnItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
+
+            setFields(uploadItem, datasetVersionUrnItem);
+        }
+
+        @Override
+        public UploadItem getUploadItem() {
+            return uploadItem;
+        }
+    }
+}
