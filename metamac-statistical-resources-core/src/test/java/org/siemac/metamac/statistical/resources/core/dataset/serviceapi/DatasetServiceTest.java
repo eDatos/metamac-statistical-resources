@@ -127,6 +127,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRep
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMappingRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
@@ -946,7 +947,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
         List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
         HashMap<String, String> mappings = new HashMap<String, String>();
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -956,7 +957,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -966,10 +967,9 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false, new BasicVersionableStatisticalResourceDto());
     }
 
- // TODO EDATOS-3729 VER ESTE TEST
     @Test
     @MetamacMock(DATASET_VERSION_52_IN_PRODUCTION_VALIDATION_WITH_DATASOURCE_NAME)
     public void testImportDatasourcesInDatasetVersionProcStatusProductionValidation() throws Exception {
@@ -979,10 +979,9 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
 
         expectedMetamacException(new MetamacException(ServiceExceptionType.LIFE_CYCLE_WRONG_PROC_STATUS, urn, ProcStatusForActionsConstants.PROC_STATUS_FOR_IMPORT_DATASOURCES_IN_DATASET_VERSION));
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false, new BasicVersionableStatisticalResourceDto());
     }
 
-    // TODO EDATOS-3729 VER ESTE TEST
     @Test
     @MetamacMock(DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME)
     public void testImportDatasourcesInDatasetVersionProcStatusDiffusionValidation() throws Exception {
@@ -991,11 +990,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
         List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
 
+        
         expectedMetamacException(new MetamacException(ServiceExceptionType.LIFE_CYCLE_WRONG_PROC_STATUS, urn, ProcStatusForActionsConstants.PROC_STATUS_FOR_IMPORT_DATASOURCES_IN_DATASET_VERSION));
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false, new BasicVersionableStatisticalResourceDto());
     }
 
- // TODO EDATOS-3729 VER ESTE TEST
     @Test
     @MetamacMock(DATASET_VERSION_55_PUBLISHED_WITH_DATASOURCE_NAME)
     public void testImportDatasourcesInDatasetVersionProcStatusPublished() throws Exception {
@@ -1005,7 +1004,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
 
         expectedMetamacException(new MetamacException(ServiceExceptionType.LIFE_CYCLE_WRONG_PROC_STATUS, urn, ProcStatusForActionsConstants.PROC_STATUS_FOR_IMPORT_DATASOURCES_IN_DATASET_VERSION));
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, new HashMap<String, String>(), false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -1021,7 +1020,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
         List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
         HashMap<String, String> mappings = new HashMap<String, String>();
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -1034,7 +1033,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
         List<URL> urls = Arrays.asList(new File("datasource_06.px").toURI().toURL());
         HashMap<String, String> mappings = new HashMap<String, String>();
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Override
@@ -1049,7 +1048,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         String statisticalOperationCode = datasetVersion37.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode();
 
         List<URL> urls = Arrays.asList(buildURLForFile(fileForDatasetVersion37), buildURLForFile(fileForDatasetVersion38));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -1072,7 +1071,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         String statisticalOperationCode = datasetVersion37.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode();
 
         List<URL> urls = Arrays.asList(buildURLForFile(fileForDatasetVersion37), buildURLForFile(fileForDatasetVersion38));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -1087,7 +1086,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, "not_exist.px", statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildURLForFile("not_exist.px"), buildURLForFile(fileForDatasetVersion38));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
     }
 
     @Override

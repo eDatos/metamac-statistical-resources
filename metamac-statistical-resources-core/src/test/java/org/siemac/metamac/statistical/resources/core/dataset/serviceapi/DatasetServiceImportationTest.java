@@ -36,6 +36,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceimpl.DatasetServiceImpl;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -82,7 +83,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         Map<String, String> mappings = new HashMap<String, String>();
         mappings.put("dimension01", "urn01");
         mappings.put("dimension02", "urn02");
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
 
         ArgumentCaptor<TaskInfoDataset> argument = ArgumentCaptor.forClass(TaskInfoDataset.class);
         verify(taskService).planifyImportationDataset(any(ServiceContext.class), argument.capture());
@@ -104,7 +105,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename));
         HashMap<String, String> mappings = new HashMap<String, String>();
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -124,7 +125,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename));
         HashMap<String, String> mappings = new HashMap<String, String>();
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -140,7 +141,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         Mockito.when(datasetVersionRepository.retrieveLastVersion(Mockito.eq(datasetUrn))).thenReturn(datasetVersion);
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
         ArgumentCaptor<TaskInfoDataset> argument = ArgumentCaptor.forClass(TaskInfoDataset.class);
         verify(taskService).planifyImportationDataset(any(ServiceContext.class), argument.capture());
@@ -180,7 +181,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         }
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
         ArgumentCaptor<TaskInfoDataset> argument = ArgumentCaptor.forClass(TaskInfoDataset.class);
         verify(taskService, Mockito.times(2)).planifyImportationDataset(any(ServiceContext.class), argument.capture());
@@ -224,7 +225,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, filename01, statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
     }
 
@@ -256,7 +257,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, filename02, statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
     }
 
