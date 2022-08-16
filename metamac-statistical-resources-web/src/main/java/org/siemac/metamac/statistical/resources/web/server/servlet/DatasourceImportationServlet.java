@@ -253,13 +253,13 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     // UTILITY METHODS
     //
 
-    private void sendSuccessImportationResponse(HttpServletResponse response, String message, boolean zipUpload, boolean isZipWithAutomaticLifeCicle) throws IOException {
-        String functionName = (zipUpload && !isZipWithAutomaticLifeCicle) ? "uploadZipComplete" : "uploadComplete";
+    private void sendSuccessImportationResponse(HttpServletResponse response, String message, boolean zipUpload, Boolean isZipWithAutomaticLifeCicle) throws IOException {
+        String functionName = (zipUpload && !Boolean.TRUE.equals(isZipWithAutomaticLifeCicle)) ? "uploadZipComplete" : "uploadComplete";
         sendImportationResponse(response, message, functionName);
     }
 
     private void sendFailedImportationResponse(HttpServletResponse response, String errorMessage, boolean zipUpload, boolean isZipWithAutomaticLifeCicle) throws IOException {
-        String functionName = (zipUpload && !isZipWithAutomaticLifeCicle) ? "uploadZipFailed" : "uploadFailed";
+        String functionName = (zipUpload && !Boolean.TRUE.equals(isZipWithAutomaticLifeCicle)) ? "uploadZipFailed" : "uploadFailed";
         sendImportationResponse(response, errorMessage, functionName);
     }
 
