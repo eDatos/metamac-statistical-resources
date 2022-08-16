@@ -19,13 +19,13 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleBaseParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
-
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 
 public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidator {
@@ -264,6 +264,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         if (dimensionRepresentationMapping == null) {
             StatisticalResourcesValidationUtils.checkParameterRequired(dimensionRepresentationMapping, ServiceExceptionParameters.DATASET_DIMENSION_REPRESENTATION_MAPPING, exceptions);
         }
+        
+        checkImportDataSourcesInStatisticalOperationWithAutomaticLifeCicle(basicVersionableStatisticalResourceDto, exceptions);
     }
 
     public static void checkImportDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
@@ -271,11 +273,30 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING TO DO HERE
     }
 
-    public static void checkImportDatasourcesInStatisticalOperation(String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, List<MetamacExceptionItem> exceptions) {
-        StatisticalResourcesValidationUtils.checkParameterRequired(statisticalOperationCode, ServiceExceptionParameters.STATISTICAL_OPERATION_CODE,  exceptions);
+    public static void checkImportDatasourcesInStatisticalOperation(String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto,
+            List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(statisticalOperationCode, ServiceExceptionParameters.STATISTICAL_OPERATION_CODE, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(fileUrls, ServiceExceptionParameters.FILE_URLS, exceptions);
+        checkImportDataSourcesInStatisticalOperationWithAutomaticLifeCicle(basicVersionableStatisticalResourceDto, exceptions);
+
     }
 
+    private static void checkImportDataSourcesInStatisticalOperationWithAutomaticLifeCicle(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto,
+            List<MetamacExceptionItem> exceptions) {
+        if (basicVersionableStatisticalResourceDto != null && Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle())) {
+            StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getVersionRationaleTypes(), ServiceExceptionParameters.DATASET_VERSION_RATIONALE_TYPES,
+                    exceptions);
+            StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextVersion(), ServiceExceptionParameters.DATASET_NEXT_VERSION, exceptions);
+            if (basicVersionableStatisticalResourceDto.getNextVersion() != null
+                    && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(basicVersionableStatisticalResourceDto.getNextVersion()))) {
+                StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextVersionDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_VERSION,
+                        exceptions);
+                StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextUpdateDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_UPDATE, exceptions);
+
+            }
+        }
+    }
+    
     public static void checkCheckAttributesInstancesWithDatasetAndDimensionAttachment(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
         checkExistingDatasetVersion(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
     }

@@ -25,6 +25,10 @@ public class ServiceExceptionParameters extends ServiceExceptionBaseParameters {
     public static final String       DATASET_ATTRIBUTE_UUID                   = "parameter.resources.dataset_attribute_uuid";
     public static final String       DATASET_DIMENSION_REPRESENTATION_MAPPING = "parameter.resources.dataset_dimension_representation_mapping";
     public static final String       DATASET_REPOSITORY_ID                    = "parameter.resources.dataset_repository_id";
+    public static final String       DATASET_VERSION_RATIONALE_TYPES          = "parameter.resources.dataset_version_rationale_types";
+    public static final String       DATASET_NEXT_VERSION                     = "parameter.resources.dataset_next_version";
+    public static final String       DATASET_DATE_NEXT_VERSION                = "parameter.resources.dataset_date_next_version";
+    public static final String       DATASET_DATE_NEXT_UPDATE                 = "parameter.resources.dataset_date_next_update";
 
     // Publication
     public static final String       PUBLICATION_URN                          = "parameter.resources.publication_urn";
@@ -36,6 +40,7 @@ public class ServiceExceptionParameters extends ServiceExceptionBaseParameters {
     public static final String       CUBE_URN                                 = "parameter.resources.cube_urn";
     public static final String       STRUCTURE_FILE_URL                       = "parameter.resources.structure_file_url";
     public static final String       STRUCTURE_FILE_LANGUAGE                  = "parameter.resources.structure_file_language";
+    
 
     // Query
     public static final String       QUERY_URN                                = "parameter.resources.query_urn";

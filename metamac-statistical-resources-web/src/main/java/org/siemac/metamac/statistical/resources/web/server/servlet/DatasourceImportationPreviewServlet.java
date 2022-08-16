@@ -72,12 +72,10 @@ public class DatasourceImportationPreviewServlet extends BaseHttpServlet {
 
         HashMap<String, String> args = new HashMap<String, String>();
 
-        String filename = new String();
+        String fileName = new String();
 
         try {
-            StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext()
-                    .getBean("statisticalResourcesServiceFacade");
-
+            
             DiskFileItemFactory factory = new DiskFileItemFactory();
             // Get the temporary directory (this is where files that exceed the threshold will be stored)
             factory.setRepository(tmpDir);
@@ -95,20 +93,12 @@ public class DatasourceImportationPreviewServlet extends BaseHttpServlet {
                 if (item.isFormField()) {
                     args.put(item.getFieldName(), item.getString());
                 } else {
-                    filename = item.getName();
+                    fileName = item.getName();
                 }
             }
             
-            String datasetVersionUrn = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
-            String message = null;
-            if (datasetVersionUrn != null && !"".equals(datasetVersionUrn) ) {
+            String message = getDimensionRepresentationMappingDto(fileName, args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN));
             
-            DimensionRepresentationMappingDto mapping = statisticalResourcesServiceFacade.retrieveDimensionRepresentationMappings(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn,
-                    filename);
-            DimensionRepresentationMappingWebDto mappingExternalItem = dimensionRepresentationMappingDto2WebDto(mapping);
-
-             message = serializeResourceJson(mappingExternalItem).toJSONString();
-            }
             sendSuccessImportationResponse(response, StringEscapeUtils.escapeJavaScript(message));
 
         } catch (Exception e) {
@@ -121,13 +111,28 @@ public class DatasourceImportationPreviewServlet extends BaseHttpServlet {
                 errorMessage = StringEscapeUtils.escapeJavaScript(errorMessage);
             }
 
-            logger.log(Level.SEVERE, "Error importing file = " + filename + ". " + e.getMessage());
+            logger.log(Level.SEVERE, "Error importing file = " + fileName + ". " + e.getMessage());
             logger.log(Level.SEVERE, e.getMessage());
 
             sendFailedImportationResponse(response, errorMessage);
         }
     }
 
+    private String getDimensionRepresentationMappingDto(String filename, String datasetVersionUrn) throws MetamacException, MetamacWebException {
+        String message = null;
+        if (datasetVersionUrn != null && !"".equals(datasetVersionUrn)) {
+            StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext()
+                    .getBean("statisticalResourcesServiceFacade");
+
+            DimensionRepresentationMappingDto mapping = statisticalResourcesServiceFacade.retrieveDimensionRepresentationMappings(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn,
+                    filename);
+            DimensionRepresentationMappingWebDto mappingExternalItem = dimensionRepresentationMappingDto2WebDto(mapping);
+
+            message = serializeResourceJson(mappingExternalItem).toJSONString();
+        }
+        return message;
+    }
+    
     private void processQuery(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     }
 

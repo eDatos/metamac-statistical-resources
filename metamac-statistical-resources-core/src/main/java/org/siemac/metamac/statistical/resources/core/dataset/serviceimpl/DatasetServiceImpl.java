@@ -97,7 +97,6 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
-import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.CodeDimensionEqualsIdentifierPredicate;
@@ -742,6 +741,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkValidDataSourceTypeForImportationTask(expectedDataSourceTypeEnum, datasetVersion);
 
+        if (DataSourceTypeEnum.FILE.equals(datasetVersion.getDataSourceType())) {
+            ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion, basicVersionableStatisticalResourceDto);
+        }
+        
         String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
 
         checkFilesCanBeAssociatedWithDataset(datasetUrn, datasetVersionUrn, fileUrls);
@@ -763,6 +766,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
         taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
         taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
+        taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto.getNextUpdateDate());
         taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
         taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
         for (String dimensionId : dimensionRepresentationMapping.keySet()) {
@@ -1280,7 +1284,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
 
-        ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion);
+        ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion, new BasicVersionableStatisticalResourceDto());
 
         checkValidDataSourceTypeForImportationTask(DataSourceTypeEnum.DATABASE, datasetVersion);
 

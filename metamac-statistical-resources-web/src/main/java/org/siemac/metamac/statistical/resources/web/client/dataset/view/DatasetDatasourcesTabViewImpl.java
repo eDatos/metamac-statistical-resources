@@ -342,7 +342,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         }
 
         private void createImportDatasourcesWindow(String datasetVersionUrn) {
-            importDatasourcesWindow = new ImportDatasourcesWindow(Boolean.FALSE);
+            importDatasourcesWindow = new ImportDatasourcesWindow();
             importDatasourcesWindow.setUploadListener(new UploadListener() {
 
                 @Override

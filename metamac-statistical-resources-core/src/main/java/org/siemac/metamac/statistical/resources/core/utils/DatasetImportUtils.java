@@ -25,6 +25,7 @@ public class DatasetImportUtils {
         setDatasetVersionVersionRationaleType(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersion(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersionDate(datasetVersion, taskInfoDataset);
+        setDatasetVersionNextUpdateDate(datasetVersion, taskInfoDataset);
     }
 
     private static void setDatasetVersionVersionRationaleType(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
@@ -47,6 +48,12 @@ public class DatasetImportUtils {
         }
     }
 
+    private static void setDatasetVersionNextUpdateDate(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
+        if (!isBlank(taskInfoDataset.getDatasetNextUpdateDate())) {
+            datasetVersion.setDateNextUpdate(getFormattedDateTime(taskInfoDataset.getDatasetNextUpdateDate()));
+        }
+    }
+    
     private static boolean isBlank(String cadena) {
         return cadena == null || "".equals(cadena);  
     }

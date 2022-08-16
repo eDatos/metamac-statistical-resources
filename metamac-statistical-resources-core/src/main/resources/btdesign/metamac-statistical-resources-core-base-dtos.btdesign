@@ -85,6 +85,7 @@ Application StatisticalResourcesDto {
 		}
 		
 		DataTransferObject BasicVersionableStatisticalResourceDto {
+		    String nextUpdateDate;
 			String nextVersionDate;
 			String nextVersion;
 			List<String> versionRationaleTypes;

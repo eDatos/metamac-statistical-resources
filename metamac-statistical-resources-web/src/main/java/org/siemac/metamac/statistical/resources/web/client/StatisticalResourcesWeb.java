@@ -23,7 +23,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 public class StatisticalResourcesWeb extends MetamacSecurityEntryPoint {
 
     private static Logger                                logger           = Logger.getLogger(StatisticalResourcesWeb.class.getName());
-    private static final boolean                         SECURITY_ENABLED = true;
+    private static final boolean                         SECURITY_ENABLED = false;
 
     private static MetamacPrincipal                      principal;
     private static StatisticalResourcesWebConstants      constants;

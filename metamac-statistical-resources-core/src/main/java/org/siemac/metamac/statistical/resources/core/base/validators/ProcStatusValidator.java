@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.core.base.validators;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
@@ -51,8 +52,10 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
     // --------------------------------------------------------------------
     // DatasetVersion
     // --------------------------------------------------------------------
-    public static void checkDatasetVersionCanImportDatasources(HasLifecycle resource) throws MetamacException {
-        ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForImportDatasourcesInDatasetVersion);
+    public static void checkDatasetVersionCanImportDatasources(HasLifecycle resource, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+        if (basicVersionableStatisticalResourceDto == null || !Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle())) {
+            ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForImportDatasourcesInDatasetVersion);
+        }
     }
 
     // --------------------------------------------------------------------

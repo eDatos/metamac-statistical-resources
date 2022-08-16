@@ -33,7 +33,6 @@ import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatist
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.client.WebMessageExceptionsConstants;
-import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
@@ -47,10 +46,10 @@ import com.google.inject.Singleton;
 @SuppressWarnings("serial")
 public class DatasourceImportationServlet extends BaseHttpServlet {
 
-    private static Logger logger = Logger.getLogger(DatasourceImportationServlet.class.getName());
-    public static final String[] FIELDSVERSIONABLESTATISTICALRESOURCEDTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
-            StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS,  StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION, VersionableResourceDS.VERSION_RATIONALE_TYPES,
-            VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION};
+    private static Logger           logger                                  = Logger.getLogger(DatasourceImportationServlet.class.getName());
+    protected static final String[] FIELDSVERSIONABLESTATISTICALRESOURCEDTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
+            StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,
+            StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS};
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -108,7 +107,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             File uploadedFile = new File(tempZipFilePathName);
                        
             mustBeZip = BooleanUtils.toBoolean(args.get(StatisticalResourcesSharedTokens.UPLOAD_MUST_BE_ZIP_FILE));
-           
+                       
             ImportableResourceTypeEnum importableResourceType = getImportableResourceType(args);
             if (ImportableResourceTypeEnum.PUBLICATION_VERSION_STRUCTURE.equals(importableResourceType)) {
                 importPublicationVersionStructure(uploadedFile, args);
@@ -116,7 +115,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
                 importDatasource(mustBeZip, uploadedFile, outputFolder, args, basicVersionableStatisticalResourceDto);
             }
 
-            sendSuccessImportationResponse(response, fileName, mustBeZip);
+            sendSuccessImportationResponse(response, fileName, mustBeZip, basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
 
         } catch (Exception e) {
 
@@ -134,7 +133,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             logger.log(Level.SEVERE, "Error importing file = " + fileName + ". " + e.getMessage());
             logger.log(Level.SEVERE, e.getMessage());
 
-            sendFailedImportationResponse(response, errorMessage, mustBeZip);
+            sendFailedImportationResponse(response, errorMessage, mustBeZip, basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
         }
     }
 
@@ -157,6 +156,10 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
 
         if (StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setNextVersion(item.getString());
+        }
+        
+        if (StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE.equals(item.getFieldName())) {
+            basicVersionableStatisticalResourceDto.setNextUpdateDate(item.getString());
         }
         
         if (StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS.equals(item.getFieldName())) {
@@ -250,13 +253,13 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     // UTILITY METHODS
     //
 
-    private void sendSuccessImportationResponse(HttpServletResponse response, String message, boolean zipUpload) throws IOException {
-        String functionName = zipUpload ? "uploadZipComplete" : "uploadComplete";
+    private void sendSuccessImportationResponse(HttpServletResponse response, String message, boolean zipUpload, boolean isZipWithAutomaticLifeCicle) throws IOException {
+        String functionName = (zipUpload && !isZipWithAutomaticLifeCicle) ? "uploadZipComplete" : "uploadComplete";
         sendImportationResponse(response, message, functionName);
     }
 
-    private void sendFailedImportationResponse(HttpServletResponse response, String errorMessage, boolean zipUpload) throws IOException {
-        String functionName = zipUpload ? "uploadZipFailed" : "uploadFailed";
+    private void sendFailedImportationResponse(HttpServletResponse response, String errorMessage, boolean zipUpload, boolean isZipWithAutomaticLifeCicle) throws IOException {
+        String functionName = (zipUpload && !isZipWithAutomaticLifeCicle) ? "uploadZipFailed" : "uploadFailed";
         sendImportationResponse(response, errorMessage, functionName);
     }
 

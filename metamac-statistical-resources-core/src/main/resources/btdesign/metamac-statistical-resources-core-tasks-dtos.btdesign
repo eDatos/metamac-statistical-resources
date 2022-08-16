@@ -18,6 +18,7 @@ Application DatasetsStatisticalResourcesDto {
 			List<String> datasetVersionRationaleTypes;
 			String datasetNextVersion;
 			String datasetNextVersionDate;
+			String datasetNextUpdateDate;
 			Boolean datasetAutomaticLifeCicle;
 			
  		}

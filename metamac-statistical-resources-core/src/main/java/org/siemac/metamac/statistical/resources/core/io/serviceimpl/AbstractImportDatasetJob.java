@@ -47,6 +47,7 @@ public abstract class AbstractImportDatasetJob implements Job {
     public static final String         DATASET_VERSION_RATIONALE_TYPES   = "datasetVersionRationaleTypes";
     public static final String         DATASET_NEXT_VERSION              = "datasetNextVersion";
     public static final String         DATASET_NEXT_VERSION_DATE         = "datasetNextVersionDate";
+    public static final String         DATASET_NEXT_UPDATE_DATE          = "datasetNextUpdateDate";
     public static final String         DATASET_AUTOMATIC_LIFE_CICLE      = "datasetAutomaticLifeCicle";
     public static final String         TASK_NAME                         = "taskName";
 
@@ -83,6 +84,7 @@ public abstract class AbstractImportDatasetJob implements Job {
         String datasetVersionRationaleTypes = data.getString(DATASET_VERSION_RATIONALE_TYPES); 
         String datasetNextVersion = data.getString(DATASET_NEXT_VERSION);
         String datasetNextVersionDate = data.getString(DATASET_NEXT_VERSION_DATE);
+        String datasetNextUpdateDate = data.getString(DATASET_NEXT_UPDATE_DATE);
         Boolean datasetAutomaticLifeCicle = data.getBoolean(DATASET_AUTOMATIC_LIFE_CICLE);
 
         try {
@@ -101,6 +103,7 @@ public abstract class AbstractImportDatasetJob implements Job {
             taskInfoDataset.setDatasetVersionRationaleTypes(inflateDatasetVersionRationaleTypes(datasetVersionRationaleTypes));
             taskInfoDataset.setDatasetNextVersion(datasetNextVersion);
             taskInfoDataset.setDatasetNextVersionDate(datasetNextVersionDate);
+            taskInfoDataset.setDatasetNextUpdateDate(datasetNextUpdateDate);
             taskInfoDataset.setDatasetAutomaticLifeCicle(datasetAutomaticLifeCicle);
             
 

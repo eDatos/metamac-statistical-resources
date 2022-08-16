@@ -3,7 +3,6 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.view;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
 import java.util.List;
-import java.util.Map;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
@@ -15,11 +14,8 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.Data
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetDatasourcesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionSearchSectionStack;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportDatasourceWithMappingWindow;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportDatasourcesWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportZipDatasourceWithMappingWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.NewDatasetWindow;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
@@ -31,7 +27,6 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPagin
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
-import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 
@@ -270,6 +265,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
             @Override
             public void onClick(ClickEvent event) {
+                importZipDatasourceWithMappingWindow.setStatisticalOperation(StatisticalResourcesDefaults.getSelectedStatisticalOperation().getCode());
                 importZipDatasourceWithMappingWindow.show();
             }
         });
