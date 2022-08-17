@@ -258,7 +258,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         sendImportationResponse(response, message, functionName);
     }
 
-    private void sendFailedImportationResponse(HttpServletResponse response, String errorMessage, boolean zipUpload, boolean isZipWithAutomaticLifeCicle) throws IOException {
+    private void sendFailedImportationResponse(HttpServletResponse response, String errorMessage, boolean zipUpload, Boolean isZipWithAutomaticLifeCicle) throws IOException {
         String functionName = (zipUpload && !Boolean.TRUE.equals(isZipWithAutomaticLifeCicle)) ? "uploadZipFailed" : "uploadFailed";
         sendImportationResponse(response, errorMessage, functionName);
     }
