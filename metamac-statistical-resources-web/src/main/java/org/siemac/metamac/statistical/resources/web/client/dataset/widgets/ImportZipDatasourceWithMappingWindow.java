@@ -14,6 +14,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationa
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResourceTypeEnum;
@@ -92,11 +93,13 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         HiddenItem nextVersionItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION);
         HiddenItem nextVersionDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION);
         HiddenItem nextUpdateDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE);
+        HiddenItem procStatus = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS);
         extraItemsToAdd.add(extraFields);
         extraItemsToAdd.add(versionRationaleTypeItem);
         extraItemsToAdd.add(nextVersionItem);
         extraItemsToAdd.add(nextVersionDate);
         extraItemsToAdd.add(nextUpdateDate);
+        extraItemsToAdd.add(procStatus);
         return extraItemsToAdd;
     }
     
@@ -130,6 +133,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraItemsToAdd.add(addFieldNextVersion());
         extraItemsToAdd.add(addFieldNextVersionDate());
         extraItemsToAdd.add(addFieldNextUpdateDate());
+        extraItemsToAdd.add(addFieldProcStatus());
         return extraItemsToAdd;
     }
 
@@ -179,6 +183,16 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return nextVersion;
     }
 
+    private CustomSelectItem addFieldProcStatus() {
+        final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().versionableStatisticalResourceNextVersion());
+        procStatus.setValueMap(CommonUtils.getProcStatusHashMap());
+        procStatus.setRequired(true);   
+        procStatus.setTitleColSpan(2);
+        procStatus.setWidth(formWidthFields);
+
+        return procStatus;
+    }
+    
     private void setRequiredCustomDateItem(CustomDateItem date, boolean isRequired) {
         date.setRequired(isRequired);
     }
@@ -211,9 +225,18 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         setFormFieldNextVersion();
         setFormFieldDateNextVersion();
         setFormFieldDateNextUpdate();
+        setFormFieldProcStatus();
 
     }
 
+    private void setFormFieldProcStatus() {
+        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS, getFieldProcStatus());
+    }
+    
+    private String getFieldProcStatus() {
+        return !StringUtils.isBlank(extraForm.getValueAsString(LifeCycleResourceDS.PROC_STATUS)) ? extraForm.getValueAsString(LifeCycleResourceDS.PROC_STATUS) : null;
+    }
+    
     private void setFormFieldNextVersion() {
         mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, getFieldNextVersion());
     }

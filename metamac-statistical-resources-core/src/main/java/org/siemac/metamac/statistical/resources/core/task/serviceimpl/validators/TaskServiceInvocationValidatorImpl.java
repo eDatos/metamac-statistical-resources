@@ -41,6 +41,8 @@ public class TaskServiceInvocationValidatorImpl {
                 StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetNextUpdateDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_UPDATE, exceptions);
 
             }
+            StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetNextProcStatus(), ServiceExceptionParameters.DATASET_NEXT_PROC_STATUS, exceptions);
+            
         }
     }
     

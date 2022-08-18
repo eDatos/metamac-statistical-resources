@@ -162,6 +162,10 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             basicVersionableStatisticalResourceDto.setNextUpdateDate(item.getString());
         }
         
+        if (StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS.equals(item.getFieldName())) {
+            basicVersionableStatisticalResourceDto.setNextProcStatus(item.getString());
+        }
+        
         if (StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setAutomaticLifeCicle(BooleanUtils.toBoolean(item.getString()));
         }

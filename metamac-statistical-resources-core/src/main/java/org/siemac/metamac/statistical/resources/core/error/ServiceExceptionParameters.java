@@ -29,6 +29,7 @@ public class ServiceExceptionParameters extends ServiceExceptionBaseParameters {
     public static final String       DATASET_NEXT_VERSION                     = "parameter.resources.dataset_next_version";
     public static final String       DATASET_DATE_NEXT_VERSION                = "parameter.resources.dataset_date_next_version";
     public static final String       DATASET_DATE_NEXT_UPDATE                 = "parameter.resources.dataset_date_next_update";
+    public static final String       DATASET_NEXT_PROC_STATUS                 = "parameter.resources.dataset_next_proc_status";
 
     // Publication
     public static final String       PUBLICATION_URN                          = "parameter.resources.publication_urn";

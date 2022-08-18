@@ -294,6 +294,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
                 StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextUpdateDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_UPDATE, exceptions);
 
             }
+            StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextProcStatus(), ServiceExceptionParameters.DATASET_NEXT_PROC_STATUS, exceptions);
+
         }
     }
     

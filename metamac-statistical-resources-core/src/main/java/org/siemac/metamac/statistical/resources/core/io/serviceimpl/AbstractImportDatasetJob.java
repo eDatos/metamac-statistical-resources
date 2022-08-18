@@ -49,6 +49,7 @@ public abstract class AbstractImportDatasetJob implements Job {
     public static final String         DATASET_NEXT_VERSION_DATE         = "datasetNextVersionDate";
     public static final String         DATASET_NEXT_UPDATE_DATE          = "datasetNextUpdateDate";
     public static final String         DATASET_AUTOMATIC_LIFE_CICLE      = "datasetAutomaticLifeCicle";
+    public static final String         DATASET_NEXT_PROC_STATUS          = "datasetNextProcStatus";
     public static final String         TASK_NAME                         = "taskName";
 
     private TaskServiceFacade          taskServiceFacade                 = null;
@@ -86,6 +87,7 @@ public abstract class AbstractImportDatasetJob implements Job {
         String datasetNextVersionDate = data.getString(DATASET_NEXT_VERSION_DATE);
         String datasetNextUpdateDate = data.getString(DATASET_NEXT_UPDATE_DATE);
         Boolean datasetAutomaticLifeCicle = data.getBoolean(DATASET_AUTOMATIC_LIFE_CICLE);
+        String datasetNextProcStatus = data.getString(DATASET_NEXT_PROC_STATUS);
 
         try {
             logger.info("Importation job: {} starting at {}", jobKey, new Date());
@@ -105,7 +107,7 @@ public abstract class AbstractImportDatasetJob implements Job {
             taskInfoDataset.setDatasetNextVersionDate(datasetNextVersionDate);
             taskInfoDataset.setDatasetNextUpdateDate(datasetNextUpdateDate);
             taskInfoDataset.setDatasetAutomaticLifeCicle(datasetAutomaticLifeCicle);
-            
+            taskInfoDataset.setDatasetNextProcStatus(datasetNextProcStatus);
 
             executeImportTask(serviceContext, taskName, taskInfoDataset);
 
