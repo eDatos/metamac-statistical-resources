@@ -81,6 +81,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalLifeCicleService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
@@ -190,8 +191,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     @Autowired
     private DatabaseImportRepository          databaseImportRepository;
 
+    @Autowired
+    private NoticesRestInternalLifeCicleService noticesRestInternalLifeCicleService;
+    
     private SchedulerFactory                  schedulerFactory                    = null;
 
+    
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         if (schedulerFactory != null) {
@@ -554,9 +559,17 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
     
+    private ProcStatusEnum getNextProcStatus(ServiceContext ctx, TaskInfoDataset taskInfoDataset) {
+        if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+            return ProcStatusEnum.PUBLISHED;
+        }
+        return taskInfoDataset.getDatasetNextProcStatus() != null ? ProcStatusEnum.valueOf(taskInfoDataset.getDatasetNextProcStatus()) : null;
+    }
+    
     private void processCommonImportationTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         String datasetVersionUrn = taskInfoDataset.getDatasetVersionId();
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+        ProcStatusEnum procNextStatus = getNextProcStatus(ctx, taskInfoDataset);
 
         if (ProcStatusEnum.PUBLISHED.equals(datasetVersion.getLifeCycleStatisticalResource().getEffectiveProcStatus())) {
             datasetVersionUrn = versioningDatasetVersion(ctx, taskInfoDataset.getDatasetVersionId());
@@ -568,16 +581,23 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             updateMetadataDatasetVersion(ctx, datasetVersionUrn, taskInfoDataset);
 
-            sendDatasetVersionToProductionValidation(ctx, datasetVersionUrn);
+            sendDatasetVersionToProductionValidation(ctx, datasetVersionUrn, procNextStatus);
 
-            sendDatasetVersionToDiffusionValidation(ctx, datasetVersionUrn);
+            sendDatasetVersionToDiffusionValidation(ctx, datasetVersionUrn, procNextStatus);
 
-            publishDatasetVersion(ctx, datasetVersionUrn);
+            publishDatasetVersion(ctx, datasetVersionUrn, procNextStatus);
         } else {
             executeImportationTask(ctx, importationJobKey, taskInfoDataset);
         }
-
+        
         markDatabaseImportTaskAsFinished(ctx, importationJobKey);
+    }
+    
+    private void sendNotification(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+        if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+            noticesRestInternalLifeCicleService.createLifeCycleNotification(ctx, datasetVersion.getLifeCycleStatisticalResource().getProcStatus(), datasetVersion);
+        }
     }
     
     @Override
@@ -640,47 +660,60 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 return null;
             }
         });
-    }
-
+    }   
     
-    
-    private void sendDatasetVersionToProductionValidation(ServiceContext ctx, String datasetVersionUrn) {
-        logger.debug("Sending to production validation dataset {}", datasetVersionUrn);
+    private void sendDatasetVersionToProductionValidation(ServiceContext ctx, String datasetVersionUrn, ProcStatusEnum procNextStatus) {
+        if (ProcStatusEnum.PRODUCTION_VALIDATION.equals(procNextStatus) || ProcStatusEnum.DIFFUSION_VALIDATION.equals(procNextStatus) || ProcStatusEnum.PUBLISHED.equals(procNextStatus)) {
 
-        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+            logger.debug("Sending to production validation dataset {}", datasetVersionUrn);
 
-            @Override
-            protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                datasetLifecycleService.sendToProductionValidation(ctx, datasetVersionUrn);
-                return null;
-            }
-        });
+            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+
+                @Override
+                protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                    datasetLifecycleService.sendToProductionValidation(ctx, datasetVersionUrn);
+                    if (ProcStatusEnum.PRODUCTION_VALIDATION.equals(procNextStatus)) {
+                        sendNotification(ctx, datasetVersionUrn);
+                    }
+                    return null;
+                }
+            });
+        }
     }
 
-    private void sendDatasetVersionToDiffusionValidation(ServiceContext ctx, String datasetVersionUrn) {
-        logger.debug("Sending to difussion validation dataset {}", datasetVersionUrn);
+    private void sendDatasetVersionToDiffusionValidation(ServiceContext ctx, String datasetVersionUrn, ProcStatusEnum procNextStatus) {
+        if (ProcStatusEnum.DIFFUSION_VALIDATION.equals(procNextStatus) || ProcStatusEnum.PUBLISHED.equals(procNextStatus)) {
 
-        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+            logger.debug("Sending to difussion validation dataset {}", datasetVersionUrn);
 
-            @Override
-            protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                datasetLifecycleService.sendToDiffusionValidation(ctx, datasetVersionUrn);
-                return null;
-            }
-        });
+            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+
+                @Override
+                protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                    datasetLifecycleService.sendToDiffusionValidation(ctx, datasetVersionUrn);
+                    if (ProcStatusEnum.DIFFUSION_VALIDATION.equals(procNextStatus)) {
+                        sendNotification(ctx, datasetVersionUrn);
+                    }
+                    return null;
+                }
+            });
+        }
     }
 
-    private void publishDatasetVersion(ServiceContext ctx, String datasetVersionUrn) {
-        logger.debug("Publishing dataset {}", datasetVersionUrn);
+    private void publishDatasetVersion(ServiceContext ctx, String datasetVersionUrn, ProcStatusEnum procNextStatus) {
+        if (ProcStatusEnum.PUBLISHED.equals(procNextStatus)) {
+            logger.debug("Publishing dataset {}", datasetVersionUrn);
 
-        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
 
-            @Override
-            protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                datasetLifecycleService.sendToPublished(ctx, datasetVersionUrn);
-                return null;
-            }
-        });
+                @Override
+                protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                    datasetLifecycleService.sendToPublished(ctx, datasetVersionUrn);
+                    sendNotification(ctx, datasetVersionUrn);
+                    return null;
+                }
+            });
+        }
     }
 
     private void markDatabaseImportTaskAsFinished(ServiceContext ctx, String databaseImportationJobKey) {

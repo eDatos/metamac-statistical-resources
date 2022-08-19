@@ -49,7 +49,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     private static Logger           logger                                  = Logger.getLogger(DatasourceImportationServlet.class.getName());
     protected static final String[] FIELDSVERSIONABLESTATISTICALRESOURCEDTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
             StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,
-            StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS};
+            StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS, StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS};
 
     @Override
     public void init(ServletConfig config) throws ServletException {

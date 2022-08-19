@@ -5,11 +5,13 @@ import static org.siemac.metamac.statistical.resources.web.shared.utils.Statisti
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
@@ -40,7 +42,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private static int formWidth = 600;
     private static int formWidthFields = 400;
 
-    public ImportZipDatasourceWithMappingWindow() {
+    protected ImportZipDatasourceWithMappingWindow() {
         super(getConstants().actionLoadDatasource());
         addFieldsInMainForm();
         addFieldsInExtraForm();
@@ -185,7 +187,9 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
     private CustomSelectItem addFieldProcStatus() {
         final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().versionableStatisticalResourceNextVersion());
-        procStatus.setValueMap(CommonUtils.getProcStatusHashMap());
+        LinkedHashMap<String, String>  mapaProcStatus = CommonUtils.getProcStatusHashMap();
+        mapaProcStatus.remove(ProcStatusEnum.VALIDATION_REJECTED.getName());
+        procStatus.setValueMap(mapaProcStatus);
         procStatus.setRequired(true);   
         procStatus.setTitleColSpan(2);
         procStatus.setWidth(formWidthFields);
