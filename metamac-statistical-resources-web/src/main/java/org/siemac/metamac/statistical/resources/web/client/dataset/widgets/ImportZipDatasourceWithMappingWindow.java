@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
 import static org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens.UPLOAD_RESOURCE_TYPE;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResou
 import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
+import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWindow;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
@@ -41,7 +43,8 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
     private static int formWidth = 600;
     private static int formWidthFields = 400;
-
+    InformationLabel informationLabel;
+    
     protected ImportZipDatasourceWithMappingWindow() {
         super(getConstants().actionLoadDatasource());
         addFieldsInMainForm();
@@ -53,6 +56,14 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return new UploadDatasourceForm();
     }
 
+    private void buildInformationLabel() {
+        informationLabel = new InformationLabel(getMessages().datasourceImportationInfoLifeCicleRestrictionsMessage());
+        informationLabel.setWidth(formWidth);
+        informationLabel.setMargin(5);
+        informationLabel.hide();
+        body.addMember(informationLabel);
+    }
+    
     @Override
     protected CustomDynamicForm buildExtraForm() {
         CustomDynamicForm form = new CustomDynamicForm();
@@ -186,7 +197,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
 
     private CustomSelectItem addFieldProcStatus() {
-        final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().versionableStatisticalResourceNextVersion());
+        final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().lifeCycleStatisticalResourceProcStatus());
         LinkedHashMap<String, String>  mapaProcStatus = CommonUtils.getProcStatusHashMap();
         mapaProcStatus.remove(ProcStatusEnum.VALIDATION_REJECTED.getName());
         procStatus.setValueMap(mapaProcStatus);
@@ -284,6 +295,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraForm.clearValues();
         clearExtraFormValues();
         extraForm.setVisible(true);
+        informationLabel.setVisible(true);
        
     }
 
@@ -314,6 +326,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     public void show() {
         clearExtraFormValues();
         extraForm.hide();
+        informationLabel.hide();
         super.show();
     }
 
@@ -348,6 +361,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
             uploadItem.setTitleColSpan(2);
             uploadItem.setWidth(formWidthFields);
             uploadItem.setRequired(true);
+            buildInformationLabel();
 
             uploadItem.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
 
