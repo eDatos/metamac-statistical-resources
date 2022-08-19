@@ -1173,9 +1173,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersionDto dto) throws MetamacException {
+    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
         // Retrieve
-        DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, dto.getDatasetRepositoryId());
+        DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
