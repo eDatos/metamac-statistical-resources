@@ -1302,11 +1302,15 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateGeographicCoverageVariableElementsCache(ctx, datasetVersion);
+
         updateGeocoverageCache(ctx, datasetVersion, true);
     }
 
     @Override
     public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateAllGeographicCoverageVariableElementsCache(ctx);
+
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
                                                                        .eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
         List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
