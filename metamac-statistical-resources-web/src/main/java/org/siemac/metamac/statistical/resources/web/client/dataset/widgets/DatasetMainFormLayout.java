@@ -1,19 +1,33 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
 
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.LifecycleMainFormLayout;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
+import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
+import org.siemac.metamac.web.common.client.widgets.MainFormLayoutButton;
+
+import com.smartgwt.client.widgets.events.HasClickHandlers;
 
 public class DatasetMainFormLayout extends LifecycleMainFormLayout {
 
     private DatasetVersionDto datasetVersionDto;
+    private MainFormLayoutButton updateGeocoverageCache;
 
     public DatasetMainFormLayout() {
         super();
+        createButtonsForToolStrip();
+    }
+
+    private void createButtonsForToolStrip() {
+        updateGeocoverageCache = new MainFormLayoutButton(getConstants().updateGeographicCoverageVariableElementsCache(), GlobalResources.RESOURCE.reload().getURL());
+        toolStrip.addButton(updateGeocoverageCache);
     }
 
     public DatasetMainFormLayout(boolean canEdit) {
         super(canEdit);
+        createButtonsForToolStrip();
     }
 
     public void setDatasetVersion(DatasetVersionDto datasetVersionDto) {
@@ -52,8 +66,7 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
         return DatasetClientSecurityUtils.canResendStreamMessageDatasetVersion(datasetVersionDto);
     }
 
-    @Override
-    protected boolean canUpdateGeocoverageCache() {
+    private boolean canUpdateGeocoverageCache() {
         return DatasetClientSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(datasetVersionDto);
     }
 
@@ -72,5 +85,29 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
         if (datasetVersionDto.isKeepAllData() || isLastVersion()) {
             super.showPreviewButton();
         }
+    }
+
+    private void showUpdateGeocoverageCacheButton() {
+        if (canUpdateGeocoverageCache()) {
+            updateGeocoverageCache.show();
+        }
+    }
+
+    @Override
+    protected void updateVisibility() {
+        super.updateVisibility();
+        if (canUpdateGeocoverageCache()) {
+            showUpdateGeocoverageCacheButton();
+        }
+    }
+
+    @Override
+    protected void hideAllLifeCycleButtons() {
+        super.hideAllLifeCycleButtons();
+        updateGeocoverageCache.hide();
+    }
+
+    public HasClickHandlers getUpdateGeocoverageCache() {
+        return updateGeocoverageCache;
     }
 }

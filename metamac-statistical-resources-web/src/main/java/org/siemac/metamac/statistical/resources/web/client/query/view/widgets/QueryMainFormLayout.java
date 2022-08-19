@@ -60,8 +60,4 @@ public class QueryMainFormLayout extends LifecycleMainFormLayout {
         return QueryClientSecurityUtils.canPreviewQueryData(queryVersionDto);
     }
 
-    @Override
-    protected boolean canUpdateGeocoverageCache() {
-        return false;
-    }
 }

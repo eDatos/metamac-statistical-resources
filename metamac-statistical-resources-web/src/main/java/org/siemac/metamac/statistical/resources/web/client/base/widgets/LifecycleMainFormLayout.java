@@ -2,7 +2,6 @@ package org.siemac.metamac.statistical.resources.web.client.base.widgets;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
-import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.widgets.MainFormLayoutButton;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
@@ -16,7 +15,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     private MainFormLayoutButton rejectValidation;
     private MainFormLayoutButton publish;
     private MainFormLayoutButton resendStreamMessage;
-    private MainFormLayoutButton updateGeocoverageCache;
     private MainFormLayoutButton versioning;
     private MainFormLayoutButton preview;
 
@@ -38,7 +36,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         rejectValidation = new MainFormLayoutButton(getConstants().lifeCycleRejectValidation(), GlobalResources.RESOURCE.reject().getURL());
         publish = new MainFormLayoutButton(getConstants().lifeCyclePublish(), GlobalResources.RESOURCE.publish().getURL());
         resendStreamMessage = new MainFormLayoutButton(getConstants().lifeCycleReSendStreamMessage(), GlobalResources.RESOURCE.reload().getURL());
-        updateGeocoverageCache = new MainFormLayoutButton(getConstants().updateGeographicCoverageVariableElementsCache(), GlobalResources.RESOURCE.reload().getURL());
         versioning = new MainFormLayoutButton(getConstants().lifeCycleVersioning(), GlobalResources.RESOURCE.version().getURL());
         preview = new MainFormLayoutButton(getConstants().actionPreviewData(), GlobalResources.RESOURCE.preview().getURL());
 
@@ -47,7 +44,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         toolStrip.addButton(rejectValidation);
         toolStrip.addButton(publish);
         toolStrip.addButton(resendStreamMessage);
-        toolStrip.addButton(updateGeocoverageCache);
         toolStrip.addButton(versioning);
         toolStrip.addButton(preview);
     }
@@ -87,9 +83,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         if (canResendStreamMessage()) {
             showResendStreamMessageButton();
         }
-        if (canUpdateGeocoverageCache()) {
-            showUpdateGeocoverageCacheButton();
-        }
         if (canVersion() && lastVersion) {
             showVersioningButton();
         }
@@ -103,7 +96,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         rejectValidation.hide();
         publish.hide();
         resendStreamMessage.hide();
-        updateGeocoverageCache.hide();
         versioning.hide();
         preview.hide();
     }
@@ -135,12 +127,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     private void showResendStreamMessageButton() {
         if (canResendStreamMessage()) {
             resendStreamMessage.show();
-        }
-    }
-
-    private void showUpdateGeocoverageCacheButton() {
-        if (canUpdateGeocoverageCache()) {
-            updateGeocoverageCache.show();
         }
     }
 
@@ -176,10 +162,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         return resendStreamMessage;
     }
 
-    public HasClickHandlers getUpdateGeocoverageCache() {
-        return updateGeocoverageCache;
-    }
-
     public HasClickHandlers getVersioningButton() {
         return versioning;
     }
@@ -201,7 +183,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     protected abstract boolean canRejectValidation();
     protected abstract boolean canPublish();
     protected abstract boolean canResendStreamMessage();
-    protected abstract boolean canUpdateGeocoverageCache();
     protected abstract boolean canVersion();
     protected abstract boolean canPreviewData();
 }
