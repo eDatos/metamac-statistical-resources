@@ -43,6 +43,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.serviceimpl.Dataset
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -117,6 +118,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         versionRationaleTypes.add(VersionRationaleTypeEnum.MINOR_DATA_UPDATE.getName());
         basicVersionableStatisticalResourceDto.setVersionRationaleTypes(versionRationaleTypes);
         basicVersionableStatisticalResourceDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE.getName());
+        basicVersionableStatisticalResourceDto.setNextProcStatus(ProcStatusEnum.PUBLISHED.getName());
         basicVersionableStatisticalResourceDto.setNextVersionDate(convertDateToString("12/02/2022"));
         basicVersionableStatisticalResourceDto.setNextUpdateDate(convertDateToString("12/02/2022"));
         

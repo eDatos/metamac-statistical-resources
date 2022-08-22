@@ -137,6 +137,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersio
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
@@ -1018,6 +1019,25 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
             fail("parameter date next version required");
         } catch (MetamacException e) {
             assertEqualsMetamacExceptionItem(ServiceExceptionType.PARAMETER_REQUIRED, 1, new Serializable[]{ServiceExceptionParameters.DATASET_DATE_NEXT_VERSION}, e.getExceptionItems().get(0));
+        }
+    }
+    
+    @Test
+    @MetamacMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME)
+    public void testImportDatasourcesInDatasetVersionWithAutomaticLifeCicleFieldDateNextProcStatusRequired() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
+        HashMap<String, String> mappings = new HashMap<String, String>();
+        BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto = getMockBasicVersionableStatisticalResourceDto();
+        basicVersionableStatisticalResourceDto.setNextProcStatus(null);
+
+        try {
+            datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, mappings, false, basicVersionableStatisticalResourceDto);
+            fail("parameter date next proc status required");
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.PARAMETER_REQUIRED, 1, new Serializable[]{ServiceExceptionParameters.DATASET_NEXT_PROC_STATUS}, e.getExceptionItems().get(0));
         }
     }
     
@@ -2022,6 +2042,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         versionRationaleTypes.add(VersionRationaleTypeEnum.MINOR_DATA_UPDATE.getName());
         basicVersionableStatisticalResourceDto.setVersionRationaleTypes(versionRationaleTypes);
         basicVersionableStatisticalResourceDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE.getName());
+        basicVersionableStatisticalResourceDto.setNextProcStatus(ProcStatusEnum.PUBLISHED.getName());
         basicVersionableStatisticalResourceDto.setNextVersionDate(convertDateToString("12/02/2022"));
         basicVersionableStatisticalResourceDto.setNextUpdateDate(convertDateToString("12/02/2022"));
         
