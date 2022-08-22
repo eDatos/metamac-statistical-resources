@@ -1104,11 +1104,11 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+    public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode);
 
-        getDatasetService().importDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
+        return getDatasetService().importDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
     }
 
     @Override

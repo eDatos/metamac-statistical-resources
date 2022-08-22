@@ -208,12 +208,14 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             throwMetamacWebException(WebMessageExceptionsConstants.ERROR_IMPORT_IS_ZIP);
         }
 
+        MetamacException exceptionsJobPlanifying = null;
         if (StringUtils.isNotBlank(datasetVersionUrn)) {
             Map<String, String> dimensionMapping = buildDimensionsMappings(args);
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
             statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping, new BasicVersionableStatisticalResourceDto());
         } else if (StringUtils.isNotBlank(statisticalOperationCode)) {
-            statisticalResourcesServiceFacade.importDatasourcesInStatisticalOperation(ServiceContextHolder.getCurrentServiceContext(), statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
+            exceptionsJobPlanifying = statisticalResourcesServiceFacade.importDatasourcesInStatisticalOperation(ServiceContextHolder.getCurrentServiceContext(), statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
+            throw exceptionsJobPlanifying;
         }
     }
 

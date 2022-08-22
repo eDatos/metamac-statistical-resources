@@ -827,7 +827,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+    public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls,
+            BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
         datasetServiceInvocationValidator.checkImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
 
         Map<String, List<URL>> datasetVersionsForFiles = organizeFilesByDatasetVersionCode(statisticalOperationCode, fileUrls);
@@ -846,9 +847,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 items.add(item);
             }
         }
-        if (items.size() > 0) {
-            throw new MetamacException(items);
+        if (!items.isEmpty()) {
+            return new MetamacException(items);
         }
+        return null;
     }
 
     protected Map<String, List<URL>> organizeFilesByDatasetVersionCode(String statisticalOperationCode, List<URL> fileUrls) throws MetamacException {
