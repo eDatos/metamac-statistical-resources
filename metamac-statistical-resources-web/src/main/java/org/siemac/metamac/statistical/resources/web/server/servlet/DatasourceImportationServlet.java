@@ -178,10 +178,11 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         }
     }
     
-    private void importDatasource(Boolean mustBeZip, File uploadedFile, File outputFolder, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacWebException, ZipException, IOException, MetamacException {
+    private void importDatasource(Boolean mustBeZip, File uploadedFile, File outputFolder, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto)
+            throws MetamacWebException, ZipException, IOException, MetamacException {
 
-        StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(
-                StatisticalResourcesServiceFacade.BEAN_ID);
+        StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext()
+                .getBean(StatisticalResourcesServiceFacade.BEAN_ID);
 
         List<File> filesToImport = new ArrayList<File>();
 
@@ -212,10 +213,14 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (StringUtils.isNotBlank(datasetVersionUrn)) {
             Map<String, String> dimensionMapping = buildDimensionsMappings(args);
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
-            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping, new BasicVersionableStatisticalResourceDto());
+            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping,
+                    new BasicVersionableStatisticalResourceDto());
         } else if (StringUtils.isNotBlank(statisticalOperationCode)) {
-            exceptionsJobPlanifying = statisticalResourcesServiceFacade.importDatasourcesInStatisticalOperation(ServiceContextHolder.getCurrentServiceContext(), statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
-            throw exceptionsJobPlanifying;
+            exceptionsJobPlanifying = statisticalResourcesServiceFacade.importDatasourcesInStatisticalOperation(ServiceContextHolder.getCurrentServiceContext(), statisticalOperationCode, fileUrls,
+                    basicVersionableStatisticalResourceDto);
+            if (exceptionsJobPlanifying != null) {
+                throw exceptionsJobPlanifying;
+            }
         }
     }
 
