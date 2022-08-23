@@ -22,6 +22,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
@@ -65,6 +66,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisati
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceProperties;
@@ -95,6 +97,7 @@ import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnum
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
+import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
@@ -160,6 +163,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private NoticesRestInternalService                noticesRestInternalService;
+
+    @Autowired
+    private TaskService                               taskService;
 
     // ------------------------------------------------------------------------
     // DATASOURCES
@@ -1291,8 +1297,45 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     // ------------------------------------------------------------------------
+    // CACHE
+    // ------------------------------------------------------------------------
+
+    @Override
+    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateGeographicCoverageVariableElementsCache(ctx, datasetVersion);
+
+        updateGeocoverageCache(ctx, datasetVersion, true);
+    }
+
+    @Override
+    public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateAllGeographicCoverageVariableElementsCache(ctx);
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
+                                                                       .eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
+        List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
+
+        for (DatasetVersion datasetVersion : datasetVersions) {
+            updateGeocoverageCache(ctx, datasetVersion, false);
+        }
+    }
+
+    // ------------------------------------------------------------------------
     // PRIVATE METHODS
     // ------------------------------------------------------------------------
+
+    private void updateGeocoverageCache(ServiceContext ctx, DatasetVersion datasetVersion, boolean sendNotification) throws MetamacException {
+        String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        checkNotTasksInProgress(ctx, datasetVersionUrn);
+
+        TaskInfoDataset taskInfo = new TaskInfoDataset();
+        taskInfo.setDatasetVersionId(datasetVersionUrn);
+        taskInfo.setDatasetUrn(datasetUrn);
+        taskService.planifyUpdateGeocoverageCache(ctx, taskInfo, sendNotification);
+    }
+
 
     private void checkNotTasksInProgress(ServiceContext ctx, String datasetUrn) throws MetamacException {
         if (getTaskService().existsTaskForResource(ctx, datasetUrn)) {

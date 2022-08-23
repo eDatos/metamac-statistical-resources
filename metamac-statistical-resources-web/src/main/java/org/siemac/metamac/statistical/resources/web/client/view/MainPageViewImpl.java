@@ -7,10 +7,12 @@ import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalReso
 import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalResourcesToolStripLayoutEnum;
 import org.siemac.metamac.statistical.resources.web.client.presenter.MainPagePresenter;
 import org.siemac.metamac.statistical.resources.web.client.view.handlers.MainPageUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.widgets.StatisticalResourcesAdminMenu;
 import org.siemac.metamac.statistical.resources.web.client.widgets.StatisticalResourcesMenu;
 import org.siemac.metamac.web.common.client.enums.MessageTypeEnum;
 import org.siemac.metamac.web.common.client.widgets.BreadCrumbsPanel;
 import org.siemac.metamac.web.common.client.widgets.FooterLayout;
+import org.siemac.metamac.web.common.client.widgets.InformationWindow;
 import org.siemac.metamac.web.common.client.widgets.MasterHead;
 import org.siemac.metamac.web.common.client.widgets.MessagePanel;
 import org.siemac.metamac.web.common.client.widgets.MetamacNavBar;
@@ -25,30 +27,34 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
+import com.smartgwt.client.widgets.layout.Layout;
 import com.smartgwt.client.widgets.layout.VLayout;
 
 public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> implements MainPagePresenter.MainPageView {
 
-    private static final int               NORTH_HEIGHT   = 85;
-    private static final String            DEFAULT_MARGIN = "0px";
+    private static final int NORTH_HEIGHT = 85;
+    private static final String DEFAULT_MARGIN = "0px";
+    public static final String HEADER_ID = "header";
 
-    private MainPageUiHandlers             uiHandlers;
+    private MainPageUiHandlers uiHandlers;
 
-    private final MasterHead               masterHead;
+    private final MasterHead masterHead;
+    private final StatisticalResourcesAdminMenu adminMenu;
     private final StatisticalResourcesMenu navigationMenu;
-    private final BreadCrumbsPanel         breadCrumbsPanel;
-    private WaitPopup                      waitPopup;
+    private final BreadCrumbsPanel breadCrumbsPanel;
+    private WaitPopup waitPopup;
 
-    private final MessagePanel             messagePanel;
+    private final MessagePanel messagePanel;
 
-    private VLayout                        panel;
-    private VLayout                        northLayout;
-    private HLayout                        southLayout;
-    private FooterLayout                   footerLayout;
+    private VLayout panel;
+    private VLayout northLayout;
+    private HLayout southLayout;
+    private FooterLayout footerLayout;
 
     @Inject
-    public MainPageViewImpl(MasterHead masterHead, StatisticalResourcesMenu navigationMenu, BreadCrumbsPanel breadCrumbsPanel, MessagePanel messagePanel) {
+    public MainPageViewImpl(MasterHead masterHead, StatisticalResourcesAdminMenu adminMenu, StatisticalResourcesMenu navigationMenu, BreadCrumbsPanel breadCrumbsPanel, MessagePanel messagePanel) {
         this.masterHead = masterHead;
+        this.adminMenu = adminMenu;
         this.breadCrumbsPanel = breadCrumbsPanel;
         this.navigationMenu = navigationMenu;
         this.messagePanel = messagePanel;
@@ -69,9 +75,10 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
         northLayout.setHeight(NORTH_HEIGHT);
 
         // Nested layout container
+        // this header is for the navbar
+        // what navbar is shown is up to the menu layout
         VLayout vLayout = new VLayout();
-        vLayout.addMember(this.masterHead);
-        vLayout.addMember(this.navigationMenu);
+        vLayout.setID(HEADER_ID);
 
         VLayout breadCrumbLayout = new VLayout();
         breadCrumbLayout.addMember(this.breadCrumbsPanel);
@@ -190,6 +197,7 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
     public void setUiHandlers(MainPageUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
         navigationMenu.setUiHandlers(uiHandlers);
+        adminMenu.setUiHandlers(uiHandlers);
     }
 
     @Override
@@ -204,7 +212,14 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
 
     @Override
     public void selectMenuLayout(StatisticalResourcesToolStripLayoutEnum resourceType) {
-        navigationMenu.selectLayout(resourceType);
+        Layout header = (Layout) northLayout.getMember(HEADER_ID);
+        if (resourceType == StatisticalResourcesToolStripLayoutEnum.STATISTIC_DESKTOP) {
+            header.addMember(this.adminMenu);
+            header.removeMember(this.navigationMenu);
+        } else if (resourceType == StatisticalResourcesToolStripLayoutEnum.OPERATION_RESOURCES) {
+            header.addMember(this.navigationMenu);
+            header.removeMember(this.adminMenu);
+        }
     }
 
     @Override
@@ -223,6 +238,13 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
         if (waitPopup != null) {
             waitPopup.hideFinal();
         }
+    }
+
+    @Override
+    public InformationWindow showInformationMessage(String title, String message) {
+        InformationWindow informationWindow = new InformationWindow(title, message);
+        informationWindow.show();
+        return informationWindow;
     }
 
     private String getUserName() {
