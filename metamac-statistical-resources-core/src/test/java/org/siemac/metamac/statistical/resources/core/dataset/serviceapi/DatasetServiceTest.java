@@ -1773,12 +1773,12 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     @Override
-    public void testSaveGeographicCoverageVariableElementsCache() throws Exception {
+    public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
         // no test
     }
 
     @Override
-    public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
+    public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
         // no test
     }
 
