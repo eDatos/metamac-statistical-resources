@@ -545,7 +545,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         Task task = retrieveTaskByJob(ctx, importationJobKey);
 
         try {
-            processDatasets(ctx, taskInfoDataset, task.getCreatedDate());
+            processDatasets(ctx, taskInfoDataset, getCreatedDataSourceDate(ctx, task.getCreatedDate()));
         } catch (Exception e) {
             // Convert parser exception to metamac exception
             MetamacException throwableMetamacException = null;
@@ -557,6 +557,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
             throw throwableMetamacException;
         }
+    }
+
+    private DateTime getCreatedDataSourceDate(ServiceContext ctx, DateTime createdDateTask) {
+        return DatasetImportUtils.isDatasetImportJob(ctx) ? new DateTime() : createdDateTask;
     }
     
     private ProcStatusEnum getNextProcStatus(ServiceContext ctx, TaskInfoDataset taskInfoDataset) {
