@@ -56,7 +56,10 @@ public abstract class ProcStatusForActionsConstants {
 
     // DatasetVersion
     public static final String              PROC_STATUS_FOR_IMPORT_DATASOURCES_IN_DATASET_VERSION  = BaseEnumUtils.enumToString(procStatusForImportDatasourcesInDatasetVersion);
+    public static final String              PROC_STATUS_FOR_IMPORT_ZIP_DATASOURCES                 = BaseEnumUtils.enumToString(procStatusForImportZipDatasources);
 
+    
+    
     // Publication
     public static final String              PROC_STATUS_FOR_EDIT_PUBLICATION_STRUCTURE             = BaseEnumUtils.enumToString(procStatusForEditPublicationStructure);
 

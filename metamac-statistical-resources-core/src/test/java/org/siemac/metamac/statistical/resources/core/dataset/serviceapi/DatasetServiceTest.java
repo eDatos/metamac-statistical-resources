@@ -1042,6 +1042,38 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
     
     @Test
+    @MetamacMock(DATASET_VERSION_20_PRODUCTION_VALIDATION_READY_FOR_DIFFUSION_VALIDATION_NAME)
+    public void testImportDatasourcesInDatasetVersionWithAutomaticLifeCicleFieldProcStatusProductionInvalid() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_20_PRODUCTION_VALIDATION_READY_FOR_DIFFUSION_VALIDATION_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
+        HashMap<String, String> mappings = new HashMap<String, String>();
+        BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto = getMockBasicVersionableStatisticalResourceDto();
+
+        expectedMetamacException(MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.LIFE_CYCLE_WRONG_PROC_STATUS)
+                .withMessageParameters(urn, ProcStatusForActionsConstants.PROC_STATUS_FOR_IMPORT_ZIP_DATASOURCES).build());
+
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, mappings, false, basicVersionableStatisticalResourceDto);
+    }
+  
+    @Test
+    @MetamacMock(DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME)
+    public void testImportDatasourcesInDatasetVersionWithAutomaticLifeCicleFieldProcStatusDifussionInvalid() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
+        HashMap<String, String> mappings = new HashMap<String, String>();
+        BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto = getMockBasicVersionableStatisticalResourceDto();
+
+        expectedMetamacException(MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.LIFE_CYCLE_WRONG_PROC_STATUS)
+                .withMessageParameters(urn, ProcStatusForActionsConstants.PROC_STATUS_FOR_IMPORT_ZIP_DATASOURCES).build());
+
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), urn, urls, mappings, false, basicVersionableStatisticalResourceDto);
+    }
+    
+    @Test
     @MetamacMock(DATASET_VERSION_57_DRAFT_INITIAL_VERSION_NAME)
     public void testImportDatasourcesInDatasetVersionProcStatusDraft() throws Exception {
         DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_57_DRAFT_INITIAL_VERSION_NAME);
