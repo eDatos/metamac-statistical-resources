@@ -2303,6 +2303,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // no test
     }
 
+    @Override
+    public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
+        // no test
+    }
+
     // ------------------------------------------------------------------------
     // CATEGORISATIONS
     // ------------------------------------------------------------------------
