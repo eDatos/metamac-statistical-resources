@@ -86,10 +86,12 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
 
     public SiemacMetadataStatisticalResourceDto getSiemacMetadataStatisticalResourceDto(SiemacMetadataStatisticalResourceDto siemacMetadataStatisticalResourceDto) {
         siemacMetadataStatisticalResourceDto.setCreator(getValueAsExternalItemDto(SiemacMetadataDS.CREATOR));
-        siemacMetadataStatisticalResourceDto.getContributor().clear();
+        
+        siemacMetadataStatisticalResourceDto.getDataProvider().clear();
         siemacMetadataStatisticalResourceDto.getDataProvider().addAll(getExternalItemsValue(getItem(SiemacMetadataDS.DATA_PROVIDER)));
         siemacMetadataStatisticalResourceDto.setDataProviderAnnotations(getValueAsInternationalStringDto(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS));
         
+        siemacMetadataStatisticalResourceDto.getContributor().clear();
         siemacMetadataStatisticalResourceDto.getContributor().addAll(getExternalItemsValue(getItem(SiemacMetadataDS.CONTRIBUTOR)));
         siemacMetadataStatisticalResourceDto.setConformsTo(getValueAsInternationalStringDto(SiemacMetadataDS.CONFORMS_TO));
         siemacMetadataStatisticalResourceDto.setConformsToInternal(getValueAsInternationalStringDto(SiemacMetadataDS.CONFORMS_TO_INTERNAL));
