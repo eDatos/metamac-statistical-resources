@@ -1194,8 +1194,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         String statisticalOperationCode = datasetVersion37.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode();
 
         List<URL> urls = Arrays.asList(buildURLForFile(fileForDatasetVersion37), buildURLForFile(fileForDatasetVersion38));
-        MetamacException exceptions = datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
-        throw exceptions;
+        throw datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -1210,7 +1209,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, "not_exist.px", statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildURLForFile("not_exist.px"), buildURLForFile(fileForDatasetVersion38));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
+        throw datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
     }
 
     @Override

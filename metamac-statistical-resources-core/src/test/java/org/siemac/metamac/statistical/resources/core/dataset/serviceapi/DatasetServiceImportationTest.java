@@ -264,7 +264,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, filename01, statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
+        throw datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
     }
 
@@ -296,7 +296,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, filename02, statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
+        throw datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
     }
 
