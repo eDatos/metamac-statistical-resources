@@ -101,6 +101,7 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(siemacMetadataStatisticalResource.getType(), addParameter(metadataName, ServiceExceptionSingleParameters.TYPE), exceptionItems);
 
         checkMetadataRequired(siemacMetadataStatisticalResource.getCreator(), addParameter(metadataName, ServiceExceptionSingleParameters.CREATOR), exceptionItems);
+        checkMetadataRequired(siemacMetadataStatisticalResource.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER), exceptionItems);
         checkMetadataRequired(siemacMetadataStatisticalResource.getLastUpdate(), addParameter(metadataName, ServiceExceptionSingleParameters.LAST_UPDATE), exceptionItems);
 
         checkMetadataRequired(siemacMetadataStatisticalResource.getPublisher(), addParameter(metadataName, ServiceExceptionSingleParameters.PUBLISHER), exceptionItems);

@@ -15,7 +15,9 @@ public class SiemacMetadataDS extends LifeCycleResourceDS {
     public static final String LAST_UPDATE                    = "siemac-last-up";
     public static final String CONFORMS_TO                    = "siemac-conf";
     public static final String CONFORMS_TO_INTERNAL           = "siemac-conf-int";
-
+    public static final String DATA_PROVIDER                  = "siemac-data-provider";
+    public static final String DATA_PROVIDER_ANNOTATIONS      = "siemac-data-provider-annot";
+    
     public static final String COMMON_METADATA                = "siemac-common-metadata";
     public static final String COMMON_METADATA_VIEW           = "siemac-common-metadata-view";
 

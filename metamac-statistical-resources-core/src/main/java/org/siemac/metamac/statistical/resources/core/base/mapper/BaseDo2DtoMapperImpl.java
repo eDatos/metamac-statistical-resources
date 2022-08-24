@@ -59,6 +59,9 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
         target.setCreator(externalItemDoToDto(source.getCreator()));
         target.getContributor().clear();
         target.getContributor().addAll(externalItemDoCollectionToDtoCollection(source.getContributor()));
+        target.getDataProvider().clear();
+        target.getDataProvider().addAll(externalItemDoCollectionToDtoCollection(source.getDataProvider()));
+        target.setDataProviderAnnotations(internationalStringDoToDto(source.getDataProviderAnnotations()));
         target.setResourceCreatedDate(dateDoToDto(source.getResourceCreatedDate()));
         target.setLastUpdate(dateDoToDto(source.getLastUpdate()));
         target.setConformsTo(internationalStringDoToDto(source.getConformsTo()));

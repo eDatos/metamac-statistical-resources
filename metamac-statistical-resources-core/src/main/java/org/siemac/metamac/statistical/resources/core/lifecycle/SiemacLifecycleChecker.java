@@ -85,6 +85,9 @@ public class SiemacLifecycleChecker {
 
         // Contributor
         externalItemChecker.checkExternalItemsExternallyPublished(resource.getContributor(), addParameter(metadataName, ServiceExceptionSingleParameters.CONTRIBUTOR), exceptionItems);
+        
+        // DataProvider
+        externalItemChecker.checkExternalItemsExternallyPublished(resource.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER), exceptionItems);
 
         // Publisher
         externalItemChecker.checkExternalItemsExternallyPublished(resource.getPublisher(), addParameter(metadataName, ServiceExceptionSingleParameters.PUBLISHER), exceptionItems);
