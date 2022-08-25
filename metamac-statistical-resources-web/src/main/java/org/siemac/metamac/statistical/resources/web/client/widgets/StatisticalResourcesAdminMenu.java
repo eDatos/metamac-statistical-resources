@@ -42,7 +42,7 @@ public class StatisticalResourcesAdminMenu extends ToolStrip {
             }
         });
 
-        if (DatasetClientSecurityUtils.canUpdateGeographicCoverageVariableElementsCache()) {
+        if (DatasetClientSecurityUtils.canUpdateAllGeographicCoverageVariableElementsCache()) {
             addButton(updateGeographicCoverageVariableElementsCacheButton);
         }
     }

@@ -246,7 +246,7 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
     // ADMIN MANAGEMENT
     // ------------------------------------------------------------------------
 
-    public static boolean canUpdateGeographicCoverageVariableElementsCache() {
+    public static boolean canUpdateAllGeographicCoverageVariableElementsCache() {
         return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
     }    
     
