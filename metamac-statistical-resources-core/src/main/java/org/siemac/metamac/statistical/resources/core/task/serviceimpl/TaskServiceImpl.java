@@ -515,7 +515,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
                 sched.scheduleJob(job, trigger);
             } catch (SchedulerException e) {
-                logger.error("PlanifyUpdateGeocoverageCache: the recovery importation with key " + jobKey.getName() + " has failed", e);
+                logger.error("PlanifyUpdateGeocoverageCache: the job with key " + jobKey.getName() + " has failed", e);
             }
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
