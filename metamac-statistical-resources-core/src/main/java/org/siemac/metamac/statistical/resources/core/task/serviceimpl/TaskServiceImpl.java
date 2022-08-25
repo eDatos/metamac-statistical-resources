@@ -1097,7 +1097,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private JobKey createJobKeyForUpdateGeocoverageCacheResource(String resourceId) {
-        return new JobKey(createJobNameForUpdateGeocoverageCache(resourceId), GROUP_IMPORTATION);
+        return new JobKey(createJobNameForUpdateGeocoverageCache(resourceId));
     }
 
     private TriggerKey createTriggerKeyForImportationDataset(String datasetId) {
@@ -1117,7 +1117,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private TriggerKey createTriggerKeyForUpdateGeocoverageCache(String datasetId) {
-        return new TriggerKey(createJobNameForUpdateGeocoverageCache(datasetId), GROUP_IMPORTATION);
+        return new TriggerKey(createJobNameForUpdateGeocoverageCache(datasetId));
     }
 
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {
