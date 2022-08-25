@@ -258,6 +258,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setKeywords(toInternationalString(source.getKeywords(), selectedLanguages));
         target.setType(toStatisticalResourceType(source.getType()));
         target.setCreator(toResourceExternalItemSrm(source.getCreator(), selectedLanguages));
+        target.setDataProviders(toResourcesExternalItemsSrm(source.getDataProvider(), selectedLanguages));
+        target.setDataProviderAnnotations(toInternationalString(source.getDataProviderAnnotations(), selectedLanguages));
         target.setContributors(toResourcesExternalItemsSrm(source.getContributor(), selectedLanguages));
         target.setCreatedDate(toDate(source.getResourceCreatedDate()));
         target.setLastUpdate(toDate(source.getLastUpdate()));

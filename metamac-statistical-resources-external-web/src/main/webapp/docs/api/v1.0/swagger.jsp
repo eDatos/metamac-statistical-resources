@@ -1540,6 +1540,14 @@
             "versionRationaleTypes":{
                "description":"",
                "$ref":"#/definitions/VersionRationaleTypes"
+            },
+            "dataProviders":{
+               "description":"",
+               "$ref":"#/definitions/Resources"
+            },
+            "dataProviderAnnotations":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
             }
          },
          "description":""
@@ -3571,6 +3579,20 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/VersionRationaleTypes"
+                  },
+                  "dataProviders":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/Resources"
+                  },
+                  "dataProviderAnnotations":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/InternationalString"
                   }
                }
             }
