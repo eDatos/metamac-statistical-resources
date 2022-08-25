@@ -480,22 +480,23 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         // Validation
         taskServiceInvocationValidator.checkPlanifyUpdateGeocoverageCache(ctx, taskInfoDataset, sendNotification);
 
+        String datasetUrn = taskInfoDataset.getDatasetUrn();
         String datasetVersionUrn = taskInfoDataset.getDatasetVersionId();
-        String taskName = createJobNameForUpdateGeocoverageCache(taskInfoDataset.getDatasetVersionId());
+        String taskName = createJobNameForUpdateGeocoverageCache(datasetUrn);
 
         // Job keys
-        JobKey jobKey = createJobKeyForUpdateGeocoverageCacheResource(datasetVersionUrn);
-        TriggerKey triggerKey = createTriggerKeyForUpdateGeocoverageCache(datasetVersionUrn);
+        JobKey jobKey = createJobKeyForUpdateGeocoverageCacheResource(datasetUrn);
+        TriggerKey triggerKey = createTriggerKeyForUpdateGeocoverageCache(datasetUrn);
 
         try {
-            checkExistTaskInResource(ctx, jobKey, datasetVersionUrn);
+            checkExistTaskInResource(ctx, jobKey, datasetUrn);
 
             // @formatter:off
             JobDetail job = newJob(UpdateGeocoverageCacheJob.class)
                     .withIdentity(jobKey)
-                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId())
+                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_VERSION_ID, datasetVersionUrn)
                     .usingJobData(UpdateGeocoverageCacheJob.USER, ctx.getUserId())
-                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_URN, datasetVersionUrn)
+                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_URN, datasetUrn)
                     .usingJobData(UpdateGeocoverageCacheJob.TASK_NAME, taskName)
                     .usingJobData(UpdateGeocoverageCacheJob.SEND_NOTIFICATION, sendNotification)
                     .requestRecovery()
@@ -504,7 +505,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             Task task = new Task(taskName);
             task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
-            task.setExtensionPoint(taskInfoDataset.getDatasetVersionId());
+            task.setExtensionPoint(datasetUrn);
             createTask(ctx, task);
 
             SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
