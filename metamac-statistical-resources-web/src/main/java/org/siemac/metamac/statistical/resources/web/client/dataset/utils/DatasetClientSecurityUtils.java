@@ -251,7 +251,10 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
     }    
     
     public static boolean canUpdateGeographicCoverageVariableElementsCache(DatasetVersionDto dto) {
-        if (Boolean.FALSE.equals(dto.getLastVersion())) {
+        if (!isPublished(dto.getProcStatus())) {
+            return false;
+        }
+        if (BooleanUtils.isTrue(dto.getIsTaskInBackground())) {
             return false;
         }
         return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
