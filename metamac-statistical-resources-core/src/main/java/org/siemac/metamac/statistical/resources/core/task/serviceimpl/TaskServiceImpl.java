@@ -480,22 +480,23 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         // Validation
         taskServiceInvocationValidator.checkPlanifyUpdateGeocoverageCache(ctx, taskInfoDataset, sendNotification);
 
+        String datasetUrn = taskInfoDataset.getDatasetUrn();
         String datasetVersionUrn = taskInfoDataset.getDatasetVersionId();
-        String taskName = createJobNameForUpdateGeocoverageCache(taskInfoDataset.getDatasetVersionId());
+        String taskName = createJobNameForUpdateGeocoverageCache(datasetUrn);
 
         // Job keys
-        JobKey jobKey = createJobKeyForUpdateGeocoverageCacheResource(datasetVersionUrn);
-        TriggerKey triggerKey = createTriggerKeyForUpdateGeocoverageCache(datasetVersionUrn);
+        JobKey jobKey = createJobKeyForUpdateGeocoverageCacheResource(datasetUrn);
+        TriggerKey triggerKey = createTriggerKeyForUpdateGeocoverageCache(datasetUrn);
 
         try {
-            checkExistTaskInResource(ctx, jobKey, datasetVersionUrn);
+            checkExistTaskInResource(ctx, jobKey, datasetUrn);
 
             // @formatter:off
             JobDetail job = newJob(UpdateGeocoverageCacheJob.class)
                     .withIdentity(jobKey)
-                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId())
+                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_VERSION_ID, datasetVersionUrn)
                     .usingJobData(UpdateGeocoverageCacheJob.USER, ctx.getUserId())
-                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_URN, datasetVersionUrn)
+                    .usingJobData(UpdateGeocoverageCacheJob.DATASET_URN, datasetUrn)
                     .usingJobData(UpdateGeocoverageCacheJob.TASK_NAME, taskName)
                     .usingJobData(UpdateGeocoverageCacheJob.SEND_NOTIFICATION, sendNotification)
                     .requestRecovery()
@@ -504,7 +505,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             Task task = new Task(taskName);
             task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
-            task.setExtensionPoint(taskInfoDataset.getDatasetVersionId());
+            task.setExtensionPoint(datasetUrn);
             createTask(ctx, task);
 
             SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
@@ -514,7 +515,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
                 sched.scheduleJob(job, trigger);
             } catch (SchedulerException e) {
-                logger.error("PlanifyUpdateGeocoverageCache: the recovery importation with key " + jobKey.getName() + " has failed", e);
+                logger.error("PlanifyUpdateGeocoverageCache: the job with key " + jobKey.getName() + " has failed", e);
             }
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
@@ -914,7 +915,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public boolean existsTaskForResource(ServiceContext ctx, String resourceId) throws MetamacException {
         taskServiceInvocationValidator.checkExistsTaskForResource(ctx, resourceId);
         return existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
-                || (existDatabaseImportationTaskInResource(ctx, resourceId));
+                || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId);
     }
 
     @Override
@@ -1096,7 +1097,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private JobKey createJobKeyForUpdateGeocoverageCacheResource(String resourceId) {
-        return new JobKey(createJobNameForUpdateGeocoverageCache(resourceId), GROUP_IMPORTATION);
+        return new JobKey(createJobNameForUpdateGeocoverageCache(resourceId));
     }
 
     private TriggerKey createTriggerKeyForImportationDataset(String datasetId) {
@@ -1116,7 +1117,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private TriggerKey createTriggerKeyForUpdateGeocoverageCache(String datasetId) {
-        return new TriggerKey(createJobNameForUpdateGeocoverageCache(datasetId), GROUP_IMPORTATION);
+        return new TriggerKey(createJobNameForUpdateGeocoverageCache(datasetId));
     }
 
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {
