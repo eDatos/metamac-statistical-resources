@@ -429,6 +429,13 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
         if (resource.getCreator() == null) {
             resource.setCreator(mockOrganizationUnitExternalItem("creator"));
         }
+        if (resource.getDataProvider().isEmpty()) {
+            resource.addDataProvider(mockDataProviderExternalItem("dataProvider01"));
+            resource.addDataProvider(mockDataProviderExternalItem("dataProvider02"));
+        }
+        if (resource.getDataProviderAnnotations() == null) {
+            resource.setDataProviderAnnotations(mockInternationalStringMetadata(resourceCode, "dataProviderAnnotations"));
+        }
         if (resource.getContributor().isEmpty()) {
             resource.addContributor(mockOrganizationUnitExternalItem("contributor01"));
             resource.addContributor(mockOrganizationUnitExternalItem("contributor02"));
@@ -708,6 +715,15 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
         return mockExternalItem(code, mockOrganizationUnitUrn(code), TypeExternalArtefactsEnum.ORGANISATION_UNIT);
     }
 
+    public static ExternalItem mockDataProviderExternalItem() {
+        String code = mockCode();
+        return mockDataProviderExternalItem(code);
+    }
+    
+    public static ExternalItem mockDataProviderExternalItem(String code) {
+        return mockExternalItem(code, mockDataProviderUrn(code), TypeExternalArtefactsEnum.DATA_PROVIDER);
+    }
+    
     public static ExternalItem mockConceptExternalItem() {
         String code = mockCode();
         return mockConceptExternalItem(code);

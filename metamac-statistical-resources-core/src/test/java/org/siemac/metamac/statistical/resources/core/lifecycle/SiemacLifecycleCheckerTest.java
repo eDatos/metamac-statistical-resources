@@ -167,6 +167,7 @@ public class SiemacLifecycleCheckerTest extends StatisticalResourcesBaseTest {
         verifyExternalItemsExternallyPublished(siemacMetadata.getLanguages());
         verifyExternalItemsExternallyPublished(siemacMetadata.getStatisticalOperationInstances());
         verifyExternalItemExternallyPublished(siemacMetadata.getCreator());
+        verifyExternalItemsExternallyPublished(siemacMetadata.getDataProvider());
         verifyExternalItemsExternallyPublished(siemacMetadata.getContributor());
         verifyExternalItemsExternallyPublished(siemacMetadata.getPublisher());
         verifyExternalItemsExternallyPublished(siemacMetadata.getMediator());
@@ -191,6 +192,9 @@ public class SiemacLifecycleCheckerTest extends StatisticalResourcesBaseTest {
 
         siemacMetadata.setCreator(StatisticalResourcesDoMocks.mockOrganizationUnitExternalItem());
 
+        siemacMetadata.addDataProvider(StatisticalResourcesDoMocks.mockDataProviderExternalItem());
+        siemacMetadata.addDataProvider(StatisticalResourcesDoMocks.mockDataProviderExternalItem());
+        
         siemacMetadata.addContributor(StatisticalResourcesDoMocks.mockOrganizationUnitExternalItem());
         siemacMetadata.addContributor(StatisticalResourcesDoMocks.mockOrganizationUnitExternalItem());
 
