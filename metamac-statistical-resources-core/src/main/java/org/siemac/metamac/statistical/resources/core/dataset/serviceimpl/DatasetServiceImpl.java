@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -106,7 +107,13 @@ import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeDime
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
@@ -166,6 +173,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private TaskService                               taskService;
+
+    @Autowired
+    @Qualifier("txManager")
+    private PlatformTransactionManager                platformTransactionManager;
 
     // ------------------------------------------------------------------------
     // DATASOURCES
@@ -1315,9 +1326,67 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                                                                        .eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
         List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
 
-        for (DatasetVersion datasetVersion : datasetVersions) {
-            updateGeocoverageCache(ctx, datasetVersion, false);
+        updateAllGeocoverageCache(ctx, datasetVersions);
+    }
+
+    private TransactionTemplate getTransactionTemplate() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        return transactionTemplate;
+    }
+
+    private void updateAllGeocoverageCache(ServiceContext ctx, List<DatasetVersion> datasetVersions) throws MetamacException {
+        // Given that jobs take an ID from the dataset urn (not the dataset version), and we need to update all the versions
+        // of a dataset, a conflict emerges when trying to schedule two jobs to update the cache of several versions of the same dataset.
+        // We prevent this by planning only one dataset version at a time, and then waiting until that job finishes to planify the next one.
+        // That's why we run a loop that checks whether a job with a dataset urn has been created before planning it. We can have
+        // multiple jobs for different datasets, but not for multiple versions of the same dataset.
+        while (!datasetVersions.isEmpty()) {
+            ListIterator<DatasetVersion> datasetVersionsIt = datasetVersions.listIterator();
+
+            while (datasetVersionsIt.hasNext()) {
+                DatasetVersion datasetVersion = datasetVersionsIt.next();
+                String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+
+                if (!getTaskService().existsTaskForResource(ctx, datasetUrn)) {
+
+                    // Thing is, Quartz run its own thread to execute jobs. That thread does not share the same transaction as the
+                    // one planning the jobs (the one where this method runs). Given that this thread does not end until all jobs
+                    // have been planned (because we cannot have two jobs for the same dataset, we have to planify them only one at
+                    // a time) that means a job starts and ends executing while this thread it's still alive.
+                    //
+                    // That causes an exception: when a job finishes it looks in the DB to mark itself as finished. But since the transaction
+                    // at the planify thread has not yet been completed, it has not flushed data to the DB, meaning an exception it's thrown:
+                    // "couldn't find job on DB".
+                    //
+                    // This is fixed by creating a specific transaction to planify a job, that allows it to be saved to DB before the job even
+                    // starts, preventing the exception.
+                    getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
+
+                        @Override
+                        protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                            updateGeocoverageCache(ctx, datasetVersion, false);
+                            return null;
+                        }
+                    });
+
+                    datasetVersionsIt.remove();
+                }
+            }
         }
+    }
+
+    abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
+
+        public final T doInTransaction(TransactionStatus status) {
+            try {
+                return doInMetamacTransaction(status);
+            } catch (MetamacException e) {
+                throw new RuntimeException("Error in transactional method", e);
+            }
+        }
+
+        protected abstract T doInMetamacTransaction(TransactionStatus status) throws MetamacException;
     }
 
     // ------------------------------------------------------------------------
