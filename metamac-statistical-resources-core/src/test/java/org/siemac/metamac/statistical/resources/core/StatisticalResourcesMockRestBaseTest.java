@@ -226,7 +226,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getLanguages(), baseField, "languages"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getStatisticalOperationInstances(), baseField, "statistical_operation_instances"));
         exceptionItems.add(buildExternalItemNotPublishedException(siemacResource.getCreator(), baseField, "creator"));
-        exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getDataProvider(), baseField, "dataProvider"));
+        exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getDataProvider(), baseField, "data_provider"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getContributor(), baseField, "contributor"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getPublisher(), baseField, "publisher"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getPublisherContributor(), baseField, "publisher_contributor"));
