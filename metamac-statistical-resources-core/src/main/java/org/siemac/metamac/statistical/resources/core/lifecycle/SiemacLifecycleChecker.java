@@ -53,7 +53,7 @@ public class SiemacLifecycleChecker {
 
     public void checkSendToValidationRejected(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         lifecycleChecker.checkSendToValidationRejected(resource, metadataName, exceptionItems);
-        checkSiemacMetadataAllActions(resource, metadataName, exceptionItems);
+        checkSiemacMetadataVersionOrReject(resource, metadataName, exceptionItems);
     }
 
     // ------------------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ public class SiemacLifecycleChecker {
     // ------------------------------------------------------------------------------------------------------
     public void checkVersioning(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         lifecycleChecker.checkVersioning(resource, metadataName, exceptionItems);
-        checkSiemacMetadataAllActions(resource, metadataName, exceptionItems);
+        checkSiemacMetadataVersionOrReject(resource, metadataName, exceptionItems);
     }
 
     // ------------------------------------------------------------------------------------------------------
@@ -134,5 +134,9 @@ public class SiemacLifecycleChecker {
 
     private void checkSiemacMetadataAllActions(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
         lifecycleCommonMetadataChecker.checkSiemacCommonMetadata(resource, metadataName, exceptionItems);
+    }
+    
+    private void checkSiemacMetadataVersionOrReject(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
+        lifecycleCommonMetadataChecker.checkSiemacCommonMetadataVersioningWithoutDataProvider(resource, metadataName, exceptionItems);
     }
 }

@@ -92,7 +92,7 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(lifeCycleStatisticalResource.getMaintainer(), addParameter(metadataName, ServiceExceptionSingleParameters.MAINTAINER), exceptionItems);
     }
 
-    public void checkSiemacCommonMetadata(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
+    public void checkSiemacCommonMetadataGeneral(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
         SiemacMetadataStatisticalResource siemacMetadataStatisticalResource = resource.getSiemacMetadataStatisticalResource();
 
         checkMetadataRequired(siemacMetadataStatisticalResource.getLanguage(), addParameter(metadataName, ServiceExceptionSingleParameters.LANGUAGE), exceptionItems);
@@ -101,7 +101,7 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(siemacMetadataStatisticalResource.getType(), addParameter(metadataName, ServiceExceptionSingleParameters.TYPE), exceptionItems);
 
         checkMetadataRequired(siemacMetadataStatisticalResource.getCreator(), addParameter(metadataName, ServiceExceptionSingleParameters.CREATOR), exceptionItems);
-        checkMetadataRequired(siemacMetadataStatisticalResource.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER), exceptionItems);
+
         checkMetadataRequired(siemacMetadataStatisticalResource.getLastUpdate(), addParameter(metadataName, ServiceExceptionSingleParameters.LAST_UPDATE), exceptionItems);
 
         checkMetadataRequired(siemacMetadataStatisticalResource.getPublisher(), addParameter(metadataName, ServiceExceptionSingleParameters.PUBLISHER), exceptionItems);
@@ -109,6 +109,17 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(siemacMetadataStatisticalResource.getCommonMetadata(), addParameter(metadataName, ServiceExceptionSingleParameters.COMMON_METADATA), exceptionItems);
     }
 
+    public void checkSiemacCommonMetadata(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
+        checkSiemacCommonMetadataGeneral(resource, metadataName, exceptionItems);
+        SiemacMetadataStatisticalResource siemacMetadataStatisticalResource = resource.getSiemacMetadataStatisticalResource();
+        checkMetadataRequired(siemacMetadataStatisticalResource.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER), exceptionItems);
+    }
+    
+    // Because is required but the datasets without this value before this development must version o reject.
+    public void checkSiemacCommonMetadataVersioningWithoutDataProvider(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
+        checkSiemacCommonMetadataGeneral(resource, metadataName, exceptionItems);
+    }
+        
     public void checkDatasetVersionCommonMetadata(ServiceContext ctx, DatasetVersion resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
 
         checkMetadataRequired(resource.getRelatedDsd(), addParameter(metadataName, ServiceExceptionSingleParameters.RELATED_DSD), exceptionItems);
