@@ -242,4 +242,21 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
         return SharedDatasetsSecurityUtils.canDeleteAttributeInstance(getMetamacPrincipal(), dto.getStatisticalOperation().getCode(), dto.getProcStatus());
     }
 
+    // ------------------------------------------------------------------------
+    // ADMIN MANAGEMENT
+    // ------------------------------------------------------------------------
+
+    public static boolean canUpdateAllGeographicCoverageVariableElementsCache() {
+        return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
+    }    
+    
+    public static boolean canUpdateGeographicCoverageVariableElementsCache(DatasetVersionDto dto) {
+        if (!isPublished(dto.getProcStatus())) {
+            return false;
+        }
+        if (BooleanUtils.isTrue(dto.getIsTaskInBackground())) {
+            return false;
+        }
+        return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
+    }
 }

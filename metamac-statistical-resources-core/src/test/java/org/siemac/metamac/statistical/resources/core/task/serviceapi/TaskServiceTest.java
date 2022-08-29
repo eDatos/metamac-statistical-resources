@@ -82,13 +82,28 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     }
 
     @Override
+    public void testPlanifyUpdateGeocoverageCache() throws Exception {
+        // No test
+    }
+
+    @Override
     public void testProcessDuplicationTask() throws Exception {
         // See integration test in DataManipulateTest
     }
 
     @Override
+    public void testProcessUpdateGeocoverageCacheTask() throws Exception {
+        // No test
+    }
+
+    @Override
     public void testExistDuplicationTaskInResource() throws Exception {
         // See integration test in DataManipulateTest
+    }
+
+    @Override
+    public void testExistUpdateGeocoverageCacheTaskInResource() throws Exception {
+        // No test
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -108,6 +109,39 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             createDatabaseImportBackgroundNotification(locale, datasetVersion, actionCode, message);
         } catch (MetamacException e) {
             logger.error("Error creating createDatabaseImportSuccessBackgroundNotification:", e);
+        }
+    }
+
+    @Override
+    public void createUpdateGeocoverageCacheNotification(DatasetVersion datasetVersion, String actionCode, String messageCode, Serializable... messageParameters) {
+        try {
+            Locale locale = configurationService.retrieveLanguageDefaultLocale();
+            ResourceInternal resourceInternal = restMapper.generateResourceInternal(datasetVersion);
+            Message message = createMessage(locale, Collections.singletonList(resourceInternal), messageCode, messageParameters);
+
+            createUpdateGeocoverageCacheBackgroundNotification(locale, datasetVersion, actionCode, message);
+        } catch (MetamacException e) {
+            logger.error("Error creating createDatabaseImportSuccessBackgroundNotification:", e);
+        }
+    }
+
+    private void createUpdateGeocoverageCacheBackgroundNotification(Locale locale, DatasetVersion datasetVersion, String actionCode, Message message) throws MetamacException {
+        try {
+            String subject = LocaleUtil.getMessageForCode(actionCode, locale);
+            String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS.getName();
+
+            // @formatter:off
+            sendNotice(NoticeBuilder.notification()
+                    .withMessages(message)
+                    .withSendingApplication(sendingApp)
+                    .withRoles(MetamacRolesEnum.ADMINISTRADOR)
+                    .withSubject(subject)
+                    .withApplications(sendingApp)
+                    .withStatisticalOperations(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn())
+                    .build());
+            // @formatter:on
+        } catch (Exception e) {
+            throw manageNoticesInternalRestException(e);
         }
     }
 

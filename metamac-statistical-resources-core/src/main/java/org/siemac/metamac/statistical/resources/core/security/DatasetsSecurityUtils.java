@@ -263,4 +263,14 @@ public class DatasetsSecurityUtils extends SecurityUtils {
         }
     }
 
+    // ------------------------------------------------------------------------
+    // ADMIN MANAGEMENT
+    // ------------------------------------------------------------------------
+
+    public static void canUpdateGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
 }

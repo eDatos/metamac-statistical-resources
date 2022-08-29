@@ -82,6 +82,10 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
     }
 
+    public static void checkExistUpdateGeocoverageCacheTaskInResource(String resourceId, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
+    }
+
     public static void checkMarkTaskAsFinished(String job, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(job, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
     }
@@ -136,5 +140,14 @@ public class TaskServiceInvocationValidatorImpl {
     public static void checkSendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(metamacException, ServiceExceptionParameters.METAMAC_EXCEPTION, exceptions);
+    }
+
+    public static void checkPlanifyUpdateGeocoverageCache(TaskInfoDataset taskInfoDataset, boolean sendNotification, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
+    }
+
+    public static void checkProcessUpdateGeocoverageCacheTask(String jobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
     }
 }
