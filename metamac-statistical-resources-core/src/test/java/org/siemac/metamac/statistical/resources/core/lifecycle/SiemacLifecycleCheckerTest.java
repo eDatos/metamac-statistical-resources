@@ -130,7 +130,7 @@ public class SiemacLifecycleCheckerTest extends StatisticalResourcesBaseTest {
         Assert.assertEquals(0, exceptionItems.size());
 
         verify(lifecycleService, times(1)).checkSendToValidationRejected(any(HasLifecycle.class), anyString(), anyListOf(MetamacExceptionItem.class));
-        verify(lifecycleCommonMetadataChecker, times(1)).checkSiemacCommonMetadata(any(HasSiemacMetadata.class), anyString(), anyListOf(MetamacExceptionItem.class));
+        verify(lifecycleCommonMetadataChecker, times(1)).checkSiemacCommonMetadataVersioningWithoutDataProvider(any(HasSiemacMetadata.class), anyString(), anyListOf(MetamacExceptionItem.class));
     }
 
     // ------------------------------------------------------------------------------------------------------
