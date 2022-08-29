@@ -183,7 +183,6 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     protected abstract boolean canRejectValidation();
     protected abstract boolean canPublish();
     protected abstract boolean canResendStreamMessage();
-
     protected abstract boolean canVersion();
     protected abstract boolean canPreviewData();
 }

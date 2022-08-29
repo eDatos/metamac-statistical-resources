@@ -109,7 +109,11 @@ Application DatasetsStatisticalResources {
     		List<@Categorisation> retrieveCategorisationsByDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Finds categorisations by criteria"
     		PagedResult<@Categorisation> findCategorisationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
-		}  
+
+    		// Geocoverage variable elements cache
+    		void updateGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
+    		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
+		}
 
 		// ----------------------------------------------------------------
 		// 							ENTITIES
@@ -244,6 +248,9 @@ Application DatasetsStatisticalResources {
 			- Bag<@Datasource> datasources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersion;
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
+
+			"Variable elements of geographical coverage of datasets"
+			- Bag<@ExternalItem> geographicCoverageVariableElements cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS" databaseColumn="EXTERNAL_ITEM_FK" databaseJoinColumn="DATASET_VERSION_FK";
 
 			Repository DatasetVersionRepository {
 				save;

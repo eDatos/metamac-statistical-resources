@@ -110,22 +110,4 @@ public class StatisticalResourcesMenu extends ToolStrip {
         queriesButton.deselect();
         multidatasetsButton.deselect();
     }
-
-    public void selectLayout(StatisticalResourcesToolStripLayoutEnum resourceType) {
-        switch (resourceType) {
-            case OPERATION_RESOURCES:
-                datasetsButton.setVisible(true);
-                publicationsButton.setVisible(true);
-                queriesButton.setVisible(true);
-                multidatasetsButton.setVisible(true);
-                break;
-            case STATISTIC_DESKTOP:
-                datasetsButton.setVisible(false);
-                publicationsButton.setVisible(false);
-                queriesButton.setVisible(false);
-                multidatasetsButton.setVisible(false);
-                break;
-        }
-    }
-
 }

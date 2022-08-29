@@ -58,4 +58,5 @@ public class MultidatasetMainFormLayout extends LifecycleMainFormLayout {
     protected boolean canPreviewData() {
         return MultidatasetClientSecurityUtils.canPreviewDataMultidatasetVersion(multidatasetVersionDto);
     }
+
 }
