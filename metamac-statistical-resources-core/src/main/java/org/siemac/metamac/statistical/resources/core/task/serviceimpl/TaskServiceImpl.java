@@ -482,7 +482,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         String datasetUrn = taskInfoDataset.getDatasetUrn();
         String datasetVersionUrn = taskInfoDataset.getDatasetVersionId();
-        String taskName = createJobNameForUpdateGeocoverageCache(datasetUrn);
+        String taskName = createJobNameForUpdateGeocoverageCache(datasetVersionUrn);
 
         // Job keys
         JobKey jobKey = createJobKeyForUpdateGeocoverageCacheResource(datasetUrn);
