@@ -265,6 +265,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
+    
     @Override
     public synchronized String planifyImportationDataset(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
         // Validation
@@ -496,7 +497,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         String datasetUrn = taskInfoDataset.getDatasetUrn();
         String datasetVersionUrn = taskInfoDataset.getDatasetVersionId();
-        String taskName = createJobNameForUpdateGeocoverageCache(datasetUrn);
+        String taskName = createJobNameForUpdateGeocoverageCache(datasetVersionUrn);
 
         // Job keys
         JobKey jobKey = createJobKeyForUpdateGeocoverageCacheResource(datasetUrn);
@@ -662,11 +663,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             sendDatasetVersionToDiffusionValidation(ctx, datasetVersionUrn, procNextStatus);
 
             publishDatasetVersion(ctx, datasetVersionUrn, procNextStatus);
+
         } else {
             executeImportationTask(ctx, importationJobKey, taskInfoDataset);
         }
         
         markDatabaseImportTaskAsFinished(ctx, importationJobKey);
+        
+        updateGeographicCoverageVariableElementsCache(ctx, datasetVersionUrn,  procNextStatus);
     }
     
     private void sendNotification(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
@@ -791,6 +795,24 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             });
         }
     }
+    
+    private void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, String datasetVersionUrn, ProcStatusEnum procNextStatus) {
+        if (ProcStatusEnum.PUBLISHED.equals(procNextStatus) && (DatasetImportUtils.isDatasetImportJob(ctx) || DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx))) {
+            logger.debug("updateGeographicCoverageVariableElementsCache dataset in zip import or database import {}", datasetVersionUrn);
+
+            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+
+                @Override
+                protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                    DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+                    if (ProcStatusEnum.PUBLISHED.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus())) {
+                        datasetService.updateGeographicCoverageVariableElementsCache(ctx, datasetVersion);
+                    }
+                    return null;
+                }
+            });
+        }
+    }
 
     private void markDatabaseImportTaskAsFinished(ServiceContext ctx, String databaseImportationJobKey) {
         logger.debug("Marking databaset task as finished {}", databaseImportationJobKey);
@@ -906,7 +928,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.debug("Dataset geographic coverage is empty");
             return;
         }
-
+        
         String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
 

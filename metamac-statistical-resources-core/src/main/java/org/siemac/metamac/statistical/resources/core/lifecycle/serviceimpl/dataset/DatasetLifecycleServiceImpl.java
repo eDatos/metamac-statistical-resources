@@ -33,6 +33,8 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
+import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
+import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -161,9 +163,9 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     @Override
     protected void applySendToPublishedCurrentResource(ServiceContext ctx, DatasetVersion resource, DatasetVersion previousResource) throws MetamacException {
         resource.setBibliographicCitation(buildBibliographicCitation(resource));
-        datasetService.updateGeographicCoverageVariableElementsCache(ctx, resource);
+        updateGeographicCoverageVariableElementsCache(ctx, resource);
     }
-
+      
     @Override
     protected void applySendToPublishedPreviousResource(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         try {
@@ -177,6 +179,14 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     }
 
+    
+    private void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+        // In automatic life cicle this process is done later when the principal task finished
+        if (!DatasetImportUtils.isDatasetImportJob(ctx) && !DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+            datasetService.updateGeographicCoverageVariableElementsCache(ctx, resource);
+        }
+    }
+    
     private InternationalString buildBibliographicCitation(DatasetVersion resource) throws MetamacException {
         // Format: Creator.code (date) Title (vXXX.YYY) [dataset]. Publisher.name (api url)
         // Example: ISTAC (2017) Índice censal de ocupación (v002.001) [dataset]. Instituto Canario de Estadística (url)
