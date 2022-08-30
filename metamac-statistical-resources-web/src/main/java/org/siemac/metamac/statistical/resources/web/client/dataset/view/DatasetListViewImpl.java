@@ -8,6 +8,8 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
+import org.siemac.metamac.statistical.resources.web.client.base.presenter.StatisticalResourceMetadataBasePresenter;
+import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceBaseListViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NewStatisticalResourceWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
@@ -25,6 +27,8 @@ import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersi
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
@@ -39,7 +43,7 @@ import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<DatasetListUiHandlers> implements DatasetListPresenter.DatasetListView {
-
+   
     private DatasetVersionSearchSectionStack searchSectionStack;
 
     private CustomToolStripButton            importDatasourcesButton;
@@ -103,6 +107,9 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     public void setUiHandlers(DatasetListUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         searchSectionStack.setUiHandlers(uiHandlers);
+        if (importZipDatasourceWithMappingWindow != null) {
+            importZipDatasourceWithMappingWindow.setUiHandlers(uiHandlers);
+        }
     }
 
     @Override
@@ -355,5 +362,16 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     private DatasetVersionBaseDto getDtoFromRecord(ListGridRecord record) {
         DatasetRecord datasetRecord = (DatasetRecord) record;
         return datasetRecord.getDatasetVersionBaseDto();
+    }
+    
+    @Override
+    public void setDataProviderSchemesForField(GetOrganisationUnitSchemesPaginatedListResult result, SiemacMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setDataProviderSchemes(result.getOrganisationUnitSchemes(), result.getFirstResultOut(), result.getTotalResults());
+    }
+
+    @Override
+    public void setDataProviderForField(GetOrganisationUnitsPaginatedListResult result, SiemacMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setDataProvider(result.getOrganisationUnits(), result.getFirstResultOut(), result.getTotalResults());
+
     }
 }

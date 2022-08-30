@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
+import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.getExternalItemsValue;
 import static org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens.UPLOAD_RESOURCE_TYPE;
 
 import java.util.ArrayList;
@@ -9,20 +10,26 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
+import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetDatasourcesTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
+import org.siemac.metamac.web.common.client.constants.CommonWebConstants;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWindow;
@@ -30,6 +37,9 @@ import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmListItemWithSchemeFilterItem;
+import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.google.gwt.core.client.Scheduler;
 import com.smartgwt.client.types.Alignment;
@@ -39,7 +49,7 @@ import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
 
 public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourceWithPreviewWindow {
- 
+    private DatasetListUiHandlers             uiHandlers;
 
     private static int formWidth = 600;
     private static int formWidthFields = 400;
@@ -102,12 +112,14 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         
         HiddenItem extraFields = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS);
         extraFields.setDefaultValue(true);
+        HiddenItem dataProviderItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER);
         HiddenItem versionRationaleTypeItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES);
         HiddenItem nextVersionItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION);
         HiddenItem nextVersionDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION);
         HiddenItem nextUpdateDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE);
         HiddenItem procStatus = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS);
         extraItemsToAdd.add(extraFields);
+        extraItemsToAdd.add(dataProviderItem);
         extraItemsToAdd.add(versionRationaleTypeItem);
         extraItemsToAdd.add(nextVersionItem);
         extraItemsToAdd.add(nextVersionDate);
@@ -142,6 +154,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private List<FormItem> addExtraFields() {
 
         List<FormItem> extraItemsToAdd = new ArrayList<FormItem>();
+        extraItemsToAdd.add(addFieldDataProviderItem());
         extraItemsToAdd.add(addFieldSearchVersionRationaleTypeItem());
         extraItemsToAdd.add(addFieldNextVersion());
         extraItemsToAdd.add(addFieldNextVersionDate());
@@ -233,9 +246,51 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return versionRationaleTypesDto;
     }
 
+    // ***************************************************************************************
+    // DATA PROVIDER
+    // ***************************************************************************************
+
+    public void setDataProvider(List<ExternalItemDto> items, int firstResult, int totalResults) {
+        SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.PUBLISHER);
+        dataProviderItem.setResources(items, firstResult, totalResults);
+    }
+
+    public void setDataProviderSchemes(List<ExternalItemDto> items, int firstResult, int totalResults) {
+        SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.PUBLISHER);
+        dataProviderItem.setFilterResources(items, firstResult, totalResults);
+    }
+
+    private SearchSrmListItemWithSchemeFilterItem addFieldDataProviderItem() {
+        SearchSrmListItemWithSchemeFilterItem searchSrmListItemWithSchemeFilterItem = new SearchSrmListItemWithSchemeFilterItem(SiemacMetadataDS.PUBLISHER,
+                getConstants().siemacMetadataStatisticalResourcePublisher(), CommonWebConstants.FORM_LIST_MAX_RESULTS) {
+
+            @Override
+            protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
+                getUiHandlers().retrieveDataProviderSchemes(firstResult, maxResults, webCriteria, SiemacMetadataExternalField.PUBLISHER);
+            }
+
+            @Override
+            protected void retrieveItems(int firstResult, int maxResults, SrmItemRestCriteria webCriteria) {
+                getUiHandlers().retrieveDataProviderUnits(firstResult, maxResults, webCriteria, SiemacMetadataExternalField.PUBLISHER);
+            }
+        };
+
+        searchSrmListItemWithSchemeFilterItem.setWidth(formWidthFields);
+        searchSrmListItemWithSchemeFilterItem.setTitleColSpan(2);
+        return searchSrmListItemWithSchemeFilterItem;
+    }
+     
+    public void setUiHandlers(DatasetListUiHandlers uiHandlers) {
+        this.uiHandlers = uiHandlers;
+    }
+
+    private DatasetListUiHandlers getUiHandlers() {
+        return uiHandlers;
+    }
+    
     @Override
     protected void copyHiddenValuesToMainForm(UploadForm mainForm, DynamicForm extraForm) {
-               
+        setFormFieldDataProviderItem();
         setFormFieldVersionRationaleTypeItem();
         setFormFieldNextVersion();
         setFormFieldDateNextVersion();
@@ -289,6 +344,19 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString());
     }
     
+    private void setFormFieldDataProviderItem() {
+        List<ExternalItemDto> dataProvidersDto = new ArrayList<ExternalItemDto>();
+        dataProvidersDto.addAll(getExternalItemsValue(extraForm.getItem(SiemacMetadataDS.PUBLISHER)));
+        StringBuilder dataProviders = new StringBuilder();
+        for (ExternalItemDto item : dataProvidersDto) {
+            if (dataProviders.length() != 0) {
+                dataProviders.append(",");
+            }
+            dataProviders.append(item.getUrn());
+        }
+
+        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER, dataProviders.toString());
+    }
     
     @Override
     protected void onPreviewComplete(String response) {
