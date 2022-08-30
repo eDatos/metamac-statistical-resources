@@ -115,7 +115,9 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(siemacMetadataStatisticalResource.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER), exceptionItems);
     }
     
-    // Because is required but the datasets without this value before this development must version o reject.
+    /* Since EDATOS-3723. This metadata is required since this task but data adaptation was not carried out on existing data. Because of that, the metadata is required in business logic but not in
+     database. To allow users the 'dataProvider' metadata correction the required validation is not carried out in versioning o rejection processes
+     */
     public void checkSiemacCommonMetadataVersioningWithoutDataProvider(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
         checkSiemacCommonMetadataGeneral(resource, metadataName, exceptionItems);
     }

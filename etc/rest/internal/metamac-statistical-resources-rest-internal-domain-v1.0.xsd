@@ -231,7 +231,7 @@
             <xs:element name="publicationUser" type="xs:string" minOccurs="0"/>
             <xs:element name="conformsToInternal" type="common:InternationalString" minOccurs="0" />
             <xs:element name="dataProviders" type="tns:ResourcesInternal" />
-             <xs:element name="dataProviderAnnotations" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="dataProviderAnnotations" type="common:InternationalString" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 

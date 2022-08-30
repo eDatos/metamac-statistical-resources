@@ -201,7 +201,7 @@
             <xs:element name="validTo" type="xs:dateTime" minOccurs="0" />
             <xs:element name="nextVersion" type="tns:NextVersionType" />
             <xs:element name="dataProviders" type="common:Resources" />
-             <xs:element name="dataProviderAnnotations" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="dataProviderAnnotations" type="common:InternationalString" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 
