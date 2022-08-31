@@ -20,4 +20,8 @@ public interface StatisticalResourceUiHandlers extends BaseUiHandlers {
     // ORGANIZATION UNITS and SCHEMES
     void retrieveOrganisationUnitSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, SiemacMetadataExternalField field);
     void retrieveOrganisationUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, SiemacMetadataExternalField field);
+    
+ // DATA_PROVIDERS and SCHEMES
+    void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, SiemacMetadataExternalField field);
+    void retrieveDataProviderUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, SiemacMetadataExternalField field);
 }

@@ -154,7 +154,9 @@ Application BaseStatisticalResources {
 			DateTimeTZ lastUpdate nullable;
 			- @InternationalString conformsTo cascade="all" fetch="lazy" databaseColumn="CONFORMS_TO_FK" nullable;
 			- @InternationalString conformsToInternal cascade="all" fetch="lazy" databaseColumn="CONFORMS_TO_INTERNAL_FK" nullable;
-			
+			- Bag<@ExternalItem> dataProvider cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_DATA_PROVIDERS" databaseColumn="DATA_PROVIDER_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
+			- @InternationalString dataProviderAnnotations cascade="all" fetch="lazy" databaseColumn="DATA_PROVIDER_ANNOTATIONS_FK" nullable;
+				
 			//PUBLISHING DESCRIPTORS
 			- Bag<@ExternalItem> publisher cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_PUBLISHERS" databaseColumn="PUBLISHER_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
 			- Bag<@ExternalItem> publisherContributor cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_PUB_CONTRIBUTORS" databaseColumn="PUBLISHER_CONT_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";

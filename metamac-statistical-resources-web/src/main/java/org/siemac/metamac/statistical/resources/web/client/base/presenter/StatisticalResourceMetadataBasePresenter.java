@@ -6,6 +6,10 @@ import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMeta
 import org.siemac.metamac.statistical.resources.web.client.base.view.handlers.StatisticalResourceUiHandlers;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCommonMetadataConfigurationsListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCommonMetadataConfigurationsListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetLanguagesCodesAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetLanguagesCodesResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListAction;
@@ -50,6 +54,10 @@ public abstract class StatisticalResourceMetadataBasePresenter<V extends Statist
 
         void setOrganisationUnitSchemesForField(GetOrganisationUnitSchemesPaginatedListResult result, SiemacMetadataExternalField field);
         void setOrganisationUnitsForField(GetOrganisationUnitsPaginatedListResult result, SiemacMetadataExternalField field);
+        
+        // data provider
+        void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field);
+        void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field);
     }
 
     @Override
@@ -75,6 +83,30 @@ public abstract class StatisticalResourceMetadataBasePresenter<V extends Statist
         });
     }
 
+    @Override
+    public void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, final SiemacMetadataExternalField field) {
+        dispatcher.execute(new GetDataProviderSchemesPaginatedListAction(firstResult, maxResults, webCriteria),
+                new WaitingAsyncCallbackHandlingError<GetDataProviderSchemesPaginatedListResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetDataProviderSchemesPaginatedListResult result) {
+                        getView().setDataProviderSchemesForField(result, field);
+                    }
+                });
+    }
+
+    @Override
+    public void retrieveDataProviderUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, final SiemacMetadataExternalField field) {
+        dispatcher.execute(new GetDataProviderPaginatedListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetDataProviderPaginatedListResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDataProviderPaginatedListResult result) {
+                getView().setDataProviderForField(result, field);
+            }
+        });
+    }
+
+    
     @Override
     public void retrieveCommonConfigurations(CommonConfigurationRestCriteria criteria) {
         dispatcher.execute(new GetCommonMetadataConfigurationsListAction(criteria), new WaitingAsyncCallbackHandlingError<GetCommonMetadataConfigurationsListResult>(this) {

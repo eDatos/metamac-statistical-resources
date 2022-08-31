@@ -251,6 +251,10 @@ public class LifecycleTestUtils {
         resource.getSiemacMetadataStatisticalResource().addStatisticalOperationInstance(StatisticalResourcesPersistedDoMocks.mockStatisticalOperationInstanceExternalItem());
         resource.getSiemacMetadataStatisticalResource().addStatisticalOperationInstance(StatisticalResourcesPersistedDoMocks.mockStatisticalOperationInstanceExternalItem());
 
+        resource.getSiemacMetadataStatisticalResource().getDataProvider().clear();
+        resource.getSiemacMetadataStatisticalResource().addDataProvider(StatisticalResourcesPersistedDoMocks.mockDataProviderExternalItem());
+        resource.getSiemacMetadataStatisticalResource().addDataProvider(StatisticalResourcesPersistedDoMocks.mockDataProviderExternalItem());
+        
         resource.getSiemacMetadataStatisticalResource().getContributor().clear();
         resource.getSiemacMetadataStatisticalResource().addContributor(StatisticalResourcesPersistedDoMocks.mockOrganizationUnitExternalItem());
         resource.getSiemacMetadataStatisticalResource().addContributor(StatisticalResourcesPersistedDoMocks.mockOrganizationUnitExternalItem());
@@ -284,6 +288,10 @@ public class LifecycleTestUtils {
             siemacResource.setCreator(StatisticalResourcesPersistedDoMocks.mockOrganizationUnitExternalItem());
         }
 
+        if (siemacResource.getDataProvider().isEmpty()) {
+            siemacResource.addDataProvider(StatisticalResourcesPersistedDoMocks.mockDataProviderExternalItem());
+        }
+        
         if (siemacResource.getLastUpdate() == null) {
             siemacResource.setLastUpdate(new DateTime().minusMinutes(10));
         }

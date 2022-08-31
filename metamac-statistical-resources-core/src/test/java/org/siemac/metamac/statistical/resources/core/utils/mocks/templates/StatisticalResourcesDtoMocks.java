@@ -375,6 +375,8 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         siemacMetadataStatisticalResourceDto.setType(type);
 
         siemacMetadataStatisticalResourceDto.setCreator(mockOrganizationUnitExternalItemDto());
+        siemacMetadataStatisticalResourceDto.addDataProvider(mockDataProviderExternalItemDto());
+        siemacMetadataStatisticalResourceDto.setDataProviderAnnotations(mockInternationalStringDto());
         siemacMetadataStatisticalResourceDto.addContributor(mockOrganizationUnitExternalItemDto());
         siemacMetadataStatisticalResourceDto.setResourceCreatedDate(mockDate());
         siemacMetadataStatisticalResourceDto.setLastUpdate(mockDate());

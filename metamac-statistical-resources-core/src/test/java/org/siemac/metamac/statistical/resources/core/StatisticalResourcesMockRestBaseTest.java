@@ -89,6 +89,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
             switch (typeExternalItem) {
                 case ORGANISATION_UNIT:
                 case AGENCY:
+                case DATA_PROVIDER:
                     mockFindPublishedOrganisations(allItems, publishedItems);
                     break;
                 case CODE:
@@ -225,6 +226,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getLanguages(), baseField, "languages"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getStatisticalOperationInstances(), baseField, "statistical_operation_instances"));
         exceptionItems.add(buildExternalItemNotPublishedException(siemacResource.getCreator(), baseField, "creator"));
+        exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getDataProvider(), baseField, "data_provider"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getContributor(), baseField, "contributor"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getPublisher(), baseField, "publisher"));
         exceptionItems.addAll(buildExternalItemsNotPublishedExceptions(siemacResource.getPublisherContributor(), baseField, "publisher_contributor"));
@@ -270,6 +272,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         mockExternalItemsNotPublished(siemacResource.getLanguages());
         mockExternalItemsNotPublished(siemacResource.getStatisticalOperationInstances());
         mockExternalItemNotPublished(siemacResource.getCreator());
+        mockExternalItemsNotPublished(siemacResource.getDataProvider());
         mockExternalItemsNotPublished(siemacResource.getContributor());
         mockExternalItemsNotPublished(siemacResource.getPublisher());
         mockExternalItemsNotPublished(siemacResource.getPublisherContributor());
@@ -295,6 +298,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         mockExternalItemsPublished(siemacResource.getLanguages());
         mockExternalItemsPublished(siemacResource.getStatisticalOperationInstances());
         mockExternalItemPublished(siemacResource.getCreator());
+        mockExternalItemsPublished(siemacResource.getDataProvider());
         mockExternalItemsPublished(siemacResource.getContributor());
         mockExternalItemsPublished(siemacResource.getPublisher());
         mockExternalItemsPublished(siemacResource.getPublisherContributor());

@@ -8,7 +8,7 @@
         <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
     </stat:name>
     <stat:description>
-        <cdomain:text xml:lang="es">description-l95tLP5wi2_000001 en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-FIsEXaJfZK_000001 en Espanol</cdomain:text>
     </stat:description>
     <stat:selectedLanguages total="1">
         <stat:language>es</stat:language>
@@ -41,9 +41,9 @@
             </cdomain:resource>
         </stat:languages>
         <stat:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>l95tLP5wi2</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=l95tLP5wi2</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/l95tLP5wi2"/>
+            <cdomain:id>FIsEXaJfZK</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=FIsEXaJfZK</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/FIsEXaJfZK"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Tn2JaF3RSI en Espanol</cdomain:text>
             </cdomain:name>
@@ -61,16 +61,16 @@
             </cdomain:resource>
         </stat:statisticalOperationInstances>
         <stat:subtitle>
-            <cdomain:text xml:lang="es">subtitle-l95tLP5wi2_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">subtitle-FIsEXaJfZK_000001 en Espanol</cdomain:text>
         </stat:subtitle>
         <stat:titleAlternative>
-            <cdomain:text xml:lang="es">titleAlternative-l95tLP5wi2_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">titleAlternative-FIsEXaJfZK_000001 en Espanol</cdomain:text>
         </stat:titleAlternative>
         <stat:abstract>
-            <cdomain:text xml:lang="es">abstract-l95tLP5wi2_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">abstract-FIsEXaJfZK_000001 en Espanol</cdomain:text>
         </stat:abstract>
         <stat:keywords>
-            <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-l95tLP5wi2_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-FIsEXaJfZK_000001 en Espanol</cdomain:text>
         </stat:keywords>
         <stat:type>DATASET</stat:type>
         <stat:creator kind="structuralResources#organisationUnit">
@@ -102,7 +102,7 @@
         <stat:createdDate>2012-01-02T03:04:05Z</stat:createdDate>
         <stat:lastUpdate>2013-01-02T03:04:05Z</stat:lastUpdate>
         <stat:conformsTo>
-            <cdomain:text xml:lang="es">conformsTo-l95tLP5wi2_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">conformsTo-FIsEXaJfZK_000001 en Espanol</cdomain:text>
         </stat:conformsTo>
         <stat:publishers total="2">
             <cdomain:resource kind="structuralResources#organisationUnit">
@@ -196,15 +196,15 @@
             <cdomain:text xml:lang="es">license en Español</cdomain:text>
         </stat:license>
         <stat:accessRights>
-            <cdomain:text xml:lang="es">accessRights-l95tLP5wi2_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">accessRights-FIsEXaJfZK_000001 en Espanol</cdomain:text>
         </stat:accessRights>
         <stat:maintainer kind="structuralResources#agency">
-            <cdomain:id>gRphQi2pGA</cdomain:id>
+            <cdomain:id>31rh5mSllF</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).gRphQi2pGA</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/gRphQi2pGA"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).31rh5mSllF</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/31rh5mSllF"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-gRphQi2pGA en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-31rh5mSllF en Espanol</cdomain:text>
             </cdomain:name>
         </stat:maintainer>
         <stat:version>01.000</stat:version>
@@ -218,6 +218,27 @@
         <stat:validFrom>2013-01-01T03:04:12Z</stat:validFrom>
         <stat:validTo>2013-02-16T14:04:12Z</stat:validTo>
         <stat:nextVersion>NO_UPDATES</stat:nextVersion>
+        <stat:dataProviders total="2">
+            <cdomain:resource kind="structuralResources#dataProvider">
+                <cdomain:id>dataProvider01</cdomain:id>
+                <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.DataProvider=MaintainerMock:DataProviderSchemeMock(1.0).dataProvider01</cdomain:urn>
+                <cdomain:selfLink kind="structuralResources#dataProvider" href="http://data.istac.es/apis/srm/latest/dataProvider01"/>
+                <cdomain:name>
+                    <cdomain:text xml:lang="es">title-dataProvider01 en Espanol</cdomain:text>
+                </cdomain:name>
+            </cdomain:resource>
+            <cdomain:resource kind="structuralResources#dataProvider">
+                <cdomain:id>dataProvider02</cdomain:id>
+                <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.DataProvider=MaintainerMock:DataProviderSchemeMock(1.0).dataProvider02</cdomain:urn>
+                <cdomain:selfLink kind="structuralResources#dataProvider" href="http://data.istac.es/apis/srm/latest/dataProvider02"/>
+                <cdomain:name>
+                    <cdomain:text xml:lang="es">title-dataProvider02 en Espanol</cdomain:text>
+                </cdomain:name>
+            </cdomain:resource>
+        </stat:dataProviders>
+        <stat:dataProviderAnnotations>
+            <cdomain:text xml:lang="es">dataProviderAnnotations-FIsEXaJfZK_000001 en Espanol</cdomain:text>
+        </stat:dataProviderAnnotations>
         <stat:isRequiredBy total="2"/>
         <stat:geographicCoverages total="13">
             <cdomain:resource kind="structuralResources#code">
@@ -389,19 +410,19 @@
         </stat:geographicGranularities>
         <stat:temporalGranularities total="2">
             <cdomain:resource kind="structuralResources#code">
-                <cdomain:id>yearly</cdomain:id>
-                <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).yearly</cdomain:urn>
-                <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/yearly"/>
-                <cdomain:name>
-                    <cdomain:text xml:lang="es">title-yearly en Espanol</cdomain:text>
-                </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
                 <cdomain:id>monthly</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).monthly</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/monthly"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-monthly en Espanol</cdomain:text>
+                </cdomain:name>
+            </cdomain:resource>
+            <cdomain:resource kind="structuralResources#code">
+                <cdomain:id>yearly</cdomain:id>
+                <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).yearly</cdomain:urn>
+                <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/yearly"/>
+                <cdomain:name>
+                    <cdomain:text xml:lang="es">title-yearly en Espanol</cdomain:text>
                 </cdomain:name>
             </cdomain:resource>
         </stat:temporalGranularities>
@@ -1149,9 +1170,7 @@
         <stat:bibliographicCitation>
             <cdomain:text xml:lang="es">bibliographicCitation. More info: http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset1/01.000</cdomain:text>
         </stat:bibliographicCitation>
-        <stat:keepAllData>
-        	true
-       	</stat:keepAllData>
+        <stat:keepAllData>true</stat:keepAllData>
     </stat:metadata>
     <stat:data>
         <stat:dimensions total="4">

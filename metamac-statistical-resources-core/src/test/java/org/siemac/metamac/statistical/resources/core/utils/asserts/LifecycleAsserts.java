@@ -38,6 +38,8 @@ public class LifecycleAsserts extends CommonAsserts {
         assertNotNull(siemac.getType());
 
         assertNotNull(siemac.getCreator());
+        assertNotNull(siemac.getDataProvider());
+        assertFalse(siemac.getDataProvider().isEmpty());
         assertNotNull(siemac.getLastUpdate());
         assertNotNull(siemac.getPublisher());
         assertFalse(siemac.getPublisher().isEmpty());

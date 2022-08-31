@@ -235,10 +235,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setKeywords(toInternationalString(source.getKeywords(), selectedLanguages));
         target.setType(toStatisticalResourceType(source.getType()));
         target.setCreator(toResourceExternalItemSrm(source.getCreator(), selectedLanguages));
+        target.setDataProviders(toResourcesExternalItemsSrm(source.getDataProvider(), selectedLanguages));
+        target.setDataProviderAnnotations(toInternationalString(source.getDataProviderAnnotations(), selectedLanguages));
         target.setContributors(toResourcesExternalItemsSrm(source.getContributor(), selectedLanguages));
         target.setCreatedDate(toDate(source.getResourceCreatedDate()));
         target.setLastUpdate(toDate(source.getLastUpdate()));
         target.setConformsTo(toInternationalString(source.getConformsTo(), selectedLanguages));
+        
         target.setPublishers(toResourcesExternalItemsSrm(source.getPublisher(), selectedLanguages));
         target.setPublisherContributors(toResourcesExternalItemsSrm(source.getPublisherContributor(), selectedLanguages));
         target.setMediators(toResourcesExternalItemsSrm(source.getMediator(), selectedLanguages));
@@ -253,7 +256,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         // Lifecycle
         // note: replacesVersion and isReplacedByVersion are only valid to datasets. So, they are mapped in Dataset mapper
         target.setMaintainer(toResourceExternalItemSrm(source.getMaintainer(), selectedLanguages));
-
+        
         // Versionable
         target.setVersion(source.getVersionLogic());
         target.setVersionRationaleTypes(toVersionRationaleTypes(source.getVersionRationaleTypes(), selectedLanguages));
