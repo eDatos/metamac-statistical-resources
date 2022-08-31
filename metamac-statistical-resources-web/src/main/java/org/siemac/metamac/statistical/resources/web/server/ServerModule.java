@@ -46,6 +46,8 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.external.Get
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetCommonMetadataConfigurationsListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetConceptSchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetConceptsPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDataProviderPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDataProviderSchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDsdsPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetGeographicalGranularitiesListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetLanguagesCodesActionHandler;
@@ -130,6 +132,8 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetCodesPagi
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCommonMetadataConfigurationsListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetLanguagesCodesAction;
@@ -221,6 +225,9 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetCategorySchemesPaginatedListAction.class, GetCategorySchemesPaginatedListActionHandler.class);
         bindHandler(GetCategoriesPaginatedListAction.class, GetCategoriesPaginatedListActionHandler.class);
         bindHandler(GetItemsAction.class, GetItemsActionHandler.class);
+        bindHandler(GetDataProviderSchemesPaginatedListAction.class, GetDataProviderSchemesPaginatedListActionHandler.class);
+        bindHandler(GetDataProviderPaginatedListAction.class, GetDataProviderPaginatedListActionHandler.class);
+        
 
         // DATASETS
         bindHandler(GetDatasetVersionAction.class, GetDatasetVersionActionHandler.class);

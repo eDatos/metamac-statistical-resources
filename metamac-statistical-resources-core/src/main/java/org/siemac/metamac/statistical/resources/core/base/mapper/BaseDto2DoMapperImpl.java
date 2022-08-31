@@ -97,6 +97,8 @@ public class BaseDto2DoMapperImpl extends CommonDto2DoMapperImpl implements Base
         target.setAbstractLogic(internationalStringDtoToDo(source.getAbstractLogic(), target.getAbstractLogic(), addParameter(metadataName, ServiceExceptionSingleParameters.ABSTRACT_LOGIC)));
 
         target.setCreator(externalItemDtoToDo(source.getCreator(), target.getCreator(), addParameter(metadataName, ServiceExceptionSingleParameters.CREATOR)));
+        externalItemDtoCollectionToDoList(source.getDataProvider(), target.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER));
+        target.setDataProviderAnnotations(internationalStringDtoToDo(source.getDataProviderAnnotations(), target.getDataProviderAnnotations(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER_ANNOTATIONS)));
         externalItemDtoCollectionToDoList(source.getContributor(), target.getContributor(), addParameter(metadataName, ServiceExceptionSingleParameters.CONTRIBUTOR));
         target.setConformsTo(internationalStringDtoToDo(source.getConformsTo(), target.getConformsTo(), addParameter(metadataName, ServiceExceptionSingleParameters.CONFORMS_TO)));
         target.setConformsToInternal(internationalStringDtoToDo(source.getConformsToInternal(), target.getConformsToInternal(),
