@@ -25,6 +25,8 @@ import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalReso
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListResult;
@@ -365,13 +367,13 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     }
     
     @Override
-    public void setDataProviderSchemesForField(GetOrganisationUnitSchemesPaginatedListResult result, SiemacMetadataExternalField field) {
-        importZipDatasourceWithMappingWindow.setDataProviderSchemes(result.getOrganisationUnitSchemes(), result.getFirstResultOut(), result.getTotalResults());
+    public void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setDataProviderSchemes(result.getDataProviderSchemes(), result.getFirstResultOut(), result.getTotalResults());
     }
 
     @Override
-    public void setDataProviderForField(GetOrganisationUnitsPaginatedListResult result, SiemacMetadataExternalField field) {
-        importZipDatasourceWithMappingWindow.setDataProvider(result.getOrganisationUnits(), result.getFirstResultOut(), result.getTotalResults());
+    public void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setDataProvider(result.getDataProviders(), result.getFirstResultOut(), result.getTotalResults());
 
     }
 }

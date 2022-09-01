@@ -68,6 +68,19 @@ public class StatisticalResourcesExternalItemUtils {
         return externalItemDto;
     }
 
+    public static ExternalItem buildExternalItemFromItem(Item item, TypeExternalArtefactsEnum type) {
+        ExternalItem externalItem = new ExternalItem();
+        externalItem.setCode(item.getId());
+        externalItem.setCodeNested(item.getNestedId());
+        externalItem.setUrn(item.getUrn());
+        externalItem.setUrnProvider(item.getUrnProvider());
+        externalItem.setType(type);       
+        externalItem.setUri(item.getSelfLink().getHref());
+        externalItem.setManagementAppUrl(item.getManagementAppLink());
+        //title not necessary
+        return externalItem;
+    }
+    
     private static InternationalStringDto getInternationalStringDtoFromInternationalString(InternationalString internationalString) {
         if (internationalString != null) {
             InternationalStringDto internationalStringDto = new InternationalStringDto();

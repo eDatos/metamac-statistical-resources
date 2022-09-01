@@ -49,7 +49,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     private static Logger           logger                                  = Logger.getLogger(DatasourceImportationServlet.class.getName());
     protected static final String[] FIELDSVERSIONABLESTATISTICALRESOURCEDTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
             StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,
-            StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS, StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS};
+            StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS, StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS, StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER};
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -146,6 +146,11 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     }
 
     private void fillBasicVersionableStatisticalResourceDto(DiskFileItem item, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws ParseException {
+        
+        if (StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER.equals(item.getFieldName()) && !StringUtils.isEmpty(item.getString())) {
+            getListDataProvidersUrnFromRequest(item.getString().split(","), basicVersionableStatisticalResourceDto);
+        }
+        
         if (StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES.equals(item.getFieldName())) {
             getListVersionRationaleTypeFromRequest(item.getString().split(","), basicVersionableStatisticalResourceDto);
         }
@@ -175,6 +180,12 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
 
         for (String itemVersionRationaleType : versionRationaleType) {
             basicVersionableStatisticalResourceDto.getVersionRationaleTypes().add((itemVersionRationaleType));
+        }
+    }
+
+    private void getListDataProvidersUrnFromRequest(String[] dataProvidersUrn, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
+        for (String itemDataProviderUrn : dataProvidersUrn) {
+            basicVersionableStatisticalResourceDto.getDataProvidersUrn().add((itemDataProviderUrn));
         }
     }
     

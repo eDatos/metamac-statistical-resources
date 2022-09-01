@@ -16,6 +16,7 @@ Application DatasetsStatisticalResourcesDto {
 			String statisticalOperationUrn;
 			Boolean storeAlternativeRepresentations;
 			List<String> datasetVersionRationaleTypes;
+			List<String> datasetVersionDataProviderUrn;
 			String datasetNextVersion;
 			String datasetNextVersionDate;
 			String datasetNextUpdateDate;

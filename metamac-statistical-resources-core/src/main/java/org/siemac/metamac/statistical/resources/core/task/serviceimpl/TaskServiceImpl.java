@@ -285,9 +285,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             StringBuilder fileFormats = new StringBuilder();
             StringBuilder alternativeRepresentations = new StringBuilder();
             StringBuilder datasetVersionRationaleTypes = new StringBuilder();
+            StringBuilder datasetVersionDataProvidersUrn = new StringBuilder();
             serializeFilePathsAndNames(taskInfoDataset, filePaths, fileNames, fileFormats);
             serializeAlternativeRepresentations(taskInfoDataset, alternativeRepresentations);
             serializeDatasetVersionRationaleTypes(taskInfoDataset, datasetVersionRationaleTypes);
+            serializeDatasetVersionDataProvidersUrn(taskInfoDataset, datasetVersionDataProvidersUrn);
             checkExistTaskInResource(ctx, jobKey, datasetUrn);
 
             // Checking garbage
@@ -310,7 +312,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 }
             }
 
-            JobDetail job = createJob(ctx, jobKey, taskName, filePaths, fileNames, fileFormats, alternativeRepresentations, datasetVersionRationaleTypes, taskInfoDataset);
+            JobDetail job = createJob(ctx, jobKey, taskName, filePaths, fileNames, fileFormats, alternativeRepresentations, datasetVersionRationaleTypes, datasetVersionDataProvidersUrn, taskInfoDataset);
 
             // No existing Job
             Task newTask = new Task(taskName);
@@ -356,7 +358,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private JobDetail createJob(ServiceContext serviceContext, JobKey jobKey, String taskName, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats,
-            StringBuilder alternativeRepresentations, StringBuilder versionRationaleTypes,  TaskInfoDataset taskInfoDataset) {
+            StringBuilder alternativeRepresentations, StringBuilder versionRationaleTypes, StringBuilder datasetVersionDataProvidersUrn, TaskInfoDataset taskInfoDataset) {
         // @formatter:off
         JobBuilder jobBuilder = 
                 newJob().withIdentity(jobKey)
@@ -371,7 +373,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION, taskInfoDataset.getDatasetNextVersion())
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION_DATE, taskInfoDataset.getDatasetNextVersionDate())
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_UPDATE_DATE, taskInfoDataset.getDatasetNextUpdateDate())
-                    .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_DATA_PROVIDERS_URN, datasetVersionDataProvidersUrn.toString())
                     .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString())
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_PROC_STATUS, taskInfoDataset.getDatasetNextProcStatus())
                     .usingJobData(AbstractImportDatasetJob.DATASET_AUTOMATIC_LIFE_CICLE, taskInfoDataset.getDatasetAutomaticLifeCicle())
@@ -731,7 +733,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
                     DatabaseDatasetImportUtils.setRequiredMetadataForDatabaseDatasetImportation(datasetVersion);
                 } else {
-                    DatasetImportUtils.setRequiredMetadataForDatasetImportation(datasetVersion, taskInfoDataset);
+                    DatasetImportUtils.setRequiredMetadataForDatasetImportation(datasetVersion, taskInfoDataset, srmRestInternalService);
                 }
 
                 // It's necessary to save the new metadata of the dataset before continuing transiting it through the life cycle
@@ -1254,6 +1256,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 datasetVersionRationaleTypes.append(JobUtil.SERIALIZATION_SEPARATOR);
             }
             datasetVersionRationaleTypes.append(datasetVersionRationaleType);
+        }
+    }
+    
+    protected void serializeDatasetVersionDataProvidersUrn(TaskInfoDataset taskInfoDataset, StringBuilder datasetVersionDataProvidersUrn) throws IOException, FileNotFoundException {
+        for (String datasetVersionDataProviderUrn : taskInfoDataset.getDatasetVersionDataProviderUrn()) {
+            if (datasetVersionDataProvidersUrn.length() > 0) {
+                datasetVersionDataProvidersUrn.append(JobUtil.SERIALIZATION_SEPARATOR);
+            }
+            datasetVersionDataProvidersUrn.append(datasetVersionDataProviderUrn);
         }
     }
     

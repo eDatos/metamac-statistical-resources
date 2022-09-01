@@ -251,27 +251,27 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     // ***************************************************************************************
 
     public void setDataProvider(List<ExternalItemDto> items, int firstResult, int totalResults) {
-        SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.PUBLISHER);
+        SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.DATA_PROVIDER);
         dataProviderItem.setResources(items, firstResult, totalResults);
     }
 
     public void setDataProviderSchemes(List<ExternalItemDto> items, int firstResult, int totalResults) {
-        SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.PUBLISHER);
+        SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.DATA_PROVIDER);
         dataProviderItem.setFilterResources(items, firstResult, totalResults);
     }
 
     private SearchSrmListItemWithSchemeFilterItem addFieldDataProviderItem() {
-        SearchSrmListItemWithSchemeFilterItem searchSrmListItemWithSchemeFilterItem = new SearchSrmListItemWithSchemeFilterItem(SiemacMetadataDS.PUBLISHER,
-                getConstants().siemacMetadataStatisticalResourcePublisher(), CommonWebConstants.FORM_LIST_MAX_RESULTS) {
+        SearchSrmListItemWithSchemeFilterItem searchSrmListItemWithSchemeFilterItem = new SearchSrmListItemWithSchemeFilterItem(SiemacMetadataDS.DATA_PROVIDER,
+                getConstants().siemacMetadataStatisticalResourceDataProvider(), CommonWebConstants.FORM_LIST_MAX_RESULTS) {
 
             @Override
             protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
-                getUiHandlers().retrieveDataProviderSchemes(firstResult, maxResults, webCriteria, SiemacMetadataExternalField.PUBLISHER);
+                getUiHandlers().retrieveDataProviderSchemes(firstResult, maxResults, webCriteria, SiemacMetadataExternalField.DATA_PROVIDER);
             }
 
             @Override
             protected void retrieveItems(int firstResult, int maxResults, SrmItemRestCriteria webCriteria) {
-                getUiHandlers().retrieveDataProviderUnits(firstResult, maxResults, webCriteria, SiemacMetadataExternalField.PUBLISHER);
+                getUiHandlers().retrieveDataProviderUnits(firstResult, maxResults, webCriteria, SiemacMetadataExternalField.DATA_PROVIDER);
             }
         };
 
@@ -346,7 +346,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     
     private void setFormFieldDataProviderItem() {
         List<ExternalItemDto> dataProvidersDto = new ArrayList<ExternalItemDto>();
-        dataProvidersDto.addAll(getExternalItemsValue(extraForm.getItem(SiemacMetadataDS.PUBLISHER)));
+        dataProvidersDto.addAll(getExternalItemsValue(extraForm.getItem(SiemacMetadataDS.DATA_PROVIDER)));
         StringBuilder dataProviders = new StringBuilder();
         for (ExternalItemDto item : dataProvidersDto) {
             if (dataProviders.length() != 0) {
@@ -354,7 +354,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
             }
             dataProviders.append(item.getUrn());
         }
-
+     
         mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER, dataProviders.toString());
     }
     
@@ -400,6 +400,9 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
     
     private void clearExtraFormValues() {
+        SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.DATA_PROVIDER);
+        dataProviderItem.clearValue();
+        
         SearchVersionRationaleTypeItem searchVersionRationaleTypeItem = ((SearchVersionRationaleTypeItem) extraForm.getItem(VersionableResourceDS.VERSION_RATIONALE_TYPES));
         searchVersionRationaleTypeItem.setVersionRationaleTypes(getDefaultVersionRationaleType());
 

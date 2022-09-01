@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,22 +36,23 @@ public abstract class AbstractImportDatasetJob implements Job {
 
     protected final Logger             logger                            = LoggerFactory.getLogger(getClass());
 
-    public static final String         USER                              = "user";
-    public static final String         FILE_PATHS                        = "filePaths";
-    public static final String         FILE_NAMES                        = "fileNames";
-    public static final String         FILE_FORMATS                      = "fileFormats";
-    public static final String         DATA_STRUCTURE_URN                = "dataStructureUrn";
-    public static final String         DATASET_URN                       = "datasetUrn";
-    public static final String         DATASET_VERSION_ID                = "datasetVersionId";
-    public static final String         ALTERNATIVE_REPRESENTATIONS       = "alternativeRepresentations";
-    public static final String         STORE_ALTERNATIVE_REPRESENTATIONS = "storeAlternativeRepresentations";
-    public static final String         DATASET_VERSION_RATIONALE_TYPES   = "datasetVersionRationaleTypes";
-    public static final String         DATASET_NEXT_VERSION              = "datasetNextVersion";
-    public static final String         DATASET_NEXT_VERSION_DATE         = "datasetNextVersionDate";
-    public static final String         DATASET_NEXT_UPDATE_DATE          = "datasetNextUpdateDate";
-    public static final String         DATASET_AUTOMATIC_LIFE_CICLE      = "datasetAutomaticLifeCicle";
-    public static final String         DATASET_NEXT_PROC_STATUS          = "datasetNextProcStatus";
-    public static final String         TASK_NAME                         = "taskName";
+    public static final String         USER                               = "user";
+    public static final String         FILE_PATHS                         = "filePaths";
+    public static final String         FILE_NAMES                         = "fileNames";
+    public static final String         FILE_FORMATS                       = "fileFormats";
+    public static final String         DATA_STRUCTURE_URN                 = "dataStructureUrn";
+    public static final String         DATASET_URN                        = "datasetUrn";
+    public static final String         DATASET_VERSION_ID                 = "datasetVersionId";
+    public static final String         ALTERNATIVE_REPRESENTATIONS        = "alternativeRepresentations";
+    public static final String         STORE_ALTERNATIVE_REPRESENTATIONS  = "storeAlternativeRepresentations";
+    public static final String         DATASET_VERSION_DATA_PROVIDERS_URN = "datasetVersionDataProvidersUrn";
+    public static final String         DATASET_VERSION_RATIONALE_TYPES    = "datasetVersionRationaleTypes";
+    public static final String         DATASET_NEXT_VERSION               = "datasetNextVersion";
+    public static final String         DATASET_NEXT_VERSION_DATE          = "datasetNextVersionDate";
+    public static final String         DATASET_NEXT_UPDATE_DATE           = "datasetNextUpdateDate";
+    public static final String         DATASET_AUTOMATIC_LIFE_CICLE       = "datasetAutomaticLifeCicle";
+    public static final String         DATASET_NEXT_PROC_STATUS           = "datasetNextProcStatus";
+    public static final String         TASK_NAME                          = "taskName";
 
     private TaskServiceFacade          taskServiceFacade                 = null;
     private NoticesRestInternalService noticesRestInternalService        = null;
@@ -82,7 +84,8 @@ public abstract class AbstractImportDatasetJob implements Job {
         Boolean storeAlternativeRepresentations = data.getBoolean(STORE_ALTERNATIVE_REPRESENTATIONS);
         String taskName = data.getString(TASK_NAME);
         String user = data.getString(USER);
-        String datasetVersionRationaleTypes = data.getString(DATASET_VERSION_RATIONALE_TYPES); 
+        String datasetVersionRationaleTypes = data.getString(DATASET_VERSION_RATIONALE_TYPES);
+        String datasetVersionDataProvidersUrn = data.getString(DATASET_VERSION_DATA_PROVIDERS_URN);
         String datasetNextVersion = data.getString(DATASET_NEXT_VERSION);
         String datasetNextVersionDate = data.getString(DATASET_NEXT_VERSION_DATE);
         String datasetNextUpdateDate = data.getString(DATASET_NEXT_UPDATE_DATE);
@@ -102,7 +105,8 @@ public abstract class AbstractImportDatasetJob implements Job {
             taskInfoDataset.setDatasetVersionId(datasetVersionId);
             taskInfoDataset.getAlternativeRepresentations().addAll(inflateAlternativeRepresentations(alternativeRepresentations));
             taskInfoDataset.setStoreAlternativeRepresentations(storeAlternativeRepresentations);
-            taskInfoDataset.setDatasetVersionRationaleTypes(inflateDatasetVersionRationaleTypes(datasetVersionRationaleTypes));
+            taskInfoDataset.setDatasetVersionDataProviderUrn(inflateDatasetVersionFieldListAsString(datasetVersionDataProvidersUrn));
+            taskInfoDataset.setDatasetVersionRationaleTypes(inflateDatasetVersionFieldListAsString(datasetVersionRationaleTypes));
             taskInfoDataset.setDatasetNextVersion(datasetNextVersion);
             taskInfoDataset.setDatasetNextVersionDate(datasetNextVersionDate);
             taskInfoDataset.setDatasetNextUpdateDate(datasetNextUpdateDate);
@@ -170,7 +174,7 @@ public abstract class AbstractImportDatasetJob implements Job {
     }
 
     private List<AlternativeEnumeratedRepresentation> inflateAlternativeRepresentations(String alternativeRepresentations) {
-        List<AlternativeEnumeratedRepresentation> alternativeRepresentationList = new ArrayList<AlternativeEnumeratedRepresentation>();
+        List<AlternativeEnumeratedRepresentation> alternativeRepresentationList = new ArrayList<>();
         if (!StringUtils.isEmpty(alternativeRepresentations)) {
             String[] pairs = alternativeRepresentations.split("\\" + JobUtil.SERIALIZATION_SEPARATOR);
 
@@ -186,16 +190,13 @@ public abstract class AbstractImportDatasetJob implements Job {
         return alternativeRepresentationList;
     }
     
-    private List<String> inflateDatasetVersionRationaleTypes(String datasetVersionRationaleTypes) {
-        List<String> datasetVersionRationaleTypesList = new ArrayList<String>();
-        if (!StringUtils.isEmpty(datasetVersionRationaleTypes)) {
-            String[] pairs = datasetVersionRationaleTypes.split("\\" + JobUtil.SERIALIZATION_SEPARATOR);
-
-            for (int i = 0; i < pairs.length; i++) {
-                datasetVersionRationaleTypesList.add(pairs[i]);
-            }
+    private List<String> inflateDatasetVersionFieldListAsString(String datasetVersionFieldStringList) {
+        List<String> datasetVersionFieldList = new ArrayList<>();
+        if (!StringUtils.isEmpty(datasetVersionFieldStringList)) {
+            String[] pairs = datasetVersionFieldStringList.split("\\" + JobUtil.SERIALIZATION_SEPARATOR);
+            datasetVersionFieldList.addAll(Arrays.asList(pairs));
         }
 
-        return datasetVersionRationaleTypesList;
+        return datasetVersionFieldList;
     }
 }

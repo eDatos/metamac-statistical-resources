@@ -4,10 +4,14 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
+import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 
@@ -21,13 +25,25 @@ public class DatasetImportUtils {
         return Boolean.TRUE.equals(ctx.getProperty(ImportDatasetJob.DATASET_IMPORT_JOB_FLAG));
     }
 
-    public static void setRequiredMetadataForDatasetImportation(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
+    public static void setRequiredMetadataForDatasetImportation(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException  {
+        setDatasetVersionDataProviders(datasetVersion, taskInfoDataset, srmRestInternalService);
         setDatasetVersionVersionRationaleType(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersion(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersionDate(datasetVersion, taskInfoDataset);
         setDatasetVersionNextUpdateDate(datasetVersion, taskInfoDataset);
     }
-
+    
+    private static void setDatasetVersionDataProviders(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException {
+        if (taskInfoDataset.getDatasetVersionDataProviderUrn() != null) {
+            datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().clear();
+            for (String datasetVersionDataProviderUrn : taskInfoDataset.getDatasetVersionDataProviderUrn()) {
+                ExternalItem dataProvider = StatisticalResourcesExternalItemUtils.buildExternalItemFromItem(srmRestInternalService.retrieveDataProviderByUrn(datasetVersionDataProviderUrn),
+                        TypeExternalArtefactsEnum.DATA_PROVIDER);
+                datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().add(dataProvider);
+            }
+        }
+    }
+    
     private static void setDatasetVersionVersionRationaleType(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
         if (taskInfoDataset.getDatasetVersionRationaleTypes() != null) {
             for (String DatasetVersionRationaleTypes : taskInfoDataset.getDatasetVersionRationaleTypes()) {

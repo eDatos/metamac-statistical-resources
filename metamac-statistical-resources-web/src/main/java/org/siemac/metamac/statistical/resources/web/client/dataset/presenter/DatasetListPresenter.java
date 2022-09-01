@@ -35,14 +35,14 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVe
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction.Builder;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListAction;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListResult;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitsPaginatedListAction;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
@@ -97,11 +97,9 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
         void setDsdsForSearchSection(GetDsdsPaginatedListResult result);
         void setStatisticalOperationsForSearchSection(GetStatisticalOperationsPaginatedListResult result);
 
-        // TODO EDATOS-3729 CAMBIAR A DATA PROVIDER
-        //void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field);
-        //void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field);
-        void setDataProviderSchemesForField(GetOrganisationUnitSchemesPaginatedListResult result, SiemacMetadataExternalField field);
-        void setDataProviderForField(GetOrganisationUnitsPaginatedListResult result, SiemacMetadataExternalField field);
+        // data provider y data provider schemes
+        void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field);
+        void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field);
         
         // Search
         void clearSearchSection();
@@ -352,22 +350,21 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
 
     @Override
     public void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, final SiemacMetadataExternalField field) {
-        dispatcher.execute(new GetOrganisationUnitSchemesPaginatedListAction(firstResult, maxResults, webCriteria),
-                new WaitingAsyncCallbackHandlingError<GetOrganisationUnitSchemesPaginatedListResult>(this) {
+        dispatcher.execute(new GetDataProviderSchemesPaginatedListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetDataProviderSchemesPaginatedListResult>(this) {
 
-                    @Override
-                    public void onWaitSuccess(GetOrganisationUnitSchemesPaginatedListResult result) {
-                        getView().setDataProviderSchemesForField(result, field);
-                    }
-                });
+            @Override
+            public void onWaitSuccess(GetDataProviderSchemesPaginatedListResult result) {
+                getView().setDataProviderSchemesForField(result, field);
+            }
+        });
     }
 
     @Override
     public void retrieveDataProviderUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, final SiemacMetadataExternalField field) {
-        dispatcher.execute(new GetOrganisationUnitsPaginatedListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetOrganisationUnitsPaginatedListResult>(this) {
+        dispatcher.execute(new GetDataProviderPaginatedListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetDataProviderPaginatedListResult>(this) {
 
             @Override
-            public void onWaitSuccess(GetOrganisationUnitsPaginatedListResult result) {
+            public void onWaitSuccess(GetDataProviderPaginatedListResult result) {
                 getView().setDataProviderForField(result, field);
             }
         });

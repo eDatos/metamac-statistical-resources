@@ -89,6 +89,7 @@ Application StatisticalResourcesDto {
 			String nextVersionDate;
 			String nextVersion;
 			String nextProcStatus;
+			List<String> dataProvidersUrn;
 			List<String> versionRationaleTypes;
 			Boolean automaticLifeCicle;
 			
