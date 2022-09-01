@@ -34,7 +34,7 @@ public class DatasetImportUtils {
     }
     
     private static void setDatasetVersionDataProviders(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException {
-        if (taskInfoDataset.getDatasetVersionDataProviderUrn() != null) {
+        if (taskInfoDataset.getDatasetVersionDataProviderUrn() != null && !taskInfoDataset.getDatasetVersionDataProviderUrn().isEmpty()) {
             datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().clear();
             for (String datasetVersionDataProviderUrn : taskInfoDataset.getDatasetVersionDataProviderUrn()) {
                 ExternalItem dataProvider = StatisticalResourcesExternalItemUtils.buildExternalItemFromItem(srmRestInternalService.retrieveDataProviderByUrn(datasetVersionDataProviderUrn),
