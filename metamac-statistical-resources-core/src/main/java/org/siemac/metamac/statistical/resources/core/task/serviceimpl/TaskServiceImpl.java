@@ -665,20 +665,36 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             sendDatasetVersionToDiffusionValidation(ctx, datasetVersionUrn, procNextStatus);
 
             publishDatasetVersion(ctx, datasetVersionUrn, procNextStatus);
-
+            
         } else {
             executeImportationTask(ctx, importationJobKey, taskInfoDataset);
         }
         
         markDatabaseImportTaskAsFinished(ctx, importationJobKey);
         
+        sendNotification(ctx, datasetVersionUrn);
+        
         updateGeographicCoverageVariableElementsCache(ctx, datasetVersionUrn,  procNextStatus);
     }
-    
+        
     private void sendNotification(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
         if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
-            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
-            noticesRestInternalLifeCicleService.createLifeCycleNotification(ctx, datasetVersion.getLifeCycleStatisticalResource().getProcStatus(), datasetVersion);
+
+            logger.debug("sendNotification dataset in zip import with automatic life cicle {}", datasetVersionUrn);
+            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+
+                @Override
+                protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                    DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+                    if (ProcStatusEnum.PRODUCTION_VALIDATION.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())
+                            || ProcStatusEnum.DIFFUSION_VALIDATION.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())
+                            || ProcStatusEnum.PUBLISHED.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())) {
+                        noticesRestInternalLifeCicleService.createLifeCycleNotification(ctx, datasetVersion.getLifeCycleStatisticalResource().getProcStatus(), datasetVersion);
+                    }
+                    return null;
+                }
+            });
+
         }
     }
     
@@ -754,9 +770,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 @Override
                 protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
                     datasetLifecycleService.sendToProductionValidation(ctx, datasetVersionUrn);
-                    if (ProcStatusEnum.PRODUCTION_VALIDATION.equals(procNextStatus)) {
-                        sendNotification(ctx, datasetVersionUrn);
-                    }
                     return null;
                 }
             });
@@ -773,9 +786,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 @Override
                 protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
                     datasetLifecycleService.sendToDiffusionValidation(ctx, datasetVersionUrn);
-                    if (ProcStatusEnum.DIFFUSION_VALIDATION.equals(procNextStatus)) {
-                        sendNotification(ctx, datasetVersionUrn);
-                    }
                     return null;
                 }
             });
@@ -791,7 +801,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 @Override
                 protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
                     datasetLifecycleService.sendToPublished(ctx, datasetVersionUrn);
-                    sendNotification(ctx, datasetVersionUrn);
                     return null;
                 }
             });
