@@ -760,7 +760,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkValidDataSourceTypeForImportationTask(expectedDataSourceTypeEnum, datasetVersion);
 
-        checkRequiredDataProviderInDataset(basicVersionableStatisticalResourceDto, datasetVersion);
+        checkRequiredDataProviderInDataset(basicVersionableStatisticalResourceDto, datasetVersion, expectedDataSourceTypeEnum);
         
         if (DataSourceTypeEnum.FILE.equals(datasetVersion.getDataSourceType())) {
             ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion, basicVersionableStatisticalResourceDto);
@@ -1969,13 +1969,23 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
     
-    private void checkRequiredDataProviderInDataset(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, DatasetVersion datasetVersion) throws MetamacException {
+    private Boolean checkDataProviderEmptyInDatabaseImport(DatasetVersion datasetVersion, DataSourceTypeEnum expectedDataSourceTypeEnum) {
+        return datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider() != null && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().isEmpty()
+                && DataSourceTypeEnum.DATABASE.equals(expectedDataSourceTypeEnum);
+    }
 
-        if (Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle()) && basicVersionableStatisticalResourceDto.getDataProvidersUrn().isEmpty()
-                && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().isEmpty()
+    private Boolean checkDataProviderEmptyInZipImport(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, DatasetVersion datasetVersion,
+            DataSourceTypeEnum expectedDataSourceTypeEnum) {
+        return Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle()) && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider() != null
+                && basicVersionableStatisticalResourceDto.getDataProvidersUrn().isEmpty() && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().isEmpty()
                 && !ProcStatusEnum.DRAFT.getName().equals(basicVersionableStatisticalResourceDto.getNextProcStatus())
                 && !ProcStatusEnum.DRAFT.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus())
-                && !ProcStatusEnum.VALIDATION_REJECTED.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus())) {
+                && !ProcStatusEnum.VALIDATION_REJECTED.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus());
+    }
+
+    private void checkRequiredDataProviderInDataset(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, DatasetVersion datasetVersion, DataSourceTypeEnum expectedDataSourceTypeEnum) throws MetamacException {
+
+        if (checkDataProviderEmptyInDatabaseImport(datasetVersion, expectedDataSourceTypeEnum) || checkDataProviderEmptyInZipImport(basicVersionableStatisticalResourceDto, datasetVersion, expectedDataSourceTypeEnum)) {
             List<MetamacExceptionItem> exceptions = new ArrayList<>();
             exceptions.add(new MetamacExceptionItem(CommonServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionBaseParameters.DATASET_VERSION__DATA_PROVIDER));
             ExceptionUtils.throwIfException(exceptions);
