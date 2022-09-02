@@ -412,11 +412,11 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
         CustomDateItem nextVersionDate = ((CustomDateItem) extraForm.getItem(VersionableResourceDS.DATE_NEXT_VERSION));
         nextVersionDate.setRequired(false);
-        nextVersionDate.setTitle(getConstants().datasetDateNextUpdate());
         nextVersionDate.clearValue();
         nextVersionDate.hide();
         
         CustomDateItem nextUpdateDate = ((CustomDateItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE));
+        nextUpdateDate.setTitle(getConstants().datasetDateNextUpdate());
         nextUpdateDate.setRequired(false);
         nextUpdateDate.clearValue();
     }
