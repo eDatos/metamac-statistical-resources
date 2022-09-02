@@ -20,7 +20,6 @@ import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesW
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetDatasourcesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
@@ -164,7 +163,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
 
     private CustomDateItem addFieldNextVersionDate() {
-        CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
+        CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate() + "*");
         nextVersionDate.setTitleColSpan(2);
         return nextVersionDate;
    
@@ -177,7 +176,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
     
     private CustomSelectItem addFieldNextVersion() {
-        final CustomSelectItem nextVersion = new CustomSelectItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion());
+        final CustomSelectItem nextVersion = new CustomSelectItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion() + "*");
         nextVersion.setValueMap(CommonUtils.getStatisticalResourceNextVersionHashMap());
         nextVersion.setRequired(true);
         nextVersion.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
@@ -190,12 +189,14 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
                 if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
                     setRequiredCustomDateItem(dateNextVersion, true);
                     setRequiredCustomDateItem(dateNextUpdate, true);
+                    dateNextUpdate.setTitle(getConstants().datasetDateNextUpdate() + "*");
                     dateNextVersion.show();
                     
                 } else {
                     if (Boolean.TRUE.equals(dateNextVersion.isVisible())) {
                         setRequiredCustomDateItem(dateNextVersion, false);
                         setRequiredCustomDateItem(dateNextUpdate, false);
+                        dateNextUpdate.setTitle(getConstants().datasetDateNextUpdate());
                         dateNextVersion.clearValue();
                         dateNextVersion.clearValue();
                         dateNextVersion.hide();
@@ -210,7 +211,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
 
     private CustomSelectItem addFieldProcStatus() {
-        final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().lifeCycleStatisticalResourceProcStatus());
+        final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().lifeCycleStatisticalResourceProcStatus() + "*");
         LinkedHashMap<String, String>  mapaProcStatus = CommonUtils.getProcStatusHashMap();
         mapaProcStatus.remove(ProcStatusEnum.VALIDATION_REJECTED.getName());
         procStatus.setValueMap(mapaProcStatus);
@@ -227,7 +228,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     
     private SearchVersionRationaleTypeItem addFieldSearchVersionRationaleTypeItem() {
         final SearchVersionRationaleTypeItem searchVersionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES,
-                getConstants().versionableStatisticalResourceVersionRationaleTypes(), true);
+                getConstants().versionableStatisticalResourceVersionRationaleTypes() + "*", true);
           searchVersionRationaleTypeItem.setValidators(new CustomRequiredValidator() {
 
             @Override
@@ -401,7 +402,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     
     private void clearExtraFormValues() {
         SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.DATA_PROVIDER);
-        dataProviderItem.clearValue();
+        dataProviderItem.clearRelatedResourceList();
         
         SearchVersionRationaleTypeItem searchVersionRationaleTypeItem = ((SearchVersionRationaleTypeItem) extraForm.getItem(VersionableResourceDS.VERSION_RATIONALE_TYPES));
         searchVersionRationaleTypeItem.setVersionRationaleTypes(getDefaultVersionRationaleType());
@@ -411,6 +412,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
         CustomDateItem nextVersionDate = ((CustomDateItem) extraForm.getItem(VersionableResourceDS.DATE_NEXT_VERSION));
         nextVersionDate.setRequired(false);
+        nextVersionDate.setTitle(getConstants().datasetDateNextUpdate());
         nextVersionDate.clearValue();
         nextVersionDate.hide();
         
