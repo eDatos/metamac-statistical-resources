@@ -12,7 +12,9 @@ import org.siemac.metamac.statistical.resources.web.client.constants.Statistical
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.TextAndUrlItem;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
+import org.siemac.metamac.statistical.resources.web.client.utils.DateUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceVersionEditionForm;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
@@ -27,7 +29,8 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
     private DatasetMetadataTabUiHandlers uiHandlers;
     private SearchExternalItemSimpleItem updateFrequency;
     private ProcStatusEnum               procStatus;
-
+    private TextAndUrlItem pruebas;
+    
     public DatasetVersionEditionForm() {
         super();
 
@@ -43,7 +46,14 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
             }
         });
 
-        addFields(dateNextUpdate, updateFrequency);
+        pruebas = createFieldPruebas();
+        
+        //pruebas.setDefaultValue(new Date());
+        //pruebas.setDefaultValue(DateUtils.getDate(01, 05, 1970));
+        pruebas.setDefaultValue("2022-08-01");
+        
+        
+        addFields(pruebas, updateFrequency, dateNextUpdate);
     }
 
     public void setDatasetVersionDto(DatasetVersionDto dto) {
@@ -64,6 +74,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
         return dto;
     }
     private CustomDateItem createDateNextUpdateItem() {
+            
         FormItemIcon infoIcon = new FormItemIcon();
         infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
         infoIcon.setPrompt(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
@@ -72,6 +83,13 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
         return item;
     }
 
+
+    // TODO EDATOS-3744 QUITAR
+    private TextAndUrlItem createFieldPruebas() {
+        return new TextAndUrlItem(DatasetDS.DATE_NEXT_UPDATE + "1", getConstants().datasetDateNextUpdate(), false);
+       
+    }
+    
     private SearchExternalItemSimpleItem createUpdateFrequencyItem() {
         return new SearchExternalItemSimpleItem(DatasetDS.UPDATE_FRECUENCY, getConstants().datasetUpdateFrequency(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
 

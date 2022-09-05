@@ -30,7 +30,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
 
     protected LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto;
-
+    
     public LifeCycleResourceVersionEditionForm() {
         super(getConstants().formVersion());
 
@@ -89,7 +89,7 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
 
         CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
         nextVersionDate.setShowIfCondition(getNextVersionDateFormItemIfFunction());
-
+        
         setFields(versionLogic, versionRationaleTypeItem, staticVersionRationaleTypeItem, versionRationale, validFrom, validTo, nextVersion, nextVersionDate);
     }
 
@@ -109,7 +109,7 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
 
         markForRedraw();
     }
-
+    
     public LifeCycleStatisticalResourceDto getLifeCycleStatisticalResourceDto(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto) {
 
         lifeCycleStatisticalResourceDto.getVersionRationaleTypes().clear();
