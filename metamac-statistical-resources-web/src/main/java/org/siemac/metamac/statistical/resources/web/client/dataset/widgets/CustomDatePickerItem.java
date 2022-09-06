@@ -3,14 +3,14 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.LinkedHashMap;
 
-import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCanvasItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
 import com.smartgwt.client.types.FormErrorOrientation;
 import com.smartgwt.client.types.VerticalAlignment;
@@ -31,28 +31,29 @@ public class CustomDatePickerItem extends CustomCanvasItem {
         }
     }
      
-    
     private static String nameCustomField = "-custom";
     private static String nameDateField = "-date";
     private static String nameSelectorField = "-selector";
-    
+    private boolean readOnly = true;
     private DynamicForm form;
 
     private CustomDateItem nextVersionDate;
     CustomSelectItem dateFormatType;
     private TextItem customSdmxTimePeriodItem;
+    private ViewTextItem staticTimePeriodItem;
     
-    private void common(boolean required) {
-        setTitleStyle(( !required) ? "localeLabel" : "requiredLocaleLabel");
+    private void common(boolean readOnly, boolean required) {
+        setTitleStyle((!readOnly && !required)  ? "localeLabel" : "requiredLocaleLabel");
         setCellStyle("localeCellStyle");
         setTitleVAlign(VerticalAlignment.CENTER);
     }
     
-    public CustomDatePickerItem(String name, String title, boolean required) {
+    public CustomDatePickerItem(String name, String title, boolean readOnly, boolean required) {
         super(name, title);
+        this.readOnly = readOnly;
         setRedrawOnChange(true);
         setShouldSaveValue(true);
-        common(required);
+        common(readOnly, required);
 
         form = new DynamicForm();
         form.setAutoHeight();
@@ -62,6 +63,24 @@ public class CustomDatePickerItem extends CustomCanvasItem {
 
         form.setErrorOrientation(FormErrorOrientation.RIGHT);
         form.setValidateOnChange(true);
+        
+        if (this.readOnly) {
+            customDatePickerItemForm(name, required);
+        } else {
+            customDatePickerItemEditionForm(name, required); 
+        }
+        
+
+        Canvas canvas = new Canvas();
+        canvas.addChild(form);
+        canvas.setAutoHeight();
+
+        setCanvas(canvas);
+        setCellHeight(20);
+        
+    }
+    
+    private void customDatePickerItemEditionForm(String name, boolean required) {
         dateFormatType = new CustomSelectItem(name + nameSelectorField, "-");
         dateFormatType.setShowTitle(false);
         dateFormatType.setRequired(required);
@@ -95,19 +114,13 @@ public class CustomDatePickerItem extends CustomCanvasItem {
         nextVersionDate.setShowTitle(false);
        
         form.setFields(dateFormatType, nextVersionDate, customSdmxTimePeriodItem);
-
-        Canvas canvas = new Canvas();
-        canvas.addChild(form);
-        canvas.setAutoHeight();
-
-        setCanvas(canvas);
-        setCellHeight(20);
-        
     }
-   
-    public void setValue(String value, String url) {
-
-        dateFormatType.setValue(value);
+    
+    private void customDatePickerItemForm(String name, boolean required) {
+        staticTimePeriodItem = new ViewTextItem();
+        staticTimePeriodItem.setShowTitle(false); 
+        staticTimePeriodItem.setRedrawOnChange(true);
+        form.setFields(staticTimePeriodItem);
     }
 
     public String getValue() {
@@ -121,6 +134,14 @@ public class CustomDatePickerItem extends CustomCanvasItem {
 
     @Override
     public void setValue(String sdmxTimePeriod) {
+        if (this.readOnly) {
+            setValueInForm(sdmxTimePeriod);
+        } else {
+            setValueInEditionForm(sdmxTimePeriod);
+        }
+    }
+      
+    private void setValueInEditionForm(String sdmxTimePeriod) {
         if (DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
             dateFormatType.setValue(DateFormatTypeEnum.SPECIFIC_DATE.getName());
             customSdmxTimePeriodItem.setVisible(false);
@@ -133,7 +154,17 @@ public class CustomDatePickerItem extends CustomCanvasItem {
             customSdmxTimePeriodItem.setValue(sdmxTimePeriod);
         }
     }
-      
+
+    private void setValueInForm(String sdmxTimePeriod) {
+        if (!StringUtils.isBlank(sdmxTimePeriod)) {
+            if (DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
+                staticTimePeriodItem.setValue(DateUtils.getVisualizationDateFormat(sdmxTimePeriod));
+            } else {
+                staticTimePeriodItem.setValue(sdmxTimePeriod);
+            }
+        }
+    }
+
     public static LinkedHashMap<String, String> getDateFormatTypeHashMap() {
         LinkedHashMap<String, String> dateFormatTypeHashMap = new LinkedHashMap<String, String>();
         for (DateFormatTypeEnum a : DateFormatTypeEnum.values()) {

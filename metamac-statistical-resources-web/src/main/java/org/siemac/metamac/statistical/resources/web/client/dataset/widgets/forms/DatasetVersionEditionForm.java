@@ -57,8 +57,8 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
 
         setValue(DatasetDS.DATE_NEXT_UPDATE, dto.getDateNextUpdate());
         setValue(DatasetDS.UPDATE_FRECUENCY, dto.getUpdateFrequency());
-        dateNextUpdate.setValue("2022-08-01");
-        
+        dateNextUpdate.setValue(dto.getDateNextUpdate1());
+
     }
 
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto dto) {
@@ -66,8 +66,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
 
         dto.setDateNextUpdate(((CustomDateItem) getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsDate());
         dto.setUpdateFrequency(getValueAsExternalItemDto(DatasetDS.UPDATE_FRECUENCY));
-        
-        String d = dateNextUpdate.getValue();
+        dto.setDateNextUpdate1(dateNextUpdate.getValue());
 
         return dto;
     }
@@ -82,8 +81,8 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
     }
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
-        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE + "1", getConstants().datasetDateNextUpdate(), false);
-       
+        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE1, getConstants().datasetDateNextUpdate(), false, false);
+
     }
     
     private SearchExternalItemSimpleItem createUpdateFrequencyItem() {
