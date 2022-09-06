@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCanvasItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
@@ -17,7 +18,7 @@ import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 
-public class TextAndUrlItem extends CustomCanvasItem {
+public class CustomDatePickerItem extends CustomCanvasItem {
 
     public enum DateFormatTypeEnum implements Serializable {
         SPECIFIC_DATE, CUSTOM;
@@ -47,7 +48,7 @@ public class TextAndUrlItem extends CustomCanvasItem {
         setTitleVAlign(VerticalAlignment.CENTER);
     }
     
-    public TextAndUrlItem(String name, String title, boolean required) {
+    public CustomDatePickerItem(String name, String title, boolean required) {
         super(name, title);
         setRedrawOnChange(true);
         setShouldSaveValue(true);
@@ -109,21 +110,24 @@ public class TextAndUrlItem extends CustomCanvasItem {
         dateFormatType.setValue(value);
     }
 
-    public String getTextValue() {
-        if (DateFormatTypeEnum.SPECIFIC_DATE.equals(dateFormatType.getValue())) {
-            return nextVersionDate.getValue();
+    public String getValue() {
+        // get value as observational time period
+        if (DateFormatTypeEnum.SPECIFIC_DATE.getName().equals(dateFormatType.getValueAsString())) {
+            return DateUtils.getDateInSdmxFormat(nextVersionDate.getValueAsDate());
         } else {
-            dateFormatTypeHashMap.put(a.name(), "Personalizado");
+            return customSdmxTimePeriodItem.getValueAsString();
         }
     }
 
     @Override
-    public void setDefaultValue(String sdmxTimePeriod) {
+    public void setValue(String sdmxTimePeriod) {
         if (DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
+            dateFormatType.setValue(DateFormatTypeEnum.SPECIFIC_DATE.getName());
             customSdmxTimePeriodItem.setVisible(false);
             nextVersionDate.setVisible(true);
             nextVersionDate.setValue(DateUtils.getDate(sdmxTimePeriod));
         } else {
+            dateFormatType.setValue(DateFormatTypeEnum.CUSTOM.getName());
             customSdmxTimePeriodItem.setVisible(true);
             nextVersionDate.setVisible(false);
             customSdmxTimePeriodItem.setValue(sdmxTimePeriod);

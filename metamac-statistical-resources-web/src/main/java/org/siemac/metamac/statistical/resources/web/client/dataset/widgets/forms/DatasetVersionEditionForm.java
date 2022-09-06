@@ -12,9 +12,8 @@ import org.siemac.metamac.statistical.resources.web.client.constants.Statistical
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.TextAndUrlItem;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CustomDatePickerItem;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
-import org.siemac.metamac.statistical.resources.web.client.utils.DateUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceVersionEditionForm;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
@@ -29,12 +28,12 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
     private DatasetMetadataTabUiHandlers uiHandlers;
     private SearchExternalItemSimpleItem updateFrequency;
     private ProcStatusEnum               procStatus;
-    private TextAndUrlItem pruebas;
+    private CustomDatePickerItem dateNextUpdate;
     
     public DatasetVersionEditionForm() {
         super();
 
-        final CustomDateItem dateNextUpdate = createDateNextUpdateItem();
+        final CustomDateItem dateNextUpdate1 = createDateNextUpdateItem();
 
         updateFrequency = createUpdateFrequencyItem();
         updateFrequency.setValidators(new CustomRequiredValidator() {
@@ -46,14 +45,9 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
             }
         });
 
-        pruebas = createFieldPruebas();
+        dateNextUpdate = createFieldDateNextUpdate();
         
-        //pruebas.setDefaultValue(new Date());
-        //pruebas.setDefaultValue(DateUtils.getDate(01, 05, 1970));
-        pruebas.setDefaultValue("2022-08-01");
-        
-        
-        addFields(pruebas, updateFrequency, dateNextUpdate);
+        addFields(dateNextUpdate, updateFrequency, dateNextUpdate1);
     }
 
     public void setDatasetVersionDto(DatasetVersionDto dto) {
@@ -63,6 +57,8 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
 
         setValue(DatasetDS.DATE_NEXT_UPDATE, dto.getDateNextUpdate());
         setValue(DatasetDS.UPDATE_FRECUENCY, dto.getUpdateFrequency());
+        dateNextUpdate.setValue("2022-08-01");
+        
     }
 
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto dto) {
@@ -70,6 +66,8 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
 
         dto.setDateNextUpdate(((CustomDateItem) getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsDate());
         dto.setUpdateFrequency(getValueAsExternalItemDto(DatasetDS.UPDATE_FRECUENCY));
+        
+        String d = dateNextUpdate.getValue();
 
         return dto;
     }
@@ -83,10 +81,8 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
         return item;
     }
 
-
-    // TODO EDATOS-3744 QUITAR
-    private TextAndUrlItem createFieldPruebas() {
-        return new TextAndUrlItem(DatasetDS.DATE_NEXT_UPDATE + "1", getConstants().datasetDateNextUpdate(), false);
+    private CustomDatePickerItem createFieldDateNextUpdate() {
+        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE + "1", getConstants().datasetDateNextUpdate(), false);
        
     }
     
