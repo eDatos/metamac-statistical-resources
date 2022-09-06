@@ -47,7 +47,7 @@ import com.google.inject.Singleton;
 public class DatasourceImportationServlet extends BaseHttpServlet {
 
     private static Logger           logger                                  = Logger.getLogger(DatasourceImportationServlet.class.getName());
-    protected static final String[] FIELDS_VERSIONABLE_STATISTICAL_RESOURCEDTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
+    protected static final String[] FIELDS_VERSIONABLE_STATISTICAL_RESOURCE_DTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
             StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,
             StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS, StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS, StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER};
 
@@ -138,7 +138,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     }
 
     private void getFormFields(DiskFileItem item, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, HashMap<String, String> args) throws ParseException {
-        if (Arrays.asList(FIELDS_VERSIONABLE_STATISTICAL_RESOURCEDTO).contains(item.getFieldName())) {
+        if (Arrays.asList(FIELDS_VERSIONABLE_STATISTICAL_RESOURCE_DTO).contains(item.getFieldName())) {
             fillBasicVersionableStatisticalResourceDto(item, basicVersionableStatisticalResourceDto);
         } else {
             args.put(item.getFieldName(), item.getString());
