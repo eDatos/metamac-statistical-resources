@@ -24,6 +24,7 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
 import org.siemac.metamac.core.common.dto.LocalisedStringDto;
@@ -120,7 +121,7 @@ public class DatasourceImportationPreviewServlet extends BaseHttpServlet {
 
     private String getDimensionRepresentationMappingDto(String filename, String datasetVersionUrn) throws MetamacException, MetamacWebException {
         String message = null;
-        if (datasetVersionUrn != null && !"".equals(datasetVersionUrn)) {
+        if (StringUtils.isNotEmpty(datasetVersionUrn)) {
             StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext()
                     .getBean("statisticalResourcesServiceFacade");
 
