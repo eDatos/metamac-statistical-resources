@@ -204,7 +204,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private RestMapper                        restMapper;
 
     @Autowired 
-    private NoticesRestInternalServiceImpl noticesRestInternalServiceImpl;
+    private NoticesRestInternalService noticesRestInternalService;
     
     private SchedulerFactory                  schedulerFactory                    = null;
 
@@ -689,7 +689,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     if (ProcStatusEnum.PRODUCTION_VALIDATION.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())
                             || ProcStatusEnum.DIFFUSION_VALIDATION.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())
                             || ProcStatusEnum.PUBLISHED.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())) {
-                        noticesRestInternalServiceImpl.createLifeCycleNotification(ctx, datasetVersion.getLifeCycleStatisticalResource().getProcStatus(), datasetVersion);
+                        noticesRestInternalService.createLifeCycleNotification(ctx, datasetVersion.getLifeCycleStatisticalResource().getProcStatus(), datasetVersion);
                     }
                     return null;
                 }
