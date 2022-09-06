@@ -87,8 +87,8 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalLifeCicleService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
+import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalServiceImpl;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
@@ -204,7 +204,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private RestMapper                        restMapper;
 
     @Autowired 
-    private NoticesRestInternalLifeCicleService noticesRestInternalLifeCicleService;
+    private NoticesRestInternalServiceImpl noticesRestInternalServiceImpl;
     
     private SchedulerFactory                  schedulerFactory                    = null;
 
@@ -689,7 +689,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     if (ProcStatusEnum.PRODUCTION_VALIDATION.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())
                             || ProcStatusEnum.DIFFUSION_VALIDATION.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())
                             || ProcStatusEnum.PUBLISHED.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())) {
-                        noticesRestInternalLifeCicleService.createLifeCycleNotification(ctx, datasetVersion.getLifeCycleStatisticalResource().getProcStatus(), datasetVersion);
+                        noticesRestInternalServiceImpl.createLifeCycleNotification(ctx, datasetVersion.getLifeCycleStatisticalResource().getProcStatus(), datasetVersion);
                     }
                     return null;
                 }
@@ -968,10 +968,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         datasetVersionRepository.save(datasetVersion);
 
         markTaskAsFinished(ctx, jobKey);
-    }
-
-    private String getDataViewsRole() throws MetamacException {
-        return configurationService.retrieveDbDataViewsRole();
     }
 
     private void processRollbackDuplicationTask(ServiceContext ctx, Task task) throws MetamacException {
