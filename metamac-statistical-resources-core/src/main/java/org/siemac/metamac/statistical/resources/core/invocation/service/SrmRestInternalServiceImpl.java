@@ -31,6 +31,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraints;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataProvider;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructures;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationSchemes;
@@ -549,6 +550,20 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
         }
     }
 
+    @Override
+    public DataProvider retrieveDataProviderByUrn(String dataProviderUrn) throws MetamacException {
+        try {
+            String[] params = UrnUtils.splitUrnItem(dataProviderUrn);
+            String agencyId = params[0];
+            String schemeId = params[1];
+            String version = params[2];
+            String organisationId = params[3];
+            return restApiLocator.getSrmRestInternalFacadeV10().retrieveDataProvider(agencyId, schemeId, version, organisationId);
+        } catch (Exception e) {
+            throw manageSrmInternalRestException(e);
+        }
+    }
+    
     // -------------------------------------------------------------------------------------------------
     // CATEGORY SCHEMES
     // -------------------------------------------------------------------------------------------------
