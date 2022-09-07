@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 
+import org.siemac.metamac.core.common.util.shared.ArrayUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
@@ -54,25 +55,23 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private static int formWidthFields = 400;
     InformationLabel informationLabel;
     
+    private static final String[] REQUIRED_FIELDS = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
+            LifeCycleResourceDS.PROC_STATUS};
+    
+    private static final String[] REQUIRED_FIELDS_SCHEDULED_UPDATE = ArrayUtils.addStringElementsToStringArray(REQUIRED_FIELDS, DatasetDS.DATE_NEXT_UPDATE);
+
     protected ImportZipDatasourceWithMappingWindow() {
         super(getConstants().actionLoadDatasource());
         addFieldsInMainForm();
         addFieldsInExtraForm();
+        addRequiredFieldsInExtraForm(false);
     }
 
     @Override
     protected UploadForm buildMainUploadForm() {
         return new UploadDatasourceForm();
     }
-
-    private void buildInformationLabel() {
-        informationLabel = new InformationLabel(getMessages().datasourceImportationInfoLifeCicleRestrictionsMessage());
-        informationLabel.setWidth(formWidth);
-        informationLabel.setMargin(5);
-        informationLabel.hide();
-        body.addMember(informationLabel);
-    }
-    
+        
     @Override
     protected CustomDynamicForm buildExtraForm() {
         CustomDynamicForm form = new CustomDynamicForm();
@@ -105,7 +104,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         
         mainForm.addFields(itemsToAdd.toArray(new HiddenItem[itemsToAdd.size()]));
     }
-
+   
     private List<FormItem> addExtraFieldsToMainForm() {
         List<FormItem> extraItemsToAdd = new ArrayList<FormItem>();
         
@@ -132,7 +131,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         List<FormItem> items = new ArrayList<FormItem>();
       
         items.addAll(addExtraFields());
-        
+                      
         CustomButtonItem uploadButton = new CustomButtonItem("button-import", MetamacWebCommon.getConstants().accept());
         uploadButton.setAlign(Alignment.CENTER);
         uploadButton.setColSpan(3);
@@ -149,7 +148,16 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
         
     }
-    
+
+    private void addRequiredFieldsInExtraForm(boolean isScheduledUpdate) {
+        extraForm.resetRequiredTitleSuffix();
+        if (isScheduledUpdate) {
+            extraForm.setRequiredTitleSuffix(REQUIRED_FIELDS_SCHEDULED_UPDATE);
+        } else {
+            extraForm.setRequiredTitleSuffix(REQUIRED_FIELDS);
+        }
+    }
+
     private List<FormItem> addExtraFields() {
 
         List<FormItem> extraItemsToAdd = new ArrayList<FormItem>();
@@ -163,7 +171,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
 
     private CustomDateItem addFieldNextVersionDate() {
-        CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate() + "*");
+        CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
         nextVersionDate.setTitleColSpan(2);
         return nextVersionDate;
    
@@ -175,8 +183,9 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return nextUpdateDate;
     }
     
+    
     private CustomSelectItem addFieldNextVersion() {
-        final CustomSelectItem nextVersion = new CustomSelectItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion() + "*");
+        final CustomSelectItem nextVersion = new CustomSelectItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion());
         nextVersion.setValueMap(CommonUtils.getStatisticalResourceNextVersionHashMap());
         nextVersion.setRequired(true);
         nextVersion.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
@@ -188,15 +197,15 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
                 CustomDateItem dateNextUpdate = ((CustomDateItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE));
                 if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
                     setRequiredCustomDateItem(dateNextVersion, true);
-                    setRequiredCustomDateItem(dateNextUpdate, true);
-                    dateNextUpdate.setTitle(getConstants().datasetDateNextUpdate() + "*");
-                    dateNextVersion.show();
+                    setRequiredCustomDateItem(dateNextUpdate, true);                   
+                    addRequiredFieldsInExtraForm(true);
+                     dateNextVersion.show();
                     
                 } else {
                     if (Boolean.TRUE.equals(dateNextVersion.isVisible())) {
                         setRequiredCustomDateItem(dateNextVersion, false);
                         setRequiredCustomDateItem(dateNextUpdate, false);
-                        dateNextUpdate.setTitle(getConstants().datasetDateNextUpdate());
+                        addRequiredFieldsInExtraForm(false);
                         dateNextVersion.clearValue();
                         dateNextVersion.clearValue();
                         dateNextVersion.hide();
@@ -211,7 +220,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
 
     private CustomSelectItem addFieldProcStatus() {
-        final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().lifeCycleStatisticalResourceProcStatus() + "*");
+        final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().lifeCycleStatisticalResourceProcStatus());
         LinkedHashMap<String, String>  mapaProcStatus = CommonUtils.getProcStatusHashMap();
         mapaProcStatus.remove(ProcStatusEnum.VALIDATION_REJECTED.getName());
         procStatus.setValueMap(mapaProcStatus);
@@ -228,7 +237,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     
     private SearchVersionRationaleTypeItem addFieldSearchVersionRationaleTypeItem() {
         final SearchVersionRationaleTypeItem searchVersionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES,
-                getConstants().versionableStatisticalResourceVersionRationaleTypes() + "*", true);
+                getConstants().versionableStatisticalResourceVersionRationaleTypes(), true);
           searchVersionRationaleTypeItem.setValidators(new CustomRequiredValidator() {
 
             @Override
@@ -419,12 +428,22 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         nextUpdateDate.setTitle(getConstants().datasetDateNextUpdate());
         nextUpdateDate.setRequired(false);
         nextUpdateDate.clearValue();
+        
+        addRequiredFieldsInExtraForm(false);
     }
 
     private class UploadDatasourceForm extends UploadForm {
 
         private UploadItem uploadItem;
 
+        private void buildInformationLabel() {
+            informationLabel = new InformationLabel(getMessages().datasourceImportationInfoLifeCicleRestrictionsMessage());
+            informationLabel.setWidth(formWidth);
+            informationLabel.setMargin(5);
+            informationLabel.hide();
+            body.addMember(informationLabel);
+        }
+        
         public UploadDatasourceForm() {
             super();
             this.setWidth(610);
