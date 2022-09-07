@@ -12,6 +12,7 @@ import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.BaseInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
@@ -22,6 +23,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedRes
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleBaseParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
 
@@ -234,6 +236,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
             return;
         }
 
+        checkObservationalTimePeriodType(datasetVersion.getDateNextUpdate1(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE1, exceptions);
+        
         checkExistingSiemacMetadataStatisticalResource(datasetVersion.getSiemacMetadataStatisticalResource(), TypeRelatedResourceEnum.DATASET_VERSION, metadataName, exceptions);
         checkDatasetVersion(datasetVersion, metadataName, exceptions);
 
@@ -242,7 +246,13 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getId(), addParameter(metadataName, ServiceExceptionSingleParameters.ID), exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.VERSION), exceptions);
     }
-
+    
+    private static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
+        if (!SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN, parameter, parameterName));
+        }
+    }
+    
     private static void checkDatasetVersion(DatasetVersion datasetVersion, String metadataName, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion.getDataSourceType(), addParameter(metadataName, ServiceExceptionSingleBaseParameters.DATA_SOURCE_TYPE), exceptions);
     }

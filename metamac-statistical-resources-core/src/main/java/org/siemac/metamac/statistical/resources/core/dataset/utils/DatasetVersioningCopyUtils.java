@@ -166,6 +166,7 @@ public class DatasetVersioningCopyUtils extends CommonVersioningCopyUtils {
     private static void copyDatasource(Datasource source, Datasource target) {
         target.setIdentifiableStatisticalResource(copyIdentifiableStatisticalResource(source.getIdentifiableStatisticalResource(), target.getIdentifiableStatisticalResource()));
         target.setSourceName(source.getSourceName());
+        // TODO EDATOS-3744 VER SI TIENE RELACIÓN
         target.setDateNextUpdate(source.getDateNextUpdate());
     }
 

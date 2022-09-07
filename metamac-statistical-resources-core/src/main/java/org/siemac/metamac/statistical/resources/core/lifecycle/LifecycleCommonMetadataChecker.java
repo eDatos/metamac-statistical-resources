@@ -135,10 +135,12 @@ public class LifecycleCommonMetadataChecker {
         if (resource.getDatasources() == null || resource.getDatasources().isEmpty()) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_EMPTY_DATASOURCES, resource.getSiemacMetadataStatisticalResource().getUrn()));
         } else {
+            // TODO EDATOS-3744 COMPROBAR
             if (!hasAnyDatasourceDateNextUpdate(resource)) {
                 if (resource.getSiemacMetadataStatisticalResource().getNextVersion() != null
                         && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(resource.getSiemacMetadataStatisticalResource().getNextVersion())) {
                     checkMetadataRequired(resource.getDateNextUpdate(), addParameter(metadataName, ServiceExceptionSingleParameters.DATE_NEXT_UPDATE), exceptionItems);
+                    checkMetadataRequired(resource.getDateNextUpdate1(), addParameter(metadataName, ServiceExceptionSingleParameters.DATE_NEXT_UPDATE1), exceptionItems);
                 }
             }
         }
