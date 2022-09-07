@@ -10,10 +10,14 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_36_FOR_IMPORT_IN_OPERATION_0002_NAME;
 
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +40,11 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceimpl.DatasetServiceImpl;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
@@ -82,7 +90,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         Map<String, String> mappings = new HashMap<String, String>();
         mappings.put("dimension01", "urn01");
         mappings.put("dimension02", "urn02");
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
 
         ArgumentCaptor<TaskInfoDataset> argument = ArgumentCaptor.forClass(TaskInfoDataset.class);
         verify(taskService).planifyImportationDataset(any(ServiceContext.class), argument.capture());
@@ -91,6 +99,38 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         assertTaskFile(filename, DatasetFileFormatEnum.PX, argument.getValue().getFiles().get(0));
     }
 
+    @Test
+    public void testImportDatasourcesInDatasetVersionWithAutomaticLifeCicle() throws Exception {
+        String filename = "prueba.zip";
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME);
+        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        Mockito.when(datasetVersionRepository.retrieveByUrn(Mockito.eq(datasetVersionUrn))).thenReturn(datasetVersion);
+        Mockito.when(datasetRepository.findDatasetUrnLinkedToDatasourceSourceName(filename)).thenReturn(null);
+
+        List<URL> urls = Arrays.asList(buildFileUrl(filename));
+        Map<String, String> mappings = new HashMap<String, String>();
+        
+        BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto = new BasicVersionableStatisticalResourceDto();
+        Date date = new Date();
+        basicVersionableStatisticalResourceDto.setAutomaticLifeCicle(true);
+        List<String> versionRationaleTypes = new ArrayList<>();
+        versionRationaleTypes.add(VersionRationaleTypeEnum.MINOR_DATA_UPDATE.getName());
+        basicVersionableStatisticalResourceDto.setVersionRationaleTypes(versionRationaleTypes);
+        basicVersionableStatisticalResourceDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE.getName());
+        basicVersionableStatisticalResourceDto.setNextProcStatus(ProcStatusEnum.PUBLISHED.getName());
+        basicVersionableStatisticalResourceDto.setNextVersionDate(convertDateToString("12/02/2022"));
+        basicVersionableStatisticalResourceDto.setNextUpdateDate(convertDateToString("12/02/2022"));
+        
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, basicVersionableStatisticalResourceDto);
+
+        ArgumentCaptor<TaskInfoDataset> argument = ArgumentCaptor.forClass(TaskInfoDataset.class);
+        verify(taskService).planifyImportationDataset(any(ServiceContext.class), argument.capture());
+        
+        assertTaskInfoZipFileWithAutomaticLifeCicle(datasetVersion, argument.getValue(), basicVersionableStatisticalResourceDto);
+        assertTaskFile(filename, DatasetFileFormatEnum.CSV, argument.getValue().getFiles().get(0));
+    }
+    
     @Test
     public void testImportDatasourcesInDatasetVersionInvalidFile() throws Exception {
         String filename = "prueba.px";
@@ -104,7 +144,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename));
         HashMap<String, String> mappings = new HashMap<String, String>();
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -124,7 +164,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename));
         HashMap<String, String> mappings = new HashMap<String, String>();
-        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false);
+        datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Test
@@ -140,7 +180,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         Mockito.when(datasetVersionRepository.retrieveLastVersion(Mockito.eq(datasetUrn))).thenReturn(datasetVersion);
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
         ArgumentCaptor<TaskInfoDataset> argument = ArgumentCaptor.forClass(TaskInfoDataset.class);
         verify(taskService).planifyImportationDataset(any(ServiceContext.class), argument.capture());
@@ -180,7 +220,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         }
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
         ArgumentCaptor<TaskInfoDataset> argument = ArgumentCaptor.forClass(TaskInfoDataset.class);
         verify(taskService, Mockito.times(2)).planifyImportationDataset(any(ServiceContext.class), argument.capture());
@@ -224,7 +264,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, filename01, statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        throw datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
     }
 
@@ -256,7 +296,7 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         expectedMetamacException(new MetamacException(ServiceExceptionType.FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION, filename02, statisticalOperationCode));
 
         List<URL> urls = Arrays.asList(buildFileUrl(filename01), buildFileUrl(filename02));
-        datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls);
+        throw datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
 
     }
 
@@ -283,6 +323,8 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         }
 
     }
+    
+       
     private void assertTaskFile(String filename, DatasetFileFormatEnum type, FileDescriptor fileDescriptor) {
         assertEquals(filename, fileDescriptor.getFileName());
         assertEquals(type, fileDescriptor.getDatasetFileFormatEnum());
@@ -291,6 +333,27 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
 
     private URL buildFileUrl(String filename) throws Exception {
         return new URL("file", null, filename);
+    }
+    
+    private void assertTaskInfoZipFileWithAutomaticLifeCicle(DatasetVersion datasetVersion, TaskInfoDataset taskInfo, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
+        assertEquals(datasetVersion.getRelatedDsd().getUrn(), taskInfo.getDataStructureUrn());
+        assertEquals(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), taskInfo.getDatasetVersionId());
+        assertEquals(1, taskInfo.getFiles().size());
+
+        assertEquals(basicVersionableStatisticalResourceDto.getVersionRationaleTypes(), taskInfo.getDatasetVersionRationaleTypes());
+        assertEquals(basicVersionableStatisticalResourceDto.getNextVersion(), taskInfo.getDatasetNextVersion());
+        assertEquals(basicVersionableStatisticalResourceDto.getNextVersionDate(), taskInfo.getDatasetNextVersionDate());
+        assertEquals(basicVersionableStatisticalResourceDto.getNextUpdateDate(), taskInfo.getDatasetNextUpdateDate());
+
+    }
+
+    private String convertDateToString(String date) {
+        DateFormat df = new SimpleDateFormat(date);
+
+        Date today = Calendar.getInstance().getTime();
+        String dateToString = df.format(today);
+
+        return (dateToString);
     }
 
 }

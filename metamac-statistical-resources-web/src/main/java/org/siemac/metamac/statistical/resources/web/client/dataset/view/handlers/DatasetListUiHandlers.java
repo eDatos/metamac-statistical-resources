@@ -5,10 +5,12 @@ import java.util.List;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.view.handlers.NewStatisticalResourceUiHandlers;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers {
 
@@ -43,4 +45,8 @@ public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers 
     void retrieveTemporalGranularitiesForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria);
     void retrieveStatisticalOperationsForDsdSelectionInSearchSection();
     void retrieveDsdsForSearchSection(int firstResult, int maxResults, DsdWebCriteria criteria);
+    
+    // DATA_PROVIDERS and SCHEMES
+    void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, SiemacMetadataExternalField field);
+    void retrieveDataProviderUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, SiemacMetadataExternalField field);
 }

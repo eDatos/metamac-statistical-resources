@@ -8,6 +8,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
+import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceBaseListViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NewStatisticalResourceWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
@@ -16,18 +17,19 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.Dat
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionSearchSectionStack;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportDatasourcesWindow;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportZipDatasourceWithMappingWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.NewDatasetWindow;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
-import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 
@@ -40,12 +42,12 @@ import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<DatasetListUiHandlers> implements DatasetListPresenter.DatasetListView {
-
+   
     private DatasetVersionSearchSectionStack searchSectionStack;
 
     private CustomToolStripButton            importDatasourcesButton;
 
-    private ImportDatasourcesWindow          importDatasourcesWindow;
+    private ImportZipDatasourceWithMappingWindow  importZipDatasourceWithMappingWindow;
     private NewDatasetWindow                 newDatasetWindow;
 
     @Inject
@@ -86,24 +88,27 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
         // Import datasources window
 
-        importDatasourcesWindow = new ImportDatasourcesWindow();
-        importDatasourcesWindow.setUploadListener(new UploadListener() {
+        importZipDatasourceWithMappingWindow = new ImportZipDatasourceWithMappingWindow() {
 
             @Override
-            public void uploadFailed(String errorMessage) {
-                getUiHandlers().datasourcesImportationFailed(errorMessage);
+            protected void uploadSuccess(String message) {
+                getUiHandlers().datasourcesImportationSucceed(message);
             }
+
             @Override
-            public void uploadComplete(String fileName) {
-                getUiHandlers().datasourcesImportationSucceed(fileName);
+            protected void uploadFailed(String error) {
+                getUiHandlers().datasourcesImportationFailed(error);
             }
-        });
+        };
     }
-
+     
     @Override
     public void setUiHandlers(DatasetListUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         searchSectionStack.setUiHandlers(uiHandlers);
+        if (importZipDatasourceWithMappingWindow != null) {
+            importZipDatasourceWithMappingWindow.setUiHandlers(uiHandlers);
+        }
     }
 
     @Override
@@ -266,10 +271,11 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
             @Override
             public void onClick(ClickEvent event) {
-                importDatasourcesWindow.setStatisticalOperation(StatisticalResourcesDefaults.getSelectedStatisticalOperation().getCode());
-                importDatasourcesWindow.show();
+                importZipDatasourceWithMappingWindow.setStatisticalOperation(StatisticalResourcesDefaults.getSelectedStatisticalOperation().getCode());
+                importZipDatasourceWithMappingWindow.show();
             }
         });
+        
         return importDatasourcesButton;
     }
 
@@ -355,5 +361,16 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     private DatasetVersionBaseDto getDtoFromRecord(ListGridRecord record) {
         DatasetRecord datasetRecord = (DatasetRecord) record;
         return datasetRecord.getDatasetVersionBaseDto();
+    }
+    
+    @Override
+    public void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setDataProviderSchemes(result.getDataProviderSchemes(), result.getFirstResultOut(), result.getTotalResults());
+    }
+
+    @Override
+    public void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setDataProvider(result.getDataProviders(), result.getFirstResultOut(), result.getTotalResults());
+
     }
 }

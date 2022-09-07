@@ -1,4 +1,5 @@
 import "classpath:/btdesign/metamac-statistical-resources-core-base.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-base-dtos.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-base-enums.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-tasks-dtos.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-tasks.btdesign"
@@ -58,10 +59,10 @@ Application DatasetsStatisticalResources {
 	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;
     		
     		proccessDatasetFileImportationResult(String datasetImportationId, List<@FileDescriptorResult> fileDescriptors) throws MetamacException;
-    		importDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
+    		importDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto ) throws MetamacException;
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
-    		importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls) throws MetamacException; 
+    		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException; 
 
     		// Datasets
     		"Finds datasets by criteria"

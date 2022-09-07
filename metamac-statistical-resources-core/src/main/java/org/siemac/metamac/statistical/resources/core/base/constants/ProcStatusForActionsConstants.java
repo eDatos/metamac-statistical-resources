@@ -26,6 +26,7 @@ public abstract class ProcStatusForActionsConstants {
 
     // DatasetVersion
     protected static final ProcStatusEnum[] procStatusForImportDatasourcesInDatasetVersion    = {ProcStatusEnum.DRAFT, ProcStatusEnum.VALIDATION_REJECTED};
+    protected static final ProcStatusEnum[] procStatusForImportZipDatasources                 = {ProcStatusEnum.DRAFT, ProcStatusEnum.VALIDATION_REJECTED, ProcStatusEnum.PUBLISHED};
     
     // Publication
     protected static final ProcStatusEnum[] procStatusForEditPublicationStructure             = {ProcStatusEnum.DRAFT, ProcStatusEnum.VALIDATION_REJECTED, ProcStatusEnum.PRODUCTION_VALIDATION, ProcStatusEnum.DIFFUSION_VALIDATION};
@@ -55,7 +56,10 @@ public abstract class ProcStatusForActionsConstants {
 
     // DatasetVersion
     public static final String              PROC_STATUS_FOR_IMPORT_DATASOURCES_IN_DATASET_VERSION  = BaseEnumUtils.enumToString(procStatusForImportDatasourcesInDatasetVersion);
+    public static final String              PROC_STATUS_FOR_IMPORT_ZIP_DATASOURCES                 = BaseEnumUtils.enumToString(procStatusForImportZipDatasources);
 
+    
+    
     // Publication
     public static final String              PROC_STATUS_FOR_EDIT_PUBLICATION_STRUCTURE             = BaseEnumUtils.enumToString(procStatusForEditPublicationStructure);
 
