@@ -80,27 +80,36 @@ public class CustomDatePickerItem extends CustomCanvasItem {
         
     }
     
+    private void enabledNextVersionDate() {
+        customSdmxTimePeriodItem.hide();
+        customSdmxTimePeriodItem.setVisible(false);
+        customSdmxTimePeriodItem.clearValue();
+        nextVersionDate.show();
+        nextVersionDate.setVisible(true);
+    }
+    
+    private void enabledCustomSdmxTimePeriodItem() {
+        customSdmxTimePeriodItem.show();
+        customSdmxTimePeriodItem.setVisible(true);
+        nextVersionDate.hide();
+        nextVersionDate.setVisible(false);
+        nextVersionDate.clearValue();
+    }
+
     private void customDatePickerItemEditionForm(String name, boolean required) {
         dateFormatType = new CustomSelectItem(name + nameSelectorField, "-");
         dateFormatType.setShowTitle(false);
         dateFormatType.setRequired(required);
         dateFormatType.setValueMap(getDateFormatTypeHashMap());
-        
+
         dateFormatType.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
 
             @Override
             public void onChange(com.smartgwt.client.widgets.form.fields.events.ChangeEvent event) {
                 if (DateFormatTypeEnum.SPECIFIC_DATE.getName().equals(event.getValue())) {
-                    customSdmxTimePeriodItem.hide();
-                    customSdmxTimePeriodItem.setVisible(false);
-                    nextVersionDate.show();
-                    nextVersionDate.setVisible(true);
-                    
+                    enabledNextVersionDate();
                 } else {
-                    customSdmxTimePeriodItem.show();
-                    customSdmxTimePeriodItem.setVisible(true);
-                    nextVersionDate.hide();
-                    nextVersionDate.setVisible(false);
+                    enabledCustomSdmxTimePeriodItem();
                 }
             }
         });
@@ -144,13 +153,11 @@ public class CustomDatePickerItem extends CustomCanvasItem {
     private void setValueInEditionForm(String sdmxTimePeriod) {
         if (DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
             dateFormatType.setValue(DateFormatTypeEnum.SPECIFIC_DATE.getName());
-            customSdmxTimePeriodItem.setVisible(false);
-            nextVersionDate.setVisible(true);
+            enabledNextVersionDate();
             nextVersionDate.setValue(DateUtils.getDate(sdmxTimePeriod));
         } else {
             dateFormatType.setValue(DateFormatTypeEnum.CUSTOM.getName());
-            customSdmxTimePeriodItem.setVisible(true);
-            nextVersionDate.setVisible(false);
+            enabledCustomSdmxTimePeriodItem();
             customSdmxTimePeriodItem.setValue(sdmxTimePeriod);
         }
     }

@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.joda.time.DateTime;
@@ -248,7 +249,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
     
     private static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
-        if (!SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
+        if (StringUtils.isNotBlank(parameter) && !SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN, parameter, parameterName));
         }
     }
