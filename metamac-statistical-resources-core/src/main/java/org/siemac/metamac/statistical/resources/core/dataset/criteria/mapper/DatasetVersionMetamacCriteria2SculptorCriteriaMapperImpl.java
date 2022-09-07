@@ -121,6 +121,8 @@ public class DatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl implements
                 case DATASET_DATE_NEXT_UPDATE:
                     return new SculptorPropertyCriteria(CriteriaUtils.getDatetimeLeafPropertyEmbedded(DatasetVersionProperties.dateNextUpdate(), DatasetVersion.class),
                             propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                case DATASET_DATE_NEXT_UPDATE1:
+                    return new SculptorPropertyCriteria(DatasetVersionProperties.dateNextUpdate1(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case DATASET_STATISTIC_OFFICIALITY_IDENTIFIER:
                     return new SculptorPropertyCriteria(DatasetVersionProperties.statisticOfficiality().identifier(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case DATA:

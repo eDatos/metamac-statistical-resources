@@ -531,6 +531,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Date next update
         if (BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
             resource.setDateNextUpdate(null);
+            resource.setDateNextUpdate1(null);
         }
 
         // Dataset repository
@@ -909,6 +910,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 datasource.getIdentifiableStatisticalResource().setCode(fileDescriptor.getDatasourceId());
                 datasource.setSourceName(fileDescriptor.getFileName());
                 if (DatasetFileFormatEnum.PX.equals(fileDescriptor.getDatasetFileFormatEnum())) {
+                    // TODO EDATOS-3744 REVISAR SI ESTÁ RELACIONADO
                     datasource.setDateNextUpdate(new DateTime(fileDescriptor.getNextUpdate()));
                 }
                 createDatasource(ctx, datasetImportationId, datasource);
@@ -1453,7 +1455,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return times[1]; // start
     }
 
-    private void processDateNextUpdate(DatasetVersion resource) {
+ // TODO EDATOS-3729  QUITAR
+    private void processDateNextUpdate1(DatasetVersion resource) {
         if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)) {
             if (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
                 DateTime mostRecentDate = null;
@@ -1470,6 +1473,25 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
+    private void processDateNextUpdate(DatasetVersion resource) {
+        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)) {
+            if (resource.getDateNextUpdate1() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
+                DateTime mostRecentDate = null;
+                for (Datasource datasource : resource.getDatasources()) {
+                    if (datasource.getDateNextUpdate() != null) {
+                        if (isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
+                            mostRecentDate = datasource.getDateNextUpdate();
+                        }
+                    }
+                }
+                
+                // TODO EDATOS-3729 REVISAR FORMATO
+                resource.setDateNextUpdate1(mostRecentDate.toString());
+                resource.setUserModifiedDateNextUpdate(false);
+            }
+        }
+    }
+    
     private boolean isNewDateBestOptionForDateNextUpdate(DateTime current, DateTime newCandidate) {
         if (current == null) {
             return true;

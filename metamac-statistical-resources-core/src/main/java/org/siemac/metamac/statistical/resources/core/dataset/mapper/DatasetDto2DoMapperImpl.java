@@ -157,14 +157,16 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
         }
 
         if (MetadataEditionChecks.canNextVersionDateBeEdited(target.getSiemacMetadataStatisticalResource().getNextVersion())) {
-            boolean dateNextUpdateModified = hasDateBeModified(target.getDateNextUpdate(), source.getDateNextUpdate());
+            boolean dateNextUpdateModified = hasDateBeModified(target.getDateNextUpdate1(), source.getDateNextUpdate1());
             if (dateNextUpdateModified) {
                 target.setUserModifiedDateNextUpdate(true);
                 target.setDateNextUpdate(dateDtoToDo(source.getDateNextUpdate()));
+                target.setDateNextUpdate1(source.getDateNextUpdate1());
             }
         } else {
             target.setUserModifiedDateNextUpdate(false);
             target.setDateNextUpdate(null);
+            target.setDateNextUpdate1(null);
         }
 
         target.setUpdateFrequency(externalItemDtoToDo(source.getUpdateFrequency(), target.getUpdateFrequency(), ServiceExceptionParameters.DATASET_VERSION__UPDATE_FREQUENCY));
@@ -233,12 +235,12 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
         }
     }
 
-    private boolean hasDateBeModified(DateTime previous, Date current) {
+    private boolean hasDateBeModified(String previous, String current) {
         if ((previous == null && current != null) || (previous != null && current == null)) {
             return true;
         } else if (previous == null && current == null) {
             return false;
-        } else if (!previous.toString("yyyy-MM-dd HH:mm:ss Z").equals((new DateTime(current)).toString("yyyy-MM-dd HH:mm:ss Z"))) {
+        } else if (!previous.equals(current)) {
             return true;
         } else {
             return false;

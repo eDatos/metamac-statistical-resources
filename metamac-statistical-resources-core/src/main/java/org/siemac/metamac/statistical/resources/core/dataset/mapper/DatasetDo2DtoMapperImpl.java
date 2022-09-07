@@ -253,6 +253,7 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         target.setFormatExtentObservations(source.getFormatExtentObservations());
 
         target.setDateNextUpdate(dateDoToDto(source.getDateNextUpdate()));
+        target.setDateNextUpdate1(source.getDateNextUpdate1());
         target.setUpdateFrequency(externalItemDoToDto(source.getUpdateFrequency()));
         target.setStatisticOfficiality(statisticOfficialityDo2Dto(source.getStatisticOfficiality()));
         target.setBibliographicCitation(internationalStringDoToDto(source.getBibliographicCitation()));

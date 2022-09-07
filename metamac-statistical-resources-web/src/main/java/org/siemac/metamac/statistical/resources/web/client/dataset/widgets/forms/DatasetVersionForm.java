@@ -29,11 +29,7 @@ public class DatasetVersionForm extends LifeCycleResourceVersionForm {
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
         setLifeCycleStatisticalResourceDto(datasetDto);
         setValue(DatasetDS.DATE_NEXT_UPDATE, datasetDto.getDateNextUpdate());
-        setValue(DatasetDS.UPDATE_FRECUENCY, datasetDto.getUpdateFrequency());
-        
-        // TODO EDATOS-3744 PONER BIEN
-        //dateNextUpdate.setValue(datasetDto.getDateNextUpdate1());
-        
-        dateNextUpdate.setValue("2022-08-23");
+        setValue(DatasetDS.UPDATE_FRECUENCY, datasetDto.getUpdateFrequency()); 
+        dateNextUpdate.setValue(datasetDto.getDateNextUpdate1());      
     }
 }
