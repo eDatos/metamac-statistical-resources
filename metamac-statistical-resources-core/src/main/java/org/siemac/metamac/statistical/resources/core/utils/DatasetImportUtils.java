@@ -66,7 +66,8 @@ public class DatasetImportUtils {
 
     private static void setDatasetVersionNextUpdateDate(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
         if (!isBlank(taskInfoDataset.getDatasetNextUpdateDate())) {
-            datasetVersion.setDateNextUpdate(getFormattedDateTime(taskInfoDataset.getDatasetNextUpdateDate()));
+            //datasetVersion.setDateNextUpdate(getFormattedDateTime(taskInfoDataset.getDatasetNextUpdateDate()));
+            datasetVersion.setDateNextUpdate1(taskInfoDataset.getDatasetNextUpdateDate());
         }
     }
     

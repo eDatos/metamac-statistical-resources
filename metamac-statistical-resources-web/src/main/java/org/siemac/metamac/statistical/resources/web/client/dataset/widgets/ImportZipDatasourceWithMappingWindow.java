@@ -9,10 +9,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
+import com.google.gwt.regexp.shared.MatchResult;
+import com.google.gwt.regexp.shared.RegExp;
 
-import org.siemac.metamac.core.common.util.shared.ArrayUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.util.shared.ArrayUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1;
+import static org.siemac.edatos.core.common.constants.shared.RegularExpressionConstants.END;
+import static org.siemac.edatos.core.common.constants.shared.RegularExpressionConstants.START;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
@@ -33,6 +38,7 @@ import org.siemac.metamac.web.common.client.constants.CommonWebConstants;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWindow;
+import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
@@ -46,14 +52,16 @@ import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
+import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
 
 public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourceWithPreviewWindow {
     private DatasetListUiHandlers             uiHandlers;
-
+    
     private static int formWidth = 600;
     private static int formWidthFields = 400;
-    InformationLabel informationLabel;
+    protected InformationLabel informationLabel;
+    protected WarningLabel warningLabel;
     
     private static final String[] REQUIRED_FIELDS = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
             LifeCycleResourceDS.PROC_STATUS};
@@ -66,7 +74,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         addFieldsInExtraForm();
         addRequiredFieldsInExtraForm(false);
     }
-
+    
     @Override
     protected UploadForm buildMainUploadForm() {
         return new UploadDatasourceForm();
@@ -84,7 +92,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     public void setStatisticalOperation(String statisticalOperationUrn) {
         ((HiddenItem) mainForm.getItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_OPERATION_CODE)).setDefaultValue(statisticalOperationUrn);
     }
-    
+        
     private void addFieldsInMainForm() {
 
         List<FormItem> itemsToAdd = new ArrayList<FormItem>();
@@ -125,13 +133,21 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraItemsToAdd.add(procStatus);
         return extraItemsToAdd;
     }
-    
+
+    private static Boolean isObservationalTimePeriod(String value) {
+        String pattern = START + SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD + END;
+        RegExp patternObervationalTimePeriod = RegExp.compile(pattern, "g");
+        MatchResult matcher = patternObervationalTimePeriod.exec(value);
+        return matcher != null;
+        
+    }
+
     private void addFieldsInExtraForm() {
 
         List<FormItem> items = new ArrayList<FormItem>();
-      
+
         items.addAll(addExtraFields());
-                      
+
         CustomButtonItem uploadButton = new CustomButtonItem("button-import", MetamacWebCommon.getConstants().accept());
         uploadButton.setAlign(Alignment.CENTER);
         uploadButton.setColSpan(3);
@@ -139,14 +155,18 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
             @Override
             public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                submitIfValid();
+                String dateNextUpdateValue = ((TextItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsString();
+                if (StringUtils.isNotEmpty(dateNextUpdateValue) && !Boolean.TRUE.equals(isObservationalTimePeriod(dateNextUpdateValue))) {
+                    warningLabel.show();
+                } else {
+                    submitIfValid();
+                }
+
             }
         });
 
         items.add(uploadButton);
-
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
-        
     }
 
     private void addRequiredFieldsInExtraForm(boolean isScheduledUpdate) {
@@ -168,7 +188,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraItemsToAdd.add(addFieldNextUpdateDate());
         extraItemsToAdd.add(addFieldProcStatus());
         return extraItemsToAdd;
-    }
+     }
 
     private CustomDateItem addFieldNextVersionDate() {
         CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
@@ -176,9 +196,9 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return nextVersionDate;
    
     }
-
-    private CustomDateItem addFieldNextUpdateDate() {
-        CustomDateItem nextUpdateDate = new CustomDateItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate());
+    
+    private TextItem addFieldNextUpdateDate() {
+        TextItem nextUpdateDate = new TextItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate());
         nextUpdateDate.setTitleColSpan(2);
         return nextUpdateDate;
     }
@@ -194,17 +214,17 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
             public void onChange(com.smartgwt.client.widgets.form.fields.events.ChangeEvent event) {
                 String nextVersionValue = event.getValue().toString();
                 CustomDateItem dateNextVersion = ((CustomDateItem) extraForm.getItem(VersionableResourceDS.DATE_NEXT_VERSION));
-                CustomDateItem dateNextUpdate = ((CustomDateItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE));
+                TextItem dateNextUpdate = ((TextItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE));
                 if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
                     setRequiredCustomDateItem(dateNextVersion, true);
-                    setRequiredCustomDateItem(dateNextUpdate, true);                   
+                    dateNextUpdate.setRequired(true);          
                     addRequiredFieldsInExtraForm(true);
                      dateNextVersion.show();
                     
                 } else {
                     if (Boolean.TRUE.equals(dateNextVersion.isVisible())) {
                         setRequiredCustomDateItem(dateNextVersion, false);
-                        setRequiredCustomDateItem(dateNextUpdate, false);
+                        dateNextUpdate.setRequired(false);
                         addRequiredFieldsInExtraForm(false);
                         dateNextVersion.clearValue();
                         dateNextVersion.clearValue();
@@ -335,7 +355,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
 
     private void setFormFieldDateNextUpdate() {
-        Date dateNextUpdateValue = ((CustomDateItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsDate();
+        String dateNextUpdateValue = ((TextItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsString();
         mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, dateNextUpdateValue);
     }
     
@@ -424,18 +444,27 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         nextVersionDate.clearValue();
         nextVersionDate.hide();
         
-        CustomDateItem nextUpdateDate = ((CustomDateItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE));
-        nextUpdateDate.setTitle(getConstants().datasetDateNextUpdate());
+        TextItem nextUpdateDate = ((TextItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE));
         nextUpdateDate.setRequired(false);
         nextUpdateDate.clearValue();
         
         addRequiredFieldsInExtraForm(false);
-    }
-
+        
+        warningLabel.hide();
+    }   
+    
     private class UploadDatasourceForm extends UploadForm {
 
         private UploadItem uploadItem;
 
+        private void buildWarningSdmxDatePatternLabel() {
+            warningLabel = new WarningLabel(getMessages().datasetsSdmxPatternFields());
+            warningLabel.setWidth(formWidth);
+            warningLabel.setMargin(5);
+            warningLabel.hide();
+            body.addMember(warningLabel);
+        }
+        
         private void buildInformationLabel() {
             informationLabel = new InformationLabel(getMessages().datasourceImportationInfoLifeCicleRestrictionsMessage());
             informationLabel.setWidth(formWidth);
@@ -454,6 +483,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
             uploadItem.setWidth(formWidthFields);
             uploadItem.setRequired(true);
             buildInformationLabel();
+            buildWarningSdmxDatePatternLabel();
 
             uploadItem.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
 

@@ -6,7 +6,10 @@ import java.io.Serializable;
 import java.util.LinkedHashMap;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.DateUtils;
+import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCanvasItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
@@ -16,6 +19,7 @@ import com.smartgwt.client.types.FormErrorOrientation;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 
 public class CustomDatePickerItem extends CustomCanvasItem {
@@ -114,15 +118,35 @@ public class CustomDatePickerItem extends CustomCanvasItem {
             }
         });
         
-        customSdmxTimePeriodItem = new TextItem(name + nameCustomField, "-");
+        customSdmxTimePeriodItem = createCustomSdmxTimePeriodItem(name, required);
+        
+        nextVersionDate = createDateNextUpdateItem(name);
+       
+        form.setFields(dateFormatType, nextVersionDate, customSdmxTimePeriodItem);
+    }
+    
+    private CustomDateItem createDateNextUpdateItem(String name) {
+
+        FormItemIcon infoIcon = new FormItemIcon();
+        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
+        infoIcon.setPrompt(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
+        CustomDateItem item = new CustomDateItem(name + nameDateField, getConstants().datasetDateNextUpdate());
+        item.setShowTitle(false);
+        item.setIcons(infoIcon);
+        return item;
+    }
+
+    private TextItem createCustomSdmxTimePeriodItem(String name, boolean required) {
+
+        FormItemIcon infoIcon = new FormItemIcon();
+        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
+        infoIcon.setPrompt(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
+        TextItem customSdmxTimePeriodItem = new TextItem(name + nameCustomField, "-");
         customSdmxTimePeriodItem.setShowTitle(false);
         customSdmxTimePeriodItem.setRequired(required);
         customSdmxTimePeriodItem.setWidth("150");
-        
-        nextVersionDate = new CustomDateItem(name + nameDateField, getConstants().versionableStatisticalResourceNextVersionDate());
-        nextVersionDate.setShowTitle(false);
-       
-        form.setFields(dateFormatType, nextVersionDate, customSdmxTimePeriodItem);
+        customSdmxTimePeriodItem.setIcons(infoIcon);
+        return customSdmxTimePeriodItem;
     }
     
     private void customDatePickerItemForm(String name, boolean required) {

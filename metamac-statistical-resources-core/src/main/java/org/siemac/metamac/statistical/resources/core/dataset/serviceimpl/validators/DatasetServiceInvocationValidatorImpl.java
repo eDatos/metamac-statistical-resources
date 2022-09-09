@@ -248,8 +248,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getId(), addParameter(metadataName, ServiceExceptionSingleParameters.ID), exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.VERSION), exceptions);
     }
-    
-    private static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
+       
+    public static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
         if (StringUtils.isNotBlank(parameter) && !SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN, parameter, parameterName));
         }
@@ -303,10 +303,12 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
                 StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextVersionDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_VERSION,
                         exceptions);
                 StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextUpdateDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_UPDATE, exceptions);
-
             }
             StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextProcStatus(), ServiceExceptionParameters.DATASET_NEXT_PROC_STATUS, exceptions);
 
+            if (StringUtils.isNotBlank(basicVersionableStatisticalResourceDto.getNextUpdateDate())) {
+                checkObservationalTimePeriodType(basicVersionableStatisticalResourceDto.getNextUpdateDate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
+            }
         }
     }
     
