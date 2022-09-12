@@ -77,8 +77,8 @@ public class DatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl implements
                             propertyRestriction.getOperationType());
                 case NEXT_VERSION_DATE:
                     return new SculptorPropertyCriteria(
-                            CriteriaUtils.getDatetimeLeafPropertyEmbedded(DatasetVersionProperties.siemacMetadataStatisticalResource().nextVersionDate(), DatasetVersion.class),
-                            propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                            CriteriaUtils.getDatetimeLeafPropertyEmbedded(DatasetVersionProperties.siemacMetadataStatisticalResource().nextVersionDate1(), DatasetVersion.class),
+                            propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case PROC_STATUS:
                     return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus(), propertyRestriction.getEnumValue(),
                             propertyRestriction.getOperationType());

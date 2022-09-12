@@ -23,8 +23,7 @@ public class DatasetVersionForm extends LifeCycleResourceVersionForm {
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
         return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE1, getConstants().datasetDateNextUpdate(), true, false);
-    }
-    
+    }    
     
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
         setLifeCycleStatisticalResourceDto(datasetDto);

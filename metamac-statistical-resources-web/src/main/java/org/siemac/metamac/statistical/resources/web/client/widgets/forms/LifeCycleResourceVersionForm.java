@@ -6,6 +6,8 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CustomDatePickerItem;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
@@ -18,13 +20,14 @@ import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class LifeCycleResourceVersionForm extends GroupDynamicForm {
-
+    CustomDatePickerItem nextVersionDate1;
+    
     public LifeCycleResourceVersionForm() {
         super(getConstants().formVersion());
 
         ViewTextItem versionLogic = new ViewTextItem(VersionableResourceDS.VERSION, getConstants().versionableStatisticalResourceVersionLogic());
-        SearchVersionRationaleTypeItem versionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES, getConstants()
-                .versionableStatisticalResourceVersionRationaleTypes(), false);
+        SearchVersionRationaleTypeItem versionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES,
+                getConstants().versionableStatisticalResourceVersionRationaleTypes(), false);
         ViewMultiLanguageTextItem versionRationale = new ViewMultiLanguageTextItem(VersionableResourceDS.VERSION_RATIONALE, getConstants().versionableStatisticalResourceVersionRationale());
         ViewTextItem validFrom = new ViewTextItem(VersionableResourceDS.VALID_FROM, getConstants().versionableStatisticalResourceValidFrom());
         ViewTextItem validTo = new ViewTextItem(VersionableResourceDS.VALID_TO, getConstants().versionableStatisticalResourceValidTo());
@@ -34,7 +37,10 @@ public class LifeCycleResourceVersionForm extends GroupDynamicForm {
         ViewTextItem nextVersionDate = new ViewTextItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
         nextVersionDate.setShowIfCondition(getNextVersionDateFormItemIfFunction());
 
-        setFields(versionLogic, versionRationaleTypeItem, versionRationale, validFrom, validTo, nextVersion, nextVersionDate);
+        nextVersionDate1 = createFieldDateNextVersion();
+        nextVersionDate1.setShowIfCondition(getNextVersionDateFormItemIfFunction());
+
+        setFields(versionLogic, versionRationaleTypeItem, versionRationale, validFrom, validTo, nextVersion, nextVersionDate1, nextVersionDate);
     }
 
     public void setLifeCycleStatisticalResourceDto(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto) {
@@ -46,6 +52,7 @@ public class LifeCycleResourceVersionForm extends GroupDynamicForm {
         setValue(VersionableResourceDS.NEXT_VERSION, CommonUtils.getStatisticalResourceNextVersionName(lifeCycleStatisticalResourceDto.getNextVersion()));
         setValue(VersionableResourceDS.NEXT_VERSION_VIEW, lifeCycleStatisticalResourceDto.getNextVersion() == null ? StringUtils.EMPTY : lifeCycleStatisticalResourceDto.getNextVersion().name());
         setValue(VersionableResourceDS.DATE_NEXT_VERSION, lifeCycleStatisticalResourceDto.getNextVersionDate());
+        nextVersionDate1.setValue(lifeCycleStatisticalResourceDto.getNextVersionDate1());
         markForRedraw();
     }
 
@@ -62,5 +69,9 @@ public class LifeCycleResourceVersionForm extends GroupDynamicForm {
     protected boolean isNextVersionScheduledUpdate() {
         String nextVersionValue = getValueAsString(VersionableResourceDS.NEXT_VERSION_VIEW);
         return StringUtils.equals(NextVersionTypeEnum.SCHEDULED_UPDATE.name(), nextVersionValue);
+    }
+    
+    private CustomDatePickerItem createFieldDateNextVersion() {
+        return  new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION1, getConstants().versionableStatisticalResourceNextVersionDate(), true, false);
     }
 }

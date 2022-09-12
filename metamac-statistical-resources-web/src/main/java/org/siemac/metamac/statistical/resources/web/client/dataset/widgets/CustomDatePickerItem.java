@@ -1,13 +1,11 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
 
-import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getCoreMessages;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
-import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
-import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCanvasItem;
@@ -41,9 +39,9 @@ public class CustomDatePickerItem extends CustomCanvasItem {
     private boolean readOnly = true;
     private DynamicForm form;
 
-    private CustomDateItem nextVersionDate;
+    protected CustomDateItem date;
     CustomSelectItem dateFormatType;
-    private TextItem customSdmxTimePeriodItem;
+    protected TextItem customSdmxTimePeriodItem;
     private ViewTextItem staticTimePeriodItem;
     
     private void common(boolean readOnly, boolean required) {
@@ -69,7 +67,7 @@ public class CustomDatePickerItem extends CustomCanvasItem {
         form.setValidateOnChange(true);
         
         if (this.readOnly) {
-            customDatePickerItemForm(name, required);
+            customDatePickerItemForm();
         } else {
             customDatePickerItemEditionForm(name, required); 
         }
@@ -83,21 +81,27 @@ public class CustomDatePickerItem extends CustomCanvasItem {
         setCellHeight(20);
         
     }
+
+    public void defaultDateType() {
+        enabledDate();
+    }
     
-    private void enabledNextVersionDate() {
+    private void enabledDate() {
         customSdmxTimePeriodItem.hide();
         customSdmxTimePeriodItem.setVisible(false);
         customSdmxTimePeriodItem.clearValue();
-        nextVersionDate.show();
-        nextVersionDate.setVisible(true);
+        date.show();
+        date.setVisible(true);
     }
-    
+
     private void enabledCustomSdmxTimePeriodItem() {
         customSdmxTimePeriodItem.show();
         customSdmxTimePeriodItem.setVisible(true);
-        nextVersionDate.hide();
-        nextVersionDate.setVisible(false);
-        nextVersionDate.clearValue();
+        date.hide();
+        date.setVisible(false);
+        if (date.getValue() != null) {
+            date.clearValue();
+        }
     }
 
     private void customDatePickerItemEditionForm(String name, boolean required) {
@@ -111,7 +115,7 @@ public class CustomDatePickerItem extends CustomCanvasItem {
             @Override
             public void onChange(com.smartgwt.client.widgets.form.fields.events.ChangeEvent event) {
                 if (DateFormatTypeEnum.SPECIFIC_DATE.getName().equals(event.getValue())) {
-                    enabledNextVersionDate();
+                    enabledDate();
                 } else {
                     enabledCustomSdmxTimePeriodItem();
                 }
@@ -120,46 +124,57 @@ public class CustomDatePickerItem extends CustomCanvasItem {
         
         customSdmxTimePeriodItem = createCustomSdmxTimePeriodItem(name, required);
         
-        nextVersionDate = createDateNextUpdateItem(name);
-       
-        form.setFields(dateFormatType, nextVersionDate, customSdmxTimePeriodItem);
+        date = createDateItem(name);
+               
+        form.setFields(dateFormatType, date, customSdmxTimePeriodItem);
     }
     
-    private CustomDateItem createDateNextUpdateItem(String name) {
-
-        FormItemIcon infoIcon = new FormItemIcon();
-        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
-        infoIcon.setPrompt(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
-        CustomDateItem item = new CustomDateItem(name + nameDateField, getConstants().datasetDateNextUpdate());
+    private CustomDateItem createDateItem(String name) {
+        CustomDateItem item = new CustomDateItem(name + nameDateField, "-");
         item.setShowTitle(false);
-        item.setIcons(infoIcon);
         return item;
     }
-
+        
     private TextItem createCustomSdmxTimePeriodItem(String name, boolean required) {
 
-        FormItemIcon infoIcon = new FormItemIcon();
-        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
-        infoIcon.setPrompt(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
-        TextItem customSdmxTimePeriodItem = new TextItem(name + nameCustomField, "-");
-        customSdmxTimePeriodItem.setShowTitle(false);
-        customSdmxTimePeriodItem.setRequired(required);
-        customSdmxTimePeriodItem.setWidth("150");
-        customSdmxTimePeriodItem.setIcons(infoIcon);
-        return customSdmxTimePeriodItem;
+        TextItem customSdmxDate = new TextItem(name + nameCustomField, "-");
+        customSdmxDate.setShowTitle(false);
+        customSdmxDate.setRequired(required);
+        customSdmxDate.setWidth("150");
+        return customSdmxDate;
     }
     
-    private void customDatePickerItemForm(String name, boolean required) {
+    public void setIconCreateDateItem(String message) {
+        FormItemIcon infoIcon = createIcon(message);
+        date.setIcons(infoIcon);
+    }
+
+    public void setIconCustomSdmxTimePeriodItem(String message) {
+        FormItemIcon infoIcon = new FormItemIcon();
+        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
+        infoIcon.setPrompt(message);
+        customSdmxTimePeriodItem.setIcons(infoIcon);
+    }
+    
+    private FormItemIcon createIcon(String message) {
+        FormItemIcon infoIcon = new FormItemIcon();
+        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
+        infoIcon.setPrompt(message);
+        return infoIcon;
+    }
+    
+    private void customDatePickerItemForm() {
         staticTimePeriodItem = new ViewTextItem();
         staticTimePeriodItem.setShowTitle(false); 
         staticTimePeriodItem.setRedrawOnChange(true);
         form.setFields(staticTimePeriodItem);
     }
 
+    @Override
     public String getValue() {
         // get value as observational time period
         if (DateFormatTypeEnum.SPECIFIC_DATE.getName().equals(dateFormatType.getValueAsString())) {
-            return DateUtils.getDateInSdmxFormat(nextVersionDate.getValueAsDate());
+            return DateUtils.getDateInSdmxFormat(date.getValueAsDate());
         } else {
             return customSdmxTimePeriodItem.getValueAsString();
         }
@@ -175,10 +190,10 @@ public class CustomDatePickerItem extends CustomCanvasItem {
     }
       
     private void setValueInEditionForm(String sdmxTimePeriod) {
-        if (DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
+        if (StringUtils.isBlank(sdmxTimePeriod) || DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
             dateFormatType.setValue(DateFormatTypeEnum.SPECIFIC_DATE.getName());
-            enabledNextVersionDate();
-            nextVersionDate.setValue(DateUtils.getDate(sdmxTimePeriod));
+            enabledDate();
+            date.setValue(DateUtils.getDate(sdmxTimePeriod));
         } else {
             dateFormatType.setValue(DateFormatTypeEnum.CUSTOM.getName());
             enabledCustomSdmxTimePeriodItem();
@@ -199,15 +214,10 @@ public class CustomDatePickerItem extends CustomCanvasItem {
     public static LinkedHashMap<String, String> getDateFormatTypeHashMap() {
         LinkedHashMap<String, String> dateFormatTypeHashMap = new LinkedHashMap<String, String>();
         for (DateFormatTypeEnum a : DateFormatTypeEnum.values()) {
-            //String value = MetamacSrmWeb.getCoreMessages().getString(MetamacSrmWeb.getCoreMessages().normalizationTypeEnum() + a.getName());
-            // TODO EDATOS-3744
-            if (DateFormatTypeEnum.SPECIFIC_DATE.equals(a)) {
-                dateFormatTypeHashMap.put(a.name(), "Fecha");
-            } else {
-                dateFormatTypeHashMap.put(a.name(), "Personalizado");
-            }
-            
+            String value = getCoreMessages().getString(getCoreMessages().dateFormatTypeEnum() + a.getName());
+            dateFormatTypeHashMap.put(a.name(), value);
         }
+
         return dateFormatTypeHashMap;
     }
 

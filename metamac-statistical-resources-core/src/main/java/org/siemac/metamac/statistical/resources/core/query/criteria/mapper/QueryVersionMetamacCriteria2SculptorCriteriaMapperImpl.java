@@ -75,8 +75,8 @@ public class QueryVersionMetamacCriteria2SculptorCriteriaMapperImpl implements Q
                 case NEXT_VERSION:
                     return new SculptorPropertyCriteria(QueryVersionProperties.lifeCycleStatisticalResource().nextVersion(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
                 case NEXT_VERSION_DATE:
-                    return new SculptorPropertyCriteria(CriteriaUtils.getDatetimeLeafPropertyEmbedded(QueryVersionProperties.lifeCycleStatisticalResource().nextVersionDate(), QueryVersion.class),
-                            propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                    return new SculptorPropertyCriteria(CriteriaUtils.getDatetimeLeafPropertyEmbedded(QueryVersionProperties.lifeCycleStatisticalResource().nextVersionDate1(), QueryVersion.class),
+                            propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case PROC_STATUS:
                     return new SculptorPropertyCriteria(QueryVersionProperties.lifeCycleStatisticalResource().procStatus(), propertyRestriction.getEnumValue(),
                             propertyRestriction.getOperationType());

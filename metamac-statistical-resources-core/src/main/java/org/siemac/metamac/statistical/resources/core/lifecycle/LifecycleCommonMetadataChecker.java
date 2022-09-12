@@ -15,6 +15,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
@@ -80,8 +81,12 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(lifeCycleStatisticalResource.getNextVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION), exceptionItems);
         if (lifeCycleStatisticalResource.getNextVersion() != null && !NextVersionTypeEnum.SCHEDULED_UPDATE.equals(lifeCycleStatisticalResource.getNextVersion())) {
             checkMetadataEmpty(lifeCycleStatisticalResource.getNextVersionDate(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
+            checkMetadataEmpty(lifeCycleStatisticalResource.getNextVersionDate1(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
+            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate1(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
         } else if (lifeCycleStatisticalResource.getNextVersion() != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(lifeCycleStatisticalResource.getNextVersion())) {
             checkMetadataRequired(lifeCycleStatisticalResource.getNextVersionDate(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
+            checkMetadataRequired(lifeCycleStatisticalResource.getNextVersionDate1(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
+            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate1(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
         }
 
         // LifeCycleResource
@@ -92,6 +97,12 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(lifeCycleStatisticalResource.getMaintainer(), addParameter(metadataName, ServiceExceptionSingleParameters.MAINTAINER), exceptionItems);
     }
 
+    private static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
+        if (StringUtils.isNotEmpty(parameter) && !SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN, parameter, parameterName));
+        }
+    }
+    
     public void checkSiemacCommonMetadataGeneral(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
         SiemacMetadataStatisticalResource siemacMetadataStatisticalResource = resource.getSiemacMetadataStatisticalResource();
 
@@ -135,7 +146,6 @@ public class LifecycleCommonMetadataChecker {
         if (resource.getDatasources() == null || resource.getDatasources().isEmpty()) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_EMPTY_DATASOURCES, resource.getSiemacMetadataStatisticalResource().getUrn()));
         } else {
-            // TODO EDATOS-3744 COMPROBAR
             if (!hasAnyDatasourceDateNextUpdate(resource)) {
                 if (resource.getSiemacMetadataStatisticalResource().getNextVersion() != null
                         && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(resource.getSiemacMetadataStatisticalResource().getNextVersion())) {

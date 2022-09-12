@@ -923,7 +923,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 datasource.getIdentifiableStatisticalResource().setCode(fileDescriptor.getDatasourceId());
                 datasource.setSourceName(fileDescriptor.getFileName());
                 if (DatasetFileFormatEnum.PX.equals(fileDescriptor.getDatasetFileFormatEnum())) {
-                    // TODO EDATOS-3744 REVISAR SI ESTÁ RELACIONADO
                     datasource.setDateNextUpdate(new DateTime(fileDescriptor.getNextUpdate()));
                 }
                 createDatasource(ctx, datasetImportationId, datasource);

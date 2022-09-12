@@ -60,7 +60,7 @@ public class DatasetImportUtils {
 
     private static void setDatasetVersionNextVersionDate(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
         if (!isBlank(taskInfoDataset.getDatasetNextVersionDate())) {
-            datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(getFormattedDateTime(taskInfoDataset.getDatasetNextVersionDate()));
+            datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate1(taskInfoDataset.getDatasetNextVersionDate());
         }
     }
 

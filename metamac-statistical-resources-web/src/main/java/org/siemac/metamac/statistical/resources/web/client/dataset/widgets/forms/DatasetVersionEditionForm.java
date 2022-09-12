@@ -81,10 +81,14 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
     }
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
-        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE1, getConstants().datasetDateNextUpdate(), false, false);
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE1, getConstants().datasetDateNextUpdate(), false, false);
+        customDatePickerItem.setIconCreateDateItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
+        customDatePickerItem.setIconCustomSdmxTimePeriodItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
+        customDatePickerItem.defaultDateType();
+        return customDatePickerItem;
 
     }
-    
+
     private SearchExternalItemSimpleItem createUpdateFrequencyItem() {
         return new SearchExternalItemSimpleItem(DatasetDS.UPDATE_FRECUENCY, getConstants().datasetUpdateFrequency(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
 
