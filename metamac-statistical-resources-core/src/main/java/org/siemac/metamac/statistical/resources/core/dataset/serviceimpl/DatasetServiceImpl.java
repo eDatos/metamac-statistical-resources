@@ -35,6 +35,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
@@ -1496,12 +1497,15 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                         }
                     }
                 }
-                
-                // TODO EDATOS-3729 REVISAR FORMATO
-                resource.setDateNextUpdate1(mostRecentDate.toString());
+
+                resource.setDateNextUpdate1(setDateInSdmx(mostRecentDate));
                 resource.setUserModifiedDateNextUpdate(false);
             }
         }
+    }
+
+    private String setDateInSdmx(DateTime date) {
+        return date != null ? CoreCommonUtil.jodaDateTime2IsoDate(date.toDate()) : null;
     }
     
     private boolean isNewDateBestOptionForDateNextUpdate(DateTime current, DateTime newCandidate) {
