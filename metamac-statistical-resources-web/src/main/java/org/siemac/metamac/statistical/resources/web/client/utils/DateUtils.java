@@ -46,8 +46,8 @@ public class DateUtils {
     }
 
     public static String getDateInSdmxFormat(Date date) {
-
-        return DateTimeFormat.getFormat(SDMX_FORMAT).format(date);
+        
+        return date != null ? DateTimeFormat.getFormat(SDMX_FORMAT).format(date) : null;
     }
 
     public static String getVisualizationDateFormat(String dateInSdmx) {

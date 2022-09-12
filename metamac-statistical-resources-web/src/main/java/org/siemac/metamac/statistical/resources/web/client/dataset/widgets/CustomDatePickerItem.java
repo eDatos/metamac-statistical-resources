@@ -174,9 +174,9 @@ public class CustomDatePickerItem extends CustomCanvasItem {
     public String getValue() {
         // get value as observational time period
         if (DateFormatTypeEnum.SPECIFIC_DATE.getName().equals(dateFormatType.getValueAsString())) {
-            return DateUtils.getDateInSdmxFormat(date.getValueAsDate());
+            return date != null ? DateUtils.getDateInSdmxFormat(date.getValueAsDate()) : null;
         } else {
-            return customSdmxTimePeriodItem.getValueAsString();
+            return customSdmxTimePeriodItem != null && StringUtils.isNotEmpty(customSdmxTimePeriodItem.getValueAsString()) ? customSdmxTimePeriodItem.getValueAsString() : null;
         }
     }
 

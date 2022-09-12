@@ -15,6 +15,7 @@ public class DatasetVersionWebCriteria extends SiemacMetadataStatisticalResource
     private Date              dateEnd;
     private String            dsdUrn;
     private Date              dateNextUpdate;
+    private String            dateNextUpdate1;
     private String            statisticOfficialityIdentifier;
 
     public DatasetVersionWebCriteria() {
@@ -95,5 +96,13 @@ public class DatasetVersionWebCriteria extends SiemacMetadataStatisticalResource
 
     public void setStatisticOfficialityIdentifier(String statisticOfficialityIdentifier) {
         this.statisticOfficialityIdentifier = statisticOfficialityIdentifier;
+    }
+
+    public String getDateNextUpdate1() {
+        return dateNextUpdate1;
+    }
+
+    public void setDateNextUpdate1(String dateNextUpdate1) {
+        this.dateNextUpdate1 = dateNextUpdate1;
     }
 }

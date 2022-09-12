@@ -76,9 +76,8 @@ public class DatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl implements
                     return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().nextVersion(), propertyRestriction.getEnumValue(),
                             propertyRestriction.getOperationType());
                 case NEXT_VERSION_DATE:
-                    return new SculptorPropertyCriteria(
-                            CriteriaUtils.getDatetimeLeafPropertyEmbedded(DatasetVersionProperties.siemacMetadataStatisticalResource().nextVersionDate1(), DatasetVersion.class),
-                            propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+                    return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().nextVersionDate1(), propertyRestriction.getStringValue(),
+                            propertyRestriction.getOperationType());
                 case PROC_STATUS:
                     return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus(), propertyRestriction.getEnumValue(),
                             propertyRestriction.getOperationType());
@@ -119,9 +118,6 @@ public class DatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl implements
                             OperationType.LIKE);
                     return new SculptorCriteriaDisjunction(urnDsdCriteria, urnDsdProviderCriteria);
                 case DATASET_DATE_NEXT_UPDATE:
-                    return new SculptorPropertyCriteria(CriteriaUtils.getDatetimeLeafPropertyEmbedded(DatasetVersionProperties.dateNextUpdate(), DatasetVersion.class),
-                            propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
-                case DATASET_DATE_NEXT_UPDATE1:
                     return new SculptorPropertyCriteria(DatasetVersionProperties.dateNextUpdate1(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case DATASET_STATISTIC_OFFICIALITY_IDENTIFIER:
                     return new SculptorPropertyCriteria(DatasetVersionProperties.statisticOfficiality().identifier(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());

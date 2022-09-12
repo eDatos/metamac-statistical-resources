@@ -205,8 +205,8 @@ public class MetamacWebCriteriaUtils {
     }
 
     private static MetamacCriteriaRestriction buildNextVersionDateCriteria(VersionableStatisticalResourceWebCriteria criteria) {
-        if (criteria.getNextVersionDate() != null) {
-            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE.name(), criteria.getNextVersionDate(), OperationType.EQ);
+        if (criteria.getNextVersionDate1() != null) {
+            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE.name(), criteria.getNextVersionDate1(), OperationType.EQ);
         }
         return null;
     }
@@ -269,8 +269,8 @@ public class MetamacWebCriteriaUtils {
     }
 
     private static MetamacCriteriaRestriction buildDateNextUpdateCriteria(DatasetVersionWebCriteria criteria) {
-        if (criteria.getDateNextUpdate() != null) {
-            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.DATASET_DATE_NEXT_UPDATE.name(), criteria.getDateNextUpdate(), OperationType.EQ);
+        if (criteria.getDateNextUpdate1() != null) {
+            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.DATASET_DATE_NEXT_UPDATE.name(), criteria.getDateNextUpdate1(), OperationType.EQ);
         }
         return null;
     }
