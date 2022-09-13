@@ -89,7 +89,7 @@
                     <xs:element name="attributes" type="tns:Attributes" minOccurs="0" />
                     <xs:element name="formatExtentObservations" type="xs:long" minOccurs="0" />
                     <xs:element name="formatExtentDimensions" type="xs:int" minOccurs="0" />
-                    <xs:element name="dateNextUpdate" type="xs:string" />
+                    <xs:element name="dateNextUpdate" type="common:InternationalString" />
                     <xs:element name="updateFrequency" type="common:Resource" />
                     <xs:element name="statisticOfficiality" type="common:Item" />
                     <xs:element name="bibliographicCitation" type="common:InternationalString" />

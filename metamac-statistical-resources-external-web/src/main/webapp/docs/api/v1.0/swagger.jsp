@@ -627,7 +627,7 @@
                   },
                   "dateNextUpdate":{
                      "description":"",
-                     "type":"string"
+                     "$ref":"#/definitions/InternationalString"
                   },
                   "dateStart":{
                      "description":"",
@@ -2609,7 +2609,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "type":"string"
+                     "$ref":"#/definitions/InternationalString"
                   },
                   "dateStart":{
                      "xml":{

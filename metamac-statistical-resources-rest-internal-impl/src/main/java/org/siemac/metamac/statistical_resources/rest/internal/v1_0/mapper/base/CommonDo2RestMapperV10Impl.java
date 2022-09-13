@@ -228,6 +228,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException {
+        Map<String, String> internationalStringValue = translationService.retrieveTimeTranslation(SERVICE_CONTEXT, sdmxValue);
+        return toInternationalString(internationalStringValue, selectedLanguages);
+    }
+    
+    @Override
     public InternalWebApplicationNavigation getInternalWebApplicationNavigation() {
         return internalWebApplicationNavigation;
     }
@@ -298,7 +304,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setValidFrom(toDate(source.getValidFrom()));
         target.setValidTo(toDate(isDateAfterNowSetNull(source.getValidTo())));
         target.setNextVersion(toNextVersionType(source.getNextVersion(), selectedLanguages));
-        target.setNextVersionDate(source.getNextVersionDate1());
+        target.setNextVersionDate(toSdmxObservationalTimePeriod(source.getNextVersionDate1(), selectedLanguages));
     }
 
     @Override
