@@ -11,6 +11,8 @@
 ## 4.0.0 a 4.0.1-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db).
 
+BREAKING CHANGE FOR DATE_NEXT_UPDATE AND NEXT_VERSION_DATE OUTPUT IN APIS. A INTERNATIONALSTRING VALUE IS RETURNED FOR THESE FIELDS FROM THIS VERSION.
+
 ## 3.12.0 a 4.0.0
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.
 
