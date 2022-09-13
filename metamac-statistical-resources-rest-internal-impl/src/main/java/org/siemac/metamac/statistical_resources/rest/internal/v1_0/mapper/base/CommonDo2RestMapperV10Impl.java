@@ -298,7 +298,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setValidFrom(toDate(source.getValidFrom()));
         target.setValidTo(toDate(isDateAfterNowSetNull(source.getValidTo())));
         target.setNextVersion(toNextVersionType(source.getNextVersion(), selectedLanguages));
-        target.setNextVersionDate(toDate(source.getNextVersionDate()));
+        target.setNextVersionDate(source.getNextVersionDate1());
     }
 
     @Override

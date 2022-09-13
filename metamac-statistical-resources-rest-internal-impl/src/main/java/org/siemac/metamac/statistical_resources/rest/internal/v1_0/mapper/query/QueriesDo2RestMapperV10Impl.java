@@ -195,7 +195,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setRequires(datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages));
         target.setIsPartOf(toQueryIsPartOf(source, selectedLanguages));
         target.setNextVersion(commonDo2RestMapper.toNextVersionType(source.getLifeCycleStatisticalResource().getNextVersion(), selectedLanguages));
-        target.setNextVersionDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getNextVersionDate()));
+        target.setNextVersionDate(source.getLifeCycleStatisticalResource().getNextVersionDate1());
         target.setProcStatus(commonDo2RestMapper.toProcStatusType(source.getLifeCycleStatisticalResource().getProcStatus(), selectedLanguages));
         target.setCreationDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getCreationDate()));
         target.setCreationUser(source.getLifeCycleStatisticalResource().getCreationUser());
