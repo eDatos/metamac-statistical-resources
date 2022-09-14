@@ -157,16 +157,14 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
         }
 
         if (MetadataEditionChecks.canNextVersionDateBeEdited(target.getSiemacMetadataStatisticalResource().getNextVersion())) {
-            boolean dateNextUpdateModified = hasDateBeModified(target.getDateNextUpdate1(), source.getDateNextUpdate1());
+            boolean dateNextUpdateModified = hasDateBeModified(target.getDateNextUpdate(), source.getDateNextUpdate());
             if (dateNextUpdateModified) {
                 target.setUserModifiedDateNextUpdate(true);
-                target.setDateNextUpdate(dateDtoToDo(source.getDateNextUpdate()));
-                target.setDateNextUpdate1(source.getDateNextUpdate1());
+                target.setDateNextUpdate(source.getDateNextUpdate());
             }
         } else {
             target.setUserModifiedDateNextUpdate(false);
             target.setDateNextUpdate(null);
-            target.setDateNextUpdate1(null);
         }
 
         target.setUpdateFrequency(externalItemDtoToDo(source.getUpdateFrequency(), target.getUpdateFrequency(), ServiceExceptionParameters.DATASET_VERSION__UPDATE_FREQUENCY));

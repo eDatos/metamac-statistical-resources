@@ -73,7 +73,7 @@ public class PublicationVersionMetamacCriteria2SculptorCriteriaMapperImpl implem
                     return new SculptorPropertyCriteria(PublicationVersionProperties.siemacMetadataStatisticalResource().nextVersion(), propertyRestriction.getEnumValue(),
                             propertyRestriction.getOperationType());
                 case NEXT_VERSION_DATE:
-                    return new SculptorPropertyCriteria(PublicationVersionProperties.siemacMetadataStatisticalResource().nextVersionDate1(), propertyRestriction.getStringValue(),
+                    return new SculptorPropertyCriteria(PublicationVersionProperties.siemacMetadataStatisticalResource().nextVersionDate(), propertyRestriction.getStringValue(),
                             propertyRestriction.getOperationType());
                 case PROC_STATUS:
                     return new SculptorPropertyCriteria(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus(), propertyRestriction.getEnumValue(),

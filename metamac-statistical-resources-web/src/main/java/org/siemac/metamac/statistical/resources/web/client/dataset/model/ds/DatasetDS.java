@@ -24,8 +24,7 @@ public class DatasetDS extends SiemacMetadataDS {
 
     // PUBLICATION DESCRIPTORS
     public static final String DATE_NEXT_UPDATE           = "ds-date-next-up";
-    public static final String DATE_NEXT_UPDATE1           = "ds-date-next-up-1";
-    public static final String UPDATE_FRECUENCY           = "ds-up-freq";
+     public static final String UPDATE_FRECUENCY           = "ds-up-freq";
     public static final String STATISTIC_OFFICIALITY      = "ds-sta-off";
     public static final String BIBLIOGRAPHIC_CITATION     = "ds-bib-cit";
 

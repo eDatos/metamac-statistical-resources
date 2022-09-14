@@ -71,7 +71,7 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
 
         criteria.setStatisticOfficialityIdentifier(advancedSearchForm.getValueAsString(DatasetDS.STATISTIC_OFFICIALITY));
 
-        criteria.setDateNextUpdate1(((CustomDatePickerItem) advancedSearchForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValue());
+        criteria.setDateNextUpdate(((CustomDatePickerItem) advancedSearchForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValue());
         return criteria;
     }
 

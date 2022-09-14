@@ -148,8 +148,7 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
 
         target.setVersionLogic(source.getVersionLogic());
         target.setNextVersion(source.getNextVersion());
-        target.setNextVersionDate(dateDoToDto(source.getNextVersionDate()));
-        target.setNextVersionDate1(source.getNextVersionDate1());
+        target.setNextVersionDate(source.getNextVersionDate());
         target.setVersionRationale(internationalStringDoToDto(source.getVersionRationale()));
         target.getVersionRationaleTypes().clear();
         target.getVersionRationaleTypes().addAll(versionRationaleTypeDoCollectionToDtoCollection(source.getVersionRationaleTypes()));

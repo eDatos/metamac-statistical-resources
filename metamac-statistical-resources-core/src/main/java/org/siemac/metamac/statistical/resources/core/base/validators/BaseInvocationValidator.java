@@ -207,7 +207,7 @@ public abstract class BaseInvocationValidator {
 
     private static void checkLifeCycleStatisticalResource(LifeCycleStatisticalResource resource, String metadataName, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkMetadataRequired(resource.getMaintainer(), addParameter(metadataName, ServiceExceptionSingleParameters.MAINTAINER), exceptions);
-        checkObservationalTimePeriodType(resource.getNextVersionDate1(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptions);
+        checkObservationalTimePeriodType(resource.getNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptions);
         
     }
 

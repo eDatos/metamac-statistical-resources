@@ -81,12 +81,10 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(lifeCycleStatisticalResource.getNextVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION), exceptionItems);
         if (lifeCycleStatisticalResource.getNextVersion() != null && !NextVersionTypeEnum.SCHEDULED_UPDATE.equals(lifeCycleStatisticalResource.getNextVersion())) {
             checkMetadataEmpty(lifeCycleStatisticalResource.getNextVersionDate(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
-            checkMetadataEmpty(lifeCycleStatisticalResource.getNextVersionDate1(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
-            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate1(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
+            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
         } else if (lifeCycleStatisticalResource.getNextVersion() != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(lifeCycleStatisticalResource.getNextVersion())) {
             checkMetadataRequired(lifeCycleStatisticalResource.getNextVersionDate(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
-            checkMetadataRequired(lifeCycleStatisticalResource.getNextVersionDate1(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
-            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate1(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
+            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
         }
 
         // LifeCycleResource
@@ -150,7 +148,6 @@ public class LifecycleCommonMetadataChecker {
                 if (resource.getSiemacMetadataStatisticalResource().getNextVersion() != null
                         && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(resource.getSiemacMetadataStatisticalResource().getNextVersion())) {
                     checkMetadataRequired(resource.getDateNextUpdate(), addParameter(metadataName, ServiceExceptionSingleParameters.DATE_NEXT_UPDATE), exceptionItems);
-                    checkMetadataRequired(resource.getDateNextUpdate1(), addParameter(metadataName, ServiceExceptionSingleParameters.DATE_NEXT_UPDATE1), exceptionItems);
                 }
             }
         }

@@ -29,7 +29,7 @@ import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
-    CustomDatePickerItem nextVersionDate1;
+    CustomDatePickerItem nextVersionDate;
     protected LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto;
     
     public LifeCycleResourceVersionEditionForm() {
@@ -87,18 +87,15 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
                 return CommonUtils.isResourceInProductionValidationOrGreaterProcStatus(lifeCycleStatisticalResourceDto.getProcStatus()) ? !StringUtils.isBlank(nextVersion.getValueAsString()) : true;
             }
         });
-
-        CustomDateItem nextVersionDate = new CustomDateItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate());
+        
+        nextVersionDate = createFieldDateNextVersion();
         nextVersionDate.setShowIfCondition(getNextVersionDateFormItemIfFunction());
         
-        nextVersionDate1 = createFieldDateNextVersion();
-        nextVersionDate1.setShowIfCondition(getNextVersionDateFormItemIfFunction());
-        
-        setFields(versionLogic, versionRationaleTypeItem, staticVersionRationaleTypeItem, versionRationale, validFrom, validTo, nextVersion, nextVersionDate1, nextVersionDate);
+        setFields(versionLogic, versionRationaleTypeItem, staticVersionRationaleTypeItem, versionRationale, validFrom, validTo, nextVersion, nextVersionDate);
     }
 
     private CustomDatePickerItem createFieldDateNextVersion() {
-        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION1, getConstants().versionableStatisticalResourceNextVersionDate(), false, false);
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), false, false);
         customDatePickerItem.defaultDateType();
         return customDatePickerItem;
     }
@@ -115,8 +112,7 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
         setValue(VersionableResourceDS.VALID_FROM, DateUtils.getFormattedDateTime(lifeCycleStatisticalResourceDto.getValidFrom()));
         setValue(VersionableResourceDS.VALID_TO, DateUtils.getFormattedDateTime(lifeCycleStatisticalResourceDto.getValidTo()));
         setValue(VersionableResourceDS.NEXT_VERSION, lifeCycleStatisticalResourceDto.getNextVersion() != null ? lifeCycleStatisticalResourceDto.getNextVersion().name() : null);
-        setValue(VersionableResourceDS.DATE_NEXT_VERSION, lifeCycleStatisticalResourceDto.getNextVersionDate());
-        nextVersionDate1.setValue(lifeCycleStatisticalResourceDto.getNextVersionDate1());
+        nextVersionDate.setValue(lifeCycleStatisticalResourceDto.getNextVersionDate());
         
         markForRedraw();
     }
@@ -130,8 +126,7 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
         lifeCycleStatisticalResourceDto.setVersionRationale(getValueAsInternationalStringDto(VersionableResourceDS.VERSION_RATIONALE));
         lifeCycleStatisticalResourceDto.setNextVersion(!StringUtils.isBlank(getValueAsString(VersionableResourceDS.NEXT_VERSION)) ? NextVersionTypeEnum
                 .valueOf(getValueAsString(VersionableResourceDS.NEXT_VERSION)) : null);
-        lifeCycleStatisticalResourceDto.setNextVersionDate(((CustomDateItem) getItem(VersionableResourceDS.DATE_NEXT_VERSION)).getValueAsDate());
-        lifeCycleStatisticalResourceDto.setNextVersionDate1(((CustomDatePickerItem) getItem(VersionableResourceDS.DATE_NEXT_VERSION1)).getValue());
+        lifeCycleStatisticalResourceDto.setNextVersionDate(((CustomDatePickerItem) getItem(VersionableResourceDS.DATE_NEXT_VERSION)).getValue());
         return lifeCycleStatisticalResourceDto;
     }
 

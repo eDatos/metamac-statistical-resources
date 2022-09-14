@@ -53,8 +53,7 @@ Application DatasetsStatisticalResourcesDto {
 			- Bag<@RelatedResourceDto> isPartOf;
 
 			//public date of next update
-			JAVADATE dateNextUpdate;
-			String dateNextUpdate1 nullable;
+			String dateNextUpdate;
 			String dateNext
 			
 			//Frecuency which the data is updated

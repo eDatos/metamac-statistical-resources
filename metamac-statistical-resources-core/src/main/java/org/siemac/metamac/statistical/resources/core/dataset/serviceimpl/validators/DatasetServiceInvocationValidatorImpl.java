@@ -237,7 +237,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
             return;
         }
 
-        checkObservationalTimePeriodType(datasetVersion.getDateNextUpdate1(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE1, exceptions);
+        checkObservationalTimePeriodType(datasetVersion.getDateNextUpdate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
                 
         checkExistingSiemacMetadataStatisticalResource(datasetVersion.getSiemacMetadataStatisticalResource(), TypeRelatedResourceEnum.DATASET_VERSION, metadataName, exceptions);
         checkDatasetVersion(datasetVersion, metadataName, exceptions);

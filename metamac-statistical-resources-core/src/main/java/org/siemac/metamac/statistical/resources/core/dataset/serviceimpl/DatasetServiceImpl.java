@@ -535,7 +535,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Date next update
         if (BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
             resource.setDateNextUpdate(null);
-            resource.setDateNextUpdate1(null);
         }
 
         // Dataset repository
@@ -1468,39 +1467,18 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return times[1]; // start
     }
 
- // TODO EDATOS-3729  QUITAR
-    private void processDateNextUpdate1(DatasetVersion resource) {
-        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)) {
-            if (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
-                DateTime mostRecentDate = null;
-                for (Datasource datasource : resource.getDatasources()) {
-                    if (datasource.getDateNextUpdate() != null) {
-                        if (isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
-                            mostRecentDate = datasource.getDateNextUpdate();
-                        }
-                    }
-                }
-                resource.setDateNextUpdate(mostRecentDate);
-                resource.setUserModifiedDateNextUpdate(false);
-            }
-        }
-    }
-
     private void processDateNextUpdate(DatasetVersion resource) {
-        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)) {
-            if (resource.getDateNextUpdate1() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
-                DateTime mostRecentDate = null;
-                for (Datasource datasource : resource.getDatasources()) {
-                    if (datasource.getDateNextUpdate() != null) {
-                        if (isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
-                            mostRecentDate = datasource.getDateNextUpdate();
-                        }
-                    }
+        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)
+                && (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate()))) {
+            DateTime mostRecentDate = null;
+            for (Datasource datasource : resource.getDatasources()) {
+                if (datasource.getDateNextUpdate() != null && isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
+                    mostRecentDate = datasource.getDateNextUpdate();
                 }
-
-                resource.setDateNextUpdate1(setDateInSdmx(mostRecentDate));
-                resource.setUserModifiedDateNextUpdate(false);
             }
+
+            resource.setDateNextUpdate(setDateInSdmx(mostRecentDate));
+            resource.setUserModifiedDateNextUpdate(false);
         }
     }
 

@@ -16,8 +16,7 @@ public class VersionableStatisticalResourceWebCriteria extends MetamacVersionabl
     private String              urn;
     private String              description;
     private NextVersionTypeEnum nextVersionType;
-    private Date                nextVersionDate;
-    private String                nextVersionDate1;
+    private String              nextVersionDate;
 
     public VersionableStatisticalResourceWebCriteria() {
         super();
@@ -77,19 +76,11 @@ public class VersionableStatisticalResourceWebCriteria extends MetamacVersionabl
         this.nextVersionType = nextVersionType;
     }
 
-    public Date getNextVersionDate() {
+    public String getNextVersionDate() {
         return nextVersionDate;
     }
 
-    public void setNextVersionDate(Date nextVersionDate) {
+    public void setNextVersionDate(String nextVersionDate) {
         this.nextVersionDate = nextVersionDate;
-    }
-
-    public String getNextVersionDate1() {
-        return nextVersionDate1;
-    }
-
-    public void setNextVersionDate1(String nextVersionDate1) {
-        this.nextVersionDate1 = nextVersionDate1;
     }
 }

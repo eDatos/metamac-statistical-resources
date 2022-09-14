@@ -65,7 +65,7 @@ public abstract class LifeCycleResourceSearchSectionStack extends BaseAdvancedSe
         SelectItem nextVersionType = new SelectItem(LifeCycleResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion());
         nextVersionType.setValueMap(CommonUtils.getStatisticalResourceNextVersionHashMap());
 
-        CustomDatePickerItem nextVersionDate1 = createFieldDateNextVersion();
+        CustomDatePickerItem nextVersionDate = createFieldDateNextVersion();
 
         SelectItem procStatus = new SelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().lifeCycleStatisticalResourceProcStatus());
         procStatus.setValueMap(CommonUtils.getProcStatusHashMap());
@@ -82,12 +82,12 @@ public abstract class LifeCycleResourceSearchSectionStack extends BaseAdvancedSe
                 retrieveResources();
             }
         });
-        FormItem[] advancedSearchFormItems = new FormItem[]{searchOperationItem, code, name, urn, description, nextVersionType, nextVersionDate1, procStatus, isLastVersion, searchItem};
+        FormItem[] advancedSearchFormItems = new FormItem[]{searchOperationItem, code, name, urn, description, nextVersionType, nextVersionDate, procStatus, isLastVersion, searchItem};
         setFormItemsInAdvancedSearchForm(advancedSearchFormItems);
     }
 
     private CustomDatePickerItem createFieldDateNextVersion() {
-        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(LifeCycleResourceDS.DATE_NEXT_VERSION1, getConstants().versionableStatisticalResourceNextVersionDate(), false, false);
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(LifeCycleResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), false, false);
         customDatePickerItem.defaultDateType();
         return customDatePickerItem;
     }
@@ -106,7 +106,7 @@ public abstract class LifeCycleResourceSearchSectionStack extends BaseAdvancedSe
         lifecycleStatisticalResourceWebCriteria.setUrn(advancedSearchForm.getValueAsString(LifeCycleResourceDS.URN));
         lifecycleStatisticalResourceWebCriteria.setDescription(advancedSearchForm.getValueAsString(LifeCycleResourceDS.DESCRIPTION));
         lifecycleStatisticalResourceWebCriteria.setNextVersionType(CommonUtils.getNextVersionTypeEnum(advancedSearchForm.getValueAsString(LifeCycleResourceDS.NEXT_VERSION)));
-        lifecycleStatisticalResourceWebCriteria.setNextVersionDate1(((CustomDatePickerItem) advancedSearchForm.getItem(LifeCycleResourceDS.DATE_NEXT_VERSION1)).getValue());
+        lifecycleStatisticalResourceWebCriteria.setNextVersionDate(((CustomDatePickerItem) advancedSearchForm.getItem(LifeCycleResourceDS.DATE_NEXT_VERSION)).getValue());
         lifecycleStatisticalResourceWebCriteria.setProcStatus(CommonUtils.getProcStatusEnum(advancedSearchForm.getValueAsString(LifeCycleResourceDS.PROC_STATUS)));
         lifecycleStatisticalResourceWebCriteria.setOnlyLastVersion(((CustomCheckboxItem) advancedSearchForm.getItem(LifeCycleResourceDS.LAST_VERSION)).getValueAsBoolean());
         return lifecycleStatisticalResourceWebCriteria;

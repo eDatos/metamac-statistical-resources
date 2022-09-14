@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
@@ -41,7 +42,9 @@ public class DatasetVersionDo2AvroMapper {
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
                 .setDateStart(DateTimeDo2AvroMapper.do2Avro(source.getDateStart())).setDateEnd(DateTimeDo2AvroMapper.do2Avro(source.getDateEnd()))
                 .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions())
-                .setDateNextUpdate(DateTimeDo2AvroMapper.do2Avro(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
+                // TODO EDATOS 3744 PENDIENTE
+            //    .setDateNextUpdate(DateTimeDo2AvroMapper.do2Avro(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
+                .setDateNextUpdate(DateTimeDo2AvroMapper.do2Avro(new DateTime())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
                 .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd()))
                 .setUpdateFrequency(ExternalItemDo2AvroMapper.do2Avro(source.getUpdateFrequency())).setStatisticOfficiality(StatisticOfficialityDo2AvroMapper.do2Avro(source.getStatisticOfficiality()))
                 .setBibliographicCitation(InternationalStringDo2AvroMapper.do2Avro(source.getBibliographicCitation())).setDimensionsCoverage(dimensions).setAttributesCoverage(coverageList)

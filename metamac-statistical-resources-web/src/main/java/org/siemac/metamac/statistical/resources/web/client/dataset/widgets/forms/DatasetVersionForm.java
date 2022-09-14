@@ -15,20 +15,18 @@ public class DatasetVersionForm extends LifeCycleResourceVersionForm {
     public DatasetVersionForm() {
         super();
 
-        ViewTextItem dateNextUpdate1 = new ViewTextItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate());
         ExternalItemLinkItem updateFrequency = new ExternalItemLinkItem(DatasetDS.UPDATE_FRECUENCY, getConstants().datasetUpdateFrequency());
         dateNextUpdate = createFieldDateNextUpdate();
-        addFields(dateNextUpdate, updateFrequency, dateNextUpdate1);
+        addFields(dateNextUpdate, updateFrequency);
     }
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
-        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE1, getConstants().datasetDateNextUpdate(), true, false);
+        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), true, false);
     }    
     
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
         setLifeCycleStatisticalResourceDto(datasetDto);
-        setValue(DatasetDS.DATE_NEXT_UPDATE, datasetDto.getDateNextUpdate());
         setValue(DatasetDS.UPDATE_FRECUENCY, datasetDto.getUpdateFrequency()); 
-        dateNextUpdate.setValue(datasetDto.getDateNextUpdate1());      
+        dateNextUpdate.setValue(datasetDto.getDateNextUpdate());      
     }
 }

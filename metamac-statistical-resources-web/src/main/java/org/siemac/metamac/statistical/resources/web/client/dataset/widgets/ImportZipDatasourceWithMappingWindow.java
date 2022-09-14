@@ -64,7 +64,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private static final String[] REQUIRED_FIELDS = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
             LifeCycleResourceDS.PROC_STATUS};
     
-    private static final String[] REQUIRED_FIELDS_SCHEDULED_UPDATE = ArrayUtils.addStringElementsToStringArray(REQUIRED_FIELDS, DatasetDS.DATE_NEXT_UPDATE, DatasetDS.DATE_NEXT_UPDATE1);
+    private static final String[] REQUIRED_FIELDS_SCHEDULED_UPDATE = ArrayUtils.addStringElementsToStringArray(REQUIRED_FIELDS, DatasetDS.DATE_NEXT_UPDATE);
 
     protected ImportZipDatasourceWithMappingWindow() {
         super(getConstants().actionLoadDatasource());

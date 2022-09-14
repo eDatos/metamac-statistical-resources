@@ -33,8 +33,6 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
     public DatasetVersionEditionForm() {
         super();
 
-        final CustomDateItem dateNextUpdate1 = createDateNextUpdateItem();
-
         updateFrequency = createUpdateFrequencyItem();
         updateFrequency.setValidators(new CustomRequiredValidator() {
 
@@ -47,7 +45,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
 
         dateNextUpdate = createFieldDateNextUpdate();
         
-        addFields(dateNextUpdate, updateFrequency, dateNextUpdate1);
+        addFields(dateNextUpdate, updateFrequency);
     }
 
     public void setDatasetVersionDto(DatasetVersionDto dto) {
@@ -55,33 +53,22 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
 
         this.procStatus = dto.getProcStatus();
 
-        setValue(DatasetDS.DATE_NEXT_UPDATE, dto.getDateNextUpdate());
         setValue(DatasetDS.UPDATE_FRECUENCY, dto.getUpdateFrequency());
-        dateNextUpdate.setValue(dto.getDateNextUpdate1());
+        dateNextUpdate.setValue(dto.getDateNextUpdate());
 
     }
 
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto dto) {
         super.getLifeCycleStatisticalResourceDto(dto);
 
-        dto.setDateNextUpdate(((CustomDateItem) getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsDate());
         dto.setUpdateFrequency(getValueAsExternalItemDto(DatasetDS.UPDATE_FRECUENCY));
-        dto.setDateNextUpdate1(dateNextUpdate.getValue());
+        dto.setDateNextUpdate(dateNextUpdate.getValue());
 
         return dto;
     }
-    private CustomDateItem createDateNextUpdateItem() {
-            
-        FormItemIcon infoIcon = new FormItemIcon();
-        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
-        infoIcon.setPrompt(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
-        CustomDateItem item = new CustomDateItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate());
-        item.setIcons(infoIcon);
-        return item;
-    }
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
-        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE1, getConstants().datasetDateNextUpdate(), false, false);
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), false, false);
         customDatePickerItem.setIconCreateDateItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
         customDatePickerItem.setIconCustomSdmxTimePeriodItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
         customDatePickerItem.defaultDateType();
