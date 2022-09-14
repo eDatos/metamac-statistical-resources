@@ -202,12 +202,10 @@ public class CustomDatePickerItem extends CustomCanvasItem {
     }
 
     private void setValueInForm(String sdmxTimePeriod) {
-        if (!StringUtils.isBlank(sdmxTimePeriod)) {
-            if (DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
-                staticTimePeriodItem.setValue(DateUtils.getVisualizationDateFormat(sdmxTimePeriod));
-            } else {
-                staticTimePeriodItem.setValue(sdmxTimePeriod);
-            }
+        if (!StringUtils.isBlank(sdmxTimePeriod) && DateUtils.isValidDateInSdmx(sdmxTimePeriod)) {
+            staticTimePeriodItem.setValue(DateUtils.getVisualizationDateFormat(sdmxTimePeriod));
+        } else {
+            staticTimePeriodItem.setValue(sdmxTimePeriod);
         }
     }
 
