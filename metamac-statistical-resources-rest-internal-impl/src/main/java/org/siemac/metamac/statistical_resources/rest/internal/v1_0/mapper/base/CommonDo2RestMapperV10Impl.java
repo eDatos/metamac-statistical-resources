@@ -229,8 +229,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     @Override
     public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException {
-        Map<String, String> internationalStringValue = translationService.retrieveTimeTranslation(SERVICE_CONTEXT, sdmxValue);
-        return toInternationalString(internationalStringValue, selectedLanguages);
+        if (StringUtils.isNotBlank(sdmxValue)) {
+            Map<String, String> internationalStringValue = translationService.retrieveTimeTranslation(SERVICE_CONTEXT, sdmxValue);
+            return toInternationalString(internationalStringValue, selectedLanguages);
+        }
+        return null;
     }
     
     @Override
