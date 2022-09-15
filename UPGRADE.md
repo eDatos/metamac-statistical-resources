@@ -8,7 +8,9 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 4.0.0 a 4.0.1-SNAPSHOT
+## 4.0.0 a 5.0.0 (Pendiente de realizar versión release a fecha 15/09/2022)
+* Rotura de la compatibilidad:
+** Debido a refactorización de código al mover determinadas clases al proyecto metamac-statistical-resources-rest-api-common, las aplicaciones que usen el proyecto metamac-statistical-resources como librería deberan ser adaptadas al actualizar a esta versión. De no hacerlo, las aplicaciones no compilarán correctamente.
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db).
 
 ## 3.12.0 a 4.0.0
