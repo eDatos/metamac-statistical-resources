@@ -3,12 +3,15 @@ package org.siemac.metamac.statistical.resources.core.stream.messages.mappers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
-import org.joda.time.DateTime;
+import org.apache.commons.lang.StringUtils;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.common.serviceapi.TranslationService;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
@@ -19,12 +22,21 @@ import org.siemac.metamac.statistical.resources.core.stream.messages.Categorisat
 import org.siemac.metamac.statistical.resources.core.stream.messages.CodeDimensionAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetVersionAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.ExternalItemAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.RelatedResourceAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.TemporalCodeAvro;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class DatasetVersionDo2AvroMapper {
 
-    protected DatasetVersionDo2AvroMapper() {
+    public static final ServiceContext SERVICE_CONTEXT          = new ServiceContext("restInternal", "restInternal", "restInternal");
+    
+    
+    private static TranslationService  translationService;
+    
+    @Autowired
+    protected DatasetVersionDo2AvroMapper(TranslationService translationService) {
+        DatasetVersionDo2AvroMapper.translationService = translationService;
     }
 
     public static DatasetVersionAvro do2Avro(DatasetVersion source) throws MetamacException {
@@ -42,9 +54,7 @@ public class DatasetVersionDo2AvroMapper {
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
                 .setDateStart(DateTimeDo2AvroMapper.do2Avro(source.getDateStart())).setDateEnd(DateTimeDo2AvroMapper.do2Avro(source.getDateEnd()))
                 .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions())
-                // TODO EDATOS 3744 PENDIENTE
-            //    .setDateNextUpdate(DateTimeDo2AvroMapper.do2Avro(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
-                .setDateNextUpdate(DateTimeDo2AvroMapper.do2Avro(new DateTime())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
+                .setDateNextUpdate(toSdmxObservationalTimePeriod(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
                 .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd()))
                 .setUpdateFrequency(ExternalItemDo2AvroMapper.do2Avro(source.getUpdateFrequency())).setStatisticOfficiality(StatisticOfficialityDo2AvroMapper.do2Avro(source.getStatisticOfficiality()))
                 .setBibliographicCitation(InternationalStringDo2AvroMapper.do2Avro(source.getBibliographicCitation())).setDimensionsCoverage(dimensions).setAttributesCoverage(coverageList)
@@ -119,13 +129,21 @@ public class DatasetVersionDo2AvroMapper {
         return dimensions;
     }
 
-    protected static List<CategorisationAvro> categorisations2Avro(DatasetVersion source) {
+    protected static List<CategorisationAvro> categorisations2Avro(DatasetVersion source) throws MetamacException {
         List<CategorisationAvro> categorisations = new ArrayList<CategorisationAvro>();
         for (Categorisation categorisation : source.getCategorisations()) {
             CategorisationAvro categorisationAvro = CategorisationDo2AvroMapper.do2Avro(categorisation);
             categorisations.add(categorisationAvro);
         }
         return categorisations;
+    }
+    
+    public static InternationalStringAvro toSdmxObservationalTimePeriod(String sdmxValue) throws MetamacException {
+        if (StringUtils.isNotBlank(sdmxValue)) {
+            Map<String, String> internationalStringValue = translationService.retrieveTimeTranslation(SERVICE_CONTEXT, sdmxValue);
+            return InternationalStringDo2AvroMapper.mapDo2Avro(internationalStringValue);
+        }
+        return null;
     }
 
 }
