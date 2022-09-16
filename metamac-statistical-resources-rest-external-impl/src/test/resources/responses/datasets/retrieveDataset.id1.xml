@@ -185,11 +185,26 @@
                 </cdomain:name>
             </cdomain:resource>
         </stat:isPartOf>
-        <stat:rightsHolder kind="structuralResources#organisation">
-            <cdomain:id>contact</cdomain:id>
+        <stat:rightsHolder kind="structuralResources#agency">
+            <cdomain:id>AGENCIES</cdomain:id>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY</cdomain:urn>
             <cdomain:name>
-                <cdomain:text xml:lang="es">contact en Español</cdomain:text>
+                <cdomain:text xml:lang="es">AGENCIES en Español</cdomain:text>
             </cdomain:name>
+            <stat:contacts total="2">
+                <stat:contact>
+                    <stat:name>
+                        <cdomain:text xml:lang="es">Oficina Tenerife en Español</cdomain:text>
+                        <cdomain:text xml:lang="en">Oficina Tenerife in English</cdomain:text>
+                    </stat:name>
+                </stat:contact>
+                <stat:contact>
+                    <stat:name>
+                        <cdomain:text xml:lang="es">Oficina Las Palmas en Español</cdomain:text>
+                        <cdomain:text xml:lang="en">Oficina Las Palmas in English</cdomain:text>
+                    </stat:name>
+                </stat:contact>
+            </stat:contacts>
         </stat:rightsHolder>
         <stat:copyrightDate>2014</stat:copyrightDate>
         <stat:license>

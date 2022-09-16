@@ -63,6 +63,7 @@ import org.siemac.metamac.rest.common_metadata.v1_0.domain.Configuration;
 import org.siemac.metamac.rest.constants.RestConstants;
 import org.siemac.metamac.rest.statistical_operations.v1_0.domain.Operation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.mockito.MockitoMockConfig;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
@@ -843,6 +844,18 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
         });
     }
 
+    private void mockRetrieveAgencyByUrn() throws MetamacException {
+        when(srmRestExternalFacade.retrieveAgency(any(String.class))).thenAnswer(new Answer<Agency>() {
+
+            @Override
+            public Agency answer(InvocationOnMock invocation) throws Throwable {
+                String urn = (String) invocation.getArguments()[0];
+                String[] urnSplited = UrnUtils.splitUrnItem(urn);
+                return SrmRestMocks.mockAgency(urnSplited[0], urnSplited[1], urnSplited[2], urnSplited[3]);
+            };
+        });
+    }
+
     private void mockRetrieveConfigurationById() throws MetamacException {
         when(commonMetadataRestExternalFacade.retrieveConfiguration(any(String.class))).thenAnswer(new Answer<Configuration>() {
 
@@ -977,6 +990,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
         mockRetrieveCodesByCodelistUrn();
         mockRetrieveConceptsByConceptSchemeUrn();
         mockRetrieveConceptByUrn();
+        mockRetrieveAgencyByUrn();
 
         mockFindCollectionsByCondition();
 
