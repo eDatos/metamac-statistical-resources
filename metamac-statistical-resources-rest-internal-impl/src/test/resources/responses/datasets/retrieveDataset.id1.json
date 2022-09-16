@@ -2277,16 +2277,51 @@
             "total": 2
         },
         "rightsHolder": {
-            "id": "contact",
-            "name": {
-                "text": [
+          "contacts": {
+            "contact": [
+              {
+                "name": {
+                  "text": [
                     {
-                        "value": "contact en Español",
-                        "lang": "es"
+                      "value": "Oficina Tenerife en Español",
+                      "lang": "es"
+                    },
+                    {
+                      "value": "Oficina Tenerife in English",
+                      "lang": "en"
                     }
-                ]
-            },
-            "kind": "structuralResources#organisation"
+                  ]
+                }
+              },
+              {
+                "name": {
+                  "text": [
+                    {
+                      "value": "Oficina Las Palmas en Español",
+                      "lang": "es"
+                    },
+                    {
+                      "value": "Oficina Las Palmas in English",
+                      "lang": "en"
+                    }
+                  ]
+                }
+              }
+            ],
+            "total": 2
+          },
+          "id": "AGENCIES",
+          "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY",
+          "name": {
+            "text": [
+              {
+                "value": "AGENCIES en Español",
+                "lang": "es"
+              }
+            ]
+          },
+          "kind": "structuralResources#agency",
+          "urnProvider": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY"
         },
         "copyrightDate": 2014,
         "license": {
