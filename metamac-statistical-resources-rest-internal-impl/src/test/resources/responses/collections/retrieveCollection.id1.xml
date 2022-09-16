@@ -179,12 +179,28 @@
             <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:collection99(01.000)</ns2:managementAppLink>
         </ns2:isReplacedBy>
         <ns2:hasPart total="5"/>
-        <ns2:rightsHolder kind="structuralResources#organisation">
-            <cdomain:id>contact</cdomain:id>
+        <ns2:rightsHolder kind="structuralResources#agency">
+            <cdomain:id>AGENCIES</cdomain:id>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY</cdomain:urn>
             <cdomain:name>
-                <cdomain:text xml:lang="es">contact en Español</cdomain:text>
+                <cdomain:text xml:lang="es">AGENCIES en Español</cdomain:text>
             </cdomain:name>
-        </ns2:rightsHolder>
+            <ns2:urnProvider>urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY</ns2:urnProvider>
+            <ns2:contacts total="2">
+                <ns2:contact>
+                    <ns2:name>
+                        <cdomain:text xml:lang="es">Oficina Tenerife en Español</cdomain:text>
+                        <cdomain:text xml:lang="en">Oficina Tenerife in English</cdomain:text>
+                    </ns2:name>
+                </ns2:contact>
+                <ns2:contact>
+                    <ns2:name>
+                        <cdomain:text xml:lang="es">Oficina Las Palmas en Español</cdomain:text>
+                        <cdomain:text xml:lang="en">Oficina Las Palmas in English</cdomain:text>
+                    </ns2:name>
+                </ns2:contact>
+            </ns2:contacts>
+        </ns2:rightsHolder>               
         <ns2:copyrightDate>2022</ns2:copyrightDate>
         <ns2:license>
             <cdomain:text xml:lang="es">license en Español</cdomain:text>
