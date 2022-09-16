@@ -49,6 +49,8 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentations;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.ComponentType;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Contact;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Contacts;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataAttribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataAttributes;
@@ -70,16 +72,19 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedAt
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedAttributeValues;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDimensionValues;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Organisation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.SelectedLanguages;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.StatisticalResource;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.StatisticalResourceType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.VersionRationaleTypes;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionVisualisation;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Item;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Quantity;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ShowDecimalPrecision;
@@ -1397,7 +1402,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         String configurationId = source.getCommonMetadata().getCode();
         Configuration configuration = commonMetadataRestExternalFacade.retrieveConfiguration(configurationId);
-        target.setRightsHolder(toResource(configuration.getContact(), selectedLanguages));
+        Agency agency = srmRestExternalFacade.retrieveAgency(configuration.getContact().getUrn());
+        target.setRightsHolder(toOrganisation(agency, selectedLanguages));
         target.setLicense(toInternationalString(configuration.getLicense(), selectedLanguages));
     }
 
@@ -1670,5 +1676,63 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private InternationalString getUpdatedStatisticalOperationInstanceName(String operationId, String instanceId) {
         Instance instance = statisticalOperationsRestExternalFacade.retrieveInstanceById(operationId, instanceId);
         return instance != null ? instance.getName() : null;
+    }
+
+    /*** SRM **/
+    private Organisation toOrganisation(Agency agency, List<String> selectedLanguages) {
+        if (agency == null) {
+            return null;
+        }
+
+        Organisation organisation = new Organisation();
+        toResource(agency, organisation, selectedLanguages);
+        organisation.setContacts(toContacts(agency.getContacts(), selectedLanguages));
+
+        return organisation;
+    }
+
+    private void toResource(Agency agency, Resource resource, List<String> selectedLanguages) {
+        toResource(agency, resource, agency.getKind(), selectedLanguages);
+    }
+
+    private void toResource(Item source, Resource target, String kind, List<String> selectedLanguages) {
+        target.setKind(kind);
+        target.setId(source.getId());
+        target.setNestedId(source.getNestedId());
+        target.setUrn(source.getUrn());
+        target.setSelfLink(source.getSelfLink());
+        target.setName(toInternationalString(source.getName(), selectedLanguages));
+        target.setDescription(toInternationalString(source.getDescription(), selectedLanguages));
+    }
+
+    private Contacts toContacts(org.siemac.metamac.rest.structural_resources.v1_0.domain.Contacts sources, List<String> selectedLanguages) {
+        if (sources == null) {
+            return null;
+        }
+
+        Contacts targets = new Contacts();
+        for (org.siemac.metamac.rest.structural_resources.v1_0.domain.Contact source : sources.getContacts()) {
+            Contact target = toContact(source, selectedLanguages);
+            targets.getContacts().add(target);
+        }
+        targets.setTotal(BigInteger.valueOf(sources.getContacts().size()));
+
+        return targets;
+    }
+
+    private Contact toContact(org.siemac.metamac.rest.structural_resources.v1_0.domain.Contact source, List<String> selectedLanguages) {
+        if (source == null) {
+            return null;
+        }
+        Contact target = new Contact();
+        target.setId(source.getId());
+        target.setName(source.getName());
+        target.setOrganisationUnit(source.getOrganisationUnit());
+        target.setResponsibility(source.getResponsibility());
+        target.getTelephones().addAll(source.getTelephones());
+        target.getFaxes().addAll(source.getFaxes());
+        target.getUrls().addAll(source.getUrls());
+        target.getEmails().addAll(source.getEmails());
+        return target;
     }
 }
