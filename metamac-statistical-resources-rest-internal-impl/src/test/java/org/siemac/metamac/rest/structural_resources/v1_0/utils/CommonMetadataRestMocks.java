@@ -20,6 +20,7 @@ public class CommonMetadataRestMocks {
         resource.setId(id);
         resource.setName(mockInternationalString(id));
         resource.setKind(kind);
+        resource.setUrn("urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY");
         return resource;
     }
 }
