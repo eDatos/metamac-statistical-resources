@@ -11,7 +11,17 @@
 ## 4.0.0 a 4.0.1-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db).
 
-BREAKING CHANGE FOR DATE_NEXT_UPDATE AND NEXT_VERSION_DATE OUTPUT IN APIS. A INTERNATIONALSTRING VALUE IS RETURNED FOR THESE FIELDS FROM THIS VERSION.
+**BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
+A partir de esta versión los metadatos "date_next_update" y "next_version_date" dejan de ser fechas en formato "dateTime" para convertirse en un formato abierto que cumpla con las especificaciones de sdmx 2.1. Por este motivo, las APIs van a devolver en estos metadatos un InternationalString con la conversión del valor introducido.
+Ej: si 2022-M12
+Se devuelve:
+ns2:dateNextUpdate
+<cdomain:text xml:lang="en">12/2022</cdomain:text>
+<cdomain:text xml:lang="pt">12/2022</cdomain:text>
+<cdomain:text xml:lang="es">12/2022</cdomain:text>
+<cdomain:text xml:lang="ca">12/2022</cdomain:text>
+</ns2:dateNextUpdate>
+
 
 ## 3.12.0 a 4.0.0
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.
