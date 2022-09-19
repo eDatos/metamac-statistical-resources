@@ -36,9 +36,9 @@ public class InternationalStringDo2AvroMapper {
         }
 
         List<InternationalStringItemAvro> localisedStrings = new ArrayList<InternationalStringItemAvro>();
-        for (String s : sources.keySet()) {
-            InternationalStringItemAvro isia = InternationalStringItemAvro.newBuilder().setLocale(s).setLabel(sources.get(s)).build();
-            localisedStrings.add(isia);
+        for (String mapInternationalString : sources.keySet()) {
+            InternationalStringItemAvro internationalStringItemAvro = InternationalStringItemAvro.newBuilder().setLocale(mapInternationalString).setLabel(sources.get(mapInternationalString)).build();
+            localisedStrings.add(internationalStringItemAvro);
         }
         target = InternationalStringAvro.newBuilder().setLocalisedStrings(localisedStrings).build();
 
