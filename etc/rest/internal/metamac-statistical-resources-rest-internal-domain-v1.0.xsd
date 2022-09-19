@@ -206,7 +206,7 @@
             <xs:element name="isReplacedBy" type="tns:ResourceInternal" />
             <xs:element name="hasPart" type="tns:ResourcesInternal" />
             <xs:element name="isPartOf" type="tns:ResourcesInternal" />
-            <xs:element name="rightsHolder" type="tns:ResourceInternal" />
+            <xs:element name="rightsHolder" type="tns:Organisation" />
             <xs:element name="copyrightDate" type="xs:int" minOccurs="0" />
             <xs:element name="license" type="common:InternationalString" />
             <xs:element name="accessRights" type="common:InternationalString" minOccurs="0" />
@@ -762,6 +762,36 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+           
+    <xs:complexType name="Organisation">
+        <xs:complexContent>
+            <xs:extension base="tns:ResourceInternal">
+                <xs:sequence>
+                    <xs:element name="contacts" type="tns:Contacts" minOccurs="0" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Contacts">
+        <xs:sequence>
+            <xs:element name="contact" type="tns:Contact" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
+    </xs:complexType>   
+
+    <xs:complexType name="Contact">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string" minOccurs="0" />
+            <xs:element name="name" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="organisationUnit" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="responsibility" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="telephones" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="faxes" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="urls" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="emails" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
     </xs:complexType>
     
     <!-- Elements -->

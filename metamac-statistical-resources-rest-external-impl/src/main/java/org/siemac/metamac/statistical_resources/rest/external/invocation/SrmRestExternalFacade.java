@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.invocation;
 
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
@@ -18,4 +19,6 @@ public interface SrmRestExternalFacade {
     public Concept retrieveConceptByUrn(String urn);
 
     public VariableElementsGeoInfo findVariableElementsGeoInfo(String urn);
+
+    public Agency retrieveAgency(String urn);
 }
