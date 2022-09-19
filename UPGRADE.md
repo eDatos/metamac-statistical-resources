@@ -25,6 +25,7 @@ ns2:dateNextUpdate
 </ns2:dateNextUpdate>
 
 
+
 ## 3.12.0 a 4.0.0
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.
 
