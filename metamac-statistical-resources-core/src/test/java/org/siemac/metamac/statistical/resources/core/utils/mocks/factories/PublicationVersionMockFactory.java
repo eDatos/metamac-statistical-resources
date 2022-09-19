@@ -38,6 +38,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockDescriptor;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockProvider;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -483,7 +484,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         PublicationVersion publicationVersion = createPublicationVersion();
         prepareToProductionValidation(publicationVersion);
         publicationVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
-        publicationVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(new DateTime().plusDays(10));
+        publicationVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(10).toDate()));
         return publicationVersion;
     }
 
