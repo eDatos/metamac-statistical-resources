@@ -1,6 +1,6 @@
 -- --------------------------------------------------------------------------------------------------
 -- EDATOS-3744 Formato de fecha de próxima actualización debe ser del tipo sdmx
-      -- c
+      -- DATE_NEXT_UPDATE
 	  -- NEXT_VERSION_DATE 
 -- Lo siguientes scripts permitirán cambiar el tipo de dato de los dos campos anteriores de DateTime a String en formato sdxm. Además, se realiza un proceso de migración del valor en formato datetime al valor en formato fecha en sdmx (YYY-MM-DD)	  
 -- --------------------------------------------------------------------------------------------------
