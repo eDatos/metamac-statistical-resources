@@ -326,6 +326,74 @@
          ],
          "description":""
       },
+      "Contact":{
+         "type":"object",
+         "title":"Contact",
+         "properties":{
+            "id":{
+               "description":"",
+               "type":"string"
+            },
+            "name":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "organisationUnit":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "responsibility":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "telephones":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "faxes":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "urls":{
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "emails":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            }
+         },
+         "description":""
+      },
+      "Contacts":{
+         "type":"object",
+         "title":"Contacts",
+         "properties":{
+            "dimension":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Contact"
+               }
+            },
+            "total":{
+               "description":"",
+               "type":"number"
+            }
+         },
+         "description":""
+      },
       "Multidataset":{
          "type":"object",
          "title":"Multidataset",
@@ -1499,7 +1567,7 @@
             },
             "rightsHolder":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/Organisation"
             },
             "statisticalOperation":{
                "description":"",
@@ -3080,6 +3148,24 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/NonEnumeratedDimensionValue"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
+      "Organisation":{
+         "type":"object",
+         "title":"Organisation",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                  "contacts":{
+                     "description":"",
+                     "$ref":"#/definitions/Contacts"
                   }
                }
             }
