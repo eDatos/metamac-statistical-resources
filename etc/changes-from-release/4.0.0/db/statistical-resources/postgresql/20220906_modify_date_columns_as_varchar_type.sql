@@ -19,7 +19,7 @@ insert into TEMP_TB_DATASETS_VERSIONS(ID, DATE_NEXT_UPDATE, DATE_NEXT_UPDATE_TZ,
 select ID, DATE_NEXT_UPDATE, DATE_NEXT_UPDATE_TZ, TO_CHAR(DATE_NEXT_UPDATE, 'YYYY-MM-DD') from TB_DATASETS_VERSIONS where DATE_NEXT_UPDATE is not NULL;
 
 --3) Asegurarse que se han volcado los datos en la tabla temporal
---select count(*) from TEMP_TB_DATASETS_VERSIONS;
+select count(*) from TEMP_TB_DATASETS_VERSIONS;
 
 --4) Borrar los campos antiguos 
 ALTER TABLE TB_DATASETS_VERSIONS drop column DATE_NEXT_UPDATE;
@@ -52,7 +52,7 @@ insert into TEMP_TB_STAT_RESOURCES(ID, NEXT_VERSION_DATE, NEXT_VERSION_DATE_TZ, 
 select ID, NEXT_VERSION_DATE, NEXT_VERSION_DATE_TZ, TO_CHAR(NEXT_VERSION_DATE, 'YYYY-MM-DD') from TB_STAT_RESOURCES where NEXT_VERSION_DATE is not NULL;
 
 --3) OPCIONAL. Asegurarse que se han volcado los datos en la tabla temporal
---select * from TEMP_TB_STAT_RESOURCES;
+select count(*) from TEMP_TB_STAT_RESOURCES;
 
 --4) Borrar los campos antiguos 
 ALTER TABLE TB_STAT_RESOURCES drop column NEXT_VERSION_DATE;
