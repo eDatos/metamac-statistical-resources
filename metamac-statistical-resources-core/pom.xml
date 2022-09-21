@@ -356,7 +356,7 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>6.1.5</version>
+            <version>${kafka-avro-serializer.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
