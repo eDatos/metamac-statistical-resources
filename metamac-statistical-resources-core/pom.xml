@@ -356,15 +356,11 @@
         <dependency>
             <groupId>io.confluent</groupId>
             <artifactId>kafka-avro-serializer</artifactId>
-            <version>${kafka-avro-serializer.version}</version>
+            <version>6.1.5</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                	<groupId>jakarta.ws.rs</groupId>
-                	<artifactId>jakarta.ws.rs-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
