@@ -223,6 +223,15 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     }
 
     @Override
+    public void createConsumerFromKafkaErrorBackgroundNotification(String keyMessage) {
+        createBackgroundNotification(ServiceNoticeAction.RESOURCE_RECEIVED_FROM_KAFKA_ERROR, ServiceNoticeMessage.RESOURCE_RECEIVED_FROM_KAFKA_ERROR, new ArrayList<DatasetVersion>(), keyMessage);
+    }
+    
+    private void createBackgroundNotification(String actionCode, String messageCode, List<DatasetVersion> failedDatasets, Object... messageParams) {
+        createAndSendViewNotification(actionCode, messageCode, failedDatasets, messageParams);
+    }
+    
+    @Override
     public void createErrorOnStreamMessagingService(String user, String actionCode, HasSiemacMetadata affectedResource, String errorMessageCode, Serializable... extraParameters) {
         ResourceInternal resourceInternal = restMapper.generateResourceInternal(affectedResource);
         createNotificationErrorOnStreamMessagingService(user, actionCode, resourceInternal, errorMessageCode, extraParameters);

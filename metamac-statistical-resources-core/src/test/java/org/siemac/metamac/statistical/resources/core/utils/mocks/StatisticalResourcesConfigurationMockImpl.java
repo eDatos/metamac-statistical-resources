@@ -42,4 +42,9 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     public String retrieveDbDataViewsRole() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
+    
+    @Override
+    public String retrieveKafkaJaxiMessagesGroup() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
 }

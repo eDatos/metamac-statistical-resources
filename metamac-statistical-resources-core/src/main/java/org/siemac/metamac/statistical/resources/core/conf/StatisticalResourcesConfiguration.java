@@ -24,4 +24,7 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public boolean retriveDatabaseDatasetImportJobIsEnabled();
 
     public String retrieveDbDataViewsRole() throws MetamacException;
+    
+    String retrieveKafkaJaxiMessagesGroup() throws MetamacException;
+    
 }

@@ -13,7 +13,8 @@ public class ServiceNoticeAction {
     public static final String RESOURCE_PUBLICATION                           = "notice_message.resources.action.publication";
     public static final String RESOURCE_PUBLICATION_ERROR                     = "notice_message.resources.action.publication_error";
     public static final String STREAM_MESSAGE_SEND                            = "notice_message.resources.stream_messaging.action.send";
-
+    public static final String RESOURCE_RECEIVED_FROM_KAFKA_ERROR             = "notice_message.resources.action.received_from_kafka.error";
+    
     public static final String CREATE_REPLACE_DATASET_ERROR                   = "notice_message.resources.action.create_replace_dataset.error";
     public static final String ASSIGN_ROLE_PERMISSIONS_DATASET_ERROR          = "notice_message.resources.action.assign_role_permissions_dataset.error";
 

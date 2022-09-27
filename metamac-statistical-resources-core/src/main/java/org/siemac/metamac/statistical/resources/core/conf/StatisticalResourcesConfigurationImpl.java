@@ -12,6 +12,8 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 
 public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceImpl implements StatisticalResourcesConfiguration {
 
+    final String STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP = "STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP";
+    
     @Override
     public Map<KeyDotEnum, String> retrieveDotCodeMapping() throws MetamacException {
 
@@ -65,5 +67,10 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     @Override
     public String retrieveDbDataViewsRole() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DATA_VIEWS_ROLE);
+    }
+    
+    @Override
+    public String retrieveKafkaJaxiMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP; // Hard coded for evit manual edition
     }
 }
