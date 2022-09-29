@@ -1,8 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection;
 
 import static org.siemac.metamac.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -97,7 +99,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     }
 
     @Override
-    public Collection toCollection(PublicationVersion source, List<String> selectedLanguages, boolean includeMetadata, boolean includeData) throws Exception {
+    public Collection toCollection(PublicationVersion source, List<String> selectedLanguages, Set<String> fields) throws Exception {
         if (source == null) {
             return null;
         }
@@ -111,6 +113,8 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         target.setParentLink(toCollectionParentLink(source));
         target.setChildLinks(toCollectionChildLinks(source));
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
+        boolean includeMetadata = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
+        boolean includeData = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
         if (includeMetadata) {
             target.setMetadata(toCollectionMetadata(source, selectedLanguages));
         }
