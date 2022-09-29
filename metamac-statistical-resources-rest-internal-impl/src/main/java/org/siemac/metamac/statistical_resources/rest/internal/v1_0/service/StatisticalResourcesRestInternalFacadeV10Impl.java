@@ -224,7 +224,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             throw manageException(e);
         }
     }
-    
+
     private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
         try {
             SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);

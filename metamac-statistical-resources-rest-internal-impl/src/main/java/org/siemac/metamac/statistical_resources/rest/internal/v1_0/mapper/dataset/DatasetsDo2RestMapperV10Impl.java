@@ -442,7 +442,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         String version = source.getVersionLogic();
         return toDatasetSelfLink(agencyID, resourceID, version);
     }
-    
+
     private String toDatasetVersionManagementApplicationLink(DatasetVersion source) {
         return commonDo2RestMapper.getInternalWebApplicationNavigation().buildDatasetVersionUrl(source);
     }

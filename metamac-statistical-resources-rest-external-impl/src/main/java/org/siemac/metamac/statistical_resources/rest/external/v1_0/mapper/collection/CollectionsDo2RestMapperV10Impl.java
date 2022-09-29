@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection;
 
-import static org.siemac.metamac.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
+import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
 
 import java.util.List;

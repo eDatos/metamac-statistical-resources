@@ -97,8 +97,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim);
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Set<String> parsedFields = parseFieldsParameter(fields);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             return datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
@@ -224,7 +224,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             throw manageException(e);
         }
     }
-    
+
     private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
         try {
             SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);

@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.multidataset;
 
-import static org.siemac.metamac.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceMultidatasetUrn;
+import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceMultidatasetUrn;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
 
 import java.util.List;

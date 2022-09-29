@@ -309,7 +309,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                 return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryStatus.DISCONTINUED;
             default:
                 throw buildRestException("QueryStatusEnum unsupported: " + source);
-                
+
         }
     }
 
@@ -428,7 +428,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         String resourceID = source.getCode();
         return toQuerySelfLink(agencyID, resourceID);
     }
-    
+
     private String toQueryVersionManagementApplicationLink(QueryVersion source) {
         return commonDo2RestMapper.getInternalWebApplicationNavigation().buildQueryVersionUrl(source);
     }
