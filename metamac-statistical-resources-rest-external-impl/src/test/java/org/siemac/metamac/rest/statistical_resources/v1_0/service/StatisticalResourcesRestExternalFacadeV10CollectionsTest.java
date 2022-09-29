@@ -58,7 +58,7 @@ public class StatisticalResourcesRestExternalFacadeV10CollectionsTest extends St
         String requestBase = getRetrieveCollectionUri(AGENCY_1, COLLECTION_1_CODE, null, null);
         String[] requestUris = new String[]{requestBase + "?lang=es", requestBase + ".xml?lang=es", requestBase + "?_type=xml&lang=es"};
         for (int i = 0; i < requestUris.length; i++) {
-            String requestUri = requestUris[i];
+            String requestUri = requestUris[i] + "&fields=+keywords";
             InputStream responseExpected = StatisticalResourcesRestExternalFacadeV10CollectionsTest.class.getResourceAsStream("/responses/collections/retrieveCollection.id1.xml");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
         }
@@ -69,7 +69,7 @@ public class StatisticalResourcesRestExternalFacadeV10CollectionsTest extends St
         String requestBase = getRetrieveCollectionUri(AGENCY_1, COLLECTION_1_CODE, null, null);
         String[] requestUris = new String[]{requestBase + "?lang=es", requestBase + ".json?lang=es", requestBase + "?_type=json&lang=es"};
         for (int i = 0; i < requestUris.length; i++) {
-            String requestUri = requestUris[i];
+            String requestUri = requestUris[i] + "&fields=+keywords";
             InputStream responseExpected = StatisticalResourcesRestExternalFacadeV10CollectionsTest.class.getResourceAsStream("/responses/collections/retrieveCollection.id1.json");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_JSON, Status.OK, responseExpected);
         }

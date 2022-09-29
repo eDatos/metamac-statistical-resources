@@ -26,6 +26,14 @@
             }
         ]
     },
+    "keywords": {
+        "text": [
+            {
+                "value": "keyword1 keyword2 keyword3-3GyRvUTCB2_000001 en Espanol",
+                "lang": "es"
+            }
+        ]
+    },
     "selectedLanguages": {
         "language": [
             "es"
@@ -123,14 +131,6 @@
             "text": [
                 {
                     "value": "titleAlternative-3GyRvUTCB2_000001 en Espanol",
-                    "lang": "es"
-                }
-            ]
-        },
-        "keywords": {
-            "text": [
-                {
-                    "value": "keyword1 keyword2 keyword3-3GyRvUTCB2_000001 en Espanol",
                     "lang": "es"
                 }
             ]
