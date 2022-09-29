@@ -10,6 +10,9 @@
     <stat:description>
         <cdomain:text xml:lang="es">description-FIsEXaJfZK_000001 en Espanol</cdomain:text>
     </stat:description>
+    <stat:keywords>
+        <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-FIsEXaJfZK_000001 en Espanol</cdomain:text>
+    </stat:keywords>
     <stat:selectedLanguages total="1">
         <stat:language>es</stat:language>
     </stat:selectedLanguages>
@@ -69,9 +72,6 @@
         <stat:abstract>
             <cdomain:text xml:lang="es">abstract-FIsEXaJfZK_000001 en Espanol</cdomain:text>
         </stat:abstract>
-        <stat:keywords>
-            <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-FIsEXaJfZK_000001 en Espanol</cdomain:text>
-        </stat:keywords>
         <stat:type>DATASET</stat:type>
         <stat:creator kind="structuralResources#organisationUnit">
             <cdomain:id>creator</cdomain:id>
