@@ -11,6 +11,9 @@
     <ns2:description>
         <cdomain:text xml:lang="es">description-iUSRorCn6W_000001 en Espanol</cdomain:text>
     </ns2:description>
+    <ns2:keywords>
+        <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-iUSRorCn6W_000001 en Espanol</cdomain:text>
+    </ns2:keywords>
     <ns2:selectedLanguages total="1">
         <ns2:language>es</ns2:language>
     </ns2:selectedLanguages>
@@ -62,9 +65,6 @@
         <ns2:abstract>
             <cdomain:text xml:lang="es">abstract-iUSRorCn6W_000001 en Espanol</cdomain:text>
         </ns2:abstract>
-        <ns2:keywords>
-            <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-iUSRorCn6W_000001 en Espanol</cdomain:text>
-        </ns2:keywords>
         <ns2:type>COLLECTION</ns2:type>
         <ns2:creator kind="structuralResources#organisationUnit">
             <cdomain:id>creator</cdomain:id>
