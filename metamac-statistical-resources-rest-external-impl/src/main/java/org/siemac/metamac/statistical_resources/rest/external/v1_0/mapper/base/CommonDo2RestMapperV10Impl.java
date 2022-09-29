@@ -237,7 +237,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setSubtitle(toInternationalString(source.getSubtitle(), selectedLanguages));
         target.setTitleAlternative(toInternationalString(source.getTitleAlternative(), selectedLanguages));
         target.setAbstract(toInternationalString(source.getAbstractLogic(), selectedLanguages));
-        target.setKeywords(toInternationalString(source.getKeywords(), selectedLanguages));
         target.setType(toStatisticalResourceType(source.getType()));
         target.setCreator(toResourceExternalItemSrm(source.getCreator(), selectedLanguages));
         target.setDataProviders(toResourcesExternalItemsSrm(source.getDataProvider(), selectedLanguages));
