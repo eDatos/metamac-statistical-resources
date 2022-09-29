@@ -11,6 +11,7 @@ import java.util.Arrays;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
@@ -62,6 +63,15 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
             assertEquals("dim01", dataset.getData().getDimensions().getDimensions().get(3).getDimensionId());
             assertEquals("dim01-codelist01-code01", dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getRepresentations().get(0).getCode());
             assertEquals("dim01-codelist01-code04", dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getRepresentations().get(2).getCode());
+        }
+        {
+            Dataset dataset = statisticalResourcesRestInternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null);
+            assertNull(dataset.getKeywords());
+        }
+        {
+            String fields = StringUtils.join(Arrays.asList(StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_KEYWORDS), ",");
+            Dataset dataset = statisticalResourcesRestInternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, fields, null);
+            assertNotNull(dataset.getKeywords());
         }
         {
             String dims = "GEO_DIM:lanzarote:TIME_PERIOD:2014:measure01:measure01-conceptScheme01-concept05:dim01:dim01-codelist01-code04";
@@ -151,7 +161,7 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
         String requestBase = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
         String[] requestUris = new String[]{requestBase + "?lang=es", requestBase + ".xml?lang=es", requestBase + "?_type=xml&lang=es"};
         for (int i = 0; i < requestUris.length; i++) {
-            String requestUri = requestUris[i];
+            String requestUri = requestUris[i] + "&fields=+keywords";
             InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDataset.id1.xml");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
         }
@@ -162,7 +172,7 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
         String requestBase = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
         String[] requestUris = new String[]{requestBase + "?lang=es", requestBase + ".json?lang=es", requestBase + "?_type=json&lang=es"};
         for (int i = 0; i < requestUris.length; i++) {
-            String requestUri = requestUris[i];
+            String requestUri = requestUris[i] + "&fields=+keywords";
             InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDataset.id1.json");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_JSON, Status.OK, responseExpected);
         }

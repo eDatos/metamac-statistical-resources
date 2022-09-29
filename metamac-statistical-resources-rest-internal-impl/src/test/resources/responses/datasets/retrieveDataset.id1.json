@@ -26,6 +26,14 @@
             }
         ]
     },
+    "keywords": {
+        "text": [
+            {
+                "value": "keyword1 keyword2 keyword3-8oMsHB04p3_000001 en Espanol",
+                "lang": "es"
+            }
+        ]
+    },
     "selectedLanguages": {
         "language": [
             "es"
@@ -1993,14 +2001,6 @@
             "text": [
                 {
                     "value": "titleAlternative-8oMsHB04p3_000001 en Espanol",
-                    "lang": "es"
-                }
-            ]
-        },
-        "keywords": {
-            "text": [
-                {
-                    "value": "keyword1 keyword2 keyword3-8oMsHB04p3_000001 en Espanol",
                     "lang": "es"
                 }
             ]
