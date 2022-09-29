@@ -107,6 +107,10 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (includeData) {
             target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
         }
+        boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
+        if (includeKeywords) {
+            target.setKeywords(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
+        }
         return target;
     }
 
