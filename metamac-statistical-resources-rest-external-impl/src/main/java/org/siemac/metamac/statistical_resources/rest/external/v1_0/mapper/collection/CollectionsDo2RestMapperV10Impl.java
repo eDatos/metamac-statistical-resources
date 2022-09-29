@@ -121,6 +121,10 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         if (includeData) {
             target.setData(toCollectionData(source, selectedLanguages));
         }
+        boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
+        if (includeKeywords) {
+            target.setKeywords(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
+        }
         return target;
     }
 

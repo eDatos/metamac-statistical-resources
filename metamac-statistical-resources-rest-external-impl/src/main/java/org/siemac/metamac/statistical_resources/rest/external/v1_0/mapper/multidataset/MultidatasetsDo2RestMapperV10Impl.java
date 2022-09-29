@@ -107,6 +107,10 @@ public class MultidatasetsDo2RestMapperV10Impl implements MultidatasetsDo2RestMa
         if (includeData) {
             target.setData(toMultidatasetData(source, selectedLanguages));
         }
+        boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
+        if (includeKeywords) {
+            target.setKeywords(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
+        }
         return target;
     }
 

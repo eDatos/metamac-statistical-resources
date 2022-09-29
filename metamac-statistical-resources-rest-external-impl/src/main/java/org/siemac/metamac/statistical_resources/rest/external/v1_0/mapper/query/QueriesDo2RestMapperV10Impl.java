@@ -107,7 +107,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         DatasetVersion relatedDatasetEffective = null;
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
-        if (includeMetadata || includeData) {
+        boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
+        if (includeMetadata || includeData || includeKeywords) {
             relatedDatasetEffective = getQueryRelatedDatasetVersionEffective(source);
             dsdProcessorResult = commonDo2RestMapper.processDataStructure(relatedDatasetEffective.getRelatedDsd().getUrn());
         }
@@ -116,6 +117,9 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         if (includeData) {
             target.setData(toQueryData(source, relatedDatasetEffective, dsdProcessorResult, selectedDimensions, selectedLanguages));
+        }
+        if (includeKeywords) {
+            target.setKeywords(commonDo2RestMapper.toInternationalString(relatedDatasetEffective.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
         }
         return target;
     }
