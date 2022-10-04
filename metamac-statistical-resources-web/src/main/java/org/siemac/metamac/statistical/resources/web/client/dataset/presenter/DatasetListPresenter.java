@@ -17,6 +17,7 @@ import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.base.presenter.StatisticalResourceBaseListPresenter;
+import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.enums.LifeCycleActionEnum;
@@ -34,6 +35,10 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVe
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction.Builder;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListAction;
@@ -48,6 +53,7 @@ import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -91,6 +97,10 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
         void setDsdsForSearchSection(GetDsdsPaginatedListResult result);
         void setStatisticalOperationsForSearchSection(GetStatisticalOperationsPaginatedListResult result);
 
+        // data provider y data provider schemes
+        void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field);
+        void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field);
+        
         // Search
         void clearSearchSection();
         DatasetVersionWebCriteria getDatasetVersionWebCriteria();
@@ -338,6 +348,28 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
                 });
     }
 
+    @Override
+    public void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, final SiemacMetadataExternalField field) {
+        dispatcher.execute(new GetDataProviderSchemesPaginatedListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetDataProviderSchemesPaginatedListResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDataProviderSchemesPaginatedListResult result) {
+                getView().setDataProviderSchemesForField(result, field);
+            }
+        });
+    }
+
+    @Override
+    public void retrieveDataProviderUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, final SiemacMetadataExternalField field) {
+        dispatcher.execute(new GetDataProviderPaginatedListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetDataProviderPaginatedListResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDataProviderPaginatedListResult result) {
+                getView().setDataProviderForField(result, field);
+            }
+        });
+    }
+    
     //
     // NAVIGATION
     //

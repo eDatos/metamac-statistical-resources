@@ -84,6 +84,16 @@ Application StatisticalResourcesDto {
 			- @ExternalItemDto maintainer;
 		}
 		
+		DataTransferObject BasicVersionableStatisticalResourceDto {
+		    String nextUpdateDate;
+			String nextVersionDate;
+			String nextVersion;
+			String nextProcStatus;
+			List<String> dataProvidersUrn;
+			List<String> versionRationaleTypes;
+			Boolean automaticLifeCicle;
+			
+		}
 		
 		DataTransferObject SiemacMetadataStatisticalResourceBaseDto extends @LifeCycleStatisticalResourceBaseDto {
 		}
@@ -110,6 +120,8 @@ Application StatisticalResourcesDto {
 			
 			//PRODUCTION DESCRIPTORS
 			- @ExternalItemDto creator;
+			- Bag<@ExternalItemDto> dataProvider;
+			- @InternationalStringDto dataProviderAnnotations;
 			- Bag<@ExternalItemDto> contributor;
 			JAVADATE resourceCreatedDate;
 			JAVADATE lastUpdate;

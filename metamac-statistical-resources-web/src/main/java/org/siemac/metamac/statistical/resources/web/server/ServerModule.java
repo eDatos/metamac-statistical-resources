@@ -37,6 +37,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Save
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveRegionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionsProcStatusActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateGeographicCoverageVariableElementsCacheActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetAgenciesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetAgencySchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetCategoriesPaginatedListActionHandler;
@@ -45,6 +46,8 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.external.Get
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetCommonMetadataConfigurationsListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetConceptSchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetConceptsPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDataProviderPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDataProviderSchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDsdsPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetGeographicalGranularitiesListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetLanguagesCodesActionHandler;
@@ -120,6 +123,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasourc
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveRegionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgenciesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgencySchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCategoriesPaginatedListAction;
@@ -128,6 +132,8 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetCodesPagi
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCommonMetadataConfigurationsListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetLanguagesCodesAction;
@@ -219,6 +225,9 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetCategorySchemesPaginatedListAction.class, GetCategorySchemesPaginatedListActionHandler.class);
         bindHandler(GetCategoriesPaginatedListAction.class, GetCategoriesPaginatedListActionHandler.class);
         bindHandler(GetItemsAction.class, GetItemsActionHandler.class);
+        bindHandler(GetDataProviderSchemesPaginatedListAction.class, GetDataProviderSchemesPaginatedListActionHandler.class);
+        bindHandler(GetDataProviderPaginatedListAction.class, GetDataProviderPaginatedListActionHandler.class);
+        
 
         // DATASETS
         bindHandler(GetDatasetVersionAction.class, GetDatasetVersionActionHandler.class);
@@ -299,6 +308,8 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetHelpUrlAction.class, GetHelpUrlActionHandler.class);
 
         bindHandler(LoadConfigurationPropertiesAction.class, LoadConfigurationPropertiesActionHandler.class);
+
+        bindHandler(UpdateGeographicCoverageVariableElementsCacheAction.class, UpdateGeographicCoverageVariableElementsCacheActionHandler.class);
 
         // This action should be removed to use CAS authentication
         bindHandler(MockCASUserAction.class, MockCASUserActionHandler.class);

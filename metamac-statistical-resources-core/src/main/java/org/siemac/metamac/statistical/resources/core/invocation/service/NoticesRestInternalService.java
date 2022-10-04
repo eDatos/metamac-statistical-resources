@@ -2,9 +2,11 @@ package org.siemac.metamac.statistical.resources.core.invocation.service;
 
 import java.io.Serializable;
 
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 
 public interface NoticesRestInternalService {
@@ -16,6 +18,7 @@ public interface NoticesRestInternalService {
     public void createDatabaseImportErrorBackgroundNotification(DatasetVersion datasetVersion, String actionCode, MetamacException exception);
     public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, Serializable... successMessageParameters);
     public void createDatabaseImportSuccessBackgroundNotification(DatasetVersion datasetVersion, String actionCode, String successMessageCode, Serializable... successMessageParameters);
+    public void createUpdateGeocoverageCacheNotification(DatasetVersion datasetVersion, String actionCode, String messageCode, Serializable... successMessageParameters);
 
     // Stream Messaging Notifications
     public void createErrorOnStreamMessagingService(String user, String actionCode, HasSiemacMetadata affectedResource, String errorMessageCode, Serializable... extraParameters);
@@ -23,4 +26,6 @@ public interface NoticesRestInternalService {
 
     void createAssignRolePermissionsDatasetErrorBackgroundNotification(String dataViewsRole, String viewCode);
     void createCreateReplaceDatasetErrorBackgroundNotification(DatasetVersion datasetVersion, String viewCode, String datasetRepositoryId);
+    
+    void createLifeCycleNotification(ServiceContext serviceContext, ProcStatusEnum procStatus, DatasetVersion datasetVersion) throws MetamacException;
 }

@@ -13,10 +13,12 @@ import static org.siemac.metamac.rest.statistical_resources.constants.RestTestCo
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_9_DIMENSION;
 import static org.siemac.metamac.rest.structural_resources.v1_0.utils.RestMocks.mockInternationalString;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeQualifierType;
@@ -27,6 +29,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contact;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contacts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureComponents;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
@@ -460,5 +464,30 @@ public class SrmRestMocks {
         ResourceLink resourceLink = new ResourceLink();
         resourceLink.setHref(link);
         return resourceLink;
+    }
+
+    public static Agency mockAgency(String agencyID, String resourceID, String version, String organisationID) {
+        Agency agency = new Agency();
+        agency.setUrn("urn:sdmx:org.sdmx.infomodel.base.Agency=" + agencyID + ":" + resourceID + "(" + version + ")." + organisationID);
+        agency.setUrnProvider(agency.getUrn());
+        agency.setId(resourceID);
+        agency.setName(mockInternationalString(resourceID));
+        agency.setKind("structuralResources#agency");
+        agency.setContacts(mockContacts());
+        return agency;
+    }
+
+    private static Contacts mockContacts() {
+        Contacts contacts = new Contacts();
+        contacts.getContacts().add(mockContact("Oficina Tenerife"));
+        contacts.getContacts().add(mockContact("Oficina Las Palmas"));
+        contacts.setTotal(BigInteger.valueOf(contacts.getContacts().size()));
+        return contacts;
+    }
+
+    private static Contact mockContact(String contactId) {
+        Contact contact = new Contact();
+        contact.setName(mockInternationalString(contactId));
+        return contact;
     }
 }

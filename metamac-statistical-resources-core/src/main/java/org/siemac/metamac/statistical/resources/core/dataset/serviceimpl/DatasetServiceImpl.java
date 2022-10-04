@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,12 +23,14 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
+import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -65,6 +68,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisati
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceProperties;
@@ -73,12 +77,14 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOff
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.NextVersionTypeEnumUtils;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionBaseParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
@@ -95,6 +101,7 @@ import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnum
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
+import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
@@ -103,7 +110,13 @@ import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeDime
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
@@ -161,6 +174,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     @Autowired
     private NoticesRestInternalService                noticesRestInternalService;
 
+    @Autowired
+    private TaskService                               taskService;
+
+    @Autowired
+    @Qualifier("txManager")
+    private PlatformTransactionManager                platformTransactionManager;
+
     // ------------------------------------------------------------------------
     // DATASOURCES
     // ------------------------------------------------------------------------
@@ -193,7 +213,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return datasource;
     }
 
-    protected void updateDbDatasource(DatasetVersion datasetVersion) throws MetamacException {
+    protected void updateAutomaticDatasource(DatasetVersion datasetVersion) throws MetamacException {
         datasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime());
 
         computeDataRelatedMetadata(datasetVersion);
@@ -720,19 +740,19 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void importDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping) throws MetamacException {
-        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.FILE);
+            boolean storeDimensionRepresentationMapping, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.FILE, basicVersionableStatisticalResourceDto);
     }
 
     @Override
     public void importDatabaseDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
             boolean storeDimensionRepresentationMapping) throws MetamacException {
-        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.DATABASE);
+        importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.DATABASE, new BasicVersionableStatisticalResourceDto());
     }
 
     private void importDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping, DataSourceTypeEnum expectedDataSourceTypeEnum) throws MetamacException {
-        datasetServiceInvocationValidator.checkImportDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
+            boolean storeDimensionRepresentationMapping, DataSourceTypeEnum expectedDataSourceTypeEnum, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+        datasetServiceInvocationValidator.checkImportDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, basicVersionableStatisticalResourceDto);
 
         DatasetVersion datasetVersion = getDatasetVersionRepository().retrieveByUrn(datasetVersionUrn);
 
@@ -740,21 +760,23 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkValidDataSourceTypeForImportationTask(expectedDataSourceTypeEnum, datasetVersion);
 
+        checkRequiredDataProviderInDataset(basicVersionableStatisticalResourceDto, datasetVersion, expectedDataSourceTypeEnum);
+        
         if (DataSourceTypeEnum.FILE.equals(datasetVersion.getDataSourceType())) {
-            ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion);
+            ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion, basicVersionableStatisticalResourceDto);
         }
-
+        
         String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
 
         checkFilesCanBeAssociatedWithDataset(datasetUrn, datasetVersionUrn, fileUrls);
 
-        TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
+        TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, basicVersionableStatisticalResourceDto);
 
         getTaskService().planifyImportationDataset(ctx, taskInfo);
     }
 
     private TaskInfoDataset buildImportationTaskInfo(DatasetVersion datasetVersion, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping) {
+            boolean storeDimensionRepresentationMapping, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         TaskInfoDataset taskInfo = new TaskInfoDataset();
@@ -763,7 +785,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
         taskInfo.setStoreAlternativeRepresentations(storeDimensionRepresentationMapping);
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-
+        taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
+        taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
+        taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto.getNextUpdateDate());
+        taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto.getDataProvidersUrn());
+        taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
+        taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto.getNextProcStatus());
+        taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
         for (String dimensionId : dimensionRepresentationMapping.keySet()) {
             AlternativeEnumeratedRepresentation representation = new AlternativeEnumeratedRepresentation();
             representation.setComponentId(dimensionId);
@@ -821,8 +849,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls) throws MetamacException {
-        datasetServiceInvocationValidator.checkImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls);
+    public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls,
+            BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+        datasetServiceInvocationValidator.checkImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode, fileUrls, basicVersionableStatisticalResourceDto);
 
         Map<String, List<URL>> datasetVersionsForFiles = organizeFilesByDatasetVersionCode(statisticalOperationCode, fileUrls);
 
@@ -833,16 +862,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 HashMap<String, String> dimensionRepresentationMapping = new HashMap<String, String>();
                 boolean storeDimensionRepresentationMapping = false;
 
-                importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, urls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
+                importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, urls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, basicVersionableStatisticalResourceDto);
             } catch (MetamacException e) {
                 MetamacExceptionItem item = new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_DATASET_VERSION_ERROR, datasetVersionUrn);
                 item.setExceptionItems(e.getExceptionItems());
                 items.add(item);
             }
         }
-        if (items.size() > 0) {
-            throw new MetamacException(items);
+        if (!items.isEmpty()) {
+            return new MetamacException(items);
         }
+        return null;
     }
 
     protected Map<String, List<URL>> organizeFilesByDatasetVersionCode(String statisticalOperationCode, List<URL> fileUrls) throws MetamacException {
@@ -897,7 +927,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 createDatasource(ctx, datasetImportationId, datasource);
             }
         } else {
-            updateDbDatasource(datasetVersion);
+            updateAutomaticDatasource(datasetVersion);
         }
     }
 
@@ -1279,7 +1309,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
 
-        ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion);
+        ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion, new BasicVersionableStatisticalResourceDto());
 
         checkValidDataSourceTypeForImportationTask(DataSourceTypeEnum.DATABASE, datasetVersion);
 
@@ -1291,8 +1321,103 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     // ------------------------------------------------------------------------
+    // CACHE
+    // ------------------------------------------------------------------------
+
+    @Override
+    public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateGeographicCoverageVariableElementsCache(ctx, datasetVersion);
+
+        updateGeocoverageCache(ctx, datasetVersion, true);
+    }
+
+    @Override
+    public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateAllGeographicCoverageVariableElementsCache(ctx);
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
+                                                                       .eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
+        List<DatasetVersion> datasetVersions = datasetVersionRepository.findByCondition(criteria);
+
+        updateAllGeocoverageCache(ctx, datasetVersions);
+    }
+
+    private TransactionTemplate getTransactionTemplate() {
+        TransactionTemplate transactionTemplate = new TransactionTemplate(platformTransactionManager);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        return transactionTemplate;
+    }
+
+    private void updateAllGeocoverageCache(ServiceContext ctx, List<DatasetVersion> datasetVersions) throws MetamacException {
+        // Given that jobs take an ID from the dataset urn (not the dataset version), and we need to update all the versions
+        // of a dataset, a conflict emerges when trying to schedule two jobs to update the cache of several versions of the same dataset.
+        // We prevent this by planning only one dataset version at a time, and then waiting until that job finishes to planify the next one.
+        // That's why we run a loop that checks whether a job with a dataset urn has been created before planning it. We can have
+        // multiple jobs for different datasets, but not for multiple versions of the same dataset.
+        while (!datasetVersions.isEmpty()) {
+            ListIterator<DatasetVersion> datasetVersionsIt = datasetVersions.listIterator();
+
+            while (datasetVersionsIt.hasNext()) {
+                DatasetVersion datasetVersion = datasetVersionsIt.next();
+                String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+
+                if (!getTaskService().existsTaskForResource(ctx, datasetUrn)) {
+
+                    // Thing is, Quartz run its own thread to execute jobs. That thread does not share the same transaction as the
+                    // one planning the jobs (the one where this method runs). Given that this thread does not end until all jobs
+                    // have been planned (because we cannot have two jobs for the same dataset, we have to planify them only one at
+                    // a time) that means a job starts and ends executing while this thread it's still alive.
+                    //
+                    // That causes an exception: when a job finishes it looks in the DB to mark itself as finished. But since the transaction
+                    // at the planify thread has not yet been completed, it has not flushed data to the DB, meaning an exception it's thrown:
+                    // "couldn't find job on DB".
+                    //
+                    // This is fixed by creating a specific transaction to planify a job, that allows it to be saved to DB before the job even
+                    // starts, preventing the exception.
+                    getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
+
+                        @Override
+                        protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                            updateGeocoverageCache(ctx, datasetVersion, false);
+                            return null;
+                        }
+                    });
+
+                    datasetVersionsIt.remove();
+                }
+            }
+        }
+    }
+
+    abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
+
+        public final T doInTransaction(TransactionStatus status) {
+            try {
+                return doInMetamacTransaction(status);
+            } catch (MetamacException e) {
+                throw new RuntimeException("Error in transactional method", e);
+            }
+        }
+
+        protected abstract T doInMetamacTransaction(TransactionStatus status) throws MetamacException;
+    }
+
+    // ------------------------------------------------------------------------
     // PRIVATE METHODS
     // ------------------------------------------------------------------------
+
+    private void updateGeocoverageCache(ServiceContext ctx, DatasetVersion datasetVersion, boolean sendNotification) throws MetamacException {
+        String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        checkNotTasksInProgress(ctx, datasetVersionUrn);
+
+        TaskInfoDataset taskInfo = new TaskInfoDataset();
+        taskInfo.setDatasetVersionId(datasetVersionUrn);
+        taskInfo.setDatasetUrn(datasetUrn);
+        taskService.planifyUpdateGeocoverageCache(ctx, taskInfo, sendNotification);
+    }
+
 
     private void checkNotTasksInProgress(ServiceContext ctx, String datasetUrn) throws MetamacException {
         if (getTaskService().existsTaskForResource(ctx, datasetUrn)) {
@@ -1841,6 +1966,29 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private void checkTableNameFormat(String tableName, String datasetVersionUrn) throws MetamacException {
         if (!DatabaseDatasetImportUtils.checkTableNameFormat(tableName)) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.INVALID_TABLENAME_FORMAT).withMessageParameters(tableName, datasetVersionUrn).build();
+        }
+    }
+    
+    private Boolean checkDataProviderEmptyInDatabaseImport(DatasetVersion datasetVersion, DataSourceTypeEnum expectedDataSourceTypeEnum) {
+        return datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider() != null && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().isEmpty()
+                && DataSourceTypeEnum.DATABASE.equals(expectedDataSourceTypeEnum);
+    }
+
+    private Boolean checkDataProviderEmptyInZipImport(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, DatasetVersion datasetVersion,
+            DataSourceTypeEnum expectedDataSourceTypeEnum) {
+        return Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle()) && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider() != null
+                && basicVersionableStatisticalResourceDto.getDataProvidersUrn().isEmpty() && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().isEmpty()
+                && !ProcStatusEnum.DRAFT.getName().equals(basicVersionableStatisticalResourceDto.getNextProcStatus())
+                && !ProcStatusEnum.DRAFT.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus())
+                && !ProcStatusEnum.VALIDATION_REJECTED.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus());
+    }
+
+    private void checkRequiredDataProviderInDataset(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, DatasetVersion datasetVersion, DataSourceTypeEnum expectedDataSourceTypeEnum) throws MetamacException {
+
+        if (checkDataProviderEmptyInDatabaseImport(datasetVersion, expectedDataSourceTypeEnum) || checkDataProviderEmptyInZipImport(basicVersionableStatisticalResourceDto, datasetVersion, expectedDataSourceTypeEnum)) {
+            List<MetamacExceptionItem> exceptions = new ArrayList<>();
+            exceptions.add(new MetamacExceptionItem(CommonServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionBaseParameters.DATASET_VERSION__DATA_PROVIDER));
+            ExceptionUtils.throwIfException(exceptions);
         }
     }
 

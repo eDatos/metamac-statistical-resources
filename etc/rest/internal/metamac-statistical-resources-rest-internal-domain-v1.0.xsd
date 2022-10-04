@@ -14,6 +14,7 @@
             <xs:element name="managementAppLink" type="xs:string" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:DatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
@@ -31,6 +32,7 @@
             <xs:element name="managementAppLink" type="xs:string" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />            
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:CollectionMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:CollectionData" minOccurs="0" />
@@ -48,6 +50,7 @@
             <xs:element name="managementAppLink" type="xs:string" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:QueryMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
@@ -65,6 +68,7 @@
             <xs:element name="managementAppLink" type="xs:string" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:MultidatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:MultidatasetData" minOccurs="0" />
@@ -191,7 +195,6 @@
             <xs:element name="subtitle" type="common:InternationalString" minOccurs="0" />
             <xs:element name="titleAlternative" type="common:InternationalString" minOccurs="0" />
             <xs:element name="abstract" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="type" type="tns:StatisticalResourceType" />
             <xs:element name="creator" type="tns:ResourceInternal" />
             <xs:element name="contributors" type="tns:ResourcesInternal" minOccurs="0" />
@@ -206,7 +209,7 @@
             <xs:element name="isReplacedBy" type="tns:ResourceInternal" />
             <xs:element name="hasPart" type="tns:ResourcesInternal" />
             <xs:element name="isPartOf" type="tns:ResourcesInternal" />
-            <xs:element name="rightsHolder" type="tns:ResourceInternal" />
+            <xs:element name="rightsHolder" type="tns:Organisation" />
             <xs:element name="copyrightDate" type="xs:int" minOccurs="0" />
             <xs:element name="license" type="common:InternationalString" />
             <xs:element name="accessRights" type="common:InternationalString" minOccurs="0" />
@@ -230,6 +233,8 @@
             <xs:element name="publicationDate" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="publicationUser" type="xs:string" minOccurs="0"/>
             <xs:element name="conformsToInternal" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="dataProviders" type="tns:ResourcesInternal" />
+            <xs:element name="dataProviderAnnotations" type="common:InternationalString" minOccurs="0" />
         </xs:sequence>
     </xs:complexType>
 
@@ -662,6 +667,7 @@
             <xs:enumeration value="VALID_TO" />
             <xs:enumeration value="STATISTICAL_OPERATION_URN" />
             <xs:enumeration value="IS_LAST_VERSION" />
+            <xs:enumeration value="GEOCOV_VARELEM_ID" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -759,6 +765,36 @@
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
+    </xs:complexType>
+           
+    <xs:complexType name="Organisation">
+        <xs:complexContent>
+            <xs:extension base="tns:ResourceInternal">
+                <xs:sequence>
+                    <xs:element name="contacts" type="tns:Contacts" minOccurs="0" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Contacts">
+        <xs:sequence>
+            <xs:element name="contact" type="tns:Contact" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
+    </xs:complexType>   
+
+    <xs:complexType name="Contact">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string" minOccurs="0" />
+            <xs:element name="name" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="organisationUnit" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="responsibility" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="telephones" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="faxes" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="urls" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="emails" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
     </xs:complexType>
     
     <!-- Elements -->

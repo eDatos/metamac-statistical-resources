@@ -1,8 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base;
 
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.escapeValueToData;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 import static org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants.KEY_DIMENSIONS_SEPARATOR;
 import static org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants.SERVICE_CONTEXT;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.containsField;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -46,6 +48,8 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attrib
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CodeRepresentation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CodeRepresentations;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ComponentType;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Contact;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Contacts;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DataAttribute;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DataAttributes;
@@ -67,6 +71,7 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnu
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedAttributeValues;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValues;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Organisation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ProcStatusType;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesInternal;
@@ -74,12 +79,14 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Select
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.StatisticalResource;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.StatisticalResourceType;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleTypes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionVisualisation;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Item;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Quantity;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ShowDecimalPrecision;
@@ -122,7 +129,6 @@ import org.siemac.metamac.statistical_resources.rest.internal.invocation.CommonM
 import org.siemac.metamac.statistical_resources.rest.internal.invocation.SrmRestInternalFacade;
 import org.siemac.metamac.statistical_resources.rest.internal.invocation.StatisticalOperationsRestInternalFacade;
 import org.siemac.metamac.statistical_resources.rest.internal.service.utils.LookupUtil;
-import org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -254,9 +260,10 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setSubtitle(toInternationalString(source.getSubtitle(), selectedLanguages));
         target.setTitleAlternative(toInternationalString(source.getTitleAlternative(), selectedLanguages));
         target.setAbstract(toInternationalString(source.getAbstractLogic(), selectedLanguages));
-        target.setKeywords(toInternationalString(source.getKeywords(), selectedLanguages));
         target.setType(toStatisticalResourceType(source.getType()));
         target.setCreator(toResourceExternalItemSrm(source.getCreator(), selectedLanguages));
+        target.setDataProviders(toResourcesExternalItemsSrm(source.getDataProvider(), selectedLanguages));
+        target.setDataProviderAnnotations(toInternationalString(source.getDataProviderAnnotations(), selectedLanguages));
         target.setContributors(toResourcesExternalItemsSrm(source.getContributor(), selectedLanguages));
         target.setCreatedDate(toDate(source.getResourceCreatedDate()));
         target.setLastUpdate(toDate(source.getLastUpdate()));
@@ -293,7 +300,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setVersionRationaleTypes(toVersionRationaleTypes(source.getVersionRationaleTypes(), selectedLanguages));
         target.setVersionRationale(toInternationalString(source.getVersionRationale(), selectedLanguages));
         target.setValidFrom(toDate(source.getValidFrom()));
-        target.setValidTo(toDate(StatisticalResourcesRestInternalUtils.isDateAfterNowSetNull(source.getValidTo())));
+        target.setValidTo(toDate(isDateAfterNowSetNull(source.getValidTo())));
         target.setNextVersion(toNextVersionType(source.getNextVersion(), selectedLanguages));
         target.setNextVersionDate(toDate(source.getNextVersionDate()));
     }
@@ -1497,7 +1504,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         String configurationId = source.getCommonMetadata().getCode();
         Configuration configuration = commonMetadataRestExternalFacade.retrieveConfiguration(configurationId);
-        target.setRightsHolder(toResource(configuration.getContact(), selectedLanguages));
+        Agency agency = srmRestExternalFacade.retrieveAgency(configuration.getContact().getUrn());
+        target.setRightsHolder(toOrganisation(agency, selectedLanguages));
         target.setLicense(toInternationalString(configuration.getLicense(), selectedLanguages));
     }
 
@@ -1536,7 +1544,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
      */
     private String toAttributeInstanceValueToData(AttributeInstanceBasicDto attributeDto) {
         String attributeValue = attributeDto.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE); // all attributes has only one locale
-        return StatisticalResourcesRestInternalUtils.escapeValueToData(attributeValue);
+        return escapeValueToData(attributeValue);
     }
 
     private Map<String, AttributeInstanceDto> buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(List<String> attributeDimensionsOrdered,
@@ -1770,5 +1778,67 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private InternationalString getUpdatedStatisticalOperationInstanceName(String operationId, String instanceId) {
         Instance instance = statisticalOperationsRestInternalFacade.retrieveInstanceById(operationId, instanceId);
         return instance != null ? instance.getName() : null;
+    }
+
+    /*** SRM **/
+    private Organisation toOrganisation(Agency agency, List<String> selectedLanguages) {
+        if (agency == null) {
+            return null;
+        }
+
+        Organisation organisation = new Organisation();
+        toResource(agency, organisation, selectedLanguages);
+        organisation.setContacts(toContacts(agency.getContacts(), selectedLanguages));
+
+        return organisation;
+    }
+
+    private void toResource(Agency agency, ResourceInternal resource, List<String> selectedLanguages) {
+        toResource(agency, resource, agency.getKind(), selectedLanguages);
+    }
+
+    private void toResource(Item source, ResourceInternal target, String kind, List<String> selectedLanguages) {
+        target.setKind(kind);
+        target.setId(source.getId());
+        target.setNestedId(source.getNestedId());
+        target.setUrn(source.getUrn());
+        target.setSelfLink(source.getSelfLink());
+        target.setName(toInternationalString(source.getName(), selectedLanguages));
+        target.setDescription(toInternationalString(source.getDescription(), selectedLanguages));
+        if (source.getManagementAppLink() != null) {
+            target.setManagementAppLink(RestUtils.createLink(srmInternalWebApplication, source.getManagementAppLink()));
+        }
+        target.setUrnProvider(source.getUrnProvider());
+    }
+
+    private Contacts toContacts(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contacts sources, List<String> selectedLanguages) {
+        if (sources == null) {
+            return null;
+        }
+
+        Contacts targets = new Contacts();
+        for (org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contact source : sources.getContacts()) {
+            Contact target = toContact(source, selectedLanguages);
+            targets.getContacts().add(target);
+        }
+        targets.setTotal(BigInteger.valueOf(sources.getContacts().size()));
+
+        return targets;
+    }
+
+    private Contact toContact(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contact source, List<String> selectedLanguages) {
+        if (source == null) {
+            return null;
+        }
+        Contact target = new Contact();
+        target.setId(source.getId());
+        target.setName(source.getName());
+        target.setOrganisationUnit(source.getOrganisationUnit());
+        target.setResponsibility(source.getResponsibility());
+        target.getTelephones().addAll(source.getTelephones());
+        target.getFaxes().addAll(source.getFaxes());
+        target.getUrls().addAll(source.getUrls());
+        target.getEmails().addAll(source.getEmails());
+        return target;
     }
 }

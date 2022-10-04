@@ -1,10 +1,9 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
-import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestApiExternalUtils.parseDimensionExpression;
-import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils.hasField;
-import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils.manageException;
-import static org.siemac.metamac.statistical_resources.rest.external.service.utils.StatisticalResourcesRestExternalUtils.parseFieldsParameter;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsParameter;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -98,8 +97,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim);
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Set<String> parsedFields = parseFieldsParameter(fields);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             return datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
@@ -121,11 +120,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     public Collection retrieveCollection(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             PublicationVersion publicationVersion = commonService.retrievePublicationVersion(agencyID, resourceID);
-
-            boolean includeMetadata = !hasField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
-            boolean includeData = !hasField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
+            Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Collection collection = collectionsDo2RestMapper.toCollection(publicationVersion, selectedLanguages, includeMetadata, includeData);
+            Collection collection = collectionsDo2RestMapper.toCollection(publicationVersion, selectedLanguages, parsedFields);
             return collection;
         } catch (Exception e) {
             throw manageException(e);
@@ -143,14 +140,13 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields) {
+    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
-
-            boolean includeMetadata = !hasField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
-            boolean includeData = !hasField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
+            Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Query query = queriesDo2RestMapper.toQuery(queryVersion, selectedLanguages, includeMetadata, includeData);
+            Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
             return query;
         } catch (Exception e) {
             throw manageException(e);
@@ -172,11 +168,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     public Multidataset retrieveMultidataset(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             MultidatasetVersion multidatasetVersion = commonService.retrieveMultidatasetVersion(agencyID, resourceID);
-
-            boolean includeMetadata = !hasField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
-            boolean includeData = !hasField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
+            Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Multidataset multidataset = multidatasetsDo2RestMapper.toMultidataset(multidatasetVersion, selectedLanguages, includeMetadata, includeData);
+            Multidataset multidataset = multidatasetsDo2RestMapper.toMultidataset(multidatasetVersion, selectedLanguages, parsedFields);
             return multidataset;
         } catch (Exception e) {
             throw manageException(e);

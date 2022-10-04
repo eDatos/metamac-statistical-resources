@@ -478,7 +478,6 @@
             <!-- Generates JAR for test classes -->
             <plugin>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
                 <executions>
                     <execution>
                         <goals>
@@ -490,7 +489,6 @@
 
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
                 <executions>
                     <execution>
                         <id>${project.artifactId}-client</id>
@@ -510,6 +508,9 @@
                         <goals>
                             <goal>test-jar</goal>
                         </goals>
+                        <configuration>
+                            <skip>false</skip>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -517,10 +518,16 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.14</version>
+                <version>2.22.2</version>
                 <configuration>
-                    <forkMode>once</forkMode>
-                    <argLine>-Xms512m -Xmx1256m -XX:PermSize=64m</argLine>
+                    <forkCount>1</forkCount>
+                    <reuseForks>true</reuseForks>
+                    <argLine>-Xms1024m -Xmx2048m</argLine>
+                    <!-- TODO EDATOS-3227 -->
+                    <excludes>
+                        <exclude>**/DataManipulateTest.java</exclude>
+                        <exclude>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</exclude>           
+                     </excludes>
                 </configuration>
                 <executions>
                     <execution>
@@ -538,6 +545,27 @@
 							<reportsDirectory>${project.build.directory}/surefire-reports/postgresql</reportsDirectory>
 						</configuration>
 					</execution>
+                </executions>
+            </plugin>
+            
+            <!-- TODO EDATOS-3227 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>2.22.2</version>
+                <configuration>
+                    <includes>
+                        <include>**/DataManipulateTest.java</include>
+                        <include>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</include>
+                    </includes>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                            <goal>verify</goal>
+                        </goals>
+                    </execution>
                 </executions>
             </plugin>
             
@@ -617,6 +645,19 @@
                                 <!-- <delete file="${basedir}/src/test/java/org/siemac/metamac/statistical/resources/core/serviceapi/StatisticalResourcesServiceFacadeTest.java" /> -->
                                 <!-- <delete file="${basedir}/src/test/java/org/siemac/metamac/statistical/resources/core/serviceapi/StatisticalResourcesServiceTest.java" /> -->
                             </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5.1</version>
+                <executions>
+                    <execution>
+                        <id>default-testCompile</id>
+                        <configuration>
+                            <skip>false</skip>
                         </configuration>
                     </execution>
                 </executions>

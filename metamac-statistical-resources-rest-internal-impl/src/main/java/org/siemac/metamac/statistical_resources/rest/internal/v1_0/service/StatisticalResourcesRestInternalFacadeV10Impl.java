@@ -1,10 +1,9 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.service;
 
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.hasField;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.manageException;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.parseDimensionExpression;
-import static org.siemac.metamac.statistical_resources.rest.internal.service.utils.StatisticalResourcesRestInternalUtils.parseFieldsParameter;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsParameter;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,11 +120,9 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     public Collection retrieveCollection(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             PublicationVersion publicationVersion = commonService.retrievePublicationVersion(agencyID, resourceID);
-
-            boolean includeMetadata = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
-            boolean includeData = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
+            Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Collection collection = collectionsDo2RestMapper.toCollection(publicationVersion, selectedLanguages, includeMetadata, includeData);
+            Collection collection = collectionsDo2RestMapper.toCollection(publicationVersion, selectedLanguages, parsedFields);
             return collection;
         } catch (Exception e) {
             throw manageException(e);
@@ -143,14 +140,13 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields) {
+    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
-
-            boolean includeMetadata = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
-            boolean includeData = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
+            Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Query query = queriesDo2RestMapper.toQuery(queryVersion, selectedLanguages, includeMetadata, includeData);
+            Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
             return query;
         } catch (Exception e) {
             throw manageException(e);
@@ -172,28 +168,10 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     public Multidataset retrieveMultidataset(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             MultidatasetVersion multidatasetVersion = commonService.retrieveMultidatasetVersion(agencyID, resourceID);
-
-            boolean includeMetadata = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
-            boolean includeData = !hasField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
+            Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Multidataset multidataset = multidatasetsDo2RestMapper.toMultidataset(multidatasetVersion, selectedLanguages, includeMetadata, includeData);
+            Multidataset multidataset = multidatasetsDo2RestMapper.toMultidataset(multidatasetVersion, selectedLanguages, parsedFields);
             return multidataset;
-        } catch (Exception e) {
-            throw manageException(e);
-        }
-    }
-
-    private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
-        try {
-            SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
-
-            // Find
-            PagedResult<MultidatasetVersion> entitiesPagedResult = commonService.findMultidatasetVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
-
-            // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
-            return multidatasets;
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -247,6 +225,22 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
     }
 
+    private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
+        try {
+            SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            // Find
+            PagedResult<MultidatasetVersion> entitiesPagedResult = commonService.findMultidatasetVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+            // Transform
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            return multidatasets;
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
     private List<String> languagesRequestedToEffectiveLanguages(List<String> sources) throws MetamacException {
 
         List<String> targets = null;
@@ -276,5 +270,4 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
         return result;
     }
-
 }

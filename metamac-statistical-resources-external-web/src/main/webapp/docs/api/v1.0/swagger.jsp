@@ -326,6 +326,74 @@
          ],
          "description":""
       },
+      "Contact":{
+         "type":"object",
+         "title":"Contact",
+         "properties":{
+            "id":{
+               "description":"",
+               "type":"string"
+            },
+            "name":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "organisationUnit":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "responsibility":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "telephones":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "faxes":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "urls":{
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "emails":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            }
+         },
+         "description":""
+      },
+      "Contacts":{
+         "type":"object",
+         "title":"Contacts",
+         "properties":{
+            "dimension":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Contact"
+               }
+            },
+            "total":{
+               "description":"",
+               "type":"number"
+            }
+         },
+         "description":""
+      },
       "Multidataset":{
          "type":"object",
          "title":"Multidataset",
@@ -1499,7 +1567,7 @@
             },
             "rightsHolder":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/Organisation"
             },
             "statisticalOperation":{
                "description":"",
@@ -1540,6 +1608,14 @@
             "versionRationaleTypes":{
                "description":"",
                "$ref":"#/definitions/VersionRationaleTypes"
+            },
+            "dataProviders":{
+               "description":"",
+               "$ref":"#/definitions/Resources"
+            },
+            "dataProviderAnnotations":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
             }
          },
          "description":""
@@ -3078,6 +3154,24 @@
          ],
          "description":""
       },
+      "Organisation":{
+         "type":"object",
+         "title":"Organisation",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                  "contacts":{
+                     "description":"",
+                     "$ref":"#/definitions/Contacts"
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
       "Queries":{
          "type":"object",
          "title":"Queries",
@@ -3571,6 +3665,20 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/VersionRationaleTypes"
+                  },
+                  "dataProviders":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/Resources"
+                  },
+                  "dataProviderAnnotations":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/InternationalString"
                   }
                }
             }
@@ -3826,7 +3934,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión de campos de la misma. Los posibles valores son \"-metadata\" y \"-data\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
                },
                {
                   "name":"lang",
@@ -3901,7 +4009,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
                }
             ],
             "responses":{
@@ -3973,7 +4081,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
                }
             ],
             "responses":{
@@ -4051,7 +4159,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
                }
             ],
             "responses":{
@@ -4111,13 +4219,13 @@
                   "name":"dim",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite filtrar los dato que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensione que no se especifique ningún filtro se obtendrán todos los valores existentes. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS"
+                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+dimension.description\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\",  \"+keywords\" y \"+dimension.description\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description\r\n- fields=+keywords"
                },
                {
                   "name":"lang",
@@ -4315,10 +4423,16 @@
                   "description":"Identificador del recurso."
                },
                {
+                  "name":"dim",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
+               },
+               {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión de campos de la misma. Los posibles valores son \"-metadata\" y \"-data\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
                },
                {
                   "name":"lang",
@@ -4519,7 +4633,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión de campos de la misma. Los posibles valores son \"-metadata\" y \"-data\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
                },
                {
                   "name":"lang",

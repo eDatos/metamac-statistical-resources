@@ -196,6 +196,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType TASKS_JOB_IMPORTATION_IN_PROCESS                                             = create("exception.resources.task.error.imporation_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_DATABASE_IMPORTATION_IN_PROCESS                                    = create(
             "exception.resources.task.error.database_importation_in_process");
+    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_GEOCOVERAGE_CACHE_IN_PROCESS                                = create(
+            "exception.resources.task.error.update_geocoverage_cache_in_process");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                            = create("exception.resources.task.in_progress");
 
     // Dataset Importation
@@ -293,4 +295,10 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
 
     public static final CommonServiceExceptionType FILE_ENCODING_ERROR                                                          = create("exception.resources.dataset.importation.file_encoding_error");
 
-}
+    // Geographic Coverage
+    public static final CommonServiceExceptionType GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND                                         = create(
+            "exception.resources.dataset_version.geocoverage.geographical_coverage_code_not_found");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR                                   = create("exception.resources.dataset_version.geocoverage.job_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR            = create(
+        "exception.resources.dataset_version.geocoverage.job_error_and_cant_mark_as_error");
+    }

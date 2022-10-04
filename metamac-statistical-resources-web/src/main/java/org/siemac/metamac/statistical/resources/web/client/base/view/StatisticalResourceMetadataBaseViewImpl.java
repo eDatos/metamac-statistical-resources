@@ -9,6 +9,8 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacM
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataPublicationDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersEditionForm;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCommonMetadataConfigurationsListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetLanguagesCodesResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitsPaginatedListResult;
@@ -74,6 +76,16 @@ public abstract class StatisticalResourceMetadataBaseViewImpl<H extends Statisti
             default:
                 break;
         }
+    }
+
+    @Override
+    public void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field) {
+        getProductionDescriptorsEditionForm().setDataProviderSchemes(result.getDataProviderSchemes(), result.getFirstResultOut(), result.getTotalResults());
+    }
+
+    @Override
+    public void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field) {
+        getProductionDescriptorsEditionForm().setDataProvider(result.getDataProviders(), result.getFirstResultOut(), result.getTotalResults());
     }
 
     @Override

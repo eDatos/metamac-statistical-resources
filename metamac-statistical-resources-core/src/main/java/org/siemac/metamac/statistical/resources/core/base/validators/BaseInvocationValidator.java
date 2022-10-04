@@ -238,6 +238,7 @@ public abstract class BaseInvocationValidator {
                 addParameter(metadataName, ServiceExceptionSingleParameters.STATISTICAL_OPERATION_INSTANCES), exceptions);
         StatisticalResourcesValidationUtils.checkMetadataOptionalIsValid(resource.getCreator(), addParameter(metadataName, ServiceExceptionSingleParameters.CREATOR), exceptions);
         StatisticalResourcesValidationUtils.checkListMetadataOptionalIsValid(resource.getContributor(), addParameter(metadataName, ServiceExceptionSingleParameters.CONTRIBUTOR), exceptions);
+        StatisticalResourcesValidationUtils.checkListMetadataOptionalIsValid(resource.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER), exceptions);
         StatisticalResourcesValidationUtils.checkListMetadataOptionalIsValid(resource.getPublisher(), addParameter(metadataName, ServiceExceptionSingleParameters.PUBLISHER), exceptions);
         StatisticalResourcesValidationUtils.checkListMetadataOptionalIsValid(resource.getMediator(), addParameter(metadataName, ServiceExceptionSingleParameters.MEDIATOR), exceptions);
     }

@@ -1,15 +1,28 @@
 package org.siemac.metamac.statistical.resources.core.invocation.service;
 
+import static org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum.DIFFUSION_VALIDATION;
+import static org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum.PRODUCTION_VALIDATION;
+import static org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum.PUBLISHED;
+import static org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum.VALIDATION_REJECTED;
+
 import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.utils.TranslateExceptions;
 import org.siemac.metamac.core.common.lang.LocaleUtil;
+import org.siemac.metamac.core.common.util.ServiceContextUtils;
 import org.siemac.metamac.rest.notices.v1_0.domain.Message;
 import org.siemac.metamac.rest.notices.v1_0.domain.Notice;
 import org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal;
@@ -20,6 +33,7 @@ import org.siemac.metamac.rest.notices.v1_0.domain.utils.NoticeBuilder;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionUtils;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
@@ -50,6 +64,30 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     @Autowired
     private RestMapper                        restMapper;
 
+    
+    private static Map<ProcStatusEnum, MetamacRolesEnum[]> roles;
+    private static Map<ProcStatusEnum, String>             actionCodes;
+    private static Map<ProcStatusEnum, String>             messageCodes;
+
+    static {
+        roles = new HashMap<ProcStatusEnum, MetamacRolesEnum[]>();
+        roles.put(PRODUCTION_VALIDATION, new MetamacRolesEnum[]{MetamacRolesEnum.TECNICO_PRODUCCION});
+        roles.put(DIFFUSION_VALIDATION, new MetamacRolesEnum[]{MetamacRolesEnum.TECNICO_DIFUSION, MetamacRolesEnum.TECNICO_APOYO_DIFUSION});
+        roles.put(PUBLISHED, new MetamacRolesEnum[]{MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION});
+
+        actionCodes = new HashMap<ProcStatusEnum, String>();
+        actionCodes.put(PRODUCTION_VALIDATION, ServiceNoticeAction.RESOURCE_SEND_PRODUCTION_VALIDATION);
+        actionCodes.put(DIFFUSION_VALIDATION, ServiceNoticeAction.RESOURCE_SEND_DIFFUSION_VALIDATION);
+        actionCodes.put(VALIDATION_REJECTED, ServiceNoticeAction.RESOURCE_CANCEL_VALIDATION);
+        actionCodes.put(PUBLISHED, ServiceNoticeAction.RESOURCE_PUBLICATION);
+
+        messageCodes = new HashMap<ProcStatusEnum, String>();
+        messageCodes.put(PRODUCTION_VALIDATION, ServiceNoticeMessage.RESOURCE_SEND_PRODUCTION_VALIDATION_OK);
+        messageCodes.put(DIFFUSION_VALIDATION, ServiceNoticeMessage.RESOURCE_SEND_DIFFUSION_VALIDATION_OK);
+        messageCodes.put(VALIDATION_REJECTED, ServiceNoticeMessage.RESOURCE_CANCEL_VALIDATION_OK);
+        messageCodes.put(PUBLISHED, ServiceNoticeMessage.RESOURCE_PUBLICATION_OK);
+    }
+    
     @Override
     public void createErrorBackgroundNotification(String user, String actionCode, MetamacException exception) {
         try {
@@ -108,6 +146,39 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             createDatabaseImportBackgroundNotification(locale, datasetVersion, actionCode, message);
         } catch (MetamacException e) {
             logger.error("Error creating createDatabaseImportSuccessBackgroundNotification:", e);
+        }
+    }
+
+    @Override
+    public void createUpdateGeocoverageCacheNotification(DatasetVersion datasetVersion, String actionCode, String messageCode, Serializable... messageParameters) {
+        try {
+            Locale locale = configurationService.retrieveLanguageDefaultLocale();
+            ResourceInternal resourceInternal = restMapper.generateResourceInternal(datasetVersion);
+            Message message = createMessage(locale, Collections.singletonList(resourceInternal), messageCode, messageParameters);
+
+            createUpdateGeocoverageCacheBackgroundNotification(locale, datasetVersion, actionCode, message);
+        } catch (MetamacException e) {
+            logger.error("Error creating createDatabaseImportSuccessBackgroundNotification:", e);
+        }
+    }
+
+    private void createUpdateGeocoverageCacheBackgroundNotification(Locale locale, DatasetVersion datasetVersion, String actionCode, Message message) throws MetamacException {
+        try {
+            String subject = LocaleUtil.getMessageForCode(actionCode, locale);
+            String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS.getName();
+
+            // @formatter:off
+            sendNotice(NoticeBuilder.notification()
+                    .withMessages(message)
+                    .withSendingApplication(sendingApp)
+                    .withRoles(MetamacRolesEnum.ADMINISTRADOR)
+                    .withSubject(subject)
+                    .withApplications(sendingApp)
+                    .withStatisticalOperations(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn())
+                    .build());
+            // @formatter:on
+        } catch (Exception e) {
+            throw manageNoticesInternalRestException(e);
         }
     }
 
@@ -260,4 +331,70 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
 
         return resources;
     }
+    
+    // LifeCicle Notifications functions
+    
+    @Override
+    public void createLifeCycleNotification(ServiceContext serviceContext, ProcStatusEnum procStatus, DatasetVersion datasetVersion) throws MetamacException {
+        
+        
+        MetamacRolesEnum[] notificationRoles = roles.containsKey(procStatus) ? roles.get(procStatus) : null;
+        createNotification(serviceContext, procStatus, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn(), notificationRoles, getResourceInternalFromDataset(datasetVersion));
+ 
+    }
+
+    private List<ResourceInternal> getResourceInternalFromDataset(DatasetVersion datasetVersion) {
+        ResourceInternal resourceInternal = restMapper.generateResourceInternal(datasetVersion);
+        List<ResourceInternal> resourceInternalList = new ArrayList<ResourceInternal>();
+        resourceInternalList.add(resourceInternal);
+        return resourceInternalList;
+    }
+    
+    private void createNotification(ServiceContext ctx, ProcStatusEnum procStatus, String urnStatisticalOperation, MetamacRolesEnum[] notificationRoles, List<ResourceInternal> resourcesInternal)
+            throws MetamacException {
+
+        String actionCode = getActionCode(procStatus);
+        String messageCode = getMessageCode(procStatus);
+
+        String subject = buildSubject(ctx, actionCode);
+        Message message = buildMessage(ctx, messageCode, resourcesInternal);
+
+        NoticeBuilder noticeBuilder = NoticeBuilder.notification().withMessages(message).withSendingApplication(getSendingApp()).withSendingUser(ctx.getUserId()).withSubject(subject);
+        if (notificationRoles != null) {
+            noticeBuilder = noticeBuilder.withRoles(notificationRoles);
+        }
+        if (StringUtils.isNotBlank(urnStatisticalOperation)) {
+            noticeBuilder = noticeBuilder.withStatisticalOperations(urnStatisticalOperation);
+        }
+
+        try {
+            Response response = restApiLocator.getNoticesRestInternalFacadeV10().createNotice(noticeBuilder.build());
+        } catch (MetamacException e) {
+            logger.error("Error creating notification for error on view creation:", e);
+        }
+    }
+
+    private Message buildMessage(ServiceContext ctx, String messageCode, List<ResourceInternal> resources) {
+        Locale locale = ServiceContextUtils.getLocale(ctx);
+        String localisedMessage = LocaleUtil.getMessageForCode(messageCode, locale);
+        return MessageBuilder.message().withText(localisedMessage).withResources(resources).build();
+    }
+
+    private String buildSubject(ServiceContext ctx, String actionCode) {
+        Locale locale = ServiceContextUtils.getLocale(ctx);
+        return LocaleUtil.getMessageForCode(actionCode, locale);
+    }
+
+    private String getActionCode(ProcStatusEnum lifeCycleAction) {
+        return actionCodes.containsKey(lifeCycleAction) ? actionCodes.get(lifeCycleAction) : StringUtils.EMPTY;
+    }
+
+    private String getMessageCode(ProcStatusEnum lifeCycleAction) {
+        return messageCodes.containsKey(lifeCycleAction) ? messageCodes.get(lifeCycleAction) : StringUtils.EMPTY;
+    }
+
+    private String getSendingApp() {
+        return MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS.getName();
+    }
+    
 }

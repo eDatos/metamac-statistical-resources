@@ -59,4 +59,5 @@ public class QueryMainFormLayout extends LifecycleMainFormLayout {
     protected boolean canPreviewData() {
         return QueryClientSecurityUtils.canPreviewQueryData(queryVersionDto);
     }
+
 }

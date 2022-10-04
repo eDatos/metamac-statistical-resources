@@ -4,6 +4,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
@@ -86,6 +87,20 @@ public class SrmRestExternalFacadeImpl implements SrmRestExternalFacade {
             String version = urnSplited[2];
             String itemId = urnSplited[3];
             return restApiLocator.getSrmRestExternalFacadeV10().retrieveConcept(agencyID, itemSchemeID, version, itemId);
+        } catch (Exception e) {
+            throw toRestException(e);
+        }
+    }
+
+    @Override
+    public Agency retrieveAgency(String urn) {
+        try {
+            String[] urnSplited = UrnUtils.splitUrnItem(urn);
+            String agencyID = urnSplited[0];
+            String resourceID = urnSplited[1];
+            String version = urnSplited[2];
+            String organisationID = urnSplited[3];
+            return restApiLocator.getSrmRestExternalFacadeV10().retrieveAgency(agencyID, resourceID, version, organisationID);
         } catch (Exception e) {
             throw toRestException(e);
         }

@@ -200,6 +200,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
@@ -2263,7 +2264,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         URL url = new URL("file", null, "myfile.px");
 
         HashMap<String, String> mappings = new HashMap<String, String>();
-        statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url), mappings, false);
+        statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url), mappings, false, new BasicVersionableStatisticalResourceDto());
     }
 
     @Override
@@ -2296,6 +2297,16 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     public void testRetrieveAttributeInstances() throws Exception {
         // TODO testRetrieveAttributeInstances (METAMAC-2143)
 
+    }
+
+    @Override
+    public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
+        // no test
+    }
+
+    @Override
+    public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
+        // no test
     }
 
     // ------------------------------------------------------------------------

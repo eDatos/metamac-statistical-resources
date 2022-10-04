@@ -51,6 +51,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStr
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureComponents;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
@@ -1320,7 +1321,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         try {
             List<URL> urls = Arrays.asList(new URL("file", null, "prueba.px"));
             Map<String, String> mappings = new HashMap<String, String>();
-            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDtoSession02, urls, mappings, false);
+            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDtoSession02, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
             fail("optimistic locking");
         } catch (MetamacException e) {
             assertEqualsMetamacExceptionItem(ServiceExceptionType.OPTIMISTIC_LOCKING, 0, null, e.getExceptionItems().get(0));
@@ -1349,6 +1350,16 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
     @Override
     public void testRetrieveAttributeInstances() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
+    public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
+    public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
         // no optimistic locking in this operation
     }
 

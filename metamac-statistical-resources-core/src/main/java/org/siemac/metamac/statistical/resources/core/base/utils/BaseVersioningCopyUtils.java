@@ -48,6 +48,9 @@ public class BaseVersioningCopyUtils extends CommonVersioningCopyUtils {
         target.setCreator(copyExternalItem(source.getCreator()));
         target.getContributor().clear();
         target.getContributor().addAll(copyCollectionExternalItem(source.getContributor()));
+        target.getDataProvider().clear();
+        target.getDataProvider().addAll(copyCollectionExternalItem(source.getDataProvider()));
+        target.setDataProviderAnnotations(copyInternationalString(source.getDataProviderAnnotations()));
         target.setCreatedDate(source.getCreatedDate());
         target.setConformsTo(copyInternationalString(source.getConformsTo()));
         target.setConformsToInternal(copyInternationalString(source.getConformsToInternal()));
