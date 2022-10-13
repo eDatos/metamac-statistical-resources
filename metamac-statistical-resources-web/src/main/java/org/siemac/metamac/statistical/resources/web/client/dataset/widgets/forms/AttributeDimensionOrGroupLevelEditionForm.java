@@ -38,8 +38,8 @@ public class AttributeDimensionOrGroupLevelEditionForm extends AttributeDimensio
         DimensionCoverageValuesSelectionItem dimensionCoverageValuesSelectionItem = createDimensionValuesSelectionItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES,
                 getConstants().datasetAttributeDimensionValuesSelection(), dsdAttributeInstanceDto);
 
-        CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue() + " jajaja");
-        value.setValidators(DatasetAttibuteUtils.getAttibuteValueLengthValidator());
+        CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+        value.setValidators(DatasetAttibuteUtils.getDimensionOrGroupLevelAttibuteValueLengthValidator());
         value.setRequired(true);
 
         setFields(dimensionCoverageValuesSelectionItem, value);

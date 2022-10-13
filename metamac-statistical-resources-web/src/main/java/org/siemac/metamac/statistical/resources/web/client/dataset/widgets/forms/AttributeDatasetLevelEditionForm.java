@@ -39,8 +39,8 @@ public class AttributeDatasetLevelEditionForm extends AttributeBaseForm {
         this.dsdAttributeInstanceDto = dsdAttributeInstanceDto;
         this.dsdAttributeDto = dsdAttributeDto;
 
-        CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue() + " jajaja");
-        value.setValidators(DatasetAttibuteUtils.getAttibuteValueLengthValidator());
+        CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+        value.setValidators(DatasetAttibuteUtils.getDatasetLevelAttibuteValueLengthValidator());
 
         if (dsdAttributeInstanceDto.getValue() != null) {
             value.setValue(dsdAttributeInstanceDto.getValue().getStringValue());
