@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -1564,7 +1565,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             @Override
             public AttributeValue transformItem(String item) {
                 AttributeValue result = new AttributeValue();
-                result.setIdentifier(item);
+                // TODO EDATOS-3778 Validar si este cambio no rompe nada
+                // result.setIdentifier(item);
+                result.setIdentifier(UUID.randomUUID().toString());
                 result.setTitle(item);
                 result.setDsdComponentId(attributeId);
                 result.setDatasetVersion(datasetVersion);
@@ -1673,7 +1676,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     if (title != null) {
                         attrValue.setTitle(title);
                     } else {
+                        // TODO EDATOS-3778 Validar si este cambio no rompe nada
                         attrValue.setTitle(attrValue.getIdentifier());
+                        attrValue.setIdentifier(UUID.randomUUID().toString());
                     }
                 }
             }

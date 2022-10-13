@@ -10,6 +10,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDt
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.DsdAttributeInstanceDS;
+import org.siemac.metamac.statistical.resources.web.client.utils.DatasetAttibuteUtils;
 import org.siemac.metamac.web.common.client.utils.RecordUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
@@ -37,7 +38,10 @@ public class AttributeDatasetLevelEditionForm extends AttributeBaseForm {
     protected void buildNonEnumeratedRepresentationForm(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         this.dsdAttributeInstanceDto = dsdAttributeInstanceDto;
         this.dsdAttributeDto = dsdAttributeDto;
-        CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+
+        CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue() + " jajaja");
+        value.setValidators(DatasetAttibuteUtils.getAttibuteValueLengthValidator());
+
         if (dsdAttributeInstanceDto.getValue() != null) {
             value.setValue(dsdAttributeInstanceDto.getValue().getStringValue());
         }
