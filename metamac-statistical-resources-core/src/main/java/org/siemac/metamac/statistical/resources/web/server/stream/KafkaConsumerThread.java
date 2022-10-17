@@ -74,7 +74,14 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             while (alwaysWithDelay()) {
                 // Milliseconds, spent waiting in poll if data is not available in the buffer
                 ConsumerRecords<String, T> records = consumer.poll(100);
-
+                /*
+                Set<TopicPartition> partitions = consumer.assignment();
+                for (TopicPartition partition : partitions) {
+                    if (partition.partition() == 0) {
+                        this.consumer.seek(partition, 2000);
+                    }
+                }
+                */
                 if (records.count() > 1) {
                     LOGGER.error(MAX_POOL_MSG);
                     throw new RuntimeException(MAX_POOL_MSG);

@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -118,6 +119,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
 
 /**
  * Implementation of StatisticalResourcesServiceFacade.
@@ -1194,6 +1196,22 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
     }
 
+    @Override
+    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
+        
+        DatasetAvro jaxiDatasetVersionAvro = null;
+        if (message instanceof DatasetAvro) {
+            jaxiDatasetVersionAvro = (DatasetAvro) message;
+        } 
+
+        String r = "SSs";
+        // TODO EDATOS-3770 Operate
+        //getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+    }
+    
+    
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
         DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 

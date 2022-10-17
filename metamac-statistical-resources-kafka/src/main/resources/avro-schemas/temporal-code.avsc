@@ -1,3 +1,4 @@
+[
   {
       "namespace": "org.siemac.metamac.statistical.resources.core.stream.messages",
       "type" : "record",
@@ -7,3 +8,4 @@
           {"name" : "title", "type" : ["null", "string" ]}
       ]
   }
+  ]

@@ -52,5 +52,31 @@
              {"name" : "title", "type" : ["null", "InternationalStringAvro"]},
              {"name" : "selfLink", "type" : ["null", "string"]} 
          ]
+     },
+     {
+        "namespace" : "es.ibestat.jaxi.stream.messages",
+        "name" : "TypeExternalArtefactsEnumAvro",
+        "type" : "enum",
+        "symbols" : [
+             "CATEGORY",
+             "CATEGORY_SCHEME",
+             "CODELIST",
+             "CODE",
+             "CONCEPT_SCHEME",
+             "CONCEPT",
+             "DIMENSION",
+             "STATISTICAL_OPERATION",
+             "VARIABLE_ELEMENT"
+        ]
+    },  
+    {
+        "namespace": "es.ibestat.jaxi.stream.messages",
+         "type": "record",
+         "name": "ExternalItemAvro",
+         "fields" : [
+             {"name" : "code", "type" : ["null", "string"]},
+             {"name" : "codeNested", "type" : ["null", "string"]},
+             {"name" : "urn", "type" : ["null", "string"]}
+         ]
      }
  ]

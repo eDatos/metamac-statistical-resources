@@ -56,7 +56,7 @@ public class KafkaInitializeTopics implements ApplicationListener<ContextRefresh
         }
     }
 
-    public void propagateCreationOfTopics() throws MetamacException {
+    private void propagateCreationOfTopics() throws MetamacException {
         Properties kafkaProperties = getKafkaProperties();
 
         List<NewTopic> topics = getTopics();
@@ -80,7 +80,6 @@ public class KafkaInitializeTopics implements ApplicationListener<ContextRefresh
         topics.add(createTopic(statisticalResourcesConfiguration.retrieveKafkaTopicQueryPublication()));
         topics.add(createTopic(statisticalResourcesConfiguration.retrieveKafkaTopicDatasetsPublication()));
         topics.add(createTopic(statisticalResourcesConfiguration.retrieveKafkaTopicCollectionPublication()));
-        topics.add(createTopic(statisticalResourcesConfiguration.retrieveKafkaTopicJaxiPublication()));
 
         return topics;
     }
