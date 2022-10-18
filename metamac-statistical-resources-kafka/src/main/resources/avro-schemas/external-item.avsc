@@ -76,7 +76,9 @@
          "fields" : [
              {"name" : "code", "type" : ["null", "string"]},
              {"name" : "codeNested", "type" : ["null", "string"]},
-             {"name" : "urn", "type" : ["null", "string"]}
+             {"name" : "urn", "type" : ["null", "string"]},
+             {"name" : "title", "type" : ["null", "org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro"]},
+             {"name" : "type", "type" : ["null", "TypeExternalArtefactsEnumAvro"]}
          ]
      }
  ]

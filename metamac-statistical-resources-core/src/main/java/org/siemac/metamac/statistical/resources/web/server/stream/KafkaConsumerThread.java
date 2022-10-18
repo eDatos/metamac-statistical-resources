@@ -74,14 +74,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             while (alwaysWithDelay()) {
                 // Milliseconds, spent waiting in poll if data is not available in the buffer
                 ConsumerRecords<String, T> records = consumer.poll(100);
-                /*
-                Set<TopicPartition> partitions = consumer.assignment();
-                for (TopicPartition partition : partitions) {
-                    if (partition.partition() == 0) {
-                        this.consumer.seek(partition, 2000);
-                    }
-                }
-                */
+
                 if (records.count() > 1) {
                     LOGGER.error(MAX_POOL_MSG);
                     throw new RuntimeException(MAX_POOL_MSG);
@@ -121,8 +114,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                 try {
                     ServiceContext serviceContext = createServiceContext(logMessage);
   
-                    //TODO EDATOS-3770 PONER CÓDIGO AQUÍ
-                    //statisticalResourcesServiceFacade
+                    statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
                     
                     commitSync(record);
                 } catch (Exception e) {
@@ -143,7 +135,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
     }
 
     private ServiceContext createServiceContext(String logMessage) {
-        ServiceContext serviceContext = new ServiceContext("kafka-query-received", logMessage.toString(), "indicators-core");
+        ServiceContext serviceContext = new ServiceContext("kafka-jaxi-publication-received", logMessage.toString(), "metamac-statistical-resources-core");
         MetamacPrincipal metamacPrincipal = new MetamacPrincipal();
         metamacPrincipal.setUserId(serviceContext.getUserId());
         metamacPrincipal.getAccesses().add(new MetamacPrincipalAccess(StatisticalResourcesRoleEnum.ADMINISTRADOR.getName(), StatisticalResourcesConstants.APPLICATION_ID, null));
