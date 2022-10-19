@@ -88,7 +88,6 @@ import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFi
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
-import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalServiceImpl;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
@@ -613,6 +612,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processCommonImportationTask(ctx, importationJobKey, taskInfoDataset);
         } else {
             processDatasetInImportTask(ctx, importationJobKey, taskInfoDataset);
+            markDatabaseImportTaskAsFinished(ctx, importationJobKey);
         }
     }
 
