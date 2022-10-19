@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsParameter;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
@@ -93,15 +92,23 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Dataset retrieveDataset(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim) {
+    public Dataset retrieveDataset(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             return datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
+        }
+    }
+
+    private Map<String, List<String>> parseDimensionExpression(String dim, String representation) {
+        if (StringUtils.isEmpty(representation)) {
+            return org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression(dim);
+        } else {
+            return org.siemac.metamac.core.common.util.rest.RequestUtil.parseParamExpression(representation);
         }
     }
 
@@ -140,10 +147,10 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim) {
+    public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
-            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
