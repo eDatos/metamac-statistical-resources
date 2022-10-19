@@ -9,9 +9,12 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -71,6 +74,41 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
             // @formatter:on
         }
     }
+    
+    public void createCustomConsumer(ServiceContext ctx) {
+            KafkaConsumer<String, DatasetAvro> consumer = null;
+            try {
+                String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaTopicJaxiPublication();
+                consumer = createConsumerFromCurrentOffset(topicJaxiPublication, CONSUMER_JAXI_MESSAGES_1_NAME);
+                
+                int numberOfMessagesToRead = 5;
+                boolean keepOnReading = true;
+                int numberOfMessagesReadSoFar = 0;
+                
+                while(keepOnReading){
+                    ConsumerRecords<String, DatasetAvro> records =
+                            consumer.poll(100);
+
+                    for (ConsumerRecord<String, DatasetAvro> record : records){
+                        numberOfMessagesReadSoFar += 1;
+                        LOGGER.info("Key: " + record.key() + ", Value: " + record.value());
+                        LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
+                        if (numberOfMessagesReadSoFar >= numberOfMessagesToRead){
+                            keepOnReading = false; // to exit the while loop
+                            break; // to exit the for loop
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                LOGGER.error(e, e.getCause());
+    } finally {
+        LOGGER.info("Closing the consumer...");
+        if (consumer != null) {
+        consumer.close();
+        }
+    }
+    }
+    
     
     public void startKeepAliveKafkaThread(ApplicationContext context) throws MetamacException {
         KeepAliveKafkaThread keepAliveKafkaThread = new KeepAliveKafkaThread();
