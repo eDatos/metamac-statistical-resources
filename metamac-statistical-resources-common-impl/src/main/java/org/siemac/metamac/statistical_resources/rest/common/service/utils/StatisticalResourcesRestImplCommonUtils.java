@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.common.service.utils;
 
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.PATTERN_LAST;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +64,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
                 continue;
             }
 
-            Matcher matcherLast = patternLast.matcher(value);
+            Matcher matcherLast = PATTERN_LAST.matcher(value);
             if (matcherLast.matches()) {
                 int lastN = Integer.parseInt(matcherLast.group(1));
 

@@ -1,5 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.common.service.utils;
 
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.LAST_PATTERN_REGEX;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.PLUS;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.SPACE;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.removeCapturing;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,8 +36,6 @@ public class StatisticalResourcesRestApiCommonUtils {
 
     private static final String  AFTER_PATTERN_REGEX   = "~after=(" + TIME_PERIOD_REGEX + ")";
 
-    private static final String  LAST_PATTERN_REGEX    = "~last=(\\d+)";
-
     private static final String  CODE                  = removeCapturing(RANGE_PATTERN_REGEX) + "|" + removeCapturing(AFTER_PATTERN_REGEX) + "|" + removeCapturing(LAST_PATTERN_REGEX) + "|"
             + NON_TIME_PERIOD_REGEX + "|" + TIME_PERIOD_REGEX;
 
@@ -45,13 +48,6 @@ public class StatisticalResourcesRestApiCommonUtils {
 
     // Date range, inclusive: dim=TIME_PERIOD:~range=2009;2010
     public static final Pattern  patternRange          = Pattern.compile(RANGE_PATTERN_REGEX);
-
-    // Last n elements: dim=TIME_PERIOD:~last=2
-    public static final Pattern  patternLast           = Pattern.compile(LAST_PATTERN_REGEX);
-
-    private static final String  SPACE                 = " ";
-
-    private static final String  PLUS                  = "+";
 
     private static final Pattern patternDataSeparator  = Pattern.compile(" \\| ");
 
@@ -90,10 +86,6 @@ public class StatisticalResourcesRestApiCommonUtils {
             logger.info(String.format("The following text (%s) was unmatched when parsing (%s)", unmatchedText, dimExpression));
         }
         return selectedDimension;
-    }
-
-    private static String removeCapturing(String regex) {
-        return regex.replace("(?:", "(").replace("(", "(?:");
     }
 
     public static Set<String> parseFieldsParameter(String fieldsParam) {
