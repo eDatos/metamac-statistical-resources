@@ -1,12 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.common.service.utils;
 
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.LAST_PATTERN_REGEX;
-import static org.siemac.metamac.core.common.util.rest.RequestUtil.PLUS;
-import static org.siemac.metamac.core.common.util.rest.RequestUtil.SPACE;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.parseFields;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.removeCapturing;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -88,30 +86,13 @@ public class StatisticalResourcesRestApiCommonUtils {
         return selectedDimension;
     }
 
-    public static Set<String> parseFieldsParameter(String fieldsParam) {
-        Set<String> showFields = new HashSet<>();
-        if (fieldsParam != null) {
-            Set<String> validFields = new HashSet<>();
-            validFields.add(StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
-            validFields.add(StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
-            validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION);
-            validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
-            List<String> fieldList = Arrays.asList(fieldsParam.split(","));
-            List<String> parsedFieldList = new ArrayList<>();
-            for (String field : fieldList) {
-                if (field.startsWith(SPACE)) {
-                    parsedFieldList.add(field.replaceFirst(SPACE, PLUS));
-                } else {
-                    parsedFieldList.add(field);
-                }
-            }
-            for (String value : validFields) {
-                if (parsedFieldList.contains(value)) {
-                    showFields.add(value);
-                }
-            }
-        }
-        return showFields;
+    public static Set<String> parseFieldsStatisticalResources(String fieldsParam) {
+        Set<String> validFields = new HashSet<>();
+        validFields.add(StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
+        validFields.add(StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
+        validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION);
+        validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
+        return parseFields(fieldsParam, validFields);
     }
 
     public static boolean containsField(Set<String> fields, String field) {
