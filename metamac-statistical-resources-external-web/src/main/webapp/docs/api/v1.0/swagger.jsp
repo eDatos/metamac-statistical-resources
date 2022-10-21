@@ -4216,10 +4216,16 @@
                   "description":"Versión del recurso."
                },
                {
+                  "name":"representations",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD[2009|2010]<br/>\r\n- dim=TIME_PERIOD[2009|2010]:INDICADORES[INDICE_OCUPACION_PLAZAS] <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD[~last=2] <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD[~after=2012-M02] <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD[~range=2012;2013]"
+               },
+               {
                   "name":"dim",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
+                  "description":"<b>DEPRECADO use representations en su lugar.</b> Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
                },
                {
                   "name":"fields",
@@ -4423,10 +4429,16 @@
                   "description":"Identificador del recurso."
                },
                {
+                  "name":"representations",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD[2009|2010]<br/>\r\n- dim=TIME_PERIOD[2009|2010]:INDICADORES[INDICE_OCUPACION_PLAZAS] <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD[~last=2] <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD[~after=2012-M02] <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD[~range=2012;2013]"
+               },
+               {
                   "name":"dim",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
+                  "description":"<b>DEPRECADO use representations en su lugar.</b> Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
                },
                {
                   "name":"fields",
