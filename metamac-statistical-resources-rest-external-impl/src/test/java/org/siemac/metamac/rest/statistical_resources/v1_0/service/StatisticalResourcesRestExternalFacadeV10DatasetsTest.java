@@ -75,7 +75,27 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
         }
         {
             String dims = "GEO_DIM:lanzarote:TIME_PERIOD:2014:measure01:measure01-conceptScheme01-concept05:dim01:dim01-codelist01-code04";
-            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null); // FIXME make some tests
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null);
+
+            assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
+            assertEquals(BigInteger.valueOf(1), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());
+            assertEquals("lanzarote", dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getRepresentations().get(0).getCode());
+
+            assertEquals("TIME_PERIOD", dataset.getData().getDimensions().getDimensions().get(1).getDimensionId());
+            assertEquals(BigInteger.valueOf(1), dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal());
+            assertEquals("2014", dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getRepresentations().get(0).getCode());
+
+            assertEquals("measure01", dataset.getData().getDimensions().getDimensions().get(2).getDimensionId());
+            assertEquals(BigInteger.valueOf(1), dataset.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal());
+            assertEquals("measure01-conceptScheme01-concept05", dataset.getData().getDimensions().getDimensions().get(2).getRepresentations().getRepresentations().get(0).getCode());
+
+            assertEquals("dim01", dataset.getData().getDimensions().getDimensions().get(3).getDimensionId());
+            assertEquals(BigInteger.valueOf(1), dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal());
+            assertEquals("dim01-codelist01-code04", dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getRepresentations().get(0).getCode());
+        }
+        {
+            String representations = "GEO_DIM[lanzarote]:TIME_PERIOD[2014]:measure01[measure01-conceptScheme01-concept05]:dim01[dim01-codelist01-code04]";
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, representations);
 
             assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
             assertEquals(BigInteger.valueOf(1), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());
@@ -95,8 +115,24 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
         }
         {
             String dims = "TIME_PERIOD:~last=1";
-            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null); // FIXME make some tests for
-                                                                                                                                                                        // this
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null);
+
+            assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
+            assertEquals(BigInteger.valueOf(13), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());
+
+            assertEquals("TIME_PERIOD", dataset.getData().getDimensions().getDimensions().get(1).getDimensionId());
+            assertEquals(BigInteger.valueOf(1), dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal());
+            assertEquals("2014", dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getRepresentations().get(0).getCode());
+
+            assertEquals("measure01", dataset.getData().getDimensions().getDimensions().get(2).getDimensionId());
+            assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal());
+
+            assertEquals("dim01", dataset.getData().getDimensions().getDimensions().get(3).getDimensionId());
+            assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal());
+        }
+        {
+            String representations = "TIME_PERIOD[~last=1]";
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, representations);
 
             assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
             assertEquals(BigInteger.valueOf(13), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());
@@ -113,7 +149,25 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
         }
         {
             String dims = "TIME_PERIOD:~after=2013";
-            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null); // FIXME make some tests
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null);
+
+            assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
+            assertEquals(BigInteger.valueOf(13), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());
+
+            assertEquals("TIME_PERIOD", dataset.getData().getDimensions().getDimensions().get(1).getDimensionId());
+            assertEquals(BigInteger.valueOf(2), dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal());
+            assertEquals("2014", dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getRepresentations().get(0).getCode());
+            assertEquals("2013", dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getRepresentations().get(1).getCode());
+
+            assertEquals("measure01", dataset.getData().getDimensions().getDimensions().get(2).getDimensionId());
+            assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal());
+
+            assertEquals("dim01", dataset.getData().getDimensions().getDimensions().get(3).getDimensionId());
+            assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal());
+        }
+        {
+            String representations = "TIME_PERIOD[~after=2013]";
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, representations);
 
             assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
             assertEquals(BigInteger.valueOf(13), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());
@@ -131,7 +185,26 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
         }
         {
             String dims = "TIME_PERIOD:~range=2011;2013";
-            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null); // FIXME make some tests
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, dims, null);
+
+            assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
+            assertEquals(BigInteger.valueOf(13), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());
+
+            assertEquals("TIME_PERIOD", dataset.getData().getDimensions().getDimensions().get(1).getDimensionId());
+            assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal());
+            assertEquals("2013", dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getRepresentations().get(0).getCode());
+            assertEquals("2012", dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getRepresentations().get(1).getCode());
+            assertEquals("2011", dataset.getData().getDimensions().getDimensions().get(1).getRepresentations().getRepresentations().get(2).getCode());
+
+            assertEquals("measure01", dataset.getData().getDimensions().getDimensions().get(2).getDimensionId());
+            assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal());
+
+            assertEquals("dim01", dataset.getData().getDimensions().getDimensions().get(3).getDimensionId());
+            assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal());
+        }
+        {
+            String representations = "TIME_PERIOD[~range=2011;2013]";
+            Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, representations);
 
             assertEquals("GEO_DIM", dataset.getData().getDimensions().getDimensions().get(0).getDimensionId());
             assertEquals(BigInteger.valueOf(13), dataset.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal());

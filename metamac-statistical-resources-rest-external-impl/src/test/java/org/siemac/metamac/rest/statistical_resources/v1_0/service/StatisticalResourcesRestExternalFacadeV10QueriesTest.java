@@ -99,23 +99,42 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryWithDimensions() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, buildDimParamsForQuery_1(), null); // FIXME, make some tests for the
-                                                                                                                                                                       // new one
+        {
+            Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, buildDimParamsForQuery_1(), null);
 
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
+            assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
 
-        assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
-        assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(1));
-        assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
-        assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(1));
-        assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
-        assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(1));
-        assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
-        assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
 
-        // Ultimo elemento de las observaciones
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 1);
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[0], "421");
+            // Ultimo elemento de las observaciones
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 1);
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[0], "421");
+        }
+        {
+            Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, buildRepresentationsParamsForQuery_1());
+
+            assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
+
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
+
+            // Ultimo elemento de las observaciones
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 1);
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[0], "421");
+        }
     }
 
     private String buildDimParamsForQuery_1() {
@@ -124,6 +143,16 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
                 + "dim01" + ":" + "dim01-codelist01-code01" + ":"
                 + "measure01" + ":" + "measure01-conceptScheme01-concept05" + ":"
                 + "TIME_PERIOD" + ":" + "2013" + ":"
+                ;
+        //@formatter:on
+    }
+
+    private String buildRepresentationsParamsForQuery_1() {
+        //@formatter:off
+        return "GEO_DIM" + "[" + "fuerteventura" + "]" + ":"
+                + "dim01" + "[" + "dim01-codelist01-code01" + "]" + ":"
+                + "measure01" + "[" + "measure01-conceptScheme01-concept05" + "]" + ":"
+                + "TIME_PERIOD" + "[" + "2013" + "]"
                 ;
         //@formatter:on
     }
