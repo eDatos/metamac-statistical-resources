@@ -19,7 +19,6 @@ import org.siemac.metamac.statistical_resources.rest.common.StatisticalResources
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 public class StatisticalResourcesRestApiCommonUtils {
 
     private final static Logger  logger                = LoggerFactory.getLogger(StatisticalResourcesRestApiCommonUtils.class);
@@ -51,6 +50,7 @@ public class StatisticalResourcesRestApiCommonUtils {
      * Parse dimension expression from request
      * Sample: MOTIVOS_ESTANCIA:000|001|002:ISLAS_DESTINO_PRINCIPAL:005|006
      */
+    @Deprecated
     public static Map<String, List<String>> parseDimensionExpression(String dimExpression) {
         if (StringUtils.isBlank(dimExpression)) {
             return Collections.emptyMap();
