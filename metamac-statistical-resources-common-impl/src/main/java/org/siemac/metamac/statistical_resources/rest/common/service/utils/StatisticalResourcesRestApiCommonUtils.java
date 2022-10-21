@@ -41,12 +41,6 @@ public class StatisticalResourcesRestApiCommonUtils {
 
     private static final Pattern patternCodes          = Pattern.compile("(" + CODE + ")\\|?");
 
-    // Dates after or equals to a date: dim=TIME_PERIOD:~after=1999
-    public static final Pattern  patternAfter          = Pattern.compile(AFTER_PATTERN_REGEX);
-
-    // Date range, inclusive: dim=TIME_PERIOD:~range=2009;2010
-    public static final Pattern  patternRange          = Pattern.compile(RANGE_PATTERN_REGEX);
-
     private static final Pattern patternDataSeparator  = Pattern.compile(" \\| ");
 
     protected StatisticalResourcesRestApiCommonUtils() {
@@ -93,14 +87,6 @@ public class StatisticalResourcesRestApiCommonUtils {
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION);
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
         return parseFields(fieldsParam, validFields);
-    }
-
-    public static boolean containsField(Set<String> fields, String field) {
-        return fields != null && fields.contains(field);
-    }
-
-    public static boolean hasField(String fields, String field) {
-        return fields != null && fields.contains(field);
     }
 
     public static String escapeValueToData(String value) {

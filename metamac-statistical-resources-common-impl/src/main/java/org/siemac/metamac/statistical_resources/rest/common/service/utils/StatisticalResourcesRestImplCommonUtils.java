@@ -1,6 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.common.service.utils;
 
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.PATTERN_AFTER;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.PATTERN_LAST;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.PATTERN_RANGE;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +57,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
 
         ArrayList<String> results = new ArrayList<String>();
         for (String value : selectedValues) {
-            Matcher matcherAfter = patternAfter.matcher(value);
+            Matcher matcherAfter = PATTERN_AFTER.matcher(value);
             if (matcherAfter.matches()) {
                 String startRange = matcherAfter.group(1);
 
@@ -79,7 +81,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
                 continue;
             }
 
-            Matcher matcherRange = patternRange.matcher(value);
+            Matcher matcherRange = PATTERN_RANGE.matcher(value);
             if (matcherRange.matches()) {
                 String startRange = matcherRange.group(1);
                 String endRange = matcherRange.group(2);
