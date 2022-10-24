@@ -88,7 +88,6 @@ import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFi
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
-import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalServiceImpl;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
@@ -944,7 +943,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
 
         // discard all variable elements present in the array to avoid duplicated or outdated data
-        datasetVersion.getGeographicCoverageVariableElements().clear();
+        
+        //TODO
+        //datasetVersion.getGeographicCoverageVariableElements().clear();
 
         logger.debug("Processing geographic coverage to create the cache");
         for (ExternalItem geoCoverage : geographicCoverage) {
@@ -961,11 +962,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
 
             ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
-            datasetVersion.addGeographicCoverageVariableElement(territoryVariableElement);
+            //TODO
+           // datasetVersion.addGeographicCoverageVariableElement(territoryVariableElement);
         }
 
-        logger.debug("Created new {} variable elements for {} geographic codes", datasetVersion.getGeographicCoverageVariableElements().size(), geographicCoverage.size());
-        datasetVersionRepository.save(datasetVersion);
+        //TODO
+        //logger.debug("Created new {} variable elements for {} geographic codes", datasetVersion.getGeographicCoverageVariableElements().size(), geographicCoverage.size());
+        //datasetVersionRepository.save(datasetVersion);
 
         markTaskAsFinished(ctx, jobKey);
     }

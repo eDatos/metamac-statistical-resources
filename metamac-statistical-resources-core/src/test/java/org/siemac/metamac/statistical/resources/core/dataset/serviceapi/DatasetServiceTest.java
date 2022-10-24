@@ -109,7 +109,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.siemac.edatos.core.common.constants.shared.ExceptionCodeConstants;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -1907,6 +1906,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         // no test
     }
 
+    @Override
+    public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
+        // no test
+    }
+    
     @Override
     @Test
     @MetamacMock({CATEGORISATION_01_DATASET_VERSION_01_NAME})

@@ -86,8 +86,9 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation());
                 case IS_LAST_VERSION:
                     return buildSculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
-                case GEOCOV_VARELEM_ID:
-                    return buildSculptorPropertyCriteria(DatasetVersionProperties.geographicCoverageVariableElements().code(), PropertyTypeEnum.STRING, propertyRestriction);
+                    //TODO EDATOS-3770
+         //       case GEOCOV_VARELEM_ID:
+         //           return buildSculptorPropertyCriteria(DatasetVersionProperties.geographicCoverageVariableElements().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }

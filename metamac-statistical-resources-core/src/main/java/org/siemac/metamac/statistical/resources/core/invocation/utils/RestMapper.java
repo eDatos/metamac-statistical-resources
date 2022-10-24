@@ -5,6 +5,8 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.specific.SpecificData;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -24,10 +26,15 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalRes
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringItemAvro;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
+import es.ibestat.jaxi.stream.messages.ExternalItemAvro;
 
 @Component
 public class RestMapper {
@@ -59,6 +66,29 @@ public class RestMapper {
         return externalItems;
     }
 
+    public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException {
+        List<ExternalItem> externalItems = new ArrayList<ExternalItem>();
+        for (ExternalItemAvro externalAvro : jaxiDatasetVersionAvro.getGeographicCoverage()) {
+
+            ExternalItem externalItem = new ExternalItem();
+
+            externalItem.setType(TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name()));
+            externalItem.setCode(externalAvro.getCode());
+            externalItem.setCodeNested(externalAvro.getCodeNested());
+            
+            //TODO EDATOS-3770 VER SI NECESARIO URI Y MANAGEMENTAPPURL
+            ///latest/variables/VR_TERRITORIO/variableelements/CCAA_CANARIAS
+            // externalItem.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(externalAvro.getType(), resource.getSelfLink().getHref()));
+            externalItem.setUri("FIXME EDATOS-3770 RELLENAR");
+            externalItem.setUrn(externalAvro.getUrn());
+            // externalItem.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(externalAvro.getType(), resource.getManagementAppLink()));
+            externalItem.setTitle(getInternationalStringFromInternationalStringAvro(externalAvro.getTitle()));
+            externalItems.add(externalItem);
+        }
+
+        return externalItems;
+    }
+    
     public ExternalItem buildExternalItemFromResourceInternal(ResourceInternal resource) throws MetamacException {
         ExternalItem externalItem = new ExternalItem();
         TypeExternalArtefactsEnum type = TypeExternalArtefactsEnum.fromValue(resource.getKind());
@@ -82,6 +112,18 @@ public class RestMapper {
         return buildExternalItemFromSrmItemResourceInternal(code);
     }
 
+    private InternationalString getInternationalStringFromInternationalStringAvro(InternationalStringAvro internationalStringAvro) {
+        InternationalString result = new InternationalString();
+        List<InternationalStringItemAvro> internationalStringItemAvro = internationalStringAvro.getLocalisedStrings();
+
+        for (Object element : internationalStringItemAvro) {
+            GenericRecord record = (GenericRecord) element;
+            InternationalStringItemAvro item = (InternationalStringItemAvro) SpecificData.get().deepCopy(InternationalStringItemAvro.getClassSchema(), record);
+            result.addText(new LocalisedString(item.getLocale(), item.getLabel()));
+        }
+        return result;
+    }
+    
     public InternationalString getInternationalStringFromInternationalStringResource(org.siemac.metamac.rest.common.v1_0.domain.InternationalString intString) {
         InternationalString result = new InternationalString();
         for (org.siemac.metamac.rest.common.v1_0.domain.LocalisedString text : intString.getTexts()) {

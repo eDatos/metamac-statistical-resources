@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.joda.time.DateTime;
@@ -26,6 +27,7 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingl
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
+
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 
 public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidator {
@@ -356,6 +358,10 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkUpdateAllGeographicCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+    
+    public static void checkUpdateGeographicCoverageExternalPublicationVariableElementsCache(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
 }
