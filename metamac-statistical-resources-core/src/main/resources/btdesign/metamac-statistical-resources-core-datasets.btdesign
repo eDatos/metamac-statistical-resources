@@ -113,6 +113,8 @@ Application DatasetsStatisticalResources {
     		// Geocoverage variable elements cache
     		void updateGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
+    		void updateGeographicCoverageExternalPublicationVariableElementsCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
+    		
 		}
 
 		// ----------------------------------------------------------------
@@ -248,9 +250,7 @@ Application DatasetsStatisticalResources {
 			- Bag<@Datasource> datasources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersion;
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
-
-			"Variable elements of geographical coverage of datasets"
-			- Bag<@ExternalItem> geographicCoverageVariableElements cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS" databaseColumn="EXTERNAL_ITEM_FK" databaseJoinColumn="DATASET_VERSION_FK";
+			
 
 			Repository DatasetVersionRepository {
 				save;
@@ -420,6 +420,27 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}
+    	}  	
+    	
+		Entity GeoCovVarElementCacheDatasetVersion {
+			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
+			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
+			!auditable
+			!optimisticLocking
+
+			Long id not nullable key;
+			
+			String datasetVersionUrn databaseColumn="dataset_version_urn" not nullable;
+			- @ExternalItem externalItem cascade="all" databaseColumn="external_item_fk" not nullable;
+			boolean isExternalSource databaseColumn="is_external_source" not nullable;
+			
+			Repository GeoCovVarElementCacheDatasetVersionRepository {
+				save;
+				delete;			
+				findByCondition;
+				findByCondition(PagingParameter pagingParameter);
+				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
+			}
+		}
 	}
 }
