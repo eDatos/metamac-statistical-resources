@@ -28,12 +28,22 @@
             <filter-name>UrlRewriteFilter</filter-name>
             <url-pattern>/apis/*</url-pattern>
     </filter-mapping>
+    
     <filter>
         <filter-name>CORSFilter</filter-name>
         <filter-class>org.siemac.metamac.core.common.filter.CORSFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>CORSFilter</filter-name>
+        <url-pattern>/apis/*</url-pattern>
+    </filter-mapping>
+    
+    <filter>
+        <filter-name>DeprecationFilter</filter-name>
+        <filter-class>org.siemac.metamac.statistical.resources.web.external.DeprecationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>DeprecationFilter</filter-name>
         <url-pattern>/apis/*</url-pattern>
     </filter-mapping>
     

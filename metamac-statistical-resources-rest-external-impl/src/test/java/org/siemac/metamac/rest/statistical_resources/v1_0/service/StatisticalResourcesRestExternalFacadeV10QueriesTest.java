@@ -74,7 +74,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQuery() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null);
+        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, null);
 
         assertEquals(QUERY_1_CODE, query.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
@@ -99,22 +99,42 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryWithDimensions() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, buildDimParamsForQuery_1());
+        {
+            Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, buildDimParamsForQuery_1(), null);
 
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
+            assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
 
-        assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
-        assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(1));
-        assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
-        assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(1));
-        assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
-        assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(1));
-        assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
-        assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
 
-        // Ultimo elemento de las observaciones
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 1);
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[0], "421");
+            // Ultimo elemento de las observaciones
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 1);
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[0], "421");
+        }
+        {
+            Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, buildRepresentationsParamsForQuery_1());
+
+            assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
+
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getDimensionId(), "GEO_DIM");
+            assertEquals(query.getData().getDimensions().getDimensions().get(0).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getDimensionId(), "TIME_PERIOD");
+            assertEquals(query.getData().getDimensions().getDimensions().get(1).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getDimensionId(), "measure01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(2).getRepresentations().getTotal(), BigInteger.valueOf(1));
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
+            assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
+
+            // Ultimo elemento de las observaciones
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 1);
+            assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[0], "421");
+        }
     }
 
     private String buildDimParamsForQuery_1() {
@@ -127,9 +147,19 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
         //@formatter:on
     }
 
+    private String buildRepresentationsParamsForQuery_1() {
+        //@formatter:off
+        return "GEO_DIM" + "[" + "fuerteventura" + "]" + ":"
+                + "dim01" + "[" + "dim01-codelist01-code01" + "]" + ":"
+                + "measure01" + "[" + "measure01-conceptScheme01-concept05" + "]" + ":"
+                + "TIME_PERIOD" + "[" + "2013" + "]"
+                ;
+        //@formatter:on
+    }
+
     @Test
     public void testRetrieveQueryWithDatasetGlobal() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, defaultLanguages, null, null);
+        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, defaultLanguages, null, null, null);
 
         assertEquals(QUERY_2_CODE, query.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query2", query.getUrn());
@@ -138,7 +168,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryAnotherLanguage() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, Arrays.asList("en"), null, null);
+        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, Arrays.asList("en"), null, null, null);
 
         MetamacRestAsserts.assertEqualsInternationalString("es", "title-query1 en Espanol", "en", "title-query1 in English", query.getName());
     }
@@ -167,7 +197,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryFixed() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, null, null, null);
+        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -262,7 +292,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryFixedChangingParentVisualisations() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_4_CODE, null, null, null);
+        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_4_CODE, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -331,7 +361,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryAutoincremental() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, null, null, null);
+        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -383,7 +413,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryLatestData() throws Exception {
-        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_3_CODE, null, null, null);
+        Query query = statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_3_CODE, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -433,7 +463,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
         String agencyID = AGENCY_1;
         String resourceID = NOT_EXISTS;
         try {
-            statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(agencyID, resourceID, null, null, null);
+            statisticalResourcesRestExternalFacadeClientXml.retrieveQuery(agencyID, resourceID, null, null, null, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.NOT_FOUND.getStatusCode(), e.getStatus());
 
