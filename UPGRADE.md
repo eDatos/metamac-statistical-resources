@@ -8,6 +8,12 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## X.0.0 a Y.0.0
+* En edatos-3744 hay una rotura de compatibilidad ya que las fechas "DATE_NEXT_UPDATE" en tabla "TB_DATASETS_VERSIONS"  y "NEXT_VERSION_DATE" en tabla "TB_STAT_RESOURCES" cambian de timestamp a varchar (en formato sdmx) En esta tarea se guardó un backup de los valores en las tablas "TEMP_TB_DATASETS_VERSIONS" y "TEMP_TB_STAT_RESOURCES" respectivamente. 
+En esta tarea se deben borrar dichas tablas temporales después de verificar que la migración de datos fue correcta.
+Por tanto, pasar script de borrado de ambas tablas que se encuentra en esta ruta:
+[etc/changes-from-release/5.0.0/db](etc/changes-from-release/5.0.0/db).
+
 ## 4.0.0 a 5.0.0
 * Rotura de la compatibilidad:
 ** Debido a refactorización de código al mover determinadas clases de los subproyectos metamac-statistical-resources-rest-external-impl y metamac-statistical-resources-rest-internal-impl al proyecto metamac-statistical-resources-rest-api-common que implicaron el renombrado de paquetes, es necesario que las aplicaciones que usen el proyecto metamac-statistical-resources como librería sean adaptadas al actualizar a esta versión. De no hacerlo, las aplicaciones no compilarán correctamente.
