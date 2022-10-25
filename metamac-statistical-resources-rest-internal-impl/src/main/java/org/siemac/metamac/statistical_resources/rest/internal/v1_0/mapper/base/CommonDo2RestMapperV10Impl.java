@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base;
 
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.escapeValueToData;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 import static org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants.KEY_DIMENSIONS_SEPARATOR;
@@ -269,7 +269,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setSubtitle(toInternationalString(source.getSubtitle(), selectedLanguages));
         target.setTitleAlternative(toInternationalString(source.getTitleAlternative(), selectedLanguages));
         target.setAbstract(toInternationalString(source.getAbstractLogic(), selectedLanguages));
-        target.setKeywords(toInternationalString(source.getKeywords(), selectedLanguages));
         target.setType(toStatisticalResourceType(source.getType()));
         target.setCreator(toResourceExternalItemSrm(source.getCreator(), selectedLanguages));
         target.setDataProviders(toResourcesExternalItemsSrm(source.getDataProvider(), selectedLanguages));

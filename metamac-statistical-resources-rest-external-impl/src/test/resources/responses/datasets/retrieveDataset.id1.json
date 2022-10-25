@@ -25,6 +25,14 @@
             }
         ]
     },
+    "keywords": {
+        "text": [
+            {
+                "value": "keyword1 keyword2 keyword3-oGdSI8N7Wp_000001 en Espanol",
+                "lang": "es"
+            }
+        ]
+    },
     "selectedLanguages": {
         "language": [
             "es"
@@ -1942,14 +1950,6 @@
             "text": [
                 {
                     "value": "titleAlternative-oGdSI8N7Wp_000001 en Espanol",
-                    "lang": "es"
-                }
-            ]
-        },
-        "keywords": {
-            "text": [
-                {
-                    "value": "keyword1 keyword2 keyword3-oGdSI8N7Wp_000001 en Espanol",
                     "lang": "es"
                 }
             ]

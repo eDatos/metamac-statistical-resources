@@ -3934,7 +3934,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión de campos de la misma. Los posibles valores son \"-metadata\" y \"-data\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
                },
                {
                   "name":"lang",
@@ -4216,16 +4216,22 @@
                   "description":"Versión del recurso."
                },
                {
+                  "name":"representation",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD[2009|2010]<br/>\r\n- dim=TIME_PERIOD[2009|2010]:INDICADORES[INDICE_OCUPACION_PLAZAS] <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD[~last=2] <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD[~after=2012-M02] <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD[~range=2012;2013]"
+               },
+               {
                   "name":"dim",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
+                  "description":"<b>DEPRECADO use representations en su lugar.</b> Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+dimension.description\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\",  \"+keywords\" y \"+dimension.description\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description\r\n- fields=+keywords"
                },
                {
                   "name":"lang",
@@ -4423,16 +4429,22 @@
                   "description":"Identificador del recurso."
                },
                {
+                  "name":"representation",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD[2009|2010]<br/>\r\n- dim=TIME_PERIOD[2009|2010]:INDICADORES[INDICE_OCUPACION_PLAZAS] <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD[~last=2] <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD[~after=2012-M02] <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD[~range=2012;2013]"
+               },
+               {
                   "name":"dim",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite filtrar los datos que se se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
+                  "description":"<b>DEPRECADO use representations en su lugar.</b> Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión de campos de la misma. Los posibles valores son \"-metadata\" y \"-data\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
                },
                {
                   "name":"lang",
@@ -4633,7 +4645,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión de campos de la misma. Los posibles valores son \"-metadata\" y \"-data\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
                },
                {
                   "name":"lang",

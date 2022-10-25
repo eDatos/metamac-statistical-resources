@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base;
 
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.escapeValueToData;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 import static org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants.KEY_DIMENSIONS_SEPARATOR;
@@ -246,7 +246,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setSubtitle(toInternationalString(source.getSubtitle(), selectedLanguages));
         target.setTitleAlternative(toInternationalString(source.getTitleAlternative(), selectedLanguages));
         target.setAbstract(toInternationalString(source.getAbstractLogic(), selectedLanguages));
-        target.setKeywords(toInternationalString(source.getKeywords(), selectedLanguages));
         target.setType(toStatisticalResourceType(source.getType()));
         target.setCreator(toResourceExternalItemSrm(source.getCreator(), selectedLanguages));
         target.setDataProviders(toResourcesExternalItemsSrm(source.getDataProvider(), selectedLanguages));
@@ -255,7 +254,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setCreatedDate(toDate(source.getResourceCreatedDate()));
         target.setLastUpdate(toDate(source.getLastUpdate()));
         target.setConformsTo(toInternationalString(source.getConformsTo(), selectedLanguages));
-        
+
         target.setPublishers(toResourcesExternalItemsSrm(source.getPublisher(), selectedLanguages));
         target.setPublisherContributors(toResourcesExternalItemsSrm(source.getPublisherContributor(), selectedLanguages));
         target.setMediators(toResourcesExternalItemsSrm(source.getMediator(), selectedLanguages));
@@ -270,7 +269,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         // Lifecycle
         // note: replacesVersion and isReplacedByVersion are only valid to datasets. So, they are mapped in Dataset mapper
         target.setMaintainer(toResourceExternalItemSrm(source.getMaintainer(), selectedLanguages));
-        
+
         // Versionable
         target.setVersion(source.getVersionLogic());
         target.setVersionRationaleTypes(toVersionRationaleTypes(source.getVersionRationaleTypes(), selectedLanguages));
