@@ -6,12 +6,11 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CustomDatePickerItem;
-import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
@@ -69,6 +68,6 @@ public class LifeCycleResourceVersionForm extends GroupDynamicForm {
     }
     
     private CustomDatePickerItem createFieldDateNextVersion() {
-        return  new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), true, false);
+        return  new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), true, false, CommonUtils.getDateFormatTypeHashMap());
     }
 }

@@ -12,14 +12,13 @@ import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalRes
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CustomDatePickerItem;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.FormItemUtils;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
@@ -95,7 +94,7 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
     }
 
     private CustomDatePickerItem createFieldDateNextVersion() {
-        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), false, false);
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), false, false, CommonUtils.getDateFormatTypeHashMap());
         customDatePickerItem.defaultDateType();
         return customDatePickerItem;
     }

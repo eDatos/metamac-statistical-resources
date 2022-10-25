@@ -6,7 +6,6 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CustomDatePickerItem;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.LifeCycleStatisticalResourceWebCriteria;
@@ -20,7 +19,7 @@ import org.siemac.metamac.web.common.client.widgets.actions.SearchPaginatedActio
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
@@ -87,7 +86,7 @@ public abstract class LifeCycleResourceSearchSectionStack extends BaseAdvancedSe
     }
 
     private CustomDatePickerItem createFieldDateNextVersion() {
-        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(LifeCycleResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), false, false);
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(LifeCycleResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), false, false, CommonUtils.getDateFormatTypeHashMap());
         customDatePickerItem.defaultDateType();
         return customDatePickerItem;
     }

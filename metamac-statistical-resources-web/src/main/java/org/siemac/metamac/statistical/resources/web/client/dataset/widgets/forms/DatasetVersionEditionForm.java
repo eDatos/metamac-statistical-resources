@@ -12,16 +12,12 @@ import org.siemac.metamac.statistical.resources.web.client.constants.Statistical
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CustomDatePickerItem;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceVersionEditionForm;
-import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
-
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 
 public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionForm {
 
@@ -68,7 +64,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
     }
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
-        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), false, false);
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), false, false, CommonUtils.getDateFormatTypeHashMap());
         customDatePickerItem.setIconCreateDateItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
         customDatePickerItem.setIconCustomSdmxTimePeriodItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
         customDatePickerItem.defaultDateType();

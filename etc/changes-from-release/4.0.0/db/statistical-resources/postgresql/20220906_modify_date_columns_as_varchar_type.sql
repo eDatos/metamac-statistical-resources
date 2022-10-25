@@ -2,7 +2,9 @@
 -- EDATOS-3744 Formato de fecha de próxima actualización debe ser del tipo sdmx
       -- DATE_NEXT_UPDATE
 	  -- NEXT_VERSION_DATE 
--- Lo siguientes scripts permitirán cambiar el tipo de dato de los dos campos anteriores de DateTime a String en formato sdxm. Además, se realiza un proceso de migración del valor en formato datetime al valor en formato fecha en sdmx (YYY-MM-DD)	  
+-- Lo siguientes scripts permitirán cambiar el tipo de dato de los dos campos anteriores de DateTime a String en formato sdxm. Además, se realiza un proceso de migración del valor en formato datetime al valor en formato fecha en sdmx (YYY-MM-DD)	
+
+-- Se crea EDATOS-3804 como tarea de soporte para borrar las tablas temporales una vez la tarea lleve en PRO un tiempo prudencial.  
 -- --------------------------------------------------------------------------------------------------
 
 ------------- PASAR "DATE_NEXT_UPDATE" DE DATE A VARCHAR(255)
@@ -34,7 +36,6 @@ update TB_DATASETS_VERSIONS
   from TEMP_TB_DATASETS_VERSIONS 
   where TEMP_TB_DATASETS_VERSIONS.id = TB_DATASETS_VERSIONS.id;
 
---7) Al cabo de unos días, si todo va bien borrar la tabla temporal.
 
 ------------- PASAR "NEXT_VERSION_DATE" DE DATE A VARCHAR(255)
 

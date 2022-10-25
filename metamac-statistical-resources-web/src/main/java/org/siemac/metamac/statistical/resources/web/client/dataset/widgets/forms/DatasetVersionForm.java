@@ -4,10 +4,10 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CustomDatePickerItem;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceVersionForm;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
-import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
 public class DatasetVersionForm extends LifeCycleResourceVersionForm {
     CustomDatePickerItem dateNextUpdate;
@@ -21,7 +21,7 @@ public class DatasetVersionForm extends LifeCycleResourceVersionForm {
     }
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
-        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), true, false);
+        return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), true, false, CommonUtils.getDateFormatTypeHashMap());
     }    
     
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
