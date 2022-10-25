@@ -1224,8 +1224,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         for (String dimension : dimensions) {
             List<String> dimensionValues = dimensionsSelected.get(dimension);
             List<String> dimensionValuesSelected = new ArrayList<String>();
-            if (CollectionUtils.isEmpty(dimensionValues)) {
-                // if dimension is not selected in query, retrieve all codes from coverage
+            if (dimensionValues == null) {
+                // if dimension is not selected in query, retrieve all codes from coverage BUT if the filter returns empty list, we do that
                 List<CodeDimension> codeDimensions = datasetService.retrieveCoverageForDatasetVersionDimension(SERVICE_CONTEXT, source.getSiemacMetadataStatisticalResource().getUrn(), dimension);
                 for (CodeDimension codeDimension : codeDimensions) {
                     dimensionValuesSelected.add(codeDimension.getIdentifier());
