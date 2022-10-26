@@ -16,6 +16,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidatasets;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 
 @Path("v1.0")
 // IMPORTANT: If a new version of API is added, remember change latest url y urlrewrite.xml in war
@@ -44,6 +45,12 @@ public interface StatisticalResourcesV1_0 {
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     Dataset retrieveDataset(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
             @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces({"application/jsonstat+json"})
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    JsonStatData retrieveDatasetJsonStat(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim);
 
     @GET
     @Produces({"application/xml", "application/json"})

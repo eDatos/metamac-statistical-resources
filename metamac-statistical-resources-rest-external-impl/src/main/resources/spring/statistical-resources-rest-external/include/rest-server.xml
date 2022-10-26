@@ -26,11 +26,18 @@
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json" />
             <entry key="xml" value="application/xml" />
+            <!--
+            FIXME EDATOS-3662: Why when using the extension at the end of the URL does it work with ".jsonstat"
+                               but when using `_type` it does not? In the latter it only works with
+                               "application/x-jsonstat", not just only jsonstat or x-jsontat.
+            -->
+            <entry key="jsonstat" value="application/jsonstat+json" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>
             <ref bean="jaxbProvider" />
             <ref bean="jsonProvider" />
+            <ref bean="jsonStatProvider" />
             <ref bean="wadlGenerator" />
         </jaxrs:providers>
         
@@ -52,6 +59,7 @@
     </bean>
     
     <bean id="jsonProvider" class="org.siemac.metamac.rest.json.MetamacJacksonJaxbJsonProvider" />
+    <bean id="jsonStatProvider" class="org.siemac.metamac.statistical_resources.rest.external.provider.MetamacJacksonJaxbJsonStatProvider" />
 
     <bean id="wadlGenerator" class="org.apache.cxf.jaxrs.model.wadl.WadlGenerator">
         <property name="namespacePrefix" value="ns" />
