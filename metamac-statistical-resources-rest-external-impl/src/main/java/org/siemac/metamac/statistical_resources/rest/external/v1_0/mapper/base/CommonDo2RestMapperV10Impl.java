@@ -627,6 +627,20 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, List<String> selectedLanguages) {
+        if (source == null || source.getTexts() == null || source.getTexts().isEmpty()) {
+            return null;
+        }
+
+        if (selectedLanguages == null || selectedLanguages.isEmpty()) {
+            // given that we know texts is not empty we can get the first one
+            return source.getTexts().stream().findFirst().get().getLabel(); // TODO EDATOS-3662: default language?
+        }
+
+        return toInternationalString(source, selectedLanguages).getTexts().get(0).getValue(); // TODO EDATOS-3662 multiples languages?
+    }
+
+    @Override
     public Resources toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
