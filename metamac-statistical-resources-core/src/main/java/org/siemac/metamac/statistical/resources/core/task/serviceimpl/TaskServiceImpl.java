@@ -612,6 +612,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processCommonImportationTask(ctx, importationJobKey, taskInfoDataset);
         } else {
             processDatasetInImportTask(ctx, importationJobKey, taskInfoDataset);
+            markDatabaseImportTaskAsFinished(ctx, importationJobKey);
         }
     }
 
@@ -631,6 +632,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
             throw throwableMetamacException;
         }
+        // this function process the import files and add them to the datasets as new observations. After this task the function  ******"markDatabaseImportTaskAsFinished"******* must be always called if the process finished correctly.
+        // if markDatabaseImportTaskAsFinished is not called, the task is pending in the database and the observations introduced in this execution will be deleted the next time the server is restarted by an automatic background process.
     }
 
     private DateTime getCreatedDataSourceDate(ServiceContext ctx, DateTime createdDateTask) {

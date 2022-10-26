@@ -1,9 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query;
 
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.filterDimensions;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isTemporalDimension;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -87,7 +87,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     @Override
-    public Query toQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, boolean includeMetadata, boolean includeData) throws Exception {
+    public Query toQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields) throws Exception {
         if (source == null) {
             return null;
         }
@@ -103,7 +103,10 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
         DsdProcessorResult dsdProcessorResult = null;
         DatasetVersion relatedDatasetEffective = null;
-        if (includeMetadata || includeData) {
+        boolean includeMetadata = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
+        boolean includeData = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
+        boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
+        if (includeMetadata || includeData || includeKeywords) {
             relatedDatasetEffective = getQueryRelatedDatasetVersionEffective(source);
             dsdProcessorResult = commonDo2RestMapper.processDataStructure(relatedDatasetEffective.getRelatedDsd().getUrn());
         }
@@ -112,6 +115,9 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         if (includeData) {
             target.setData(toQueryData(source, relatedDatasetEffective, dsdProcessorResult, selectedDimensions, selectedLanguages));
+        }
+        if (includeKeywords) {
+            target.setKeywords(commonDo2RestMapper.toInternationalString(relatedDatasetEffective.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
         }
         return target;
     }
@@ -219,7 +225,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion);
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveSelectionValues(selectedDimensions, effectiveQueryDimensionValuesToDataByDimension);
-        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = StatisticalResourcesRestImplCommonUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension, effectiveSelectionValues);
+        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = StatisticalResourcesRestImplCommonUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension,
+                effectiveSelectionValues);
         return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages);
     }
 
@@ -285,7 +292,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                 return org.siemac.metamac.rest.statistical_resources.v1_0.domain.QueryStatus.DISCONTINUED;
             default:
                 throw buildRestException("QueryStatusEnum unsupported: " + source);
-                
+
         }
     }
 

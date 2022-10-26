@@ -13,6 +13,7 @@
             <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:DatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
@@ -29,6 +30,7 @@
             <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:CollectionMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:CollectionData" minOccurs="0" />
@@ -45,6 +47,7 @@
             <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:QueryMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
@@ -61,6 +64,7 @@
             <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
+            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
             <xs:element name="metadata" type="tns:MultidatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:MultidatasetData" minOccurs="0" />
@@ -174,7 +178,6 @@
             <xs:element name="subtitle" type="common:InternationalString" minOccurs="0" />
             <xs:element name="titleAlternative" type="common:InternationalString" minOccurs="0" />
             <xs:element name="abstract" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="type" type="tns:StatisticalResourceType" />
             <xs:element name="creator" type="common:Resource" />
             <xs:element name="contributors" type="common:Resources" minOccurs="0" />

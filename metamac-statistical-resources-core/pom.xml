@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>4.0.1-SNAPSHOT</version>
+        <version>5.0.2-SNAPSHOT</version>
         <relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 
@@ -523,7 +523,6 @@
                     <forkCount>1</forkCount>
                     <reuseForks>true</reuseForks>
                     <argLine>-Xms1024m -Xmx2048m</argLine>
-                    <!-- TODO EDATOS-3227 -->
                     <excludes>
                         <exclude>**/DataManipulateTest.java</exclude>
                         <exclude>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</exclude>           
@@ -548,7 +547,6 @@
                 </executions>
             </plugin>
             
-            <!-- TODO EDATOS-3227 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
