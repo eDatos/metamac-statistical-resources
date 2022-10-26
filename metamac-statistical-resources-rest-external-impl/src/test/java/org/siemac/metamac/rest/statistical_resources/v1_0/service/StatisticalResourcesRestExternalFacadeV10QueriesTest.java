@@ -94,7 +94,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
         // Ultimo elemento de las observaciones
         assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 8 * 2 * 3 * 1);
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "421");
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "403");
     }
 
     @Test
