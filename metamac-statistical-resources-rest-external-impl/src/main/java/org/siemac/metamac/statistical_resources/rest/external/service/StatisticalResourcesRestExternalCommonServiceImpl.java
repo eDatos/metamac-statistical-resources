@@ -153,7 +153,7 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
             // Retrieve
             PagedResult<MultidatasetVersion> entitiesPagedResult = findMultidatasetVersionsCommon(agencyID, resourceID, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
-                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.COLLECTION_NOT_FOUND, resourceID, agencyID);
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.MULTIDATASET_NOT_FOUND, resourceID, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND);
             }
             return entitiesPagedResult.getValues().get(0);
