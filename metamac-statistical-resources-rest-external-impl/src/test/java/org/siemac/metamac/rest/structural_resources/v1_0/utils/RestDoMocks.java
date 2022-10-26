@@ -97,7 +97,7 @@ public class RestDoMocks {
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit2"));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit3"));
         target.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem("DSD01"));
-        target.setFormatExtentObservations(Long.valueOf(3));
+        target.setFormatExtentObservations(Long.valueOf(468));
         target.setFormatExtentDimensions(Integer.valueOf(5));
         target.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 12, 2, 3, 4, 5, 0).toDate()));
         target.setUpdateFrequency(StatisticalResourcesDoMocks.mockCodeExternalItem("updateFrequency01"));
