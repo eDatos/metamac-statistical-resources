@@ -29,6 +29,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
@@ -109,6 +110,19 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             return org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression(dim);
         } else {
             return org.siemac.metamac.core.common.util.rest.RequestUtil.parseParamExpression(representation);
+        }
+    }
+
+    @Override
+    public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim) {
+        try {
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            Set<String> parsedFields = parseFieldsParameter(fields);
+            return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
+        } catch (Exception e) {
+            throw manageException(e);
         }
     }
 
