@@ -49,6 +49,16 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     }
     
     @Override
+    public String retrieveKafkaExternalPublicationsTopicName() {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
+    
+    @Override
+    public Boolean retrieveKafkaExternalPublicationsTopicIsEnabled() {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
+    
+    @Override
     public String retrieveKafkaTopicJaxiPublication() {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }

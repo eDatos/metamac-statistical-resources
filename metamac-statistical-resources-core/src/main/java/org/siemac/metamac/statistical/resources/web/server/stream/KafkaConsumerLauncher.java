@@ -62,12 +62,16 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         if (ac.getParent() == null) {
             // @formatter:off
             try {
+                
+                if (statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicIsEnabled()) {
+                
                 KafkaInitializeConsumerTopics.propagateCreationOfTopics(statisticalResourcesConfiguration);
                 prepareFailedMessageCache();
 
                 futuresMap = new HashMap<>();
                 futuresMap.put(CONSUMER_JAXI_MESSAGES_1_NAME, startConsumerForJaxiTopic(ac));
                 startKeepAliveKafkaThread(ac);
+                }
             } catch (Exception e) {
                 LOGGER.error(e, e.getCause());
             }
@@ -78,7 +82,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     public void createCustomConsumer(ServiceContext ctx) {
             KafkaConsumer<String, DatasetAvro> consumer = null;
             try {
-                String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaTopicJaxiPublication();
+                String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
                 consumer = createConsumerFromCurrentOffset(topicJaxiPublication, CONSUMER_JAXI_MESSAGES_1_NAME);
                 
                 int numberOfMessagesToRead = 5;
@@ -124,7 +128,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Future<?> startConsumerForJaxiTopic(ApplicationContext context) throws MetamacException {
-        String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaTopicJaxiPublication();
+        String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
         KafkaConsumerThread<DatasetAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
         KafkaConsumer<String, DatasetAvro> consumerFromBegin = createConsumerFromCurrentOffset(topicJaxiPublication, CONSUMER_JAXI_MESSAGES_1_NAME);
         consumerThread.setConsumer(consumerFromBegin);

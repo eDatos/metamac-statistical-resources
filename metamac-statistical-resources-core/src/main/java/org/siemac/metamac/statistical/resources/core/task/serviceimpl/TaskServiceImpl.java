@@ -80,6 +80,8 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.repository.api.DatabaseImportRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
@@ -204,6 +206,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired 
     private NoticesRestInternalService noticesRestInternalService;
+    
+    @Autowired
+    GeoCovVarElementCacheDatasetVersionRepository geoCovVarElementCacheDatasetVersionRepository;
     
     private SchedulerFactory                  schedulerFactory                    = null;
 
@@ -934,7 +939,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(taskInfoDataset.getDatasetVersionId());
 
-        logger.debug("Updating geocoverage cache for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        
+        logger.debug("Updating geocoverage cache for dataset {}", datasetVersionUrn);
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
 
         if (geographicCoverage.isEmpty()) {
@@ -944,13 +951,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         
         String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
-
-        // discard all variable elements present in the array to avoid duplicated or outdated data
         
-        //TODO
-        //datasetVersion.getGeographicCoverageVariableElements().clear();
+        // discard all variable elements present in the array to avoid duplicated or outdated data
+        geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(datasetVersionUrn);
 
-        logger.debug("Processing geographic coverage to create the cache");
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
+        }
+        
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
                 @Override
@@ -965,17 +974,23 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
 
             ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
-            //TODO
-           // datasetVersion.addGeographicCoverageVariableElement(territoryVariableElement);
+            updateGeographicCoverageVariableElementsCache(datasetVersionUrn, territoryVariableElement);
+            
         }
 
-        //TODO
-        //logger.debug("Created new {} variable elements for {} geographic codes", datasetVersion.getGeographicCoverageVariableElements().size(), geographicCoverage.size());
-        //datasetVersionRepository.save(datasetVersion);
-
+        logger.debug("Processing geographic coverage to create the cache correctlyfinished");
+        
         markTaskAsFinished(ctx, jobKey);
     }
 
+    private void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn, ExternalItem variableElement) {
+        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
+        geoCovVarElementCacheDatasetVersion.setDatasetVersionUrn(datasetVersionUrn);
+        geoCovVarElementCacheDatasetVersion.setExternalItem(variableElement);
+        geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.FALSE);
+        geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
+    }
+    
     private void processRollbackDuplicationTask(ServiceContext ctx, Task task) throws MetamacException {
         markTaskAsFinished(ctx, task.getJob());
     }

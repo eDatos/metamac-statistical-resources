@@ -18,4 +18,9 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryTest
     public void testRetrieveByDatasetVersionUrn() throws Exception {
         // TODO EDATOS-3770 implements this test.
     }
+    
+    @Test
+    public void testDeleteAllByDatasetVersionUrn() throws Exception {
+        // TODO EDATOS-3770 implements this test.
+    }
 }

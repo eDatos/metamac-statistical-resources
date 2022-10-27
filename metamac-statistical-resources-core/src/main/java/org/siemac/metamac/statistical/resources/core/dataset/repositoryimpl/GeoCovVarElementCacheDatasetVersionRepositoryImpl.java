@@ -25,4 +25,12 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         return findByCondition(condition);
 
     }
+
+    public void deleteAllByDatasetVersionUrn(String datasetVersionUrn) {
+
+        List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetVersions = retrieveByDatasetVersionUrn(datasetVersionUrn);
+        for (GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion : geoCovVarElementCacheDatasetVersions) {
+            delete(geoCovVarElementCacheDatasetVersion);
+        }
+    }
 }

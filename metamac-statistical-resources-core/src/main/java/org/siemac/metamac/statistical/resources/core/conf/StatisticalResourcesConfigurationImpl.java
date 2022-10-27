@@ -70,7 +70,17 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
     
     @Override
+    public String retrieveKafkaExternalPublicationsTopicName() throws MetamacException {
+        return retrieveProperty(StatisticalResourcesConfigurationConstants.EXTERNAL_PUBLICATIONS_TOPIC_NAME);
+    }
+    
+    @Override
+    public Boolean retrieveKafkaExternalPublicationsTopicIsEnabled() throws MetamacException {
+        return retrievePropertyBoolean(StatisticalResourcesConfigurationConstants.EXTERNAL_PUBLICATIONS_TOPIC_IS_ENABLED);
+    }
+    
+    @Override
     public String retrieveKafkaJaxiMessagesGroup() throws MetamacException {
-        return STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP; // Hard coded for evit manual edition
+        return STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP; 
     }
 }

@@ -117,6 +117,7 @@ Application DatasetsStatisticalResources {
     		
 		}
 
+
 		// ----------------------------------------------------------------
 		// 							ENTITIES
 		// ---------------------------------------------------------------- 
@@ -191,7 +192,7 @@ Application DatasetsStatisticalResources {
 			Long id key;
 
 			- @SiemacMetadataStatisticalResource siemacMetadataStatisticalResource databaseColumn="SIEMAC_RESOURCE_FK" not nullable cascade="all";
-			
+						
 			- @DataSourceTypeEnum dataSourceType;
 			DateTimeTZ dateLastTimeDataImport nullable;
 			//Content descriptors
@@ -251,7 +252,6 @@ Application DatasetsStatisticalResources {
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
 			
-
 			Repository DatasetVersionRepository {
 				save;
 				delete;
@@ -439,6 +439,7 @@ Application DatasetsStatisticalResources {
 				delete;			
 				findByCondition;
 				findByCondition(PagingParameter pagingParameter);
+				deleteAllByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 			}
 		}

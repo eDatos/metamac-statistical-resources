@@ -58,7 +58,7 @@ public class KafkaInitializeConsumerTopics {
     private static List<NewTopic> getTopics(StatisticalResourcesConfiguration statisticalResourcesConfiguration) throws MetamacException {
         List<NewTopic> topics = new ArrayList<>();
 
-        topics.add(createTopic(statisticalResourcesConfiguration.retrieveKafkaTopicJaxiPublication()));
+        topics.add(createTopic(statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName()));
 
         return topics;
     }

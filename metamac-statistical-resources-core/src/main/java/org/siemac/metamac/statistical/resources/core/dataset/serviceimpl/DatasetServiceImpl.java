@@ -1365,8 +1365,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR_STREAM_NO_VALID).build();
             }
 
-            List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersions = geoCovVarElementCacheDatasetVersionRepository.retrieveByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
-            deleteGeographicCoverageVariableElementsCache(geoCovVarElementCacheDatasetsVersions);
+            geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
             if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
                 List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro);
                 for (ExternalItem variableElement : externalItemGeographicCoverage) {
@@ -1375,12 +1374,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             }
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR).build();
-        }
-    }
-
-    private void deleteGeographicCoverageVariableElementsCache(List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersions) {
-        for (GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion : geoCovVarElementCacheDatasetsVersions) {
-            geoCovVarElementCacheDatasetVersionRepository.delete(geoCovVarElementCacheDatasetVersion);
         }
     }
 
