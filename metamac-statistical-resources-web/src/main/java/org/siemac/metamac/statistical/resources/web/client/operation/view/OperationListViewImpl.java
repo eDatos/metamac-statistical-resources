@@ -10,10 +10,12 @@ import org.siemac.metamac.statistical.resources.web.client.operation.model.ds.Op
 import org.siemac.metamac.statistical.resources.web.client.operation.model.record.OperationRecord;
 import org.siemac.metamac.statistical.resources.web.client.operation.presenter.OperationListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.operation.view.handlers.OperationListUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.widgets.OperationsValuesSearchSectionStack;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.PaginatedListGrid;
 import org.siemac.metamac.web.common.client.widgets.actions.PaginatedAction;
+import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -29,16 +31,19 @@ public class OperationListViewImpl extends ViewWithUiHandlers<OperationListUiHan
     private VLayout           panel;
 
     private PaginatedListGrid operationsList;
+    
+    private OperationsValuesSearchSectionStack searchSectionStack;
 
     @Inject
     public OperationListViewImpl() {
         super();
-
-        operationsList = new PaginatedListGrid(StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, new PaginatedAction() {
+        searchSectionStack = new OperationsValuesSearchSectionStack();
+        //TODO CAMBIAR MAXIMO PAGINACION MAIN_LIST_MAX_RESULTS
+        operationsList = new PaginatedListGrid(50, new PaginatedAction() {
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
-                getUiHandlers().retrieveOperations(firstResult, maxResults);
+                getUiHandlers().retrieveOperations(firstResult, maxResults, null);
             }
         });
         operationsList.getListGrid().setAutoFitMaxRecords(StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
@@ -53,6 +58,7 @@ public class OperationListViewImpl extends ViewWithUiHandlers<OperationListUiHan
         operationsList.setHeight100();
 
         panel = new VLayout();
+        panel.addMember(searchSectionStack);
         panel.addMember(operationsList);
 
         bindEvents();
@@ -89,4 +95,18 @@ public class OperationListViewImpl extends ViewWithUiHandlers<OperationListUiHan
     public Widget asWidget() {
         return panel;
     }
+    
+    @Override
+    public void setUiHandlers(OperationListUiHandlers handlers) {
+        super.setUiHandlers(handlers);
+        searchSectionStack.setUiHandlers(handlers);
+    }
+    
+//    @Override
+//    public MetamacWebCriteria getOperationWebCriteria() {
+//        if (searchSectionStack == null) {
+//            return new MetamacWebCriteria();
+//        }
+//        return searchSectionStack.getDataConfigurationWebCriteria();
+//    }
 }

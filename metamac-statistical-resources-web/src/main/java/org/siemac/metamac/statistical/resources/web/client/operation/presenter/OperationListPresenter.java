@@ -15,6 +15,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.web.common.client.events.SetTitleEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
+import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -34,7 +35,8 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 public class OperationListPresenter extends Presenter<OperationListPresenter.OperationListView, OperationListPresenter.OperationListProxy> implements OperationListUiHandlers {
 
-    private final DispatchAsync dispatcher;
+    public static final int OPERATION_LIST_FIRST_RESULT = 0;
+	private final DispatchAsync dispatcher;
     private final PlaceManager  placeManager;
 
     @ProxyCodeSplit
@@ -46,6 +48,9 @@ public class OperationListPresenter extends Presenter<OperationListPresenter.Ope
     public interface OperationListView extends View, HasUiHandlers<OperationListUiHandlers> {
 
         void setOperationPaginatedList(GetStatisticalOperationsPaginatedListResult datasetsPaginatedList);
+        
+//        MetamacWebCriteria getOperationWebCriteria();
+
     }
 
     @Inject
@@ -76,12 +81,14 @@ public class OperationListPresenter extends Presenter<OperationListPresenter.Ope
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-        retrieveOperations(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
+//        retrieveOperations(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, null);
+      retrieveOperations(0, 50, null);
+
     }
 
     @Override
-    public void retrieveOperations(int firstResult, int maxResults) {
-        dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(firstResult, maxResults, null), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
+    public void retrieveOperations(int firstResult, int maxResults, MetamacWebCriteria criteria) {
+        dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
 
             @Override
             public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
@@ -96,4 +103,5 @@ public class OperationListPresenter extends Presenter<OperationListPresenter.Ope
             placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeOperationPlaceRequest(urn));
         }
     }
+
 }
