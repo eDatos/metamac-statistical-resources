@@ -38,7 +38,7 @@ ns2:dateNextUpdate
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
 
 - Actualizar apps
-   - Statistical-resources   
+   - statistical-resources   
    - external-users
    - search-indexers
 *******************************
