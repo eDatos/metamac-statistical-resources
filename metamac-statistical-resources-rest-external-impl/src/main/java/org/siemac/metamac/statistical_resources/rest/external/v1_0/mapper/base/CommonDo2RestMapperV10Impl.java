@@ -9,6 +9,7 @@ import static org.siemac.metamac.statistical_resources.rest.external.Statistical
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -110,6 +111,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersio
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
@@ -193,6 +195,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private String                                  srmApiExternalEndpoint;
     private String                                  statisticalOperationsApiExternalEndpoint;
     private String                                  defaultLanguage;
+
+    @Autowired
+    private RestMapper                              restMapper;
 
     @PostConstruct
     public void init() throws Exception {
@@ -627,17 +632,22 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, List<String> selectedLanguages) {
+    public String toI18nValue(InternationalString source, String selectedLanguage) {
         if (source == null || source.getTexts() == null || source.getTexts().isEmpty()) {
             return null;
         }
 
-        if (selectedLanguages == null || selectedLanguages.isEmpty()) {
+        if (selectedLanguage == null) {
             // given that we know texts is not empty we can get the first one
-            return source.getTexts().stream().findFirst().get().getLabel(); // TODO EDATOS-3662: default language?
+            return source.getTexts().stream().findFirst().get().getValue(); // TODO EDATOS-3662: default language?
         }
 
-        return toInternationalString(source, selectedLanguages).getTexts().get(0).getValue(); // TODO EDATOS-3662 multiples languages?
+        return toInternationalString(source, Collections.singletonList(selectedLanguage)).getTexts().get(0).getValue(); // TODO EDATOS-3662 multiples languages?
+    }
+
+    @Override
+    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, String selectedLanguage) {
+        return toI18nValue(restMapper.toRestInternationalString(source), selectedLanguage);
     }
 
     @Override

@@ -49,7 +49,8 @@ public interface CommonDo2RestMapperV10 {
     public ResourceLink toResourceLink(String kind, String href);
     public String toResourceLink(String resourceSubpath, String agencyID, String resourceID, String version);
 
-    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, List<String> selectedLanguages);
+    public String toI18nValue(InternationalString source, String selectedLanguage);
+    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source,String selectedLanguage);
 
     public InternationalString toInternationalString(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString sources, List<String> selectedLanguages);
     public InternationalString toInternationalString(InternationalString sources, List<String> selectedLanguages);

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -34,7 +35,11 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DatasetMetadata;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimensions;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValue;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValues;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatCategory;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
@@ -43,6 +48,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
@@ -125,12 +131,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-    private Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Data data) throws Exception {
+    private Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, Data data, String selectedLanguage) throws Exception {
         Map<String, JsonStatDimension> jsonStatDimensionMap = new HashMap<>();
-
         for (DimensionRepresentation dimension: data.getDimensions().getDimensions()) {
             JsonStatDimension jsonStatDimension = new JsonStatDimension();
-            jsonStatDimension.setLabel(dimension.getDimensionId());
+            jsonStatDimension.setLabel(toDimensionI18nName(dimensions, dimension, selectedLanguage));
             jsonStatDimension.setCategory(new JsonStatCategory());
 
             Map<String, Long> indexMap = new HashMap<>();
@@ -138,16 +143,29 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
             for (CodeRepresentation category : dimension.getRepresentations().getRepresentations()) {
                 indexMap.put(category.getCode(), category.getIndex());
-                labelMap.put(category.getCode(), category.getCode()); // FIXME EDATOS-3662: translate code!!
+                labelMap.put(category.getCode(), toCategoryI18nName(dimensions, dimension, category, selectedLanguage));
             }
 
             jsonStatDimension.getCategory().setIndex(indexMap);
             jsonStatDimension.getCategory().setLabel(labelMap);
 
-            jsonStatDimensionMap.put(jsonStatDimension.getLabel(), jsonStatDimension);
+            jsonStatDimensionMap.put(dimension.getDimensionId(), jsonStatDimension);
         }
 
         return jsonStatDimensionMap;
+    }
+
+    private String toCategoryI18nName(Dimensions dimensions, DimensionRepresentation dimensionRepresentation, CodeRepresentation category, String selectedLanguage) {
+        for (Dimension dimension : dimensions.getDimensions()) {
+            if (Objects.equals(dimension.getId(), dimensionRepresentation.getDimensionId()) && dimension.getDimensionValues() instanceof EnumeratedDimensionValues) {
+                for (EnumeratedDimensionValue value : ((EnumeratedDimensionValues) dimension.getDimensionValues()).getValues()) {
+                    if (Objects.equals(value.getId(), category.getCode())) {
+                        return commonDo2RestMapper.toI18nValue(value.getName(), selectedLanguage);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -159,6 +177,12 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
         Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages);
 
+        // too slow but necessary for category and dimension translations
+        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields);
+
+        // for now, JSON-stat only takes the first selected lang since InternationalStrings are not supported
+        String selectedLanguage = getSelectedLanguage(source, selectedLanguages);
+
         // ********************************************
         // ***** See https://json-stat.org/full/ ******
         // ********************************************
@@ -168,21 +192,60 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setVersion("2.0");
         target.setClazz("dataset");
         target.addAllValues(toJsonStatDatasetValues(data));
-        target.setDimension(toJsonStatDatasetDimensions(data));
+        target.setDimension(toJsonStatDatasetDimensions(dimensions, data, selectedLanguage));
         target.setRole(toJsonStatRoles(dsdProcessorResult));
         target.setId(getJsonStatId(data));
         target.setSize(toJsonStatSize(data));
-        target.setLabel(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguages));
+        target.setLabel(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
         target.setUpdated(source.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
-        target.setExtension(toJsonStatExtension(source, selectedLanguages));
-        target.setNote(toJsonStatNote(source, dsdProcessorResult, selectedLanguages));
+        target.setExtension(toJsonStatExtension(source, selectedLanguage));
+        target.setNote(toJsonStatNote(source, dsdProcessorResult, selectedLanguage));
 
         return target;
     }
 
-    private List<String> toJsonStatNote(DatasetVersion source, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages) {
-        // TODO EDATOS-3622
+    private String toDimensionI18nName(Dimensions dimensions, DimensionRepresentation dimensionRepresentation, String selectedLanguage) {
+        for (Dimension dimension : dimensions.getDimensions()) {
+            if (Objects.equals(dimension.getId(), dimensionRepresentation.getDimensionId())) {
+                return commonDo2RestMapper.toI18nValue(dimension.getName(), selectedLanguage);
+            }
+        }
+
         return null;
+    }
+
+    private String getSelectedLanguage(DatasetVersion source, List<String> selectedLanguages) {
+        // TODO EDATOS-3662 treatment of unavailable selected language? how about an intersection of source.languages and selectedLanguages to discover common languages?
+        String selectedLanguage = selectedLanguages.isEmpty() ? null : selectedLanguages.get(0);
+
+        String sourceLang = source.getSiemacMetadataStatisticalResource().getLanguage().getCode();
+        if (selectedLanguage == null && sourceLang != null) {
+            selectedLanguage = sourceLang.toLowerCase();
+        }
+
+        return selectedLanguage;
+    }
+
+    private List<String> toJsonStatNote(DatasetVersion source, DsdProcessorResult dsdProcessorResult, String selectedLanguage) {
+        Map<String, InternationalString> attributesConceptNames = new HashMap<>();
+        for (DsdExternalProcessor.DsdAttribute attribute : dsdProcessorResult.getAttributes()) {
+            if (!attribute.isAttributeAtObservationLevel()) {
+                String key = attribute.getComponentId();
+                InternationalString value = attribute.getConceptIdentity().getName();
+                attributesConceptNames.put(key, value);
+            }
+        }
+
+        List<String> notes = new ArrayList<>();
+        for (AttributeValue attributeValue : source.getAttributesCoverage()) {
+            if (attributesConceptNames.containsKey(attributeValue.getDsdComponentId())) {
+                InternationalString internationalString = attributesConceptNames.get(attributeValue.getDsdComponentId());
+                String note = commonDo2RestMapper.toI18nValue(internationalString, selectedLanguage) + ". " + attributeValue.getTitle();
+                notes.add(note);
+            }
+        }
+
+        return notes;
     }
 
     private List<String> getJsonStatId(Data data) {
@@ -203,20 +266,23 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return dimensionSizes;
     }
 
-    private JsonStatExtension toJsonStatExtension(DatasetVersion source, List<String> selectedLanguages) {
+    private JsonStatExtension toJsonStatExtension(DatasetVersion source, String selectedLanguage) {
         JsonStatExtension extension = new JsonStatExtension();
         extension.setDatasetId(source.getSiemacMetadataStatisticalResource().getCode());
         extension.setDatasetUrn(source.getSiemacMetadataStatisticalResource().getUrn());
-        extension.setSurvey(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle(), selectedLanguages));
+        extension.setSurvey(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle(), selectedLanguage));
         extension.setLang(joinExternalItemCodes(source.getSiemacMetadataStatisticalResource().getLanguages()));
-        extension.setPublishers(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getPublisher(), selectedLanguages));
-        extension.setRightsHolder(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getAccessRights(), selectedLanguages));  // TODO EDATOS-3662 correct value?
-        extension.setDataProviders(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getDataProvider(), selectedLanguages));
-        extension.setDataProvidersAnnotations(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getDataProviderAnnotations(), selectedLanguages));
+        extension.setPublishers(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getPublisher(), selectedLanguage));
+        extension.setDataProviders(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getDataProvider(), selectedLanguage));
+        extension.setDataProvidersAnnotations(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getDataProviderAnnotations(), selectedLanguage));
         return extension;
     }
 
     private String joinExternalItemCodes(List<ExternalItem> externalItemList) {
+        if (externalItemList == null || externalItemList.isEmpty()) {
+            return null;
+        }
+
         StringJoiner joiner = new StringJoiner(",");
         for (ExternalItem externalItem : externalItemList) {
             String title = externalItem.getCode();
@@ -225,10 +291,14 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return joiner.toString();
     }
 
-    private String joinExternalItemTitles(List<ExternalItem> externalItemList, List<String> selectedLanguages) {
+    private String joinExternalItemTitles(List<ExternalItem> externalItemList, String selectedLanguage) {
+        if (externalItemList == null || externalItemList.isEmpty()) {
+            return null;
+        }
+
         StringJoiner joiner = new StringJoiner(", ");
         for (ExternalItem externalItem : externalItemList) {
-            String title = commonDo2RestMapper.toI18nValue(externalItem.getTitle(), selectedLanguages);
+            String title = commonDo2RestMapper.toI18nValue(externalItem.getTitle(), selectedLanguage);
             joiner.add(title);
         }
         return joiner.toString();
