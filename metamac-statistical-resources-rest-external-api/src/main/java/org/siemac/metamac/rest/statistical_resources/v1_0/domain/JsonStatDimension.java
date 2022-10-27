@@ -2,16 +2,12 @@ package org.siemac.metamac.rest.statistical_resources.v1_0.domain;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.ALWAYS)
 public class JsonStatDimension {
 
-    @JsonProperty
     private String label;
-
-    @JsonProperty
     private JsonStatCategory category;
 
     public String getLabel() {

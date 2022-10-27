@@ -4,16 +4,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.ALWAYS)
 public class JsonStatCategory {
 
-    @JsonProperty
     private Map<String, Long> index;
-
-    @JsonProperty
     private Map<String, String> label;
 
     public Map<String, Long> getIndex() {

@@ -19,40 +19,20 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 @JsonSerialize(include = JsonSerialize.Inclusion.ALWAYS)
 public class JsonStatData {
 
-    @JsonProperty
     private String version;
 
     @JsonProperty("class")
     private String clazz;
 
-    @JsonProperty
     private String label;
-
-    @JsonProperty
     private String updated;
-
-    @JsonProperty
     private JsonStatExtension extension;
-
-    @JsonProperty
     private List<String> note;
-
-    @JsonProperty
     private List<Number> value = new ArrayList<>(); // TODO EDATOS-3662: could there be more values than Integer.MAX_VALUE?
-
-    @JsonProperty
     private Map<String, String> status;
-
-    @JsonProperty
     private List<String> id;
-
-    @JsonProperty
     private List<Long> size;
-
-    @JsonProperty
     private Map<String, List<String>> role;
-
-    @JsonProperty
     private Map<String, JsonStatDimension> dimension;
 
     public void addAllValues(List<String> values) {
