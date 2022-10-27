@@ -8,6 +8,14 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 5.0.1 a 5.0.2-SNAPSHOT
+* Se añaden script relacionados con la actualización de la caché de elementos de variable de un dataset y se añaden dos nuevas propiedades en el common_metadata en este orden
+[etc/changes-from-release/5.0.1/db](etc/changes-from-release/5.0.1/db).
+** change_table_geocov_varelem_cache_datasets_versions.sql
+** create_sequence_seq_geocov_varelem_cache_datasets_versions.sql
+** create_constant_properties_in_common_metadata.sql
+
+
 ## 5.0.0 a 5.0.1-SNAPSHOT
 * Aviso de futura deprecación
 ** Los métodos de la API que recibían el parámetro _dim_ pasarán a recibir el parámetro _representation_ que tiene un formato distinto. El parámetro _dim_ dejará de ser soportado en futuras versiones. Consulte la documentación de la API para más información
