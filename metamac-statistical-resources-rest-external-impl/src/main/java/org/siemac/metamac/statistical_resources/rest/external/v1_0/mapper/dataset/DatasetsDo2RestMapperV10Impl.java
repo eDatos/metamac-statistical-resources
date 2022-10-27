@@ -37,6 +37,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DatasetMetadata
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentations;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValue;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValues;
@@ -131,9 +132,9 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-    private Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, Data data, String selectedLanguage) throws Exception {
+    private Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, String selectedLanguage) throws Exception {
         Map<String, JsonStatDimension> jsonStatDimensionMap = new HashMap<>();
-        for (DimensionRepresentation dimension: data.getDimensions().getDimensions()) {
+        for (DimensionRepresentation dimension: dimensionRepresentations.getDimensions()) {
             JsonStatDimension jsonStatDimension = new JsonStatDimension();
             jsonStatDimension.setLabel(toDimensionI18nName(dimensions, dimension, selectedLanguage));
             jsonStatDimension.setCategory(new JsonStatCategory());
@@ -192,7 +193,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setVersion("2.0");
         target.setClazz("dataset");
         target.addAllValues(toJsonStatDatasetValues(data));
-        target.setDimension(toJsonStatDatasetDimensions(dimensions, data, selectedLanguage));
+        target.setDimension(toJsonStatDatasetDimensions(dimensions, data.getDimensions(), selectedLanguage));
         target.setRole(toJsonStatRoles(dsdProcessorResult));
         target.setId(getJsonStatId(data));
         target.setSize(toJsonStatSize(data));
