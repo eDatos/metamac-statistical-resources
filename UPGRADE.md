@@ -8,16 +8,8 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 5.0.0 a 5.0.1-SNAPSHOT
-* Aviso de futura deprecación
-** Los métodos de la API que recibían el parámetro _dim_ pasarán a recibir el parámetro _representation_ que tiene un formato distinto. El parámetro _dim_ dejará de ser soportado en futuras versiones. Consulte la documentación de la API para más información
 
-## 4.0.0 a 5.0.0
-* Rotura de la compatibilidad:
-** Debido a refactorización de código al mover determinadas clases de los subproyectos metamac-statistical-resources-rest-external-impl y metamac-statistical-resources-rest-internal-impl al proyecto metamac-statistical-resources-rest-api-common que implicaron el renombrado de paquetes, es necesario que las aplicaciones que usen el proyecto metamac-statistical-resources como librería sean adaptadas al actualizar a esta versión. De no hacerlo, las aplicaciones no compilarán correctamente.
-** Se modifica la firma de la API, concretamente el atributo keywords pasa de estar dentro del metadata a la raíz de los recursos
-* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db).
-
+## 5.0.0 a 5.0.X-SNAPSHOT
 **BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
 A partir de esta versión los metadatos "date_next_update" y "next_version_date" dejan de ser fechas en formato "dateTime" para convertirse en un formato abierto que cumpla con las especificaciones de sdmx 2.1. Por este motivo, las APIs van a devolver en estos metadatos un InternationalString con la conversión del valor introducido.
 Ej: si 2022-M12
@@ -29,6 +21,36 @@ ns2:dateNextUpdate
 <cdomain:text xml:lang="ca">12/2022</cdomain:text>
 </ns2:dateNextUpdate>
 
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/5.0.0/db](etc/changes-from-release/5.0.0/db).
+
+*******************************
+*** La ejecución de esta tarea requiere una serie de pasos en cada entorno que se detallan a continuación:*******
+
+- Parar las app external-users, search-indexer y statistical-resources
+- Realizar los cambios de base de datos que se indican para transformar los campos fechas en internationalString.
+- Borrar los esquemas existentes para el topic "DATASET_PUBLICATIONS" para ello ejecutar la siguiente instrucción desde consola en el tomcat correspondiente:
+******** curl -X DELETE  http://localhost:10002/subjects/dataset-publications-value
+
+- Borrar los mensajes existentes en el topic DATASET_PUBLICATIONS. Para ello, 
+
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --describe retention.ms
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
+
+- Actualizar apps
+   - Statistical-resources   
+   - external-users
+   - search-indexers
+*******************************
+
+* Aviso de futura deprecación
+** Los métodos de la API que recibían el parámetro _dim_ pasarán a recibir el parámetro _representation_ que tiene un formato distinto. El parámetro _dim_ dejará de ser soportado en futuras versiones. Consulte la documentación de la API para más información
+
+## 4.0.0 a 5.0.0
+* Rotura de la compatibilidad:
+** Debido a refactorización de código al mover determinadas clases de los subproyectos metamac-statistical-resources-rest-external-impl y metamac-statistical-resources-rest-internal-impl al proyecto metamac-statistical-resources-rest-api-common que implicaron el renombrado de paquetes, es necesario que las aplicaciones que usen el proyecto metamac-statistical-resources como librería sean adaptadas al actualizar a esta versión. De no hacerlo, las aplicaciones no compilarán correctamente.
+** Se modifica la firma de la API, concretamente el atributo keywords pasa de estar dentro del metadata a la raíz de los recursos
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db).
 
 
 ## 3.12.0 a 4.0.0
