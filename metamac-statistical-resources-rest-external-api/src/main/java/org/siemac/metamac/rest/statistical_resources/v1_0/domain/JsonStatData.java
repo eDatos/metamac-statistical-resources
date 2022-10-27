@@ -12,9 +12,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 /**
- * This class and those in the same package are used for mapping JSON-stat files to Java objects.
- * They are based on an interpretation of the documentation on the JSON-stat format available at
- * <a href="https://json-stat.org/format/">JSON-stat website</a>.
+ * This class is used for mapping JSON-stat files to Java objects, based on a subset of fields extracted from
+ * the documentation on the JSON-stat format available at <a href="https://json-stat.org/full/">JSON-stat website</a>.
  */
 @JsonSerialize(include = JsonSerialize.Inclusion.ALWAYS)
 public class JsonStatData {
