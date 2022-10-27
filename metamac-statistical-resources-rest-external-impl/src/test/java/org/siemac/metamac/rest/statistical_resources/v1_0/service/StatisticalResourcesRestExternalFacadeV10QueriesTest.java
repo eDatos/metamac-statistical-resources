@@ -94,7 +94,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
         // Ultimo elemento de las observaciones
         assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 8 * 2 * 3 * 1);
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "421");
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "403");
     }
 
     @Test
@@ -288,6 +288,20 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
         // Data
         assertEquals(48, StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length);
+
+        {
+            DimensionRepresentation dimension = query.getData().getDimensions().getDimensions().get(1);
+            assertEquals("TIME_PERIOD", dimension.getDimensionId());
+            assertTrue(dimension.getRepresentations() instanceof CodeRepresentations);
+            {
+                CodeRepresentations dimensionValues = dimension.getRepresentations();
+                assertEquals(BigInteger.valueOf(2), dimensionValues.getTotal());
+                // Order here must be the same as order of dimensionValues
+                assertEquals("2013", dimensionValues.getRepresentations().get(0).getCode());
+                assertEquals("2011", dimensionValues.getRepresentations().get(1).getCode());
+            }
+        }
+
     }
 
     @Test
