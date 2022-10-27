@@ -1,20 +1,22 @@
 package org.siemac.metamac.statistical.resources.web.server.stream;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -62,24 +64,36 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         if (ac.getParent() == null) {
             // @formatter:off
             try {
-                
-                if (statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicIsEnabled()) {
-                
-                KafkaInitializeConsumerTopics.propagateCreationOfTopics(statisticalResourcesConfiguration);
+                List<NewTopic> availableTopics = new ArrayList<>();
+                availableTopics = KafkaInitializeConsumerTopics.propagateCreationOfTopics(statisticalResourcesConfiguration);
                 prepareFailedMessageCache();
 
                 futuresMap = new HashMap<>();
+                
+                if (Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName()))) {
                 futuresMap.put(CONSUMER_JAXI_MESSAGES_1_NAME, startConsumerForJaxiTopic(ac));
+                }
+                
+                if (!futuresMap.isEmpty()) {
                 startKeepAliveKafkaThread(ac);
                 }
             } catch (Exception e) {
                 LOGGER.error(e, e.getCause());
             }
-            // @formatter:on
         }
+            // @formatter:on
     }
     
-    public void createCustomConsumer(ServiceContext ctx) {
+    private Boolean checkIsAvailableTopic(List<NewTopic> availableTopics, String topicName) {
+        for (NewTopic topic : availableTopics) {
+            if (topicName.equals(topic.name())) {
+                return Boolean.TRUE;
+            }
+        }
+        return Boolean.FALSE;
+    }
+    
+    public void createCustomConsumer() {
             KafkaConsumer<String, DatasetAvro> consumer = null;
             try {
                 String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();

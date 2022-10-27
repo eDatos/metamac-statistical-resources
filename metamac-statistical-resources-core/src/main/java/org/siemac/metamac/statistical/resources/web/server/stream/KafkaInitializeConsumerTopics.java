@@ -5,12 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.admin.AdminClient;
 import org.apache.kafka.clients.admin.CreateTopicsOptions;
+import org.apache.kafka.clients.admin.ListTopicsResult;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.errors.TopicExistsException;
@@ -37,14 +40,18 @@ public class KafkaInitializeConsumerTopics {
     };
 
 
-    public static void propagateCreationOfTopics(StatisticalResourcesConfiguration statisticalResourcesConfiguration) throws MetamacException {
+    public static List<NewTopic> propagateCreationOfTopics(StatisticalResourcesConfiguration statisticalResourcesConfiguration) throws MetamacException {
+        List<NewTopic> availableTopics = new ArrayList<>();
         Properties kafkaProperties = getKafkaProperties(statisticalResourcesConfiguration);
 
         List<NewTopic> topics = getTopics(statisticalResourcesConfiguration);
 
-        CreateTopicsOptions topicsOptions = getTopicsOptions();
+        if (!topics.isEmpty()) {
+            CreateTopicsOptions topicsOptions = getTopicsOptions();
 
-        createTopics(kafkaProperties, topics, topicsOptions);
+            availableTopics = createTopics(kafkaProperties, topics, topicsOptions);
+        }
+        return availableTopics;
     }
 
     private static Properties getKafkaProperties(StatisticalResourcesConfiguration statisticalResourcesConfiguration) throws MetamacException {
@@ -58,7 +65,17 @@ public class KafkaInitializeConsumerTopics {
     private static List<NewTopic> getTopics(StatisticalResourcesConfiguration statisticalResourcesConfiguration) throws MetamacException {
         List<NewTopic> topics = new ArrayList<>();
 
-        topics.add(createTopic(statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName()));
+        try {
+            String topicNameDatasetExternalPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
+            // The topic can not be enabled in some environments.
+            if (StringUtils.isNotEmpty(topicNameDatasetExternalPublication)) {
+                topics.add(createTopic(topicNameDatasetExternalPublication));
+            } else {
+                LOGGER.info("retrieveKafkaExternalPublicationsTopicName is empty. Check if must exists in common metadata");
+            }
+        } catch (Exception e) {
+            LOGGER.info("retrieveKafkaExternalPublicationsTopicName not found. Check if must exists in common metadata");
+        }
 
         return topics;
     }
@@ -71,9 +88,29 @@ public class KafkaInitializeConsumerTopics {
         return new CreateTopicsOptions().timeoutMs(TIMEOUT);
     }
 
-    private static void createTopics(Properties kafkaProperties, List<NewTopic> topics, CreateTopicsOptions topicsOptions) {
+    private static List<NewTopic> getAvailableTopics(AdminClient adminClient, List<NewTopic> topics) {
+        // excludes nonexistent topics
+        List<NewTopic> availableTopics = new ArrayList<>();
+        try {
+        ListTopicsResult listTopics = adminClient.listTopics();
+        Set<String> names = listTopics.names().get();
+        for (NewTopic topic : topics) {
+           if (names.contains(topic.name())) {
+               availableTopics.add(topic);
+           }
+        }
+        } catch(Exception e) {
+            LOGGER.info("error to get list available topics");
+        }
+        return availableTopics;
+    }
+    
+    private static List<NewTopic> createTopics(Properties kafkaProperties, List<NewTopic> topics, CreateTopicsOptions topicsOptions) {
+        List<NewTopic> availableTopics = new ArrayList<>();
         try (AdminClient adminClient = AdminClient.create(kafkaProperties)) {
-            adminClient.createTopics(topics, topicsOptions).all().get();
+
+            availableTopics = getAvailableTopics(adminClient, topics);
+            adminClient.createTopics(availableTopics, topicsOptions).all().get();
         } catch (InterruptedException | ExecutionException e) {
             // Ignore if TopicExistsException, which may be valid if topic exists
             if (!(e.getCause() instanceof TopicExistsException)) {
@@ -82,5 +119,6 @@ public class KafkaInitializeConsumerTopics {
                 LOGGER.info("Kafka topics already exist, it's not necessary to create them. The application deploy continues in the right way...");
             }
         }
+        return availableTopics;
     }
 }

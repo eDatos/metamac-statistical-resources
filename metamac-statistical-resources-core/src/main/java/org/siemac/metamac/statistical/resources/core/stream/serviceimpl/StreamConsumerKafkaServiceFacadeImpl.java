@@ -22,7 +22,7 @@ public class StreamConsumerKafkaServiceFacadeImpl implements StreamConsumerServi
     @Override
     public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx) throws MetamacException {
         KafkaConsumerLauncher kafkaConsumerLauncher = new KafkaConsumerLauncher();
-        kafkaConsumerLauncher.createCustomConsumer(ctx);
+        kafkaConsumerLauncher.createCustomConsumer();
         
     }
 }

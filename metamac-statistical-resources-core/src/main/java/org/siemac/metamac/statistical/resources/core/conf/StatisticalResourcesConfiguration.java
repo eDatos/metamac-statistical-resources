@@ -26,9 +26,7 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public String retrieveDbDataViewsRole() throws MetamacException;
     
     public String retrieveKafkaExternalPublicationsTopicName() throws MetamacException;
-    
-    public Boolean retrieveKafkaExternalPublicationsTopicIsEnabled() throws MetamacException;
-    
+        
     public String retrieveKafkaJaxiMessagesGroup() throws MetamacException;
     
     
