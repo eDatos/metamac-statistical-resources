@@ -144,13 +144,21 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
      * Throws response error, logging exception
      */
     public static RestException manageException(Exception e) {
-    	logger.debug("Debug", e);
+        logException(e);
         if (e instanceof RestException) {
             return (RestException) e;
         } else {
             // do not show information details about exception to user
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
             return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private static void logException(Exception e) {
+        if (e instanceof RestException && Status.NOT_FOUND.equals(((RestException) e).getStatus())) {
+            logger.debug("Error", e);
+        } else {
+            logger.error("Error", e);
         }
     }
     
