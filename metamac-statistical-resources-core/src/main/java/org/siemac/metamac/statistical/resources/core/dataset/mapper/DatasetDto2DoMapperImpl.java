@@ -160,7 +160,7 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
             boolean dateNextUpdateModified = hasDateBeModified(target.getDateNextUpdate(), source.getDateNextUpdate());
             if (dateNextUpdateModified) {
                 target.setUserModifiedDateNextUpdate(true);
-                target.setDateNextUpdate(dateDtoToDo(source.getDateNextUpdate()));
+                target.setDateNextUpdate(source.getDateNextUpdate());
             }
         } else {
             target.setUserModifiedDateNextUpdate(false);
@@ -233,12 +233,12 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
         }
     }
 
-    private boolean hasDateBeModified(DateTime previous, Date current) {
+    private boolean hasDateBeModified(String previous, String current) {
         if ((previous == null && current != null) || (previous != null && current == null)) {
             return true;
         } else if (previous == null && current == null) {
             return false;
-        } else if (!previous.toString("yyyy-MM-dd HH:mm:ss Z").equals((new DateTime(current)).toString("yyyy-MM-dd HH:mm:ss Z"))) {
+        } else if (!previous.equals(current)) {
             return true;
         } else {
             return false;

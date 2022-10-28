@@ -14,7 +14,7 @@ public class DatasetVersionWebCriteria extends SiemacMetadataStatisticalResource
     private Date              dateStart;
     private Date              dateEnd;
     private String            dsdUrn;
-    private Date              dateNextUpdate;
+    private String            dateNextUpdate;
     private String            statisticOfficialityIdentifier;
 
     public DatasetVersionWebCriteria() {
@@ -61,10 +61,6 @@ public class DatasetVersionWebCriteria extends SiemacMetadataStatisticalResource
         return dsdUrn;
     }
 
-    public Date getDateNextUpdate() {
-        return dateNextUpdate;
-    }
-
     public String getStatisticOfficialityIdentifier() {
         return statisticOfficialityIdentifier;
     }
@@ -89,11 +85,15 @@ public class DatasetVersionWebCriteria extends SiemacMetadataStatisticalResource
         this.dsdUrn = dsdUrn;
     }
 
-    public void setDateNextUpdate(Date dateNextUpdate) {
-        this.dateNextUpdate = dateNextUpdate;
-    }
-
     public void setStatisticOfficialityIdentifier(String statisticOfficialityIdentifier) {
         this.statisticOfficialityIdentifier = statisticOfficialityIdentifier;
+    }
+
+    public String getDateNextUpdate() {
+        return dateNextUpdate;
+    }
+
+    public void setDateNextUpdate(String dateNextUpdate) {
+        this.dateNextUpdate = dateNextUpdate;
     }
 }
