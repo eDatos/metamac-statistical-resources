@@ -35,6 +35,7 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collec
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsRest2DoMapper;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat.JsonStatDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multidataset.MultidatasetsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multidataset.MultidatasetsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query.QueriesDo2RestMapperV10;
@@ -71,6 +72,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Autowired
     private MultidatasetsRest2DoMapper                    multidatasetsRest2DoMapper;
+
+    @Autowired
+    private JsonStatDo2RestMapperV10                      jsonStatDo2RestMapper;
 
     @Autowired
     private StatisticalResourcesConfiguration             configurationService;
@@ -120,7 +124,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             Map<String, List<String>> dimensions = parseDimensionExpression(dim);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Set<String> parsedFields = parseFieldsParameter(fields);
-            return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
+            return jsonStatDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -181,7 +185,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             Map<String, List<String>> dimensions = parseDimensionExpression(dim);
             Set<String> parsedFields = parseFieldsParameter(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
+            return jsonStatDo2RestMapper.toJsonStatQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }

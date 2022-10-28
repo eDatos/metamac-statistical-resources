@@ -16,7 +16,6 @@ public interface DatasetsDo2RestMapperV10 {
 
     public Datasets toDatasets(PagedResult<DatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages);
     public Dataset toDataset(DatasetVersion source, Map<String, List<String>> dimensions, List<String> selectedLanguages, Set<String> fields) throws Exception;
-    public JsonStatData toJsonStatDataset(DatasetVersion datasetVersion, Map<String, List<String>> dimensions, List<String> selectedLanguages, Set<String> parsedFields) throws Exception;
     public Resource toResource(DatasetVersion source, List<String> selectedLanguages);
     public Resource toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages);
     public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages);

@@ -18,5 +18,4 @@ public interface QueriesDo2RestMapperV10 {
     public Query toQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public Resource toResource(QueryVersion source, List<String> selectedLanguages);
     public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages);
-    public JsonStatData toJsonStatQuery(QueryVersion queryVersion, Map<String, List<String>> dimensions, List<String> selectedLanguages, Set<String> parsedFields) throws Exception;
 }
