@@ -144,7 +144,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
      * Throws response error, logging exception
      */
     public static RestException manageException(Exception e) {
-        logger.error("Error", e);
+        logException(e);
         if (e instanceof RestException) {
             return (RestException) e;
         } else {
@@ -154,6 +154,14 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         }
     }
 
+    private static void logException(Exception e) {
+        if (e instanceof RestException && Status.NOT_FOUND.equals(((RestException) e).getStatus())) {
+            logger.debug("Error", e);
+        } else {
+            logger.error("Error", e);
+        }
+    }
+    
     public static DateTime isDateAfterNowSetNull(DateTime checkValidTo) {
         if (checkValidTo == null || checkValidTo.isAfterNow()) {
             return null;
