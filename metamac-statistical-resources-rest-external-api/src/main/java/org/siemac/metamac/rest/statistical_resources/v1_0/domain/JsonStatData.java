@@ -27,7 +27,7 @@ public class JsonStatData {
     private String updated;
     private JsonStatExtension extension;
     private List<String> note;
-    private List<Number> value = new ArrayList<>(); // TODO EDATOS-3662: could there be more values than Integer.MAX_VALUE?
+    private List<Number> value = new ArrayList<>();
     private List<String> id;
     private List<Long> size;
     private Map<String, List<String>> role;
