@@ -172,7 +172,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             return null;
         }
         if (!TypeRelatedResourceEnum.QUERY_VERSION.equals(source.getType())) {
-            throw buildRestException("RelatedResource unsupported: " + source.getType());
+            throw commonDo2RestMapper.buildRestException("RelatedResource unsupported: " + source.getType());
         }
 
         Resource target = new Resource();
@@ -517,7 +517,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             case DISCONTINUED:
                 return org.siemac.metamac.rest.statistical_resources.v1_0.domain.QueryStatus.DISCONTINUED;
             default:
-                throw buildRestException("QueryStatusEnum unsupported: " + source);
+                throw commonDo2RestMapper.buildRestException("QueryStatusEnum unsupported: " + source);
 
         }
     }
@@ -534,7 +534,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             case LATEST_DATA:
                 return org.siemac.metamac.rest.statistical_resources.v1_0.domain.QueryType.LATEST_DATA;
             default:
-                throw buildRestException("QueryTypeEnum unsupported: " + source);
+                throw commonDo2RestMapper.buildRestException("QueryTypeEnum unsupported: " + source);
         }
     }
 
@@ -616,14 +616,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             }
             return temporalCoverageCodes.subList(0, codeLastIndexToReturn);
         } else {
-            throw buildRestException("QueryTypeEnum unsupported: " + source);
+            throw commonDo2RestMapper.buildRestException("QueryTypeEnum unsupported: " + source);
         }
-    }
-
-    private RestException buildRestException(String message) {
-        logger.error(message);
-        org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
-        return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
     }
 
 }
