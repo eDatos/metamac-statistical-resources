@@ -1,6 +1,5 @@
 package org.siemac.metamac.statistical.resources.web.client.widgets;
 
-import org.siemac.metamac.statistical.resources.web.client.operation.presenter.OperationListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.operation.view.handlers.OperationListUiHandlers;
 import org.siemac.metamac.web.common.client.constants.CommonWebConstants;
 
@@ -8,7 +7,7 @@ public class OperationsValuesSearchSectionStack extends OperationSearchSectionSt
     private OperationListUiHandlers handlers;
 
     protected void retrieveResources() {
-        getUiHandlers().retrieveOperations(OperationListPresenter.OPERATION_LIST_FIRST_RESULT, CommonWebConstants.MAIN_LIST_MAX_RESULTS, getDataConfigurationWebCriteria());
+        getUiHandlers().retrieveOperations(0, CommonWebConstants.MAIN_LIST_MAX_RESULTS, getDataConfigurationWebCriteria());
     }
 
     private OperationListUiHandlers getUiHandlers() {

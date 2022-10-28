@@ -35,8 +35,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 public class OperationListPresenter extends Presenter<OperationListPresenter.OperationListView, OperationListPresenter.OperationListProxy> implements OperationListUiHandlers {
 
-    public static final int OPERATION_LIST_FIRST_RESULT = 0;
-	private final DispatchAsync dispatcher;
+    private final DispatchAsync dispatcher;
     private final PlaceManager  placeManager;
 
     @ProxyCodeSplit
@@ -48,9 +47,6 @@ public class OperationListPresenter extends Presenter<OperationListPresenter.Ope
     public interface OperationListView extends View, HasUiHandlers<OperationListUiHandlers> {
 
         void setOperationPaginatedList(GetStatisticalOperationsPaginatedListResult datasetsPaginatedList);
-        
-//        MetamacWebCriteria getOperationWebCriteria();
-
     }
 
     @Inject
@@ -81,8 +77,7 @@ public class OperationListPresenter extends Presenter<OperationListPresenter.Ope
     @Override
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
-//        retrieveOperations(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, null);
-      retrieveOperations(0, 50, null);
+        retrieveOperations(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, null);
 
     }
 

@@ -37,9 +37,9 @@ public class OperationListViewImpl extends ViewWithUiHandlers<OperationListUiHan
     @Inject
     public OperationListViewImpl() {
         super();
+        
         searchSectionStack = new OperationsValuesSearchSectionStack();
-        //TODO CAMBIAR MAXIMO PAGINACION MAIN_LIST_MAX_RESULTS
-        operationsList = new PaginatedListGrid(50, new PaginatedAction() {
+        operationsList = new PaginatedListGrid(StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, new PaginatedAction() {
 
             @Override
             public void retrieveResultSet(int firstResult, int maxResults) {
@@ -101,12 +101,4 @@ public class OperationListViewImpl extends ViewWithUiHandlers<OperationListUiHan
         super.setUiHandlers(handlers);
         searchSectionStack.setUiHandlers(handlers);
     }
-    
-//    @Override
-//    public MetamacWebCriteria getOperationWebCriteria() {
-//        if (searchSectionStack == null) {
-//            return new MetamacWebCriteria();
-//        }
-//        return searchSectionStack.getDataConfigurationWebCriteria();
-//    }
 }

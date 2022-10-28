@@ -10,5 +10,4 @@ public interface OperationListUiHandlers extends UiHandlers {
 
     public void retrieveOperations(int firstResult, int maxResults, MetamacWebCriteria criteria);
     public void goToOperation(String urn);
-
 }
