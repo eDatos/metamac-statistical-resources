@@ -34,6 +34,7 @@ import org.sdmx.resources.sdmxml.schemas.v2_1.structure.TimeDimensionRepresentat
 import org.sdmx.resources.sdmxml.schemas.v2_1.structure.TimeDimensionType;
 import org.sdmx.resources.sdmxml.schemas.v2_1.structure.TimeTextFormatType;
 import org.sdmx.resources.sdmxml.schemas.v2_1.structure.UsageStatusType;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.NameableStatisticalResource;
@@ -712,7 +713,7 @@ public class SdmxDataCoreMocks extends BaseJaxbMocks {
         target.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem("DSD01"));
         target.setFormatExtentObservations(Long.valueOf(3));
         target.setFormatExtentDimensions(Integer.valueOf(5));
-        target.setDateNextUpdate(new DateTime(2013, 12, 2, 3, 4, 5, 0));
+        target.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 12, 2, 3, 4, 5, 0).toDate()));
         target.setUpdateFrequency(StatisticalResourcesDoMocks.mockCodeExternalItem("updateFrequency01"));
         target.setStatisticOfficiality(coreDoMocks.mockStatisticOfficiality("statisticOfficiality01"));
         mockSiemacMetadataStatisticalResource(agencyID, resourceID, version, target.getSiemacMetadataStatisticalResource());

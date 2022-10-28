@@ -75,7 +75,7 @@ public class MultidatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl imple
                 case NEXT_VERSION_DATE:
                     return new SculptorPropertyCriteria(
                             CriteriaUtils.getDatetimeLeafPropertyEmbedded(MultidatasetVersionProperties.siemacMetadataStatisticalResource().nextVersionDate(), MultidatasetVersion.class),
-                            propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                            propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
                 case PROC_STATUS:
                     return new SculptorPropertyCriteria(MultidatasetVersionProperties.siemacMetadataStatisticalResource().procStatus(), propertyRestriction.getEnumValue(),
                             propertyRestriction.getOperationType());

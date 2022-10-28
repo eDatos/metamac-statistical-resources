@@ -60,13 +60,13 @@ public class DatasetImportUtils {
 
     private static void setDatasetVersionNextVersionDate(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
         if (!isBlank(taskInfoDataset.getDatasetNextVersionDate())) {
-            datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(getFormattedDateTime(taskInfoDataset.getDatasetNextVersionDate()));
+            datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(taskInfoDataset.getDatasetNextVersionDate());
         }
     }
 
     private static void setDatasetVersionNextUpdateDate(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
         if (!isBlank(taskInfoDataset.getDatasetNextUpdateDate())) {
-            datasetVersion.setDateNextUpdate(getFormattedDateTime(taskInfoDataset.getDatasetNextUpdateDate()));
+            datasetVersion.setDateNextUpdate(taskInfoDataset.getDatasetNextUpdateDate());
         }
     }
     
