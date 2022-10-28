@@ -35,6 +35,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
@@ -1467,22 +1468,24 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     private void processDateNextUpdate(DatasetVersion resource) {
-        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)) {
-            if (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
-                DateTime mostRecentDate = null;
-                for (Datasource datasource : resource.getDatasources()) {
-                    if (datasource.getDateNextUpdate() != null) {
-                        if (isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
-                            mostRecentDate = datasource.getDateNextUpdate();
-                        }
-                    }
+        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)
+                && (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate()))) {
+            DateTime mostRecentDate = null;
+            for (Datasource datasource : resource.getDatasources()) {
+                if (datasource.getDateNextUpdate() != null && isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
+                    mostRecentDate = datasource.getDateNextUpdate();
                 }
-                resource.setDateNextUpdate(mostRecentDate);
-                resource.setUserModifiedDateNextUpdate(false);
             }
+
+            resource.setDateNextUpdate(setDateInSdmx(mostRecentDate));
+            resource.setUserModifiedDateNextUpdate(false);
         }
     }
 
+    private String setDateInSdmx(DateTime date) {
+        return date != null ? CoreCommonUtil.jodaDateTime2IsoDate(date.toDate()) : null;
+    }
+    
     private boolean isNewDateBestOptionForDateNextUpdate(DateTime current, DateTime newCandidate) {
         if (current == null) {
             return true;

@@ -1,5 +1,9 @@
 package org.siemac.metamac.statistical.resources.core.stream.messages.mappers;
 
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
@@ -7,6 +11,7 @@ import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.common.serviceapi.TranslationService;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -20,6 +25,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Publicat
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
 
 public class AvroMapperUtils {
 
@@ -36,7 +42,16 @@ public class AvroMapperUtils {
 
     protected static MultidatasetRepository        multidatasetRepository;
     protected static MultidatasetVersionRepository multidatasetVersionRepository;
+    
+    protected static TranslationService              translationService;
 
+    public static TranslationService getTranslationService() {
+        if (translationService == null) {
+            translationService = ApplicationContextProvider.getApplicationContext().getBean(TranslationService.class);
+        }
+        return translationService;
+    }
+    
     public static DatasetRepository getDatasetRepository() {
         if (datasetRepository == null) {
             datasetRepository = ApplicationContextProvider.getApplicationContext().getBean(DatasetRepository.class);
@@ -176,5 +191,14 @@ public class AvroMapperUtils {
                 break;
         }
         return target;
+    }
+    
+    public static InternationalStringAvro toSdmxObservationalTimePeriod(String sdmxValue) throws MetamacException {
+        if (StringUtils.isNotBlank(sdmxValue)) {
+            ServiceContext serviceContext = new ServiceContext("restInternal", "restInternal", "restInternal");
+            Map<String, String> internationalStringValue = getTranslationService().retrieveTimeTranslation(serviceContext, sdmxValue);
+            return InternationalStringDo2AvroMapper.mapDo2Avro(internationalStringValue);
+        }
+        return null;
     }
 }

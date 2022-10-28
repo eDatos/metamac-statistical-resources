@@ -75,5 +75,6 @@ public interface CommonDo2RestMapperV10 {
     public void toResourceExternalItemSrm(ExternalItem source, ResourceInternal target, List<String> selectedLanguages);
     public ResourceInternal toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages);
     public ResourcesInternal toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages);
+    public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException;
 
 }
