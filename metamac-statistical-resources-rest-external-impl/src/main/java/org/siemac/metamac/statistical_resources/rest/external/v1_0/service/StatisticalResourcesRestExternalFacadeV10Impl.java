@@ -175,6 +175,19 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim) {
+        try {
+            QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
+            Set<String> parsedFields = parseFieldsParameter(fields);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
     public Multidatasets findMultidatasets(String query, String orderBy, String limit, String offset, List<String> lang) {
         return findMultidatasetsCommon(null, null, query, orderBy, limit, offset, lang);
     }

@@ -88,6 +88,12 @@ public interface StatisticalResourcesV1_0 {
             @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
     @GET
+    @Produces({"application/jsonstat+json"})
+    @Path("queries/{agencyID}/{resourceID}")
+    JsonStatData retrieveJsonStatQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim);
+
+    @GET
     @Produces({"application/xml", "application/json"})
     @Path("multidatasets")
     Multidatasets findMultidatasets(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
