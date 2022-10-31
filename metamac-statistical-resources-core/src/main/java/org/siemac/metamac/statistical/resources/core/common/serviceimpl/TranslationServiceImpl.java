@@ -23,7 +23,6 @@ import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesCo
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.siemac.metamac.statistical.resources.core.task.serviceimpl.TaskServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ import net.sf.ehcache.Element;
 @Service("translationService")
 public class TranslationServiceImpl extends TranslationServiceImplBase {
 
-    private static Logger                     logger                              = LoggerFactory.getLogger(TaskServiceImpl.class);
+    private static Logger                     logger                              = LoggerFactory.getLogger(TranslationServiceImpl.class);
     
     private static final String                   TRANSLATION_SERVICE_CACHE_NAME = "translationServiceCache";
 
@@ -88,7 +87,11 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
         if ("2006-D364".equals(time)) {
             logger.debug("retrieveTimeTranslation timeSdmx:" + timeSdmx);
             logger.debug("retrieveTimeTranslation translationCode:" + translationCode);
-            logger.debug("retrieveTimeTranslation translation:" + translation.getCode());
+            if (translation != null && translation.getCode() != null) {
+                logger.debug("retrieveTimeTranslation translation:" + translation.getCode());
+            } else {
+                logger.debug("translation is null");
+            }
         }
         
         if (translation == null) {
