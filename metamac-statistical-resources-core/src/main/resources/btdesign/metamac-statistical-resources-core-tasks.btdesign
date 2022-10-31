@@ -53,6 +53,8 @@ Application DatasetsStatisticalResources {
             String planifyDuplicationDataset(@TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
 			"Plannify a scheduled task to update the geographical coverage cache"
             String planifyUpdateGeocoverageCache(@TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException;
+            "Plannify a scheduled task to update the geographical coverage cache for external datasets"
+            String planifyUpdateExternalGeocoverageCache(@TaskInfoDataset taskInfoDataset) throws MetamacException;
 			"Perform the importation task"
     		processImportationTask(String importationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the database importation task"
@@ -63,6 +65,8 @@ Application DatasetsStatisticalResources {
     		processDuplicationTask(String duplicationJobKey, @TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
     		"Perform the geographical coverage cache update task"
     		processUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		"Perform the geographical coverage cache update task for external datasets"
+    		processUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the database dataset polling task"
     		processDatabaseDatasetPollingTask() throws MetamacException;
     		
@@ -80,6 +84,9 @@ Application DatasetsStatisticalResources {
 
 			"Check if exists a update geocoverage cache job task in the @param resourceId"
 			boolean existUpdateGeocoverageCacheTaskInResource(String resourceId) throws MetamacException;
+			
+			"Check if exists a update geocoverage cache job task for external datasets"
+			boolean existUpdateExternalGeocoverageCacheTaskInResource() throws MetamacException;
 			
 			"Check if exists an db importation job task in the @param resourceId"
     		boolean existDatabaseImportationTaskInResource(String resourceId) throws MetamacException;

@@ -115,6 +115,7 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatas
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -240,6 +241,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
     
+    @Autowired
+    StreamConsumerServiceFacade streamConsumerServiceFacade;
+        
     public StatisticalResourcesServiceFacadeImpl() {
     }
 
@@ -1192,9 +1196,18 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
         // Operate
-        getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+        // TODO EDATOS-3770 DESCOMENTAR
+        //getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+        
+        updateAllGeographicCoverageExternalPublicationVariableElementsCache(ctx);
     }
-
+    
+    private void updateAllGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
+        
+        //streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
+    }
+    
     @Override
     public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security

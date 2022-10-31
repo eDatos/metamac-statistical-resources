@@ -198,6 +198,9 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.task.error.database_importation_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_GEOCOVERAGE_CACHE_IN_PROCESS                                = create(
             "exception.resources.task.error.update_geocoverage_cache_in_process");
+    // TODO EDATOS-3770 PONER CONSTANTE
+    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_IN_PROCESS                                = create(
+            "exception.resources.task.error.update_external_geocoverage_cache_in_process");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                            = create("exception.resources.task.in_progress");
 
     // Dataset Importation

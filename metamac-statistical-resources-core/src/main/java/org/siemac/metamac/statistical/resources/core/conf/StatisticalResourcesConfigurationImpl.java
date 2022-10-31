@@ -13,6 +13,7 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceImpl implements StatisticalResourcesConfiguration {
 
     final String STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP = "STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP";
+    final String STATISTICAL_RESOURCES_CUSTOM_JAXI_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_JAXI_MESSAGES_GROUP";
     
     @Override
     public Map<KeyDotEnum, String> retrieveDotCodeMapping() throws MetamacException {
@@ -77,5 +78,10 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     @Override
     public String retrieveKafkaJaxiMessagesGroup() throws MetamacException {
         return STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP; 
+    }
+    
+    @Override
+    public String retrieveKafkaCustomJaxiMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_CUSTOM_JAXI_MESSAGES_GROUP; 
     }
 }

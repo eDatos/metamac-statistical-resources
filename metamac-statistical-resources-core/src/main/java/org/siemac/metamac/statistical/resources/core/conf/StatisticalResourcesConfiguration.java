@@ -29,6 +29,8 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
         
     public String retrieveKafkaJaxiMessagesGroup() throws MetamacException;
     
+    public String retrieveKafkaCustomJaxiMessagesGroup() throws MetamacException;
+    
     
     
 }

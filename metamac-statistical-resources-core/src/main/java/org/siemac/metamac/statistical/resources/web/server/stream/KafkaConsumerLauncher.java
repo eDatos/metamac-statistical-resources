@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.server.stream;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -11,15 +12,27 @@ import java.util.concurrent.Future;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
+import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
+import org.siemac.metamac.sso.client.MetamacPrincipal;
+import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
+import org.siemac.metamac.sso.client.SsoClientConstants;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +47,14 @@ import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 @Component
 public class KafkaConsumerLauncher implements ApplicationListener<ContextRefreshedEvent> {
 
     protected static final Log             LOGGER                  = LogFactory.getLog(KafkaConsumerLauncher.class);
+    
+    private static final String      MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
     
     @Autowired
     private StatisticalResourcesConfiguration statisticalResourcesConfiguration;
@@ -56,6 +72,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     
     private Cache                          kafkaFailedMessagesCache;
     private static final String            CONSUMER_JAXI_MESSAGES_1_NAME   = "statistical_resources_consumer_jaxi_publication_1";
+    private static final String            CONSUMER_JAXI_CUSTOM_MESSAGE_NAME   = "statistical_resources_consumer_jaxi_publication_2";
     private static final String            KAFKA_FAILED_CACHE_NAME = "kafkaFailed";
     
     @Override
@@ -92,39 +109,146 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
         return Boolean.FALSE;
     }
-    
-    public void createCustomConsumer() {
-            KafkaConsumer<String, DatasetAvro> consumer = null;
-            try {
-                String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
-                consumer = createConsumerFromCurrentOffset(topicJaxiPublication, CONSUMER_JAXI_MESSAGES_1_NAME);
-                
-                int numberOfMessagesToRead = 5;
-                boolean keepOnReading = true;
-                int numberOfMessagesReadSoFar = 0;
-                
-                while(keepOnReading){
-                    ConsumerRecords<String, DatasetAvro> records =
-                            consumer.poll(100);
+        
+    public void createCustomConsumer() throws MetamacException {
+        String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
+        try (KafkaConsumer<String, DatasetAvro> consumer = createCustomConsumerFromCurrentOffset(statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName(),
+                CONSUMER_JAXI_CUSTOM_MESSAGE_NAME);) {
+            consumer.subscribe(Collections.singleton(topicJaxiPublication), new ConsumerRebalanceListener() {
 
-                    for (ConsumerRecord<String, DatasetAvro> record : records){
-                        numberOfMessagesReadSoFar += 1;
-                        LOGGER.info("Key: " + record.key() + ", Value: " + record.value());
-                        LOGGER.info("Partition: " + record.partition() + ", Offset:" + record.offset());
-                        if (numberOfMessagesReadSoFar >= numberOfMessagesToRead){
-                            keepOnReading = false; // to exit the while loop
-                            break; // to exit the for loop
-                        }
-                    }
+                @Override
+                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
                 }
-            } catch (Exception e) {
-                LOGGER.error(e, e.getCause());
-    } finally {
-        LOGGER.info("Closing the consumer...");
-        if (consumer != null) {
-        consumer.close();
+
+                @Override
+                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                    consumer.seekToBeginning(partitions);
+                }
+            });
+
+            boolean keepOnReading = true;
+
+            Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
+            
+            while (keepOnReading) {
+                ConsumerRecords<String, DatasetAvro> records = consumer.poll(100);
+                
+                if (records.count() > 1) {
+                    LOGGER.error(MAX_POOL_MSG);
+                    throw new RuntimeException(MAX_POOL_MSG);
+                }
+
+                if (records.isEmpty()) {
+                    continue;
+                }
+
+                // Process resources
+                ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
+
+                if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
+                    LOGGER.debug("The current message already processed successfully");
+                    if (commitSync(consumer, record)) {
+                        pendigOffsetsToCommit.remove(record.partition());
+                        removeFromErrorCacheMessagesIfNeccesary(record);
+                    }
+                    continue;
+                }
+
+                StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
+                // @formatter:off
+                logMessageBldr
+                    .append(topicJaxiPublication)
+                    .append(", Partition: ").append(record.partition())
+                    .append(", Offset: ").append(record.offset())
+                    .append(", TimestampType: ").append(record.timestampType())
+                    .append(", Timestamp: ").append(record.timestamp())
+                    .append(" [").append(new DateTime(record.timestamp(), DateTimeZone.forID("Atlantic/Canary"))).append("]");
+                // @formatter:on
+                String logMessage = logMessageBldr.toString();
+                
+                pendigOffsetsToCommit.put(record.partition(), record.offset());
+                
+                LOGGER.info(logMessage.toString());
+                try {
+                    ServiceContext serviceContext = createServiceContext(logMessage);
+  
+                    statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
+                    
+                    commitSync(consumer, record);
+                } catch (Exception e) {
+                    LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
+
+                    // Send a error notification, the error message will send only if not exist in error cache
+                    sendErrorMessageIfNeccesary(record);
+
+                    LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
+                }
+            }
+
+        } catch (Exception e) {
+            LOGGER.error(e, e.getCause());
         }
     }
+    
+    private void removeFromErrorCacheMessagesIfNeccesary(ConsumerRecord<String, DatasetAvro> record) {
+        if (kafkaFailedMessagesCache.isKeyInCache(record.key())) {
+            kafkaFailedMessagesCache.remove(record.key());
+        }
+    }
+    
+    private ServiceContext createServiceContext(String logMessage) {
+        ServiceContext serviceContext = new ServiceContext("kafka-jaxi-publication-received", logMessage.toString(), "metamac-statistical-resources-core");
+        MetamacPrincipal metamacPrincipal = new MetamacPrincipal();
+        metamacPrincipal.setUserId(serviceContext.getUserId());
+        metamacPrincipal.getAccesses().add(new MetamacPrincipalAccess(StatisticalResourcesRoleEnum.ADMINISTRADOR.getName(), StatisticalResourcesConstants.APPLICATION_ID, null));
+        serviceContext.setProperty(SsoClientConstants.PRINCIPAL_ATTRIBUTE, metamacPrincipal);
+        return serviceContext;
+    }
+
+    private boolean commitSync(KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record) {
+        try {
+            consumer.commitSync(Collections.singletonMap(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1)));
+            LOGGER.debug("Commited message: " + record.partition() + " : " + record.offset());
+        } catch (CommitFailedException e) {
+            LOGGER.debug("The message processing takes longer than the session timeout. The coordinator kicks the consumer out of the group (rebalanced)");
+            return false;
+        }
+        return true;
+    }
+    
+    private void sendErrorMessageIfNeccesary(ConsumerRecord<String, DatasetAvro> record) {
+        if (!kafkaFailedMessagesCache.isKeyInCache(record.key())) {
+            Element element = new Element(record.key(), record.value());
+            element.setEternal(true);
+            kafkaFailedMessagesCache.put(element);
+            noticesRestInternalService.createConsumerFromKafkaErrorBackgroundNotification(record.key());
+        }
+    }
+    
+    private KafkaConsumer<String, DatasetAvro> createCustomConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
+        KafkaConsumer<String, DatasetAvro> kafkaConsumer = new KafkaConsumer<>(getCustomonsumerProperties(clientId));
+        kafkaConsumer.subscribe(Collections.singletonList(topic));
+        return kafkaConsumer;
+    }
+    
+    private Properties getCustomonsumerProperties(String clientId) throws MetamacException {
+        Properties props = new Properties();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, statisticalResourcesConfiguration.retrieveKafkaCustomJaxiMessagesGroup());
+        props.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, io.confluent.kafka.serializers.KafkaAvroDeserializer.class);
+
+        props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false); // Default is True
+        props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 10000); // 10 s
+        props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 900000); // 15 min, Max time for Bussiness Logic execution of consumer thread
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1); // The maximum number of records returned in a single call to poll()
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.toString().toLowerCase()); // Policy to follow when there are no confirmed offset
+
+        props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, statisticalResourcesConfiguration.retrieveKafkaSchemaRegistryUrl());
+        props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
+
+        return props;
     }
     
     
@@ -202,7 +326,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 }
             }
         }
-
+     
         private boolean alwaysWithDelay(long timeout) {
             try {
                 Thread.sleep(timeout);
