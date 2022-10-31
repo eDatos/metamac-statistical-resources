@@ -35,9 +35,7 @@ ns2:dateNextUpdate
 ******** curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
 ******** curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
 3.2) Comprobar que se borran todos los esquemas. Según entorno:
--- ISTAC: https://confluence.arte.dev/display/ISTAC/Servidores
--- IBESTAT: https://confluence.arte.dev/display/ISTAC/IBESTAT+-+Entorno+PRE#IBESTATEntornoPRE-Kafka
--- IESTADIS: https://confluence.arte.dev/display/ISTAC/Entorno+IESTADIS+-+IECM+-+Madrid+-+PRE#EntornoIESTADISIECMMadridPRE-Kafka
+Ver enlaces a la información por entorno en la tarea.
 
 - 4) 
 4.1) Borrar los mensajes existentes en los topics DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS. Para ello, 
@@ -62,15 +60,15 @@ ns2:dateNextUpdate
 
 4.2) Comprobar que se borran todos los datos para el topic DATASET_PUBLICATIONS. Según entorno:
 -- (PUEDE TARDAR UN RATO EN BORRAR TODO) 
-
--- ISTAC: https://confluence.arte.dev/display/ISTAC/Servidores
--- IBESTAT: https://confluence.arte.dev/display/ISTAC/IBESTAT+-+Entorno+PRE#IBESTATEntornoPRE-Kafka
--- IESTADIS: https://confluence.arte.dev/display/ISTAC/Entorno+IESTADIS+-+IECM+-+Madrid+-+PRE#EntornoIESTADISIECMMadridPRE-Kafka
+Ver enlaces a la información por entorno en la tarea.
 
 
-- 5) Actualizar apps
+
+- 5) 
+ 5.1) Builds de proyectos
    - metamac-core-common
    - metamac-web-common
+ 5.2) Actualizar apps
    - metamac-sso
    - statistical-resources   
    - edatos-external-users
