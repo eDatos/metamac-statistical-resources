@@ -45,7 +45,7 @@ ns2:dateNextUpdate
 -- DATASET_PUBLICATIONS
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --describe retention.ms
---ESPERAR 1 MINUTOS ANTES DE VOLVER A RESTAURAR CON LA SIGUIENTE SENTENCIA
+-- Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
 
 -- COLLECTION_PUBLICATIONS
