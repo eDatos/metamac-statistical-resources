@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base;
 
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.escapeValueToData;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 import static org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants.KEY_DIMENSIONS_SEPARATOR;
@@ -233,6 +233,15 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException {
+        if (StringUtils.isNotBlank(sdmxValue)) {
+            Map<String, String> internationalStringValue = translationService.retrieveTimeTranslation(SERVICE_CONTEXT, sdmxValue);
+            return toInternationalString(internationalStringValue, selectedLanguages);
+        }
+        return null;
+    }
+    
+    @Override
     public InternalWebApplicationNavigation getInternalWebApplicationNavigation() {
         return internalWebApplicationNavigation;
     }
@@ -302,7 +311,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setValidFrom(toDate(source.getValidFrom()));
         target.setValidTo(toDate(isDateAfterNowSetNull(source.getValidTo())));
         target.setNextVersion(toNextVersionType(source.getNextVersion(), selectedLanguages));
-        target.setNextVersionDate(toDate(source.getNextVersionDate()));
+        target.setNextVersionDate(toSdmxObservationalTimePeriod(source.getNextVersionDate(), selectedLanguages));
     }
 
     @Override
@@ -1327,8 +1336,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         for (String dimension : dimensions) {
             List<String> dimensionValues = dimensionsSelected.get(dimension);
             List<String> dimensionValuesSelected = new ArrayList<String>();
-            if (CollectionUtils.isEmpty(dimensionValues)) {
-                // if dimension is not selected in query, retrieve all codes from coverage
+            if (dimensionValues == null) {
+                // if dimension is not selected in query, retrieve all codes from coverage BUT if the filter returns empty list, we do that
                 List<CodeDimension> codeDimensions = datasetService.retrieveCoverageForDatasetVersionDimension(SERVICE_CONTEXT, source.getSiemacMetadataStatisticalResource().getUrn(), dimension);
                 for (CodeDimension codeDimension : codeDimensions) {
                     dimensionValuesSelected.add(codeDimension.getIdentifier());

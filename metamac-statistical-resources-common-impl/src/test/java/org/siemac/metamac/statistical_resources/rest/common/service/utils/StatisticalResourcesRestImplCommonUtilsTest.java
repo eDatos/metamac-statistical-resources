@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -66,11 +67,13 @@ public class StatisticalResourcesRestImplCommonUtilsTest {
         return map;
     }
 
-    private List<String> temporalCoverageDataset1 = Arrays.asList("2012", "2011", "2010", "2009", "2008", "2007");
-    private List<String> temporalCoverageDataset2 = Arrays.asList("2012-01-01", "2010-M01", "2008", "2007-S2");
-
     @Test
     public void testCalculateEffectiveTemporalSelectionValues1() {
+        List<String> temporalCoverageDataset1 = Arrays.asList("2012", "2011", "2010", "2009", "2008", "2007");
+
+        assertEquals(new ArrayList<String>(), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset1, new ArrayList<String>()));
+        assertEquals(Arrays.asList("2000"), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset1, Arrays.asList("2000")));
+
         // Range
         assertEquals(Arrays.asList("2009", "2008", "2007"), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset1, Arrays.asList("~range=2006;2009")));
 
@@ -107,6 +110,8 @@ public class StatisticalResourcesRestImplCommonUtilsTest {
 
     @Test
     public void testCalculateEffectiveTemporalSelectionValues2() {
+        List<String> temporalCoverageDataset2 = Arrays.asList("2012-01-01", "2010-M01", "2008", "2007-S2");
+
         // Range
         assertEquals(Arrays.asList("2008", "2007-S2"), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset2, Arrays.asList("~range=2006;2009")));
 
@@ -133,6 +138,21 @@ public class StatisticalResourcesRestImplCommonUtilsTest {
         assertEquals(Arrays.asList("2012-01-01", "2010-M01"), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset2, Arrays.asList("~after=2009-M01")));
         assertEquals(Arrays.asList(), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset2, Arrays.asList("~after=2013")));
         assertEquals(Arrays.asList("2012-01-01", "2010-M01", "2008", "2007-S2"), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset2, Arrays.asList("~after=2005")));
+    }
+
+    @Test
+    public void testCalculateEffectiveTemporalSelectionValues3() {
+
+        List<String> temporalCoverageDataset3 = Arrays.asList("2019-09-30T23:00:00", "2019-09-30T22:00:00", "2019-08-01T01:00:00", "2019-08-01T00:00:00", "2019-06-01T00:00:00");
+
+        // Range
+        assertEquals(temporalCoverageDataset3, calculateEffectiveTemporalSelectionValues(temporalCoverageDataset3, Arrays.asList("~range=2018;2019")));
+        assertEquals(Arrays.asList("2019-09-30T23:00:00", "2019-09-30T22:00:00", "2019-08-01T01:00:00", "2019-08-01T00:00:00"),
+                calculateEffectiveTemporalSelectionValues(temporalCoverageDataset3, Arrays.asList("~range=2019-M07;2019-M09")));
+        assertEquals(new ArrayList<String>(), calculateEffectiveTemporalSelectionValues(temporalCoverageDataset3, Arrays.asList("~range=2019-M08;2019-M08")));
+        assertEquals(temporalCoverageDataset3, calculateEffectiveTemporalSelectionValues(temporalCoverageDataset3, Arrays.asList("~range=2019-06-01T00:00:00;2019-09-30T23:00:00")));
+        assertEquals(Arrays.asList("2019-09-30T23:00:00", "2019-09-30T22:00:00", "2019-08-01T01:00:00", "2019-08-01T00:00:00"),
+                calculateEffectiveTemporalSelectionValues(temporalCoverageDataset3, Arrays.asList("~range=2019-06-01T00:00:01;2019-09-30T23:00:00")));
     }
 
     @Test

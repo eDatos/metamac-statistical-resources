@@ -82,7 +82,7 @@ Application BaseStatisticalResources {
 			discriminatorValue="VERSIONABLE_RESOURCE"
 
 			String versionLogic nullable;
-			DateTimeTZ nextVersionDate nullable;
+			String nextVersionDate nullable;
 			DateTimeTZ validFrom nullable;
 			DateTimeTZ validTo nullable;
 			- Bag<@VersionRationaleType> versionRationaleTypes cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_SR_VRATIONALE_TYPES";

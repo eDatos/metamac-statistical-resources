@@ -1,7 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query;
 
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 
 import java.math.BigInteger;
@@ -351,8 +351,10 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     private List<String> calculateEffectiveTemporalDimensionValuesToQuery(QueryVersion source, List<String> temporalCoverageCodes, List<String> selectionCodes) {
         QueryTypeEnum type = source.getType();
         if (QueryTypeEnum.FIXED.equals(type)) {
-            // return exactly
-            return selectionCodes;
+            // We return exactly the selected codes, but first, we sort them so all three methods (FIXED, AUTOINCREMENTAL and LATEST_DATA) return the same order, equal to the coverage
+            List<String> sortedSelectionCodes = SdmxTimeUtils.sortTimeList(selectionCodes);
+            Collections.reverse(sortedSelectionCodes);
+            return sortedSelectionCodes;
         } else if (QueryTypeEnum.AUTOINCREMENTAL.equals(type)) {
             List<String> effectiveDimensionValues = new ArrayList<String>();
 

@@ -203,7 +203,7 @@ public class BaseAsserts extends CommonAsserts {
     protected static void assertEqualsVersionableStatisticalResource(VersionableStatisticalResource expected, VersionableStatisticalResource actual) {
 
         assertEquals(expected.getVersionLogic(), actual.getVersionLogic());
-        assertEqualsDate(expected.getNextVersionDate(), actual.getNextVersionDate());
+        assertEquals(expected.getNextVersionDate(), actual.getNextVersionDate());
         assertEquals(expected.getNextVersion(), actual.getNextVersion());
         assertEqualsVersionRationaleTypeCollection(expected.getVersionRationaleTypes(), actual.getVersionRationaleTypes());
         assertEqualsInternationalString(expected.getVersionRationale(), actual.getVersionRationale());
@@ -346,7 +346,7 @@ public class BaseAsserts extends CommonAsserts {
         switch (mapperEnum) {
             case DO2DTO:
                 assertEquals(entity.getVersionLogic(), dto.getVersionLogic());
-                assertEqualsDate(entity.getNextVersionDate(), dto.getNextVersionDate());
+                assertEquals(entity.getNextVersionDate(), dto.getNextVersionDate());
                 assertEqualsDate(entity.getValidFrom(), dto.getValidFrom());
                 assertEqualsDate(entity.getValidTo(), dto.getValidTo());
                 assertEqualsVersionRationaleTypeCollectionMapper(entity.getVersionRationaleTypes(), dto.getVersionRationaleTypes());
@@ -356,7 +356,7 @@ public class BaseAsserts extends CommonAsserts {
             case DTO2DO:
                 assertEquals(entity.getNextVersion(), dto.getNextVersion());
                 if (NextVersionTypeEnum.SCHEDULED_UPDATE.equals(entity.getNextVersionDate())) {
-                    assertEqualsDate(entity.getNextVersionDate(), dto.getNextVersionDate());
+                    assertEquals(entity.getNextVersionDate(), dto.getNextVersionDate());
                 }
                 assertEqualsInternationalString(entity.getVersionRationale(), dto.getVersionRationale());
                 assertEqualsVersionRationaleTypeCollectionMapper(entity.getVersionRationaleTypes(), dto.getVersionRationaleTypes());

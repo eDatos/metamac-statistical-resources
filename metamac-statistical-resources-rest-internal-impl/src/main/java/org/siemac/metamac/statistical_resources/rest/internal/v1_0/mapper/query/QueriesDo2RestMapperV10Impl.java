@@ -1,7 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.query;
 
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.containsField;
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
 
 import java.math.BigInteger;
@@ -203,7 +203,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setRequires(datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages));
         target.setIsPartOf(toQueryIsPartOf(source, selectedLanguages));
         target.setNextVersion(commonDo2RestMapper.toNextVersionType(source.getLifeCycleStatisticalResource().getNextVersion(), selectedLanguages));
-        target.setNextVersionDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getNextVersionDate()));
+        target.setNextVersionDate(commonDo2RestMapper.toSdmxObservationalTimePeriod(source.getLifeCycleStatisticalResource().getNextVersionDate(), selectedLanguages));
         target.setProcStatus(commonDo2RestMapper.toProcStatusType(source.getLifeCycleStatisticalResource().getProcStatus(), selectedLanguages));
         target.setCreationDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getCreationDate()));
         target.setCreationUser(source.getLifeCycleStatisticalResource().getCreationUser());
