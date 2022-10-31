@@ -23,6 +23,9 @@ import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesCo
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.task.serviceimpl.TaskServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +39,8 @@ import net.sf.ehcache.Element;
 @Service("translationService")
 public class TranslationServiceImpl extends TranslationServiceImplBase {
 
+    private static Logger                     logger                              = LoggerFactory.getLogger(TaskServiceImpl.class);
+    
     private static final String                   TRANSLATION_SERVICE_CACHE_NAME = "translationServiceCache";
 
     @Autowired
@@ -74,11 +79,18 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
         if (timeSdmx == null) {
             throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, ServiceExceptionParameters.TIME);
         }
-
+        
+        
         // Translate
         String translationCode = getTimeSdmxTranslationCode(timeSdmx);
         Translation translation = findTranslationByCode(translationCode);
 
+        if ("2006-D364".equals(time)) {
+            logger.debug("retrieveTimeTranslation timeSdmx:" + timeSdmx);
+            logger.debug("retrieveTimeTranslation translationCode:" + translationCode);
+            logger.debug("retrieveTimeTranslation translation:" + translation.getCode());
+        }
+        
         if (translation == null) {
             // Put code as title
             Map<String, String> title = new HashMap<String, String>(1);
@@ -93,13 +105,15 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
     private Translation findTranslationByCode(String translationCode) {
         Element element;
 
+        
         if ((element = translationServiceCache.get(translationCode)) == null) {
             Translation translation = getTranslationRepository().findTranslationByCode(translationCode);
             element = new Element(translationCode, translation);
             element.setEternal(Boolean.TRUE);
             translationServiceCache.put(element);
+        } else {
+            logger.debug("está en caché translationCode:" + translationCode);
         }
-
         return (Translation) element.getObjectValue();
     }
 
