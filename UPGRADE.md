@@ -40,7 +40,7 @@ ns2:dateNextUpdate
 -- IESTADIS: https://confluence.arte.dev/display/ISTAC/Entorno+IESTADIS+-+IECM+-+Madrid+-+PRE#EntornoIESTADISIECMMadridPRE-Kafka
 
 - 4) 
-4.1)Borrar los mensajes existentes en los topics DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS. Para ello, 
+4.1) Borrar los mensajes existentes en los topics DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS. Para ello, 
 
 -- DATASET_PUBLICATIONS
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
