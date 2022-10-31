@@ -39,7 +39,7 @@ public class MetamacWebRestCriteriaUtils {
     public static String buildQueryStatisticalOperation(MetamacWebCriteria webCriteria) {
         StringBuilder queryBuilder = new StringBuilder();
         if (webCriteria != null) {
-            addSimpleRestCriteria(queryBuilder, webCriteria, OperationCriteriaPropertyRestriction.TITLE, OperationCriteriaPropertyRestriction.ID,OperationCriteriaPropertyRestriction.ACRONYM);
+            addSimpleRestCriteria(queryBuilder, webCriteria, OperationCriteriaPropertyRestriction.TITLE, OperationCriteriaPropertyRestriction.ID, OperationCriteriaPropertyRestriction.ACRONYM);
         }
         return queryBuilder.toString();
     }
