@@ -235,8 +235,8 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
 
     @Test
     public void testRetrieveJsonStatdataset() throws Exception {
-        Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null);
-        JsonStatData jsonStatDataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDatasetJsonStat(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null);
+        Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, null);
+        JsonStatData jsonStatDataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDatasetJsonStat(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, null);
 
         // values testing
         assertNotNull(jsonStatDataset.getValue());

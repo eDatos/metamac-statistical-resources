@@ -118,12 +118,12 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim) {
+    public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Set<String> parsedFields = parseFieldsParameter(fields);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             return jsonStatDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
@@ -179,11 +179,11 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim) {
+    public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
-            Map<String, List<String>> dimensions = parseDimensionExpression(dim);
-            Set<String> parsedFields = parseFieldsParameter(fields);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             return jsonStatDo2RestMapper.toJsonStatQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
