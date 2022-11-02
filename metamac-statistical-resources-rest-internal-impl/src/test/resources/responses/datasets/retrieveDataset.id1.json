@@ -9,7 +9,7 @@
         "kind": "statisticalResources#datasets",
         "href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets"
     },
-    "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=8oMsHB04p3/datasets/dataset;id=agency1:dataset1(01.000)",
+    "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=3E3uJHl3T4/datasets/dataset;id=agency1:dataset1(01.000)",
     "name": {
         "text": [
             {
@@ -21,7 +21,7 @@
     "description": {
         "text": [
             {
-                "value": "description-8oMsHB04p3_000001 en Espanol",
+                "value": "description-3E3uJHl3T4_000001 en Espanol",
                 "lang": "es"
             }
         ]
@@ -29,7 +29,7 @@
     "keywords": {
         "text": [
             {
-                "value": "keyword1 keyword2 keyword3-8oMsHB04p3_000001 en Espanol",
+                "value": "keyword1 keyword2 keyword3-3E3uJHl3T4_000001 en Espanol",
                 "lang": "es"
             }
         ]
@@ -1848,7 +1848,14 @@
         },
         "formatExtentObservations": 3,
         "formatExtentDimensions": 5,
-        "dateNextUpdate": "2013-12-02T03:04:05Z",
+        "dateNextUpdate": {
+            "text": [
+                {
+                    "value": "2013-12-02",
+                    "lang": "es"
+                }
+            ]
+        },
         "updateFrequency": {
             "managementAppLink": "http://localhost:8080/metamac-srm-web/updateFrequency01",
             "id": "updateFrequency01",
@@ -1947,12 +1954,12 @@
             "total": 2
         },
         "statisticalOperation": {
-            "managementAppLink": "http://localhost:8080/statistical-operations-internal/8oMsHB04p3",
-            "id": "8oMsHB04p3",
-            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=8oMsHB04p3",
+            "managementAppLink": "http://localhost:8080/statistical-operations-internal/3E3uJHl3T4",
+            "id": "3E3uJHl3T4",
+            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=3E3uJHl3T4",
             "selfLink": {
                 "kind": "statisticalOperations#operation",
-                "href": "http://data.istac.es/apis/operations/latest/8oMsHB04p3"
+                "href": "http://data.istac.es/apis/operations/latest/3E3uJHl3T4"
             },
             "name": {
                 "text": [
@@ -1992,7 +1999,7 @@
         "subtitle": {
             "text": [
                 {
-                    "value": "subtitle-8oMsHB04p3_000001 en Espanol",
+                    "value": "subtitle-3E3uJHl3T4_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2000,7 +2007,7 @@
         "titleAlternative": {
             "text": [
                 {
-                    "value": "titleAlternative-8oMsHB04p3_000001 en Espanol",
+                    "value": "titleAlternative-3E3uJHl3T4_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2070,7 +2077,7 @@
         "conformsTo": {
             "text": [
                 {
-                    "value": "conformsTo-8oMsHB04p3_000001 en Espanol",
+                    "value": "conformsTo-3E3uJHl3T4_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2200,7 +2207,7 @@
         },
         "newnessUntilDate": "2013-09-02T15:04:05+01:00",
         "replaces": {
-            "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=v4DNZrw6G9/datasets/dataset;id=agency1:replace01(01.000)",
+            "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=S8hsaEy87p/datasets/dataset;id=agency1:replace01(01.000)",
             "id": "replace01",
             "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:replace01(01.000)",
             "selfLink": {
@@ -2277,51 +2284,51 @@
             "total": 2
         },
         "rightsHolder": {
-          "contacts": {
-            "contact": [
-              {
-                "name": {
-                  "text": [
+            "contacts": {
+                "contact": [
                     {
-                      "value": "Oficina Tenerife en Español",
-                      "lang": "es"
+                        "name": {
+                            "text": [
+                                {
+                                    "value": "Oficina Tenerife en Español",
+                                    "lang": "es"
+                                },
+                                {
+                                    "value": "Oficina Tenerife in English",
+                                    "lang": "en"
+                                }
+                            ]
+                        }
                     },
                     {
-                      "value": "Oficina Tenerife in English",
-                      "lang": "en"
+                        "name": {
+                            "text": [
+                                {
+                                    "value": "Oficina Las Palmas en Español",
+                                    "lang": "es"
+                                },
+                                {
+                                    "value": "Oficina Las Palmas in English",
+                                    "lang": "en"
+                                }
+                            ]
+                        }
                     }
-                  ]
-                }
-              },
-              {
-                "name": {
-                  "text": [
+                ],
+                "total": 2
+            },
+            "id": "AGENCIES",
+            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY",
+            "name": {
+                "text": [
                     {
-                      "value": "Oficina Las Palmas en Español",
-                      "lang": "es"
-                    },
-                    {
-                      "value": "Oficina Las Palmas in English",
-                      "lang": "en"
+                        "value": "AGENCIES en Español",
+                        "lang": "es"
                     }
-                  ]
-                }
-              }
-            ],
-            "total": 2
-          },
-          "id": "AGENCIES",
-          "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY",
-          "name": {
-            "text": [
-              {
-                "value": "AGENCIES en Español",
-                "lang": "es"
-              }
-            ]
-          },
-          "kind": "structuralResources#agency",
-          "urnProvider": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY"
+                ]
+            },
+            "kind": "structuralResources#agency",
+            "urnProvider": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY"
         },
         "copyrightDate": 2014,
         "license": {
@@ -2335,24 +2342,24 @@
         "accessRights": {
             "text": [
                 {
-                    "value": "accessRights-8oMsHB04p3_000001 en Espanol",
+                    "value": "accessRights-3E3uJHl3T4_000001 en Espanol",
                     "lang": "es"
                 }
             ]
         },
         "maintainer": {
-            "managementAppLink": "http://localhost:8080/metamac-srm-web/UZjgP9qYcF",
-            "id": "UZjgP9qYcF",
+            "managementAppLink": "http://localhost:8080/metamac-srm-web/pczekvoZxv",
+            "id": "pczekvoZxv",
             "nestedId": "agency1",
-            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).UZjgP9qYcF",
+            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).pczekvoZxv",
             "selfLink": {
                 "kind": "structuralResources#agency",
-                "href": "http://data.istac.es/apis/srm/latest/UZjgP9qYcF"
+                "href": "http://data.istac.es/apis/srm/latest/pczekvoZxv"
             },
             "name": {
                 "text": [
                     {
-                        "value": "title-UZjgP9qYcF en Espanol",
+                        "value": "title-pczekvoZxv en Espanol",
                         "lang": "es"
                     }
                 ]
@@ -2386,7 +2393,7 @@
         "conformsToInternal": {
             "text": [
                 {
-                    "value": "conformsToInternal-8oMsHB04p3_000001 en Espanol",
+                    "value": "conformsToInternal-3E3uJHl3T4_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2435,7 +2442,7 @@
         "dataProviderAnnotations": {
             "text": [
                 {
-                    "value": "dataProviderAnnotations-8oMsHB04p3_000001 en Espanol",
+                    "value": "dataProviderAnnotations-3E3uJHl3T4_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2443,7 +2450,7 @@
         "abstract": {
             "text": [
                 {
-                    "value": "abstract-8oMsHB04p3_000001 en Espanol",
+                    "value": "abstract-3E3uJHl3T4_000001 en Espanol",
                     "lang": "es"
                 }
             ]

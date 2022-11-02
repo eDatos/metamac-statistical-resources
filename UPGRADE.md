@@ -26,22 +26,57 @@ ns2:dateNextUpdate
 *******************************
 *** La ejecución de esta tarea requiere una serie de pasos en cada entorno que se detallan a continuación:*******
 
-- Parar las app external-users, search-indexer y statistical-resources
-- Realizar los cambios de base de datos que se indican para transformar los campos fechas en internationalString.
-- Borrar los esquemas existentes para el topic "DATASET_PUBLICATIONS" para ello ejecutar la siguiente instrucción desde consola en el tomcat correspondiente:
-******** curl -X DELETE  http://localhost:10002/subjects/dataset-publications-value
+- 1) Parar las app external-users, search-indexer, indicators y statistical-resources
+- 2) Realizar los cambios de base de datos que se indican para transformar los campos fechas en internationalString.
+- 3) 
+ 3.1) Borrar los esquemas existentes para los topics  DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
+ 
+******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+******** curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
+******** curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
+3.2) Comprobar que se borran todos los esquemas. Según entorno:
+Ver enlaces a la información por entorno en la tarea.
 
-- Borrar los mensajes existentes en el topic DATASET_PUBLICATIONS. Para ello, 
+- 4) 
+4.1) Borrar los mensajes existentes en los topics DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS. Para ello, 
 
+-- DATASET_PUBLICATIONS
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --describe retention.ms
+-- Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
 ******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
 
-- Actualizar apps
+-- COLLECTION_PUBLICATIONS
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --describe retention.ms
+--ESPERAR 1 MINUTOS ANTES DE VOLVER A RESTAURAR CON LA SIGUIENTE SENTENCIA
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
+
+-- QUERY_PUBLICATIONS
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --describe retention.ms
+--ESPERAR 1 MINUTOS ANTES DE VOLVER A RESTAURAR CON LA SIGUIENTE SENTENCIA
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --delete-config retention.ms --alter
+
+4.2) Comprobar que se borran todos los datos para el topic DATASET_PUBLICATIONS. Según entorno:
+-- (PUEDE TARDAR UN RATO EN BORRAR TODO) 
+Ver enlaces a la información por entorno en la tarea.
+
+
+
+- 5) 
+ 5.1) Builds de proyectos
+   - metamac-core-common
+   - metamac-web-common
+ 5.2) Actualizar apps
+   - metamac-sso
    - statistical-resources   
-   - external-users
+   - edatos-external-users
    - search-indexers
+   - indicators
 *******************************
+
+6) Reiniciar servicios de kafka (parar y volver a arrancar)
 
 * Aviso de futura deprecación
 ** Los métodos de la API que recibían el parámetro _dim_ pasarán a recibir el parámetro _representation_ que tiene un formato distinto. El parámetro _dim_ dejará de ser soportado en futuras versiones. Consulte la documentación de la API para más información

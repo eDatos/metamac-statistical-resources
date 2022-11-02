@@ -35,7 +35,7 @@ import net.sf.ehcache.Element;
  */
 @Service("translationService")
 public class TranslationServiceImpl extends TranslationServiceImplBase {
-
+    
     private static final String                   TRANSLATION_SERVICE_CACHE_NAME = "translationServiceCache";
 
     @Autowired
@@ -77,6 +77,7 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
 
         // Translate
         String translationCode = getTimeSdmxTranslationCode(timeSdmx);
+
         Translation translation = findTranslationByCode(translationCode);
 
         if (translation == null) {
@@ -89,7 +90,7 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
             return translateTimeWithTemplate(timeSdmx, translation);
         }
     }
-
+    
     private Translation findTranslationByCode(String translationCode) {
         Element element;
 
@@ -99,7 +100,6 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
             element.setEternal(Boolean.TRUE);
             translationServiceCache.put(element);
         }
-
         return (Translation) element.getObjectValue();
     }
 
