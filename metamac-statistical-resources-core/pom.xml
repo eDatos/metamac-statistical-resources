@@ -525,7 +525,8 @@
                     <argLine>-Xms1024m -Xmx2048m</argLine>
                     <excludes>
                         <exclude>**/DataManipulateTest.java</exclude>
-                        <exclude>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</exclude>           
+                        <exclude>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</exclude>
+                        <exclude>**/TranslationServiceTest.java</exclude>                    
                      </excludes>
                 </configuration>
                 <executions>
@@ -555,6 +556,7 @@
                     <includes>
                         <include>**/DataManipulateTest.java</include>
                         <include>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</include>
+                        <include>**/TranslationServiceTest.java</include>
                     </includes>
                 </configuration>
                 <executions>
