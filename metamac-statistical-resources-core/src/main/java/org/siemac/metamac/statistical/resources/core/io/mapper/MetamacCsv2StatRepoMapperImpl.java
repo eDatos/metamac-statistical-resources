@@ -76,7 +76,7 @@ public class MetamacCsv2StatRepoMapperImpl implements MetamacCsv2StatRepoMapper 
         // Data
         InternationalStringDto internationalStringDto = new InternationalStringDto();
         LocalisedStringDto localisedStringDto = new LocalisedStringDto();
-        localisedStringDto.setLabel(csvObservationAttribute.getAttributeValue());
+        localisedStringDto.setLabel(parseLineBrake(csvObservationAttribute.getAttributeValue()));
         // In SDMX the attributes aren't localized. For use localised in SDMX must be use a enumerated representation.
         // In this case, in the repo exists the code of enumerated representation, never the i18n of code.
         localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
@@ -86,4 +86,9 @@ public class MetamacCsv2StatRepoMapperImpl implements MetamacCsv2StatRepoMapper 
 
         return attributeObservationDto;
     }
+
+    private String parseLineBrake(String attributeValue) {
+        return attributeValue.replace("  ","<br />");
+    }
+
 }
