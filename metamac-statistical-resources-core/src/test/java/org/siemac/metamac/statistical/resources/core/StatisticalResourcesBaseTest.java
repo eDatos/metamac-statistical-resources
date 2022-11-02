@@ -44,17 +44,17 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.Query
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticOfficialityMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesNotPersistedDoMocks;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
     private static Logger       logger              = LoggerFactory.getLogger(StatisticalResourcesBaseTest.class);
 
+    
     protected static String                                 EMPTY                                     = StringUtils.EMPTY;
 
     protected static Long                                   ID_NOT_EXISTS                             = Long.valueOf(-1);
@@ -186,7 +186,7 @@ public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
             // Drop table data
             for (String tableName : tableNames) {
                 logger.debug("Table deleted cascade. Name = {}", tableName);
-                jdbcTemplateRepository.update("drop table " + tableName + " CASCADE");
+                jdbcTemplateRepository.update("drop table " + tableName);
             }
         }
 
