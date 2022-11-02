@@ -75,9 +75,14 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
             throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, ServiceExceptionParameters.TIME);
         }
 
+               
         // Translate
         String translationCode = getTimeSdmxTranslationCode(timeSdmx);
 
+        if ("2006-D364".equals(time)) {
+            translationServiceCache.remove(translationCode);
+        }
+        
         Translation translation = findTranslationByCode(translationCode);
 
         if (translation == null) {
