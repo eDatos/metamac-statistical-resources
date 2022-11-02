@@ -86,17 +86,13 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
         if ("2006-D364".equals(time)) {
             Map<String, String> title = new HashMap<String, String>(1);
 
-            // String log = "timeSdmx: " + timeSdmx.getType() + " translationCode:" + translationCode + " translation: " + (translation != null ? " transl not null" : " trans null");
-
             logger.error("timeSdmx: " + timeSdmx.getType() + " translationCode:" + translationCode + " translation: " + (translation != null ? " transl not null" : " trans null"));
 
+            Translation translation2 = findTranslationByCodeABorrar(translationCode);
+            
             if (translation != null && translation.getCode() == null) {
                 logger.error("retrieveTimeTranslation - translation.getCode() is null ");
             }
-
-            // String defaultLocale = configurationService.retrieveLanguageDefault();
-            // title.put(defaultLocale, log);
-            // return title;
         }
 
         if (translation == null) {
@@ -123,6 +119,35 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
         }
     }
 
+    //TODO EDATOS-3744 BORRAR
+    private Translation findTranslationByCodeABorrar(String translationCode) {
+        Element element;
+
+        logger.error("findTranslationByCodeABorrar");
+        
+        if ((element = translationServiceCache.get(translationCode)) == null) {
+            logger.error("findTranslationByCodeABorrar -> no está en caché");
+            Translation translation = getTranslationRepository().findTranslationByCode(translationCode);
+            if (translation == null) {
+                logger.error("findTranslationByCodeABorrar -> recupera de bd con null");
+            }
+            element = new Element(translationCode, translation);
+            element.setEternal(Boolean.TRUE);
+            translationServiceCache.put(element);
+        } else {
+            
+            logger.error("findTranslationByCodeABorrar está en caché.");
+        }
+        
+        if (element.getObjectValue() == null) {
+            logger.error("findTranslationByCodeABorrar -> getObjectValue is null");
+        }
+        
+        logger.error("findTranslationByCodeABorrar salir");
+        
+        return (Translation) element.getObjectValue();
+    }
+    
     private Translation findTranslationByCode(String translationCode) {
         Element element;
 
