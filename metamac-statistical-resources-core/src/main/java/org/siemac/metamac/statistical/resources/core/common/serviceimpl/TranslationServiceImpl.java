@@ -23,8 +23,6 @@ import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesCo
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +35,6 @@ import net.sf.ehcache.Element;
  */
 @Service("translationService")
 public class TranslationServiceImpl extends TranslationServiceImplBase {
-
-    private static Logger                     logger                              = LoggerFactory.getLogger(TranslationServiceImpl.class);
     
     private static final String                   TRANSLATION_SERVICE_CACHE_NAME = "translationServiceCache";
 
@@ -79,29 +75,10 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
             throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, ServiceExceptionParameters.TIME);
         }
 
-        
-        
         // Translate
         String translationCode = getTimeSdmxTranslationCode(timeSdmx);
-        
-        if ("2006-D364".equals(time)) {
-            translationServiceCache.remove(translationCode);
-            logger.error("retrieveTimeTranslation - borrada de caché clave ");
-        }
-        
+
         Translation translation = findTranslationByCode(translationCode);
-
-        if ("2006-D364".equals(time)) {
-            Map<String, String> title = new HashMap<String, String>(1);
-
-            logger.error("timeSdmx: " + timeSdmx.getType() + " translationCode:" + translationCode + " translation: " + (translation != null ? " transl not null" : " trans null"));
-
-            Translation translation2 = findTranslationByCodeABorrar(translationCode);
-            
-            if (translation != null && translation.getCode() == null) {
-                logger.error("retrieveTimeTranslation - translation.getCode() is null ");
-            }
-        }
 
         if (translation == null) {
             // Put code as title
@@ -110,50 +87,8 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
             title.put(defaultLocale, time);
             return title;
         } else {
-            if ("2006-D364".equals(time)) {
-                String log = "translation not null traducir---" + timeSdmx.getType() + " constante:" + TimeSdmxTypeEnum.REPORTING_TIME_PERIOD_DAY.getName();
-
-                if (timeSdmx.isDateTime()) {
-                    log = log + " timeSdmx isDateTime";
-                } else if (timeSdmx.isGregorianTime()) {
-                    log = log + " timeSdmx isGregorianTime";
-                } else if (timeSdmx.isReportingTimePeriod()) {
-                    log = log + " timeSdmx isReportingTimePeriod";
-                }
-
-                logger.error(log);
-            }
             return translateTimeWithTemplate(timeSdmx, translation);
         }
-    }
-
-    //TODO EDATOS-3744 BORRAR
-    private Translation findTranslationByCodeABorrar(String translationCode) {
-        Element element;
-
-        logger.error("findTranslationByCodeABorrar");
-        
-        if ((element = translationServiceCache.get(translationCode)) == null) {
-            logger.error("findTranslationByCodeABorrar -> no está en caché");
-            Translation translation = getTranslationRepository().findTranslationByCode(translationCode);
-            if (translation == null) {
-                logger.error("findTranslationByCodeABorrar -> recupera de bd con null");
-            }
-            element = new Element(translationCode, translation);
-            element.setEternal(Boolean.TRUE);
-            translationServiceCache.put(element);
-        } else {
-            
-            logger.error("findTranslationByCodeABorrar está en caché.");
-        }
-        
-        if (element.getObjectValue() == null) {
-            logger.error("findTranslationByCodeABorrar -> getObjectValue is null");
-        }
-        
-        logger.error("findTranslationByCodeABorrar salir");
-        
-        return (Translation) element.getObjectValue();
     }
     
     private Translation findTranslationByCode(String translationCode) {
@@ -209,11 +144,6 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
         for (LocalisedString localisedString : translationTemplate.getTitle().getTexts()) {
             String translationTemplateLabel = localisedString.getLabel();
             String label = translateTimeWithTemplate(timeSdmx, translationTemplateLabel);
-
-            if ("2006-D364".equals(translationTemplateLabel)) {
-                logger.error("translateTimeWithTemplate label :" + label + " locale:" + localisedString.getLocale());
-            }
-
             title.put(localisedString.getLocale(), label);
         }
         return title;
