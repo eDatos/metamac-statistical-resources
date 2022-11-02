@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -13,6 +14,7 @@ import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.common.serviceapi.TranslationService;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetRepository;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetVersionAvro;
 
@@ -44,7 +46,6 @@ public class DatasetVersionAvroMapperTest {
         }
     }
 
-    /* TODO EDATOS-3744
     @Test
     public void testDo2Avro() throws MetamacException {
         DatasetVersionAvro expected = MappersMockUtils.mockDatasetVersionAvro();
@@ -54,7 +55,7 @@ public class DatasetVersionAvroMapperTest {
 
         assertEqualDatasetVersionAvro(expected, actual);
     }
-*/
+
     protected void assertEqualDatasetVersionAvro(DatasetVersionAvro expected, DatasetVersionAvro actual) {
         assertThat(actual.getBibliographicCitation(), is(equalTo(expected.getBibliographicCitation())));
         assertThat(actual.getDateEnd(), is(equalTo(expected.getDateEnd())));
