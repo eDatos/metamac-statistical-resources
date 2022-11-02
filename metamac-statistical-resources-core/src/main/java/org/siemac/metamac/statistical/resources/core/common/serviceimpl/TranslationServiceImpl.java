@@ -78,22 +78,27 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
         if (timeSdmx == null) {
             throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, ServiceExceptionParameters.TIME);
         }
-        
-        
+
         // Translate
         String translationCode = getTimeSdmxTranslationCode(timeSdmx);
         Translation translation = findTranslationByCode(translationCode);
 
         if ("2006-D364".equals(time)) {
-            logger.debug("retrieveTimeTranslation timeSdmx:" + timeSdmx);
-            logger.debug("retrieveTimeTranslation translationCode:" + translationCode);
-            if (translation != null && translation.getCode() != null) {
-                logger.debug("retrieveTimeTranslation translation:" + translation.getCode());
-            } else {
-                logger.debug("translation is null");
+            Map<String, String> title = new HashMap<String, String>(1);
+
+            // String log = "timeSdmx: " + timeSdmx.getType() + " translationCode:" + translationCode + " translation: " + (translation != null ? " transl not null" : " trans null");
+
+            logger.error("timeSdmx: " + timeSdmx.getType() + " translationCode:" + translationCode + " translation: " + (translation != null ? " transl not null" : " trans null"));
+
+            if (translation != null && translation.getCode() == null) {
+                logger.error("retrieveTimeTranslation - translation.getCode() is null ");
             }
+
+            // String defaultLocale = configurationService.retrieveLanguageDefault();
+            // title.put(defaultLocale, log);
+            // return title;
         }
-        
+
         if (translation == null) {
             // Put code as title
             Map<String, String> title = new HashMap<String, String>(1);
@@ -101,6 +106,19 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
             title.put(defaultLocale, time);
             return title;
         } else {
+            if ("2006-D364".equals(time)) {
+                String log = "translation not null traducir---" + timeSdmx.getType() + " constante:" + TimeSdmxTypeEnum.REPORTING_TIME_PERIOD_DAY.getName();
+
+                if (timeSdmx.isDateTime()) {
+                    log = log + " timeSdmx isDateTime";
+                } else if (timeSdmx.isGregorianTime()) {
+                    log = log + " timeSdmx isGregorianTime";
+                } else if (timeSdmx.isReportingTimePeriod()) {
+                    log = log + " timeSdmx isReportingTimePeriod";
+                }
+
+                logger.error(log);
+            }
             return translateTimeWithTemplate(timeSdmx, translation);
         }
     }
@@ -108,14 +126,11 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
     private Translation findTranslationByCode(String translationCode) {
         Element element;
 
-        
         if ((element = translationServiceCache.get(translationCode)) == null) {
             Translation translation = getTranslationRepository().findTranslationByCode(translationCode);
             element = new Element(translationCode, translation);
             element.setEternal(Boolean.TRUE);
             translationServiceCache.put(element);
-        } else {
-            logger.debug("está en caché translationCode:" + translationCode);
         }
         return (Translation) element.getObjectValue();
     }
@@ -161,6 +176,11 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
         for (LocalisedString localisedString : translationTemplate.getTitle().getTexts()) {
             String translationTemplateLabel = localisedString.getLabel();
             String label = translateTimeWithTemplate(timeSdmx, translationTemplateLabel);
+
+            if ("2006-D364".equals(translationTemplateLabel)) {
+                logger.error("translateTimeWithTemplate label :" + label + " locale:" + localisedString.getLocale());
+            }
+
             title.put(localisedString.getLocale(), label);
         }
         return title;
