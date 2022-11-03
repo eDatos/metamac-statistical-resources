@@ -74,6 +74,7 @@ Ver enlaces a la información por entorno en la tarea.
    - edatos-external-users
    - search-indexers
    - indicators
+   - portal
 *******************************
 
 6) Reiniciar servicios de kafka (parar y volver a arrancar)
