@@ -40,5 +40,5 @@ public class DatasetDS extends SiemacMetadataDS {
     public static final String KEEP_ALL_DATA              = "ds-keep-all-data";
     public static final String DATA_SOURCE_TYPE           = "ds-dataSourceType";
     public static final String DATE_LAST_TIME_DATA_IMPORT = "ds-dateLastTimeDataImport";
-    public static final String MAP_CODELISTS              = "ds-mapcodelists";
+    public static final String MAP_CODELISTS              = "ds-mapCodelists";
 }
