@@ -98,7 +98,7 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
 
         if (!dimensionsMapping.isEmpty()) {
             Boolean mapCodelists = ((CustomCheckboxItem) mainForm.getItem(DatasetDS.MAP_CODELISTS)).getValueAsBoolean();
-            if (!mapCodelists) {
+            if (mapCodelists) {
                 StaticTextItem mappingLabel = new StaticTextItem("header");
                 mappingLabel.setShowTitle(false);
                 mappingLabel.setValue(getMessages().datasourceImportationDimensionMapping());
@@ -129,8 +129,8 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
     private void createMapCodelistsCheckBoxItem() {
         CustomCheckboxItem mapCodelistsCheckBoxItem = new CustomCheckboxItem(DatasetDS.MAP_CODELISTS, getConstants().mapCodelists());
         mapCodelistsCheckBoxItem.setCanEdit(Boolean.TRUE);
-        mapCodelistsCheckBoxItem.setValue(Boolean.TRUE);
-        mapCodelistsCheckBoxItem.setDefaultValue(Boolean.TRUE);
+        mapCodelistsCheckBoxItem.setValue(Boolean.FALSE);
+        mapCodelistsCheckBoxItem.setDefaultValue(Boolean.FALSE);
         
         mapCodelistsCheckBoxItem.addChangedHandler(new ChangedHandler() {
             @Override
