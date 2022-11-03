@@ -114,6 +114,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
@@ -556,7 +557,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         mockDsdAndCreateDatasetRepository(dataset, dataset.getSiemacMetadataStatisticalResource().getStatisticalOperation());
 
         DateTime oldLastUpdate = dataset.getSiemacMetadataStatisticalResource().getLastUpdate();
-        DateTime oldNextDateUpdate = dataset.getDateNextUpdate();
+        String oldNextDateUpdate = dataset.getDateNextUpdate();
 
         DatasetVersion updatedDataset = datasetService.updateDatasetVersion(getServiceContextWithoutPrincipal(), dataset);
 
@@ -573,7 +574,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNull(updatedDataset.getFormatExtentDimensions());
         assertNull(updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isTrue(updatedDataset.getUserModifiedDateNextUpdate()));
-        BaseAsserts.assertEqualsDate(oldNextDateUpdate, updatedDataset.getDateNextUpdate());
+        Assert.assertEquals(oldNextDateUpdate, updatedDataset.getDateNextUpdate());
         assertNotNull(updatedDataset.getDatasetRepositoryId());
         assertNull(updatedDataset.getDateLastTimeDataImport());
     }
@@ -2094,8 +2095,8 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         basicVersionableStatisticalResourceDto.setVersionRationaleTypes(versionRationaleTypes);
         basicVersionableStatisticalResourceDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE.getName());
         basicVersionableStatisticalResourceDto.setNextProcStatus(ProcStatusEnum.PUBLISHED.getName());
-        basicVersionableStatisticalResourceDto.setNextVersionDate(convertDateToString("12/02/2022"));
-        basicVersionableStatisticalResourceDto.setNextUpdateDate(convertDateToString("12/02/2022"));
+        basicVersionableStatisticalResourceDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
+        basicVersionableStatisticalResourceDto.setNextUpdateDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
         
         return basicVersionableStatisticalResourceDto;
     }

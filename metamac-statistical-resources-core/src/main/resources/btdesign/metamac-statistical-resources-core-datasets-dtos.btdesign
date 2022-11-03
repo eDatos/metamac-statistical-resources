@@ -53,7 +53,9 @@ Application DatasetsStatisticalResourcesDto {
 			- Bag<@RelatedResourceDto> isPartOf;
 
 			//public date of next update
-			JAVADATE dateNextUpdate;
+			String dateNextUpdate;
+			String dateNext
+			
 			//Frecuency which the data is updated
 			- @ExternalItemDto updateFrequency;
 			//Official/no official statistic

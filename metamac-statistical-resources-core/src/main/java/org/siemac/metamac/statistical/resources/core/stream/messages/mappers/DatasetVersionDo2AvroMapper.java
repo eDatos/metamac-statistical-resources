@@ -22,7 +22,7 @@ import org.siemac.metamac.statistical.resources.core.stream.messages.RelatedReso
 import org.siemac.metamac.statistical.resources.core.stream.messages.TemporalCodeAvro;
 
 public class DatasetVersionDo2AvroMapper {
-
+    
     protected DatasetVersionDo2AvroMapper() {
     }
 
@@ -41,7 +41,7 @@ public class DatasetVersionDo2AvroMapper {
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
                 .setDateStart(DateTimeDo2AvroMapper.do2Avro(source.getDateStart())).setDateEnd(DateTimeDo2AvroMapper.do2Avro(source.getDateEnd()))
                 .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions())
-                .setDateNextUpdate(DateTimeDo2AvroMapper.do2Avro(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
+                .setDateNextUpdate(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
                 .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd()))
                 .setUpdateFrequency(ExternalItemDo2AvroMapper.do2Avro(source.getUpdateFrequency())).setStatisticOfficiality(StatisticOfficialityDo2AvroMapper.do2Avro(source.getStatisticOfficiality()))
                 .setBibliographicCitation(InternationalStringDo2AvroMapper.do2Avro(source.getBibliographicCitation())).setDimensionsCoverage(dimensions).setAttributesCoverage(coverageList)
@@ -116,7 +116,7 @@ public class DatasetVersionDo2AvroMapper {
         return dimensions;
     }
 
-    protected static List<CategorisationAvro> categorisations2Avro(DatasetVersion source) {
+    protected static List<CategorisationAvro> categorisations2Avro(DatasetVersion source) throws MetamacException {
         List<CategorisationAvro> categorisations = new ArrayList<CategorisationAvro>();
         for (Categorisation categorisation : source.getCategorisations()) {
             CategorisationAvro categorisationAvro = CategorisationDo2AvroMapper.do2Avro(categorisation);
@@ -124,5 +124,4 @@ public class DatasetVersionDo2AvroMapper {
         }
         return categorisations;
     }
-
 }

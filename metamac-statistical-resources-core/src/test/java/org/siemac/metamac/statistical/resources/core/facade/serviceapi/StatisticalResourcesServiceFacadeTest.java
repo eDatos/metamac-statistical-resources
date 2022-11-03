@@ -189,6 +189,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureComponents;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
@@ -1493,37 +1494,37 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     @MetamacMock({DATASET_VERSION_01_BASIC_NAME})
     public void testUpdateDatasetVersionIgnoreDateNextVersion() throws Exception {
         DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
-        DateTime originalDateNextVersion = datasetVersion.getSiemacMetadataStatisticalResource().getNextVersionDate();
+        String originalDateNextVersion = datasetVersion.getSiemacMetadataStatisticalResource().getNextVersionDate();
 
         {
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(),
                     datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-            datasetVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            datasetVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             datasetVersionDto.setNextVersion(NextVersionTypeEnum.NO_UPDATES);
 
             DatasetVersionDto updatedDataset = statisticalResourcesServiceFacade.updateDatasetVersion(getServiceContextAdministrador(), datasetVersionDto);
             assertNotNull(updatedDataset);
-            assertEqualsDate(originalDateNextVersion, updatedDataset.getNextVersionDate());
+            assertEquals(originalDateNextVersion, updatedDataset.getNextVersionDate());
         }
         {
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(),
                     datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-            datasetVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            datasetVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             datasetVersionDto.setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
 
             DatasetVersionDto updatedDataset = statisticalResourcesServiceFacade.updateDatasetVersion(getServiceContextAdministrador(), datasetVersionDto);
             assertNotNull(updatedDataset);
-            assertEqualsDate(originalDateNextVersion, updatedDataset.getNextVersionDate());
+            assertEquals(originalDateNextVersion, updatedDataset.getNextVersionDate());
         }
         {
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(),
                     datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-            datasetVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            datasetVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             datasetVersionDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
 
             DatasetVersionDto updatedDataset = statisticalResourcesServiceFacade.updateDatasetVersion(getServiceContextAdministrador(), datasetVersionDto);
             assertNotNull(updatedDataset);
-            assertEqualsDate(new DateTime(datasetVersionDto.getNextVersionDate()), updatedDataset.getNextVersionDate());
+            assertEquals(datasetVersionDto.getNextVersionDate(), updatedDataset.getNextVersionDate());
         }
     }
 
@@ -1810,7 +1811,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         {
             MetamacCriteria metamacCriteria = new MetamacCriteria();
             setCriteriaPaginator(metamacCriteria, 0, Integer.MAX_VALUE, Boolean.TRUE);
-            setCriteriaDatePropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.EQ, new DateTime(2013, 1, 15, 0, 0, 0, 0).toDate());
+            setCriteriaStringPropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.EQ, CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 1, 15, 0, 0, 0, 0).toDate()));
 
             MetamacCriteriaResult<DatasetVersionBaseDto> pagedResults = statisticalResourcesServiceFacade.findDatasetsVersionsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(1, pagedResults.getPaginatorResult().getTotalResults().intValue());
@@ -1821,7 +1822,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         {
             MetamacCriteria metamacCriteria = new MetamacCriteria();
             setCriteriaPaginator(metamacCriteria, 0, Integer.MAX_VALUE, Boolean.TRUE);
-            setCriteriaDatePropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.GT, new DateTime(2012, 12, 1, 0, 0, 0, 0).toDate());
+            setCriteriaStringPropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.GT, CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2012, 12, 1, 0, 0, 0, 0).toDate()));
 
             MetamacCriteriaResult<DatasetVersionBaseDto> pagedResults = statisticalResourcesServiceFacade.findDatasetsVersionsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(2, pagedResults.getPaginatorResult().getTotalResults().intValue());
@@ -2618,37 +2619,37 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // DATE_NEXT_VERSION can only be modified if dateNextVersionType is SCHEDULED_UPDATE
 
         PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_01_BASIC_NAME);
-        DateTime originalDateNextVersion = publicationVersion.getSiemacMetadataStatisticalResource().getNextVersionDate();
+        String originalDateNextVersion = publicationVersion.getSiemacMetadataStatisticalResource().getNextVersionDate();
 
         {
             PublicationVersionDto publicationVersionDto = statisticalResourcesServiceFacade.retrievePublicationVersionByUrn(getServiceContextAdministrador(),
                     publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
-            publicationVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            publicationVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             publicationVersionDto.setNextVersion(NextVersionTypeEnum.NO_UPDATES);
 
             PublicationVersionDto updatedPublicationVersionDto = statisticalResourcesServiceFacade.updatePublicationVersion(getServiceContextAdministrador(), publicationVersionDto);
             assertNotNull(updatedPublicationVersionDto);
-            assertEqualsDate(originalDateNextVersion, updatedPublicationVersionDto.getNextVersionDate());
+            assertEquals(originalDateNextVersion, updatedPublicationVersionDto.getNextVersionDate());
         }
         {
             PublicationVersionDto publicationVersionDto = statisticalResourcesServiceFacade.retrievePublicationVersionByUrn(getServiceContextAdministrador(),
                     publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
-            publicationVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            publicationVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             publicationVersionDto.setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
 
             PublicationVersionDto updatedPublicationVersionDto = statisticalResourcesServiceFacade.updatePublicationVersion(getServiceContextAdministrador(), publicationVersionDto);
             assertNotNull(updatedPublicationVersionDto);
-            assertEqualsDate(originalDateNextVersion, updatedPublicationVersionDto.getNextVersionDate());
+            assertEquals(originalDateNextVersion, updatedPublicationVersionDto.getNextVersionDate());
         }
         {
             PublicationVersionDto publicationVersionDto = statisticalResourcesServiceFacade.retrievePublicationVersionByUrn(getServiceContextAdministrador(),
                     publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
-            publicationVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            publicationVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             publicationVersionDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
 
             PublicationVersionDto updatedPublicationVersionDto = statisticalResourcesServiceFacade.updatePublicationVersion(getServiceContextAdministrador(), publicationVersionDto);
             assertNotNull(updatedPublicationVersionDto);
-            assertEqualsDate(new DateTime(publicationVersionDto.getNextVersionDate()), updatedPublicationVersionDto.getNextVersionDate());
+            assertEquals(publicationVersionDto.getNextVersionDate(), updatedPublicationVersionDto.getNextVersionDate());
         }
     }
 
@@ -3532,37 +3533,37 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // DATE_NEXT_VERSION can only be modified if dateNextVersionType is SCHEDULED_UPDATE
 
         MultidatasetVersion multidatasetVersion = multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_01_BASIC_NAME);
-        DateTime originalDateNextVersion = multidatasetVersion.getSiemacMetadataStatisticalResource().getNextVersionDate();
+        String originalDateNextVersion = multidatasetVersion.getSiemacMetadataStatisticalResource().getNextVersionDate();
 
         {
             MultidatasetVersionDto multidatasetVersionDto = statisticalResourcesServiceFacade.retrieveMultidatasetVersionByUrn(getServiceContextAdministrador(),
                     multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-            multidatasetVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            multidatasetVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             multidatasetVersionDto.setNextVersion(NextVersionTypeEnum.NO_UPDATES);
 
             MultidatasetVersionDto updatedMultidatasetVersionDto = statisticalResourcesServiceFacade.updateMultidatasetVersion(getServiceContextAdministrador(), multidatasetVersionDto);
             assertNotNull(updatedMultidatasetVersionDto);
-            assertEqualsDate(originalDateNextVersion, updatedMultidatasetVersionDto.getNextVersionDate());
+            assertEquals(originalDateNextVersion, updatedMultidatasetVersionDto.getNextVersionDate());
         }
         {
             MultidatasetVersionDto multidatasetVersionDto = statisticalResourcesServiceFacade.retrieveMultidatasetVersionByUrn(getServiceContextAdministrador(),
                     multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-            multidatasetVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            multidatasetVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             multidatasetVersionDto.setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
 
             MultidatasetVersionDto updatedMultidatasetVersionDto = statisticalResourcesServiceFacade.updateMultidatasetVersion(getServiceContextAdministrador(), multidatasetVersionDto);
             assertNotNull(updatedMultidatasetVersionDto);
-            assertEqualsDate(originalDateNextVersion, updatedMultidatasetVersionDto.getNextVersionDate());
+            assertEquals(originalDateNextVersion, updatedMultidatasetVersionDto.getNextVersionDate());
         }
         {
             MultidatasetVersionDto multidatasetVersionDto = statisticalResourcesServiceFacade.retrieveMultidatasetVersionByUrn(getServiceContextAdministrador(),
                     multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-            multidatasetVersionDto.setNextVersionDate(new DateTime().plusDays(1).toDate());
+            multidatasetVersionDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
             multidatasetVersionDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
 
             MultidatasetVersionDto updatedMultidatasetVersionDto = statisticalResourcesServiceFacade.updateMultidatasetVersion(getServiceContextAdministrador(), multidatasetVersionDto);
             assertNotNull(updatedMultidatasetVersionDto);
-            assertEqualsDate(new DateTime(multidatasetVersionDto.getNextVersionDate()), updatedMultidatasetVersionDto.getNextVersionDate());
+            assertEquals(multidatasetVersionDto.getNextVersionDate(), updatedMultidatasetVersionDto.getNextVersionDate());
         }
     }
 

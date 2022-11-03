@@ -4,10 +4,14 @@ import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.siemac.edatos.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.Task;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
@@ -43,6 +47,19 @@ public class TaskServiceInvocationValidatorImpl {
             }
             StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetNextProcStatus(), ServiceExceptionParameters.DATASET_NEXT_PROC_STATUS, exceptions);
             
+            if (StringUtils.isNotEmpty(taskInfoDataset.getDatasetNextUpdateDate())) {
+                checkObservationalTimePeriodType(taskInfoDataset.getDatasetNextUpdateDate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
+            }
+            
+            if (StringUtils.isNotEmpty(taskInfoDataset.getDatasetNextVersionDate())) {
+                checkObservationalTimePeriodType(taskInfoDataset.getDatasetNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptions);
+            }
+        }
+    }
+    
+    public static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
+        if (StringUtils.isNotEmpty(parameter) && !SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN, parameter, parameterName));
         }
     }
     

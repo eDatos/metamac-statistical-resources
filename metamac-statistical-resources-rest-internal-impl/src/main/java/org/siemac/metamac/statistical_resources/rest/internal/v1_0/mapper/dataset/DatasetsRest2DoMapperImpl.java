@@ -65,7 +65,7 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                 case RELATED_DSD_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.relatedDsd());
                 case DATE_NEXT_UPDATE:
-                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.dateNextUpdate(), DatasetVersion.class, false);
+                    return buildSculptorPropertyCriteria(DatasetVersionProperties.dateNextUpdate(), PropertyTypeEnum.STRING, propertyRestriction);
                 case STATISTIC_OFFICIALITY:
                     return buildSculptorPropertyCriteria(DatasetVersionProperties.statisticOfficiality().identifier(), PropertyTypeEnum.STRING, propertyRestriction);
                 case SUBTITLE:

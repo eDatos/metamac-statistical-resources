@@ -38,6 +38,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.is_required_by_queries_last_version_incompatible");
     public static final CommonServiceExceptionType DATASET_VERSION_IS_REQUIRED_BY_NOT_VISIBLE_QUERY                             = create(
             "exception.resources.dataset_version.is_required_by_not_visible_query");
+    public static final CommonServiceExceptionType DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN                       = create(
+            "exception.resources.dataset_version.observational_time_period_pattern");
 
     // Datasource
     public static final CommonServiceExceptionType DATASOURCE_NOT_FOUND                                                         = create("exception.resources.datasource.not_found");

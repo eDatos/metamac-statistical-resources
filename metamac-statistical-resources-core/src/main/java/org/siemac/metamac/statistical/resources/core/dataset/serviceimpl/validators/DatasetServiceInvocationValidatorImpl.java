@@ -10,6 +10,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.joda.time.DateTime;
+import org.siemac.edatos.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -237,6 +238,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
             return;
         }
 
+        checkObservationalTimePeriodType(datasetVersion.getDateNextUpdate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
+                
         checkExistingSiemacMetadataStatisticalResource(datasetVersion.getSiemacMetadataStatisticalResource(), TypeRelatedResourceEnum.DATASET_VERSION, metadataName, exceptions);
         checkDatasetVersion(datasetVersion, metadataName, exceptions);
 
@@ -245,7 +248,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getId(), addParameter(metadataName, ServiceExceptionSingleParameters.ID), exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.VERSION), exceptions);
     }
-
+           
     private static void checkDatasetVersion(DatasetVersion datasetVersion, String metadataName, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion.getDataSourceType(), addParameter(metadataName, ServiceExceptionSingleBaseParameters.DATA_SOURCE_TYPE), exceptions);
     }
@@ -294,10 +297,16 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
                 StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextVersionDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_VERSION,
                         exceptions);
                 StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextUpdateDate(), ServiceExceptionParameters.DATASET_DATE_NEXT_UPDATE, exceptions);
-
             }
             StatisticalResourcesValidationUtils.checkParameterRequired(basicVersionableStatisticalResourceDto.getNextProcStatus(), ServiceExceptionParameters.DATASET_NEXT_PROC_STATUS, exceptions);
 
+            if (StringUtils.isNotEmpty(basicVersionableStatisticalResourceDto.getNextUpdateDate())) {
+                checkObservationalTimePeriodType(basicVersionableStatisticalResourceDto.getNextUpdateDate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
+            }
+            
+            if (StringUtils.isNotEmpty(basicVersionableStatisticalResourceDto.getNextVersionDate())) {
+                checkObservationalTimePeriodType(basicVersionableStatisticalResourceDto.getNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptions);
+            }
         }
     }
     

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -33,6 +34,7 @@ import org.mockito.MockitoAnnotations;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetRepository;
@@ -119,8 +121,8 @@ public class DatasetServiceImportationTest extends StatisticalResourcesBaseTest 
         basicVersionableStatisticalResourceDto.setVersionRationaleTypes(versionRationaleTypes);
         basicVersionableStatisticalResourceDto.setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE.getName());
         basicVersionableStatisticalResourceDto.setNextProcStatus(ProcStatusEnum.PUBLISHED.getName());
-        basicVersionableStatisticalResourceDto.setNextVersionDate(convertDateToString("12/02/2022"));
-        basicVersionableStatisticalResourceDto.setNextUpdateDate(convertDateToString("12/02/2022"));
+        basicVersionableStatisticalResourceDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
+        basicVersionableStatisticalResourceDto.setNextUpdateDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
         
         datasetService.importDatasourcesInDatasetVersion(getServiceContextWithoutPrincipal(), datasetVersionUrn, urls, mappings, false, basicVersionableStatisticalResourceDto);
 

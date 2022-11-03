@@ -12,6 +12,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.common.serviceapi.TranslationService;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
@@ -29,6 +30,9 @@ public class PublicationVersionAvroMapperTest {
 
     @Mock
     ConfigurationService                    configurationService;
+    
+    @Mock
+    private static TranslationService     translationService;
 
     protected DatasetVersionMockFactory     datasetVersionMockFactory     = DatasetVersionMockFactory.getInstance();
     protected PublicationVersionMockFactory publicationVersionMockFactory = PublicationVersionMockFactory.getInstance();
@@ -38,10 +42,12 @@ public class PublicationVersionAvroMapperTest {
         MockitoAnnotations.initMocks(this);
         AvroMapperUtils.publicationVersionRepository = publicationVersionRepository;
         AvroMapperUtils.configurationService = configurationService;
+        AvroMapperUtils.translationService = translationService;
         // DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME);
         // PublicationVersion publication01 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_47_PUBLISHED_V02_FOR_PUBLICATION_07_NAME);
         try {
             when(configurationService.retrieveStatisticalResourcesInternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
+            when(translationService.retrieveTimeTranslation(Mockito.any(), Mockito.anyString())).thenReturn(MappersMockUtils.mockMapTranslateDateSdmx());
             // Mockito.when(datasetVersionRepository.retrieveLastVersion(Mockito.eq(datasetUrn))).thenReturn(datasetVersion);
             // Mockito.when(publicationVersionRepository.retrieveLastVersion(Mockito.eq("datasetUrn"))).thenReturn(publication01);
             // .getPublicationVersionRepository().retrieveLastVersion

@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
@@ -169,7 +170,7 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
             when(mockedResource.getLifeCycleStatisticalResource()).thenReturn(new LifeCycleStatisticalResource());
 
             mockedResource.getLifeCycleStatisticalResource().setNextVersion(nextVersion2Test);
-            mockedResource.getLifeCycleStatisticalResource().setNextVersionDate(new DateTime().plusDays(1));
+            mockedResource.getLifeCycleStatisticalResource().setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
 
             MetamacException expected = null;
             if (!nextVersion2Test.equals(NextVersionTypeEnum.SCHEDULED_UPDATE)) {
@@ -320,7 +321,7 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
         resource.setSiemacMetadataStatisticalResource(new SiemacMetadataStatisticalResource());
         resource.addDatasource(new Datasource());
         resource.setUserModifiedDateNextUpdate(true);
-        resource.setDateNextUpdate(new DateTime());
+        resource.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
 
         String baseMetadata = ServiceExceptionSingleParameters.DATASET_VERSION;
 

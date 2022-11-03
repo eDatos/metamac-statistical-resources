@@ -34,7 +34,7 @@
      "name": "VersionableStatisticalResourceAvro",
      "fields" : [
          {"name" : "nameableStatisticalResource", "type" : ["null", "NameableStatisticalResourceAvro" ]},
-         {"name" : "nextVersionDate" , "type" : ["null", "DatetimeAvro"]},
+         {"name" : "nextVersionDate" , "type" : ["null", "InternationalStringAvro"]},
          {"name" : "validFrom" , "type" : ["null", "DatetimeAvro"]},
          {"name" : "validTo" , "type" : ["null", "DatetimeAvro"]},
          {"name" : "versionRationale" , "type" : ["null", "InternationalStringAvro"]},

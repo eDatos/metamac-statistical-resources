@@ -235,7 +235,8 @@ Application DatasetsStatisticalResources {
 			//Publishing descriptors
 
 			//public date of next update
-			DateTimeTZ dateNextUpdate nullable;
+			String dateNextUpdate nullable;
+			
 			//flag indicating if date next update was modified by user
 			Boolean userModifiedDateNextUpdate nullable databaseColumn="USER_MODIFIED_DATE_NEXT_U02";
 			//Frecuency which the data is updated

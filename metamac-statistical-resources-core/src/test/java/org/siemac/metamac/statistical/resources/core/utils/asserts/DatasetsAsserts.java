@@ -214,7 +214,7 @@ public class DatasetsAsserts extends BaseAsserts {
         assertEqualsExternalItemList(expected.getStatisticalUnit(), actual.getStatisticalUnit());
         assertEqualsExternalItem(expected.getUpdateFrequency(), actual.getUpdateFrequency());
 
-        assertEqualsDate(expected.getDateNextUpdate(), actual.getDateNextUpdate());
+        assertEquals(expected.getDateNextUpdate(), actual.getDateNextUpdate());
 
         assertEqualsDate(expected.getDateStart(), actual.getDateStart());
         assertEqualsDate(expected.getDateEnd(), actual.getDateEnd());
@@ -282,7 +282,7 @@ public class DatasetsAsserts extends BaseAsserts {
 
                 assertEqualsDate(entity.getDateStart(), dto.getDateStart());
                 assertEqualsDate(entity.getDateEnd(), dto.getDateEnd());
-                assertEqualsDate(entity.getDateNextUpdate(), dto.getDateNextUpdate());
+                assertEquals(entity.getDateNextUpdate(), dto.getDateNextUpdate());
 
                 assertEqualsStatisticOfficiality(entity.getStatisticOfficiality(), dto.getStatisticOfficiality());
                 assertEqualsExternalItem(entity.getRelatedDsd(), dto.getRelatedDsd(), mapperEnum);

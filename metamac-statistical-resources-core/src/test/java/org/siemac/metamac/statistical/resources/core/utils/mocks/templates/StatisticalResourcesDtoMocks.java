@@ -16,6 +16,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
 import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.NameableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
@@ -226,7 +227,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.setFormatExtentDimensions(5);
         datasetVersionDto.setFormatExtentObservations(8L);
 
-        datasetVersionDto.setDateNextUpdate(mockDate());
+        datasetVersionDto.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(mockDate()));
         datasetVersionDto.setUpdateFrequency(mockCodeExternalItemDto());
         datasetVersionDto.setStatisticOfficiality(createStatisticOfficialityDtoFromDo(officiality));
         datasetVersionDto.setBibliographicCitation(mockInternationalStringDto());
@@ -420,7 +421,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
 
     private static void mockVersionableStatisticalResourceDto(VersionableStatisticalResourceDto versionableStatisticalResourceDto) {
         versionableStatisticalResourceDto.setVersionLogic(StatisticalResourcesMockFactory.ANOTHER_NOT_INITIAL_VERSION);
-        versionableStatisticalResourceDto.setNextVersionDate(new DateTime().toDate());
+        versionableStatisticalResourceDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
         versionableStatisticalResourceDto.setValidFrom(new DateTime().toDate());
         versionableStatisticalResourceDto.setValidTo(new DateTime().toDate());
 
