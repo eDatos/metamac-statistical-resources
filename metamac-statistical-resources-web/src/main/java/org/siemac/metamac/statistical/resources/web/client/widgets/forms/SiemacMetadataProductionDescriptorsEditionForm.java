@@ -35,7 +35,7 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
     private SearchSrmListItemWithSchemeFilterItem     dataProviderItem;
 
     private SearchSrmItemLinkItemWithSchemeFilterItem creatorItem;
-
+   
     public SiemacMetadataProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
 
@@ -65,10 +65,10 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
         MultiLanguageRichTextEditorItem conformsTo = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO, getConstants().siemacMetadataStatisticalResourceConformsTo());
         MultiLanguageRichTextEditorItem conformsToInternal = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO_INTERNAL, getConstants()
                 .siemacMetadataStatisticalResourceConformsToInternal());
-
+        
         setFields(dateCreated, lastUpdate, maintainer, creatorItem, dataProviderItem, dataProviderAnnotations, contributorItem, conformsTo, conformsToInternal);
     }
-
+    
     public void setSiemacMetadataStatisticalResourceDto(SiemacMetadataStatisticalResourceDto siemacMetadataStatisticalResourceDto) {
         this.procStatus = siemacMetadataStatisticalResourceDto.getProcStatus();
 

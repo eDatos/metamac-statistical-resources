@@ -8,7 +8,7 @@
         {"name" : "dateEnd", "type" : ["null", "DatetimeAvro"]},
         {"name" : "datasetRepositoryId", "type" : ["null", "string"]},
         {"name" : "formatExtentDimensions" , "type" : ["null", "int"]},
-        {"name" : "dateNextUpdate", "type" : ["null", "DatetimeAvro"]},
+        {"name" : "dateNextUpdate", "type" : ["null", "InternationalStringAvro"]},
         {"name" : "userModifiedDateNextUpdate", "type" : ["null", "boolean"]},
         {"name" : "dataset", "type" : ["null", "DatasetAvro"]},
         {"name" : "relatedDsd", "type" : ["null", "ExternalItemAvro"]},

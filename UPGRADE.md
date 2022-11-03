@@ -8,7 +8,77 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 5.0.0 a 5.0.1-SNAPSHOT
+
+## 5.0.0 a 5.0.X-SNAPSHOT
+**BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
+A partir de esta versión los metadatos "date_next_update" y "next_version_date" dejan de ser fechas en formato "dateTime" para convertirse en un formato abierto que cumpla con las especificaciones de sdmx 2.1. Por este motivo, las APIs van a devolver en estos metadatos un InternationalString con la conversión del valor introducido.
+Ej: si 2022-M12
+Se devuelve:
+ns2:dateNextUpdate
+<cdomain:text xml:lang="en">12/2022</cdomain:text>
+<cdomain:text xml:lang="pt">12/2022</cdomain:text>
+<cdomain:text xml:lang="es">12/2022</cdomain:text>
+<cdomain:text xml:lang="ca">12/2022</cdomain:text>
+</ns2:dateNextUpdate>
+
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/5.0.0/db](etc/changes-from-release/5.0.0/db).
+
+*******************************
+*** La ejecución de esta tarea requiere una serie de pasos en cada entorno que se detallan a continuación:*******
+
+- 1) Parar las app external-users, search-indexer, indicators y statistical-resources
+- 2) Realizar los cambios de base de datos que se indican para transformar los campos fechas en internationalString.
+- 3) 
+ 3.1) Borrar los esquemas existentes para los topics  DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS para ello ejecutar las siguientes instrucciones desde consola en el tomcat correspondiente:
+ 
+******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+******** curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
+******** curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
+3.2) Comprobar que se borran todos los esquemas. Según entorno:
+Ver enlaces a la información por entorno en la tarea.
+
+- 4) 
+4.1) Borrar los mensajes existentes en los topics DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS. Para ello, 
+
+-- DATASET_PUBLICATIONS
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --describe retention.ms
+-- Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
+
+-- COLLECTION_PUBLICATIONS
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --describe retention.ms
+--ESPERAR 1 MINUTOS ANTES DE VOLVER A RESTAURAR CON LA SIGUIENTE SENTENCIA
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
+
+-- QUERY_PUBLICATIONS
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --describe retention.ms
+--ESPERAR 1 MINUTOS ANTES DE VOLVER A RESTAURAR CON LA SIGUIENTE SENTENCIA
+******** /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --delete-config retention.ms --alter
+
+4.2) Comprobar que se borran todos los datos para el topic DATASET_PUBLICATIONS. Según entorno:
+-- (PUEDE TARDAR UN RATO EN BORRAR TODO) 
+Ver enlaces a la información por entorno en la tarea.
+
+
+
+- 5) 
+ 5.1) Builds de proyectos
+   - metamac-core-common
+   - metamac-web-common
+ 5.2) Actualizar apps
+   - metamac-sso
+   - statistical-resources   
+   - edatos-external-users
+   - search-indexers
+   - indicators
+   - portal
+*******************************
+
+6) Reiniciar servicios de kafka (parar y volver a arrancar)
+
 * Aviso de futura deprecación
 ** Los métodos de la API que recibían el parámetro _dim_ pasarán a recibir el parámetro _representation_ que tiene un formato distinto. El parámetro _dim_ dejará de ser soportado en futuras versiones. Consulte la documentación de la API para más información
 
@@ -17,6 +87,7 @@
 ** Debido a refactorización de código al mover determinadas clases de los subproyectos metamac-statistical-resources-rest-external-impl y metamac-statistical-resources-rest-internal-impl al proyecto metamac-statistical-resources-rest-api-common que implicaron el renombrado de paquetes, es necesario que las aplicaciones que usen el proyecto metamac-statistical-resources como librería sean adaptadas al actualizar a esta versión. De no hacerlo, las aplicaciones no compilarán correctamente.
 ** Se modifica la firma de la API, concretamente el atributo keywords pasa de estar dentro del metadata a la raíz de los recursos
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/4.0.0/db](etc/changes-from-release/4.0.0/db).
+
 
 ## 3.12.0 a 4.0.0
 * A partir de esta versión de la aplicación se elimina el soporte para bases de datos Oracle o Sql Server, siendo PostgreSQL la única base de datos con soporte.

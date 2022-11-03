@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
@@ -44,7 +44,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
             List<String> intersectedValues = null;
             List<String> selectedValues = selectedDimensions.get(queryDimension.getKey());
             if (selectedValues != null) {
-                intersectedValues = (List<String>) CollectionUtils.intersection(queryDimension.getValue(), selectedValues);
+                intersectedValues = ListUtils.intersection(queryDimension.getValue(), selectedValues);
             } else {
                 intersectedValues = queryDimension.getValue();
             }
@@ -144,7 +144,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
      * Throws response error, logging exception
      */
     public static RestException manageException(Exception e) {
-        logger.error("Error", e);
+        logException(e);
         if (e instanceof RestException) {
             return (RestException) e;
         } else {
@@ -154,6 +154,14 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         }
     }
 
+    private static void logException(Exception e) {
+        if (e instanceof RestException && Status.NOT_FOUND.equals(((RestException) e).getStatus())) {
+            logger.debug("Error", e);
+        } else {
+            logger.error("Error", e);
+        }
+    }
+    
     public static DateTime isDateAfterNowSetNull(DateTime checkValidTo) {
         if (checkValidTo == null || checkValidTo.isAfterNow()) {
             return null;

@@ -40,7 +40,7 @@ Application StatisticalResourcesDto {
 
 		DataTransferObject VersionableStatisticalResourceDto extends @NameableStatisticalResourceDto {
 			String versionLogic;
-			JAVADATE nextVersionDate;
+			String nextVersionDate;
 			- @NextVersionTypeEnum nextVersion
 			- List<@VersionRationaleTypeDto> versionRationaleTypes;
 			- @InternationalStringDto versionRationale;
