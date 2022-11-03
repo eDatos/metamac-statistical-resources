@@ -78,12 +78,6 @@ public class TranslationServiceImpl extends TranslationServiceImplBase {
                
         // Translate
         String translationCode = getTimeSdmxTranslationCode(timeSdmx);
-
-        /*
-        if ("2006-D364".equals(time)) {
-            translationServiceCache.remove(translationCode);
-        }
-        */
         
         Translation translation = findTranslationByCode(translationCode);
 
