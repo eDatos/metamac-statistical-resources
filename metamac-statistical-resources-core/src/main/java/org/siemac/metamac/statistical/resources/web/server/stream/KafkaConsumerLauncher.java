@@ -55,6 +55,8 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     protected static final Log             LOGGER                  = LogFactory.getLog(KafkaConsumerLauncher.class);
     
     private static final String      MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
+    //private static final int      CONSUMER_TIMEOUT_PROCESS = 1800000;
+    private static final int      CONSUMER_TIMEOUT_PROCESS = 60000;
     
     @Autowired
     private StatisticalResourcesConfiguration statisticalResourcesConfiguration;
@@ -127,7 +129,8 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
             });
 
             boolean keepOnReading = true;
-
+            long startTime = System.currentTimeMillis(); //fetch starting time
+            
             Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
             
             while (keepOnReading) {
@@ -175,6 +178,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                     statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
                     
                     commitSync(consumer, record);
+        
                 } catch (Exception e) {
                     LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
 
@@ -182,14 +186,19 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                     sendErrorMessageIfNeccesary(record);
 
                     LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
+                } finally {
+                    if ((System.currentTimeMillis()-startTime) < CONSUMER_TIMEOUT_PROCESS) {
+                        keepOnReading = false;
+                    }
                 }
+                
             }
 
         } catch (Exception e) {
             LOGGER.error(e, e.getCause());
         }
     }
-    
+        
     private void removeFromErrorCacheMessagesIfNeccesary(ConsumerRecord<String, DatasetAvro> record) {
         if (kafkaFailedMessagesCache.isKeyInCache(record.key())) {
             kafkaFailedMessagesCache.remove(record.key());
@@ -244,6 +253,8 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 900000); // 15 min, Max time for Bussiness Logic execution of consumer thread
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1); // The maximum number of records returned in a single call to poll()
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.toString().toLowerCase()); // Policy to follow when there are no confirmed offset
+        
+        
 
         props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, statisticalResourcesConfiguration.retrieveKafkaSchemaRegistryUrl());
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);

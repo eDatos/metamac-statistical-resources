@@ -103,6 +103,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateCs
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulatePxDataService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateSdmx21DataCallbackImpl;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
@@ -565,13 +566,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         TriggerKey triggerKey = createTriggerKeyForUpdateExternalGeocoverageCache();
 
         try {
-            checkExistTaskInResource(ctx, jobKey, "");
+            checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ctx, jobKey);
 
             // @formatter:off
-            JobDetail job = newJob(UpdateGeocoverageCacheJob.class)
+            JobDetail job = newJob(UpdateExternalGeocoverageCacheJob.class)
                     .withIdentity(jobKey)
-                    .usingJobData(UpdateGeocoverageCacheJob.USER, ctx.getUserId())
-                    .usingJobData(UpdateGeocoverageCacheJob.TASK_NAME, taskName)
+                    .usingJobData(UpdateExternalGeocoverageCacheJob.USER, ctx.getUserId())
+                    .usingJobData(UpdateExternalGeocoverageCacheJob.TASK_NAME, taskName)
                     .requestRecovery()
                     .build();
             // @formatter:on
@@ -624,6 +625,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
+    private void checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ServiceContext ctx, JobKey jobKey) throws MetamacException {
+        checkSameJobNotExists(jobKey);
+   
+        if (!createJobKeyForUpdateExternalGeocoverageCacheResource().equals(jobKey)) {
+            checkExistUpdateExternalGeocoverageCacheResource(ctx);
+        }
+    }
+    
     private void checkExistDuplicationTaskInResource(ServiceContext ctx, String datasetUrn) throws MetamacException {
         if (existDuplicationTaskInResource(ctx, datasetUrn)) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_JOB_DUPLICATION_IN_PROCESS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();

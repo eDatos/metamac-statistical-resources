@@ -60,6 +60,11 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     }
 
     @Override
+    public void executeUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskservice.processUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
+    }
+    
+    @Override
     public void executeDatabaseDatasetPollingTask(ServiceContext ctx) throws MetamacException {
         taskservice.processDatabaseDatasetPollingTask(ctx);
     }

@@ -69,21 +69,25 @@ public class RestMapper {
     public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException {
         List<ExternalItem> externalItems = new ArrayList<ExternalItem>();
         for (ExternalItemAvro externalAvro : jaxiDatasetVersionAvro.getGeographicCoverage()) {
+            TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
 
-            ExternalItem externalItem = new ExternalItem();
+            if (TypeExternalArtefactsEnum.VARIABLE_ELEMENT.equals(externalItemType)) {
+                ExternalItem externalItem = new ExternalItem();
 
-            externalItem.setType(TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name()));
-            externalItem.setCode(externalAvro.getCode());
-            externalItem.setCodeNested(externalAvro.getCodeNested());
-            
-            //TODO EDATOS-3770 VER SI NECESARIO URI Y MANAGEMENTAPPURL
-            ///latest/variables/VR_TERRITORIO/variableelements/CCAA_CANARIAS
-            // externalItem.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(externalAvro.getType(), resource.getSelfLink().getHref()));
-            externalItem.setUri("FIXME EDATOS-3770 RELLENAR");
-            externalItem.setUrn(externalAvro.getUrn());
-            // externalItem.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(externalAvro.getType(), resource.getManagementAppLink()));
-            externalItem.setTitle(getInternationalStringFromInternationalStringAvro(externalAvro.getTitle()));
-            externalItems.add(externalItem);
+                externalItem.setType(externalItemType);
+
+                externalItem.setCode(externalAvro.getCode());
+                externalItem.setCodeNested(externalAvro.getCodeNested());
+
+                // TODO EDATOS-3770 VER SI NECESARIO URI Y MANAGEMENTAPPURL
+                /// latest/variables/VR_TERRITORIO/variableelements/CCAA_CANARIAS
+                // externalItem.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(externalAvro.getType(), resource.getSelfLink().getHref()));
+                externalItem.setUri("FIXME EDATOS-3770 RELLENAR");
+                externalItem.setUrn(externalAvro.getUrn());
+                // externalItem.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(externalAvro.getType(), resource.getManagementAppLink()));
+                externalItem.setTitle(getInternationalStringFromInternationalStringAvro(externalAvro.getTitle()));
+                externalItems.add(externalItem);
+            }
         }
 
         return externalItems;

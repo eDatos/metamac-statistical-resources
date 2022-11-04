@@ -1486,7 +1486,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         String resource = JobUtil.createJobNameForUpdateExternalGeocoverageCache();
         
-        if (getTaskService().existsTaskForResource(ctx, resource)) {
+        if (getTaskService().existUpdateExternalGeocoverageCacheTaskInResource(ctx)) {
             throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, resource);
         }
 

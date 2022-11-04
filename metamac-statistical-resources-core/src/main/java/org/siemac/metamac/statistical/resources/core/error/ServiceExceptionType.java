@@ -311,4 +311,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.geocoverage.cache_dataset_from_external_publication_error_stream_no_valid");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR = create(
             "exception.resources.dataset_version.geocoverage.cache_dataset_from_external_publication_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_JOB_ERROR_AND_CANT_MARK_AS_ERROR            = create(
+            "exception.resources.dataset_version.geocoverage.cache_external_publication_job_error_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_FROM_EXTERNAL_PUBLICATION_ERROR                                   = create("exception.resources.dataset_version.geocoverage.job_from_external_publication_error");
+    
     }
