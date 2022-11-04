@@ -1679,9 +1679,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     if (title != null) {
                         attrValue.setTitle(title);
                     } else {
-                        // TODO EDATOS-3778 Validar si este cambio no rompe nada
                         attrValue.setTitle(attrValue.getIdentifier());
-                        attrValue.setIdentifier(UUID.randomUUID().toString());
                     }
                 }
             }
