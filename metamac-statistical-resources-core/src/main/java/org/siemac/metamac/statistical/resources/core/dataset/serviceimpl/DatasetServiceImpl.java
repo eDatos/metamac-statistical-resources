@@ -1518,7 +1518,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             for (DsdAttribute dsdAttribute : attributes) {
                 if (dsdAttribute.isAttributeAtObservationLevel()) {
                     List<String> values = attrCoverages.get(dsdAttribute.getComponentId());
-                    processAttributeCoverage(resource, dsdAttribute, values);
+                    processAttributeCoverage(resource, dsdAttribute, values, Boolean.TRUE);
                 }
             }
         } catch (ApplicationException e) {
@@ -1531,20 +1531,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             List<String> values = statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId(),
                     StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
-            processAttributeCoverage(resource, dsdAttribute, values);
+            processAttributeCoverage(resource, dsdAttribute, values, Boolean.FALSE);
         } catch (ApplicationException e) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "Error retrieving values for attribute " + dsdAttribute.getComponentId());
         }
     }
 
-    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, List<String> values) throws MetamacException {
+    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, List<String> values, boolean copyItemAsIdentifier) throws MetamacException {
         String attributeId = dsdAttribute.getComponentId();
 
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
         if (values != null) {
             List<ExternalItem> items = buildExternalItemsBasedOnCodeIdentifiers(values, dsdAttribute);
 
-            attrValues = buildAttributeValues(attributeId, values, resource);
+            attrValues = buildAttributeValues(attributeId, values, resource, copyItemAsIdentifier);
             if (items != null) {
                 addTranslationsToAttributeValuesFromExternalItems(attrValues, items);
             }
@@ -1558,7 +1558,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion) {
+    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion, boolean copyItemAsIdentifier) {
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
 
         Set<String> uniqueValues = new HashSet<String>(values);
@@ -1570,7 +1570,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 AttributeValue result = new AttributeValue();
                 // TODO EDATOS-3778 Validar si este cambio no rompe nada
                 // result.setIdentifier(item);
-                result.setIdentifier(UUID.randomUUID().toString());
+                // result.setIdentifier(UUID.randomUUID().toString());
+                result.setIdentifier(copyItemAsIdentifier ? item : UUID.randomUUID().toString());
                 result.setTitle(item);
                 result.setDsdComponentId(attributeId);
                 result.setDatasetVersion(datasetVersion);
