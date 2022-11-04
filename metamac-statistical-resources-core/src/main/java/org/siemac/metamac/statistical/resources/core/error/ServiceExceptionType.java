@@ -38,7 +38,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.is_required_by_queries_last_version_incompatible");
     public static final CommonServiceExceptionType DATASET_VERSION_IS_REQUIRED_BY_NOT_VISIBLE_QUERY                             = create(
             "exception.resources.dataset_version.is_required_by_not_visible_query");
-    public static final CommonServiceExceptionType DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN                       = create(
+    public static final CommonServiceExceptionType DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN                           = create(
             "exception.resources.dataset_version.observational_time_period_pattern");
 
     // Datasource
@@ -243,6 +243,9 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset.importation.observation_attribute_not_match");
     public static final CommonServiceExceptionType IMPORTATION_OBSERVATION_ATTR_CARDINALITY_EXCEEDED                            = create(
             "exception.resources.dataset.importation.observation_attributes_cardinality_exceeded");
+
+    public static final CommonServiceExceptionType IMPORTATION_OBSERVATION_ATTR_VALUE_SIZE_EXCEEDED                             = create(
+            "exception.resources.dataset.importation.observation_attributes_value_size_exceeded");
     public static final CommonServiceExceptionType IMPORTATION_OBSERVATION_MANDATORY_ATTR_NOT_FOUND                             = create(
             "exception.resources.dataset.importation.observation_mandatory_attribute_not_found");
 
@@ -302,5 +305,5 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.geocoverage.geographical_coverage_code_not_found");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR                                   = create("exception.resources.dataset_version.geocoverage.job_error");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR            = create(
-        "exception.resources.dataset_version.geocoverage.job_error_and_cant_mark_as_error");
-    }
+            "exception.resources.dataset_version.geocoverage.job_error_and_cant_mark_as_error");
+}
