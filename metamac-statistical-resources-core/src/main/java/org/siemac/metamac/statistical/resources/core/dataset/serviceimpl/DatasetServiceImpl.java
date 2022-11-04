@@ -1568,9 +1568,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             @Override
             public AttributeValue transformItem(String item) {
                 AttributeValue result = new AttributeValue();
-                // TODO EDATOS-3778 Validar si este cambio no rompe nada
-                // result.setIdentifier(item);
-                // result.setIdentifier(UUID.randomUUID().toString());
                 result.setIdentifier(copyItemAsIdentifier ? item : UUID.randomUUID().toString());
                 result.setTitle(item);
                 result.setDsdComponentId(attributeId);
