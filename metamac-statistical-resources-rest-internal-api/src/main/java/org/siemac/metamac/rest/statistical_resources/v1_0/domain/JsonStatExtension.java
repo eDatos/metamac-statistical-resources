@@ -12,7 +12,6 @@ public class JsonStatExtension {
     String lang;
     String survey;
     String publishers;
-    String rightsHolder;
     String dataProviders;
     String dataProvidersAnnotations;
 
@@ -54,14 +53,6 @@ public class JsonStatExtension {
 
     public void setPublishers(String publishers) {
         this.publishers = publishers;
-    }
-
-    public String getRightsHolder() {
-        return rightsHolder;
-    }
-
-    public void setRightsHolder(String rightsHolder) {
-        this.rightsHolder = rightsHolder;
     }
 
     public String getDataProviders() {
