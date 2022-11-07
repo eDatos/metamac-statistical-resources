@@ -345,7 +345,7 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
         // To find the value of the attribute we need to look up the dataset attribute coverage.
         AttributeValue attributeCoverage = getAttributeCoverageByComponentId(source.getAttributesCoverage(), attribute.getComponentId());
         if (attributeCoverage != null) {
-            String note = commonDo2RestMapper.toI18nValue(attribute.getConceptIdentity().getName(), selectedLanguage) + ". " + attributeCoverage.getTitle();
+            String note = attributeCoverage.getTitle();
             notes.add(note);
         }
         return notes;
