@@ -108,7 +108,7 @@ public class DataMockUtils {
         ResourceInternal codelistReference = SrmMockUtils.buildCodelistRef(GEOCODELIST_TEST_URN);
         Codes codes = SrmMockUtils.buildCodes(3);
         Mockito.when(apisLocator.getSrmRestInternalFacadeV10().findCodes(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
-                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(codes);
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn(codes);
 
         ResourceInternal conceptSchemeReference = SrmMockUtils.buildConceptSchemeRef("urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=TEST:cshm-01(1.0)");
         Concepts concepts = SrmMockUtils.buildConcepts(3);
