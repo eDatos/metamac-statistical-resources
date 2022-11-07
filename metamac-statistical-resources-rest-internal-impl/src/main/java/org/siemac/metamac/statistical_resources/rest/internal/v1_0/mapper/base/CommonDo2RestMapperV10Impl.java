@@ -9,6 +9,7 @@ import static org.siemac.metamac.statistical_resources.rest.internal.Statistical
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +20,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -118,6 +120,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.InternalWebApplicationNavigation;
+import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
@@ -192,6 +195,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     @Autowired
     private MultidatasetsDo2RestMapperV10           multidatasetsDo2RestMapper;
+
+    @Autowired
+    private RestMapper restMapper;
 
     private String                                  statisticalResourcesApiInternalEndpointV10;
     private String                                  srmApiInternalEndpoint;
@@ -487,6 +493,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public RestException buildRestException(String message) {
+        logger.error(message);
+        org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
+        return new RestException(exception, Response.Status.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
     public ResourceInternal toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
@@ -694,6 +707,25 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
         }
         return link;
+    }
+
+    @Override
+    public String toI18nValue(InternationalString source, String selectedLanguage) {
+        if (source == null || source.getTexts() == null || source.getTexts().isEmpty()) {
+            return null;
+        }
+
+        if (selectedLanguage == null) {
+            // given that we know texts is not empty we can get the first one
+            return source.getTexts().stream().findFirst().get().getValue(); // TODO EDATOS-3662: default language?
+        }
+
+        return toInternationalString(source, Collections.singletonList(selectedLanguage)).getTexts().get(0).getValue(); // TODO EDATOS-3662 multiples languages?
+    }
+
+    @Override
+    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, String selectedLanguage) {
+        return toI18nValue(restMapper.toRestInternationalString(source), selectedLanguage);
     }
 
     @Override

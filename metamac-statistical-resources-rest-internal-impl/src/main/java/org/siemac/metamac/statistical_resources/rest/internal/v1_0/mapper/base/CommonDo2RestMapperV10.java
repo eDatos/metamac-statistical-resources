@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
+import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DataStructureDefinition;
@@ -54,6 +55,9 @@ public interface CommonDo2RestMapperV10 {
     public ResourceLink toResourceLink(String kind, String href);
     public String toResourceLink(String resourceSubpath, String agencyID, String resourceID, String version);
 
+    public String toI18nValue(InternationalString source, String selectedLanguage);
+    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source,String selectedLanguage);
+
     public InternationalString toInternationalString(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString sources, List<String> selectedLanguages);
     public InternationalString toInternationalString(InternationalString sources, List<String> selectedLanguages);
     public InternationalString toInternationalString(String source, List<String> selectedLanguages);
@@ -77,4 +81,5 @@ public interface CommonDo2RestMapperV10 {
     public ResourcesInternal toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages);
     public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException;
 
+    public RestException buildRestException(String message);
 }
