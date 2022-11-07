@@ -58,6 +58,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
+    public static final String METRIC_ROLE = "metric";
+    public static final String GEO_ROLE = "geo";
+    public static final String TIME_ROLE = "time";
+    public static final String JSON_STAT_VERSION = "2.0";
+    public static final String JSON_STAT_CLASS = "dataset";
+
     @Autowired
     private CommonDo2RestMapperV10 commonDo2RestMapper;
 
@@ -90,8 +96,8 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
 
         JsonStatData target = new JsonStatData();
 
-        target.setVersion("2.0");
-        target.setClazz("dataset");
+        target.setVersion(JSON_STAT_VERSION);
+        target.setClazz(JSON_STAT_CLASS);
         target.addAllValues(toJsonStatDatasetValues(data));
         target.setDimension(toJsonStatDatasetDimensions(dimensions, data.getDimensions(), selectedLanguage));
         target.setRole(toJsonStatRoles(dsdProcessorResult));
@@ -556,14 +562,14 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
 
         for (DsdProcessor.DsdDimension dimension : dsdProcessorResult.getDimensions()) {
             if (dimension.getType() == DsdProcessor.DsdComponentType.MEASURE) {
-                initializeDimensionRole(roles, "metric");
-                roles.get("metric").add(dimension.getComponentId());
+                initializeDimensionRole(roles, METRIC_ROLE);
+                roles.get(METRIC_ROLE).add(dimension.getComponentId());
             } else if (dimension.getType() == DsdProcessor.DsdComponentType.SPATIAL) {
-                initializeDimensionRole(roles, "geo");
-                roles.get("geo").add(dimension.getComponentId());
+                initializeDimensionRole(roles, GEO_ROLE);
+                roles.get(GEO_ROLE).add(dimension.getComponentId());
             } else if (dimension.getType() == DsdProcessor.DsdComponentType.TEMPORAL) {
-                initializeDimensionRole(roles, "time");
-                roles.get("time").add(dimension.getComponentId());
+                initializeDimensionRole(roles, TIME_ROLE);
+                roles.get(TIME_ROLE).add(dimension.getComponentId());
             }
         }
 
