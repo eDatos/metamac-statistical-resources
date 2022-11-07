@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.apache.commons.lang.math.NumberUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -27,31 +25,14 @@ public class JsonStatData {
     private String updated;
     private JsonStatExtension extension;
     private List<String> note;
-    private List<Number> value = new ArrayList<>();
+    private List<String> value = new ArrayList<>();
     private List<String> id;
     private List<Long> size;
     private Map<String, List<String>> role;
     private Map<String, JsonStatDimension> dimension;
 
     public void addAllValues(List<String> values) {
-        for (String strValue : values) {
-            value.add(parseNumber(strValue));
-        }
-    }
-
-    private Number parseNumber(String str) {
-        if (str == null || StringUtils.isBlank(str)) {
-            return null; // missing value, N/A, represented as null
-        }
-
-        if (!NumberUtils.isNumber(str)) {
-            throw new NumberFormatException("Invalid number: " + str);
-        }
-
-        if (str.contains(".")) {
-            return Double.parseDouble(str);
-        }
-        return Long.parseLong(str);
+        value.addAll(values);
     }
 
     public String getVersion() {
@@ -94,11 +75,11 @@ public class JsonStatData {
         this.updated = updated;
     }
 
-    public List<Number> getValue() {
+    public List<String> getValue() {
         return value;
     }
 
-    public void setValue(List<Number> value) {
+    public void setValue(List<String> value) {
         this.value = value;
     }
 
