@@ -405,13 +405,7 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
 
         // Since attribute values can be attached to any amount of dimensions, we need to generalize the access of those
         // values. For example, consider 2 dimensions (A and B), each with 2 and 3 categories, respectively. Values are
-        // in row-major order, we iterate over the values A1B1, A1B2, A1B3, A2B1, A2B2 and A3B3.
-
-        //  A1B1, A1B2, A1B3
-        //  A2B1, A2B2, A3B3
-
-        // This behavior can be generalized to any number of dimensions/categories.
-
+        // in row-major order, we iterate over the values A1B1, A1B2, A1B3, A2B1, A2B2 and A2B3.
         int[] size = new int[attributeAssociatedDimensions.size()];
         for (int i = 0; i < attributeAssociatedDimensions.size(); i++) {
             DimensionRepresentation dimension = attributeAssociatedDimensions.get(i);
