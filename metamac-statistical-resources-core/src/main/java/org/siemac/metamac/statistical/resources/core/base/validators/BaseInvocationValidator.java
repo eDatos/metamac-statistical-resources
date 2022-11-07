@@ -1,8 +1,10 @@
 package org.siemac.metamac.statistical.resources.core.base.validators;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.edatos.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
@@ -242,8 +244,12 @@ public abstract class BaseInvocationValidator {
         }
     }
     
-    private static void checkSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResource resource, String metadataName, List<MetamacExceptionItem> exceptions) {
-        StatisticalResourcesValidationUtils.checkMetadataRequired(resource.getLanguage(), addParameter(metadataName, ServiceExceptionSingleParameters.LANGUAGE), exceptions);
+    private static void checkSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResource resource, String metadataName, List<MetamacExceptionItem> exceptions){
+    	List<MetamacExceptionItem> exceptionsRequired = new ArrayList<MetamacExceptionItem>();
+    	StatisticalResourcesValidationUtils.checkMetadataRequired(resource.getLanguage(), addParameter(metadataName, ServiceExceptionSingleParameters.LANGUAGE), exceptionsRequired);
+        if(!exceptionsRequired.isEmpty()) {
+            exceptions.add( new MetamacExceptionItem(CommonServiceExceptionType.CONFIGURATION_PROPERTY_NOT_FOUND, "metamac.organisation.urn"));
+        } 
         StatisticalResourcesValidationUtils.checkListMetadataOptionalIsValid(resource.getLanguages(), addParameter(metadataName, ServiceExceptionSingleParameters.LANGUAGES), exceptions);
         StatisticalResourcesValidationUtils.checkListMetadataOptionalIsValid(resource.getStatisticalOperationInstances(),
                 addParameter(metadataName, ServiceExceptionSingleParameters.STATISTICAL_OPERATION_INSTANCES), exceptions);
