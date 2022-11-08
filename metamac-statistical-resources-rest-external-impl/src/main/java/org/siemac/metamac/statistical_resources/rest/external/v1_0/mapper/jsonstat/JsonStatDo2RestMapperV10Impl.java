@@ -1,9 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat;
 
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isTemporalDimension;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +10,6 @@ import java.util.StringJoiner;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeValues;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
@@ -38,18 +34,14 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedAt
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
-import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
-import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
-import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
-import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query.QueriesDo2RestMapperV10;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +59,10 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
     private CommonDo2RestMapperV10 commonDo2RestMapper;
 
     @Autowired
-    private DatasetVersionRepository datasetVersionRepository;
+    private QueriesDo2RestMapperV10 queriesDo2RestMapper;
+
+    @Autowired
+    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonStatDo2RestMapperV10Impl.class);
 
@@ -78,7 +73,7 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
         }
 
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages);
+        Data data = datasetsDo2RestMapper.toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages);
 
         // too slow but necessary for category and dimension translations
         Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields);
@@ -116,13 +111,13 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
             return null;
         }
 
-        DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(source);
+        DatasetVersion datasetVersion = queriesDo2RestMapper.getQueryRelatedDatasetVersionEffective(source);
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
-        Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages);
+        Data data = queriesDo2RestMapper.toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages);
 
         // too slow but necessary for category and dimension translations
         Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
-                calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
+                queriesDo2RestMapper.calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
 
         // too slow but necessary for category and atributes translations
         Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
@@ -149,110 +144,6 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
         target.setNote(toJsonStatNote(datasetVersion, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
 
         return target;
-    }
-
-    // calculateEffectiveSelectionValues, calculateEffectiveDimensionValuesToQuery and calculateEffectiveDimensionValuesToDataset are similar, except that
-    // - calculateEffectiveSelectionValues, applies the api selection with their special parameters to the previously queried results
-    // - calculateEffectiveDimensionValuesToQuery, applies the query selection with their special parameters to the "whole" dataset (technicaly, only to the temporal coverage)
-    // - calculateEffectiveDimensionValuesToDataset, applies the api selection with their special parameters to the "whole" dataset (technicaly, only to the temporal coverage)
-    public Map<String, List<String>> calculateEffectiveSelectionValues(Map<String, List<String>> selectedDimensions, Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension) {
-        Map<String, List<String>> effectiveDimensions = new HashMap<String, List<String>>(selectedDimensions.size());
-        for (Map.Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
-            String dimensionId = selectedDimension.getKey();
-            List<String> selectedValues = selectedDimension.getValue();
-            if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
-                List<String> temporalCoverageValues = effectiveQueryDimensionValuesToDataByDimension.get(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
-                List<String> effectiveValues = StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
-                effectiveDimensions.put(dimensionId, effectiveValues);
-            } else {
-                effectiveDimensions.put(dimensionId, selectedValues);
-            }
-        }
-        return effectiveDimensions;
-    }
-
-    private Data toQueryData(QueryVersion source, DatasetVersion datasetVersion, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages)
-            throws Exception {
-        if (source == null) {
-            return null;
-        }
-        Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion);
-        Map<String, List<String>> effectiveSelectionValues = calculateEffectiveSelectionValues(selectedDimensions, effectiveQueryDimensionValuesToDataByDimension);
-        Map<String, List<String>> effectiveDimensionValuesToDataByDimension = StatisticalResourcesRestImplCommonUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension,
-                effectiveSelectionValues);
-        return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages);
-    }
-
-    private List<String> calculateEffectiveTemporalDimensionValuesToQuery(QueryVersion source, List<String> temporalCoverageCodes, List<String> selectionCodes) {
-        QueryTypeEnum type = source.getType();
-        if (QueryTypeEnum.FIXED.equals(type)) {
-            // return exactly
-            return selectionCodes;
-        } else if (QueryTypeEnum.AUTOINCREMENTAL.equals(type)) {
-            List<String> effectiveDimensionValues = new ArrayList<String>();
-
-            List<String> sortedSelectionCodes = SdmxTimeUtils.sortTimeList(selectionCodes);
-            List<String> sortedTemporalCoverageCodes = SdmxTimeUtils.sortTimeList(temporalCoverageCodes);
-
-            String latestSelectionCode = sortedSelectionCodes.get(sortedSelectionCodes.size() - 1);
-            int indexLatestSelectionCode = sortedTemporalCoverageCodes.indexOf(latestSelectionCode);
-
-            effectiveDimensionValues.addAll(selectionCodes);
-            if (indexLatestSelectionCode >= 0) {
-                // add codes added after lastest selected code
-                List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(indexLatestSelectionCode, sortedTemporalCoverageCodes.size());
-
-                for (String code : temporalCodesAddedAfterLatestSelectedCodeString) {
-                    if (!effectiveDimensionValues.contains(code)) {
-                        effectiveDimensionValues.add(code);
-                    }
-                }
-            }
-
-            // We reverse the array to restore the order after the sortTimeList invocation
-            Collections.reverse(effectiveDimensionValues);
-
-            return effectiveDimensionValues;
-        } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
-            // return N data
-            int codeLastIndexToReturn = -1;
-            if (temporalCoverageCodes.size() < source.getLatestDataNumber()) {
-                codeLastIndexToReturn = temporalCoverageCodes.size(); // there is not N data, so return all
-            } else {
-                codeLastIndexToReturn = source.getLatestDataNumber();
-            }
-            return temporalCoverageCodes.subList(0, codeLastIndexToReturn);
-        } else {
-            throw commonDo2RestMapper.buildRestException("QueryTypeEnum unsupported: " + source);
-        }
-    }
-
-    private Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion) {
-        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(source.getSelection().size());
-        for (QuerySelectionItem selection : source.getSelection()) {
-            String dimensionId = selection.getDimension();
-            List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
-            if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
-                List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
-                List<String> dimensionValues = calculateEffectiveTemporalDimensionValuesToQuery(source, temporalCoverageCodes, selectionCodes);
-                dimensionValuesSelected.put(dimensionId, dimensionValues);
-            } else {
-                dimensionValuesSelected.put(dimensionId, selectionCodes);
-            }
-        }
-        return dimensionValuesSelected;
-    }
-
-    private DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
-        if (source.getFixedDatasetVersion() != null) {
-            return source.getFixedDatasetVersion();
-        } else {
-            if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
-                return datasetVersionRepository.retrieveLastVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
-            } else {
-                return datasetVersionRepository.retrieveLastPublishedVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
-            }
-        }
     }
 
     private Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, String selectedLanguage) throws Exception {
@@ -584,30 +475,5 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
             stringObservations.add(StringUtils.isBlank(observation) ? null : observation.trim());
         }
         return stringObservations;
-    }
-
-    public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
-        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(selectedDimensions.size());
-        for (Map.Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
-            String dimensionId = selectedDimension.getKey();
-            List<String> selectedValues = selectedDimension.getValue();
-            if (isTemporalDimension(dimensionId)) {
-                List<String> temporalCoverageValues = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
-                List<String> effectiveValues = StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
-                dimensionValuesSelected.put(dimensionId, effectiveValues);
-            } else {
-                dimensionValuesSelected.put(dimensionId, selectedValues);
-            }
-        }
-        return dimensionValuesSelected;
-    }
-
-    private Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
-
-        if (source == null) {
-            return null;
-        }
-        Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
-        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages);
     }
 }

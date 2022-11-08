@@ -5,14 +5,18 @@ import java.util.Map;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 
 public interface QueriesDo2RestMapperV10 {
 
@@ -22,4 +26,8 @@ public interface QueriesDo2RestMapperV10 {
     public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceBaseDto source);
     public ResourceInternal toResource(QueryVersion source, List<String> selectedLanguages);
     public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
+
+    Data toQueryData(QueryVersion source, DatasetVersion datasetVersion, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages) throws Exception;
+    DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException;
+    Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion);
 }

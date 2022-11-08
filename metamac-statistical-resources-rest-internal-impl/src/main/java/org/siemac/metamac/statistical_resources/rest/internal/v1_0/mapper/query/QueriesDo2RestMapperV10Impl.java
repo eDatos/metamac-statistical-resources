@@ -125,7 +125,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         return target;
     }
 
-    private DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
+    @Override
+    public DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
         if (source.getFixedDatasetVersion() != null) {
             return source.getFixedDatasetVersion();
         } else {
@@ -239,7 +240,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         return targets;
     }
 
-    private Data toQueryData(QueryVersion source, DatasetVersion datasetVersion, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages)
+    @Override
+    public Data toQueryData(QueryVersion source, DatasetVersion datasetVersion, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages)
             throws Exception {
         if (source == null) {
             return null;
@@ -353,6 +355,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         return effectiveDimensions;
     }
 
+    @Override
     public Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion) {
         Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(source.getSelection().size());
         for (QuerySelectionItem selection : source.getSelection()) {
