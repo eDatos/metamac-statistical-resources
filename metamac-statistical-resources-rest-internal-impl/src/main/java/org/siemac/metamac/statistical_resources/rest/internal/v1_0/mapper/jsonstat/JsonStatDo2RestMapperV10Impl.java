@@ -11,7 +11,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
