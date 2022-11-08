@@ -41,6 +41,8 @@
                 <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
             </ns2:stub>
             <ns2:autoOpen>true</ns2:autoOpen>
+            <ns2:showNullValuesByDefault>true</ns2:showNullValuesByDefault>
+            <ns2:showZeroValuesByDefault>true</ns2:showZeroValuesByDefault>
             <ns2:showDecimals>2</ns2:showDecimals>
         </ns2:relatedDsd>
         <ns2:dimensions total="4">

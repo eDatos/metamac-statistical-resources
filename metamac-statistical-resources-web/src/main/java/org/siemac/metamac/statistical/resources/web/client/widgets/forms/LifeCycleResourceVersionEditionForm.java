@@ -143,6 +143,21 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
         String nextVersionValue = getValueAsString(VersionableResourceDS.NEXT_VERSION);
         return StringUtils.equals(NextVersionTypeEnum.SCHEDULED_UPDATE.toString(), nextVersionValue);
     }
+    
+    protected FormItemIfFunction getUpdateFrecuencyFormItemIfFunction() {
+        return new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                return isNextVersionScheduledNecessary();
+            }
+        };
+    }
+
+    protected boolean isNextVersionScheduledNecessary() {
+        String nextVersionValue = this.getValueAsString(VersionableResourceDS.NEXT_VERSION);
+        return StringUtils.equals(NextVersionTypeEnum.SCHEDULED_UPDATE.name(), nextVersionValue) || StringUtils.equals(NextVersionTypeEnum.NON_SCHEDULED_UPDATE.name(), nextVersionValue);
+    }
 
     // ------------------------------------------------------------------------------------------------------------
     // FORM ITEM IF FUNCTIONS
