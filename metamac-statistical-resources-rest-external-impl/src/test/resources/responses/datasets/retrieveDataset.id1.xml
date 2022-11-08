@@ -505,6 +505,8 @@
                 <stat:dimensionId>TIME_PERIOD</stat:dimensionId>
             </stat:stub>
             <stat:autoOpen>true</stat:autoOpen>
+            <stat:showNullValuesByDefault>true</stat:showNullValuesByDefault>
+            <stat:showZeroValuesByDefault>true</stat:showZeroValuesByDefault>
             <stat:showDecimals>2</stat:showDecimals>
         </stat:relatedDsd>
         <stat:dimensions total="4">
