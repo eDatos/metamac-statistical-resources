@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.ws.rs.GET;
+
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -30,6 +32,35 @@ public class JsonStatData {
     private List<Long> size;
     private Map<String, List<String>> role;
     private Map<String, JsonStatDimension> dimension;
+
+    // * Problem:
+    // When no MIME type has been defined for a request/response, JAX-RS chooses to serve JSON-stat by
+    // default, instead of XML which was the default behavior before implementing JSON-stat.
+    //
+    // * Cause:
+    // We use two identical resource methods to serve datasets/queries, only distinguished when
+    // a MIME type has been defined. XML/JSON calls a specific resource method (i.e. retrieveDataset),
+    // JSON-stat calls a different one (i.e. retrieveJsonStatDataset).
+    //
+    // JAX-RS will factor the resource path, for example, into consideration when multiple resource methods
+    // are elegible, to choose the adecuate one. But MIME type isn't factored into resource method preference,
+    // meaning that when no MIME type is specified for request/response, JAX-RS doesn't prioritize one method
+    // over the other, nor does it allow it.
+    //
+    // * Fix:
+    // One of the factors that JAX-RS considers to choose a method over another is if the method comes from a
+    // subresource, giving it less priority. That way we can de-prioritize the method that serves JSON-stat,
+    // fixing the problem.
+    //
+    // * Reference:
+    // https://web.archive.org/web/20090214182513/http://cwiki.apache.org/CXF20DOC/jax-rs.html#JAX-RS-Overviewoftheselectionalgorithm.
+    //    see "Overview of the selection algorithm" chapter.
+    //
+    // https://docs.jboss.org/resteasy/docs/1.0.1.GA/userguide/html/JAX-RS_Resource_Locators_and_Sub_Resources.html
+    @GET
+    public JsonStatData get() {
+        return this;
+    }
 
     public void addAllValues(List<String> values) {
         value.addAll(values);
