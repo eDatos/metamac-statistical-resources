@@ -83,6 +83,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.repository.api.DatabaseImportRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
@@ -109,7 +110,12 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.V
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
+import org.siemac.metamac.statistical.resources.core.stream.messages.DatetimeAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.TemporalCodeAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.InternationalStringDo2AvroMapper;
+import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.TemporalCodeDo2AvroMapper;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
+import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
@@ -145,6 +151,7 @@ import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
 
 /**
  * Implementation of TaskService.
@@ -216,6 +223,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     
     @Autowired
     StreamConsumerServiceFacade streamConsumerServiceFacade;
+    
+    @Autowired
+    StreamMessagingServiceFacade  streamMessagingServiceFacade;
     
     private SchedulerFactory                  schedulerFactory                    = null;
 
@@ -1061,11 +1071,58 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         logger.debug("Updating geocoverage cache for external datasets (nonexistent in database)");
         
-        streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
+        DatasetVersion dt = datasetVersionRepository.retrieveByUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ISTAC:C00010A_000026(2.16)");
+        DatasetAvro dtAvro = new DatasetAvro();
+        dtAvro.setUrn("urn:siemac:es.caib.ibestat.infomodel.jaxi.Dataset=IBESTAT:I214003_0012");
+        dtAvro.setCode("I214003_0012");
+        dtAvro.setStatisticalOperation(do2Avro(dt.getSiemacMetadataStatisticalResource().getStatisticalOperation()));
+        dtAvro.setTitle(InternationalStringDo2AvroMapper.do2Avro(dt.getSiemacMetadataStatisticalResource().getTitle()));
+        dtAvro.setPublicationDate(new DatetimeAvro());
+        dtAvro.setLastVersion(true);
+        List<es.ibestat.jaxi.stream.messages.ExternalItemAvro> listExternals = new ArrayList<es.ibestat.jaxi.stream.messages.ExternalItemAvro>();
+        for (ExternalItem e : dt.getGeographicCoverage()) {
+            listExternals.add(do2Avro(e));
+        }
+        dtAvro.setGeographicCoverage(listExternals);
+        
+        List<es.ibestat.jaxi.stream.messages.ExternalItemAvro> listGranularities = new ArrayList<es.ibestat.jaxi.stream.messages.ExternalItemAvro>();
+        for (ExternalItem e : dt.getGeographicGranularities()) {
+            listGranularities.add(do2Avro(e));
+        }
+        
+        dtAvro.setGeographicGranularities(listGranularities);
+        
+        List<TemporalCodeAvro> listTemporalcoverages= new ArrayList<TemporalCodeAvro>();
+        for (TemporalCode e : dt.getTemporalCoverage()) {
+            listTemporalcoverages.add(TemporalCodeDo2AvroMapper.do2Avro(e));
+        }
+        
+        dtAvro.setTemporalCoverage(listTemporalcoverages);
+          
+        dtAvro.setHtmlLink("https://proves.caib.es/ibestat-jaxi-web/tabla.do?px=392a220d-af81-4ce1-a063-a14eaecaffbe&pag=1&nodeId=d07588cc-83c6-4434-8d66-453489e439a9&pxName=392a220d-af81-4ce1-a063-a14eaecaffbeName");
+        dtAvro.setJsonLink("https://proves.caib.es/ibestat-jaxi-web/tabla.do?typeDownload=7&px=392a220d-af81-4ce1-a063-a14eaecaffbe");
+        //streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
 
+        streamMessagingServiceFacade.sendNewJaxiPublication(dtAvro);
+        
         logger.debug("Processing geographic coverage for external datasets (nonexistent in database) to create the cache correctly finished");
 
         markTaskAsFinished(ctx, jobKey);
+    }
+    
+    public es.ibestat.jaxi.stream.messages.ExternalItemAvro do2Avro(ExternalItem source) {
+        es.ibestat.jaxi.stream.messages.ExternalItemAvro target = null;
+        if (source != null) {
+            try {
+                target = es.ibestat.jaxi.stream.messages.ExternalItemAvro.newBuilder().setCode(source.getCode()).setCodeNested(source.getCodeNested())
+                        .setTitle(InternationalStringDo2AvroMapper.do2Avro(source.getTitle())).setType(es.ibestat.jaxi.stream.messages.TypeExternalArtefactsEnumAvro.STATISTICAL_OPERATION).setUrn(source.getUrn())
+                        .build();
+            } catch (Exception e) {
+                logger.error("ERROR CREANDO MENSAJE JAXI PUBLICATION", e);
+            }
+        }
+        return target;
+
     }
     
     private void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn, ExternalItem variableElement) {

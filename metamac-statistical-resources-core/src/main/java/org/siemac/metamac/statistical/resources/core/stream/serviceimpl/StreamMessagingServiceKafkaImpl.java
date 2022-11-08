@@ -25,6 +25,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
 import org.springframework.stereotype.Component;
 
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 
 @Component(StreamMessagingService.BEAN_ID)
@@ -67,6 +68,21 @@ public class StreamMessagingServiceKafkaImpl<K, V extends SpecificRecordBase> im
         getProducer().sendMessage(m, topic);
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    public void sendMessage(DatasetAvro message) throws MetamacException {
+        // To Avro
+        K key = (K) message.getUrn();
+
+        // Serialize message
+        MessageBase<K, V> m = new AvroMessage<K, V>(key, (V) message);
+
+        // Topic
+        String topic = "JAXI_PUBLICATIONS";
+
+        getProducer().sendMessage(m, topic);
+    }
+    
     private ProducerBase<K, V> getProducer() throws MetamacException {
         if (producer == null) {
             producer = new KafkaCustomProducer<>(getProducerProperties());
