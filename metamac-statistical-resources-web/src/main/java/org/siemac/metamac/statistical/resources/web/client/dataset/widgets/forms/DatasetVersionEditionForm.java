@@ -30,6 +30,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
         super();
 
         updateFrequency = createUpdateFrequencyItem();
+        updateFrequency.setShowIfCondition(getUpdateFrecuencyFormItemIfFunction());
         updateFrequency.setValidators(new CustomRequiredValidator() {
 
             @Override
@@ -43,7 +44,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
         
         addFields(dateNextUpdate, updateFrequency);
     }
-
+    
     public void setDatasetVersionDto(DatasetVersionDto dto) {
         super.setLifeCycleStatisticalResourceDto(dto);
 
@@ -57,7 +58,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto dto) {
         super.getLifeCycleStatisticalResourceDto(dto);
 
-        dto.setUpdateFrequency(getValueAsExternalItemDto(DatasetDS.UPDATE_FRECUENCY));
+        dto.setUpdateFrequency(this.isNextVersionScheduledNecessary() ? getValueAsExternalItemDto(DatasetDS.UPDATE_FRECUENCY) : null);
         dto.setDateNextUpdate(dateNextUpdate.getValue());
 
         return dto;
