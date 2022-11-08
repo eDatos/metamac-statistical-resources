@@ -604,6 +604,14 @@
                      "description":"",
                      "type":"boolean"
                   },
+                  "showNullValuesByDefault":{
+                     "description":"",
+                     "type":"boolean"
+                  },
+                  "showZeroValuesByDefault":{
+                     "description":"",
+                     "type":"boolean"
+                  },
                   "heading":{
                      "description":"",
                      "$ref":"#/definitions/DimensionsId"
@@ -2521,6 +2529,20 @@
             {
                "properties":{
                   "autoOpen":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"boolean"
+                  },
+                  "showNullValuesByDefault":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"boolean"
+                  },
+                  "showZeroValuesByDefault":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },

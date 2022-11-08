@@ -61,6 +61,8 @@ public class SrmRestMocks {
         dataStructure.setId(resourceID);
         dataStructure.setVersion(version);
         dataStructure.setAutoOpen(Boolean.TRUE);
+        dataStructure.setShowNullValuesByDefault(Boolean.TRUE);
+        dataStructure.setShowZeroValuesByDefault(Boolean.TRUE);
 
         dataStructure.setStub(new DimensionReferences());
         dataStructure.getStub().getDimensions().add("GEO_DIM");

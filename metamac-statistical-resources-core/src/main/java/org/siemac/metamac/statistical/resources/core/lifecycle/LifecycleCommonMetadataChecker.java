@@ -138,7 +138,7 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(resource.getGeographicGranularities(), addParameter(metadataName, ServiceExceptionSingleParameters.GEOGRAPHIC_GRANULARITIES), exceptionItems);
         checkMetadataRequired(resource.getTemporalGranularities(), addParameter(metadataName, ServiceExceptionSingleParameters.TEMPORAL_GRANULARITIES), exceptionItems);
 
-        checkMetadataRequired(resource.getUpdateFrequency(), addParameter(metadataName, ServiceExceptionSingleParameters.UPDATE_FREQUENCY), exceptionItems);
+        checkUpdateFrequency(resource, metadataName, exceptionItems);
         checkMetadataRequired(resource.getStatisticOfficiality(), addParameter(metadataName, ServiceExceptionSingleParameters.STATISTIC_OFFICIALITY), exceptionItems);
 
         if (resource.getDatasources() == null || resource.getDatasources().isEmpty()) {
@@ -175,6 +175,13 @@ public class LifecycleCommonMetadataChecker {
         }
     }
 
+    private void checkUpdateFrequency(DatasetVersion resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
+        if (resource.getSiemacMetadataStatisticalResource().getNextVersion() != null && (NextVersionTypeEnum.SCHEDULED_UPDATE.equals(resource.getSiemacMetadataStatisticalResource().getNextVersion())
+                || NextVersionTypeEnum.NON_SCHEDULED_UPDATE.equals(resource.getSiemacMetadataStatisticalResource().getNextVersion()))) {
+            checkMetadataRequired(resource.getUpdateFrequency(), addParameter(metadataName, ServiceExceptionSingleParameters.UPDATE_FREQUENCY), exceptionItems);
+        }
+    }
+    
     private void checkAttributesInstancesMandatoryAtNonObservationLevel(DatasetVersion datasetVersion, ValidateDataVersusDsd validateDataVersusDsd) throws ApplicationException, MetamacException {
         Map<String, List<String>> coverage = datasetRepositoriesServiceFacade.findCodeDimensions(datasetVersion.getDatasetRepositoryId());
         List<MetamacExceptionItem> exceptions = new LinkedList<MetamacExceptionItem>();
