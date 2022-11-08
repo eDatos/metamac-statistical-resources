@@ -258,7 +258,20 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
 
     private List<String> getNotesForAttributesAssociatedToCategories(DsdExternalProcessor.DsdAttribute attribute, Dimensions dimensions, Attributes attributes, String selectedLanguage, Data data, DsdProcessorResult dsdProcessorResult) {
         List<String> notes = new ArrayList<>();
-        // From dataset data, get dimensions declared by the attribute
+        List<DimensionRepresentation> attributeAssociatedDimensions = getDimensionsAssociatedToAttribute(attribute, data, dsdProcessorResult);
+        DataAttribute dataAttribute = getAttributeFromDatasetData(attribute, data);
+        if (dataAttribute == null) {
+            return notes;
+        }
+        List<String> attributeValues = new ArrayList<>();
+        for (String attributeValue : dataAttribute.getValue().split("\\|")) {
+            attributeValues.add(toAttributeI18nName(attributes, attribute, attributeValue.trim(), selectedLanguage));
+        }
+        processAttributeValues(dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
+        return notes;
+    }
+
+    private List<DimensionRepresentation> getDimensionsAssociatedToAttribute(DsdExternalProcessor.DsdAttribute attribute, Data data, DsdProcessorResult dsdProcessorResult) {
         List<DimensionRepresentation> attributeAssociatedDimensions = new ArrayList<>();
         if (!attribute.getAttributeRelationship().getDimensions().isEmpty()) {
             // get dimensions when those have been declared directly in the attribute
@@ -274,11 +287,11 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
                     attributeAssociatedDimensions.add(dimensionRepresentation);
                 }
             }
-        } else {
-            return notes;
         }
+        return attributeAssociatedDimensions;
+    }
 
-        // From dataset data, get the attribute that matches the id from the DSD
+    private DataAttribute getAttributeFromDatasetData(DsdExternalProcessor.DsdAttribute attribute, Data data) {
         DataAttribute dataAttribute = null;
         for (DataAttribute da : data.getAttributes().getAttributes()) {
             if (Objects.equals(da.getId(), attribute.getComponentId())) {
@@ -286,16 +299,10 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
                 break;
             }
         }
-        if (dataAttribute == null) {
-            return notes;
-        }
+        return dataAttribute;
+    }
 
-        // Split values of the attribute to an array
-        List<String> attributeValues = new ArrayList<>();
-        for (String attributeValue : dataAttribute.getValue().split("\\|")) {
-            attributeValues.add(toAttributeI18nName(attributes, attribute, attributeValue.trim(), selectedLanguage));
-        }
-
+    private void processAttributeValues(Dimensions dimensions, String selectedLanguage, List<String> notes, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
         // The attribute values are in "row-major" order, based on the dimensions we processed from the dataset data.
         // That means dimensions order is important to map the categories to the right value.
 
@@ -306,37 +313,25 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
         for (int i = 0; i < attributeAssociatedDimensions.size(); i++) {
             DimensionRepresentation dimension = attributeAssociatedDimensions.get(i);
             int categoriesSize = dimension.getRepresentations().getTotal().intValue();
-            size[i] = categoriesSize - 1; // minus one because array index starts at 0 and ends at arrayLength - 1
+            size[i] = categoriesSize;
         }
 
         int[] index = new int[size.length];
-        for (int i = 0; i < attributeAssociatedDimensions.size(); i++) {
-            index[i] = 0; // array initialization at 0
-        }
+        iterate(0, size, index, dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
+    }
 
-        // starts at [0, 0, 0,...]
-        getNoteFromAttributePossition(dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues, index);
-        while (!ArrayUtils.isEquals(index, size)) {
-            // continues at [0, 0, 0, ..., 1], [0, 0, 0, ..., 2], ...
-            //              [0, 0, ..., 1, ..., 0], [0, 0, ..., 1, ..., 1], ...
-            //              ...
-
-            int amountOfDimensions = size.length;
-            int j = amountOfDimensions - 1;
-
-            while (j >= 0) {
-                if (index[j] < size[j]) {
-                    index[j] += 1;
-                    break;
-                } else {
-                    index[j] = 0;
-                    j = j - 1;
-                }
+    private void iterate(int currentDimension, int size[], int index[], Dimensions dimensions, String selectedLanguage, List<String> notes, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
+        if (currentDimension >= size.length) {
+            String note = getNoteFromAttributePossition(dimensions, selectedLanguage, attributeAssociatedDimensions, attributeValues, index);
+            if (note != null) {
+                notes.add(note);
             }
-            getNoteFromAttributePossition(dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues, index);
+            return;
         }
-
-        return notes;
+        for (int i = 0; i < size[currentDimension]; i++) {
+            index[currentDimension] = i;
+            iterate(currentDimension + 1, size, index, dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
+        }
     }
 
     private String toAttributeI18nName(Attributes attributes, DsdExternalProcessor.DsdAttribute attribute, String attributeCode, String selectedLanguage) {
@@ -361,7 +356,7 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
         return attributeCode; // some attributes are not declared as i18n
     }
 
-    private void getNoteFromAttributePossition(Dimensions dimensions, String selectedLanguage, List<String> notes, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues, int[] index) {
+    private String getNoteFromAttributePossition(Dimensions dimensions, String selectedLanguage, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues, int[] index) {
         String value = getValueFromPosition(attributeAssociatedDimensions, attributeValues, index);
         if (!StringUtils.isBlank(value)) {
             List<String> categories = new ArrayList<>();
@@ -370,8 +365,9 @@ public class JsonStatDo2RestMapperV10Impl implements JsonStatDo2RestMapperV10 {
                 CodeRepresentation category = dimension.getRepresentations().getRepresentations().get(index[i]);
                 categories.add(toCategoryI18nName(dimensions, dimension, category, selectedLanguage));
             }
-            notes.add(String.join(", ", categories) + ". " + value);
+            return String.join(", ", categories) + ". " + value;
         }
+        return null;
     }
 
     private String getValueFromPosition(List<DimensionRepresentation> dimensions, List<String> values, int... position) {
