@@ -142,14 +142,11 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
         Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages);
 
-        // too slow but necessary for category and dimension translations
         Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
                                                                  calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
-
-        // too slow but necessary for category and attributes translations
         Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
 
-        // for now, JSON-stat only takes the first selected lang since InternationalStrings are not supported
+        // JSON-stat only takes the first selected lang since InternationalStrings are not supported
         String selectedLanguage = commonDo2JsonStatRestMapper.getSelectedLanguage(datasetVersion, selectedLanguages);
 
         // ********************************************
