@@ -5,15 +5,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
-import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 
 public interface QueriesDo2RestMapperV10 {
 
@@ -21,8 +18,5 @@ public interface QueriesDo2RestMapperV10 {
     public Query toQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public Resource toResource(QueryVersion source, List<String> selectedLanguages);
     public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages);
-
-    Data toQueryData(QueryVersion source, DatasetVersion datasetVersion, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages) throws Exception;
-    DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException;
-    Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion);
+    public JsonStatData toJsonStatQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> parsedFields) throws Exception;
 }
