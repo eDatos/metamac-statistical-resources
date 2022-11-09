@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringJoiner;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
@@ -324,7 +325,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private String joinExternalItemCodes(List<ExternalItem> externalItemList) {
-        if (externalItemList == null || externalItemList.isEmpty()) {
+        if (CollectionUtils.isEmpty(externalItemList)) {
             return null;
         }
 
@@ -337,7 +338,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private String joinExternalItemTitles(List<ExternalItem> externalItemList, String selectedLanguage) {
-        if (externalItemList == null || externalItemList.isEmpty()) {
+        if (CollectionUtils.isEmpty(externalItemList)) {
             return null;
         }
 
