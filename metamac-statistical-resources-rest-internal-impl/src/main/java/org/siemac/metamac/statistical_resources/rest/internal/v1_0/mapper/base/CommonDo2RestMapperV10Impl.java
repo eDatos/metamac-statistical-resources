@@ -9,7 +9,6 @@ import static org.siemac.metamac.statistical_resources.rest.internal.Statistical
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -707,25 +706,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
         }
         return link;
-    }
-
-    @Override
-    public String toI18nValue(InternationalString source, String selectedLanguage) {
-        if (source == null || source.getTexts() == null || source.getTexts().isEmpty()) {
-            return null;
-        }
-
-        if (selectedLanguage == null) {
-            // given that we know texts is not empty we can get the first one
-            return source.getTexts().stream().findFirst().get().getValue(); // TODO EDATOS-3662: default language?
-        }
-
-        return toInternationalString(source, Collections.singletonList(selectedLanguage)).getTexts().get(0).getValue(); // TODO EDATOS-3662 multiples languages?
-    }
-
-    @Override
-    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, String selectedLanguage) {
-        return toI18nValue(restMapper.toRestInternationalString(source), selectedLanguage);
     }
 
     @Override

@@ -95,7 +95,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setRole(commonDo2JsonStatRestMapper.toJsonStatRoles(dsdProcessorResult));
         target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data));
         target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data));
-        target.setLabel(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
+        target.setLabel(commonDo2JsonStatRestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
         target.setUpdated(source.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
         target.setExtension(commonDo2JsonStatRestMapper.toJsonStatExtension(source, selectedLanguage));
         target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(source, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));

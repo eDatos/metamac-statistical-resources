@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.jsonstat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,7 @@ import java.util.StringJoiner;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatCategory;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtension;
@@ -36,6 +38,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.slf4j.Logger;
@@ -48,6 +51,9 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     @Autowired
     private CommonDo2RestMapperV10 commonDo2RestMapper;
+
+    @Autowired
+    private RestMapper restMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
 
@@ -83,13 +89,13 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 if (dimensionValues instanceof EnumeratedDimensionValues) {
                     for (EnumeratedDimensionValue value : ((EnumeratedDimensionValues) dimensionValues).getValues()) {
                         if (Objects.equals(value.getId(), category.getCode())) {
-                            return commonDo2RestMapper.toI18nValue(value.getName(), selectedLanguage);
+                            return toI18nValue(value.getName(), selectedLanguage);
                         }
                     }
                 } else if (dimensionValues instanceof NonEnumeratedDimensionValues) {
                     for (NonEnumeratedDimensionValue value : ((NonEnumeratedDimensionValues) dimensionValues).getValues()) {
                         if (Objects.equals(value.getId(), category.getCode())) {
-                            return commonDo2RestMapper.toI18nValue(value.getName(), selectedLanguage);
+                            return toI18nValue(value.getName(), selectedLanguage);
                         }
                     }
                 }
@@ -101,7 +107,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     public String toDimensionI18nName(Dimensions dimensions, String dimensionId, String selectedLanguage) {
         for (Dimension dimension : dimensions.getDimensions()) {
             if (Objects.equals(dimension.getId(), dimensionId)) {
-                return commonDo2RestMapper.toI18nValue(dimension.getName(), selectedLanguage);
+                return toI18nValue(dimension.getName(), selectedLanguage);
             }
         }
         return null;
@@ -251,13 +257,13 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 if (attributeValues instanceof EnumeratedAttributeValues) {
                     for (EnumeratedAttributeValue value : ((EnumeratedAttributeValues) attributeValues).getValues()) {
                         if (Objects.equals(value.getId(), attributeCode)) {
-                            return commonDo2RestMapper.toI18nValue(value.getName(), selectedLanguage);
+                            return toI18nValue(value.getName(), selectedLanguage);
                         }
                     }
                 } else if (attributeValues instanceof NonEnumeratedAttributeValues) {
                     for (NonEnumeratedAttributeValue value : ((NonEnumeratedAttributeValues) attributeValues).getValues()) {
                         if (Objects.equals(value.getId(), attributeCode)) {
-                            return commonDo2RestMapper.toI18nValue(value.getName(), selectedLanguage);
+                            return toI18nValue(value.getName(), selectedLanguage);
                         }
                     }
                 }
@@ -318,11 +324,11 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         JsonStatExtension extension = new JsonStatExtension();
         extension.setDatasetId(source.getSiemacMetadataStatisticalResource().getCode());
         extension.setDatasetUrn(source.getSiemacMetadataStatisticalResource().getUrn());
-        extension.setSurvey(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle(), selectedLanguage));
+        extension.setSurvey(toI18nValue(source.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle(), selectedLanguage));
         extension.setLang(joinExternalItemCodes(source.getSiemacMetadataStatisticalResource().getLanguages()));
         extension.setPublishers(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getPublisher(), selectedLanguage));
         extension.setDataProviders(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getDataProvider(), selectedLanguage));
-        extension.setDataProvidersAnnotations(commonDo2RestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getDataProviderAnnotations(), selectedLanguage));
+        extension.setDataProvidersAnnotations(toI18nValue(source.getSiemacMetadataStatisticalResource().getDataProviderAnnotations(), selectedLanguage));
         return extension;
     }
 
@@ -346,7 +352,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
         StringJoiner joiner = new StringJoiner(", ");
         for (ExternalItem externalItem : externalItemList) {
-            String title = commonDo2RestMapper.toI18nValue(externalItem.getTitle(), selectedLanguage);
+            String title = toI18nValue(externalItem.getTitle(), selectedLanguage);
             joiner.add(title);
         }
         return joiner.toString();
@@ -385,5 +391,24 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             stringObservations.add(StringUtils.isBlank(observation) ? null : observation.trim());
         }
         return stringObservations;
+    }
+
+    @Override
+    public String toI18nValue(InternationalString source, String selectedLanguage) {
+        if (source == null || source.getTexts() == null || source.getTexts().isEmpty()) {
+            return null;
+        }
+
+        if (selectedLanguage == null) {
+            // given that we know texts is not empty we can get the first one
+            return source.getTexts().stream().findFirst().get().getValue(); // TODO EDATOS-3662: default language?
+        }
+
+        return commonDo2RestMapper.toInternationalString(source, Collections.singletonList(selectedLanguage)).getTexts().get(0).getValue(); // TODO EDATOS-3662 multiples languages?
+    }
+
+    @Override
+    public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, String selectedLanguage) {
+        return toI18nValue(restMapper.toRestInternationalString(source), selectedLanguage);
     }
 }

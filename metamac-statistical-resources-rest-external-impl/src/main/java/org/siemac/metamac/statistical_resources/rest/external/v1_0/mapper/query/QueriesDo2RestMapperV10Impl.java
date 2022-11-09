@@ -154,7 +154,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setRole(commonDo2JsonStatRestMapper.toJsonStatRoles(dsdProcessorResult));
         target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data));
         target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data));
-        target.setLabel(commonDo2RestMapper.toI18nValue(datasetVersion.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
+        target.setLabel(commonDo2JsonStatRestMapper.toI18nValue(datasetVersion.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
         target.setUpdated(datasetVersion.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
         target.setExtension(commonDo2JsonStatRestMapper.toJsonStatExtension(datasetVersion, selectedLanguage));
         target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(datasetVersion, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
