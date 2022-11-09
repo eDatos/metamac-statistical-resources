@@ -54,6 +54,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
     }
 
     public static List<String> calculateEffectiveTemporalSelectionValues(List<String> temporalCoverageValues, List<String> selectedValues) {
+        List<String> sortedTemporalCoverageValues = sortTimeListFromRecentToOldest(temporalCoverageValues);
 
         ArrayList<String> results = new ArrayList<String>();
         for (String value : selectedValues) {
@@ -61,7 +62,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
             if (matcherAfter.matches()) {
                 String startRange = matcherAfter.group(1);
 
-                results.addAll(extractTemporalRangeValues(temporalCoverageValues, startRange, null));
+                results.addAll(extractTemporalRangeValues(sortedTemporalCoverageValues, startRange, null));
 
                 continue;
             }
@@ -73,11 +74,11 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
                 // return N data
                 int codeLastIndexToReturn = -1;
                 if (temporalCoverageValues.size() < lastN) {
-                    codeLastIndexToReturn = temporalCoverageValues.size(); // there is not N data, so return all
+                    codeLastIndexToReturn = sortedTemporalCoverageValues.size(); // there is not N data, so return all
                 } else {
                     codeLastIndexToReturn = lastN;
                 }
-                results.addAll(temporalCoverageValues.subList(0, codeLastIndexToReturn));
+                results.addAll(sortedTemporalCoverageValues.subList(0, codeLastIndexToReturn));
                 continue;
             }
 
@@ -86,7 +87,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
                 String startRange = matcherRange.group(1);
                 String endRange = matcherRange.group(2);
 
-                results.addAll(extractTemporalRangeValues(temporalCoverageValues, startRange, endRange));
+                results.addAll(extractTemporalRangeValues(sortedTemporalCoverageValues, startRange, endRange));
 
                 continue;
             }
@@ -97,16 +98,22 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         return results;
     }
 
-    private static List<String> extractTemporalRangeValues(List<String> temporalCoverageValues, String startRange, String endRange) {
-        // TemporalCoverages come sorted from newest to oldest (2012, 2011, 2010...)
+    public static List<String> sortTimeListFromRecentToOldest(List<String> temporalValues) {
+        List<String> sortedValues = SdmxTimeUtils.sortTimeList(temporalValues);
+        Collections.reverse(sortedValues);
+        return sortedValues;
+    }
 
-        List<String> partialResults = new ArrayList<String>(temporalCoverageValues);
+    private static List<String> extractTemporalRangeValues(List<String> sortedTemporalCoverageValues, String startRange, String endRange) {
+        // TemporalCoverages come sorted from recent to oldest (2012, 2011, 2010...)
+
+        List<String> partialResults = new ArrayList<String>(sortedTemporalCoverageValues);
 
         if (startRange == null) {
-            startRange = temporalCoverageValues.get(temporalCoverageValues.size() - 1);
+            startRange = sortedTemporalCoverageValues.get(sortedTemporalCoverageValues.size() - 1);
         }
         if (endRange == null) {
-            endRange = temporalCoverageValues.get(0);
+            endRange = sortedTemporalCoverageValues.get(0);
         }
 
         if (!partialResults.contains(startRange)) {
@@ -116,17 +123,17 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
             partialResults.add(endRange);
         }
 
-        // sortTimeList sorts from oldest to newest
+        // sortTimeList sorts from oldest to newest. This sort is inevitable, we have to order the added items
         partialResults = SdmxTimeUtils.sortTimeList(partialResults);
 
         int startIndex = partialResults.indexOf(startRange);
         int endIndex = partialResults.indexOf(endRange) + 1; // sublist toIndex is exclusive
         partialResults = partialResults.subList(startIndex, endIndex);
 
-        if (!temporalCoverageValues.contains(startRange)) {
+        if (!sortedTemporalCoverageValues.contains(startRange)) {
             partialResults.remove(startRange);
         }
-        if (!temporalCoverageValues.contains(endRange)) {
+        if (!sortedTemporalCoverageValues.contains(endRange)) {
             partialResults.remove(endRange);
         }
 
@@ -161,7 +168,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
             logger.error("Error", e);
         }
     }
-    
+
     public static DateTime isDateAfterNowSetNull(DateTime checkValidTo) {
         if (checkValidTo == null || checkValidTo.isAfterNow()) {
             return null;

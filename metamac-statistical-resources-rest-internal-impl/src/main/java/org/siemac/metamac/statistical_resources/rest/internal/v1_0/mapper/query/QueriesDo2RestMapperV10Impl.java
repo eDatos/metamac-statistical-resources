@@ -3,10 +3,10 @@ package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.query
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.sortTimeListFromRecentToOldest;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +18,6 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
@@ -61,21 +60,21 @@ import org.springframework.stereotype.Component;
 public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
 
     @Autowired
-    private CommonDo2RestMapperV10   commonDo2RestMapper;
+    private CommonDo2RestMapperV10         commonDo2RestMapper;
 
     @Autowired
-    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10       datasetsDo2RestMapper;
 
     @Autowired
     private CommonDo2JsonStatRestMapperV10 commonDo2JsonStatRestMapper;
 
     @Autowired
-    private QueryVersionRepository   queryVersionRepository;
+    private QueryVersionRepository         queryVersionRepository;
 
     @Autowired
-    private DatasetVersionRepository datasetVersionRepository;
+    private DatasetVersionRepository       datasetVersionRepository;
 
-    private static final Logger      logger = LoggerFactory.getLogger(QueriesDo2RestMapperV10Impl.class);
+    private static final Logger            logger = LoggerFactory.getLogger(QueriesDo2RestMapperV10Impl.class);
 
     @Override
     public Queries toQueries(PagedResult<QueryVersion> sources, String agencyID, String query, String orderBy, Integer limit, List<String> selectedLanguages) {
@@ -143,7 +142,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages);
 
         Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
-                                                                 calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
+                calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
         Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
 
         // JSON-stat only takes the first selected lang since InternationalStrings are not supported
@@ -415,46 +414,32 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     private List<String> calculateEffectiveTemporalDimensionValuesToQuery(QueryVersion source, List<String> temporalCoverageCodes, List<String> selectionCodes) {
+        List<String> sortedTemporalCoverageCodes = sortTimeListFromRecentToOldest(temporalCoverageCodes);
         QueryTypeEnum type = source.getType();
         if (QueryTypeEnum.FIXED.equals(type)) {
-            // return exactly
-            return selectionCodes;
+            // We return exactly the selected codes, but first, we sort them so all three methods (FIXED, AUTOINCREMENTAL and LATEST_DATA) return the same order, equal to the coverage
+            return sortTimeListFromRecentToOldest(selectionCodes);
         } else if (QueryTypeEnum.AUTOINCREMENTAL.equals(type)) {
             List<String> effectiveDimensionValues = new ArrayList<String>();
+            List<String> sortedSelectionCodes = sortTimeListFromRecentToOldest(selectionCodes);
 
-            List<String> sortedSelectionCodes = SdmxTimeUtils.sortTimeList(selectionCodes);
-            List<String> sortedTemporalCoverageCodes = SdmxTimeUtils.sortTimeList(temporalCoverageCodes);
-
-            String latestSelectionCode = sortedSelectionCodes.get(sortedSelectionCodes.size() - 1);
+            String latestSelectionCode = sortedSelectionCodes.get(0);
             int indexLatestSelectionCode = sortedTemporalCoverageCodes.indexOf(latestSelectionCode);
 
             effectiveDimensionValues.addAll(selectionCodes);
             if (indexLatestSelectionCode >= 0) {
                 // add codes added after lastest selected code
-                List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(indexLatestSelectionCode, sortedTemporalCoverageCodes.size());
-
-                for (String code : temporalCodesAddedAfterLatestSelectedCodeString) {
-                    if (!effectiveDimensionValues.contains(code)) {
-                        effectiveDimensionValues.add(code);
-                    }
-                }
+                List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(0, indexLatestSelectionCode);
+                effectiveDimensionValues.addAll(temporalCodesAddedAfterLatestSelectedCodeString);
             }
-
-            // We reverse the array to restore the order after the sortTimeList invocation
-            Collections.reverse(effectiveDimensionValues);
 
             return effectiveDimensionValues;
         } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
             // return N data
-            int codeLastIndexToReturn = -1;
-            if (temporalCoverageCodes.size() < source.getLatestDataNumber()) {
-                codeLastIndexToReturn = temporalCoverageCodes.size(); // there is not N data, so return all
-            } else {
-                codeLastIndexToReturn = source.getLatestDataNumber();
-            }
-            return temporalCoverageCodes.subList(0, codeLastIndexToReturn);
+            int codeLastIndexToReturn = Math.max(sortedTemporalCoverageCodes.size(), source.getLatestDataNumber());
+            return sortedTemporalCoverageCodes.subList(0, codeLastIndexToReturn);
         } else {
-            throw buildRestException("QueryTypeEnum unsupported: " + source);
+            throw commonDo2RestMapper.buildRestException("QueryTypeEnum unsupported: " + source);
         }
     }
 
