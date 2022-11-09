@@ -40,6 +40,7 @@ public class DatabaseDatasetImportUtils extends DatabaseDatasetImportSharedUtils
             // metadata and next_version_date and date_next_update to calculate their values ​​in the proper way.
             // The task METAMAC-2956 was created in order to define and resolve this TODO
             datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
+            datasetVersion.setUpdateFrequency(null);
         }
     }
 

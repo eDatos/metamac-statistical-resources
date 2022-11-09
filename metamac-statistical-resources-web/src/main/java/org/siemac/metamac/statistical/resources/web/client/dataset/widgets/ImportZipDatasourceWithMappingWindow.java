@@ -273,7 +273,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
     
     private boolean isNotUpdatedNextVersion(String nextVersionValue) {
-        return nextVersionValue == null || (nextVersionValue != null && NextVersionTypeEnum.NO_UPDATES.equals(NextVersionTypeEnum.valueOf(nextVersionValue)));
+        return nextVersionValue == null || (NextVersionTypeEnum.NO_UPDATES.equals(NextVersionTypeEnum.valueOf(nextVersionValue)));
     }
     
     private boolean isScheduledNextVersion(String nextVersionValue) {

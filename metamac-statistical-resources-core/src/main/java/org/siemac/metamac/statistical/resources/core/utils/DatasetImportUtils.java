@@ -31,6 +31,7 @@ public class DatasetImportUtils {
         setDatasetVersionNextVersion(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersionDate(datasetVersion, taskInfoDataset);
         setDatasetVersionNextUpdateDate(datasetVersion, taskInfoDataset);
+        setDatasetVersionUpdateFrequency(datasetVersion, taskInfoDataset, srmRestInternalService);
     }
     
     private static void setDatasetVersionDataProviders(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException {
@@ -67,6 +68,19 @@ public class DatasetImportUtils {
     private static void setDatasetVersionNextUpdateDate(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
         if (!isBlank(taskInfoDataset.getDatasetNextUpdateDate())) {
             datasetVersion.setDateNextUpdate(taskInfoDataset.getDatasetNextUpdateDate());
+        }
+    }
+
+    private static void setDatasetVersionUpdateFrequency(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException {
+        boolean isNoUpdatedNextVersion = isBlank(taskInfoDataset.getDatasetNextVersion())
+                || (!isBlank(taskInfoDataset.getDatasetNextVersion()) && NextVersionTypeEnum.NO_UPDATES.equals(NextVersionTypeEnum.valueOf(taskInfoDataset.getDatasetNextVersion())));
+        
+        if (!isBlank(taskInfoDataset.getDatasetUpdateFrequency()) && !isNoUpdatedNextVersion) {
+            ExternalItem temporalCode = StatisticalResourcesExternalItemUtils.buildExternalItemFromItem(srmRestInternalService.retrieveCodeByUrn(taskInfoDataset.getDatasetUpdateFrequency()),
+                    TypeExternalArtefactsEnum.CODE);
+            datasetVersion.setUpdateFrequency(temporalCode);
+        } else {
+            datasetVersion.setUpdateFrequency(null);
         }
     }
     
