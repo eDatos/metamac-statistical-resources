@@ -174,7 +174,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         for (String attributeValue : dataAttribute.getValue().split("\\|")) {
             attributeValues.add(toAttributeI18nName(attributes, attribute.getComponentId(), attributeValue.trim(), selectedLanguage));
         }
-        processAttributeValues(dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
+        notes.addAll(getAttributeValuesNotes(dimensions, selectedLanguage, attributeAssociatedDimensions, attributeValues));
         return notes;
     }
 
@@ -209,7 +209,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return dataAttribute;
     }
 
-    private void processAttributeValues(Dimensions dimensions, String selectedLanguage, List<String> notes, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
+    private List<String> getAttributeValuesNotes(Dimensions dimensions, String selectedLanguage, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
         // The attribute values are in "row-major" order, based on the dimensions we processed from the dataset data.
         // That means dimensions order is important to map the categories to the right value.
 
@@ -224,10 +224,13 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
 
         int[] index = new int[size.length];
-        iterate(0, size, index, dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
+
+        List<String> notes = new ArrayList<>();
+        populateNotes(0, size, index, dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
+        return notes;
     }
 
-    private void iterate(int currentDimension, int size[], int index[], Dimensions dimensions, String selectedLanguage, List<String> notes, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
+    private void populateNotes(int currentDimension, int size[], int index[], Dimensions dimensions, String selectedLanguage, List<String> notes, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
         if (currentDimension >= size.length) {
             String note = getNoteFromAttributePossition(dimensions, selectedLanguage, attributeAssociatedDimensions, attributeValues, index);
             if (note != null) {
@@ -237,7 +240,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
         for (int i = 0; i < size[currentDimension]; i++) {
             index[currentDimension] = i;
-            iterate(currentDimension + 1, size, index, dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
+            populateNotes(currentDimension + 1, size, index, dimensions, selectedLanguage, notes, attributeAssociatedDimensions, attributeValues);
         }
     }
 
