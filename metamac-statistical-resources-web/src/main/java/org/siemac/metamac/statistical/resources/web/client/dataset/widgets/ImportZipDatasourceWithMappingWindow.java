@@ -247,13 +247,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
                         dateNextVersion.clearValue();
                         dateNextVersion.hide();
                     }   
-                }
-                
-                ExternalItemDto temporalDate = null;
-                if (!isNoUpdateNextVersion) {
-                    temporalDate = FormUtils.getValueAsExternalItemDto(extraForm, DatasetDS.UPDATE_FRECUENCY);
-                }
-                
+                }                
                 setRequiredUpdateFrequencyField(isNoUpdateNextVersion);
                 addRequiredFieldsInExtraForm(isScheduleNextVersion, !isNoUpdateNextVersion);
                                
