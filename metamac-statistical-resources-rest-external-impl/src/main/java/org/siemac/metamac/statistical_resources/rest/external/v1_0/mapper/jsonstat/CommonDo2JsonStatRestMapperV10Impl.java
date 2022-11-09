@@ -295,8 +295,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     public List<String> getJsonStatId(Data data) {
         List<String> id = new ArrayList<>();
         for (DimensionRepresentation dim : data.getDimensions().getDimensions()) {
-            String dimensionId = dim.getDimensionId();
-            id.add(dimensionId);
+            id.add(dim.getDimensionId());
         }
         return id;
     }
