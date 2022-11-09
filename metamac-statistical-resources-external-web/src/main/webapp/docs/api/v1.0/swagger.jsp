@@ -4216,7 +4216,8 @@
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "application/jsonstat+json"
             ],
             "parameters":[
                {
@@ -4435,7 +4436,8 @@
             "operationId":"resource__v1.0_queries__agencyID___resourceID__retrieveQuery_GET",
             "produces":[
                "application/json",
-               "application/xml"
+               "application/xml",
+               "application/jsonstat+json"
             ],
             "parameters":[
                {
