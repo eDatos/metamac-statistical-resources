@@ -19,6 +19,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collections;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidatasets;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Queries;
@@ -34,6 +35,7 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collec
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsRest2DoMapper;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat.CommonDo2JsonStatRestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multidataset.MultidatasetsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multidataset.MultidatasetsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query.QueriesDo2RestMapperV10;
@@ -70,6 +72,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Autowired
     private MultidatasetsRest2DoMapper                    multidatasetsRest2DoMapper;
+
+    @Autowired
+    private CommonDo2JsonStatRestMapperV10                jsonStatDo2RestMapper;
 
     @Autowired
     private StatisticalResourcesConfiguration             configurationService;
@@ -109,6 +114,19 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             return org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression(dim);
         } else {
             return org.siemac.metamac.core.common.util.rest.RequestUtil.parseParamExpression(representation);
+        }
+    }
+
+    @Override
+    public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        try {
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
+        } catch (Exception e) {
+            throw manageException(e);
         }
     }
 
@@ -155,6 +173,19 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
             return query;
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
+    public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation) {
+        try {
+            QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }

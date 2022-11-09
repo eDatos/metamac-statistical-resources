@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
@@ -20,6 +21,7 @@ public interface QueriesDo2RestMapperV10 {
     public Query toQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceDto source);
     public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceBaseDto source);
+    public JsonStatData toJsonStatQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> parsedFields) throws Exception;
     public ResourceInternal toResource(QueryVersion source, List<String> selectedLanguages);
     public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
 }

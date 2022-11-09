@@ -7,7 +7,9 @@ import static org.siemac.metamac.rest.statistical_resources.constants.RestTestCo
 
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
 
@@ -17,10 +19,15 @@ import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends StatisticalResourcesRestExternalFacadeV10BaseTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesRestExternalFacadeV10DatasetsTest.class);
 
     @Test
     public void testFindDatasets() throws Exception {
@@ -221,6 +228,66 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
             assertEquals("dim01", dataset.getData().getDimensions().getDimensions().get(3).getDimensionId());
             assertEquals(BigInteger.valueOf(3), dataset.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal());
         }
+    }
+
+    @Test
+    public void testRetrieveJsonStatdataset() throws Exception {
+        Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, null);
+        JsonStatData jsonStatDataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDatasetJsonStat(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, null);
+
+        // values testing
+        assertNotNull(jsonStatDataset.getValue());
+        assertEquals(Math.toIntExact(dataset.getMetadata().getFormatExtentObservations()), jsonStatDataset.getValue().size());
+        assertEquals(Arrays.asList(dataset.getData().getObservations().split("\\|")).get(0).trim(), jsonStatDataset.getValue().get(0).toString());
+        long observationsCount = 1;
+        for (long size : jsonStatDataset.getSize()) {
+            observationsCount = observationsCount * size;
+        }
+        assertEquals(Math.toIntExact(dataset.getMetadata().getFormatExtentObservations()), observationsCount);
+
+        // value order
+        // we have dimensions: [ GEO_DIM, TIME_PERIOD, measure01, dim01 ] and categories sizes 13, 4, 3, 3
+        assertEquals(getValueFromPosition(dataset, 12, 3, 2, 2), getValueFromPosition(jsonStatDataset, 12, 3, 2, 2)); // get last element
+        assertEquals(getValueFromPosition(dataset, 0, 0, 0, 0), getValueFromPosition(jsonStatDataset, 0, 0, 0, 0)); // get first element
+        assertEquals(getValueFromPosition(dataset, 3, 1, 0, 2), getValueFromPosition(jsonStatDataset, 3, 1, 0, 2));
+
+        // dimension order
+        List<String> datasetDimensions = new ArrayList<>();
+        for (DimensionRepresentation dimensionRepresentation : dataset.getData().getDimensions().getDimensions()) {
+            datasetDimensions.add(dimensionRepresentation.getDimensionId());
+        }
+        assertArrayEquals(datasetDimensions.toArray(), jsonStatDataset.getId().toArray());
+
+        // categories order
+
+    }
+
+    private String getValueFromPosition(Dataset dataset, int... position) {
+        int index = 0;
+        for (int i = 0; i < position.length; i++) {
+            int multiplicator = position[i];
+            int j = i + 1;
+            while (j < position.length) {
+                multiplicator *= dataset.getData().getDimensions().getDimensions().get(j).getRepresentations().getTotal().intValueExact();
+                j++;
+            }
+            index += multiplicator;
+        }
+        return Arrays.asList(dataset.getData().getObservations().split("\\|")).get(index).trim();
+    }
+
+    private String getValueFromPosition(JsonStatData dataset, int... position) {
+        int index = 0;
+        for (int i = 0; i < position.length; i++) {
+            int multiplicator = position[i];
+            int j = i + 1;
+            while (j < position.length) {
+                multiplicator *= dataset.getSize().get(j);
+                j++;
+            }
+            index += multiplicator;
+        }
+        return dataset.getValue().get(index).toString();
     }
 
     @Test
