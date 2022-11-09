@@ -22,7 +22,9 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationa
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
+import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
@@ -39,7 +41,10 @@ import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmListItemWithSchemeFilterItem;
+import org.siemac.metamac.web.common.client.widgets.form.utils.FormUtils;
+import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
@@ -61,6 +66,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     protected InformationLabel informationLabel;
     protected WarningLabel warningLabel;
     
+    
     private static final String[] REQUIRED_FIELDS = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
             LifeCycleResourceDS.PROC_STATUS};
     
@@ -70,7 +76,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         super(getConstants().actionLoadDatasource());
         addFieldsInMainForm();
         addFieldsInExtraForm();
-        addRequiredFieldsInExtraForm(false);
+        addRequiredFieldsInExtraForm(false, false);
     }
     
     @Override
@@ -121,6 +127,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         HiddenItem nextVersionItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION);
         HiddenItem nextVersionDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION);
         HiddenItem nextUpdateDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE);
+        HiddenItem updateFrequency = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_UPDATE_FREQUENCY);
         HiddenItem procStatus = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS);
         extraItemsToAdd.add(extraFields);
         extraItemsToAdd.add(dataProviderItem);
@@ -128,6 +135,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraItemsToAdd.add(nextVersionItem);
         extraItemsToAdd.add(nextVersionDate);
         extraItemsToAdd.add(nextUpdateDate);
+        extraItemsToAdd.add(updateFrequency);
         extraItemsToAdd.add(procStatus);
         return extraItemsToAdd;
     }
@@ -172,13 +180,18 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
     }
 
-    private void addRequiredFieldsInExtraForm(boolean isScheduledUpdate) {
+    private void addRequiredFieldsInExtraForm(boolean isScheduledUpdate, boolean isUpdateFrequencyRequired) {
         extraForm.resetRequiredTitleSuffix();
+        String[] requiredFields;
         if (isScheduledUpdate) {
-            extraForm.setRequiredTitleSuffix(REQUIRED_FIELDS_SCHEDULED_UPDATE);
+            requiredFields = REQUIRED_FIELDS_SCHEDULED_UPDATE;
         } else {
-            extraForm.setRequiredTitleSuffix(REQUIRED_FIELDS);
+            requiredFields = REQUIRED_FIELDS;
         }
+        if (isUpdateFrequencyRequired) {
+            requiredFields = ArrayUtils.addStringElementsToStringArray(requiredFields, DatasetDS.UPDATE_FRECUENCY);
+        }
+        extraForm.setRequiredTitleSuffix(requiredFields);
     }
 
     private List<FormItem> addExtraFields() {
@@ -189,6 +202,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraItemsToAdd.add(addFieldNextVersion());
         extraItemsToAdd.add(addFieldNextVersionDate());
         extraItemsToAdd.add(addFieldNextUpdateDate());
+        extraItemsToAdd.add(addFieldUpdateFrequencyItem());
         extraItemsToAdd.add(addFieldProcStatus());
         return extraItemsToAdd;
      }
@@ -218,21 +232,32 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
                 String nextVersionValue = event.getValue().toString();
                 TextItem dateNextVersion = ((TextItem) extraForm.getItem(VersionableResourceDS.DATE_NEXT_VERSION));
                 TextItem dateNextUpdate = ((TextItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE));
-                if (nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
-                    dateNextVersion.setRequired(true); 
-                    dateNextUpdate.setRequired(true);          
-                    addRequiredFieldsInExtraForm(true);
-                     dateNextVersion.show();
-                    
+                boolean isScheduleNextVersion = isScheduledNextVersion(nextVersionValue);
+                boolean isNoUpdateNextVersion = isNotUpdatedNextVersion(nextVersionValue);
+                if (isScheduleNextVersion) {
+                    dateNextVersion.setRequired(true);
+                    dateNextUpdate.setRequired(true);
+                    dateNextVersion.show();
+
                 } else {
                     if (Boolean.TRUE.equals(dateNextVersion.isVisible())) {
-                        dateNextVersion.setRequired(false); 
+                        dateNextVersion.setRequired(false);
                         dateNextUpdate.setRequired(false);
-                        addRequiredFieldsInExtraForm(false);
+
                         dateNextVersion.clearValue();
                         dateNextVersion.hide();
-                    }
+                    }   
                 }
+                
+                ExternalItemDto temporalDate = null;
+                if (!isNoUpdateNextVersion) {
+                    temporalDate = FormUtils.getValueAsExternalItemDto(extraForm, DatasetDS.UPDATE_FRECUENCY);
+                }
+                
+                setRequiredUpdateFrequencyField(isNoUpdateNextVersion);
+                addRequiredFieldsInExtraForm(isScheduleNextVersion, !isNoUpdateNextVersion);
+                               
+                
             }
         });
         nextVersion.setTitleColSpan(2);
@@ -241,6 +266,26 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return nextVersion;
     }
 
+    private void setRequiredUpdateFrequencyField(boolean isNoUpdateNextVersion) {
+        SearchExternalItemSimpleItem updateFrequency = getFieldUpdateFrequency();
+        if (isNoUpdateNextVersion) {
+            updateFrequency.setRequired(false);
+            updateFrequency.clearValue();
+            updateFrequency.hide();
+        } else {
+            updateFrequency.setRequired(true);
+            updateFrequency.show();
+        }
+    }
+    
+    private boolean isNotUpdatedNextVersion(String nextVersionValue) {
+        return nextVersionValue == null || (nextVersionValue != null && NextVersionTypeEnum.NO_UPDATES.equals(NextVersionTypeEnum.valueOf(nextVersionValue)));
+    }
+    
+    private boolean isScheduledNextVersion(String nextVersionValue) {
+        return nextVersionValue != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(NextVersionTypeEnum.valueOf(nextVersionValue));
+    }
+    
     private CustomSelectItem addFieldProcStatus() {
         final CustomSelectItem procStatus = new CustomSelectItem(LifeCycleResourceDS.PROC_STATUS, getConstants().lifeCycleStatisticalResourceProcStatus());
         LinkedHashMap<String, String>  mapaProcStatus = CommonUtils.getProcStatusHashMap();
@@ -251,6 +296,20 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         procStatus.setWidth(formWidthFields);
 
         return procStatus;
+    }
+
+    private SearchExternalItemSimpleItem addFieldUpdateFrequencyItem() {
+        SearchExternalItemSimpleItem searchExternalItemSimpleItem = new SearchExternalItemSimpleItem(DatasetDS.UPDATE_FRECUENCY, getConstants().datasetUpdateFrequency(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
+
+            @Override
+            protected void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
+                getUiHandlers().retrieveTemporalCodesForField(firstResult, maxResults, webCriteria, DatasetMetadataExternalField.UPDATE_FREQUENCY);
+            }
+        };
+        searchExternalItemSimpleItem.setTitleColSpan(2);
+        searchExternalItemSimpleItem.setWidth(formWidthFields);
+        return searchExternalItemSimpleItem;
+        
     }
     
     private SearchVersionRationaleTypeItem addFieldSearchVersionRationaleTypeItem() {
@@ -274,6 +333,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return versionRationaleTypesDto;
     }
 
+    
     // ***************************************************************************************
     // DATA PROVIDER
     // ***************************************************************************************
@@ -308,6 +368,14 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return searchSrmListItemWithSchemeFilterItem;
     }
      
+    private SearchExternalItemSimpleItem getFieldUpdateFrequency() {
+        return (SearchExternalItemSimpleItem) extraForm.getItem(DatasetDS.UPDATE_FRECUENCY);
+    }
+    // UPDATE FREQUENCY
+    public void setCodesForUpdateFrequency(List<ExternalItemDto> items, int firstResult, int totalResults) {       
+        getFieldUpdateFrequency().setResources(items, firstResult, totalResults);
+    }
+    
     public void setUiHandlers(DatasetListUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
     }
@@ -315,7 +383,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private DatasetListUiHandlers getUiHandlers() {
         return uiHandlers;
     }
-    
+        
     @Override
     protected void copyHiddenValuesToMainForm(UploadForm mainForm, DynamicForm extraForm) {
         setFormFieldDataProviderItem();
@@ -323,6 +391,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         setFormFieldNextVersion();
         setFormFieldDateNextVersion();
         setFormFieldDateNextUpdate();
+        setFormFieldUpdateFrequencyItem();
         setFormFieldProcStatus();
 
     }
@@ -385,6 +454,15 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
      
         mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER, dataProviders.toString());
     }
+
+    private void setFormFieldUpdateFrequencyItem() {
+        String nextVersionValue = getFieldNextVersion();
+        ExternalItemDto temporalDate = null;
+        if (nextVersionValue != null && !NextVersionTypeEnum.NO_UPDATES.equals(NextVersionTypeEnum.valueOf(nextVersionValue))) {
+            temporalDate = FormUtils.getValueAsExternalItemDto(extraForm, DatasetDS.UPDATE_FRECUENCY);
+        }
+        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_UPDATE_FREQUENCY, temporalDate != null ? temporalDate.getUrn() : null);
+    }
     
     @Override
     protected void onPreviewComplete(String response) {
@@ -446,7 +524,12 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         nextUpdateDate.setRequired(false);
         nextUpdateDate.clearValue();
         
-        addRequiredFieldsInExtraForm(false);
+        SearchExternalItemSimpleItem updateFrequency = getFieldUpdateFrequency();
+        updateFrequency.setRequired(false);
+        updateFrequency.clearValue();
+        updateFrequency.hide();
+        
+        addRequiredFieldsInExtraForm(false, false);
         
         warningLabel.hide();
     }   

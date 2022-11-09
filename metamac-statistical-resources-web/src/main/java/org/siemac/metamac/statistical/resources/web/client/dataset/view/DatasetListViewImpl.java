@@ -15,6 +15,7 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.Data
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionSearchSectionStack;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportZipDatasourceWithMappingWindow;
@@ -373,4 +374,10 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
         importZipDatasourceWithMappingWindow.setDataProvider(result.getDataProviders(), result.getFirstResultOut(), result.getTotalResults());
 
     }
+    
+    @Override
+    public void setTemporalCodesForField(GetTemporalGranularitiesListResult result, DatasetMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setCodesForUpdateFrequency(result.getTemporalGranularities(), result.getFirstResultOut(), result.getTotalResults());
+    }
+    
 }
