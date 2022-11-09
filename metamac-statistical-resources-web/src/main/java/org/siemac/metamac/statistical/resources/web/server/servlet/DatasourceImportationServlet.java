@@ -49,7 +49,8 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     private static Logger           logger                                  = Logger.getLogger(DatasourceImportationServlet.class.getName());
     protected static final String[] FIELDS_VERSIONABLE_STATISTICAL_RESOURCE_DTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
             StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,
-            StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS, StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS, StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER};
+            StatisticalResourcesSharedTokens.UPLOAD_UPDATE_FREQUENCY, StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS,
+            StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS, StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER};
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -165,6 +166,10 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         
         if (StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setNextUpdateDate(item.getString());
+        }
+        
+        if (StatisticalResourcesSharedTokens.UPLOAD_UPDATE_FREQUENCY.equals(item.getFieldName())) {
+            basicVersionableStatisticalResourceDto.setUpdateFrequency(item.getString());
         }
         
         if (StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS.equals(item.getFieldName())) {
