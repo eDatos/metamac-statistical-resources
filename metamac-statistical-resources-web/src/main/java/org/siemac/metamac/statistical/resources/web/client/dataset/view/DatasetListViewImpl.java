@@ -181,8 +181,13 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
                         }
                     }
                 });
-                newDatasetWindow.setDefaultLanguage(StatisticalResourcesDefaults.defaultLanguage);
-                newDatasetWindow.setDefaultMaintainer(StatisticalResourcesDefaults.defaultAgency);
+                if (StatisticalResourcesDefaults.defaultLanguage != null) {
+                	newDatasetWindow.setDefaultLanguage(StatisticalResourcesDefaults.defaultLanguage);
+                    newDatasetWindow.setDefaultMaintainer(StatisticalResourcesDefaults.defaultAgency);
+                } else {
+                	newDatasetWindow.destroy();
+                	getUiHandlers().datasourcesImportationFailed("Propiedad metamac.organisation.urn no especificada");
+                }
             }
         };
     }
