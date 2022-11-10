@@ -283,7 +283,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return null;
     }
 
-    private String getValueFromPosition(List<DimensionRepresentation> dimensions, List<String> values, int... position) {
+    @Override
+    public String getValueFromPosition(List<DimensionRepresentation> dimensions, List<String> values, int... position) {
         int index = 0;
         for (int i = 0; i < position.length; i++) {
             int multiplicator = position[i];
@@ -294,7 +295,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             }
             index += multiplicator;
         }
-        return values.get(index);
+        return values.get(index).trim();
     }
 
     @Override
