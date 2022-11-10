@@ -7,6 +7,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentations;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
@@ -24,6 +25,7 @@ public interface CommonDo2JsonStatRestMapperV10 {
     Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, String selectedLanguage) throws Exception;
     String getSelectedLanguage(DatasetVersion source, List<String> selectedLanguages);
     List<String> toJsonStatNote(DatasetVersion source, Data data, Dimensions dimensions, Attributes attributes, DsdProcessorResult dsdProcessorResult, String selectedLanguage);
+    String getValueFromPosition(List<DimensionRepresentation> dimensions, List<String> values, int... position);
     List<String> getJsonStatId(Data data);
     List<Long> toJsonStatSize(Data data);
     JsonStatExtension toJsonStatExtension(DatasetVersion source, String selectedLanguage);

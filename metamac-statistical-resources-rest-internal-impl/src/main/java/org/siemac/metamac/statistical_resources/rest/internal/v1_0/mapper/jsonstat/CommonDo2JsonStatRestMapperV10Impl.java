@@ -35,10 +35,10 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnu
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
-import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.slf4j.Logger;
@@ -51,9 +51,6 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     @Autowired
     private CommonDo2RestMapperV10 commonDo2RestMapper;
-
-    @Autowired
-    private RestMapper restMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
 
@@ -409,6 +406,17 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     @Override
     public String toI18nValue(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source, String selectedLanguage) {
-        return toI18nValue(restMapper.toRestInternationalString(source), selectedLanguage);
+        if (source == null) {
+            return null;
+        }
+
+        org.siemac.metamac.rest.common.v1_0.domain.InternationalString internationalString = new org.siemac.metamac.rest.common.v1_0.domain.InternationalString();
+        for (LocalisedString item : source.getTexts()) {
+            org.siemac.metamac.rest.common.v1_0.domain.LocalisedString localisedString = new org.siemac.metamac.rest.common.v1_0.domain.LocalisedString();
+            localisedString.setValue(item.getLabel());
+            localisedString.setLang(item.getLocale());
+            internationalString.getTexts().add(localisedString);
+        }
+        return toI18nValue(internationalString, selectedLanguage);
     }
 }

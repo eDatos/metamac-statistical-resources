@@ -111,7 +111,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersio
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
-import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
@@ -195,9 +194,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private String                                  srmApiExternalEndpoint;
     private String                                  statisticalOperationsApiExternalEndpoint;
     private String                                  defaultLanguage;
-
-    @Autowired
-    private RestMapper                              restMapper;
 
     @PostConstruct
     public void init() throws Exception {
