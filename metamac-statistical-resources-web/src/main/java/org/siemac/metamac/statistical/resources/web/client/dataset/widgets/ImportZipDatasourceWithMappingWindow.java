@@ -70,8 +70,6 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private static final String[] REQUIRED_FIELDS = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
             LifeCycleResourceDS.PROC_STATUS};
     
-    private static final String[] REQUIRED_FIELDS_SCHEDULED_UPDATE = ArrayUtils.addStringElementsToStringArray(REQUIRED_FIELDS, DatasetDS.DATE_NEXT_UPDATE);
-
     protected ImportZipDatasourceWithMappingWindow() {
         super(getConstants().actionLoadDatasource());
         addFieldsInMainForm();
@@ -182,15 +180,16 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
     private void addRequiredFieldsInExtraForm(boolean isScheduledUpdate, boolean isUpdateFrequencyRequired) {
         extraForm.resetRequiredTitleSuffix();
-        String[] requiredFields;
+        String[] requiredFields = REQUIRED_FIELDS;
+        
         if (isScheduledUpdate) {
-            requiredFields = REQUIRED_FIELDS_SCHEDULED_UPDATE;
-        } else {
-            requiredFields = REQUIRED_FIELDS;
-        }
+            requiredFields = ArrayUtils.addStringElementsToStringArray(REQUIRED_FIELDS, DatasetDS.DATE_NEXT_UPDATE);
+        } 
+        
         if (isUpdateFrequencyRequired) {
             requiredFields = ArrayUtils.addStringElementsToStringArray(requiredFields, DatasetDS.UPDATE_FRECUENCY);
         }
+        
         extraForm.setRequiredTitleSuffix(requiredFields);
     }
 
