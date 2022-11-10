@@ -98,7 +98,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         return results;
     }
 
-    // TODO Check this method when EDATOS-3667 is executed
+    // TODO Check this method when EDATOS-3879 is executed
     public static List<String> sortTimeListFromRecentToOldest(List<String> temporalValues) {
         List<String> sortedValues = SdmxTimeUtils.sortTimeList(temporalValues);
         Collections.reverse(sortedValues);
