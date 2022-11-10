@@ -430,13 +430,13 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             if (indexLatestSelectionCode >= 0) {
                 // add codes added after lastest selected code
                 List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(0, indexLatestSelectionCode);
-                effectiveDimensionValues.addAll(temporalCodesAddedAfterLatestSelectedCodeString);
+                effectiveDimensionValues.addAll(0, temporalCodesAddedAfterLatestSelectedCodeString);
             }
 
             return effectiveDimensionValues;
         } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
             // return N data
-            int codeLastIndexToReturn = Math.max(sortedTemporalCoverageCodes.size(), source.getLatestDataNumber());
+            int codeLastIndexToReturn = Math.min(sortedTemporalCoverageCodes.size(), source.getLatestDataNumber());
             return sortedTemporalCoverageCodes.subList(0, codeLastIndexToReturn);
         } else {
             throw commonDo2RestMapper.buildRestException("QueryTypeEnum unsupported: " + source);
