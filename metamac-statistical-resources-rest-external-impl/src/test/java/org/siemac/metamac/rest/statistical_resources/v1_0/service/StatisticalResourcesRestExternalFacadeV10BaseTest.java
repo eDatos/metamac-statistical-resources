@@ -97,7 +97,7 @@ import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourc
 import org.siemac.metamac.statistical_resources.rest.external.invocation.CommonMetadataRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.StatisticalOperationsRestExternalFacade;
-import org.siemac.metamac.statistical_resources.rest.external.provider.MetamacJacksonJaxbJsonStatProvider;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat.CommonDo2JsonStatRestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.service.StatisticalResourcesV1_0;
 import org.springframework.context.ApplicationContext;
 
@@ -122,6 +122,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
     private DatasetVersionRepository                datasetVersionRepository;
     private QueryVersionRepository                  queryVersionRepository;
     private PublicationVersionRepository            publicationVersionRepository;
+    protected CommonDo2JsonStatRestMapperV10          commonDo2JsonStatRestMapper;
 
     private SrmRestExternalFacade                   srmRestExternalFacade;
     private CommonMetadataRestExternalFacade        commonMetadataRestExternalFacade;
@@ -966,6 +967,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
         reset(datasetVersionRepository);
         publicationVersionRepository = applicationContext.getBean(PublicationVersionRepository.class);
         reset(publicationVersionRepository);
+        commonDo2JsonStatRestMapper = applicationContext.getBean(CommonDo2JsonStatRestMapperV10.class);
 
         srmRestExternalFacade = applicationContext.getBean(SrmRestExternalFacade.class);
         reset(srmRestExternalFacade);

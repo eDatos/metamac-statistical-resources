@@ -237,57 +237,23 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
 
         // values testing
         assertNotNull(jsonStatDataset.getValue());
-        assertEquals(Math.toIntExact(dataset.getMetadata().getFormatExtentObservations()), jsonStatDataset.getValue().size());
-        assertEquals(Arrays.asList(dataset.getData().getObservations().split("\\|")).get(0).trim(), jsonStatDataset.getValue().get(0).toString());
-        long observationsCount = 1;
-        for (long size : jsonStatDataset.getSize()) {
-            observationsCount = observationsCount * size;
-        }
-        assertEquals(Math.toIntExact(dataset.getMetadata().getFormatExtentObservations()), observationsCount);
+        List<String> datasetData = Arrays.asList(dataset.getData().getObservations().split("\\|"));
+        List<String> jsonStatData = jsonStatDataset.getValue();
+        assertEquals(datasetData.size(), jsonStatData.size());
 
         // value order
         // we have dimensions: [ GEO_DIM, TIME_PERIOD, measure01, dim01 ] and categories sizes 13, 4, 3, 3
-        assertEquals(getValueFromPosition(dataset, 12, 3, 2, 2), getValueFromPosition(jsonStatDataset, 12, 3, 2, 2)); // get last element
-        assertEquals(getValueFromPosition(dataset, 0, 0, 0, 0), getValueFromPosition(jsonStatDataset, 0, 0, 0, 0)); // get first element
-        assertEquals(getValueFromPosition(dataset, 3, 1, 0, 2), getValueFromPosition(jsonStatDataset, 3, 1, 0, 2));
+        List<DimensionRepresentation> datasetDimensions = dataset.getData().getDimensions().getDimensions();
+        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 12, 3, 2, 2), commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 12, 3, 2, 2)); // get last element
+        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 0, 0, 0, 0),  commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 0, 0, 0, 0)); // get first element
+        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 3, 1, 0, 2),  commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 3, 1, 0, 2));
 
         // dimension order
-        List<String> datasetDimensions = new ArrayList<>();
-        for (DimensionRepresentation dimensionRepresentation : dataset.getData().getDimensions().getDimensions()) {
-            datasetDimensions.add(dimensionRepresentation.getDimensionId());
+        List<String> datasetDimensionsIds = new ArrayList<>();
+        for (DimensionRepresentation dimensionRepresentation : datasetDimensions) {
+            datasetDimensionsIds.add(dimensionRepresentation.getDimensionId());
         }
-        assertArrayEquals(datasetDimensions.toArray(), jsonStatDataset.getId().toArray());
-
-        // categories order
-
-    }
-
-    private String getValueFromPosition(Dataset dataset, int... position) {
-        int index = 0;
-        for (int i = 0; i < position.length; i++) {
-            int multiplicator = position[i];
-            int j = i + 1;
-            while (j < position.length) {
-                multiplicator *= dataset.getData().getDimensions().getDimensions().get(j).getRepresentations().getTotal().intValueExact();
-                j++;
-            }
-            index += multiplicator;
-        }
-        return Arrays.asList(dataset.getData().getObservations().split("\\|")).get(index).trim();
-    }
-
-    private String getValueFromPosition(JsonStatData dataset, int... position) {
-        int index = 0;
-        for (int i = 0; i < position.length; i++) {
-            int multiplicator = position[i];
-            int j = i + 1;
-            while (j < position.length) {
-                multiplicator *= dataset.getSize().get(j);
-                j++;
-            }
-            index += multiplicator;
-        }
-        return dataset.getValue().get(index).toString();
+        assertArrayEquals(datasetDimensionsIds.toArray(), jsonStatDataset.getId().toArray());
     }
 
     @Test
