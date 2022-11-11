@@ -4,6 +4,7 @@ import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isTemporalDimension;
 
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -71,19 +72,18 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     private static final Logger      logger = LoggerFactory.getLogger(DatasetsDo2RestMapperV10.class);
 
     @Override
-    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> parsedFields) throws Exception {
+    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimension, String selectedLanguage, Set<String> parsedFields) throws Exception {
         if (source == null) {
             return null;
         }
 
+        List<String> selectedLanguageList = Collections.singletonList(selectedLanguage);
+
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages);
+        Data data = toDatasetData(source, dsdProcessorResult, selectedDimension, selectedLanguageList);
 
-        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields);
-        Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
-
-        // JSON-stat only takes the first selected lang since InternationalStrings are not supported
-        String selectedLanguage = commonDo2JsonStatRestMapper.getSelectedLanguage(source, selectedLanguages);
+        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguageList, parsedFields);
+        Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguageList);
 
         // ********************************************
         // ***** See https://json-stat.org/full/ ******

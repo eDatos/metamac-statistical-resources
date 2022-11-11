@@ -125,21 +125,20 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     @Override
-    public JsonStatData toJsonStatQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> parsedFields) throws Exception {
+    public JsonStatData toJsonStatQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
         if (source == null) {
             return null;
         }
+
+        List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
 
         DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(source);
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
         Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages);
 
         Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
-                                                                 calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
+                calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
         Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
-
-        // JSON-stat only takes the first selected lang since InternationalStrings are not supported
-        String selectedLanguage = commonDo2JsonStatRestMapper.getSelectedLanguage(datasetVersion, selectedLanguages);
 
         // ********************************************
         // ***** See https://json-stat.org/full/ ******

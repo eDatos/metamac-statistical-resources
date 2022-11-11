@@ -19,5 +19,5 @@ public interface DatasetsDo2RestMapperV10 {
     public Resource toResource(DatasetVersion source, List<String> selectedLanguages);
     public Resource toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages);
     public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages);
-    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> parsedFields) throws Exception;
+    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception;
 }

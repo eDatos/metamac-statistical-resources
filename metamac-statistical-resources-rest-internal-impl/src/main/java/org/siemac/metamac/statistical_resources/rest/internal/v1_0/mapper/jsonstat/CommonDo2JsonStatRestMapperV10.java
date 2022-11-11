@@ -22,7 +22,6 @@ public interface CommonDo2JsonStatRestMapperV10 {
     String JSON_STAT_CLASS = "dataset";
 
     Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, String selectedLanguage) throws Exception;
-    String getSelectedLanguage(DatasetVersion source, List<String> selectedLanguages);
     List<String> toJsonStatNote(DatasetVersion source, Data data, Dimensions dimensions, Attributes attributes, DsdProcessorResult dsdProcessorResult, String selectedLanguage);
     List<String> getJsonStatId(Data data);
     List<Long> toJsonStatSize(Data data);

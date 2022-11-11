@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.jsonstat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,17 +39,12 @@ import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
-import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRestMapperV10 {
-
-    @Autowired
-    private CommonDo2RestMapperV10 commonDo2RestMapper;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
 
@@ -108,19 +102,6 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             }
         }
         return null;
-    }
-
-    @Override
-    public String getSelectedLanguage(DatasetVersion source, List<String> selectedLanguages) {
-        // TODO EDATOS-3662 treatment of unavailable selected language? how about an intersection of source.languages and selectedLanguages to discover common languages?
-        String selectedLanguage = selectedLanguages.isEmpty() ? null : selectedLanguages.get(0);
-
-        String sourceLang = source.getSiemacMetadataStatisticalResource().getLanguage().getCode();
-        if (selectedLanguage == null && sourceLang != null) {
-            selectedLanguage = sourceLang.toLowerCase();
-        }
-
-        return selectedLanguage;
     }
 
     @Override
@@ -392,16 +373,15 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     @Override
     public String toI18nValue(InternationalString source, String selectedLanguage) {
-        if (source == null || source.getTexts() == null || source.getTexts().isEmpty()) {
+        if (source == null || source.getTexts() == null || source.getTexts().isEmpty() || selectedLanguage == null) {
             return null;
         }
-
-        if (selectedLanguage == null) {
-            // given that we know texts is not empty we can get the first one
-            return source.getTexts().stream().findFirst().get().getValue(); // TODO EDATOS-3662: default language?
+        for (org.siemac.metamac.rest.common.v1_0.domain.LocalisedString text : source.getTexts()) {
+            if (Objects.equals(text.getLang(), selectedLanguage)) {
+                return text.getValue();
+            }
         }
-
-        return commonDo2RestMapper.toInternationalString(source, Collections.singletonList(selectedLanguage)).getTexts().get(0).getValue(); // TODO EDATOS-3662 multiples languages?
+        return null;
     }
 
     @Override
