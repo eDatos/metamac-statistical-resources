@@ -184,7 +184,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             DatasetVersion datasetVersion = commonService.retrieveDatasetLastPublishedVersionByUrn(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
-            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, dimensions, selectedLanguage, parsedFields);
+            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, datasetVersion, dimensions, selectedLanguage, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }

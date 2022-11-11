@@ -133,14 +133,13 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     @Override
-    public JsonStatData toJsonStatQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
+    public JsonStatData toJsonStatQuery(QueryVersion source, DatasetVersion datasetVersion, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
         if (source == null) {
             return null;
         }
 
         List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
 
-        DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(source);
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
         Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages);
 
