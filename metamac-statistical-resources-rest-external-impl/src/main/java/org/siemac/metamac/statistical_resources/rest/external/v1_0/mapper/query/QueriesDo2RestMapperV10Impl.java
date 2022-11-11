@@ -7,6 +7,7 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
