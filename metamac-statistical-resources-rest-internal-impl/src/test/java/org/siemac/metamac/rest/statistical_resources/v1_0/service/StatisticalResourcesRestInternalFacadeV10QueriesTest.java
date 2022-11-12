@@ -92,9 +92,25 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
         assertEquals(query.getData().getDimensions().getDimensions().get(3).getDimensionId(), "dim01");
         assertEquals(query.getData().getDimensions().getDimensions().get(3).getRepresentations().getTotal(), BigInteger.valueOf(1));
 
+        {
+            // Dimensions and representations order must match
+            Dimension dimension = query.getMetadata().getDimensions().getDimensions().get(1);
+            {
+                NonEnumeratedDimensionValues dimensionValues = (NonEnumeratedDimensionValues) dimension.getDimensionValues();
+                assertEquals("2013", dimensionValues.getValues().get(0).getId());
+                assertEquals("2011", dimensionValues.getValues().get(1).getId());
+            }
+            {
+                CodeRepresentations dimensionValues = query.getData().getDimensions().getDimensions().get(1).getRepresentations();
+                // Order here must be the same as order of dimensionValues
+                assertEquals("2013", dimensionValues.getRepresentations().get(0).getCode());
+                assertEquals("2011", dimensionValues.getRepresentations().get(1).getCode());
+            }
+        }
+
         // Ultimo elemento de las observaciones
         assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR).length, 8 * 2 * 3 * 1);
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "421");
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "403");
     }
 
     @Test

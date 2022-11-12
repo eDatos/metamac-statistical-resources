@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -15,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collections;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
@@ -23,6 +25,7 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multid
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multidatasets;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
+import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -104,6 +107,19 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
     }
 
+    @Override
+    public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        try {
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguage, parsedFields);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
     private Map<String, List<String>> parseDimensionExpression(String dim, String representation) {
         if (StringUtils.isEmpty(representation)) {
             return org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression(dim);
@@ -155,6 +171,20 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, parsedFields);
             return query;
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
+    public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation) {
+        try {
+            QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            DatasetVersion datasetVersion = commonService.retrieveDatasetLastVersionByUrn(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+            String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
+            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, datasetVersion, dimensions, selectedLanguage, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -267,6 +297,20 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             }
         }
         return targets;
+    }
+
+    private String languagesRequestedToEffectiveLanguageForJsonStat(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+        String defaultLang = configurationService.retrieveLanguageDefault().toLowerCase();
+        if (!CollectionUtils.isEmpty(selectedLanguages)) {
+            String firstSelectedLang = selectedLanguages.get(0).toLowerCase();
+            for (ExternalItem lang : source.getSiemacMetadataStatisticalResource().getLanguages()) {
+                String langCode = lang.getCode().toLowerCase();
+                if (Objects.equals(firstSelectedLang, langCode)) {
+                    return firstSelectedLang;
+                }
+            }
+        }
+        return defaultLang;
     }
 
     private List<String> splitIfCommaSeparated(List<String> sources) {

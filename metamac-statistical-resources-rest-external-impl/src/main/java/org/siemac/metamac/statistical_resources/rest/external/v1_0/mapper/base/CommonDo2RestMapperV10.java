@@ -12,6 +12,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.common.v1_0.domain.Resources;
+import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataStructureDefinition;
@@ -70,4 +71,5 @@ public interface CommonDo2RestMapperV10 {
     public Resources toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages);
     public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException;
 
+    public RestException buildRestException(String message);
 }

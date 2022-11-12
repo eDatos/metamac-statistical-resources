@@ -78,6 +78,15 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
     }
 
     @Override
+    public DatasetVersion retrieveDatasetLastPublishedVersionByUrn(String urn) {
+        try {
+            return datasetService.retrieveLatestPublishedDatasetVersionByDatasetUrn(SERVICE_CONTEXT, urn);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
     public PagedResult<DatasetVersion> findDatasetVersions(String agencyID, String resourceID, String version, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
             return findDatasetVersionsCommon(agencyID, resourceID, version, conditionalCriteria, pagingParameter);

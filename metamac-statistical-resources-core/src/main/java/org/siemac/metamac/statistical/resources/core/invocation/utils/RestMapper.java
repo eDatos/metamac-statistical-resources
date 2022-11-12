@@ -296,7 +296,7 @@ public class RestMapper {
         return link;
     }
 
-    private org.siemac.metamac.rest.common.v1_0.domain.InternationalString toRestInternationalString(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source) {
+    public org.siemac.metamac.rest.common.v1_0.domain.InternationalString toRestInternationalString(org.siemac.metamac.statistical.resources.core.common.domain.InternationalString source) {
         org.siemac.metamac.rest.common.v1_0.domain.InternationalString target = new org.siemac.metamac.rest.common.v1_0.domain.InternationalString();
         if (source != null) {
             for (LocalisedString item : source.getTexts()) {

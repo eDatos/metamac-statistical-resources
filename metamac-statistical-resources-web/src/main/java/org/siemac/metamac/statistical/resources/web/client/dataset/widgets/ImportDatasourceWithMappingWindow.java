@@ -15,6 +15,7 @@ import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetDatasourcesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleSrmItemSchemeWindow;
 import org.siemac.metamac.statistical.resources.web.shared.ds.DimensionRepresentationMappingDS;
@@ -25,6 +26,7 @@ import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWin
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
 import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
 
@@ -38,6 +40,8 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.StaticTextItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 
@@ -51,6 +55,8 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
 
     public ImportDatasourceWithMappingWindow(Map<String, String> dimensionsMapping) {
         super(getConstants().actionLoadDatasource());
+        
+        createMapCodelistsCheckBoxItem();
         this.dimensionsMapping = dimensionsMapping;
         addDimensionFieldsInMainForm();
         addDimensionFieldsInExtraForm();
@@ -91,15 +97,18 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
         List<FormItem> items = new ArrayList<FormItem>();
 
         if (!dimensionsMapping.isEmpty()) {
-            StaticTextItem mappingLabel = new StaticTextItem("header");
-            mappingLabel.setShowTitle(false);
-            mappingLabel.setValue(getMessages().datasourceImportationDimensionMapping());
-            mappingLabel.setColSpan(2);
-
-            items.add(mappingLabel);
-
-            for (String dimensionId : dimensionsMapping.keySet()) {
-                items.add(createItemForDimension(extraForm, dimensionId, dimensionsMapping.get(dimensionId)));
+            Boolean mapCodelists = ((CustomCheckboxItem) mainForm.getItem(DatasetDS.MAP_CODELISTS)).getValueAsBoolean();
+            if (mapCodelists) {
+                StaticTextItem mappingLabel = new StaticTextItem("header");
+                mappingLabel.setShowTitle(false);
+                mappingLabel.setValue(getMessages().datasourceImportationDimensionMapping());
+                mappingLabel.setColSpan(2);
+                
+                items.add(mappingLabel);
+                
+                for (String dimensionId : dimensionsMapping.keySet()) {
+                    items.add(createItemForDimension(extraForm, dimensionId, dimensionsMapping.get(dimensionId)));
+                }
             }
         }
 
@@ -116,12 +125,28 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
 
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
     }
+    
+    private void createMapCodelistsCheckBoxItem() {
+        CustomCheckboxItem mapCodelistsCheckBoxItem = new CustomCheckboxItem(DatasetDS.MAP_CODELISTS, getConstants().mapCodelists());
+        mapCodelistsCheckBoxItem.setCanEdit(Boolean.TRUE);
+        mapCodelistsCheckBoxItem.setValue(Boolean.FALSE);
+        mapCodelistsCheckBoxItem.setDefaultValue(Boolean.FALSE);
+        
+        mapCodelistsCheckBoxItem.addChangedHandler(new ChangedHandler() {
+            @Override
+            public void onChanged(ChangedEvent event) {
+                addDimensionFieldsInExtraForm();
+            }
+        });
+        
+        mainForm.addFields(mapCodelistsCheckBoxItem);
+    }
 
     @Override
     protected void copyHiddenValuesToMainForm(UploadForm mainForm, DynamicForm extraForm) {
         for (String dimensionId : dimensionsMapping.keySet()) {
             SearchExternalItemLinkItem item = (SearchExternalItemLinkItem) extraForm.getItem(getDimensionSelectionFieldName(dimensionId));
-            if (item.getExternalItemDto() != null) {
+            if (item != null && item.getExternalItemDto() != null) {
                 mainForm.setValue(getDimensionHiddenFieldName(dimensionId), item.getExternalItemDto().getUrn());
             } else {
                 mainForm.setValue(getDimensionHiddenFieldName(dimensionId), StringUtils.EMPTY);
