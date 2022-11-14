@@ -56,9 +56,8 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
     public ImportDatasourceWithMappingWindow(Map<String, String> dimensionsMapping) {
         super(getConstants().actionLoadDatasource());
         
-        createMapCodelistsCheckBoxItem();
         this.dimensionsMapping = dimensionsMapping;
-        addDimensionFieldsInMainForm();
+        addFieldsInMainForm();
         addDimensionFieldsInExtraForm();
         setAutoSize(true);
         bindEvents();
@@ -77,7 +76,7 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
         return form;
     }
 
-    private void addDimensionFieldsInMainForm() {
+    private void addFieldsInMainForm() {
 
         List<FormItem> itemsToAdd = new ArrayList<FormItem>();
 
@@ -90,7 +89,14 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
                 itemsToAdd.add(new HiddenItem(getDimensionHiddenFieldName(dimensionId)));
             }
         }
+        
+        CustomCheckboxItem mapCodelistsCheckBoxItem = new CustomCheckboxItem(DatasetDS.MAP_CODELISTS, getConstants().mapCodelists());
+        mapCodelistsCheckBoxItem.setCanEdit(Boolean.TRUE);
+        mapCodelistsCheckBoxItem.setValue(Boolean.FALSE);
+        mapCodelistsCheckBoxItem.setDefaultValue(Boolean.FALSE);
+        
         mainForm.addFields(itemsToAdd.toArray(new HiddenItem[itemsToAdd.size()]));
+        mainForm.addFields(new FormItem[]{mapCodelistsCheckBoxItem});
     }
 
     private void addDimensionFieldsInExtraForm() {
@@ -128,16 +134,6 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
         items.add(uploadButton);
 
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
-    }
-    
-    private void createMapCodelistsCheckBoxItem() {
-        CustomCheckboxItem mapCodelistsCheckBoxItem = new CustomCheckboxItem(DatasetDS.MAP_CODELISTS, getConstants().mapCodelists());
-        mapCodelistsCheckBoxItem.setCanEdit(Boolean.TRUE);
-        mapCodelistsCheckBoxItem.setValue(Boolean.FALSE);
-        mapCodelistsCheckBoxItem.setDefaultValue(Boolean.FALSE);
-        
-        mainForm.addFields(new FormItem[]{mapCodelistsCheckBoxItem});
-        
     }
     
     private void bindEvents() {
