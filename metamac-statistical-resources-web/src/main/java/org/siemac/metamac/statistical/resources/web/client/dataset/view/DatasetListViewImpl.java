@@ -8,6 +8,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
+import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.WebMessageExceptionsConstants;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceBaseListViewImpl;
@@ -172,7 +173,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
             @Override
             public void onClick(ClickEvent event) {
             	if (StatisticalResourcesDefaults.defaultLanguage == null) { 
-            		getUiHandlers().createNewDatasetError(WebMessageExceptionsConstants.ERROR_DATASET_RESOURCE);
+            		getUiHandlers().createNewDatasetFailed(StatisticalResourcesWeb.getMessages().defaultLanguageIsNull());
             		return; 
             	}
                 newDatasetWindow = new NewDatasetWindow(getConstants().datasetCreate());

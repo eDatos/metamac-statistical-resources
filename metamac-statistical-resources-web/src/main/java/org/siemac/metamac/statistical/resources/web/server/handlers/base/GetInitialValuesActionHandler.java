@@ -1,6 +1,8 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.base;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
@@ -8,6 +10,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
+import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.server.rest.SrmRestInternalFacade;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesResult;
@@ -31,6 +34,9 @@ public class GetInitialValuesActionHandler extends SecurityActionHandler<GetInit
 
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
+    
+    private static Logger log  = Logger.getLogger(GetInitialValuesActionHandler.class.getName());
+
 
     public GetInitialValuesActionHandler() {
         super(GetInitialValuesAction.class);
@@ -53,7 +59,7 @@ public class GetInitialValuesActionHandler extends SecurityActionHandler<GetInit
 	                defaultAgency = srmRestInternalFacade.retrieveAgencyByUrn(agencyUrn);
 	            }
             } catch(MetamacException e) {
-            	defaultAgency = null;
+            	log.log(Level.WARNING, "Error retrieving application OPTIONAL Organisation Urn", e);
             }
 
             // Default languages
@@ -62,11 +68,10 @@ public class GetInitialValuesActionHandler extends SecurityActionHandler<GetInit
             try {
 	            String languageCodeUrn = configurationService.retrieveDefaultCodeLanguageUrn();
 	            if (StringUtils.isNotBlank(languageCodeUrn)) {
-	                defaultLanguage = null;//srmRestInternalFacade.retrieveCodeByUrn(languageCodeUrn);
+	                defaultLanguage = srmRestInternalFacade.retrieveCodeByUrn(languageCodeUrn);
 	            }
 	        } catch(MetamacException e) {
-	        	defaultLanguage = null;
-	        	//throw WebExceptionUtils.createMetamacWebException(e);
+            	log.log(Level.WARNING, "Error retrieving application OPTIONAL Default Code Language Urn", e);
 	        }
 
             return new GetInitialValuesResult(statisticOfficialities, defaultAgency, defaultLanguage);
