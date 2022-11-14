@@ -9,12 +9,14 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeCri
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistsResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructures;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ProcStatus;
@@ -44,7 +46,7 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
 
     public static Codelists mockCodelistWithOnlyUrns(List<String> urns) {
         Codelists codelists = new Codelists();
-        codelists.getCodelists().addAll(mockItemResourcesInternalWithOnlyUrns(urns));
+        codelists.getCodelists().addAll(mockCodelistsResourceInternalWithOnlyUrns(urns));
         populateListBaseWithResourcesWithOnlyUrns(codelists, urns);
         return codelists;
     }
@@ -71,6 +73,17 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
         List<ItemResourceInternal> resources = new ArrayList<ItemResourceInternal>();
         for (String urn : urns) {
             ItemResourceInternal resource = new ItemResourceInternal();
+            resource.setUrn(urn);
+            resources.add(resource);
+        }
+        return resources;
+    }
+
+    private static List<CodelistsResourceInternal> mockCodelistsResourceInternalWithOnlyUrns(List<String> urns) {
+        List<CodelistsResourceInternal> resources = new ArrayList<CodelistsResourceInternal>();
+        for (String urn : urns) {
+            CodelistsResourceInternal resource = new CodelistsResourceInternal();
+            resource.setNormalizationType(NormalizationType.STANDARDIZED);
             resource.setUrn(urn);
             resources.add(resource);
         }

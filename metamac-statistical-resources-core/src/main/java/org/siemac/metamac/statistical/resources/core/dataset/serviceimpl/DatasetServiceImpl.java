@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -789,6 +790,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
         taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
         taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto.getNextUpdateDate());
+        taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto.getUpdateFrequency());
         taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto.getDataProvidersUrn());
         taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
         taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto.getNextProcStatus());
@@ -1517,7 +1519,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             for (DsdAttribute dsdAttribute : attributes) {
                 if (dsdAttribute.isAttributeAtObservationLevel()) {
                     List<String> values = attrCoverages.get(dsdAttribute.getComponentId());
-                    processAttributeCoverage(resource, dsdAttribute, values);
+                    processAttributeCoverage(resource, dsdAttribute, values, Boolean.TRUE);
                 }
             }
         } catch (ApplicationException e) {
@@ -1530,20 +1532,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             List<String> values = statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId(),
                     StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
-            processAttributeCoverage(resource, dsdAttribute, values);
+            processAttributeCoverage(resource, dsdAttribute, values, Boolean.FALSE);
         } catch (ApplicationException e) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "Error retrieving values for attribute " + dsdAttribute.getComponentId());
         }
     }
 
-    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, List<String> values) throws MetamacException {
+    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, List<String> values, boolean copyItemAsIdentifier) throws MetamacException {
         String attributeId = dsdAttribute.getComponentId();
 
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
         if (values != null) {
             List<ExternalItem> items = buildExternalItemsBasedOnCodeIdentifiers(values, dsdAttribute);
 
-            attrValues = buildAttributeValues(attributeId, values, resource);
+            attrValues = buildAttributeValues(attributeId, values, resource, copyItemAsIdentifier);
             if (items != null) {
                 addTranslationsToAttributeValuesFromExternalItems(attrValues, items);
             }
@@ -1557,7 +1559,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion) {
+    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion, boolean copyItemAsIdentifier) {
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
 
         Set<String> uniqueValues = new HashSet<String>(values);
@@ -1567,7 +1569,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             @Override
             public AttributeValue transformItem(String item) {
                 AttributeValue result = new AttributeValue();
-                result.setIdentifier(item);
+                result.setIdentifier(copyItemAsIdentifier ? item : UUID.randomUUID().toString());
                 result.setTitle(item);
                 result.setDsdComponentId(attributeId);
                 result.setDatasetVersion(datasetVersion);

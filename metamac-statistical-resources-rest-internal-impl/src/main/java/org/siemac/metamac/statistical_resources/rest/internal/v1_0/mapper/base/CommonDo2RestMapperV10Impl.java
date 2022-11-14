@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -350,6 +351,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setHeading(toDimensionsId(dataStructure.getHeading()));
         target.setStub(toDimensionsId(dataStructure.getStub()));
         target.setAutoOpen(dataStructure.isAutoOpen());
+        target.setShowNullValuesByDefault(dataStructure.isShowNullValuesByDefault());
+        target.setShowZeroValuesByDefault(dataStructure.isShowZeroValuesByDefault());
         target.setShowDecimals(dataStructure.getShowDecimals());
         return target;
     }
@@ -482,6 +485,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
         return targets;
+    }
+
+    @Override
+    public RestException buildRestException(String message) {
+        logger.error(message);
+        org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
+        return new RestException(exception, Response.Status.INTERNAL_SERVER_ERROR);
     }
 
     @Override
