@@ -19,6 +19,7 @@ import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesD
 import org.siemac.metamac.statistical.resources.web.client.base.presenter.StatisticalResourceBaseListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.enums.LifeCycleActionEnum;
 import org.siemac.metamac.statistical.resources.web.client.operation.presenter.OperationPresenter;
@@ -100,6 +101,7 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
         // data provider y data provider schemes
         void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field);
         void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field);
+        void setTemporalCodesForField(GetTemporalGranularitiesListResult result, DatasetMetadataExternalField field);
         
         // Search
         void clearSearchSection();
@@ -371,6 +373,17 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
             @Override
             public void onWaitSuccess(GetDataProviderPaginatedListResult result) {
                 getView().setDataProviderForField(result, field);
+            }
+        });
+    }
+    
+    @Override
+    public void retrieveTemporalCodesForField(int firstResult, int maxResults, MetamacWebCriteria webCriteria, final DatasetMetadataExternalField field) {
+        dispatcher.execute(new GetTemporalGranularitiesListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesListResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetTemporalGranularitiesListResult result) {
+                getView().setTemporalCodesForField(result, field);
             }
         });
     }

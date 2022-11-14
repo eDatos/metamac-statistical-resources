@@ -8,6 +8,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collections;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
@@ -45,6 +46,11 @@ public interface StatisticalResourcesV1_0 {
     Dataset retrieveDataset(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
             @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
+    @Produces({"application/jsonstat+json"})
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    JsonStatData retrieveDatasetJsonStat(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("collections")
@@ -78,6 +84,11 @@ public interface StatisticalResourcesV1_0 {
     @Produces({"application/xml", "application/json"})
     @Path("queries/{agencyID}/{resourceID}")
     Query retrieveQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @Produces({"application/jsonstat+json"})
+    @Path("queries/{agencyID}/{resourceID}")
+    JsonStatData retrieveJsonStatQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
             @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
     @GET

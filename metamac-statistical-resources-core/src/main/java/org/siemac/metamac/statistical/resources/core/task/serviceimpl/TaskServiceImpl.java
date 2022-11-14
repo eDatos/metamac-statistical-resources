@@ -372,6 +372,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION, taskInfoDataset.getDatasetNextVersion())
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_VERSION_DATE, taskInfoDataset.getDatasetNextVersionDate())
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_UPDATE_DATE, taskInfoDataset.getDatasetNextUpdateDate())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_UPDATE_FREQUENCY, taskInfoDataset.getDatasetUpdateFrequency())
                     .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_DATA_PROVIDERS_URN, datasetVersionDataProvidersUrn.toString())
                     .usingJobData(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString())
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_PROC_STATUS, taskInfoDataset.getDatasetNextProcStatus())

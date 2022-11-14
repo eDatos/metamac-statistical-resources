@@ -61,6 +61,7 @@ import org.siemac.metamac.rest.common.test.MetamacRestBaseTest;
 import org.siemac.metamac.rest.common.test.ServerResource;
 import org.siemac.metamac.rest.common_metadata.v1_0.domain.Configuration;
 import org.siemac.metamac.rest.constants.RestConstants;
+import org.siemac.metamac.rest.json.MetamacJacksonJaxbJsonProvider;
 import org.siemac.metamac.rest.statistical_operations.v1_0.domain.Operation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.mockito.MockitoMockConfig;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
@@ -96,6 +97,7 @@ import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourc
 import org.siemac.metamac.statistical_resources.rest.external.invocation.CommonMetadataRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.StatisticalOperationsRestExternalFacade;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat.CommonDo2JsonStatRestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.service.StatisticalResourcesV1_0;
 import org.springframework.context.ApplicationContext;
 
@@ -120,6 +122,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
     private DatasetVersionRepository                datasetVersionRepository;
     private QueryVersionRepository                  queryVersionRepository;
     private PublicationVersionRepository            publicationVersionRepository;
+    protected CommonDo2JsonStatRestMapperV10          commonDo2JsonStatRestMapper;
 
     private SrmRestExternalFacade                   srmRestExternalFacade;
     private CommonMetadataRestExternalFacade        commonMetadataRestExternalFacade;
@@ -147,6 +150,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
         {
             List providers = new ArrayList();
             providers.add(applicationContext.getBean("jaxbProvider", JAXBElementProvider.class));
+            providers.add(applicationContext.getBean("jsonStatProvider", MetamacJacksonJaxbJsonProvider.class));
             statisticalResourcesRestExternalFacadeClientXml = JAXRSClientFactory.create(jaxrsServerAddress, StatisticalResourcesV1_0.class, providers, Boolean.TRUE);
         }
 
@@ -963,6 +967,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
         reset(datasetVersionRepository);
         publicationVersionRepository = applicationContext.getBean(PublicationVersionRepository.class);
         reset(publicationVersionRepository);
+        commonDo2JsonStatRestMapper = applicationContext.getBean(CommonDo2JsonStatRestMapperV10.class);
 
         srmRestExternalFacade = applicationContext.getBean(SrmRestExternalFacade.class);
         reset(srmRestExternalFacade);
