@@ -61,6 +61,7 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
         addDimensionFieldsInMainForm();
         addDimensionFieldsInExtraForm();
         setAutoSize(true);
+        bindEvents();
     }
 
     @Override
@@ -71,7 +72,7 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
     @Override
     protected CustomDynamicForm buildExtraForm() {
         CustomDynamicForm form = new CustomDynamicForm();
-        form.setWidth(350);
+        form.setWidth(420);
         form.setVisible(false);
         return form;
     }
@@ -110,6 +111,9 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
                     items.add(createItemForDimension(extraForm, dimensionId, dimensionsMapping.get(dimensionId)));
                 }
             }
+            else {
+                extraForm.clearValues();
+            }
         }
 
         CustomButtonItem uploadButton = new CustomButtonItem("button-import", MetamacWebCommon.getConstants().accept());
@@ -132,14 +136,18 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
         mapCodelistsCheckBoxItem.setValue(Boolean.FALSE);
         mapCodelistsCheckBoxItem.setDefaultValue(Boolean.FALSE);
         
-        mapCodelistsCheckBoxItem.addChangedHandler(new ChangedHandler() {
+        mainForm.addFields(new FormItem[]{mapCodelistsCheckBoxItem});
+        
+    }
+    
+    private void bindEvents() {
+        ((CustomCheckboxItem) mainForm.getItem(DatasetDS.MAP_CODELISTS)).addChangedHandler(new ChangedHandler() {
+            
             @Override
             public void onChanged(ChangedEvent event) {
                 addDimensionFieldsInExtraForm();
             }
         });
-        
-        mainForm.addFields(mapCodelistsCheckBoxItem);
     }
 
     @Override
@@ -308,7 +316,8 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
 
     @Override
     public void show() {
-        clearExtraFormValues();
+        mainForm.clearValues();
+        addDimensionFieldsInExtraForm();
         extraForm.hide();
         super.show();
     }
