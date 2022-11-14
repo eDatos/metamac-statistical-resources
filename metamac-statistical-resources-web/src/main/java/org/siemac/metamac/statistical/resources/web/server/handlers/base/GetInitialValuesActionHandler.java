@@ -14,6 +14,7 @@ import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValues
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
 import org.siemac.metamac.web.common.server.handlers.SecurityActionHandler;
 import org.siemac.metamac.web.common.server.utils.WebExceptionUtils;
+import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -46,20 +47,27 @@ public class GetInitialValuesActionHandler extends SecurityActionHandler<GetInit
             // Default agency
 
             ExternalItemDto defaultAgency = null;
-
-            String agencyUrn = configurationService.retrieveOrganisationUrn();
-            if (StringUtils.isNotBlank(agencyUrn)) {
-                defaultAgency = srmRestInternalFacade.retrieveAgencyByUrn(agencyUrn);
+            try {
+	            String agencyUrn = configurationService.retrieveOrganisationUrn();
+	            if (StringUtils.isNotBlank(agencyUrn)) {
+	                defaultAgency = srmRestInternalFacade.retrieveAgencyByUrn(agencyUrn);
+	            }
+            } catch(MetamacException e) {
+            	defaultAgency = null;
             }
 
             // Default languages
 
             ExternalItemDto defaultLanguage = null;
-
-            String languageCodeUrn = configurationService.retrieveDefaultCodeLanguageUrn();
-            if (StringUtils.isNotBlank(languageCodeUrn)) {
-                defaultLanguage = srmRestInternalFacade.retrieveCodeByUrn(languageCodeUrn);
-            }
+            try {
+	            String languageCodeUrn = configurationService.retrieveDefaultCodeLanguageUrn();
+	            if (StringUtils.isNotBlank(languageCodeUrn)) {
+	                defaultLanguage = null;//srmRestInternalFacade.retrieveCodeByUrn(languageCodeUrn);
+	            }
+	        } catch(MetamacException e) {
+	        	defaultLanguage = null;
+	        	//throw WebExceptionUtils.createMetamacWebException(e);
+	        }
 
             return new GetInitialValuesResult(statisticOfficialities, defaultAgency, defaultLanguage);
         } catch (MetamacException e) {

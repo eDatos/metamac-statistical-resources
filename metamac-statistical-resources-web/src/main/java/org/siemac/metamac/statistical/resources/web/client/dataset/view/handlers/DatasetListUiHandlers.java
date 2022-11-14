@@ -36,6 +36,7 @@ public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers 
     // Importation
 
     void datasourcesImportationFailed(String errorMessage);
+    void createNewDatasetError(String errorMessage);
     void datasourcesImportationSucceed(String fileName);
 
     // Related resources

@@ -182,6 +182,11 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
                     }
                 });
     }
+    
+    @Override
+    public void createNewDatasetError(String errorMessage) {
+        ShowMessageEvent.fireErrorMessage(DatasetListPresenter.this, errorMessage);
+    }
 
     @Override
     public void deleteDatasets(List<String> urnsFromSelected) {

@@ -7,6 +7,7 @@ public class WebMessageExceptionsConstants {
     public static final String ERROR_REJECT_VALIDATION                      = "exception.resources.life_cycle.reject_validation";
     public static final String ERROR_PUBLISH_RESOURCE                       = "exception.resources.life_cycle.publish";
     public static final String ERROR_VERSION_RESOURCE                       = "exception.resources.life_cycle.version";
+    public static final String ERROR_DATASET_RESOURCE                       = "exception.resources.dataset";
     public static final String ERROR_SENDING_NOTIFICATIONS                  = "exception.resources.life_cycle.notification";
 
     public static final String ERROR_IMPORT_IS_NOT_ZIP                      = "exception.resources.importation.is_zip";
