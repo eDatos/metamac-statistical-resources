@@ -12,5 +12,5 @@ public interface StreamMessagingService<K, V> {
 
     public void sendMessage(HasSiemacMetadata message) throws MetamacException;
     public void sendMessage(QueryVersion message) throws MetamacException;
-    public void sendMessage(DatasetAvro message) throws MetamacException;
+    public void sendMessage(DatasetAvro message) throws MetamacException; // TODO EDATOS-3770 QUITAR
 }

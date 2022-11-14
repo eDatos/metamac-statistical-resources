@@ -47,7 +47,7 @@ public class StreamMessagingKafkaServiceFacadeImpl implements StreamMessagingSer
     }
 
     @Override
-    public void sendNewJaxiPublication(DatasetAvro msg) throws MetamacException {
+    public void sendNewJaxiPublication(DatasetAvro msg) throws MetamacException { // TODO EDATOS-3770 QUITAR
         try {
             messagingService.sendMessage(msg);
         } catch (MetamacException e) {

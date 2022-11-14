@@ -70,7 +70,7 @@ public class StreamMessagingServiceKafkaImpl<K, V extends SpecificRecordBase> im
 
     @Override
     @SuppressWarnings("unchecked")
-    public void sendMessage(DatasetAvro message) throws MetamacException {
+    public void sendMessage(DatasetAvro message) throws MetamacException { // TODO EDATOS-3770 QUITAR
         // To Avro
         K key = (K) message.getUrn();
 
