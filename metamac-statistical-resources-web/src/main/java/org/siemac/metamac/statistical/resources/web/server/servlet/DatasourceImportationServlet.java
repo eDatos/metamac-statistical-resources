@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.server.servlet;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -24,10 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
@@ -86,7 +89,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             factory.setRepository(tmpDir);
 
             ServletFileUpload upload = new ServletFileUpload(factory);
-
+            upload.setHeaderEncoding("UTF-8");
             // Parse the request
             List items = upload.parseRequest(request);
 
@@ -208,7 +211,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (isFileZip) {
             // If the uploaded file is a zip, the mapping cannot be set by the user. That's why the mappings are not stored in this case.
             storeDimensionsMapping = false;
-            filesToImport = ZipUtils.unzipArchive(uploadedFile, outputFolder);
+            filesToImport = ZipUtils.unzipArchiveDetectCharset(uploadedFile, outputFolder);
         } else {
             storeDimensionsMapping = true;
             filesToImport.add(uploadedFile);

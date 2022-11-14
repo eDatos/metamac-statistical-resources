@@ -82,6 +82,7 @@ public class DatasourceImportationPreviewServlet extends BaseHttpServlet {
             factory.setRepository(tmpDir);
 
             ServletFileUpload upload = new ServletFileUpload(factory);
+            upload.setHeaderEncoding("UTF-8");
 
             // Parse the request
             List items = upload.parseRequest(request);
