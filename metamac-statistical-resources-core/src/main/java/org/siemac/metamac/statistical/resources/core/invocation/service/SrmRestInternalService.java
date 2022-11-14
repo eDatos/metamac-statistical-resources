@@ -26,6 +26,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElement;
 
 public interface SrmRestInternalService {
 
@@ -70,6 +71,9 @@ public interface SrmRestInternalService {
     public Codes retrieveCodesOfCodelistEfficiently(String codelistUrn) throws MetamacException;
     public Code retrieveCodeByUrn(String urn) throws MetamacException;
 
+    // VARIABLE ELEMENT
+    public VariableElement retrieveVariableElement(String codelistUrn) throws MetamacException;
+    
     // ORGANISATION SCHEMES
     public List<ResourceInternal> findOrganisationSchemes(String query) throws MetamacException;
     public OrganisationSchemes findOrganisationSchemes(int firstResult, int maxResult, String query) throws MetamacException;

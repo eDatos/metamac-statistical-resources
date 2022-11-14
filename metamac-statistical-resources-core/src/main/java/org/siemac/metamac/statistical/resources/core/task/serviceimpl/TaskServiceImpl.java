@@ -83,7 +83,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.repository.api.DatabaseImportRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
@@ -110,10 +109,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.V
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
-import org.siemac.metamac.statistical.resources.core.stream.messages.DatetimeAvro;
-import org.siemac.metamac.statistical.resources.core.stream.messages.TemporalCodeAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.InternationalStringDo2AvroMapper;
-import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.TemporalCodeDo2AvroMapper;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
@@ -151,7 +147,6 @@ import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
-import es.ibestat.jaxi.stream.messages.DatasetAvro;
 
 /**
  * Implementation of TaskService.
@@ -1071,6 +1066,21 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         taskServiceInvocationValidator.checkProcessUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
 
         logger.debug("Updating geocoverage cache for external datasets (nonexistent in database)");
+
+        streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
+
+        logger.debug("Processing geographic coverage for external datasets (nonexistent in database) to create the cache correctly finished");
+
+        markTaskAsFinished(ctx, jobKey);
+    }
+    
+    /* TODO EDATOS-3770 PRODUCTOR TO PROBE JAXI_PUBLICATIONS TO EXTERNAL-USERS
+    @Override
+    public void processUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        // Validation
+        taskServiceInvocationValidator.checkProcessUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
+
+        logger.debug("Updating geocoverage cache for external datasets (nonexistent in database)");
         
         DatasetVersion dt = datasetVersionRepository.retrieveByUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ISTAC:C00010A_000026(2.16)");
         DatasetAvro dtAvro = new DatasetAvro();
@@ -1110,7 +1120,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         markTaskAsFinished(ctx, jobKey);
     }
-    
+    */
     public es.ibestat.jaxi.stream.messages.ExternalItemAvro do2Avro(ExternalItem source) {
         es.ibestat.jaxi.stream.messages.ExternalItemAvro target = null;
         if (source != null) {

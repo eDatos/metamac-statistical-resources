@@ -8,7 +8,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -66,15 +65,11 @@ public class KafkaInitializeConsumerTopics {
         List<NewTopic> topics = new ArrayList<>();
 
         try {
-            String topicNameDatasetExternalPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
             // The topic can not be enabled in some environments.
-            if (StringUtils.isNotEmpty(topicNameDatasetExternalPublication)) {
-                topics.add(createTopic(topicNameDatasetExternalPublication));
-            } else {
-                LOGGER.info("retrieveKafkaExternalPublicationsTopicName is empty. Check if must exists in common metadata");
-            }
+            String topicNameDatasetExternalPublication = statisticalResourcesConfiguration.retrieveKafkaTopicExternalDatasetPublication();
+            topics.add(createTopic(topicNameDatasetExternalPublication));
         } catch (Exception e) {
-            LOGGER.info("retrieveKafkaExternalPublicationsTopicName not found. Check if must exists in common metadata");
+            LOGGER.info("retrieveKafkaTopicExternalDatasetPublication not found. Check if must exists in common metadata");
         }
 
         return topics;

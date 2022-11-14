@@ -15,10 +15,7 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String CRON_EXPRESSION_FOR_DB_DATA_IMPORT    = "metamac.statistical_resources.data_import.cron_expression";
     public static final String DATABASE_DATASET_IMPORT_ENABLED       = "environment.metamac.statistical_resources.data_import.enabled";
     public static final String DB_DATA_VIEWS_ROLE                    = "metamac.statistical_resources.bbbd.data_views_role";
-    public static final String EXTERNAL_PUBLICATIONS_TOPIC_NAME      = "metamac.statistical_resources.kafka.topic_dataset_external_publications";
-    public static final String EXTERNAL_PUBLICATIONS_TOPIC_IS_ENABLED = "metamac.statistical_resources.kafka.topic_dataset_external_publications_enabled";
-    
-
+ 
     // DataSources
 
     public static final String DB_URL                                = "metamac.statistical_resources.db.url";

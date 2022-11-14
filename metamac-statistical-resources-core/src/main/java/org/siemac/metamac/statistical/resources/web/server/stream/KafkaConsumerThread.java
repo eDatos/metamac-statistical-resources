@@ -80,7 +80,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                 Set<TopicPartition> partitions = consumer.assignment();
                 for (TopicPartition partition : partitions) {
                     if (partition.partition() == 0) {
-                        this.consumer.seek(partition, 2000);
+                        this.consumer.seek(partition, 2900);
                     }
                 }
                 */

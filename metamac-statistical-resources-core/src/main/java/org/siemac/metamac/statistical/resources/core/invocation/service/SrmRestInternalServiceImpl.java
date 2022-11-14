@@ -38,6 +38,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElement;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -425,6 +426,26 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
         }
     }
 
+ // -------------------------------------------------------------------------------------------------
+    // VARIABLE ELEMENTS
+    // -------------------------------------------------------------------------------------------------
+
+    @Override
+    public VariableElement retrieveVariableElement(String variableElementUrn) throws MetamacException {
+        if (StringUtils.isBlank(variableElementUrn)) {
+            throw new MetamacException(ServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionParameters.URN);
+        }
+
+        try {
+            String[] urnSplited = UrnUtils.splitUrnByDots(UrnUtils.splitUrnItem(variableElementUrn)[0]);
+            String variableID = urnSplited[0];
+            String resourceID = urnSplited[1];
+            return restApiLocator.getSrmRestInternalFacadeV10().retrieveVariableElementById(variableID, resourceID);
+        } catch (Exception e) {
+            throw manageSrmInternalRestException(e);
+        }
+    }
+    
     // -------------------------------------------------------------------------------------------------
     // ORGANISATION SCHEMES
     // -------------------------------------------------------------------------------------------------

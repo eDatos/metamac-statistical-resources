@@ -12,8 +12,8 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 
 public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceImpl implements StatisticalResourcesConfiguration {
 
-    final String STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP = "STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP";
-    final String STATISTICAL_RESOURCES_CUSTOM_JAXI_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_JAXI_MESSAGES_GROUP";
+    final String STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
+    final String STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
     
     @Override
     public Map<KeyDotEnum, String> retrieveDotCodeMapping() throws MetamacException {
@@ -69,19 +69,14 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     public String retrieveDbDataViewsRole() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DATA_VIEWS_ROLE);
     }
-    
+        
     @Override
-    public String retrieveKafkaExternalPublicationsTopicName() throws MetamacException {
-        return retrieveProperty(StatisticalResourcesConfigurationConstants.EXTERNAL_PUBLICATIONS_TOPIC_NAME);
+    public String retrieveKafkaExternalDatasetPublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP; 
     }
     
     @Override
-    public String retrieveKafkaJaxiMessagesGroup() throws MetamacException {
-        return STATISTICAL_RESOURCES_JAXI_MESSAGES_GROUP; 
-    }
-    
-    @Override
-    public String retrieveKafkaCustomJaxiMessagesGroup() throws MetamacException {
-        return STATISTICAL_RESOURCES_CUSTOM_JAXI_MESSAGES_GROUP; 
+    public String retrieveKafkaCustomExternalDatasetPublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP; 
     }
 }

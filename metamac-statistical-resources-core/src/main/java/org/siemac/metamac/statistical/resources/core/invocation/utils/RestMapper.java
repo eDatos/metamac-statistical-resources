@@ -14,6 +14,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElement;
 import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
@@ -23,6 +24,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedStri
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -66,25 +68,28 @@ public class RestMapper {
         return externalItems;
     }
 
-    public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException {
+    public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, SrmRestInternalService srmRestInternalService) throws MetamacException {
         List<ExternalItem> externalItems = new ArrayList<ExternalItem>();
         for (ExternalItemAvro externalAvro : jaxiDatasetVersionAvro.getGeographicCoverage()) {
             TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
 
             if (TypeExternalArtefactsEnum.VARIABLE_ELEMENT.equals(externalItemType)) {
                 ExternalItem externalItem = new ExternalItem();
-
                 externalItem.setType(externalItemType);
 
                 externalItem.setCode(externalAvro.getCode());
                 externalItem.setCodeNested(externalAvro.getCodeNested());
 
-                // TODO EDATOS-3770 VER SI NECESARIO URI Y MANAGEMENTAPPURL
-                /// latest/variables/VR_TERRITORIO/variableelements/CCAA_CANARIAS
-                // externalItem.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(externalAvro.getType(), resource.getSelfLink().getHref()));
-                externalItem.setUri("FIXME EDATOS-3770 RELLENAR");
+                try {
+                    VariableElement variableElement = srmRestInternalService.retrieveVariableElement(externalAvro.getUrn());
+                    externalItem.setUri(variableElement.getSelfLink().getHref());
+                    externalItem.setManagementAppUrl(variableElement.getManagementAppLink());
+                } catch (Exception e) {
+                    externalItem.setUri("-");
+                    externalItem.setManagementAppUrl("-");
+                }
+
                 externalItem.setUrn(externalAvro.getUrn());
-                // externalItem.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(externalAvro.getType(), resource.getManagementAppLink()));
                 externalItem.setTitle(getInternationalStringFromInternationalStringAvro(externalAvro.getTitle()));
                 externalItems.add(externalItem);
             }

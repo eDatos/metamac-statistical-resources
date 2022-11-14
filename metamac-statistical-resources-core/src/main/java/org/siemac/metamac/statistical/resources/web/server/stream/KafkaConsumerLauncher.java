@@ -73,8 +73,8 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Map<String, Future<?>>         futuresMap;
     
     private Cache                          kafkaFailedMessagesCache;
-    private static final String            CONSUMER_JAXI_MESSAGES_1_NAME   = "statistical_resources_consumer_jaxi_publication_1";
-    private static final String            CONSUMER_JAXI_CUSTOM_MESSAGE_NAME   = "statistical_resources_consumer_jaxi_publication_2";
+    private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME   = "statistical_resources_consumer_jaxi_publication_1";
+    private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME   = "statistical_resources_consumer_jaxi_publication_2";
     private static final String            KAFKA_FAILED_CACHE_NAME = "kafkaFailed";
     
     @Override
@@ -89,8 +89,9 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
                 futuresMap = new HashMap<>();
                 
-                if (Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName()))) {
-                futuresMap.put(CONSUMER_JAXI_MESSAGES_1_NAME, startConsumerForJaxiTopic(ac));
+                String externalPublicationTopicName = getExternalDatasetPublicationTopic();
+                if (externalPublicationTopicName != null && Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, externalPublicationTopicName))) {
+                futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(ac, externalPublicationTopicName));
                 }
                 
                 if (!futuresMap.isEmpty()) {
@@ -111,91 +112,102 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
         return Boolean.FALSE;
     }
-        
+
+    private String getExternalDatasetPublicationTopic() {
+        try {
+            // The topic can not be enabled in some environments.
+            return statisticalResourcesConfiguration.retrieveKafkaTopicExternalDatasetPublication();
+        } catch (Exception e) {
+            LOGGER.info("getExternalDatasetPublicationTopic not found. Check if must exists in common metadata");
+        }
+        return null;
+    }
+
     public void createCustomConsumer() throws MetamacException {
-        String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
-        try (KafkaConsumer<String, DatasetAvro> consumer = createCustomConsumerFromCurrentOffset(statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName(),
-                CONSUMER_JAXI_CUSTOM_MESSAGE_NAME);) {
-            consumer.subscribe(Collections.singleton(topicJaxiPublication), new ConsumerRebalanceListener() {
+        String externalPublicationTopicName = getExternalDatasetPublicationTopic();
+        if (externalPublicationTopicName != null) {
+            try (KafkaConsumer<String, DatasetAvro> consumer = createCustomConsumerFromCurrentOffset(externalPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME);) {
+                consumer.subscribe(Collections.singleton(externalPublicationTopicName), new ConsumerRebalanceListener() {
 
-                @Override
-                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-                }
-
-                @Override
-                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                    consumer.seekToBeginning(partitions);
-                }
-            });
-
-            boolean keepOnReading = true;
-            long startTime = System.currentTimeMillis(); //fetch starting time
-            
-            Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
-            
-            while (keepOnReading) {
-                ConsumerRecords<String, DatasetAvro> records = consumer.poll(100);
-                
-                if (records.count() > 1) {
-                    LOGGER.error(MAX_POOL_MSG);
-                    throw new RuntimeException(MAX_POOL_MSG);
-                }
-
-                if (records.isEmpty()) {
-                    continue;
-                }
-
-                // Process resources
-                ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
-
-                if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
-                    LOGGER.debug("The current message already processed successfully");
-                    if (commitSync(consumer, record)) {
-                        pendigOffsetsToCommit.remove(record.partition());
-                        removeFromErrorCacheMessagesIfNeccesary(record);
+                    @Override
+                    public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
                     }
-                    continue;
-                }
 
-                StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
+                    @Override
+                    public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                        consumer.seekToBeginning(partitions);
+                    }
+                });
+
+                boolean keepOnReading = true;
+                long startTime = System.currentTimeMillis(); // fetch starting time
+
+                Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
+
+                while (keepOnReading) {
+                    ConsumerRecords<String, DatasetAvro> records = consumer.poll(100);
+
+                    if (records.count() > 1) {
+                        LOGGER.error(MAX_POOL_MSG);
+                        throw new RuntimeException(MAX_POOL_MSG);
+                    }
+
+                    if (records.isEmpty()) {
+                        continue;
+                    }
+
+                    // Process resources
+                    ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
+
+                    if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
+                        LOGGER.debug("The current message already processed successfully");
+                        if (commitSync(consumer, record)) {
+                            pendigOffsetsToCommit.remove(record.partition());
+                            removeFromErrorCacheMessagesIfNeccesary(record);
+                        }
+                        continue;
+                    }
+
+                    StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
                 // @formatter:off
                 logMessageBldr
-                    .append(topicJaxiPublication)
+                    .append(externalPublicationTopicName)
                     .append(", Partition: ").append(record.partition())
                     .append(", Offset: ").append(record.offset())
                     .append(", TimestampType: ").append(record.timestampType())
                     .append(", Timestamp: ").append(record.timestamp())
                     .append(" [").append(new DateTime(record.timestamp(), DateTimeZone.forID("Atlantic/Canary"))).append("]");
                 // @formatter:on
-                String logMessage = logMessageBldr.toString();
-                
-                pendigOffsetsToCommit.put(record.partition(), record.offset());
-                
-                LOGGER.info(logMessage.toString());
-                try {
-                    ServiceContext serviceContext = createServiceContext(logMessage);
-  
-                    statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
-                    
-                    commitSync(consumer, record);
-        
-                } catch (Exception e) {
-                    LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
+                    String logMessage = logMessageBldr.toString();
 
-                    // Send a error notification, the error message will send only if not exist in error cache
-                    sendErrorMessageIfNeccesary(record);
+                    pendigOffsetsToCommit.put(record.partition(), record.offset());
 
-                    LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
-                } finally {
-                    if ((System.currentTimeMillis()-startTime) < CONSUMER_TIMEOUT_PROCESS) {
-                        keepOnReading = false;
+                    LOGGER.info(logMessage.toString());
+                    try {
+                        ServiceContext serviceContext = createServiceContext(logMessage);
+
+                        statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
+
+                        commitSync(consumer, record);
+
+                    } catch (Exception e) {
+                        LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
+
+                        // Send a error notification, the error message will send only if not exist in error cache
+                        sendErrorMessageIfNeccesary(record);
+
+                        LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
+                    } finally {
+                        if ((System.currentTimeMillis() - startTime) < CONSUMER_TIMEOUT_PROCESS) {
+                            keepOnReading = false;
+                        }
                     }
-                }
-                
-            }
 
-        } catch (Exception e) {
-            LOGGER.error(e, e.getCause());
+                }
+
+            } catch (Exception e) {
+                LOGGER.error(e, e.getCause());
+            }
         }
     }
         
@@ -243,7 +255,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Properties getCustomonsumerProperties(String clientId) throws MetamacException {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, statisticalResourcesConfiguration.retrieveKafkaCustomJaxiMessagesGroup());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, statisticalResourcesConfiguration.retrieveKafkaCustomExternalDatasetPublicationMessagesGroup());
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, io.confluent.kafka.serializers.KafkaAvroDeserializer.class);
@@ -276,10 +288,10 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     }
     
     @SuppressWarnings({"unchecked", "rawtypes"})
-    private Future<?> startConsumerForJaxiTopic(ApplicationContext context) throws MetamacException {
-        String topicJaxiPublication = statisticalResourcesConfiguration.retrieveKafkaExternalPublicationsTopicName();
+    private Future<?> startConsumerForExternalDatasetPublicationTopic(ApplicationContext context, String externalPublicationTopicName) throws MetamacException {
+        String topicJaxiPublication = externalPublicationTopicName;
         KafkaConsumerThread<DatasetAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
-        KafkaConsumer<String, DatasetAvro> consumerFromBegin = createConsumerFromCurrentOffset(topicJaxiPublication, CONSUMER_JAXI_MESSAGES_1_NAME);
+        KafkaConsumer<String, DatasetAvro> consumerFromBegin = createConsumerFromCurrentOffset(topicJaxiPublication, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME);
         consumerThread.setConsumer(consumerFromBegin);
         consumerThread.setTopicName(topicJaxiPublication);
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
@@ -291,7 +303,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Properties getConsumerProperties(String clientId) throws MetamacException {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, statisticalResourcesConfiguration.retrieveKafkaJaxiMessagesGroup());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, statisticalResourcesConfiguration.retrieveKafkaExternalDatasetPublicationMessagesGroup());
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, io.confluent.kafka.serializers.KafkaAvroDeserializer.class);
@@ -318,20 +330,25 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
         @Override
         public void run() {
-            while (alwaysWithDelay(1000)) {
+            String externalPublicationTopicName = getExternalDatasetPublicationTopic();
+            if (externalPublicationTopicName != null) {
+                while (alwaysWithDelay(1000)) {
 
-                for (Map.Entry<String, Future<?>> entry : futuresMap.entrySet()) {
-                    if (entry.getValue().isDone()) {
-                        LOGGER.info("El consumidor " + entry.getKey() + " se ha desconectado. Planificando otro consumidor para el mismo Topic...");
-                        try {
-                            if (CONSUMER_JAXI_MESSAGES_1_NAME.equals(entry.getKey())) {
-                                    futuresMap.put(CONSUMER_JAXI_MESSAGES_1_NAME, startConsumerForJaxiTopic(ApplicationContextProvider.getApplicationContext()));
+                    for (Map.Entry<String, Future<?>> entry : futuresMap.entrySet()) {
+                        if (entry.getValue().isDone()) {
+                            LOGGER.info("El consumidor " + entry.getKey() + " se ha desconectado. Planificando otro consumidor para el mismo Topic...");
+                            try {
+                                if (CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+
+                                    futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME,
+                                            startConsumerForExternalDatasetPublicationTopic(ApplicationContextProvider.getApplicationContext(), externalPublicationTopicName));
+                                }
+
+                            } catch (Exception e) {
+                                long retyrMS = 6000;
+                                LOGGER.error("Imposible replanificar consumidores de Kafka. Volviendolo a intentar en " + retyrMS + "ms", e);
+                                alwaysWithDelay(60000);
                             }
-
-                        } catch (Exception e) {
-                            long retyrMS = 6000;
-                            LOGGER.error("Imposible replanificar consumidores de Kafka. Volviendolo a intentar en " + retyrMS + "ms", e);
-                            alwaysWithDelay(60000);
                         }
                     }
                 }
