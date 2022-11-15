@@ -211,7 +211,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (isFileZip) {
             // If the uploaded file is a zip, the mapping cannot be set by the user. That's why the mappings are not stored in this case.
             storeDimensionsMapping = false;
-            filesToImport = ZipUtils.unzipArchiveDetectCharset(uploadedFile, outputFolder);
+            filesToImport = ZipUtils.unzipArchive(uploadedFile, outputFolder);
         } else {
             storeDimensionsMapping = true;
             filesToImport.add(uploadedFile);
