@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
@@ -108,6 +110,7 @@ import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImport
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.CodeDimensionEqualsIdentifierPredicate;
+import org.siemac.metamac.statistical.resources.core.utils.predicates.ExternalItemEqualsIdentifierPredicate;
 import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeDimensionToCodeStringTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1518,7 +1521,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             for (DsdAttribute dsdAttribute : attributes) {
                 if (dsdAttribute.isAttributeAtObservationLevel()) {
                     List<String> values = attrCoverages.get(dsdAttribute.getComponentId());
-                    processAttributeCoverage(resource, dsdAttribute, values, Boolean.TRUE);
+                    processAttributeCoverage(resource, dsdAttribute, values);
                 }
             }
         } catch (ApplicationException e) {
@@ -1531,22 +1534,24 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             List<String> values = statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId(),
                     StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
-            processAttributeCoverage(resource, dsdAttribute, values, Boolean.FALSE);
+            processAttributeCoverage(resource, dsdAttribute, values);
         } catch (ApplicationException e) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "Error retrieving values for attribute " + dsdAttribute.getComponentId());
         }
     }
 
-    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, List<String> values, boolean copyItemAsIdentifier) throws MetamacException {
+    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, List<String> values) throws MetamacException {
         String attributeId = dsdAttribute.getComponentId();
 
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
         if (values != null) {
             List<ExternalItem> items = buildExternalItemsBasedOnCodeIdentifiers(values, dsdAttribute);
+            String locale = configurationService.retrieveLanguageDefault();
 
-            attrValues = buildAttributeValues(attributeId, values, resource, copyItemAsIdentifier);
-            if (items != null) {
-                addTranslationsToAttributeValuesFromExternalItems(attrValues, items);
+            attrValues = buildAttributeValues(attributeId, values, resource, items, locale);
+
+            if (CollectionUtils.isNotEmpty(items)) {
+                addTranslationsToAttributeValuesFromExternalItems(attrValues, items, locale);
             }
 
         }
@@ -1558,7 +1563,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion, boolean copyItemAsIdentifier) {
+    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion, List<ExternalItem> externalItems, String locale) {
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
 
         Set<String> uniqueValues = new HashSet<String>(values);
@@ -1567,13 +1572,28 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             @Override
             public AttributeValue transformItem(String item) {
+
+                boolean canSetUuidAsIdentifier = canSetUuidAsIdentifier(item, externalItems);
+
                 AttributeValue result = new AttributeValue();
-                result.setIdentifier(copyItemAsIdentifier ? item : UUID.randomUUID().toString());
+                result.setIdentifier(canSetUuidAsIdentifier ? UUID.randomUUID().toString() : item);
                 result.setTitle(item);
                 result.setDsdComponentId(attributeId);
                 result.setDatasetVersion(datasetVersion);
                 return result;
             }
+
+            private boolean canSetUuidAsIdentifier(String item, List<ExternalItem> externalItems) {
+                if (CollectionUtils.isNotEmpty(externalItems)) {
+                    ExternalItem externalItem = MetamacCollectionUtils.find(externalItems, new ExternalItemEqualsIdentifierPredicate(item));
+                    if (externalItem != null && externalItem.getTitle().getLocalisedLabel(locale) == null) {
+                        return Boolean.FALSE;
+                    }
+                }
+
+                return Boolean.TRUE;
+            }
+
         });
         return attrValues;
     }
@@ -1668,8 +1688,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void addTranslationsToAttributeValuesFromExternalItems(List<AttributeValue> values, List<ExternalItem> externalItems) throws MetamacException {
-        String locale = configurationService.retrieveLanguageDefault();
+    private void addTranslationsToAttributeValuesFromExternalItems(List<AttributeValue> values, List<ExternalItem> externalItems, String locale) throws MetamacException {
         for (ExternalItem externalItem : externalItems) {
             for (AttributeValue attrValue : values) {
                 if (attrValue.getIdentifier().equals(externalItem.getCode())) {
