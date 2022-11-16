@@ -216,8 +216,8 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.addTemporalGranularity(mockCodeExternalItemDto());
         datasetVersionDto.addTemporalGranularity(mockCodeExternalItemDto());
 
-        datasetVersionDto.setDateStart(mockDate());
-        datasetVersionDto.setDateEnd(mockDate());
+        datasetVersionDto.setDateStart(CoreCommonUtil.jodaDateTime2IsoDate(mockDate()));
+        datasetVersionDto.setDateEnd(CoreCommonUtil.jodaDateTime2IsoDate(mockDate()));
 
         datasetVersionDto.addStatisticalUnit(mockConceptExternalItemDto());
         datasetVersionDto.addStatisticalUnit(mockConceptExternalItemDto());

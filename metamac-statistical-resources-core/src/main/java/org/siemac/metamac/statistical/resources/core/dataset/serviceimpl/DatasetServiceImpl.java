@@ -1453,8 +1453,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         TemporalCode start = temporalCoverage.get(temporalCoverage.size() - 1);
         TemporalCode end = temporalCoverage.get(0);
 
-        resource.setDateStart(temporalCodeToDateTimeStart(start));
-        resource.setDateEnd(temporalCodeToDateTimeEnd(end));
+        resource.setDateStart(setDateInSdmx(temporalCodeToDateTimeStart(start)));
+        resource.setDateEnd(setDateInSdmx(temporalCodeToDateTimeEnd(end)));
     }
 
     private DateTime temporalCodeToDateTimeStart(TemporalCode temporalCode) {

@@ -39,7 +39,7 @@ public class DatasetVersionDo2AvroMapper {
 
         DatasetVersionAvro target = DatasetVersionAvro.newBuilder()
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
-                .setDateStart(DateTimeDo2AvroMapper.do2Avro(source.getDateStart())).setDateEnd(DateTimeDo2AvroMapper.do2Avro(source.getDateEnd()))
+                .setDateStart(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart())).setDateEnd(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd()))
                 .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions())
                 .setDateNextUpdate(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
                 .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd()))
