@@ -320,8 +320,8 @@ public class DatasetVersioningServiceTest extends StatisticalResourcesBaseTest {
         assertEqualsExternalItemCollection(previous.getGeographicGranularities(), next.getGeographicGranularities());
         assertEqualsExternalItemCollection(previous.getTemporalGranularities(), next.getTemporalGranularities());
 
-        assertEqualsDate(previous.getDateStart(), next.getDateStart());
-        assertEqualsDate(previous.getDateEnd(), next.getDateEnd());
+        assertEquals(previous.getDateStart(), next.getDateStart());
+        assertEquals(previous.getDateEnd(), next.getDateEnd());
 
         assertEqualsExternalItemCollection(previous.getStatisticalUnit(), next.getStatisticalUnit());
 

@@ -350,8 +350,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
                 List<String> sortedTempCodes = new ArrayList<String>();
                 StatisticalResourcesCollectionUtils.mapCollection(temporalCodes, sortedTempCodes, new CodeDimensionToCodeStringTransformer());
                 sortedTempCodes = SdmxTimeUtils.sortTimeList(sortedTempCodes);
-                datasetVersion.setDateStart(SdmxTimeUtils.calculateDateTimes(sortedTempCodes.get(0))[0]);
-                datasetVersion.setDateEnd(SdmxTimeUtils.calculateDateTimes(sortedTempCodes.get(sortedTempCodes.size() - 1))[0]);
+                datasetVersion.setDateStart(sortedTempCodes.get(0));
+                datasetVersion.setDateEnd(sortedTempCodes.get(sortedTempCodes.size() - 1));
             }
         }
 
