@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.server.servlet;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -25,12 +24,10 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.fileupload.disk.DiskFileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
@@ -49,6 +46,7 @@ import com.google.inject.Singleton;
 @SuppressWarnings("serial")
 public class DatasourceImportationServlet extends BaseHttpServlet {
 
+    private static final String UTF_8 = "UTF-8";
     private static Logger           logger                                  = Logger.getLogger(DatasourceImportationServlet.class.getName());
     protected static final String[] FIELDS_VERSIONABLE_STATISTICAL_RESOURCE_DTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
             StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,
@@ -89,7 +87,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             factory.setRepository(tmpDir);
 
             ServletFileUpload upload = new ServletFileUpload(factory);
-            upload.setHeaderEncoding("UTF-8");
+            upload.setHeaderEncoding(UTF_8);
             // Parse the request
             List items = upload.parseRequest(request);
 

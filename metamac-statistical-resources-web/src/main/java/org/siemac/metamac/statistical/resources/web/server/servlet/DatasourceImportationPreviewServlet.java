@@ -24,12 +24,12 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
 import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepresentationMappingDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.server.rest.SrmRestInternalFacadeImpl;
@@ -81,8 +81,7 @@ public class DatasourceImportationPreviewServlet extends BaseHttpServlet {
             // Get the temporary directory (this is where files that exceed the threshold will be stored)
             factory.setRepository(tmpDir);
 
-            ServletFileUpload upload = new ServletFileUpload(factory);
-            upload.setHeaderEncoding("UTF-8");
+            ServletFileUpload upload = new ServletFileUpload(factory);        
 
             // Parse the request
             List items = upload.parseRequest(request);
