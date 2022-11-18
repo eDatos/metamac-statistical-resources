@@ -798,6 +798,54 @@
             <xs:element name="emails" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
+   
+    <!-- RESOURCES ENTITY --> 
+    <!-- Lists -->
+    <xs:complexType name="Resources">
+        <xs:complexContent>
+            <xs:extension base="common:ListBase">
+                <xs:sequence>
+                    <xs:element name="resource" type="tns:Resource" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+    <xs:complexType name="Resource">
+        <xs:sequence>
+        	<xs:element name="resourceID" type="tns:ItemBase" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" />
+            <xs:element name="selfLink" type="common:ResourceLink" />
+            <xs:element name="managementAppLink" type="xs:string" />
+            <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="statisticalOperation" type="tns:ItemBase" />
+        </xs:sequence>
+        <xs:attribute name="kind" type="xs:string" use="required" />
+    </xs:complexType>
+    
+    <xs:complexType name="ItemBase">
+        <xs:sequence>
+ 			<xs:element name="id" type="xs:string" />
+            <xs:element name="urn" type="xs:string" />
+            <xs:element name="name" type="common:InternationalString" />
+            <xs:element name="type" type="xs:string" />
+        </xs:sequence>
+    </xs:complexType>
+    
+     <xs:simpleType name="ResourcesCriteriaPropertyOrder">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="ID" />
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!-- Criterias -->
+    <xs:simpleType name="ResourcesCriteriaPropertyRestriction">
+        <xs:restriction base="xs:token">
+        	<xs:enumeration value="URN" />
+            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
+            <xs:enumeration value="GEOCOV_VARELEM_ID" />
+        </xs:restriction>
+    </xs:simpleType>
     
     <!-- Elements -->
     <xs:element name="dataset" type="tns:Dataset" />
@@ -808,4 +856,6 @@
     <xs:element name="queries" type="tns:Queries" />
     <xs:element name="multidataset" type="tns:Multidataset" />
     <xs:element name="multidatasets" type="tns:Multidatasets" />
+    <xs:element name="resource" type="tns:Resource" />
+    <xs:element name="resources" type="tns:Resources" />
 </xs:schema>

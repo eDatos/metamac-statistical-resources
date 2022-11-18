@@ -109,7 +109,6 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.V
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
-import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.InternationalStringDo2AvroMapper;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
@@ -123,6 +122,7 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.validators.
 import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
+import org.siemac.metamac.statistical.resources.core.utils.MetamacPortalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -166,7 +166,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_TRIGGER_IMPORT_DATA          = "trigger_importdata_";
     public static final String                PREFIX_TRIGGER_RECOVERY_IMPORT_DATA = "trigger_recoveryimportdata_";
     public static final String                GROUP_IMPORTATION                   = "importation";
-
+   
     @Autowired
     private TaskServiceInvocationValidator    taskServiceInvocationValidator;
 
@@ -221,7 +221,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     
     @Autowired
     StreamMessagingServiceFacade  streamMessagingServiceFacade;
-    
+       
     private SchedulerFactory                  schedulerFactory                    = null;
 
     
@@ -1051,7 +1051,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
 
             ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
-            updateGeographicCoverageVariableElementsCache(datasetVersionUrn, territoryVariableElement);
+            updateGeographicCoverageVariableElementsCache(datasetVersion, territoryVariableElement);
             
         }
 
@@ -1120,7 +1120,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         markTaskAsFinished(ctx, jobKey);
     }
-    */
+
     public es.ibestat.jaxi.stream.messages.ExternalItemAvro do2Avro(ExternalItem source) {
         es.ibestat.jaxi.stream.messages.ExternalItemAvro target = null;
         if (source != null) {
@@ -1135,15 +1135,22 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return target;
 
     }
+    */
     
-    private void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn, ExternalItem variableElement) {
+    private void updateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, ExternalItem variableElement) throws MetamacException {
         GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
-        geoCovVarElementCacheDatasetVersion.setDatasetVersionUrn(datasetVersionUrn);
-        geoCovVarElementCacheDatasetVersion.setExternalItem(variableElement);
+        geoCovVarElementCacheDatasetVersion.setCode(datasetVersion.getSiemacMetadataStatisticalResource().getCode());
+        geoCovVarElementCacheDatasetVersion.setUrn(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        geoCovVarElementCacheDatasetVersion.setTitle(datasetVersion.getSiemacMetadataStatisticalResource().getTitle());        
+        geoCovVarElementCacheDatasetVersion.setOperationCode(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+        geoCovVarElementCacheDatasetVersion.setOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
+        geoCovVarElementCacheDatasetVersion.setOperationTitle(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
+        geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.FALSE);
+        geoCovVarElementCacheDatasetVersion.setHtmlLink(MetamacPortalUtils.buildDatasetVersionUrl(datasetVersion, configurationService));
         geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
-    
+ 
     private void processRollbackDuplicationTask(ServiceContext ctx, Task task) throws MetamacException {
         markTaskAsFinished(ctx, task.getJob());
     }

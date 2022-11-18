@@ -20,7 +20,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
     public List<GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(
         String datasetVersionUrn) {
 
-        List<ConditionalCriteria> condition = criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.datasetVersionUrn()).eq(datasetVersionUrn).distinctRoot().build();
+        List<ConditionalCriteria> condition = criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.urn()).eq(datasetVersionUrn).distinctRoot().build();
 
         return findByCondition(condition);
 

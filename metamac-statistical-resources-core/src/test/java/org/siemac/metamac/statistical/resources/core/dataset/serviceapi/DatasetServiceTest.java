@@ -672,6 +672,14 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     @Override
     @Test
     @MetamacMock({DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME, DATASET_01_BASIC_NAME, DATASET_VERSION_01_BASIC_NAME})
+    public void testFindResourcesByCondition() throws Exception {
+       // TODO EDATOS-3770 PENDIENTE TEST
+       
+    }
+    
+    @Override
+    @Test
+    @MetamacMock({DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME, DATASET_01_BASIC_NAME, DATASET_VERSION_01_BASIC_NAME})
     public void testDeleteDatasetVersion() throws Exception {
         String urn = getResourceUrn(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME));
 

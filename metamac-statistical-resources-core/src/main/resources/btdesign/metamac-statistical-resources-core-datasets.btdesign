@@ -54,6 +54,10 @@ Application DatasetsStatisticalResources {
     		PagedResult<@DatasetVersion> findDatasetVersionsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
+
+			"Finds resource from caché by criteria"
+			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+			
     		
     		"Link a dataset view to the latest version of the indicator"
 	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;
@@ -431,10 +435,16 @@ Application DatasetsStatisticalResources {
 			!optimisticLocking
 
 			Long id not nullable key;
-			
-			String datasetVersionUrn databaseColumn="dataset_version_urn" not nullable;
-			- @ExternalItem externalItem cascade="all" databaseColumn="external_item_fk" not nullable;
+			String code databaseColumn="code" not nullable;
+			String urn databaseColumn="urn" not nullable;
+			- @InternationalString title cascade="all" databaseColumn="title_fk" nullable;
+			- @ExternalItem variableElement cascade="all" databaseColumn="variable_element_fk" not nullable;
+			String operationCode databaseColumn="operation_code";
+			String operationUrn databaseColumn="operation_urn";
+			- @InternationalString operationTitle cascade="all" databaseColumn="operation_title_fk" nullable;
+			String htmlLink databaseColumn="htmlLink";
 			boolean isExternalSource databaseColumn="is_external_source" not nullable;
+			
 			
 			Repository GeoCovVarElementCacheDatasetVersionRepository {
 				save;

@@ -121,7 +121,7 @@ public class RestMapper {
         return buildExternalItemFromSrmItemResourceInternal(code);
     }
 
-    private InternationalString getInternationalStringFromInternationalStringAvro(InternationalStringAvro internationalStringAvro) {
+    public InternationalString getInternationalStringFromInternationalStringAvro(InternationalStringAvro internationalStringAvro) {
         InternationalString result = new InternationalString();
         List<InternationalStringItemAvro> internationalStringItemAvro = internationalStringAvro.getLocalisedStrings();
 
