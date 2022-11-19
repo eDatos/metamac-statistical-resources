@@ -835,6 +835,7 @@
      <xs:simpleType name="ResourcesCriteriaPropertyOrder">
         <xs:restriction base="xs:token">
             <xs:enumeration value="ID" />
+            <xs:enumeration value="STATISTICAL_OPERATION_ID" />  
         </xs:restriction>
     </xs:simpleType>
     

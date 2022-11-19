@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.resources;
+package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources;
 
 import java.util.List;
 
@@ -7,13 +7,13 @@ import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ItemBase;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Resource;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Resources;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.ItemBase;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Resource;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Resources;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
-import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
-import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
+import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +23,8 @@ import org.springframework.stereotype.Component;
 public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 {
 
     // TODO EDATOS-3770 PONER ESTAS CONSTANTES EN API-COMMON
-    public static String       KIND_RESOURCES                      = StatisticalResourcesRestInternalConstants.API_NAME + StatisticalResourcesRestInternalConstants.KIND_SEPARATOR + "resources";
-    public static String       KIND_RESOURCE                        = StatisticalResourcesRestInternalConstants.API_NAME + StatisticalResourcesRestInternalConstants.KIND_SEPARATOR + "resource";
+    public static String       KIND_RESOURCES                      = StatisticalResourcesRestExternalConstants.API_NAME + StatisticalResourcesRestExternalConstants.KIND_SEPARATOR + "resources";
+    public static String       KIND_RESOURCE                        = StatisticalResourcesRestExternalConstants.API_NAME + StatisticalResourcesRestExternalConstants.KIND_SEPARATOR + "resource";
     public static String       LINK_SUBPATH_RESOURCES               = "resources";
     @Autowired
     private CommonDo2RestMapperV10   commonDo2RestMapper;
@@ -36,7 +36,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
     public Resources toResources(PagedResult<GeoCovVarElementCacheDatasetVersion> sources, String query, String orderBy, Integer limit, List<String> selectedLanguages) {
 
         Resources targets = new Resources();
-        targets.setKind(StatisticalResourcesRestInternalConstants.KIND_DATASETS);
+        targets.setKind(StatisticalResourcesRestExternalConstants.KIND_DATASETS);
 
         // Pagination
         String baseLink =  toResourcesLink(TypeExternalArtefactsEnum.DATASET.getName());
@@ -57,7 +57,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         Resource target = new Resource();
         target.setResourceID(toItemBase(source.getCode(), source.getUrn(), source.getTitle(), TypeExternalArtefactsEnum.DATASET, selectedLanguages ));
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
-        target.setKind(StatisticalResourcesRestInternalConstants.KIND_DATASET);
+        target.setKind(StatisticalResourcesRestExternalConstants.KIND_DATASET);
         target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.DATASET.getName()));
         target.setVisualizerHtmlLink(source.getHtmlLink());
         target.setStatisticalOperation(toItemBase(source.getOperationCode(), source.getOperationUrn(), source.getOperationTitle(), TypeExternalArtefactsEnum.STATISTICAL_OPERATION, selectedLanguages ));
@@ -76,7 +76,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
     }
     
     private String toResourcesLink(String typeResource) {
-        String resourceSubpath = LINK_SUBPATH_RESOURCES +  StatisticalResourcesRestInternalConstants.KIND_SEPARATOR + typeResource.toLowerCase();
+        String resourceSubpath = LINK_SUBPATH_RESOURCES +  StatisticalResourcesRestExternalConstants.KIND_SEPARATOR + typeResource.toLowerCase();
         return commonDo2RestMapper.toResourceLink(resourceSubpath, null, null, null);
     }
     
@@ -90,11 +90,11 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
     
     private ResourceLink toResourceSelfLink(String agencyID, String resourceID, String version, String typeResource) {
         String link = toDatasetLink(agencyID, resourceID, version, typeResource);
-        return commonDo2RestMapper.toResourceLink(StatisticalResourcesRestInternalConstants.KIND_DATASET, link);
+        return commonDo2RestMapper.toResourceLink(StatisticalResourcesRestExternalConstants.KIND_DATASET, link);
     }
     
     private String toDatasetLink(String agencyID, String resourceID, String version, String typeResource) {
-        String resourceSubpath = LINK_SUBPATH_RESOURCES + StatisticalResourcesRestInternalConstants.KIND_SEPARATOR + typeResource.toLowerCase();
+        String resourceSubpath = LINK_SUBPATH_RESOURCES + StatisticalResourcesRestExternalConstants.KIND_SEPARATOR + typeResource.toLowerCase();
         return commonDo2RestMapper.toResourceLink(resourceSubpath, agencyID, resourceID, version);
     }
 }

@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.resources;
+package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources;
 
 import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
@@ -7,11 +7,11 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesCriteriaPropertyOrder;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesCriteriaPropertyRestriction;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.ResourcesCriteriaPropertyOrder;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.ResourcesCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
-import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.BaseRest2DoMapperV10Impl;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.BaseRest2DoMapperV10Impl;
 import org.springframework.stereotype.Component;
 
 @Component

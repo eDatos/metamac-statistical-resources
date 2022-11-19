@@ -27,6 +27,10 @@
       {
          "name":"Multidatasets estadísticos",
          "description":""
+      },
+      {
+         "name":"Otros recursos estadísticos",
+         "description":""
       }
    ],
    "definitions":{
@@ -4691,6 +4695,72 @@
                },
                "404":{
                   "description":"No encontrado. El recurso solicitado no existe."
+               },
+               "406":{
+                  "description":"No aceptable. El formato solicitado no es válido."
+               },
+               "500":{
+                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+               },
+               "503":{
+                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+               }
+            }
+         }
+      },
+      "/v1.0/resources":{
+         "get":{
+            "tags":[
+               "Otros recursos estadísticos"
+            ],
+            "description":"Permite obtener el listado de datasets cacheados por elemento de variable u operación estadística.",
+            "operationId":"resource__v1.0_resources_findResources_GET",
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "parameters":[
+               {
+                  "name":"lang",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+               },
+               {
+                  "name":"limit",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Número máximo de resultados a obtener"
+               },
+               {
+                  "name":"offset",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+               },
+               {
+                  "name":"orderBy",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+               },
+               {
+                  "name":"query",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID (dataset code), VARIABLE_ELEMENT_ID, STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               }
+            ],
+            "responses":{
+               "200":{
+                  "schema":{
+                     "description":"",
+                     "$ref":"#/definitions/Resources"
+                  },
+                  "headers":{
+
+                  },
+                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
                },
                "406":{
                   "description":"No aceptable. El formato solicitado no es válido."
