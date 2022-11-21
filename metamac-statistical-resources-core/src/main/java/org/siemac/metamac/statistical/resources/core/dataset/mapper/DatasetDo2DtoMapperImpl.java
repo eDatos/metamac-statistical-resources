@@ -24,6 +24,8 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepre
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
+import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.AvroMapperUtils;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -244,8 +246,8 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         target.getStatisticalUnit().clear();
         target.getStatisticalUnit().addAll(externalItemDoCollectionToDtoCollection(source.getStatisticalUnit()));
 
-        target.setDateStart(source.getDateStart());
-        target.setDateEnd(source.getDateEnd());
+        target.setDateStart(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart()).getLocalisedStrings().get(0).getLabel());
+        target.setDateEnd(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd()).getLocalisedStrings().get(0).getLabel());
 
         target.setRelatedDsd(externalItemDoToDto(source.getRelatedDsd()));
 
