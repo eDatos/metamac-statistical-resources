@@ -111,6 +111,7 @@ import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesC
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.CodeDimensionEqualsIdentifierPredicate;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.ExternalItemEqualsIdentifierPredicate;
+import org.siemac.metamac.statistical.resources.core.utils.shared.DatasetAttibuteSharedUtils;
 import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeDimensionToCodeStringTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1572,26 +1573,36 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             @Override
             public AttributeValue transformItem(String item) {
-
-                boolean canSetUuidAsIdentifier = canSetUuidAsIdentifier(item, externalItems);
-
                 AttributeValue result = new AttributeValue();
-                result.setIdentifier(canSetUuidAsIdentifier ? UUID.randomUUID().toString() : item);
+                result.setIdentifier(getAttributeIdentifier(item, externalItems));
                 result.setTitle(item);
                 result.setDsdComponentId(attributeId);
                 result.setDatasetVersion(datasetVersion);
                 return result;
             }
 
-            private boolean canSetUuidAsIdentifier(String item, List<ExternalItem> externalItems) {
+            private String getAttributeIdentifier(String item, List<ExternalItem> externalItems) {
+                // If there is an external item with the same value for the code attribute as the one passed in the item parameter,
+                // the identifier assigned will be the latter because the title of the attribute will be extracted from the title of the external item.
                 if (CollectionUtils.isNotEmpty(externalItems)) {
                     ExternalItem externalItem = MetamacCollectionUtils.find(externalItems, new ExternalItemEqualsIdentifierPredicate(item));
-                    if (externalItem != null && externalItem.getTitle().getLocalisedLabel(locale) == null) {
-                        return Boolean.FALSE;
+                    if (externalItem != null && externalItem.getTitle().getLocalisedLabel(locale) != null) {
+                        return item;
                     }
                 }
 
-                return Boolean.TRUE;
+                // If the length of the item parameter is less than the maximum value allowed in the database for the identifier (255),
+                // the latter is returned as the identifier
+                if (StringUtils.length(item) <= DatasetAttibuteSharedUtils.ATTRIBUTE_IDENTIFIER_MAXIMUM_SIZE) {
+                    return item;
+                }
+
+                // In any other case, if the size of the item parameter is greater than 255 and there is no variable element associated with it,
+                // the generated identifier will be a random uuid.
+                String uuidIdenfier = UUID.randomUUID().toString();
+                log.warn("Item can not be set as identifier because is too long: {} using uuid instead: {}", StringUtils.length(item), uuidIdenfier);
+
+                return uuidIdenfier;
             }
 
         });
