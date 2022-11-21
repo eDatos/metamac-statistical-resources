@@ -1457,18 +1457,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         resource.setDateEnd(end.getIdentifier());
     }
 
-    private DateTime temporalCodeToDateTimeStart(TemporalCode temporalCode) {
-        String timeCode = temporalCode.getIdentifier();
-        DateTime[] times = SdmxTimeUtils.calculateDateTimes(timeCode);
-        return times[0]; // start
-    }
-
-    private DateTime temporalCodeToDateTimeEnd(TemporalCode temporalCode) {
-        String timeCode = temporalCode.getIdentifier();
-        DateTime[] times = SdmxTimeUtils.calculateDateTimes(timeCode);
-        return times[1]; // start
-    }
-
     private void processDateNextUpdate(DatasetVersion resource) {
         if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)
                 && (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate()))) {
