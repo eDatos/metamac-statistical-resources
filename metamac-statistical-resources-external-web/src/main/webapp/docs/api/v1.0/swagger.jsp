@@ -3791,7 +3791,87 @@
             }
          ],
          "description":""
-      }
+      },
+	"ItemBase":{
+         "type":"object",
+         "title":"ItemBase",
+         "properties":{
+            "id":{
+               "description":"",
+               "type":"string",
+               required: true
+            },
+            "urn":{
+               "description":"",
+               "type":"string",
+               required: true
+            },
+            "name":{
+               "name":"",
+               "$ref":"#/definitions/InternationalString",
+               required: true       
+            },
+         },
+         "description":""
+      },	
+       "Resource":{
+         "type":"object",
+         "title":"Resource",
+         "properties":{
+            "resourceID":{
+               "description":"",
+               "$ref":"#/definitions/ItemBase",
+               required: true
+            },
+            "type":{
+               "description":"",
+               "type":"string"
+            },
+            "visualizerHtmlLink":{
+               "description":"",
+               "type":"string"
+            },
+            "selfLink":{
+               "description":"",
+               "$ref":"#/definitions/ResourceLink"
+            },
+            "selectedLanguages":{
+               "description":"",
+               "$ref":"#/definitions/SelectedLanguages",
+               required: true
+            },
+            "statisticalOperation":{
+               "description":"",
+               "$ref":"#/definitions/ItemBase"
+            },
+            "kind":{
+               "description":"",
+               "type":"string"
+            },
+         },
+         "description":""
+      },
+      "Resources":{
+         "type":"object",
+         "title":"Resources",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "resource":{
+                     "description":"",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Resource"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
    },
    "paths":{
       "/v1.0/collections":{
@@ -4748,7 +4828,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID (dataset code), VARIABLE_ELEMENT_ID, STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID (dataset code), GEOCOV_VARELEM_ID, STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
                }
             ],
             "responses":{

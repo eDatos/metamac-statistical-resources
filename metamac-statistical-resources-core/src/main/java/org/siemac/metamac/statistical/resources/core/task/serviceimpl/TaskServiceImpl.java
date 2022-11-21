@@ -110,7 +110,6 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.Lifecy
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
-import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
@@ -219,9 +218,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     @Autowired
     StreamConsumerServiceFacade streamConsumerServiceFacade;
     
+    /* TODO EDATOS-3770 QUITAR. SÓLO PARA PRUEBAS PRODUCTOR
     @Autowired
     StreamMessagingServiceFacade  streamMessagingServiceFacade;
-       
+      */ 
     private SchedulerFactory                  schedulerFactory                    = null;
 
     
@@ -1067,7 +1067,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         logger.debug("Updating geocoverage cache for external datasets (nonexistent in database)");
 
-        streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
+        streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx); //TODO EDATOS-3770 COMENTAR MOMENTANEAMENTE. PROBLEMA INTERCEPTOR
 
         logger.debug("Processing geographic coverage for external datasets (nonexistent in database) to create the cache correctly finished");
 

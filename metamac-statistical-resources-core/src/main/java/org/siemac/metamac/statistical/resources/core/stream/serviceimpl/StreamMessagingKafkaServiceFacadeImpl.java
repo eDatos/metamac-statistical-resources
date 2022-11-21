@@ -12,8 +12,6 @@ import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMes
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.ibestat.jaxi.stream.messages.DatasetAvro;
-
 @Service
 public class StreamMessagingKafkaServiceFacadeImpl implements StreamMessagingServiceFacade {
 
@@ -45,7 +43,7 @@ public class StreamMessagingKafkaServiceFacadeImpl implements StreamMessagingSer
             throw new MetamacException(e, ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER);
         }
     }
-
+/*
     @Override
     public void sendNewJaxiPublication(DatasetAvro msg) throws MetamacException { // TODO EDATOS-3770 QUITAR
         try {
@@ -54,7 +52,7 @@ public class StreamMessagingKafkaServiceFacadeImpl implements StreamMessagingSer
             throw new MetamacException(e, ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER);
         }
     }
-    
+  */  
     private void updateMessageStatus(HasSiemacMetadata version, StreamMessageStatusEnum status) {
         if (version != null) {
             version.getLifeCycleStatisticalResource().setPublicationStreamStatus(status);
