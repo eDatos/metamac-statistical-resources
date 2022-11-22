@@ -509,8 +509,12 @@
                 <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/monthly</ns2:managementAppLink>
             </ns2:resource>
         </ns2:temporalGranularities>
-        <ns2:dateStart>2013-01-02T03:04:05Z</ns2:dateStart>
-        <ns2:dateEnd>2013-03-05T06:07:08Z</ns2:dateEnd>
+        <ns2:dateStart>
+            <cdomain:text xml:lang="es">2013-01-02</cdomain:text>
+        </ns2:dateStart>
+        <ns2:dateEnd>
+            <cdomain:text xml:lang="es">2013-03-05</cdomain:text>
+        </ns2:dateEnd>
         <ns2:statisticalUnit total="3">
             <ns2:resource kind="structuralResources#concept">
                 <cdomain:id>statisticalUnit1</cdomain:id>

@@ -92,8 +92,8 @@ public class RestDoMocks {
         target.addGeographicGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("countries"));
         target.addTemporalGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("yearly"));
         target.addTemporalGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("monthly"));
-        target.setDateStart(new DateTime(2013, 1, 2, 3, 4, 5, 0));
-        target.setDateEnd(new DateTime(2013, 3, 5, 6, 7, 8, 0));
+        target.setDateStart(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 1, 2, 3, 4, 5, 0).toDate()));
+        target.setDateEnd(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 3, 5, 6, 7, 8, 0).toDate()));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit1"));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit2"));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit3"));
