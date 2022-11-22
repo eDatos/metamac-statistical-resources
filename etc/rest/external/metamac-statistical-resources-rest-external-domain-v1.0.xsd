@@ -783,6 +783,7 @@
         	<xs:enumeration value="URN" />
             <xs:enumeration value="STATISTICAL_OPERATION_URN" />
             <xs:enumeration value="GEOCOV_VARELEM_ID" />
+            <xs:enumeration value="IS_LAST_VERSION" />
         </xs:restriction>
     </xs:simpleType>
     

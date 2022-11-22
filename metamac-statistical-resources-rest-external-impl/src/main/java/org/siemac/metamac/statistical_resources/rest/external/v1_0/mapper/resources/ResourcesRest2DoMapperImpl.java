@@ -42,6 +42,8 @@ public class ResourcesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl impleme
                     return buildSculptorPropertyCriteria(GeoCovVarElementCacheDatasetVersionProperties.operationUrn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case GEOCOV_VARELEM_ID:
                     return buildSculptorPropertyCriteria(GeoCovVarElementCacheDatasetVersionProperties.variableElement().code(), PropertyTypeEnum.STRING, propertyRestriction);
+                case IS_LAST_VERSION:
+                    return buildSculptorPropertyCriteria(GeoCovVarElementCacheDatasetVersionProperties.isLastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);    
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }
