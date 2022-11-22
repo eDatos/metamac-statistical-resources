@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,11 +47,11 @@ import com.google.inject.Singleton;
 @SuppressWarnings("serial")
 public class DatasourceImportationServlet extends BaseHttpServlet {
 
-    private static Logger           logger                                  = Logger.getLogger(DatasourceImportationServlet.class.getName());
+    private static Logger           logger                                      = Logger.getLogger(DatasourceImportationServlet.class.getName());
     protected static final String[] FIELDS_VERSIONABLE_STATISTICAL_RESOURCE_DTO = new String[]{StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES,
             StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE, StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION,
-            StatisticalResourcesSharedTokens.UPLOAD_UPDATE_FREQUENCY, StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS,
-            StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS, StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER};
+            StatisticalResourcesSharedTokens.UPLOAD_UPDATE_FREQUENCY, StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS, StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS,
+            StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER};
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -86,7 +87,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             factory.setRepository(tmpDir);
 
             ServletFileUpload upload = new ServletFileUpload(factory);
-
+            upload.setHeaderEncoding(StandardCharsets.UTF_8.name());
             // Parse the request
             List items = upload.parseRequest(request);
 
@@ -106,9 +107,9 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             String tempZipFilePathName = inputStreamToTempFile(fileName, inputStream);
             File outputFolder = (File) getServletContext().getAttribute("javax.servlet.context.tempdir");
             File uploadedFile = new File(tempZipFilePathName);
-                       
+
             mustBeZip = BooleanUtils.toBoolean(args.get(StatisticalResourcesSharedTokens.UPLOAD_MUST_BE_ZIP_FILE));
-                       
+
             ImportableResourceTypeEnum importableResourceType = getImportableResourceType(args);
             if (ImportableResourceTypeEnum.PUBLICATION_VERSION_STRUCTURE.equals(importableResourceType)) {
                 importPublicationVersionStructure(uploadedFile, args);
@@ -147,11 +148,11 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     }
 
     private void fillBasicVersionableStatisticalResourceDto(DiskFileItem item, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws ParseException {
-        
+
         if (StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER.equals(item.getFieldName()) && !StringUtils.isEmpty(item.getString())) {
             getListDataProvidersUrnFromRequest(item.getString().split(","), basicVersionableStatisticalResourceDto);
         }
-        
+
         if (StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES.equals(item.getFieldName())) {
             getListVersionRationaleTypeFromRequest(item.getString().split(","), basicVersionableStatisticalResourceDto);
         }
@@ -163,19 +164,19 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setNextVersion(item.getString());
         }
-        
+
         if (StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setNextUpdateDate(item.getString());
         }
-        
+
         if (StatisticalResourcesSharedTokens.UPLOAD_UPDATE_FREQUENCY.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setUpdateFrequency(item.getString());
         }
-        
+
         if (StatisticalResourcesSharedTokens.UPLOAD_PROC_STATUS.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setNextProcStatus(item.getString());
         }
-        
+
         if (StatisticalResourcesSharedTokens.UPLOAD_HAS_EXTRA_FIELDS.equals(item.getFieldName())) {
             basicVersionableStatisticalResourceDto.setAutomaticLifeCicle(BooleanUtils.toBoolean(item.getString()));
         }
@@ -193,7 +194,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             basicVersionableStatisticalResourceDto.getDataProvidersUrn().add((itemDataProviderUrn));
         }
     }
-    
+
     private void importDatasource(Boolean mustBeZip, File uploadedFile, File outputFolder, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto)
             throws MetamacWebException, ZipException, IOException, MetamacException {
 
@@ -242,8 +243,8 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
 
     private void importPublicationVersionStructure(File uploadedFile, HashMap<String, String> args) throws MetamacException, MalformedURLException {
 
-        StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(
-                StatisticalResourcesServiceFacade.BEAN_ID);
+        StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext()
+                .getBean(StatisticalResourcesServiceFacade.BEAN_ID);
 
         String publicationVersionUrn = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_PUBLICATION_VERSION_URN);
         String language = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_LANGUAGE);
