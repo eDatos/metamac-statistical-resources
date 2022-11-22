@@ -276,7 +276,7 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
     }
 
     private String getLabelFromInternationalStringAvro(InternationalStringAvro internationalStringAvro) {
-        return internationalStringAvro != null ? internationalStringAvro.getLocalisedStrings().get(0).getLabel() : "";
+        return internationalStringAvro != null ? internationalStringAvro.getLocalisedStrings().get(0).getLabel() : null;
     }
     // ---------------------------------------------------------------------------------------------------------
     // STATISTIC OFFICIALITY
