@@ -82,6 +82,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.repository.api.DatabaseImportRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
@@ -1017,7 +1018,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(taskInfoDataset.getDatasetVersionId());
 
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
-        
+                
         logger.debug("Updating geocoverage cache for dataset {}", datasetVersionUrn);
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
 
@@ -1028,11 +1029,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         
         String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
-        
+           
         // discard all variable elements present in the array to avoid duplicated or outdated data
-        geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(datasetVersionUrn);
-
-
+        //geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(datasetVersionUrn); TODO EDATOS-3770
+        
+        if (Boolean.TRUE.equals(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion())) {
+            updateAllGeographicCoverageVariableElementsCache(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), datasetVersionUrn);
+        }
+   
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
         }
@@ -1060,6 +1064,31 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         markTaskAsFinished(ctx, jobKey);
     }
 
+    private void updateAllGeographicCoverageVariableElementsCache(String datasetUrn, String datasetVersionUrn) {
+        List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasets = findDatasetsByDatasetUrn(datasetUrn);
+
+        for (GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion : geoCovVarElementCacheDatasets) {
+            if (!geoCovVarElementCacheDatasetVersion.getUrn().equals(datasetVersionUrn)) {
+                geoCovVarElementCacheDatasetVersion.setIsLastVersion(Boolean.FALSE);
+                geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
+           // } else { TODO EDATOS-3770 QUITAR
+           //     geoCovVarElementCacheDatasetVersionRepository.delete(geoCovVarElementCacheDatasetVersion);
+            }
+        }
+    }
+    
+    private List<GeoCovVarElementCacheDatasetVersion> findDatasetsByDatasetUrn(String datasetUrn) {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class)
+                .withProperty(GeoCovVarElementCacheDatasetVersionProperties.urn()).like(datasetUrn + "%")
+                .and()
+                .withProperty(GeoCovVarElementCacheDatasetVersionProperties.isLastVersion()).eq(Boolean.TRUE)
+                .distinctRoot().build();
+        // @formatter:off
+
+        List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasets = geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions);     
+        return geoCovVarElementCacheDatasets;
+    }
+    
     @Override
     public void processUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         // Validation
@@ -1148,6 +1177,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.FALSE);
         geoCovVarElementCacheDatasetVersion.setHtmlLink(MetamacPortalUtils.buildDatasetVersionUrl(datasetVersion, configurationService));
+        geoCovVarElementCacheDatasetVersion.setIsLastVersion(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion());
         geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
  

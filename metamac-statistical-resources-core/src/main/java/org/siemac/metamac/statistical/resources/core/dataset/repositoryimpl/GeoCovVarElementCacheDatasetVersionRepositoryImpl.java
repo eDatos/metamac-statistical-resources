@@ -30,7 +30,8 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
 
         List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetVersions = retrieveByDatasetVersionUrn(datasetVersionUrn);
         for (GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion : geoCovVarElementCacheDatasetVersions) {
-            delete(geoCovVarElementCacheDatasetVersion);
+            delete(geoCovVarElementCacheDatasetVersion); 
         }
+        this.getEntityManager().flush();
     }
 }

@@ -1411,6 +1411,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.TRUE);
         geoCovVarElementCacheDatasetVersion.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
+        geoCovVarElementCacheDatasetVersion.setIsLastVersion(true);
         geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
 
