@@ -246,8 +246,8 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         target.getStatisticalUnit().clear();
         target.getStatisticalUnit().addAll(externalItemDoCollectionToDtoCollection(source.getStatisticalUnit()));
 
-        target.setDateStart(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart()).getLocalisedStrings().get(0).getLabel());
-        target.setDateEnd(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd()).getLocalisedStrings().get(0).getLabel());
+        target.setDateStart(getLabelFromInternationalStringAvro(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart())));
+        target.setDateEnd(getLabelFromInternationalStringAvro(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd())));
 
         target.setRelatedDsd(externalItemDoToDto(source.getRelatedDsd()));
 
@@ -275,6 +275,9 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         return target;
     }
 
+    private String getLabelFromInternationalStringAvro(InternationalStringAvro internationalStringAvro) {
+        return internationalStringAvro != null ? internationalStringAvro.getLocalisedStrings().get(0).getLabel() : "";
+    }
     // ---------------------------------------------------------------------------------------------------------
     // STATISTIC OFFICIALITY
     // ---------------------------------------------------------------------------------------------------------
