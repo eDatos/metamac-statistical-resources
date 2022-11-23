@@ -200,14 +200,11 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.task.error.database_importation_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_GEOCOVERAGE_CACHE_IN_PROCESS                                = create(
             "exception.resources.task.error.update_geocoverage_cache_in_process");
-    // TODO EDATOS-3770 PONER CONSTANTE
-    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_IN_PROCESS                                      = create(
+    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_IN_PROCESS                       = create(
             "exception.resources.task.error.update_external_geocoverage_cache_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_GET_ALL_EXTERNAL_PUBLICATION_MESSAGES_ERROR     = create(
-            "exception.resources.task.error.update_external_geocoverage_cache_get_all_external_publication_messages_error"); // it is has not been possible to obtain external publications messages. 
-
+            "exception.resources.task.error.update_external_geocoverage_cache_get_all_external_publication_messages_error");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                            = create("exception.resources.task.in_progress");
-
     // Dataset Importation
     public static final CommonServiceExceptionType FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION                      = create(
             "exception.resources.dataset.importation.file_not_linked_to_any_dataset_in_statistical_operation");
@@ -312,7 +309,6 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR                                   = create("exception.resources.dataset_version.geocoverage.job_error");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR            = create(
         "exception.resources.dataset_version.geocoverage.job_error_and_cant_mark_as_error");
-    // TODO EDATOS-3770 CREATE THIS INTERNATIONAL MESSAGE
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR_STREAM_NO_VALID            = create(
             "exception.resources.dataset_version.geocoverage.cache_dataset_from_external_publication_error_stream_no_valid");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR                            = create(

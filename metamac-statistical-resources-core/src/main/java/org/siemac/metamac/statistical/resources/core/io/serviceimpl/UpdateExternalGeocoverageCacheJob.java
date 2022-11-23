@@ -66,7 +66,6 @@ public class UpdateExternalGeocoverageCacheJob implements Job {
         } catch (MetamacException e) {
             logger.error("UpdateExternalGeocoverageCacheJob: the cache update job with key " + jobKey.getName() + " has failed", e);
             if (sendNotification) {
-                //TODO EDATOS-3770 VER SI DUPLICAR ESTE ERROR O VALE EL MISMO QUE LA CACHÉ INTERNA.
                 getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB, e);
             }
 
