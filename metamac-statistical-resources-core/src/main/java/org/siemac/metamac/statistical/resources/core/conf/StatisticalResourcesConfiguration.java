@@ -15,8 +15,6 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
 
     public String retrieveHelpUrl() throws MetamacException;
 
-    public String retrieveDocsPath() throws MetamacException;
-
     public String retriveFilterColumnNameForDbDataImport() throws MetamacException;
 
     public String retriveCronExpressionForDbDataImport() throws MetamacException;

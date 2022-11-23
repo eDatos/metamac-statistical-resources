@@ -9,7 +9,6 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     // Configuration
 
     public static final String HELP_URL                              = "metamac.statistical_resources.help.url";
-    public static final String DOCS_PATH                             = "metamac.data.docs.statistical_resources.path";
     public static final String DOT_CODE_MAPPING                      = "metamac.statistical_resources.dot_code_mapping";
     public static final String FILTER_COLUMN_NAME_FOR_DB_DATA_IMPORT = "metamac.statistical_resources.data_import.filter_column_name";
     public static final String CRON_EXPRESSION_FOR_DB_DATA_IMPORT    = "metamac.statistical_resources.data_import.cron_expression";
