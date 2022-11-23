@@ -32,6 +32,5 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         for (GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion : geoCovVarElementCacheDatasetVersions) {
             delete(geoCovVarElementCacheDatasetVersion); 
         }
-        this.getEntityManager().flush();
     }
 }

@@ -110,6 +110,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.V
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
+import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.InternationalStringDo2AvroMapper;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
@@ -218,11 +219,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     
     @Autowired
     StreamConsumerServiceFacade streamConsumerServiceFacade;
-    
-    /* TODO EDATOS-3770 QUITAR. SÓLO PARA PRUEBAS PRODUCTOR
-    @Autowired
-    StreamMessagingServiceFacade  streamMessagingServiceFacade;
-      */ 
+
     private SchedulerFactory                  schedulerFactory                    = null;
 
     
@@ -1031,7 +1028,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
            
         // discard all variable elements present in the array to avoid duplicated or outdated data
-        //geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(datasetVersionUrn); TODO EDATOS-3770
+        geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(datasetVersionUrn); 
         
         if (Boolean.TRUE.equals(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion())) {
             updateAllGeographicCoverageVariableElementsCache(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), datasetVersionUrn);
@@ -1071,8 +1068,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             if (!geoCovVarElementCacheDatasetVersion.getUrn().equals(datasetVersionUrn)) {
                 geoCovVarElementCacheDatasetVersion.setIsLastVersion(Boolean.FALSE);
                 geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
-           // } else { TODO EDATOS-3770 QUITAR
-           //     geoCovVarElementCacheDatasetVersionRepository.delete(geoCovVarElementCacheDatasetVersion);
             }
         }
     }
@@ -1096,55 +1091,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         logger.debug("Updating geocoverage cache for external datasets (nonexistent in database)");
 
-        streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx); //TODO EDATOS-3770 COMENTAR MOMENTANEAMENTE. PROBLEMA INTERCEPTOR
+        streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
 
-        logger.debug("Processing geographic coverage for external datasets (nonexistent in database) to create the cache correctly finished");
-
-        markTaskAsFinished(ctx, jobKey);
-    }
-    
-    /* TODO EDATOS-3770 PRODUCTOR TO PROBE JAXI_PUBLICATIONS TO EXTERNAL-USERS
-    @Override
-    public void processUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
-        // Validation
-        taskServiceInvocationValidator.checkProcessUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
-
-        logger.debug("Updating geocoverage cache for external datasets (nonexistent in database)");
-        
-        DatasetVersion dt = datasetVersionRepository.retrieveByUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ISTAC:C00010A_000026(2.16)");
-        DatasetAvro dtAvro = new DatasetAvro();
-        dtAvro.setUrn("urn:siemac:es.caib.ibestat.infomodel.jaxi.Dataset=IBESTAT:I214003_0012");
-        dtAvro.setCode("I214003_0012");
-        dtAvro.setStatisticalOperation(do2Avro(dt.getSiemacMetadataStatisticalResource().getStatisticalOperation()));
-        dtAvro.setTitle(InternationalStringDo2AvroMapper.do2Avro(dt.getSiemacMetadataStatisticalResource().getTitle()));
-        dtAvro.setPublicationDate(new DatetimeAvro());
-        dtAvro.setLastVersion(true);
-        List<es.ibestat.jaxi.stream.messages.ExternalItemAvro> listExternals = new ArrayList<es.ibestat.jaxi.stream.messages.ExternalItemAvro>();
-        for (ExternalItem e : dt.getGeographicCoverage()) {
-            listExternals.add(do2Avro(e));
-        }
-        dtAvro.setGeographicCoverage(listExternals);
-        
-        List<es.ibestat.jaxi.stream.messages.ExternalItemAvro> listGranularities = new ArrayList<es.ibestat.jaxi.stream.messages.ExternalItemAvro>();
-        for (ExternalItem e : dt.getGeographicGranularities()) {
-            listGranularities.add(do2Avro(e));
-        }
-        
-        dtAvro.setGeographicGranularities(listGranularities);
-        
-        List<TemporalCodeAvro> listTemporalcoverages= new ArrayList<TemporalCodeAvro>();
-        for (TemporalCode e : dt.getTemporalCoverage()) {
-            listTemporalcoverages.add(TemporalCodeDo2AvroMapper.do2Avro(e));
-        }
-        
-        dtAvro.setTemporalCoverage(listTemporalcoverages);
-          
-        dtAvro.setHtmlLink("https://proves.caib.es/ibestat-jaxi-web/tabla.do?px=392a220d-af81-4ce1-a063-a14eaecaffbe&pag=1&nodeId=d07588cc-83c6-4434-8d66-453489e439a9&pxName=392a220d-af81-4ce1-a063-a14eaecaffbeName");
-        dtAvro.setJsonLink("https://proves.caib.es/ibestat-jaxi-web/tabla.do?typeDownload=7&px=392a220d-af81-4ce1-a063-a14eaecaffbe");
-        //streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
-
-        streamMessagingServiceFacade.sendNewJaxiPublication(dtAvro);
-        
         logger.debug("Processing geographic coverage for external datasets (nonexistent in database) to create the cache correctly finished");
 
         markTaskAsFinished(ctx, jobKey);
@@ -1164,7 +1112,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return target;
 
     }
-    */
+
     
     private void updateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, ExternalItem variableElement) throws MetamacException {
         GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();

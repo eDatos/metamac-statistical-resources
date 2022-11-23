@@ -9,6 +9,4 @@ public interface StreamMessagingServiceFacade {
     public void sendNewVersionPublished(HasSiemacMetadata version) throws MetamacException;
 
     public void sendNewVersionPublished(QueryVersion version) throws MetamacException;
-    
-    //public void sendNewJaxiPublication(DatasetAvro version) throws MetamacException; // TODO EDATOS-3770 QUITAR
 }
