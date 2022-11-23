@@ -24,8 +24,11 @@ import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedStri
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
@@ -68,7 +71,8 @@ public class RestMapper {
         return externalItems;
     }
 
-    public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, SrmRestInternalService srmRestInternalService) throws MetamacException {
+    public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, SrmRestInternalService srmRestInternalService,
+            NoticesRestInternalService noticesRestInternalService) throws MetamacException {
         List<ExternalItem> externalItems = new ArrayList<ExternalItem>();
         for (ExternalItemAvro externalAvro : jaxiDatasetVersionAvro.getGeographicCoverage()) {
             TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
@@ -87,6 +91,8 @@ public class RestMapper {
                 } catch (Exception e) {
                     externalItem.setUri("-");
                     externalItem.setManagementAppUrl("-");
+                    noticesRestInternalService.createErrorUpdateGeocoverageCacheBackgroundNotification(jaxiDatasetVersionAvro, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET,
+                            ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn());
                 }
 
                 externalItem.setUrn(externalAvro.getUrn());
@@ -178,7 +184,7 @@ public class RestMapper {
 
         return resourceInternal;
     }
-
+    
     public org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal generateResourceInternal(QueryVersion resource) {
         org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal resourceInternal = new org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal();
 

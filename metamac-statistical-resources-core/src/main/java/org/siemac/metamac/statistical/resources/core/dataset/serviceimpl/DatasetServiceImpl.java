@@ -1390,7 +1390,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
             if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
-                List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService);
+                List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService);
                 for (ExternalItem variableElement : externalItemGeographicCoverage) {
                     updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, variableElement);
                 }

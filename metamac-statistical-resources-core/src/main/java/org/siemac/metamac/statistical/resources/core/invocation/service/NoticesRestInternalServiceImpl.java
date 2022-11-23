@@ -45,6 +45,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
+
 @Component(NoticesRestInternalService.BEAN_ID)
 public class NoticesRestInternalServiceImpl implements NoticesRestInternalService {
 
@@ -150,19 +152,31 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     }
 
     @Override
+    public void createErrorUpdateGeocoverageCacheBackgroundNotification(DatasetAvro jaxiDatasetVersionAvro, String actionCode, String messageCode, Serializable... messageParameters) {
+        try {
+            Locale locale = configurationService.retrieveLanguageDefaultLocale();
+            Message message = createMessage(locale, messageCode, messageParameters);
+
+            createUpdateGeocoverageCacheBackgroundNotification(locale, jaxiDatasetVersionAvro.getStatisticalOperation().getUrn(), actionCode, message);
+        } catch (MetamacException e) {
+            logger.error("Error creating createErrorUpdateGeocoverageCacheBackgroundNotification:", e);
+        }
+    }
+        
+    @Override
     public void createUpdateGeocoverageCacheNotification(DatasetVersion datasetVersion, String actionCode, String messageCode, Serializable... messageParameters) {
         try {
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
             ResourceInternal resourceInternal = restMapper.generateResourceInternal(datasetVersion);
             Message message = createMessage(locale, Collections.singletonList(resourceInternal), messageCode, messageParameters);
 
-            createUpdateGeocoverageCacheBackgroundNotification(locale, datasetVersion, actionCode, message);
+            createUpdateGeocoverageCacheBackgroundNotification(locale, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn(), actionCode, message);
         } catch (MetamacException e) {
-            logger.error("Error creating createDatabaseImportSuccessBackgroundNotification:", e);
+            logger.error("Error creating createUpdateGeocoverageCacheNotification:", e);
         }
     }
 
-    private void createUpdateGeocoverageCacheBackgroundNotification(Locale locale, DatasetVersion datasetVersion, String actionCode, Message message) throws MetamacException {
+    private void createUpdateGeocoverageCacheBackgroundNotification(Locale locale, String urnStatisticalOperation, String actionCode, Message message) throws MetamacException {
         try {
             String subject = LocaleUtil.getMessageForCode(actionCode, locale);
             String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS.getName();
@@ -174,14 +188,14 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
                     .withRoles(MetamacRolesEnum.ADMINISTRADOR)
                     .withSubject(subject)
                     .withApplications(sendingApp)
-                    .withStatisticalOperations(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn())
+                    .withStatisticalOperations(urnStatisticalOperation)
                     .build());
             // @formatter:on
         } catch (Exception e) {
             throw manageNoticesInternalRestException(e);
         }
     }
-
+    
     private void createBackgroundNotification(String actionCode, String message, String user) throws MetamacException {
         try {
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
@@ -322,6 +336,16 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         // @formatter:off
     }
 
+    private Message createMessage(Locale locale, String messageCode, Object... messageParams) {
+        String localisedMessage = (messageParams == null) ? LocaleUtil.getMessageForCode(messageCode, locale) : getMessageForCodeWithParams(messageCode, locale, messageParams);
+
+        // @formatter:off
+        return  MessageBuilder.message()
+                .withText(localisedMessage)
+                .build();
+        // @formatter:off
+    }
+    
     private void sendNotice(Notice notice) throws MetamacException {
         restApiLocator.getNoticesRestInternalFacadeV10().createNotice(notice);
     }
