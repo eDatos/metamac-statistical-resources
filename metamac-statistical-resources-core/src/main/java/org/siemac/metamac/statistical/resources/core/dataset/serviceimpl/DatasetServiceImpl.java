@@ -1600,7 +1600,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 // In any other case, if the size of the item parameter is greater than 255 and there is no variable element associated with it,
                 // the generated identifier will be a random uuid.
                 String uuidIdenfier = UUID.randomUUID().toString();
-                log.warn("Item can not be set as identifier because is too long: {} using uuid instead: {}", StringUtils.length(item), uuidIdenfier);
+                log.info("Item can not be set as identifier because is too long: {} using uuid instead: {}", StringUtils.length(item), uuidIdenfier);
 
                 return uuidIdenfier;
             }
