@@ -1,10 +1,8 @@
 -- --------------------------------------------------------------------------------------------------
--- EDATOS-3744 Formato de fecha de próxima actualización debe ser del tipo sdmx
-      -- DATE_NEXT_UPDATE
-	  -- NEXT_VERSION_DATE 
+-- EDATOS-872 Calcular los periodos de inicio y fin de un dataset con los periodos que se definen en el TSV de datos
+      -- DATE_START
+	  -- DATE_END 
 -- Lo siguientes scripts permitirán cambiar el tipo de dato de los dos campos anteriores de DateTime a String en formato sdxm. Además, se realiza un proceso de migración del valor en formato datetime al valor en formato fecha en sdmx (YYY-MM-DD)	
-
--- Se crea EDATOS-3804 como tarea de soporte para borrar las tablas temporales una vez la tarea lleve en PRO un tiempo prudencial.  
 -- --------------------------------------------------------------------------------------------------
 
 ------------- PASAR "DATE_START" DE DATE A VARCHAR(255)
