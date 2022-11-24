@@ -91,8 +91,9 @@ public class RestMapper {
                 } catch (Exception e) {
                     externalItem.setUri("-");
                     externalItem.setManagementAppUrl("-");
-                    noticesRestInternalService.createErrorUpdateGeocoverageCacheBackgroundNotification(jaxiDatasetVersionAvro, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET,
-                            ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn());
+                    noticesRestInternalService.createErrorUpdateGeocoverageCacheBackgroundNotification(jaxiDatasetVersionAvro,
+                            ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET, ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR,
+                            externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn());
                 }
 
                 externalItem.setUrn(externalAvro.getUrn());

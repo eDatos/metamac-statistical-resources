@@ -437,17 +437,17 @@ Application DatasetsStatisticalResources {
 			Long id not nullable key;
 			String code databaseColumn="code" not nullable;
 			String urn databaseColumn="urn" not nullable;
-			- @InternationalString title cascade="all" fetch="lazy" databaseColumn="title_fk" nullable;
+			- @InternationalString title cascade="persist,merge" fetch="lazy" databaseColumn="title_fk" nullable;
 			- @ExternalItem variableElement cascade="all-delete-orphan" fetch="lazy" databaseColumn="variable_element_fk" not nullable;
 			String operationCode databaseColumn="operation_code";
 			String operationUrn databaseColumn="operation_urn";
-			- @InternationalString operationTitle cascade="all" fetch="lazy" databaseColumn="operation_title_fk" nullable;
+			- @InternationalString operationTitle cascade="persist,merge" fetch="lazy" databaseColumn="operation_title_fk" nullable;
 			String htmlLink databaseColumn="htmlLink";
 			boolean isExternalSource databaseColumn="is_external_source" not nullable;
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			Repository GeoCovVarElementCacheDatasetVersionRepository {
 				save;
-				delete;			
+				delete;	
 				findByCondition;
 				findByCondition(PagingParameter pagingParameter);
 				deleteAllByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
