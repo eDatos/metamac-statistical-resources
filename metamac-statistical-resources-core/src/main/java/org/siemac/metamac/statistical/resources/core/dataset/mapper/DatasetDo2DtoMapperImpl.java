@@ -24,8 +24,6 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepre
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
-import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
-import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.AvroMapperUtils;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 
