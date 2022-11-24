@@ -43,11 +43,6 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
-    public String retrieveDocsPath() throws MetamacException {
-        return retrieveProperty(StatisticalResourcesConfigurationConstants.DOCS_PATH);
-    }
-
-    @Override
     public String retriveFilterColumnNameForDbDataImport() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.FILTER_COLUMN_NAME_FOR_DB_DATA_IMPORT);
     }
