@@ -22,6 +22,7 @@ public interface NoticesRestInternalService {
     public void createDatabaseImportSuccessBackgroundNotification(DatasetVersion datasetVersion, String actionCode, String successMessageCode, Serializable... successMessageParameters);
     public void createUpdateGeocoverageCacheNotification(DatasetVersion datasetVersion, String actionCode, String messageCode, Serializable... successMessageParameters);
     public void createErrorUpdateGeocoverageCacheBackgroundNotification(DatasetAvro jaxiDatasetVersionAvro, String actionCode, String messageCode, Serializable... messageParameters);
+    public void createExternalPublicationUpdateErrorBackgroundNotification(String keyMessage);
 
     // Stream Messaging Notifications
     public void createErrorOnStreamMessagingService(String user, String actionCode, HasSiemacMetadata affectedResource, String errorMessageCode, Serializable... extraParameters);

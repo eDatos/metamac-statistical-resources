@@ -189,7 +189,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     @Autowired
     @Qualifier("txManager")
     private PlatformTransactionManager                platformTransactionManager;
-    
+        
     @Autowired
     GeoCovVarElementCacheDatasetVersionRepository geoCovVarElementCacheDatasetVersionRepository;
 
@@ -1374,8 +1374,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         updateAllExternalGeocoverageCache(ctx);
     }
     
-    @Override
-    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+
+    private void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
         try {
@@ -1400,6 +1400,19 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
+    @Override
+    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+
+        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
+
+            @Override
+            protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                updateGeographicCoverageExternalPublicationCache(ctx, message);
+                return null;
+            }
+        });
+    }
+    
     private void updateGeographicCoverageVariableElementsCache(DatasetAvro jaxiDatasetVersionAvro, ExternalItem variableElement) {
         GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
         geoCovVarElementCacheDatasetVersion.setCode(jaxiDatasetVersionAvro.getCode());

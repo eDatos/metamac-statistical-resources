@@ -237,6 +237,11 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     }
 
     @Override
+    public void createExternalPublicationUpdateErrorBackgroundNotification(String keyMessage) {
+        createBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR, ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR, new ArrayList<DatasetVersion>(), keyMessage);
+    }
+    
+    @Override
     public void createConsumerFromKafkaErrorBackgroundNotification(String keyMessage) {
         createBackgroundNotification(ServiceNoticeAction.RESOURCE_RECEIVED_FROM_KAFKA_ERROR, ServiceNoticeMessage.RESOURCE_RECEIVED_FROM_KAFKA_ERROR, new ArrayList<DatasetVersion>(), keyMessage);
     }

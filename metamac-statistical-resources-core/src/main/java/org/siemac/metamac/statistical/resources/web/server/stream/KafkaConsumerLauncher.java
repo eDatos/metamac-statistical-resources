@@ -7,11 +7,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.apache.kafka.clients.admin.AdminClientConfig;
+import org.apache.kafka.clients.admin.ListOffsetsResult;
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.admin.OffsetSpec;
 import org.apache.kafka.clients.consumer.CommitFailedException;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
@@ -21,6 +26,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.clients.consumer.OffsetResetStrategy;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.UnknownMemberIdException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
@@ -75,6 +81,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Cache                          kafkaFailedMessagesCache;
     private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME   = "statistical_resources_consumer_jaxi_publication_1";
     private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME   = "statistical_resources_consumer_jaxi_publication_2";
+    private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_NAME   = "datasets_external_publication";
     private static final String            KAFKA_FAILED_CACHE_NAME = "kafkaFailed";
     
     @Override
@@ -123,94 +130,162 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return null;
     }
 
+    private Long getLastConsumerOffset() throws MetamacException {
+        String externalPublicationTopicGroup = statisticalResourcesConfiguration.retrieveKafkaExternalDatasetPublicationMessagesGroup();
+
+        Properties properties = new Properties();
+        properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 10000);
+        properties.put(AdminClientConfig.DEFAULT_API_TIMEOUT_MS_CONFIG, 10000);
+        properties.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
+
+        if (externalPublicationTopicGroup != null) {
+
+            try (AdminClient adminClient = AdminClient.create(properties)) {
+
+                Map<TopicPartition, OffsetSpec> requestLatestOffsets = new HashMap<>();
+
+                Map<TopicPartition, OffsetAndMetadata> offsets = adminClient.listConsumerGroupOffsets(externalPublicationTopicGroup).partitionsToOffsetAndMetadata().get();
+
+                for (TopicPartition tp : offsets.keySet()) {
+                    requestLatestOffsets.put(tp, OffsetSpec.latest());
+                }
+                Map<TopicPartition, ListOffsetsResult.ListOffsetsResultInfo> earliestOffsets = adminClient.listOffsets(requestLatestOffsets).all().get();
+
+                for (Map.Entry<TopicPartition, ListOffsetsResult.ListOffsetsResultInfo> e : earliestOffsets.entrySet()) {
+                    LOGGER.info("get topic-partition " + e.getKey() + " last offset " + e.getValue().offset());
+                    return e.getValue().offset();
+                }
+
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.error("Failed to get the offsets committed by group " + externalPublicationTopicGroup + " with error " + e.getMessage());
+                if (e.getCause() instanceof UnknownMemberIdException)
+                    LOGGER.error("Check if consumer group is still active.");
+            }
+        }
+        return 0L;
+    }
+
     public void createCustomConsumer() throws MetamacException {
         String externalPublicationTopicName = getExternalDatasetPublicationTopic();
         if (externalPublicationTopicName != null) {
             try (KafkaConsumer<String, DatasetAvro> consumer = createCustomConsumerFromCurrentOffset(externalPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME);) {
-                consumer.subscribe(Collections.singleton(externalPublicationTopicName), new ConsumerRebalanceListener() {
-
-                    @Override
-                    public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
-                    }
-
-                    @Override
-                    public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                        consumer.seekToBeginning(partitions);
-                    }
-                });
-
-                boolean keepOnReading = true;
-                long startTime = System.currentTimeMillis(); // fetch starting time
-
-                Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
-
-                while (keepOnReading) {
-                    ConsumerRecords<String, DatasetAvro> records = consumer.poll(100);
-
-                    if (records.count() > 1) {
-                        LOGGER.error(MAX_POOL_MSG);
-                        throw new RuntimeException(MAX_POOL_MSG);
-                    }
-
-                    if (records.isEmpty()) {
-                        continue;
-                    }
-
-                    // Process resources
-                    ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
-
-                    if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
-                        LOGGER.debug("The current message already processed successfully");
-                        if (commitSync(consumer, record)) {
-                            pendigOffsetsToCommit.remove(record.partition());
-                            removeFromErrorCacheMessagesIfNeccesary(record);
-                        }
-                        continue;
-                    }
-
-                    StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
-                // @formatter:off
-                logMessageBldr
-                    .append(externalPublicationTopicName)
-                    .append(", Partition: ").append(record.partition())
-                    .append(", Offset: ").append(record.offset())
-                    .append(", TimestampType: ").append(record.timestampType())
-                    .append(", Timestamp: ").append(record.timestamp())
-                    .append(" [").append(new DateTime(record.timestamp(), DateTimeZone.forID("Atlantic/Canary"))).append("]");
-                // @formatter:on
-                    String logMessage = logMessageBldr.toString();
-
-                    pendigOffsetsToCommit.put(record.partition(), record.offset());
-
-                    LOGGER.info(logMessage.toString());
-                    try {
-                        ServiceContext serviceContext = createServiceContext(logMessage);
-
-                        statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
-
-                        commitSync(consumer, record);
-
-                    } catch (Exception e) {
-                        LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
-
-                        // Send a error notification, the error message will send only if not exist in error cache
-                        sendErrorMessageIfNeccesary(record);
-
-                        LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
-                    } finally {
-                        if ((System.currentTimeMillis() - startTime) < CONSUMER_TIMEOUT_PROCESS) {
-                            keepOnReading = false;
-                        }
-                    }
-
-                }
-
+                updateDatasetExternalPublication(externalPublicationTopicName, consumer);
             } catch (Exception e) {
                 LOGGER.error(e, e.getCause());
             }
         }
+
     }
-        
+
+    private void updateDatasetExternalPublication(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer) throws MetamacException {
+        int it = 0;
+        Long latestOffset = getLastConsumerOffset();
+
+        if (latestOffset <= 0L) {
+            noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(CONSUMER_EXTERNAL_DATASET_PUBLICATION_NAME);
+        }
+
+        externalPublicationConsumerConfig(externalPublicationTopicName, consumer);
+
+        boolean keepOnReading = true;
+
+        Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
+
+        while (keepOnReading) {
+            ConsumerRecords<String, DatasetAvro> records = consumer.poll(100);
+
+            if (it > latestOffset) {
+                LOGGER.info("last consumer topic external publication iteration " + latestOffset);
+                keepOnReading = false;
+            }
+
+            it++;
+
+            if (records.count() > 1) {
+                LOGGER.error(MAX_POOL_MSG);
+                throw new RuntimeException(MAX_POOL_MSG);
+            }
+
+            if (!records.isEmpty()) {
+
+                // Process resources
+                ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
+
+                if (record.offset() >= latestOffset) {
+                    LOGGER.info("consumer topic external publication last offset" + latestOffset);
+                    keepOnReading = false;
+                }
+
+                if (!removePendingOffsets(consumer, record, pendigOffsetsToCommit)) {
+                    callFacadeBusinessLogicUpdateCache(externalPublicationTopicName, consumer, record, pendigOffsetsToCommit);
+                }
+            }
+        }
+    }
+    
+    private boolean removePendingOffsets(KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record, Map<Integer, Long> pendigOffsetsToCommit) {
+        if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
+            LOGGER.debug("The current message already processed successfully");
+            if (commitSync(consumer, record)) {
+                pendigOffsetsToCommit.remove(record.partition());
+                removeFromErrorCacheMessagesIfNeccesary(record);
+            }
+            return true;
+        }
+        return false;
+    }
+    
+    private void externalPublicationConsumerConfig(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer) {
+        consumer.subscribe(Collections.singleton(externalPublicationTopicName), new ConsumerRebalanceListener() {
+
+            @Override
+            public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+            }
+
+            @Override
+            public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                // TODO EDATOS-3770 DEJAR BEGINING
+                //consumer.seekToBeginning(partitions);
+                consumer.seek(partitions.iterator().next(), 2930);
+            }
+        });
+    }
+
+    private void callFacadeBusinessLogicUpdateCache(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record,
+            Map<Integer, Long> pendigOffsetsToCommit) {
+        StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
+        // @formatter:off
+        logMessageBldr
+            .append(externalPublicationTopicName)
+            .append(", Partition: ").append(record.partition())
+            .append(", Offset: ").append(record.offset())
+            .append(", TimestampType: ").append(record.timestampType())
+            .append(", Timestamp: ").append(record.timestamp())
+            .append(" [").append(new DateTime(record.timestamp(), DateTimeZone.forID("Atlantic/Canary"))).append("]");
+        // @formatter:on
+        String logMessage = logMessageBldr.toString();
+
+        pendigOffsetsToCommit.put(record.partition(), record.offset());
+
+        LOGGER.info(logMessage.toString());
+
+        try {
+            ServiceContext serviceContext = createServiceContext(logMessage);
+
+            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
+
+            commitSync(consumer, record);
+
+        } catch (Exception e) {
+            LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
+
+            // Send a error notification, the error message will send only if not exist in error cache
+            sendErrorMessageIfNeccesary(record);
+
+            LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
+        }
+    }
+    
     private void removeFromErrorCacheMessagesIfNeccesary(ConsumerRecord<String, DatasetAvro> record) {
         if (kafkaFailedMessagesCache.isKeyInCache(record.key())) {
             kafkaFailedMessagesCache.remove(record.key());
