@@ -211,7 +211,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 // Process resources
                 ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
 
-                if (record.offset() >= latestOffset) {
+                if (record.offset() >= latestOffset-1) {
                     LOGGER.info("consumer topic external publication last offset" + latestOffset);
                     keepOnReading = false;
                 }
