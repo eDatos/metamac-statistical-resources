@@ -56,11 +56,11 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
     public ImportDatasourceWithMappingWindow(Map<String, String> dimensionsMapping) {
         super(getConstants().actionLoadDatasource());
         
-        createMapCodelistsCheckBoxItem();
         this.dimensionsMapping = dimensionsMapping;
-        addDimensionFieldsInMainForm();
+        addFieldsInMainForm();
         addDimensionFieldsInExtraForm();
         setAutoSize(true);
+        bindEvents();
     }
 
     @Override
@@ -71,12 +71,12 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
     @Override
     protected CustomDynamicForm buildExtraForm() {
         CustomDynamicForm form = new CustomDynamicForm();
-        form.setWidth(350);
+        form.setWidth(420);
         form.setVisible(false);
         return form;
     }
 
-    private void addDimensionFieldsInMainForm() {
+    private void addFieldsInMainForm() {
 
         List<FormItem> itemsToAdd = new ArrayList<FormItem>();
 
@@ -89,7 +89,14 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
                 itemsToAdd.add(new HiddenItem(getDimensionHiddenFieldName(dimensionId)));
             }
         }
+        
+        CustomCheckboxItem mapCodelistsCheckBoxItem = new CustomCheckboxItem(DatasetDS.MAP_CODELISTS, getConstants().mapCodelists());
+        mapCodelistsCheckBoxItem.setCanEdit(Boolean.TRUE);
+        mapCodelistsCheckBoxItem.setValue(Boolean.FALSE);
+        mapCodelistsCheckBoxItem.setDefaultValue(Boolean.FALSE);
+        
         mainForm.addFields(itemsToAdd.toArray(new HiddenItem[itemsToAdd.size()]));
+        mainForm.addFields(new FormItem[]{mapCodelistsCheckBoxItem});
     }
 
     private void addDimensionFieldsInExtraForm() {
@@ -110,6 +117,9 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
                     items.add(createItemForDimension(extraForm, dimensionId, dimensionsMapping.get(dimensionId)));
                 }
             }
+            else {
+                extraForm.clearValues();
+            }
         }
 
         CustomButtonItem uploadButton = new CustomButtonItem("button-import", MetamacWebCommon.getConstants().accept());
@@ -126,20 +136,14 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
     }
     
-    private void createMapCodelistsCheckBoxItem() {
-        CustomCheckboxItem mapCodelistsCheckBoxItem = new CustomCheckboxItem(DatasetDS.MAP_CODELISTS, getConstants().mapCodelists());
-        mapCodelistsCheckBoxItem.setCanEdit(Boolean.TRUE);
-        mapCodelistsCheckBoxItem.setValue(Boolean.FALSE);
-        mapCodelistsCheckBoxItem.setDefaultValue(Boolean.FALSE);
-        
-        mapCodelistsCheckBoxItem.addChangedHandler(new ChangedHandler() {
+    private void bindEvents() {
+        ((CustomCheckboxItem) mainForm.getItem(DatasetDS.MAP_CODELISTS)).addChangedHandler(new ChangedHandler() {
+            
             @Override
             public void onChanged(ChangedEvent event) {
                 addDimensionFieldsInExtraForm();
             }
         });
-        
-        mainForm.addFields(mapCodelistsCheckBoxItem);
     }
 
     @Override
@@ -308,7 +312,8 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
 
     @Override
     public void show() {
-        clearExtraFormValues();
+        mainForm.clearValues();
+        addDimensionFieldsInExtraForm();
         extraForm.hide();
         super.show();
     }

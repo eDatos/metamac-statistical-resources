@@ -14,11 +14,6 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     }
 
     @Override
-    public String retrieveDocsPath() throws MetamacException {
-        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
-    }
-
-    @Override
     public String retrieveHelpUrl() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
