@@ -73,7 +73,7 @@ public class MappersMockUtils {
     protected static final NextVersionTypeEnum           EXPECTED_NEXT_VERSION_TYPE     = NextVersionTypeEnum.NON_SCHEDULED_UPDATE;
     protected static final DateTime                      EXPECTED_PAST_DATE             = new DateTime(2016, 06, 01, 0, 0, 0, 0).minusDays(30);
     protected static final DateTime                      EXPECTED_FUTURE_DATE           = new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30);
-    protected static final String                        EXPECTED_PAST_DATE_STRING      = CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2016, 06, 01, 0, 0, 0, 0).minusDays(30).toDate());
+    protected static final String                        EXPECTED_PAST_DATE_STRING      = "2016-M05";
     protected static final String                        EXPECTED_FUTURE_DATE_STRING    = CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30).toDate());
     protected static final String                        EXPECTED_FUTURE_DATE_SDMX      = CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30).toDate());
     protected static final String                        EXPECTED_VERSION_LOGIC         = "EXPECTED_VERSION_LOGIC";

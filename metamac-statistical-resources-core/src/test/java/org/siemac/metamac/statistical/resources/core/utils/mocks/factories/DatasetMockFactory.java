@@ -188,7 +188,7 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
         template.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem());
         template.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem());
 
-        template.setDateStart(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().minusYears(10).toDate()));
+        template.setDateStart("2012-11-25");
 
         template.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem());
         template.setUpdateFrequency(StatisticalResourcesDoMocks.mockCodeExternalItem());
