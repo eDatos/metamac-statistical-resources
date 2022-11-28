@@ -23,9 +23,9 @@ Application DatasetsStatisticalResourcesDto {
 			// temporal granularities
 			- Bag<@ExternalItemDto> temporalGranularities;
 			// First date which data refers to
-			JAVADATE dateStart;
+			String dateStart;
 			// Last date which data refers to
-			JAVADATE dateEnd;
+			String dateEnd;
 			- Bag<@ExternalItemDto> statisticalUnit;
 
 			//Identifiers

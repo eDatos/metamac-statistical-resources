@@ -441,8 +441,12 @@
                 </cdomain:name>
             </cdomain:resource>
         </stat:temporalGranularities>
-        <stat:dateStart>2013-01-02T03:04:05Z</stat:dateStart>
-        <stat:dateEnd>2013-03-05T06:07:08Z</stat:dateEnd>
+        <stat:dateStart>
+            <cdomain:text xml:lang="es">2013-01-02</cdomain:text>
+        </stat:dateStart>
+        <stat:dateEnd>
+            <cdomain:text xml:lang="es">2013-03-05</cdomain:text>
+        </stat:dateEnd>
         <stat:statisticalUnit total="3">
             <cdomain:resource kind="structuralResources#concept">
                 <cdomain:id>statisticalUnit1</cdomain:id>

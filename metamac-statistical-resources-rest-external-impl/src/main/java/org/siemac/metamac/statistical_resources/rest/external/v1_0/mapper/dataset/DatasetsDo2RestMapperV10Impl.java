@@ -238,8 +238,8 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setMeasureCoverages(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getMeasureCoverage(), selectedLanguages));
         target.setGeographicGranularities(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getGeographicGranularities(), selectedLanguages));
         target.setTemporalGranularities(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getTemporalGranularities(), selectedLanguages));
-        target.setDateStart(commonDo2RestMapper.toDate(source.getDateStart()));
-        target.setDateEnd(commonDo2RestMapper.toDate(source.getDateEnd()));
+        target.setDateStart(commonDo2RestMapper.toSdmxObservationalTimePeriod(source.getDateStart(), selectedLanguages));
+        target.setDateEnd(commonDo2RestMapper.toSdmxObservationalTimePeriod(source.getDateEnd(), selectedLanguages));
         target.setStatisticalUnit(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getStatisticalUnit(), selectedLanguages));
         target.setSubjectAreas(toDatasetSubjectAreas(source, selectedLanguages));
         target.setFormatExtentObservations(source.getFormatExtentObservations());
