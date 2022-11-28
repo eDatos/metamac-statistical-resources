@@ -10,8 +10,9 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.Stati
 @SuppressWarnings("unused")
 public class GeoCovVarElementCacheDatasetVersionFactory extends StatisticalResourcesMockFactory<GeoCovVarElementCacheDatasetVersion> {
 
-    public static final String             GEO_COV_VAR_ELEMENT_CACHE_01                                     = "GEO_COV_VAR_ELEMENT_CACHE_DATASET_VERSION_01";
-    public static final String             GEO_COV_VAR_ELEMENT_CACHE_02                                     = "GEO_COV_VAR_ELEMENT_CACHE_DATASET_VERSION_02";
+    public static final String                                GEO_COV_VAR_ELEMENT_CACHE_01 = "GEO_COV_VAR_ELEMENT_CACHE_DATASET_VERSION_01";
+    public static final String                                GEO_COV_VAR_ELEMENT_CACHE_02 = "GEO_COV_VAR_ELEMENT_CACHE_DATASET_VERSION_02";
+    public static final String                                VARIABLE_ELEMENT_01          = "variableElement01";
 
     private static GeoCovVarElementCacheDatasetVersionFactory instance = null;
 
@@ -28,7 +29,7 @@ public class GeoCovVarElementCacheDatasetVersionFactory extends StatisticalResou
     public static GeoCovVarElementCacheDatasetVersion getGeoCovVarElementCacheDatasetVersion01() {
         DatasetVersion dv = StatisticalResourcesPersistedDoMocks.getInstance().mockDatasetVersion();
         GeoCovVarElementCacheDatasetVersionMock geoCovVarElementCacheDatasetVersionMock = getGeoCovVarElementCacheDatasetVersionBase();
-        geoCovVarElementCacheDatasetVersionMock.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variable01", "variableElement01"));
+        geoCovVarElementCacheDatasetVersionMock.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variable01", VARIABLE_ELEMENT_01));
 
         return geoCovVarElementCacheDatasetVersionMock;
  
