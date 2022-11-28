@@ -1192,8 +1192,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
         // Operate
-        // TODO EDATOS-3770 DESCOMENTAR
-        //getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+        getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
         
         updateAllGeographicCoverageExternalPublicationVariableElementsCache(ctx);
     }

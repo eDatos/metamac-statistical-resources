@@ -212,7 +212,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
 
                 if (record.offset() >= latestOffset-1) {
-                    LOGGER.info("consumer topic external publication last offset" + latestOffset);
+                    LOGGER.info("The dataset external publication update has finished correctly. Consumer topic external publication last offset " + latestOffset);
                     keepOnReading = false;
                 }
 
@@ -244,9 +244,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
             @Override
             public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
-                // TODO EDATOS-3770 DEJAR BEGINING
-                //consumer.seekToBeginning(partitions);
-                consumer.seek(partitions.iterator().next(), 2930);
+                consumer.seekToBeginning(partitions);
             }
         });
     }
@@ -267,7 +265,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
         pendigOffsetsToCommit.put(record.partition(), record.offset());
 
-        LOGGER.info(logMessage.toString());
+        LOGGER.debug(logMessage);
 
         try {
             ServiceContext serviceContext = createServiceContext(logMessage);

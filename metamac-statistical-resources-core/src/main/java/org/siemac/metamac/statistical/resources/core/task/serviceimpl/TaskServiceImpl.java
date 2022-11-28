@@ -1058,9 +1058,22 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         logger.debug("Processing geographic coverage to create the cache correctlyfinished");
         
-        markTaskAsFinished(ctx, jobKey);
+        markTaskAsFinishedInTransaction(ctx, jobKey);
     }
 
+    private void markTaskAsFinishedInTransaction(ServiceContext ctx, String jobKey) {
+        logger.debug("Marking  task as finished {}", jobKey);
+
+        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+
+            @Override
+            protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                markTaskAsFinished(ctx, jobKey);
+                return null;
+            }
+        });
+    }
+    
     private void updateAllGeographicCoverageVariableElementsCache(String datasetUrn, String datasetVersionUrn) {
         List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasets = findDatasetsByDatasetUrn(datasetUrn);
 
