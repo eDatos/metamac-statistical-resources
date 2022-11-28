@@ -13,6 +13,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
@@ -27,6 +28,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeVal
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
@@ -390,4 +392,21 @@ public class RestDoMocks {
         return internationalStringDto;
     }
 
+    public GeoCovVarElementCacheDatasetVersion mockResources(String variableElementId, Boolean isLastVersion) {
+        DatasetVersion dv = mockDatasetVersion(RestTestConstants.AGENCY_1, RestTestConstants.DATASET_1_CODE, RestTestConstants.VERSION_1);
+
+        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
+        geoCovVarElementCacheDatasetVersion.setOperationUrn(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
+        geoCovVarElementCacheDatasetVersion.setOperationCode(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+        geoCovVarElementCacheDatasetVersion.setOperationTitle(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
+        geoCovVarElementCacheDatasetVersion.setCode(dv.getSiemacMetadataStatisticalResource().getCode());
+        geoCovVarElementCacheDatasetVersion.setIsExternalSource(isLastVersion);
+        geoCovVarElementCacheDatasetVersion.setIsExternalSource(true);
+        geoCovVarElementCacheDatasetVersion.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
+        geoCovVarElementCacheDatasetVersion.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
+        geoCovVarElementCacheDatasetVersion.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variableX", variableElementId));
+        
+        return geoCovVarElementCacheDatasetVersion;
+    }
+    
 }
