@@ -13,7 +13,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
-import org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
@@ -392,14 +391,15 @@ public class RestDoMocks {
         return internationalStringDto;
     }
 
-    public GeoCovVarElementCacheDatasetVersion mockResources(String variableElementId, Boolean isLastVersion) {
-        DatasetVersion dv = mockDatasetVersion(RestTestConstants.AGENCY_1, RestTestConstants.DATASET_1_CODE, RestTestConstants.VERSION_1);
+    public GeoCovVarElementCacheDatasetVersion mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
+        DatasetVersion dv = mockDatasetVersion(agencyId, resourceId, versionId);
 
         GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
         geoCovVarElementCacheDatasetVersion.setOperationUrn(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
         geoCovVarElementCacheDatasetVersion.setOperationCode(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
         geoCovVarElementCacheDatasetVersion.setOperationTitle(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
         geoCovVarElementCacheDatasetVersion.setCode(dv.getSiemacMetadataStatisticalResource().getCode());
+        geoCovVarElementCacheDatasetVersion.setTitle(dv.getSiemacMetadataStatisticalResource().getTitle());
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(isLastVersion);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(true);
         geoCovVarElementCacheDatasetVersion.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());

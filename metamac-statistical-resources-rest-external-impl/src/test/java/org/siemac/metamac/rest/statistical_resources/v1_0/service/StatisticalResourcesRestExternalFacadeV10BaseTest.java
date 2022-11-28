@@ -1108,7 +1108,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
                     // Retrieve one
                     GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = null;
 
-                    geoCovVarElementCacheDatasetVersion = restDoMocks.mockResources(variableElementId, isLastVersion);
+                    geoCovVarElementCacheDatasetVersion = restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, variableElementId, isLastVersion);
                     
                     List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCovVarElementCacheDatasetVersion>();
                     if (geoCovVarElementCacheDatasetVersion != null) {
@@ -1118,7 +1118,11 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
                 } else {
                     // any
                     List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCovVarElementCacheDatasetVersion>();
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources("variableElement01", true));
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, "variableElement01", true));
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_2, "variableElement01", true));
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_2, DATASET_1_CODE, VERSION_1, "variableElement01", true));
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_2_CODE, VERSION_1, "variableElement01", true));
+
                     return new PagedResult<GeoCovVarElementCacheDatasetVersion>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
 
                 }
