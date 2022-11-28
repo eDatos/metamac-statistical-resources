@@ -9,6 +9,9 @@
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
 ********* PDTE VERSIÓN EDATOS-3770
+**BREAKING CHANGE** la tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
+Se cambiará la tabla. Y luego habrá que lanzar la actualización de toda la caché para cargar todos los datos de nuevo.
+
 * Se añaden script relacionados con la actualización de la caché de elementos de variable de un dataset y se añaden dos nuevas propiedades en el common_metadata en este orden
 [etc/changes-from-release/5.0.1/db](etc/changes-from-release/5.0.1/db).
 ** change_table_geocov_varelem_cache_datasets_versions.sql

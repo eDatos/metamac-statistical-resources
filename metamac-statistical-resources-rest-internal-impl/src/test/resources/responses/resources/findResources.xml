@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ns2:resources xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:ns2="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain" kind="statisticalResources#resources" total="40" limit="25" offset="4" selfLink="http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' AND IS_LAST_VERSION EQ 'true'&amp;limit=25&amp;offset=4#dataset" nextLink="http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' AND IS_LAST_VERSION EQ 'true'&amp;limit=25&amp;offset=29#dataset" lastLink="http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' AND IS_LAST_VERSION EQ 'true'&amp;limit=25&amp;offset=29#dataset">
+    <ns2:resource kind="statisticalResources#resource">
+        <ns2:resourceID>
+            <ns2:id>dataset1</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)</ns2:urn>
+            <ns2:type>DATASET</ns2:type>
+        </ns2:resourceID>
+        <ns2:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset1&amp;version=01.000#</ns2:visualizerHtmlLink>
+        <ns2:selfLink kind="statisticalResources#resource" href="http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset1/01.000#dataset"/>
+        <ns2:selectedLanguages total="1">
+            <ns2:language>es</ns2:language>
+        </ns2:selectedLanguages>
+        <ns2:statisticalOperation>
+            <ns2:id>ZBjHpjFTHu</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=ZBjHpjFTHu</ns2:urn>
+            <ns2:name>
+                <cdomain:text xml:lang="es">title-ZBjHpjFTHu en Espanol</cdomain:text>
+            </ns2:name>
+            <ns2:type>STATISTICAL_OPERATION</ns2:type>
+        </ns2:statisticalOperation>
+    </ns2:resource>
+    <ns2:resource kind="statisticalResources#resource">
+        <ns2:resourceID>
+            <ns2:id>dataset1</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(02.000)</ns2:urn>
+            <ns2:type>DATASET</ns2:type>
+        </ns2:resourceID>
+        <ns2:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset1&amp;version=02.000#</ns2:visualizerHtmlLink>
+        <ns2:selfLink kind="statisticalResources#resource" href="http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset1/02.000#dataset"/>
+        <ns2:selectedLanguages total="1">
+            <ns2:language>es</ns2:language>
+        </ns2:selectedLanguages>
+        <ns2:statisticalOperation>
+            <ns2:id>pmMQ8E71tx</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=pmMQ8E71tx</ns2:urn>
+            <ns2:name>
+                <cdomain:text xml:lang="es">title-pmMQ8E71tx en Espanol</cdomain:text>
+            </ns2:name>
+            <ns2:type>STATISTICAL_OPERATION</ns2:type>
+        </ns2:statisticalOperation>
+    </ns2:resource>
+    <ns2:resource kind="statisticalResources#resource">
+        <ns2:resourceID>
+            <ns2:id>dataset1</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency2:dataset1(01.000)</ns2:urn>
+            <ns2:type>DATASET</ns2:type>
+        </ns2:resourceID>
+        <ns2:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency2&amp;resourceId=dataset1&amp;version=01.000#</ns2:visualizerHtmlLink>
+        <ns2:selfLink kind="statisticalResources#resource" href="http://data.istac.es/apis/statistical-resources/v1.0/resources/agency2/dataset1/01.000#dataset"/>
+        <ns2:selectedLanguages total="1">
+            <ns2:language>es</ns2:language>
+        </ns2:selectedLanguages>
+        <ns2:statisticalOperation>
+            <ns2:id>vU3aMD0r7Z</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=vU3aMD0r7Z</ns2:urn>
+            <ns2:name>
+                <cdomain:text xml:lang="es">title-vU3aMD0r7Z en Espanol</cdomain:text>
+            </ns2:name>
+            <ns2:type>STATISTICAL_OPERATION</ns2:type>
+        </ns2:statisticalOperation>
+    </ns2:resource>
+    <ns2:resource kind="statisticalResources#resource">
+        <ns2:resourceID>
+            <ns2:id>dataset2</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset2(01.000)</ns2:urn>
+            <ns2:type>DATASET</ns2:type>
+        </ns2:resourceID>
+        <ns2:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset2&amp;version=01.000#</ns2:visualizerHtmlLink>
+        <ns2:selfLink kind="statisticalResources#resource" href="http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset2/01.000#dataset"/>
+        <ns2:selectedLanguages total="1">
+            <ns2:language>es</ns2:language>
+        </ns2:selectedLanguages>
+        <ns2:statisticalOperation>
+            <ns2:id>M3MTXgSaxh</ns2:id>
+            <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=M3MTXgSaxh</ns2:urn>
+            <ns2:name>
+                <cdomain:text xml:lang="es">title-M3MTXgSaxh en Espanol</cdomain:text>
+            </ns2:name>
+            <ns2:type>STATISTICAL_OPERATION</ns2:type>
+        </ns2:statisticalOperation>
+    </ns2:resource>
+</ns2:resources>

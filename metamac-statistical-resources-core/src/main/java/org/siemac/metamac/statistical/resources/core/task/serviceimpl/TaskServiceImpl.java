@@ -1058,7 +1058,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         logger.debug("Processing geographic coverage to create the cache correctlyfinished");
         
-        markTaskAsFinishedInTransaction(ctx, jobKey);
+        markTaskAsFinished(ctx, jobKey);
     }
 
     private void markTaskAsFinishedInTransaction(ServiceContext ctx, String jobKey) {
@@ -1108,7 +1108,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         logger.debug("Processing geographic coverage for external datasets (nonexistent in database) to create the cache correctly finished");
 
-        markTaskAsFinished(ctx, jobKey);
+        markTaskAsFinishedInTransaction(ctx, jobKey);
     }
 
     public es.ibestat.jaxi.stream.messages.ExternalItemAvro do2Avro(ExternalItem source) {
@@ -1297,6 +1297,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processRollbackDatabaseImportTask(ctx, task.getJob());
         } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
             processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE)) {
+            processRollbackUpdateExternalPublicationGeocoverageCacheTask(ctx, task.getJob());
         }
     }
 
@@ -1306,7 +1308,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         getNoticesRestInternalService().createUpdateGeocoverageCacheNotification(datasetVersion, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
                 ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionUrn);
+     
+        markTaskAsFinished(ctx, jobKey);
+    }
+    
+    private void processRollbackUpdateExternalPublicationGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
 
+        getNoticesRestInternalService().createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
+        
         markTaskAsFinished(ctx, jobKey);
     }
 

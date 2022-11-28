@@ -238,7 +238,10 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
 
     @Override
     public void createExternalPublicationUpdateErrorBackgroundNotification(String keyMessage) {
-        createBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR, ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR, new ArrayList<DatasetVersion>(), keyMessage);
+        if (ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR.equals(keyMessage)) {
+            createBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR, ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR,
+                    new ArrayList<DatasetVersion>(), keyMessage);
+        }
     }
     
     @Override

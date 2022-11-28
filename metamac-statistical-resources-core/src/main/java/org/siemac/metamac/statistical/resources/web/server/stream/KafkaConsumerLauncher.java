@@ -41,6 +41,7 @@ import org.siemac.metamac.statistical.resources.core.constants.StatisticalResour
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -81,7 +82,6 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Cache                          kafkaFailedMessagesCache;
     private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME   = "statistical_resources_consumer_jaxi_publication_1";
     private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME   = "statistical_resources_consumer_jaxi_publication_2";
-    private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_NAME   = "datasets_external_publication";
     private static final String            KAFKA_FAILED_CACHE_NAME = "kafkaFailed";
     
     @Override
@@ -182,7 +182,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         Long latestOffset = getLastConsumerOffset();
 
         if (latestOffset <= 0L) {
-            noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(CONSUMER_EXTERNAL_DATASET_PUBLICATION_NAME);
+            noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
         }
 
         externalPublicationConsumerConfig(externalPublicationTopicName, consumer);

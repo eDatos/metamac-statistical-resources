@@ -1,0 +1,139 @@
+{
+    "resource": [
+        {
+            "resourceID": {
+                "id": "dataset1",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)",
+                "type": "DATASET"
+            },
+            "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=01.000#",
+            "selfLink": {
+                "kind": "statisticalResources#resource",
+                "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset1/01.000#dataset"
+            },
+            "selectedLanguages": {
+                "language": [
+                    "es"
+                ],
+                "total": 1
+            },
+            "statisticalOperation": {
+                "id": "PlPpCudkvi",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=PlPpCudkvi",
+                "name": {
+                    "text": [
+                        {
+                            "value": "title-PlPpCudkvi en Espanol",
+                            "lang": "es"
+                        }
+                    ]
+                },
+                "type": "STATISTICAL_OPERATION"
+            },
+            "kind": "statisticalResources#resource"
+        },
+        {
+            "resourceID": {
+                "id": "dataset1",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(02.000)",
+                "type": "DATASET"
+            },
+            "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=02.000#",
+            "selfLink": {
+                "kind": "statisticalResources#resource",
+                "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset1/02.000#dataset"
+            },
+            "selectedLanguages": {
+                "language": [
+                    "es"
+                ],
+                "total": 1
+            },
+            "statisticalOperation": {
+                "id": "ahvuZvS6fx",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=ahvuZvS6fx",
+                "name": {
+                    "text": [
+                        {
+                            "value": "title-ahvuZvS6fx en Espanol",
+                            "lang": "es"
+                        }
+                    ]
+                },
+                "type": "STATISTICAL_OPERATION"
+            },
+            "kind": "statisticalResources#resource"
+        },
+        {
+            "resourceID": {
+                "id": "dataset1",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency2:dataset1(01.000)",
+                "type": "DATASET"
+            },
+            "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency2&resourceId=dataset1&version=01.000#",
+            "selfLink": {
+                "kind": "statisticalResources#resource",
+                "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency2/dataset1/01.000#dataset"
+            },
+            "selectedLanguages": {
+                "language": [
+                    "es"
+                ],
+                "total": 1
+            },
+            "statisticalOperation": {
+                "id": "l3e5vyifji",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=l3e5vyifji",
+                "name": {
+                    "text": [
+                        {
+                            "value": "title-l3e5vyifji en Espanol",
+                            "lang": "es"
+                        }
+                    ]
+                },
+                "type": "STATISTICAL_OPERATION"
+            },
+            "kind": "statisticalResources#resource"
+        },
+        {
+            "resourceID": {
+                "id": "dataset2",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset2(01.000)",
+                "type": "DATASET"
+            },
+            "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset2&version=01.000#",
+            "selfLink": {
+                "kind": "statisticalResources#resource",
+                "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset2/01.000#dataset"
+            },
+            "selectedLanguages": {
+                "language": [
+                    "es"
+                ],
+                "total": 1
+            },
+            "statisticalOperation": {
+                "id": "0A8l1YHrR7",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=0A8l1YHrR7",
+                "name": {
+                    "text": [
+                        {
+                            "value": "title-0A8l1YHrR7 en Espanol",
+                            "lang": "es"
+                        }
+                    ]
+                },
+                "type": "STATISTICAL_OPERATION"
+            },
+            "kind": "statisticalResources#resource"
+        }
+    ],
+    "kind": "statisticalResources#resources",
+    "total": 40,
+    "limit": 25,
+    "offset": 4,
+    "selfLink": "http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' AND IS_LAST_VERSION EQ 'true'&limit=25&offset=4#dataset",
+    "nextLink": "http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' AND IS_LAST_VERSION EQ 'true'&limit=25&offset=29#dataset",
+    "lastLink": "http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' AND IS_LAST_VERSION EQ 'true'&limit=25&offset=29#dataset"
+}
