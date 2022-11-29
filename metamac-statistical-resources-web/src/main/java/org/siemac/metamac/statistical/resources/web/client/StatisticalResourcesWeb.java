@@ -12,6 +12,7 @@ import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesResult;
 import org.siemac.metamac.web.common.client.MetamacSecurityEntryPoint;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.gin.MetamacWebGinjector;
 
 import com.google.gwt.core.client.GWT;
@@ -50,6 +51,7 @@ public class StatisticalResourcesWeb extends MetamacSecurityEntryPoint {
                 StatisticalResourcesDefaults.defaultAgency = null;
                 StatisticalResourcesDefaults.defaultLanguage = null;
                 loadApplication();
+                ShowMessageEvent.fireErrorMessage(StatisticalResourcesWeb.this, StatisticalResourcesWeb.getMessages().srmIsDown());
             }
 
             @Override
