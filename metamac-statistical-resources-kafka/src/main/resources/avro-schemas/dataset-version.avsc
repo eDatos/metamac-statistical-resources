@@ -4,8 +4,8 @@
     "name" : "DatasetVersionAvro",
     "fields" : [
         {"name" : "siemacMetadataStatisticalResource", "type" : ["null", "SiemacMetadataStatisticalResourceAvro"]},
-        {"name" : "dateStart", "type" : ["null", "DatetimeAvro"]},
-        {"name" : "dateEnd", "type" : ["null", "DatetimeAvro"]},
+        {"name" : "dateStart", "type" : ["null", "InternationalStringAvro"]},
+        {"name" : "dateEnd", "type" : ["null", "InternationalStringAvro"]},
         {"name" : "datasetRepositoryId", "type" : ["null", "string"]},
         {"name" : "formatExtentDimensions" , "type" : ["null", "int"]},
         {"name" : "dateNextUpdate", "type" : ["null", "InternationalStringAvro"]},

@@ -73,7 +73,8 @@ public class MappersMockUtils {
     protected static final NextVersionTypeEnum           EXPECTED_NEXT_VERSION_TYPE     = NextVersionTypeEnum.NON_SCHEDULED_UPDATE;
     protected static final DateTime                      EXPECTED_PAST_DATE             = new DateTime(2016, 06, 01, 0, 0, 0, 0).minusDays(30);
     protected static final DateTime                      EXPECTED_FUTURE_DATE           = new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30);
-    protected static final String                        EXPECTED_FUTURE_DATE_SDMX      = CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30).toDate());
+    protected static final String                        EXPECTED_PAST_DATE_SDMX        = "2016-M05";
+    protected static final String                        EXPECTED_FUTURE_DATE_SDMX      = "2016-M07";
     protected static final String                        EXPECTED_VERSION_LOGIC         = "EXPECTED_VERSION_LOGIC";
     protected static final long                          EXPECTED_VERSION               = 33l;
     protected static final String                        EXPECTED_URI                   = "/EXPECTED_URI";
@@ -345,8 +346,8 @@ public class MappersMockUtils {
         DatasetVersion d = new DatasetVersion();
         SiemacMetadataStatisticalResource siemac = mockSiemacMetadataStatisticalResource(TypeRelatedResourceEnum.DATASET_VERSION, d, expectedUrn, true);
         d.setSiemacMetadataStatisticalResource(siemac);
-        d.setDateStart(EXPECTED_PAST_DATE);
-        d.setDateEnd(EXPECTED_FUTURE_DATE);
+        d.setDateStart(EXPECTED_PAST_DATE_SDMX  );
+        d.setDateEnd(EXPECTED_FUTURE_DATE_SDMX);
         d.setRelatedDsdChanged(EXPECTED_TRUE);
         d.setDatasetRepositoryId(EXPECTED_IDENTIFIER);
         d.setFormatExtentDimensions(EXPECTED_COPYRIGHT);
@@ -690,8 +691,8 @@ public class MappersMockUtils {
         // @formatter:off
         DatasetVersionAvro target = DatasetVersionAvro.newBuilder()
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(mockSiemacMetadataStatisticalResource(TypeRelatedResourceEnum.DATASET_VERSION)))
-                .setDateStart(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
-                .setDateEnd(DateTimeDo2AvroMapper.do2Avro(EXPECTED_FUTURE_DATE))
+                .setDateStart(mockInternationalStringAvroFutureDate())
+                .setDateEnd(mockInternationalStringAvroFutureDate())
                 .setDatasetRepositoryId(EXPECTED_IDENTIFIER)
                 .setFormatExtentDimensions(EXPECTED_COPYRIGHT)
                 .setDateNextUpdate(mockInternationalStringAvroFutureDate())

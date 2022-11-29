@@ -216,8 +216,8 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.addTemporalGranularity(mockCodeExternalItemDto());
         datasetVersionDto.addTemporalGranularity(mockCodeExternalItemDto());
 
-        datasetVersionDto.setDateStart(mockDate());
-        datasetVersionDto.setDateEnd(mockDate());
+        datasetVersionDto.setDateStart(mockSDMXDate());
+        datasetVersionDto.setDateEnd(mockSDMXDate());
 
         datasetVersionDto.addStatisticalUnit(mockConceptExternalItemDto());
         datasetVersionDto.addStatisticalUnit(mockConceptExternalItemDto());
@@ -227,7 +227,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.setFormatExtentDimensions(5);
         datasetVersionDto.setFormatExtentObservations(8L);
 
-        datasetVersionDto.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(mockDate()));
+        datasetVersionDto.setDateNextUpdate(mockSDMXDate());
         datasetVersionDto.setUpdateFrequency(mockCodeExternalItemDto());
         datasetVersionDto.setStatisticOfficiality(createStatisticOfficialityDtoFromDo(officiality));
         datasetVersionDto.setBibliographicCitation(mockInternationalStringDto());
@@ -238,6 +238,10 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.setDataSourceType(DataSourceTypeEnum.FILE);
 
         return datasetVersionDto;
+    }
+
+    private static String mockSDMXDate() {
+        return CoreCommonUtil.jodaDateTime2IsoDate(mockDate());
     }
 
     // -----------------------------------------------------------------

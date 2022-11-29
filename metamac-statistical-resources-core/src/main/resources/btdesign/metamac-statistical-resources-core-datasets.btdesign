@@ -209,9 +209,9 @@ Application DatasetsStatisticalResources {
 			//temporal granularities
 			- Set<@ExternalItem> temporalGranularities cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_DV_TEMP_GRANULARITY" databaseColumn="TEMPORAL_GRANULARITY_FK" databaseJoinColumn="DATASET_VERSION_FK";
 			//First date which data refers to
-			DateTimeTZ dateStart nullable;
+			String dateStart nullable;
 			//Last date which data refers to
-			DateTimeTZ dateEnd nullable;
+			String dateEnd nullable;
 			- Bag<@ExternalItem> statisticalUnit cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_STATISTICAL_UNIT" databaseColumn="STATISTICAL_UNIT_FK" databaseJoinColumn="DATASET_VERSION_FK";
 
 			//Production descriptor
