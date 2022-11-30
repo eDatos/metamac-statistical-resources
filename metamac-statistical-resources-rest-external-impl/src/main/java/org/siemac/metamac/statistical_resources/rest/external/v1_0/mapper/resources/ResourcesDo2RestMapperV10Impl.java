@@ -46,7 +46,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
             return null;
         }
         Resource target = new Resource();
-        target.setResourceID(toItemBase(source.getCode(), source.getUrn(), source.getTitle(), TypeExternalArtefactsEnum.DATASET, selectedLanguages ));
+        target.setResourceId(toItemBase(source.getCode(), source.getUrn(), source.getTitle(), TypeExternalArtefactsEnum.DATASET, selectedLanguages ));
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
         target.setKind(StatisticalResourcesRestExternalConstants.KIND_RESOURCE);
         target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.DATASET.getName()));

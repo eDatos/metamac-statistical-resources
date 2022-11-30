@@ -751,7 +751,7 @@
     
     <xs:complexType name="Resource">
         <xs:sequence>
-        	<xs:element name="resourceID" type="tns:ItemBase" />
+        	<xs:element name="resourceId" type="tns:ItemBase" />
             <xs:element name="visualizerHtmlLink" type="xs:string" />
             <xs:element name="selfLink" type="common:ResourceLink" />
             <xs:element name="managementAppLink" type="xs:string" />
