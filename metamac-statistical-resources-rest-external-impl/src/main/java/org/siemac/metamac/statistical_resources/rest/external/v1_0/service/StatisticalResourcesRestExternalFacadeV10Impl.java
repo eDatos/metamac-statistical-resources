@@ -231,7 +231,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     
     private Resources findResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
         try {
-            SculptorCriteria sculptorCriteria = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+            SculptorCriteria sculptorCriteria = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset, true);
 
             // Find
             PagedResult<GeoCovVarElementCacheDatasetVersion> entitiesPagedResult = commonService.findResources(sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
