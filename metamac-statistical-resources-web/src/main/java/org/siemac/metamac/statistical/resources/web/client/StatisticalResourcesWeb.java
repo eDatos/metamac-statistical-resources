@@ -51,7 +51,7 @@ public class StatisticalResourcesWeb extends MetamacSecurityEntryPoint {
                 StatisticalResourcesDefaults.defaultAgency = null;
                 StatisticalResourcesDefaults.defaultLanguage = null;
                 loadApplication();
-                ShowMessageEvent.fireErrorMessage(StatisticalResourcesWeb.this, StatisticalResourcesWeb.getMessages().srmIsDown());
+                ShowMessageEvent.fireErrorMessage(StatisticalResourcesWeb.this, caught);
             }
 
             @Override
