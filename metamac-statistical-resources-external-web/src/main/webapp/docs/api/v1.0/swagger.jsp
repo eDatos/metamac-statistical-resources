@@ -4115,7 +4115,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
                }
             ],
             "responses":{
@@ -4187,7 +4187,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
                }
             ],
             "responses":{
@@ -4265,7 +4265,7 @@
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
                }
             ],
             "responses":{

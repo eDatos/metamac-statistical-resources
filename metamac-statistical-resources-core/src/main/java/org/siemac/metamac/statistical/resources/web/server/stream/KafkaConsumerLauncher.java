@@ -62,8 +62,6 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     protected static final Log             LOGGER                  = LogFactory.getLog(KafkaConsumerLauncher.class);
     
     private static final String      MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
-    //private static final int      CONSUMER_TIMEOUT_PROCESS = 1800000;
-    private static final int      CONSUMER_TIMEOUT_PROCESS = 60000;
     
     @Autowired
     private StatisticalResourcesConfiguration statisticalResourcesConfiguration;
