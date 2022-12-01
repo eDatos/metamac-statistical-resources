@@ -13,8 +13,9 @@ public class ServiceNoticeMessage {
     public static final String RESOURCE_PUBLICATION_ERROR_OK          = "notice_message.resources.action.publication_error.ok";
     public static final String UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR = "notice_message.resources.action.update_geocoverage_cache.error";
     public static final String RESOURCE_RECEIVED_FROM_KAFKA_ERROR     = "notice_message.resources.message.received_from_kafka.error";
-    public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR = "notice_message.resources.message.update_geocoverage_cache_external_publication_variable_element_error";
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR = "notice_message.resources.message.update_geocoverage_cache_get_messages_from_kafka.error";
+    
+    
     
     // Stream messaging
     public static final String STREAM_MESSAGE_SEND_ERROR              = "notice_message.resources.stream_messaging.action.send.error";

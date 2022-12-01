@@ -104,8 +104,23 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         } catch (MetamacException e) {
             logger.error("Error creating createErrorBackgroundNotification:", e);
         }
-    }
+    } 
+    
+    @Override
+    public void createErrorBackgroundNotification(String actionCode, MetamacException exception) {
+        try {
+            Locale locale = configurationService.retrieveLanguageDefaultLocale();
 
+            Throwable localisedException = translateExceptions.translateException(locale, exception);
+            String localisedMessage = localisedException.getMessage();
+            localisedMessage = ERROR + " - " + localisedMessage;
+
+            createBackgroundNotification(actionCode, localisedMessage, null);
+        } catch (MetamacException e) {
+            logger.error("Error creating createErrorBackgroundNotification:", e);
+        }
+    } 
+    
     @Override
     public void createDatabaseImportErrorBackgroundNotification(DatasetVersion datasetVersion, String actionCode, MetamacException exception) {
         try {
@@ -202,6 +217,7 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             String subject = LocaleUtil.getMessageForCode(actionCode, locale);
             String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS.getName();
 
+            if (user != null) {
             // @formatter:off
             sendNotice(NoticeBuilder.notification()
                     .withMessagesWithoutResources(message)
@@ -211,6 +227,17 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
                     .withSubject(subject)
                     .build());
             // @formatter:on
+            } else {
+             // @formatter:off
+                sendNotice(NoticeBuilder.notification()
+                        .withMessagesWithoutResources(message)
+                        .withSendingApplication(sendingApp)
+                        .withSubject(subject)
+                        .withRoles(MetamacRolesEnum.ADMINISTRADOR)
+                        .build());
+                // @formatter:on
+            }
+
         } catch (Exception e) {
             throw manageNoticesInternalRestException(e);
         }

@@ -32,6 +32,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
@@ -39,6 +40,7 @@ import org.siemac.metamac.sso.client.SsoClientConstants;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
@@ -54,7 +56,6 @@ import io.confluent.kafka.serializers.AbstractKafkaSchemaSerDeConfig;
 import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 @Component
 public class KafkaConsumerLauncher implements ApplicationListener<ContextRefreshedEvent> {
@@ -165,20 +166,24 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
     public void createCustomConsumer() throws MetamacException {
         String externalPublicationTopicName = getExternalDatasetPublicationTopic();
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         if (externalPublicationTopicName != null) {
             try (KafkaConsumer<String, DatasetAvro> consumer = createCustomConsumerFromCurrentOffset(externalPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME);) {
-                updateDatasetExternalPublication(externalPublicationTopicName, consumer);
+                updateDatasetExternalPublication(externalPublicationTopicName, consumer, exceptionItems);
             } catch (Exception e) {
                 LOGGER.error(e, e.getCause());
+            } finally {
+                sendErrorNotification(exceptionItems);
             }
+            
         }
 
     }
 
-    private void updateDatasetExternalPublication(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer) throws MetamacException {
+    private void updateDatasetExternalPublication(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         int it = 0;
         Long latestOffset = getLastConsumerOffset();
-
+        
         if (latestOffset <= 0L) {
             noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
         }
@@ -213,12 +218,20 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                     LOGGER.info("The dataset external publication update has finished correctly. Consumer topic external publication last offset " + latestOffset);
                     keepOnReading = false;
                 }
-
+       
                 if (!removePendingOffsets(consumer, record, pendigOffsetsToCommit)) {
-                    callFacadeBusinessLogicUpdateCache(externalPublicationTopicName, consumer, record, pendigOffsetsToCommit);
+                    callFacadeBusinessLogicUpdateCache(externalPublicationTopicName, consumer, record, pendigOffsetsToCommit, exceptionItems);
                 }
             }
         }
+       
+    }
+    
+    private void sendErrorNotification(List<MetamacExceptionItem> exceptionItems) {      
+        MetamacException metamacException = new MetamacException();
+        metamacException.getExceptionItems().addAll(exceptionItems);
+        metamacException.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR));
+        noticesRestInternalService.createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET, metamacException);
     }
     
     private boolean removePendingOffsets(KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record, Map<Integer, Long> pendigOffsetsToCommit) {
@@ -248,7 +261,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     }
 
     private void callFacadeBusinessLogicUpdateCache(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record,
-            Map<Integer, Long> pendigOffsetsToCommit) {
+            Map<Integer, Long> pendigOffsetsToCommit, List<MetamacExceptionItem> exceptions) {
         StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
         // @formatter:off
         logMessageBldr
@@ -268,16 +281,21 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         try {
             ServiceContext serviceContext = createServiceContext(logMessage);
 
-            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
+            if (record.value() == null || record.value().getUrn() == null) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR_STREAM_NO_VALID, record.key()));
+            } else {
 
-            commitSync(consumer, record);
+                statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
+                commitSync(consumer, record);
+            }
 
+        } catch (MetamacException e) {
+            LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
+            exceptions.addAll(e.getExceptionItems());
+            LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
         } catch (Exception e) {
             LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
-
-            // Send a error notification, the error message will send only if not exist in error cache
-            sendErrorMessageIfNeccesary(record);
-
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_ERROR, record.key()));
             LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
         }
     }
@@ -307,16 +325,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
         return true;
     }
-    
-    private void sendErrorMessageIfNeccesary(ConsumerRecord<String, DatasetAvro> record) {
-        if (!kafkaFailedMessagesCache.isKeyInCache(record.key())) {
-            Element element = new Element(record.key(), record.value());
-            element.setEternal(true);
-            kafkaFailedMessagesCache.put(element);
-            noticesRestInternalService.createConsumerFromKafkaErrorBackgroundNotification(record.key());
-        }
-    }
-    
+
     private KafkaConsumer<String, DatasetAvro> createCustomConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
         KafkaConsumer<String, DatasetAvro> kafkaConsumer = new KafkaConsumer<>(getCustomonsumerProperties(clientId));
         kafkaConsumer.subscribe(Collections.singletonList(topic));

@@ -17,6 +17,7 @@ public interface NoticesRestInternalService {
 
     // Background Notifications
     public void createErrorBackgroundNotification(String user, String actionCode, MetamacException exception);
+    public void createErrorBackgroundNotification(String actionCode, MetamacException exception);
     public void createDatabaseImportErrorBackgroundNotification(DatasetVersion datasetVersion, String actionCode, MetamacException exception);
     public void createSuccessBackgroundNotification(String user, String actionCode, String successMessageCode, Serializable... successMessageParameters);
     public void createDatabaseImportSuccessBackgroundNotification(DatasetVersion datasetVersion, String actionCode, String successMessageCode, Serializable... successMessageParameters);

@@ -1374,29 +1374,28 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         updateAllExternalGeocoverageCache(ctx);
     }
     
-
     private void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-        try {
-            DatasetAvro jaxiDatasetVersionAvro = null;
-            if (message instanceof DatasetAvro) {
-                jaxiDatasetVersionAvro = (DatasetAvro) message;
-            }
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+        DatasetAvro jaxiDatasetVersionAvro = null;
+        if (message instanceof DatasetAvro) {
+            jaxiDatasetVersionAvro = (DatasetAvro) message;
+        }
 
-            if (jaxiDatasetVersionAvro == null || jaxiDatasetVersionAvro.getUrn() == null) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR_STREAM_NO_VALID).build();
+        geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
+        if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
+            List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
+                    exceptionItems);
+            for (ExternalItem variableElement : externalItemGeographicCoverage) {
+                updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, variableElement);
             }
+        }
 
-            geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
-            if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
-                List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService);
-                for (ExternalItem variableElement : externalItemGeographicCoverage) {
-                    updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, variableElement);
-                }
-            }
-        } catch (Exception e) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR).build();
+        if (!exceptionItems.isEmpty()) {
+            MetamacException metamacException = new MetamacException();
+            metamacException.getExceptionItems().addAll(exceptionItems);
+            throw metamacException;
         }
     }
 

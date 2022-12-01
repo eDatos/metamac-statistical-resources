@@ -17,6 +17,7 @@ public class ServiceNoticeAction {
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET = "notice_message.resources.action.update_geocoverage_cache_external_publication_variable_element_error";
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR = "notice_message.resources.action.update_geocoverage_cache_get_messages_from_kafka.error";
     
+    
     public static final String CREATE_REPLACE_DATASET_ERROR                   = "notice_message.resources.action.create_replace_dataset.error";
     public static final String ASSIGN_ROLE_PERMISSIONS_DATASET_ERROR          = "notice_message.resources.action.assign_role_permissions_dataset.error";
 

@@ -10,6 +10,7 @@ import org.apache.avro.specific.SpecificData;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
@@ -24,11 +25,10 @@ import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedStri
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
-import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
-import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
@@ -72,7 +72,7 @@ public class RestMapper {
     }
 
     public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, SrmRestInternalService srmRestInternalService,
-            NoticesRestInternalService noticesRestInternalService) throws MetamacException {
+            NoticesRestInternalService noticesRestInternalService, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         List<ExternalItem> externalItems = new ArrayList<ExternalItem>();
         for (ExternalItemAvro externalAvro : jaxiDatasetVersionAvro.getGeographicCoverage()) {
             TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
@@ -85,15 +85,19 @@ public class RestMapper {
                 externalItem.setCodeNested(externalAvro.getCodeNested());
 
                 try {
+                    
+                    if (externalAvro.getUrn() == null) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn()));
+                        continue;
+                    }
+                    
                     VariableElement variableElement = srmRestInternalService.retrieveVariableElement(externalAvro.getUrn());
                     externalItem.setUri(variableElement.getSelfLink().getHref());
                     externalItem.setManagementAppUrl(variableElement.getManagementAppLink());
                 } catch (Exception e) {
                     externalItem.setUri("-");
                     externalItem.setManagementAppUrl("-");
-                    noticesRestInternalService.createErrorUpdateGeocoverageCacheBackgroundNotification(jaxiDatasetVersionAvro,
-                            ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET, ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR,
-                            externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn());
+                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn()));
                 }
 
                 externalItem.setUrn(externalAvro.getUrn());
