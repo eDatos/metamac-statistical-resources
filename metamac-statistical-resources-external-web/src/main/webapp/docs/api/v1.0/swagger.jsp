@@ -29,7 +29,7 @@
          "description":""
       },
       {
-         "name":"Otros recursos estadísticos",
+         "name":"Utilidades",
          "description":""
       }
    ],
@@ -4791,7 +4791,7 @@
       "/v1.0/resources":{
          "get":{
             "tags":[
-               "Otros recursos estadísticos"
+               "Utilidades"
             ],
             "description":"Permite obtener el listado de datasets cacheados por elemento de variable u operación estadística.",
             "operationId":"resource__v1.0_resources_findResources_GET",
