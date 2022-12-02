@@ -507,7 +507,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="collection" type="common:Resource" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="collection" type="common-tns:ResourceWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -517,7 +517,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="query" type="common:Resource" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="query" type="common-tns:ResourceWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -527,7 +527,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="multidataset" type="common:Resource" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="multidataset" type="common-tns:ResourceWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
