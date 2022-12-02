@@ -17,6 +17,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     private MainFormLayoutButton resendStreamMessage;
     private MainFormLayoutButton versioning;
     private MainFormLayoutButton preview;
+    private MainFormLayoutButton copyKeepingMaintainer;
 
     private boolean              lastVersion;
 
@@ -38,6 +39,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         resendStreamMessage = new MainFormLayoutButton(getConstants().lifeCycleReSendStreamMessage(), GlobalResources.RESOURCE.reload().getURL());
         versioning = new MainFormLayoutButton(getConstants().lifeCycleVersioning(), GlobalResources.RESOURCE.version().getURL());
         preview = new MainFormLayoutButton(getConstants().actionPreviewData(), GlobalResources.RESOURCE.preview().getURL());
+        copyKeepingMaintainer = new MainFormLayoutButton(getConstants().actionCopy(), GlobalResources.RESOURCE.copy().getURL());
 
         toolStrip.addButton(productionValidation);
         toolStrip.addButton(diffusionValidation);
@@ -46,6 +48,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         toolStrip.addButton(resendStreamMessage);
         toolStrip.addButton(versioning);
         toolStrip.addButton(preview);
+        toolStrip.addButton(copyKeepingMaintainer);
     }
 
     @Override
@@ -88,6 +91,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         }
 
         showPreviewButton();
+        showCopyKeepingMaintainerButton();
     }
 
     protected void hideAllLifeCycleButtons() {
@@ -98,6 +102,11 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         resendStreamMessage.hide();
         versioning.hide();
         preview.hide();
+        copyKeepingMaintainer.hide();
+    }
+
+    private void showCopyKeepingMaintainerButton() {
+        copyKeepingMaintainer.show();
     }
 
     private void showProductionValidationButton() {
@@ -172,6 +181,10 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
 
     public boolean isLastVersion() {
         return lastVersion;
+    }
+
+    public HasClickHandlers getCopyKeepingMaintainer() {
+        return copyKeepingMaintainer;
     }
 
     //

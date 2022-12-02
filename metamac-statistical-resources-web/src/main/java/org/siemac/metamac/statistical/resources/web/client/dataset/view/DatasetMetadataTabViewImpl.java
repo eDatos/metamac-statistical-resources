@@ -289,11 +289,33 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
             }
         });
 
+        mainFormLayout.getCopyKeepingMaintainer().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                copyDsdAskingCode("");
+            }
+        });
+
         mainFormLayout.getEditToolStripButton().addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
                 mainFormLayout.setEditionMode();
+            }
+        });
+    }
+
+    private void copyDsdAskingCode(final String urn) {
+        final CopyResourceWindow copyResourceWindow = new CopyResourceWindow(getConstants().copyResource());
+        copyResourceWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+            @Override
+            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                if (copyResourceWindow.validateForm()) {
+//                    getUiHandlers().copyDsd(urn, copyResourceWindow.getSelectedCode());
+                    copyResourceWindow.destroy();
+                }
             }
         });
     }

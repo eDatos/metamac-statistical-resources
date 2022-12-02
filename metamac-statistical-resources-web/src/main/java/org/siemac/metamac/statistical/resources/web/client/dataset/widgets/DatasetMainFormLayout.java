@@ -12,7 +12,7 @@ import com.smartgwt.client.widgets.events.HasClickHandlers;
 
 public class DatasetMainFormLayout extends LifecycleMainFormLayout {
 
-    private DatasetVersionDto datasetVersionDto;
+    private DatasetVersionDto    datasetVersionDto;
     private MainFormLayoutButton updateGeocoverageCache;
 
     public DatasetMainFormLayout() {
