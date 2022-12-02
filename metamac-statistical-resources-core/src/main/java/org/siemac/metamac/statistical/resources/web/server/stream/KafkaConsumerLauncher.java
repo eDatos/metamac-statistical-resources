@@ -227,11 +227,13 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
        
     }
     
-    private void sendErrorNotification(List<MetamacExceptionItem> exceptionItems) {      
-        MetamacException metamacException = new MetamacException();
-        metamacException.getExceptionItems().addAll(exceptionItems);
-        metamacException.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR));
-        noticesRestInternalService.createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET, metamacException);
+    private void sendErrorNotification(List<MetamacExceptionItem> exceptionItems) {
+        if (!exceptionItems.isEmpty()) {
+            MetamacException metamacException = new MetamacException();
+            metamacException.getExceptionItems().addAll(exceptionItems);
+            metamacException.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR));
+            noticesRestInternalService.createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET, metamacException);
+        }
     }
     
     private boolean removePendingOffsets(KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record, Map<Integer, Long> pendigOffsetsToCommit) {
