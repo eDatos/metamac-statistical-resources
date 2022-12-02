@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain" xmlns:tns="http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
-    xmlns:common="http://www.siemac.org/metamac/rest/common/v1.0/domain">
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+           xmlns:tns="http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+           xmlns:common="http://www.siemac.org/metamac/rest/common/v1.0/domain"
+           xmlns:common-tns="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain">
 
     <xs:import namespace="http://www.siemac.org/metamac/rest/common/v1.0/domain" schemaLocation="metamac-rest-api:metamac-rest-common-domain-v1.0.xsd" />
+    <xs:import namespace="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain" schemaLocation="metamac-statistical-resources-rest-api-common-domain-v1.0.xsd" />
 
     <xs:complexType name="Dataset">
         <xs:sequence>
@@ -491,7 +497,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="dataset" type="common:Resource" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="dataset" type="common-tns:ResourceWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
