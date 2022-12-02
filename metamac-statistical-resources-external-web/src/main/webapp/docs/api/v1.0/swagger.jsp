@@ -318,7 +318,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -520,7 +520,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -795,7 +795,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -1262,7 +1262,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -1444,6 +1444,23 @@
             }
          },
          "description":""
+      },
+      "ResourceWithStatisticalOperation":{
+         "type":"object",
+         "title":"ResourceWithStatisticalOperation",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                  "statisticalOperation":{
+                     "description":"",
+                     "$ref":"#/definitions/Resource"
+                  },
+               }
+            }
+         ],
       },
       "Resources":{
          "type":"object",
@@ -2003,6 +2020,23 @@
          ],
          "description":""
       },
+      "ResourceWithStatisticalOperation":{
+         "type":"object",
+         "title":"ResourceWithStatisticalOperation",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                  "statisticalOperation":{
+                     "description":"",
+                     "$ref":"#/definitions/Resource"
+                  },
+               }
+            }
+         ],
+      },
       "Resources":{
          "type":"object",
          "title":"Resources",
@@ -2417,7 +2451,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
                   }
                }
             }
@@ -2846,7 +2880,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
                   }
                }
             }
@@ -3208,7 +3242,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
                   }
                }
             }
@@ -3831,6 +3865,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -3903,6 +3943,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4032,6 +4078,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4104,6 +4156,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4182,6 +4240,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4330,6 +4394,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, RELATED_DATASET_URN, TYPE, STATUS, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4402,6 +4472,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, RELATED_DATASET_URN, TYPE, STATUS, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4544,6 +4620,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4616,6 +4698,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
