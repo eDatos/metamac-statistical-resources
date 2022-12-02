@@ -21,7 +21,7 @@ public class StatisticalResourcesRestInternalFacadeV10CollectionsTest extends St
 
     @Test
     public void testFindCollections() throws Exception {
-        Collections collections = statisticalResourcesRestInternalFacadeClientXml.findCollections(null, null, null, null, null);
+        Collections collections = statisticalResourcesRestInternalFacadeClientXml.findCollections(null, null, null, null, null, null);
 
         assertEquals(4, collections.getCollections().size());
         assertEquals(StatisticalResourcesRestInternalConstants.KIND_COLLECTIONS, collections.getKind());
