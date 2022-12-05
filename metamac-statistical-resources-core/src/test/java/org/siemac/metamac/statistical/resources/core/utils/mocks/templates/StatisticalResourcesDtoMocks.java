@@ -16,6 +16,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
 import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.NameableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
@@ -215,8 +216,8 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.addTemporalGranularity(mockCodeExternalItemDto());
         datasetVersionDto.addTemporalGranularity(mockCodeExternalItemDto());
 
-        datasetVersionDto.setDateStart(mockDate());
-        datasetVersionDto.setDateEnd(mockDate());
+        datasetVersionDto.setDateStart(mockSDMXDate());
+        datasetVersionDto.setDateEnd(mockSDMXDate());
 
         datasetVersionDto.addStatisticalUnit(mockConceptExternalItemDto());
         datasetVersionDto.addStatisticalUnit(mockConceptExternalItemDto());
@@ -226,7 +227,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.setFormatExtentDimensions(5);
         datasetVersionDto.setFormatExtentObservations(8L);
 
-        datasetVersionDto.setDateNextUpdate(mockDate());
+        datasetVersionDto.setDateNextUpdate(mockSDMXDate());
         datasetVersionDto.setUpdateFrequency(mockCodeExternalItemDto());
         datasetVersionDto.setStatisticOfficiality(createStatisticOfficialityDtoFromDo(officiality));
         datasetVersionDto.setBibliographicCitation(mockInternationalStringDto());
@@ -237,6 +238,10 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         datasetVersionDto.setDataSourceType(DataSourceTypeEnum.FILE);
 
         return datasetVersionDto;
+    }
+
+    private static String mockSDMXDate() {
+        return CoreCommonUtil.jodaDateTime2IsoDate(mockDate());
     }
 
     // -----------------------------------------------------------------
@@ -420,7 +425,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
 
     private static void mockVersionableStatisticalResourceDto(VersionableStatisticalResourceDto versionableStatisticalResourceDto) {
         versionableStatisticalResourceDto.setVersionLogic(StatisticalResourcesMockFactory.ANOTHER_NOT_INITIAL_VERSION);
-        versionableStatisticalResourceDto.setNextVersionDate(new DateTime().toDate());
+        versionableStatisticalResourceDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
         versionableStatisticalResourceDto.setValidFrom(new DateTime().toDate());
         versionableStatisticalResourceDto.setValidTo(new DateTime().toDate());
 

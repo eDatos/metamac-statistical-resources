@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
 import org.mockito.Mockito;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeRelationship;
@@ -108,7 +107,7 @@ public class DataMockUtils {
         ResourceInternal codelistReference = SrmMockUtils.buildCodelistRef(GEOCODELIST_TEST_URN);
         Codes codes = SrmMockUtils.buildCodes(3);
         Mockito.when(apisLocator.getSrmRestInternalFacadeV10().findCodes(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
-                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(codes);
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn(codes);
 
         ResourceInternal conceptSchemeReference = SrmMockUtils.buildConceptSchemeRef("urn:sdmx:org.sdmx.infomodel.conceptscheme.ConceptScheme=TEST:cshm-01(1.0)");
         Concepts concepts = SrmMockUtils.buildConcepts(3);
@@ -201,8 +200,8 @@ public class DataMockUtils {
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(27L);
 
-        datasetVersion.setDateStart(new DateTime(2010, 1, 1, 0, 0, 0, 0));
-        datasetVersion.setDateEnd(new DateTime(2012, 12, 31, 23, 59, 59, 999));
+        datasetVersion.setDateStart("2010");
+        datasetVersion.setDateEnd("2012");
     }
 
     public static void fillDatasetVersionWithCalculatedMetadataFromDataWithObservationAttributes(DatasetVersion datasetVersion) {

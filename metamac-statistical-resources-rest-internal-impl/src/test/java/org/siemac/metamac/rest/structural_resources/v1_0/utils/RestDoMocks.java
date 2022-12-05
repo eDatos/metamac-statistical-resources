@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
@@ -91,15 +92,15 @@ public class RestDoMocks {
         target.addGeographicGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("countries"));
         target.addTemporalGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("yearly"));
         target.addTemporalGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("monthly"));
-        target.setDateStart(new DateTime(2013, 1, 2, 3, 4, 5, 0));
-        target.setDateEnd(new DateTime(2013, 3, 5, 6, 7, 8, 0));
+        target.setDateStart("2013-01-02");
+        target.setDateEnd("2013-03-05");
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit1"));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit2"));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit3"));
         target.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem("DSD01"));
         target.setFormatExtentObservations(Long.valueOf(3));
         target.setFormatExtentDimensions(Integer.valueOf(5));
-        target.setDateNextUpdate(new DateTime(2013, 12, 2, 3, 4, 5, 0));
+        target.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 12, 2, 3, 4, 5, 0).toDate()));
         target.setUpdateFrequency(StatisticalResourcesDoMocks.mockCodeExternalItem("updateFrequency01"));
         target.setStatisticOfficiality(coreDoMocks.mockStatisticOfficiality("statisticOfficiality01"));
 

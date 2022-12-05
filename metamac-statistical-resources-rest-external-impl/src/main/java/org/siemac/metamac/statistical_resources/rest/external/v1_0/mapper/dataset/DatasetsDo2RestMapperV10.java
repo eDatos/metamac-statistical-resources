@@ -8,6 +8,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 
@@ -18,4 +19,5 @@ public interface DatasetsDo2RestMapperV10 {
     public Resource toResource(DatasetVersion source, List<String> selectedLanguages);
     public Resource toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages);
     public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception;
 }

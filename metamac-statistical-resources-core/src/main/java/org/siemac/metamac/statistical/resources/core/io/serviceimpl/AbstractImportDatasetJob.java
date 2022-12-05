@@ -50,6 +50,7 @@ public abstract class AbstractImportDatasetJob implements Job {
     public static final String         DATASET_NEXT_VERSION               = "datasetNextVersion";
     public static final String         DATASET_NEXT_VERSION_DATE          = "datasetNextVersionDate";
     public static final String         DATASET_NEXT_UPDATE_DATE           = "datasetNextUpdateDate";
+    public static final String         DATASET_UPDATE_FREQUENCY           = "datasetUpdateFrequency";
     public static final String         DATASET_AUTOMATIC_LIFE_CICLE       = "datasetAutomaticLifeCicle";
     public static final String         DATASET_NEXT_PROC_STATUS           = "datasetNextProcStatus";
     public static final String         TASK_NAME                          = "taskName";
@@ -89,6 +90,7 @@ public abstract class AbstractImportDatasetJob implements Job {
         String datasetNextVersion = data.getString(DATASET_NEXT_VERSION);
         String datasetNextVersionDate = data.getString(DATASET_NEXT_VERSION_DATE);
         String datasetNextUpdateDate = data.getString(DATASET_NEXT_UPDATE_DATE);
+        String datasetUpdateFrequency = data.getString(DATASET_UPDATE_FREQUENCY);
         Boolean datasetAutomaticLifeCicle = data.getBoolean(DATASET_AUTOMATIC_LIFE_CICLE);
         String datasetNextProcStatus = data.getString(DATASET_NEXT_PROC_STATUS);
 
@@ -110,6 +112,7 @@ public abstract class AbstractImportDatasetJob implements Job {
             taskInfoDataset.setDatasetNextVersion(datasetNextVersion);
             taskInfoDataset.setDatasetNextVersionDate(datasetNextVersionDate);
             taskInfoDataset.setDatasetNextUpdateDate(datasetNextUpdateDate);
+            taskInfoDataset.setDatasetUpdateFrequency(datasetUpdateFrequency);
             taskInfoDataset.setDatasetAutomaticLifeCicle(datasetAutomaticLifeCicle);
             taskInfoDataset.setDatasetNextProcStatus(datasetNextProcStatus);
 

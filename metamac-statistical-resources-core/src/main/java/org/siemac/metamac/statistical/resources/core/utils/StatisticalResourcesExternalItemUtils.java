@@ -74,11 +74,27 @@ public class StatisticalResourcesExternalItemUtils {
         externalItem.setCodeNested(item.getNestedId());
         externalItem.setUrn(item.getUrn());
         externalItem.setUrnProvider(item.getUrnProvider());
-        externalItem.setType(type);       
+        externalItem.setType(type);
         externalItem.setUri(item.getSelfLink().getHref());
         externalItem.setManagementAppUrl(item.getManagementAppLink());
-        //title not necessary
+        externalItem.setTitle(getInternationalStringFromRestInternationalString(item.getName()));
+
         return externalItem;
+    }
+    
+    private static org.siemac.metamac.statistical.resources.core.common.domain.InternationalString getInternationalStringFromRestInternationalString(InternationalString restInternationalString) {
+        if (restInternationalString != null) {
+            org.siemac.metamac.statistical.resources.core.common.domain.InternationalString internationalString = new org.siemac.metamac.statistical.resources.core.common.domain.InternationalString();
+            List<LocalisedString> restLocalisedString = restInternationalString.getTexts();
+            for (LocalisedString localisedString : restLocalisedString) {
+                org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString newLocalisedString = new org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString();
+                newLocalisedString.setLocale(localisedString.getLang());
+                newLocalisedString.setLabel(localisedString.getValue());
+                internationalString.addText(newLocalisedString);
+            }
+            return internationalString;
+        }
+        return null;
     }
     
     private static InternationalStringDto getInternationalStringDtoFromInternationalString(InternationalString internationalString) {

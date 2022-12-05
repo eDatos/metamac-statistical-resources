@@ -84,8 +84,8 @@
                     <xs:element name="measureCoverages" type="common:Resources" />
                     <xs:element name="geographicGranularities" type="common:Resources" />
                     <xs:element name="temporalGranularities" type="common:Resources" />
-                    <xs:element name="dateStart" type="xs:dateTime" />
-                    <xs:element name="dateEnd" type="xs:dateTime" />
+                    <xs:element name="dateStart" type="common:InternationalString" />
+                    <xs:element name="dateEnd" type="common:InternationalString" />
                     <xs:element name="statisticalUnit" type="common:Resources" minOccurs="0" />
                     <xs:element name="subjectAreas" type="common:Resources" minOccurs="0" />
                     <xs:element name="relatedDsd" type="tns:DataStructureDefinition" />
@@ -93,7 +93,7 @@
                     <xs:element name="attributes" type="tns:Attributes" minOccurs="0" />
                     <xs:element name="formatExtentObservations" type="xs:long" minOccurs="0" />
                     <xs:element name="formatExtentDimensions" type="xs:int" minOccurs="0" />
-                    <xs:element name="dateNextUpdate" type="xs:dateTime" />
+                    <xs:element name="dateNextUpdate" type="common:InternationalString" />
                     <xs:element name="updateFrequency" type="common:Resource" />
                     <xs:element name="statisticOfficiality" type="common:Item" />
                     <xs:element name="bibliographicCitation" type="common:InternationalString" />
@@ -327,6 +327,8 @@
                     <xs:element name="heading" type="tns:DimensionsId" />
                     <xs:element name="stub" type="tns:DimensionsId" />
                     <xs:element name="autoOpen" type="xs:boolean" minOccurs="0" />
+                    <xs:element name="showNullValuesByDefault" type="xs:boolean" minOccurs="0" />
+                    <xs:element name="showZeroValuesByDefault" type="xs:boolean" minOccurs="0" />
                     <xs:element name="showDecimals" type="xs:int" minOccurs="0" />
                 </xs:sequence>
             </xs:extension>

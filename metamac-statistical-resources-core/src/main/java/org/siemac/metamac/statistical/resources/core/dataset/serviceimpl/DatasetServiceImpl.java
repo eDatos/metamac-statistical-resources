@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -35,7 +37,9 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
@@ -106,6 +110,8 @@ import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImport
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.CodeDimensionEqualsIdentifierPredicate;
+import org.siemac.metamac.statistical.resources.core.utils.predicates.ExternalItemEqualsIdentifierPredicate;
+import org.siemac.metamac.statistical.resources.core.utils.shared.DatasetAttibuteSharedUtils;
 import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeDimensionToCodeStringTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -788,6 +794,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
         taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
         taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto.getNextUpdateDate());
+        taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto.getUpdateFrequency());
         taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto.getDataProvidersUrn());
         taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
         taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto.getNextProcStatus());
@@ -1450,39 +1457,29 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         TemporalCode start = temporalCoverage.get(temporalCoverage.size() - 1);
         TemporalCode end = temporalCoverage.get(0);
 
-        resource.setDateStart(temporalCodeToDateTimeStart(start));
-        resource.setDateEnd(temporalCodeToDateTimeEnd(end));
-    }
-
-    private DateTime temporalCodeToDateTimeStart(TemporalCode temporalCode) {
-        String timeCode = temporalCode.getIdentifier();
-        DateTime[] times = SdmxTimeUtils.calculateDateTimes(timeCode);
-        return times[0]; // start
-    }
-
-    private DateTime temporalCodeToDateTimeEnd(TemporalCode temporalCode) {
-        String timeCode = temporalCode.getIdentifier();
-        DateTime[] times = SdmxTimeUtils.calculateDateTimes(timeCode);
-        return times[1]; // start
+        resource.setDateStart(start.getIdentifier());
+        resource.setDateEnd(end.getIdentifier());
     }
 
     private void processDateNextUpdate(DatasetVersion resource) {
-        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)) {
-            if (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
-                DateTime mostRecentDate = null;
-                for (Datasource datasource : resource.getDatasources()) {
-                    if (datasource.getDateNextUpdate() != null) {
-                        if (isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
-                            mostRecentDate = datasource.getDateNextUpdate();
-                        }
-                    }
+        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)
+                && (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate()))) {
+            DateTime mostRecentDate = null;
+            for (Datasource datasource : resource.getDatasources()) {
+                if (datasource.getDateNextUpdate() != null && isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
+                    mostRecentDate = datasource.getDateNextUpdate();
                 }
-                resource.setDateNextUpdate(mostRecentDate);
-                resource.setUserModifiedDateNextUpdate(false);
             }
+
+            resource.setDateNextUpdate(setDateInSdmx(mostRecentDate));
+            resource.setUserModifiedDateNextUpdate(false);
         }
     }
 
+    private String setDateInSdmx(DateTime date) {
+        return date != null ? CoreCommonUtil.jodaDateTime2IsoDate(date.toDate()) : null;
+    }
+    
     private boolean isNewDateBestOptionForDateNextUpdate(DateTime current, DateTime newCandidate) {
         if (current == null) {
             return true;
@@ -1539,10 +1536,12 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
         if (values != null) {
             List<ExternalItem> items = buildExternalItemsBasedOnCodeIdentifiers(values, dsdAttribute);
+            String locale = configurationService.retrieveLanguageDefault();
 
-            attrValues = buildAttributeValues(attributeId, values, resource);
-            if (items != null) {
-                addTranslationsToAttributeValuesFromExternalItems(attrValues, items);
+            attrValues = buildAttributeValues(attributeId, values, resource, items, locale);
+
+            if (CollectionUtils.isNotEmpty(items)) {
+                addTranslationsToAttributeValuesFromExternalItems(attrValues, items, locale);
             }
 
         }
@@ -1554,7 +1553,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion) {
+    private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion, List<ExternalItem> externalItems, String locale) {
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
 
         Set<String> uniqueValues = new HashSet<String>(values);
@@ -1564,12 +1563,37 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             @Override
             public AttributeValue transformItem(String item) {
                 AttributeValue result = new AttributeValue();
-                result.setIdentifier(item);
+                result.setIdentifier(getAttributeIdentifier(item, externalItems));
                 result.setTitle(item);
                 result.setDsdComponentId(attributeId);
                 result.setDatasetVersion(datasetVersion);
                 return result;
             }
+
+            private String getAttributeIdentifier(String item, List<ExternalItem> externalItems) {
+                // If there is an external item with the same value for the code attribute as the one passed in the item parameter,
+                // the identifier assigned will be the latter because the title of the attribute will be extracted from the title of the external item.
+                if (CollectionUtils.isNotEmpty(externalItems)) {
+                    ExternalItem externalItem = MetamacCollectionUtils.find(externalItems, new ExternalItemEqualsIdentifierPredicate(item));
+                    if (externalItem != null && externalItem.getTitle().getLocalisedLabel(locale) != null) {
+                        return item;
+                    }
+                }
+
+                // If the length of the item parameter is less than the maximum value allowed in the database for the identifier (255),
+                // the latter is returned as the identifier
+                if (StringUtils.length(item) <= DatasetAttibuteSharedUtils.ATTRIBUTE_IDENTIFIER_MAXIMUM_SIZE) {
+                    return item;
+                }
+
+                // In any other case, if the size of the item parameter is greater than 255 and there is no variable element associated with it,
+                // the generated identifier will be a random uuid.
+                String uuidIdenfier = UUID.randomUUID().toString();
+                log.info("Item can not be set as identifier because is too long: {} using uuid instead: {}", StringUtils.length(item), uuidIdenfier);
+
+                return uuidIdenfier;
+            }
+
         });
         return attrValues;
     }
@@ -1664,8 +1688,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void addTranslationsToAttributeValuesFromExternalItems(List<AttributeValue> values, List<ExternalItem> externalItems) throws MetamacException {
-        String locale = configurationService.retrieveLanguageDefault();
+    private void addTranslationsToAttributeValuesFromExternalItems(List<AttributeValue> values, List<ExternalItem> externalItems, String locale) throws MetamacException {
         for (ExternalItem externalItem : externalItems) {
             for (AttributeValue attrValue : values) {
                 if (attrValue.getIdentifier().equals(externalItem.getCode())) {

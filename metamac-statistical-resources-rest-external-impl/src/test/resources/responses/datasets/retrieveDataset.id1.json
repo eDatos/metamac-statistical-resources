@@ -20,7 +20,7 @@
     "description": {
         "text": [
             {
-                "value": "description-oGdSI8N7Wp_000001 en Espanol",
+                "value": "description-VuUcawhKdg_000001 en Espanol",
                 "lang": "es"
             }
         ]
@@ -28,7 +28,7 @@
     "keywords": {
         "text": [
             {
-                "value": "keyword1 keyword2 keyword3-oGdSI8N7Wp_000001 en Espanol",
+                "value": "keyword1 keyword2 keyword3-VuUcawhKdg_000001 en Espanol",
                 "lang": "es"
             }
         ]
@@ -439,8 +439,22 @@
             ],
             "total": 2
         },
-        "dateStart": "2013-01-02T03:04:05Z",
-        "dateEnd": "2013-03-05T06:07:08Z",
+        "dateStart":{
+            "text": [
+                {
+                    "value": "2013-01-02",
+                    "lang": "es"
+                }
+            ]
+        },
+        "dateEnd": {
+            "text": [
+                {
+                    "value": "2013-03-05",
+                    "lang": "es"
+                }
+            ]
+        },
         "statisticalUnit": {
             "resource": [
                 {
@@ -554,6 +568,8 @@
                 "total": 2
             },
             "autoOpen": true,
+            "showNullValuesByDefault": true,
+            "showZeroValuesByDefault": true,
             "showDecimals": 2,
             "id": "DSD01",
             "urn": "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=MaintainerMock:DSD01(1.0)",
@@ -1804,7 +1820,14 @@
         },
         "formatExtentObservations": 3,
         "formatExtentDimensions": 5,
-        "dateNextUpdate": "2013-12-02T03:04:05Z",
+        "dateNextUpdate": {
+            "text": [
+                {
+                    "value": "2013-12-02",
+                    "lang": "es"
+                }
+            ]
+        },
         "updateFrequency": {
             "id": "updateFrequency01",
             "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).updateFrequency01",
@@ -1899,11 +1922,11 @@
             "total": 2
         },
         "statisticalOperation": {
-            "id": "oGdSI8N7Wp",
-            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=oGdSI8N7Wp",
+            "id": "VuUcawhKdg",
+            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=VuUcawhKdg",
             "selfLink": {
                 "kind": "statisticalOperations#operation",
-                "href": "http://data.istac.es/apis/operations/latest/oGdSI8N7Wp"
+                "href": "http://data.istac.es/apis/operations/latest/VuUcawhKdg"
             },
             "name": {
                 "text": [
@@ -1941,7 +1964,7 @@
         "subtitle": {
             "text": [
                 {
-                    "value": "subtitle-oGdSI8N7Wp_000001 en Espanol",
+                    "value": "subtitle-VuUcawhKdg_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -1949,7 +1972,7 @@
         "titleAlternative": {
             "text": [
                 {
-                    "value": "titleAlternative-oGdSI8N7Wp_000001 en Espanol",
+                    "value": "titleAlternative-VuUcawhKdg_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2016,7 +2039,7 @@
         "conformsTo": {
             "text": [
                 {
-                    "value": "conformsTo-oGdSI8N7Wp_000001 en Espanol",
+                    "value": "conformsTo-VuUcawhKdg_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2196,50 +2219,50 @@
             "total": 2
         },
         "rightsHolder": {
-          "contacts": {
-            "contact": [
-              {
-                "name": {
-                  "text": [
+            "contacts": {
+                "contact": [
                     {
-                      "value": "Oficina Tenerife en Español",
-                      "lang": "es"
+                        "name": {
+                            "text": [
+                                {
+                                    "value": "Oficina Tenerife en Español",
+                                    "lang": "es"
+                                },
+                                {
+                                    "value": "Oficina Tenerife in English",
+                                    "lang": "en"
+                                }
+                            ]
+                        }
                     },
                     {
-                      "value": "Oficina Tenerife in English",
-                      "lang": "en"
+                        "name": {
+                            "text": [
+                                {
+                                    "value": "Oficina Las Palmas en Español",
+                                    "lang": "es"
+                                },
+                                {
+                                    "value": "Oficina Las Palmas in English",
+                                    "lang": "en"
+                                }
+                            ]
+                        }
                     }
-                  ]
-                }
-              },
-              {
-                "name": {
-                  "text": [
-                    {
-                      "value": "Oficina Las Palmas en Español",
-                      "lang": "es"
-                    },
-                    {
-                      "value": "Oficina Las Palmas in English",
-                      "lang": "en"
-                    }
-                  ]
-                }
-              }
-            ],
-            "total": 2
-          },
-          "id": "AGENCIES",
-          "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY",
+                ],
+                "total": 2
+            },
+            "id": "AGENCIES",
+            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY",
             "name": {
                 "text": [
                     {
-                "value": "AGENCIES en Español",
+                        "value": "AGENCIES en Español",
                         "lang": "es"
                     }
                 ]
             },
-          "kind": "structuralResources#agency"
+            "kind": "structuralResources#agency"
         },
         "copyrightDate": 2014,
         "license": {
@@ -2253,23 +2276,23 @@
         "accessRights": {
             "text": [
                 {
-                    "value": "accessRights-oGdSI8N7Wp_000001 en Espanol",
+                    "value": "accessRights-VuUcawhKdg_000001 en Espanol",
                     "lang": "es"
                 }
             ]
         },
         "maintainer": {
-            "id": "tnfsKUBN8Z",
+            "id": "HHpHkEsq34",
             "nestedId": "agency1",
-            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).tnfsKUBN8Z",
+            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).HHpHkEsq34",
             "selfLink": {
                 "kind": "structuralResources#agency",
-                "href": "http://data.istac.es/apis/srm/latest/tnfsKUBN8Z"
+                "href": "http://data.istac.es/apis/srm/latest/HHpHkEsq34"
             },
             "name": {
                 "text": [
                     {
-                        "value": "title-tnfsKUBN8Z en Espanol",
+                        "value": "title-HHpHkEsq34 en Espanol",
                         "lang": "es"
                     }
                 ]
@@ -2337,7 +2360,7 @@
         "dataProviderAnnotations": {
             "text": [
                 {
-                    "value": "dataProviderAnnotations-oGdSI8N7Wp_000001 en Espanol",
+                    "value": "dataProviderAnnotations-VuUcawhKdg_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2345,7 +2368,7 @@
         "abstract": {
             "text": [
                 {
-                    "value": "abstract-oGdSI8N7Wp_000001 en Espanol",
+                    "value": "abstract-VuUcawhKdg_000001 en Espanol",
                     "lang": "es"
                 }
             ]

@@ -8,6 +8,8 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
+import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
+import org.siemac.metamac.statistical.resources.web.client.WebMessageExceptionsConstants;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceBaseListViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NewStatisticalResourceWindow;
@@ -15,6 +17,7 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.Data
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionSearchSectionStack;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportZipDatasourceWithMappingWindow;
@@ -169,6 +172,10 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
             @Override
             public void onClick(ClickEvent event) {
+            	if (StatisticalResourcesDefaults.defaultLanguage == null) { 
+            		getUiHandlers().createNewDatasetFailed(StatisticalResourcesWeb.getMessages().defaultLanguageIsNull());
+            		return; 
+            	}
                 newDatasetWindow = new NewDatasetWindow(getConstants().datasetCreate());
                 newDatasetWindow.setUiHandlers(getUiHandlers());
                 newDatasetWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
@@ -373,4 +380,10 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
         importZipDatasourceWithMappingWindow.setDataProvider(result.getDataProviders(), result.getFirstResultOut(), result.getTotalResults());
 
     }
+    
+    @Override
+    public void setTemporalCodesForField(GetTemporalGranularitiesListResult result, DatasetMetadataExternalField field) {
+        importZipDatasourceWithMappingWindow.setCodesForUpdateFrequency(result.getTemporalGranularities(), result.getFirstResultOut(), result.getTotalResults());
+    }
+    
 }

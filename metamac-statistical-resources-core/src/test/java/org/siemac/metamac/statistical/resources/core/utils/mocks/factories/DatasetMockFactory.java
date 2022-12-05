@@ -28,6 +28,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockDescriptor;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockProvider;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
@@ -187,14 +188,14 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
         template.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem());
         template.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem());
 
-        template.setDateStart(new DateTime().minusYears(10));
+        template.setDateStart("2012-11-25");
 
         template.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem());
         template.setUpdateFrequency(StatisticalResourcesDoMocks.mockCodeExternalItem());
 
         template.setFormatExtentDimensions(3);
         template.setFormatExtentObservations(1354L);
-        template.setDateNextUpdate(new DateTime().plusMonths(1));
+        template.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusMonths(1).toDate()));
         template.setBibliographicCitation(StatisticalResourcesDoMocks.mockInternationalString("es", "biblio"));
 
         template.getSiemacMetadataStatisticalResource().setCreatedBy(StatisticalResourcesDoMocks.mockString(10));

@@ -46,7 +46,19 @@
             <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
             <artifactId>metamac-statistical-resources-rest-api-common</artifactId>
             <version>${metamac-statistical-resources-rest-api-common.version}</version>
-        </dependency>        
+        </dependency>
+
+         <!-- Jackson, json support -->
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+            <version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+            <version>${jackson.version}</version>
+		</dependency>
     </dependencies>
 
     <build>

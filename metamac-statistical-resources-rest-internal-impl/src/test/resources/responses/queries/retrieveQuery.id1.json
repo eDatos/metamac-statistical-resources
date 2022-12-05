@@ -67,6 +67,8 @@
 				"total": 2
 			},
 			"autoOpen": true,
+			"showNullValuesByDefault": true,
+			"showZeroValuesByDefault": true,
 			"showDecimals": 2,
 			"id": "DSD01",
 			"urn": "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=MaintainerMock:DSD01(1.0)",

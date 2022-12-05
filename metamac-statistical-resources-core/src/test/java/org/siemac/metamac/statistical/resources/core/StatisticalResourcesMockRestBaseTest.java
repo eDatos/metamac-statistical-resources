@@ -135,7 +135,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         List<String> urnsPublished = getUrnsFromExternalItems(publishedItems);
         Mockito.when(srmRestInternalFacadeV10.findCodes(Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL),
                 Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedCodesUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
-                Mockito.anyString(), Mockito.anyString())).thenReturn(SrmRestInternalFacadeV10MockUtils.mockCodesWithOnlyUrns(urnsPublished));
+                Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean(), Mockito.anyString())).thenReturn(SrmRestInternalFacadeV10MockUtils.mockCodesWithOnlyUrns(urnsPublished));
     }
 
     protected void mockFindPublishedConcepts(Collection<ExternalItem> allItems, Collection<ExternalItem> publishedItems) {

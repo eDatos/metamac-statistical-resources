@@ -18,6 +18,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalG
 import org.siemac.metamac.web.common.client.utils.RecordUtils;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
@@ -45,8 +46,8 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
         CustomDateItem dateStart = new CustomDateItem(DatasetDS.DATE_START, getConstants().datasetDateStart());
         CustomDateItem dateEnd = new CustomDateItem(DatasetDS.DATE_END, getConstants().datasetDateEnd());
         SearchExternalItemLinkItem dsd = createDsdItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD());
-        CustomDateItem dateNextUpdate = new CustomDateItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate());
-
+        CustomDatePickerItem dateNextUpdate = createFieldDateNextUpdate();
+        
         SelectItem statisticOfficiality = new SelectItem(DatasetDS.STATISTIC_OFFICIALITY, getConstants().datasetStatisticOfficiality());
         statisticOfficiality.setValueMap(CommonUtils.getStatisticOfficialityHashMap());
 
@@ -70,7 +71,7 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
 
         criteria.setStatisticOfficialityIdentifier(advancedSearchForm.getValueAsString(DatasetDS.STATISTIC_OFFICIALITY));
 
-        criteria.setDateNextUpdate(((CustomDateItem) advancedSearchForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsDate());
+        criteria.setDateNextUpdate(((CustomDatePickerItem) advancedSearchForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValue());
         return criteria;
     }
 
@@ -231,5 +232,11 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
     @Override
     public void retrieveStatisticalOperations(int firstResult, int maxResults, MetamacWebCriteria criteria) {
         getUiHandlers().retrieveStatisticalOperationsForSearchSection(firstResult, maxResults, criteria);
+    }
+    
+    private CustomDatePickerItem createFieldDateNextUpdate() {
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), false, false, CommonUtils.getDateFormatTypeHashMap());
+        customDatePickerItem.defaultDateType();
+        return customDatePickerItem;
     }
 }

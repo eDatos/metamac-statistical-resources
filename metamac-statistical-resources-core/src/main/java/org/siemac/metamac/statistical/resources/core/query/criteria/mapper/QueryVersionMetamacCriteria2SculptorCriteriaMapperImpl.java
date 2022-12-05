@@ -16,6 +16,7 @@ import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.common.criteria.enums.StatisticalResourcesCriteriaOrderEnum;
 import org.siemac.metamac.statistical.resources.core.common.criteria.enums.StatisticalResourcesCriteriaPropertyEnum;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -75,8 +76,8 @@ public class QueryVersionMetamacCriteria2SculptorCriteriaMapperImpl implements Q
                 case NEXT_VERSION:
                     return new SculptorPropertyCriteria(QueryVersionProperties.lifeCycleStatisticalResource().nextVersion(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
                 case NEXT_VERSION_DATE:
-                    return new SculptorPropertyCriteria(CriteriaUtils.getDatetimeLeafPropertyEmbedded(QueryVersionProperties.lifeCycleStatisticalResource().nextVersionDate(), QueryVersion.class),
-                            propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                    return new SculptorPropertyCriteria(QueryVersionProperties.lifeCycleStatisticalResource().nextVersionDate(), propertyRestriction.getStringValue(),
+                            propertyRestriction.getOperationType());
                 case PROC_STATUS:
                     return new SculptorPropertyCriteria(QueryVersionProperties.lifeCycleStatisticalResource().procStatus(), propertyRestriction.getEnumValue(),
                             propertyRestriction.getOperationType());
