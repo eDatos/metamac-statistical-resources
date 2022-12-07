@@ -93,6 +93,11 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     }
 
     @Override
+    public void setAttributeInstancesForRefresh(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
+        attributePanel.resetDataAttributeInstance(dsdAttributeDto, dsdAttributeInstanceDtos);
+    }
+    
+    @Override
     public void setUiHandlers(DatasetAttributesTabUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
         attributePanel.setUiHandlers(uiHandlers);

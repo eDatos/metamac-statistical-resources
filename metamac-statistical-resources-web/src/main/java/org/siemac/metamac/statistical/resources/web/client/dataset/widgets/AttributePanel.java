@@ -14,9 +14,11 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.utils.Dataset
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetAttributesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.model.record.DsdAttributeInstanceRecord;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
+import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
@@ -83,7 +85,10 @@ public class AttributePanel extends VLayout {
             public void onClick(ClickEvent event) {
                 if (mainFormLayout.isCreateMode()) {
                     mainFormLayout.hide();
+                } else {
+                    getUiHandlers().retrieveAttributeInstancesForRefresh(dsdAttributeDto);
                 }
+                    
             }
         });
 
@@ -114,6 +119,30 @@ public class AttributePanel extends VLayout {
         show();
     }
 
+    public void resetDataAttributeInstance(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
+        this.dsdAttributeDto = dsdAttributeDto;
+        if (CommonUtils.hasDatasetRelationshipType(dsdAttributeDto)) {
+            showAttributeInstances(dsdAttributeDto, dsdAttributeInstanceDtos);
+        } else {
+            // Updated attributeInstances from database because it could have been changed
+            if (instancesSectionStack.getListGrid().getSelectedRecords() != null && instancesSectionStack.getListGrid().getSelectedRecords().length > 0) {
+                ListGridRecord[] attributeInstances = instancesSectionStack.getListGrid().getSelectedRecords();
+                if (attributeInstances != null && attributeInstances.length == 1
+                        && (CommonUtils.hasDimensionRelationshipType(dsdAttributeDto) || CommonUtils.hasGroupRelationshipType(dsdAttributeDto))) {
+                    instancesSectionStack.getListGrid().setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos));
+
+                    DsdAttributeInstanceRecord dsdAttributeInstanceRecordUpdated = (DsdAttributeInstanceRecord) instancesSectionStack
+                            .getSelectedAttributeInstance(((DsdAttributeInstanceRecord) attributeInstances[0]).getUuid());
+
+                    mainFormLayout.showInstance(dsdAttributeDto, dsdAttributeInstanceRecordUpdated.getDsdAttributeInstanceDto());
+
+                    instancesSectionStack.getListGrid().selectRecord(dsdAttributeInstanceRecordUpdated);
+
+                }
+            }
+        }
+    }
+    
     public void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverage) {
         mainFormLayout.setDimensionsCoverageValues(dimensionsCoverage);
     }
