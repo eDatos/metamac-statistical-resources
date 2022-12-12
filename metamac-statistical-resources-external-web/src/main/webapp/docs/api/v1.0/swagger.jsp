@@ -322,7 +322,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/CommonResource"
                      }
                   }
                }
@@ -524,7 +524,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/CommonResource"
                      }
                   }
                }
@@ -600,7 +600,7 @@
          "title":"DataStructureDefinition",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
@@ -727,19 +727,19 @@
                   },
                   "geographicCoverages":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "geographicGranularities":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "isReplacedByVersion":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "isRequiredBy":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "keepAllData":{
                      "description":"",
@@ -747,7 +747,7 @@
                   },
                   "measureCoverages":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "relatedDsd":{
                      "description":"",
@@ -755,7 +755,7 @@
                   },
                   "replacesVersion":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "statisticOfficiality":{
                      "description":"",
@@ -763,11 +763,11 @@
                   },
                   "statisticalUnit":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "subjectAreas":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "temporalCoverages":{
                      "description":"",
@@ -775,11 +775,11 @@
                   },
                   "temporalGranularities":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "updateFrequency":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -799,7 +799,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/CommonResource"
                      }
                   }
                }
@@ -829,7 +829,7 @@
             },
             "variable":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             }
          },
          "description":""
@@ -924,7 +924,7 @@
          "title":"EnumeratedAttributeValue",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
@@ -967,13 +967,13 @@
          "title":"EnumeratedDimensionValue",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
                	  "geographicGranularity":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "measureQuantity":{
                      "description":"",
@@ -989,7 +989,7 @@
                   },
                   "variableElement":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "visualisationParent":{
                      "description":"",
@@ -1059,7 +1059,7 @@
          "title":"ItemResource",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
@@ -1266,7 +1266,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/CommonResource"
                      }
                   }
                }
@@ -1339,7 +1339,7 @@
             },
             "isPartOf":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "latestDataNumber":{
                "description":"",
@@ -1347,11 +1347,11 @@
             },
             "maintainer":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "relatedDataset":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "relatedDsd":{
                "description":"",
@@ -1359,11 +1359,11 @@
             },
             "requires":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "statisticalOperation":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "status":{
                "description":"",
@@ -1403,9 +1403,9 @@
          ],
          "description":""
       },
-      "Resource":{
+      "CommonResource":{
          "type":"object",
-         "title":"Resource",
+         "title":"CommonResource",
          "properties":{
             "id":{
                "description":"",
@@ -1449,7 +1449,7 @@
          },
          "description":""
       },
-      "Resources":{
+      "CommonResources":{
          "type":"object",
          "title":"Resources",
          "properties":{
@@ -1457,7 +1457,7 @@
                "description":"",
                "type":"array",
                "items":{
-                  "$ref":"#/definitions/Resource"
+                  "$ref":"#/definitions/CommonResource"
                }
             },
             "total":{
@@ -1503,7 +1503,7 @@
             },
             "contributors":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "copyrightDate":{
                "description":"",
@@ -1515,19 +1515,19 @@
             },
             "creator":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "hasPart":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "isPartOf":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "isReplacedBy":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "keywords":{
                "description":"",
@@ -1535,11 +1535,11 @@
             },
             "language":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "languages":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "lastUpdate":{
                "description":"",
@@ -1551,11 +1551,11 @@
             },
             "maintainer":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "mediators":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "newnessUntilDate":{
                "description":"",
@@ -1567,15 +1567,15 @@
             },
             "publisherContributors":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "publishers":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "replaces":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "rightsHolder":{
                "description":"",
@@ -1583,11 +1583,11 @@
             },
             "statisticalOperation":{
                "description":"",
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             "statisticalOperationInstances":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "subtitle":{
                "description":"",
@@ -1623,7 +1623,7 @@
             },
             "dataProviders":{
                "description":"",
-               "$ref":"#/definitions/Resources"
+               "$ref":"#/definitions/CommonResources"
             },
             "dataProviderAnnotations":{
                "description":"",
@@ -1654,11 +1654,11 @@
                "properties":{
                   "dataset":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "query":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -1676,11 +1676,11 @@
                "properties":{
                   "dataset":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "query":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -1926,7 +1926,7 @@
          ],
          "description":""
       },
-      "Resource":{
+      "CommonResource":{
          "type":"object",
          "title":"Resource",
          "allOf":[
@@ -2026,7 +2026,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -2421,7 +2421,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -2528,7 +2528,7 @@
          "title":"DataStructureDefinition",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
@@ -2738,28 +2738,28 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "geographicGranularities":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "isReplacedByVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "isRequiredBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "keepAllData":{
                   	 "xml":{
@@ -2773,7 +2773,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "relatedDsd":{
                      "xml":{
@@ -2787,7 +2787,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "statisticOfficiality":{
                      "xml":{
@@ -2801,14 +2801,14 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "subjectAreas":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "temporalCoverages":{
                      "xml":{
@@ -2822,14 +2822,14 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "updateFrequency":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -2850,7 +2850,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -2896,7 +2896,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -3032,7 +3032,7 @@
          "title":"EnumeratedAttributeValue",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
@@ -3082,7 +3082,7 @@
          "title":"ItemResource",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
@@ -3185,7 +3185,7 @@
          "title":"Organisation",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
@@ -3212,7 +3212,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
@@ -3333,7 +3333,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "latestDataNumber":{
                      "xml":{
@@ -3347,14 +3347,14 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "relatedDataset":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "relatedDsd":{
                      "xml":{
@@ -3368,14 +3368,14 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "status":{
                      "xml":{
@@ -3487,7 +3487,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "copyrightDate":{
                      "xml":{
@@ -3508,28 +3508,28 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "hasPart":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "isPartOf":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "isReplacedBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "keywords":{
                      "xml":{
@@ -3543,14 +3543,14 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "languages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "lastUpdate":{
                      "xml":{
@@ -3571,14 +3571,14 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "mediators":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "newnessUntilDate":{
                      "xml":{
@@ -3599,42 +3599,42 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "publishers":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "replaces":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "rightsHolder":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "statisticalOperationInstances":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "subtitle":{
                      "xml":{
@@ -3697,7 +3697,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/CommonResources"
                   },
                   "dataProviderAnnotations":{
                      "xml":{
@@ -3735,14 +3735,14 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                   "query":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   }
                }
             }
