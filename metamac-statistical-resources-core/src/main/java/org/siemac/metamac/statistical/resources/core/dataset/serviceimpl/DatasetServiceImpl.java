@@ -2015,4 +2015,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
+    @Override
+    public DatasetVersion copyDatasetVersion(ServiceContext ctx, String urnToCopy, String newCode) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

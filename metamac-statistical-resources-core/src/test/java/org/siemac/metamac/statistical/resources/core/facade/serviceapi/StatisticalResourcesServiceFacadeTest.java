@@ -4250,4 +4250,10 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         }
         return null;
     }
+
+    @Override
+    public void testCopyDatasetVersion() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

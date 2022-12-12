@@ -313,7 +313,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
             @Override
             public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                 if (copyResourceWindow.validateForm()) {
-//                    getUiHandlers().copyDsd(urn, copyResourceWindow.getSelectedCode());
+                    getUiHandlers().copyDataset(urn, copyResourceWindow.getSelectedCode());
                     copyResourceWindow.destroy();
                 }
             }
