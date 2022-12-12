@@ -477,8 +477,22 @@
             ],
             "total": 2
         },
-        "dateStart": "2013-01-02T03:04:05Z",
-        "dateEnd": "2013-03-05T06:07:08Z",
+        "dateStart": {
+            "text": [
+                {
+                    "value": "2013-01-02",
+                    "lang": "es"
+                }
+            ]
+        },
+        "dateEnd": {
+            "text": [
+                {
+                    "value": "2013-03-05",
+                    "lang": "es"
+                }
+            ]
+        },
         "statisticalUnit": {
             "resource": [
                 {

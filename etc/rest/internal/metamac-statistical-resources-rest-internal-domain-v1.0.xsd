@@ -88,8 +88,8 @@
                     <xs:element name="measureCoverages" type="tns:ResourcesInternal" />
                     <xs:element name="geographicGranularities" type="tns:ResourcesInternal" />
                     <xs:element name="temporalGranularities" type="tns:ResourcesInternal" />
-                    <xs:element name="dateStart" type="xs:dateTime" />
-                    <xs:element name="dateEnd" type="xs:dateTime" />
+                    <xs:element name="dateStart" type="common:InternationalString" />
+                    <xs:element name="dateEnd" type="common:InternationalString" />
                     <xs:element name="statisticalUnit" type="tns:ResourcesInternal" minOccurs="0" />
                     <xs:element name="subjectAreas" type="tns:ResourcesInternal" minOccurs="0" />
                     <xs:element name="relatedDsd" type="tns:DataStructureDefinition" />

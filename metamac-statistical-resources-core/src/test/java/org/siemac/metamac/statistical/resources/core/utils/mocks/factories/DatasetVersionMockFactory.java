@@ -759,8 +759,8 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C02"));
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C03"));
 
-        datasetVersion.setDateStart(new DateTime(2010, 1, 31, 0, 0, 0, 0));
-        datasetVersion.setDateEnd(new DateTime(2012, 12, 31, 23, 59, 59, 999));
+        datasetVersion.setDateStart("2010-01-31");
+        datasetVersion.setDateEnd("2012-12-31");
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(36L);
@@ -805,8 +805,8 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C02"));
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C03"));
 
-        datasetVersion.setDateStart(new DateTime(2010, 1, 31, 0, 0, 0, 0));
-        datasetVersion.setDateEnd(new DateTime(2012, 12, 31, 23, 59, 59, 999));
+        datasetVersion.setDateStart("2010-01-31");
+        datasetVersion.setDateEnd("2012-12-31");
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(36L);
