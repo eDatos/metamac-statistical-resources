@@ -2396,8 +2396,21 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public DatasetVersion copyDatasetVersion(ServiceContext ctx, String urnToCopy, String newCode) throws MetamacException {
-        // TODO Auto-generated method stub
-        return null;
+    public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto, ExternalItemDto statisticalOperationDto) throws MetamacException {
+        datasetVersionDto.setId(null);
+        datasetVersionDto.setStatisticalOperation(null);
+        datasetVersionDto.setVersion(1L);
+        // Security
+        DatasetsSecurityUtils.canCreateDataset(ctx, statisticalOperationDto.getCode());
+
+        // Transform
+        DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionDto);
+        ExternalItem statisticalOperation = datasetDto2DoMapper.externalItemDtoToDo(statisticalOperationDto, null, ServiceExceptionParameters.STATISTICAL_OPERATION);
+
+        // Retrieve
+        DatasetVersion datasetVersionCreated = getDatasetService().createDatasetVersion(ctx, datasetVersion, statisticalOperation);
+
+        // Transform
+        return datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersionCreated);
     }
 }

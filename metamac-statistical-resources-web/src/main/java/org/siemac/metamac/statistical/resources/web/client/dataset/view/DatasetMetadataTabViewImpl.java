@@ -293,7 +293,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
-                copyDsdAskingCode("");
+                copyDatasetAskingCode(datasetVersionDto.getUrn());
             }
         });
 
@@ -306,7 +306,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         });
     }
 
-    private void copyDsdAskingCode(final String urn) {
+    private void copyDatasetAskingCode(final String urn) {
         final CopyResourceWindow copyResourceWindow = new CopyResourceWindow(getConstants().copyResource());
         copyResourceWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 

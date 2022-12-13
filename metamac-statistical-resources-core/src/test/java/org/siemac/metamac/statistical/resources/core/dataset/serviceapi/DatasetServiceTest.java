@@ -2090,19 +2090,4 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         
         return basicVersionableStatisticalResourceDto;
     }
-    
-    private String convertDateToString(String date) {
-        DateFormat df = new SimpleDateFormat(date);
-
-        Date today = Calendar.getInstance().getTime();
-        String dateToString = df.format(today);
-
-        return (dateToString);
-    }
-
-    @Override
-    public void testCopyDatasetVersion() throws Exception {
-        // TODO Auto-generated method stub
-        
-    }
 }
