@@ -9,7 +9,6 @@ import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.RequiredFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceMetadataBaseViewImpl;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.CopyResourceWindow;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.presenter.MultidatasetMetadataTabPresenter.MultidatasetMetadataTabView;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.view.handlers.MultidatasetMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.widgets.MultidatasetMainFormLayout;
@@ -272,28 +271,6 @@ public class MultidatasetMetadataTabViewImpl extends StatisticalResourceMetadata
             @Override
             public void onClick(ClickEvent event) {
                 getUiHandlers().previewData(multidatasetVersionDto);
-            }
-        });
-
-        mainFormLayout.getCopyKeepingMaintainer().addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                copyDsdAskingCode("");
-            }
-        });
-    }
-
-    private void copyDsdAskingCode(final String urn) {
-        final CopyResourceWindow copyResourceWindow = new CopyResourceWindow(getConstants().copyResource());
-        copyResourceWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
-
-            @Override
-            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                if (copyResourceWindow.validateForm()) {
-//                    getUiHandlers().copyDsd(urn, copyResourceWindow.getSelectedCode());
-                    copyResourceWindow.destroy();
-                }
             }
         });
     }

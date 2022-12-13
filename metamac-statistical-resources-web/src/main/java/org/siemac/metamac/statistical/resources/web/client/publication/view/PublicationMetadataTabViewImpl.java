@@ -9,7 +9,6 @@ import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.RequiredFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceMetadataBaseViewImpl;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.CopyResourceWindow;
 import org.siemac.metamac.statistical.resources.web.client.publication.presenter.PublicationMetadataTabPresenter.PublicationMetadataTabView;
 import org.siemac.metamac.statistical.resources.web.client.publication.view.handlers.PublicationMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.publication.widgets.PublicationMainFormLayout;
@@ -271,28 +270,6 @@ public class PublicationMetadataTabViewImpl extends StatisticalResourceMetadataB
             @Override
             public void onClick(ClickEvent event) {
                 getUiHandlers().previewData(publicationVersionDto);
-            }
-        });
-
-        mainFormLayout.getCopyKeepingMaintainer().addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                copyDsdAskingCode("");
-            }
-        });
-    }
-
-    private void copyDsdAskingCode(final String urn) {
-        final CopyResourceWindow copyResourceWindow = new CopyResourceWindow(getConstants().copyResource());
-        copyResourceWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
-
-            @Override
-            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                if (copyResourceWindow.validateForm()) {
-//                    getUiHandlers().copyDsd(urn, copyResourceWindow.getSelectedCode());
-                    copyResourceWindow.destroy();
-                }
             }
         });
     }

@@ -14,7 +14,6 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.RequiredFieldUtils;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.CopyResourceWindow;
 import org.siemac.metamac.statistical.resources.web.client.query.model.record.QueryRecord;
 import org.siemac.metamac.statistical.resources.web.client.query.presenter.QueryPresenter;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryUiHandlers;
@@ -403,28 +402,6 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                 @Override
                 public void onClick(ClickEvent event) {
                     getUiHandlers().previewData(queryVersionDto);
-                }
-            });
-
-            mainFormLayout.getCopyKeepingMaintainer().addClickHandler(new ClickHandler() {
-
-                @Override
-                public void onClick(ClickEvent event) {
-                    copyDsdAskingCode("");
-                }
-            });
-        }
-
-        private void copyDsdAskingCode(final String urn) {
-            final CopyResourceWindow copyResourceWindow = new CopyResourceWindow(getConstants().copyResource());
-            copyResourceWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
-
-                @Override
-                public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                    if (copyResourceWindow.validateForm()) {
-//                        getUiHandlers().copyDsd(urn, copyResourceWindow.getSelectedCode());
-                        copyResourceWindow.destroy();
-                    }
                 }
             });
         }

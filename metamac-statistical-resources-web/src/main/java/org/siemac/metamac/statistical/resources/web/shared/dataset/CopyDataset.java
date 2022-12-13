@@ -12,9 +12,6 @@ public class CopyDataset {
     @In(1)
     String            urn;
 
-    @In(2)
-    String            code;
-
     @Out(1)
     DatasetVersionDto savedDatasetVersion;
 

@@ -450,8 +450,8 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
     }
 
     @Override
-    public void copyDataset(String urn, String code) {
-        dispatcher.execute(new CopyDatasetAction(urn, code), new WaitingAsyncCallbackHandlingError<CopyDatasetResult>(this) {
+    public void copyDataset(String urn) {
+        dispatcher.execute(new CopyDatasetAction(urn), new WaitingAsyncCallbackHandlingError<CopyDatasetResult>(this) {
             @Override
             public void onWaitFailure(Throwable caught) {
                 //ShowMessageEvent.fireErrorMessage(DsdGeneralTabPresenter.this, caught);
