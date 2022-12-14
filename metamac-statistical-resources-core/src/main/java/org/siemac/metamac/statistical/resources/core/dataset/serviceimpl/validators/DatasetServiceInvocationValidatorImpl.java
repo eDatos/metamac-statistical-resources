@@ -85,7 +85,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkCopyDatasetVersion(DatasetVersion datasetVersion, ExternalItem statisticalOperation, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        //TODO: implementar el método
+        checkCreateDatasetVersion(datasetVersion, statisticalOperation, exceptions);
     }
 
     public static void checkRetrieveDatasetVersionByUrn(String datasetVersionUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
