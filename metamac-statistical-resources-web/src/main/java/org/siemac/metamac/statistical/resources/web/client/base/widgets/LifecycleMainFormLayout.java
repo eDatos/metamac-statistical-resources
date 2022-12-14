@@ -48,7 +48,9 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         toolStrip.addButton(resendStreamMessage);
         toolStrip.addButton(versioning);
         toolStrip.addButton(preview);
-        toolStrip.addButton(copyKeepingMaintainer);
+        if (canShowCopyButton()) {
+            toolStrip.addButton(copyKeepingMaintainer);
+        }
     }
 
     @Override
@@ -198,4 +200,5 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     protected abstract boolean canResendStreamMessage();
     protected abstract boolean canVersion();
     protected abstract boolean canPreviewData();
+    protected abstract boolean canShowCopyButton();
 }

@@ -81,6 +81,11 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
     }
 
     @Override
+    protected boolean canShowCopyButton() {
+        return true;
+    }
+
+    @Override
     protected void showPreviewButton() {
         if (datasetVersionDto.isKeepAllData() || isLastVersion()) {
             super.showPreviewButton();
