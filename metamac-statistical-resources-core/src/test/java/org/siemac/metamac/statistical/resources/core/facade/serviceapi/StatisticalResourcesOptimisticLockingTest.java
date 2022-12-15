@@ -1982,8 +1982,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
     @Override
     public void testCopyDatasetVersion() throws Exception {
-        // TODO Auto-generated method stub
-        
+        // no optimistic locking in this operation
     }
 
 }

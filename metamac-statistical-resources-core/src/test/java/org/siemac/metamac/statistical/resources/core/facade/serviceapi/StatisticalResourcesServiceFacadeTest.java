@@ -4252,8 +4252,20 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     }
 
     @Override
+    @Test
+    @MetamacMock(STATISTIC_OFFICIALITY_01_BASIC_NAME)
     public void testCopyDatasetVersion() throws Exception {
-        // TODO Auto-generated method stub
-        
+        StatisticOfficiality officiality = statisticOfficialityMockFactory.retrieveMock(STATISTIC_OFFICIALITY_01_BASIC_NAME);
+        DatasetVersionDto datasetVersionDto = StatisticalResourcesDtoMocks.mockDatasetVersionDto(officiality);
+        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
+
+        mockDsdAndCreateDatasetRepository(datasetVersionDto, statisticalOperation);
+
+        DatasetVersionDto newDatasetVersionDto = statisticalResourcesServiceFacade.copyDatasetVersion(getServiceContextAdministrador(), datasetVersionDto, statisticalOperation);
+        assertNotNull(newDatasetVersionDto);
+        assertNotNull(newDatasetVersionDto.getUrn());
+        assertNotNull(newDatasetVersionDto.getViewCode());
+        assertEquals(DatasetVersionUtils.generateViewCode(newDatasetVersionDto.getCode()), newDatasetVersionDto.getViewCode());
+
     }
 }
