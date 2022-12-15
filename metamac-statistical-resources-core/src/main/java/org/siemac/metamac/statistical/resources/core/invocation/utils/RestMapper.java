@@ -95,8 +95,6 @@ public class RestMapper {
                     externalItem.setUri(variableElement.getSelfLink().getHref());
                     externalItem.setManagementAppUrl(variableElement.getManagementAppLink());
                 } catch (Exception e) {
-                    externalItem.setUri("-");
-                    externalItem.setManagementAppUrl("-");
                     exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn()));
                 }
 

@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +41,6 @@ import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
-import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
@@ -1391,15 +1390,16 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
             List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
                     exceptionItems);
-            for (ExternalItem variableElement : externalItemGeographicCoverage) {
-                updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, variableElement);
+            if (exceptionItems.isEmpty()) {
+                for (ExternalItem variableElement : externalItemGeographicCoverage) {
+                    updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, variableElement);
+                }
+            } else {
+                MetamacException metamacException = new MetamacException();
+                metamacException.getExceptionItems().addAll(exceptionItems);
+                throw metamacException;
             }
-        }
 
-        if (!exceptionItems.isEmpty()) {
-            MetamacException metamacException = new MetamacException();
-            metamacException.getExceptionItems().addAll(exceptionItems);
-            throw metamacException;
         }
     }
 
