@@ -405,7 +405,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             public void onWaitSuccess(GetConceptSchemesPaginatedListResult result) {
                 getView().setConceptSchemesForStatisticalUnit(result);
             }
-        });;
+        });
     }
 
     @Override
@@ -416,7 +416,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             public void onWaitSuccess(GetConceptsPaginatedListResult result) {
                 getView().setConceptsForStatisticalUnit(result);
             }
-        });;
+        });
     }
 
     @Override
@@ -453,12 +453,8 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
     public void copyDataset(String urn) {
         dispatcher.execute(new CopyDatasetAction(urn), new WaitingAsyncCallbackHandlingError<CopyDatasetResult>(this) {
             @Override
-            public void onWaitFailure(Throwable caught) {
-                //ShowMessageEvent.fireErrorMessage(DsdGeneralTabPresenter.this, caught);
-            }
-            @Override
             public void onWaitSuccess(CopyDatasetResult result) {
-                //fireSuccessMessage(getMessages().maintainableArtefactCopied());
+                fireSuccessMessage(getMessages().datasetCopied());
             }
         });
     }
