@@ -8,15 +8,18 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-********* PDTE VERSIÓN EDATOS-3770
-**BREAKING CHANGE** la tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
+## 6.0.0 a 6.0.X
+La tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
 Se cambiará la tabla. Y luego habrá que lanzar la actualización de toda la caché para cargar todos los datos de nuevo.
+La manera de actualizar la caché es como hasta ahora:
+ 1) Ir a la app de statistical-resources, y en la pantalla inicial aparece el botón "Actualizar caché de territorios"
+ 2) Pulsar el botón y ejecutará dos tareas.
+    - Actualización de la caché a partir de los datasets de base de datos.
+    - Actualización de la caché a partir del topic JAXI_PUBLICATIONS. 
+ La ejecución completa tardará horas.
 
 * Se añaden script relacionados con la actualización de la caché de elementos de variable de un dataset y se añaden dos nuevas propiedades en el common_metadata en este orden
-[etc/changes-from-release/5.0.1/db](etc/changes-from-release/5.0.1/db).
-** change_table_geocov_varelem_cache_datasets_versions.sql
-** create_sequence_seq_geocov_varelem_cache_datasets_versions.sql
-** create_constant_properties_in_common_metadata.sql
+[etc/changes-from-release/6.0.0/db](etc/changes-from-release/6.0.0/db).
 
 ## 5.0.1 a 6.0.0
 **BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
