@@ -9,6 +9,12 @@
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
 
+## 6.0.0 a 7.0.0
+* **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
+  devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
+  la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
+  de aplicaciones de eDatos que consuman la API de statistical-resources a través de JAX-RS.
+
 ## 5.0.1 a 6.0.0
 **BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
 A partir de esta versión los metadatos "date_next_update" y "next_version_date" dejan de ser fechas en formato "dateTime" para convertirse en un formato abierto que cumpla con las especificaciones de sdmx 2.1. Por este motivo, las APIs van a devolver en estos metadatos un InternationalString con la conversión del valor introducido.
