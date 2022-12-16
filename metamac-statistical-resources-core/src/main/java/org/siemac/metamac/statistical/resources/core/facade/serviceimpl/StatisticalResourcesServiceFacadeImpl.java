@@ -2399,7 +2399,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto, ExternalItemDto statisticalOperationDto) throws MetamacException {
         // Seteamos el id nulo ya que se autogenerará a la hora de crear el dataset
         datasetVersionDto.setId(null);
-        // seteamos los datos que se añaden tras la publicación al dataset, ya que no queremos que se copien
+        // Seteamos estos datos como nulos ya que se rellenan dentro del createDataset.
         datasetVersionDto.setStatisticalOperation(null);
         datasetVersionDto.setVersion(null);
         datasetVersionDto.setPublicationStreamStatus(null);
