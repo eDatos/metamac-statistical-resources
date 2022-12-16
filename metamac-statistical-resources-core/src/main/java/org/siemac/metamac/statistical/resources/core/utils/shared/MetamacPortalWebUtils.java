@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical.resources.web.client.utils;
+package org.siemac.metamac.statistical.resources.core.utils.shared;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
@@ -7,8 +7,6 @@ import org.siemac.metamac.statistical.resources.core.dto.multidataset.Multidatas
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
-import org.siemac.metamac.web.common.shared.constants.CommonSharedConstants;
-import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 public class MetamacPortalWebUtils {
 
@@ -31,9 +29,9 @@ public class MetamacPortalWebUtils {
     private static final String URL_QUERY_RESOURCE_TYPE_QUERY       = "query";
     private static final String URL_QUERY_RESOURCE_TYPE_COLLECTION  = "collection";
 
-    public static String buildDatasetVersionUrl(DatasetVersionDto datasetVersionDto) throws MetamacWebException {
+    public static String buildDatasetVersionUrl(DatasetVersionDto datasetVersionDto, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
-        builder.append(buildEndpointUrl());
+        builder.append(buildEndpointUrl(urlBase));
         builder.append(PAGE_DATA_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForVersionableResource(datasetVersionDto, StatisticalResourceTypeEnum.DATASET));
@@ -42,9 +40,19 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
-    public static String buildQueryVersionUrl(QueryVersionDto queryVersionDto) throws MetamacWebException {
+    public static String buildDatasetVersionUrl(String maintainerCode, String code, String version, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
-        builder.append(buildEndpointUrl());
+        builder.append(buildEndpointUrl(urlBase));
+        builder.append(PAGE_DATA_RESOURCE);
+        builder.append(URL_QUERY_SEPARATOR);
+        builder.append(buildQueryParametersForVersionableResource(maintainerCode, code, version, StatisticalResourceTypeEnum.DATASET));
+        builder.append(URL_SINGLEPAGE_SEPARATOR);
+        return builder.toString();
+    }
+      
+    public static String buildQueryVersionUrl(QueryVersionDto queryVersionDto, String urlBase) throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEndpointUrl(urlBase));
         builder.append(PAGE_DATA_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForNotVersionableResource(queryVersionDto, StatisticalResourceTypeEnum.QUERY));
@@ -53,9 +61,9 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
-    public static String buildPublicationVersionUrl(PublicationVersionDto publicationVersionDto) throws MetamacWebException {
+    public static String buildPublicationVersionUrl(PublicationVersionDto publicationVersionDto, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
-        builder.append(buildEndpointUrl());
+        builder.append(buildEndpointUrl(urlBase));
         builder.append(PAGE_COLLECTION_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForNotVersionableResource(publicationVersionDto, StatisticalResourceTypeEnum.COLLECTION));
@@ -63,9 +71,9 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
-    public static String buildMultidatasetVersionUrl(MultidatasetVersionDto multidatasetVersionDto) throws MetamacWebException {
+    public static String buildMultidatasetVersionUrl(MultidatasetVersionDto multidatasetVersionDto, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
-        builder.append(buildEndpointUrl());
+        builder.append(buildEndpointUrl(urlBase));
         builder.append(PAGE_DATA_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForMultidataset(multidatasetVersionDto));
@@ -73,8 +81,7 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
-    private static String buildEndpointUrl() {
-        String urlBase = CommonUtils.getMetamacPortalBaseUrl();
+    private static String buildEndpointUrl(String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder().append(urlBase);
 
         if (!StringUtils.isBlank(urlBase) && !urlBase.endsWith(URL_SEPARATOR)) {
@@ -83,42 +90,62 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
-    private static String buildQueryParametersForVersionableResource(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto, StatisticalResourceTypeEnum type) throws MetamacWebException {
+   
+    private static String buildQueryParametersForVersionableResource(String maintainerCode, String code, String version, StatisticalResourceTypeEnum type) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
 
-        if (lifeCycleStatisticalResourceDto != null) {
-            String parametersForNotVersionableResource = buildQueryParametersForNotVersionableResource(lifeCycleStatisticalResourceDto, type);
-            builder.append(parametersForNotVersionableResource);
-            builder.append(URL_QUERY_AND);
-            builder.append(URL_QUERY_PARAMETER_VERSION);
-            builder.append(URL_QUERY_EQUALS);
-            builder.append(lifeCycleStatisticalResourceDto.getVersionLogic());
-        }
+        String parametersForNotVersionableResource = buildQueryParametersForNotVersionableResource(maintainerCode, code, type);
+        builder.append(parametersForNotVersionableResource);
+        builder.append(URL_QUERY_AND);
+        builder.append(URL_QUERY_PARAMETER_VERSION);
+        builder.append(URL_QUERY_EQUALS);
+        builder.append(version);
 
         return builder.toString();
 
     }
 
-    private static String buildQueryParametersForNotVersionableResource(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto, StatisticalResourceTypeEnum type) throws MetamacWebException {
+    private static String buildQueryParametersForVersionableResource(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto, StatisticalResourceTypeEnum type)
+            throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+
+        if (lifeCycleStatisticalResourceDto != null) {
+            String maintainerCode = lifeCycleStatisticalResourceDto.getMaintainer() != null ? lifeCycleStatisticalResourceDto.getMaintainer().getCode() : null;
+            String code = lifeCycleStatisticalResourceDto.getCode();
+            return buildQueryParametersForVersionableResource(maintainerCode, code, lifeCycleStatisticalResourceDto.getVersionLogic(), type);
+        }
+
+        return builder.toString();
+    }
+
+    private static String buildQueryParametersForNotVersionableResource(String maintainerCode, String code, StatisticalResourceTypeEnum type) {
+        StringBuilder builder = new StringBuilder();
+
+        String resourceType = determinateResourceType(type);
+
+        builder.append(URL_QUERY_PARAMETER_RESOURCETYPE);
+        builder.append(URL_QUERY_EQUALS);
+        builder.append(resourceType);
+        builder.append(URL_QUERY_AND);
+        builder.append(URL_QUERY_PARAMETER_AGENCYID);
+        builder.append(URL_QUERY_EQUALS);
+        builder.append(maintainerCode);
+        builder.append(URL_QUERY_AND);
+        builder.append(URL_QUERY_PARAMETER_RESOURCEID);
+        builder.append(URL_QUERY_EQUALS);
+        builder.append(code);
+        return builder.toString();
+    }
+
+    private static String buildQueryParametersForNotVersionableResource(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto, StatisticalResourceTypeEnum type)
+            throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
 
         if (lifeCycleStatisticalResourceDto != null) {
 
             String maintainerCode = lifeCycleStatisticalResourceDto.getMaintainer() != null ? lifeCycleStatisticalResourceDto.getMaintainer().getCode() : null;
             String code = lifeCycleStatisticalResourceDto.getCode();
-            String resourceType = determinateResourceType(type);
-
-            builder.append(URL_QUERY_PARAMETER_RESOURCETYPE);
-            builder.append(URL_QUERY_EQUALS);
-            builder.append(resourceType);
-            builder.append(URL_QUERY_AND);
-            builder.append(URL_QUERY_PARAMETER_AGENCYID);
-            builder.append(URL_QUERY_EQUALS);
-            builder.append(maintainerCode);
-            builder.append(URL_QUERY_AND);
-            builder.append(URL_QUERY_PARAMETER_RESOURCEID);
-            builder.append(URL_QUERY_EQUALS);
-            builder.append(code);
+            return buildQueryParametersForNotVersionableResource(maintainerCode, code, type);
         }
         return builder.toString();
     }
@@ -140,7 +167,7 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
-    private static String determinateResourceType(StatisticalResourceTypeEnum type) throws MetamacWebException {
+    private static String determinateResourceType(StatisticalResourceTypeEnum type) throws IllegalArgumentException {
         switch (type) {
             case QUERY:
                 return URL_QUERY_RESOURCE_TYPE_QUERY;
@@ -149,7 +176,7 @@ public class MetamacPortalWebUtils {
             case COLLECTION:
                 return URL_QUERY_RESOURCE_TYPE_COLLECTION;
             default:
-                throw new MetamacWebException(CommonSharedConstants.EXCEPTION_UNKNOWN, "StatisticalResourceTypeEnum " + type + " not valid.");
+                throw new IllegalArgumentException("StatisticalResourceTypeEnum " + type + " not valid.");
         }
     }
 }

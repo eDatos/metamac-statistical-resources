@@ -123,7 +123,7 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.validators.
 import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
-import org.siemac.metamac.statistical.resources.core.utils.MetamacPortalUtils;
+import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1137,7 +1137,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         geoCovVarElementCacheDatasetVersion.setOperationTitle(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
         geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.FALSE);
-        geoCovVarElementCacheDatasetVersion.setHtmlLink(MetamacPortalUtils.buildDatasetVersionUrl(datasetVersion, configurationService));
+        String maintainer = datasetVersion.getLifeCycleStatisticalResource().getMaintainer() != null ? datasetVersion.getLifeCycleStatisticalResource().getMaintainer().getCode() : null;
+        geoCovVarElementCacheDatasetVersion.setHtmlLink(MetamacPortalWebUtils.buildDatasetVersionUrl(maintainer, datasetVersion.getLifeCycleStatisticalResource().getCode(), datasetVersion.getLifeCycleStatisticalResource().getVersionLogic(), configurationService.retrievePortalExternalWebApplicationUrlVisualizer()));
         geoCovVarElementCacheDatasetVersion.setIsLastVersion(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion());
         geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }

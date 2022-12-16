@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
@@ -22,7 +23,6 @@ import org.siemac.metamac.statistical.resources.web.client.events.SetMultidatase
 import org.siemac.metamac.statistical.resources.web.client.events.ShowUnauthorizedMultidatasetWarningMessageEvent;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.view.handlers.MultidatasetMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
-import org.siemac.metamac.statistical.resources.web.client.utils.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.MultidatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
@@ -44,7 +44,6 @@ import org.siemac.metamac.statistical.resources.web.shared.multidataset.UpdateMu
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.CommonErrorUtils;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
-import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -271,9 +270,9 @@ public class MultidatasetMetadataTabPresenter
     @Override
     public void previewData(MultidatasetVersionDto multidatasetVersionDto) {
         try {
-            String url = MetamacPortalWebUtils.buildMultidatasetVersionUrl(multidatasetVersionDto);
+            String url = MetamacPortalWebUtils.buildMultidatasetVersionUrl(multidatasetVersionDto, CommonUtils.getMetamacPortalBaseUrl());
             Window.open(url, "_blank", "");
-        } catch (MetamacWebException e) {
+        } catch (Exception e) {
             ShowMessageEvent.fireErrorMessage(this, e);
         }
     }

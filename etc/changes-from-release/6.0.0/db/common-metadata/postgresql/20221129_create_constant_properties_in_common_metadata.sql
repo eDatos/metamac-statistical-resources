@@ -4,7 +4,7 @@
 -- Relacionada con : EDATOS-3869 - que también lee de este parámetro en external-users
 -- ---------------------------------------------------------------------------------------------------
 
---ATENCIÓN, ESTA PROPIEDAD PUEDE NO EXISTIR EN TODOS LOS ENTORNOS, EN CUYO CASO DEJAR VACÍO.
+--ATENCIÓN, ESTA PROPIEDAD PUEDE NO SER NECESARIA EN TODOS LOS ENTORNOS, EN CUYO CASO DEJAR VACÍO.
 
 /*
  * Para los casos en los que no se use el consumidor ejecutar esta sentencia.
