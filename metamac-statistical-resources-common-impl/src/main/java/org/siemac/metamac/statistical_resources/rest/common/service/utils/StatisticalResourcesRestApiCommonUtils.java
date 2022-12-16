@@ -89,6 +89,12 @@ public class StatisticalResourcesRestApiCommonUtils {
         return parseFields(fieldsParam, validFields);
     }
 
+    public static Set<String> parseFieldsStatisticalResourcesListEndpoints(String fieldsParam) {
+        Set<String> validFields = new HashSet<>();
+        validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+        return parseFields(fieldsParam, validFields);
+    }
+
     public static String escapeValueToData(String value) {
         if (value == null) {
             return null;
