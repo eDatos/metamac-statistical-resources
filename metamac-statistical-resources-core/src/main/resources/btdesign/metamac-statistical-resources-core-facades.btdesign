@@ -104,6 +104,8 @@ Application FacadeStatisticalResources {
 	   		@DatasetVersionDto createDataset(@DatasetVersionDto datasetVersionDto, @ExternalItemDto statisticalOperation) throws MetamacException;
 	   		"Updates dataset"
             @DatasetVersionDto updateDatasetVersion(@DatasetVersionDto datasetVersionDto) throws MetamacException;
+            "Copy dataset version"
+			@DatasetVersionDto copyDatasetVersion(@DatasetVersionDto datasetVersion, @ExternalItemDto statisticalOperation) throws MetamacException;
             "Deletes dataset"
             deleteDatasetVersion(String urn) throws MetamacException;
             "Finds datasets by criteria"

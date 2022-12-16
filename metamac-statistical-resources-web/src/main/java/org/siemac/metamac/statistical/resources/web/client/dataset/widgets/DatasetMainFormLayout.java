@@ -12,7 +12,7 @@ import com.smartgwt.client.widgets.events.HasClickHandlers;
 
 public class DatasetMainFormLayout extends LifecycleMainFormLayout {
 
-    private DatasetVersionDto datasetVersionDto;
+    private DatasetVersionDto    datasetVersionDto;
     private MainFormLayoutButton updateGeocoverageCache;
 
     public DatasetMainFormLayout() {
@@ -78,6 +78,11 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
     @Override
     protected boolean canPreviewData() {
         return DatasetClientSecurityUtils.canPreviewDatasetData(datasetVersionDto);
+    }
+
+    @Override
+    protected boolean canShowCopyButton() {
+        return true;
     }
 
     @Override
