@@ -14,8 +14,6 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
@@ -71,7 +69,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             
             Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
              
-            while (alwaysWithDelay()) {
+            while (KafkaUtils.alwaysWithDelay()) {
                 // Milliseconds, spent waiting in poll if data is not available in the buffer
                 ConsumerRecords<String, T> records = consumer.poll(100);
                      
@@ -96,21 +94,12 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                     continue;
                 }
 
-                StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
-                // @formatter:off
-                logMessageBldr
-                    .append(topicName)
-                    .append(", Partition: ").append(record.partition())
-                    .append(", Offset: ").append(record.offset())
-                    .append(", TimestampType: ").append(record.timestampType())
-                    .append(", Timestamp: ").append(record.timestamp())
-                    .append(" [").append(new DateTime(record.timestamp(), DateTimeZone.forID("Atlantic/Canary"))).append("]");
-                // @formatter:on
+                StringBuilder logMessageBldr = KafkaUtils.buildLogMessage("Received message from Kafka -> Topic Name: ", topicName, record.partition(), record.offset(), record.timestampType(), record.timestamp());
                 String logMessage = logMessageBldr.toString();
                 
                 pendigOffsetsToCommit.put(record.partition(), record.offset());
                 
-                LOGGER.info(logMessage.toString());
+                LOGGER.info(logMessageBldr);
                 try {
                     ServiceContext serviceContext = createServiceContext(logMessage);
   
@@ -135,7 +124,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
     }
 
     private ServiceContext createServiceContext(String logMessage) {
-        ServiceContext serviceContext = new ServiceContext("kafka-jaxi-publication-received", logMessage.toString(), "metamac-statistical-resources-core");
+        ServiceContext serviceContext = new ServiceContext("kafka-jaxi-publication-received", logMessage, "metamac-statistical-resources-core");
         MetamacPrincipal metamacPrincipal = new MetamacPrincipal();
         metamacPrincipal.setUserId(serviceContext.getUserId());
         metamacPrincipal.getAccesses().add(new MetamacPrincipalAccess(StatisticalResourcesRoleEnum.ADMINISTRADOR.getName(), StatisticalResourcesConstants.APPLICATION_ID, null));
@@ -167,15 +156,6 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
         if (kafkaFailedMessagesCache.isKeyInCache(record.key())) {
             kafkaFailedMessagesCache.remove(record.key());
         }
-    }
-
-    private boolean alwaysWithDelay() {
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            LOGGER.error(e);
-        }
-        return true;
     }
 
 }
