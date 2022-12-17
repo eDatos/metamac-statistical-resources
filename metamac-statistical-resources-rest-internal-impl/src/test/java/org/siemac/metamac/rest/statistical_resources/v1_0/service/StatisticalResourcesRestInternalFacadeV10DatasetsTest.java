@@ -24,7 +24,7 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
 
     @Test
     public void testFindDatasets() throws Exception {
-        Datasets datasets = statisticalResourcesRestInternalFacadeClientXml.findDatasets(null, null, null, null, null);
+        Datasets datasets = statisticalResourcesRestInternalFacadeClientXml.findDatasets(null, null, null, null, null, null);
 
         assertEquals(4, datasets.getDatasets().size());
         assertEquals(StatisticalResourcesRestInternalConstants.KIND_DATASETS, datasets.getKind());

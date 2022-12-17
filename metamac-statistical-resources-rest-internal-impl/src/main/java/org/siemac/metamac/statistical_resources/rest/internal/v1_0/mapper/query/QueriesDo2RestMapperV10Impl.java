@@ -32,6 +32,7 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Querie
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryMetadata;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternalWithStatisticalOperation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
@@ -78,7 +79,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     private static final Logger            logger = LoggerFactory.getLogger(QueriesDo2RestMapperV10Impl.class);
 
     @Override
-    public Queries toQueries(PagedResult<QueryVersion> sources, String agencyID, String query, String orderBy, Integer limit, List<String> selectedLanguages) {
+    public Queries toQueries(PagedResult<QueryVersion> sources, String agencyID, String query, String orderBy, Integer limit, List<String> selectedLanguages, Set<String> parsedFields) {
 
         Queries targets = new Queries();
         targets.setKind(StatisticalResourcesRestInternalConstants.KIND_QUERIES);
@@ -89,7 +90,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
 
         // Values
         for (QueryVersion source : sources.getValues()) {
-            ResourceInternal target = toResource(source, selectedLanguages);
+            ResourceInternalWithStatisticalOperation target = toResource(source, selectedLanguages, parsedFields);
             targets.getQueries().add(target);
         }
         return targets;
@@ -181,18 +182,21 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceInternal toResource(QueryVersion source, List<String> selectedLanguages) {
+    public ResourceInternalWithStatisticalOperation toResource(QueryVersion source, List<String> selectedLanguages, Set<String> parsedFields) {
         if (source == null) {
             return null;
         }
-        ResourceInternal target = new ResourceInternal();
+        ResourceInternalWithStatisticalOperation target = new ResourceInternalWithStatisticalOperation();
         target.setId(source.getLifeCycleStatisticalResource().getCode());
         target.setUrn(toQueryUrn(source));
         target.setKind(StatisticalResourcesRestInternalConstants.KIND_QUERY);
         target.setSelfLink(toQuerySelfLink(source));
         target.setName(commonDo2RestMapper.toInternationalString(source.getLifeCycleStatisticalResource().getTitle(), selectedLanguages));
         target.setManagementAppLink(toQueryVersionManagementApplicationLink(source));
-
+        boolean includeStatisticalOperation = containsField(parsedFields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+        if (includeStatisticalOperation) {
+            target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getDataset().getIdentifiableStatisticalResource().getStatisticalOperation(), selectedLanguages));
+        }
         return target;
     }
 
@@ -233,7 +237,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         if (source.getDataset() != null) {
             relatedDataset = datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
         } else {
-            relatedDataset = datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages);
+            relatedDataset = datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages, null);
         }
         target.setRelatedDataset(relatedDataset);
         target.setStatus(toQueryStatus(source.getStatus()));
@@ -243,7 +247,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setMaintainer(commonDo2RestMapper.toResourceExternalItemSrm(source.getLifeCycleStatisticalResource().getMaintainer(), selectedLanguages));
         target.setValidFrom(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getValidFrom()));
         target.setValidTo(commonDo2RestMapper.toDate(isDateAfterNowSetNull(source.getLifeCycleStatisticalResource().getValidTo())));
-        target.setRequires(datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages));
+        target.setRequires(datasetsDo2RestMapper.toResource(datasetVersion, selectedLanguages, null));
         target.setIsPartOf(toQueryIsPartOf(source, selectedLanguages));
         target.setNextVersion(commonDo2RestMapper.toNextVersionType(source.getLifeCycleStatisticalResource().getNextVersion(), selectedLanguages));
         target.setNextVersionDate(commonDo2RestMapper.toSdmxObservationalTimePeriod(source.getLifeCycleStatisticalResource().getNextVersionDate(), selectedLanguages));

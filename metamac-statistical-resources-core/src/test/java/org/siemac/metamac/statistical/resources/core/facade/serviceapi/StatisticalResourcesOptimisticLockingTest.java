@@ -1985,4 +1985,9 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
     }
 
+    @Override
+    public void testCopyDatasetVersion() throws Exception {
+        // no optimistic locking in this operation
+    }
+
 }

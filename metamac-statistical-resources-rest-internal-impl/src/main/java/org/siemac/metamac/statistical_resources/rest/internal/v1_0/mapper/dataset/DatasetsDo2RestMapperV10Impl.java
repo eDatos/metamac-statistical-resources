@@ -33,6 +33,7 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Datase
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Datasets;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternalWithStatisticalOperation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -107,7 +108,8 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     @Override
-    public Datasets toDatasets(PagedResult<DatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages) {
+    public Datasets toDatasets(PagedResult<DatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
+        Set<String> parsedFields) {
 
         Datasets targets = new Datasets();
         targets.setKind(StatisticalResourcesRestInternalConstants.KIND_DATASETS);
@@ -118,7 +120,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
         // Values
         for (DatasetVersion source : sources.getValues()) {
-            ResourceInternal target = toResource(source, selectedLanguages);
+            ResourceInternalWithStatisticalOperation target = toResource(source, selectedLanguages, parsedFields);
             targets.getDatasets().add(target);
         }
         return targets;
@@ -187,13 +189,13 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceInternal toResource(DatasetVersion source, List<String> selectedLanguages) {
-        return toResource(source, false, selectedLanguages);
+    public ResourceInternalWithStatisticalOperation toResource(DatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) {
+        return toResource(source, false, selectedLanguages, parsedFields);
     }
 
     @Override
     public ResourceInternal toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages) {
-        return toResource(source, true, selectedLanguages);
+        return toResource(source, true, selectedLanguages, null);
     }
 
     @Override
@@ -218,18 +220,21 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-    private ResourceInternal toResource(DatasetVersion source, boolean asLatest, List<String> selectedLanguages) {
+    private ResourceInternalWithStatisticalOperation toResource(DatasetVersion source, boolean asLatest, List<String> selectedLanguages, Set<String> parsedFields) {
         if (source == null) {
             return null;
         }
-        ResourceInternal target = new ResourceInternal();
+        ResourceInternalWithStatisticalOperation target = new ResourceInternalWithStatisticalOperation();
         target.setId(source.getSiemacMetadataStatisticalResource().getCode());
         target.setUrn(source.getSiemacMetadataStatisticalResource().getUrn());
         target.setKind(StatisticalResourcesRestInternalConstants.KIND_DATASET);
         target.setSelfLink(toDatasetSelfLink(source, asLatest));
         target.setName(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguages));
         target.setManagementAppLink(toDatasetVersionManagementApplicationLink(source));
-
+        boolean includeStatisticalOperation = containsField(parsedFields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+        if (includeStatisticalOperation) {
+            target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
+        }
         return target;
     }
 
