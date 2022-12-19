@@ -16,7 +16,7 @@ La manera de actualizar la caché es como hasta ahora:
  2) Pulsar el botón y ejecutará dos tareas.
     - Actualización de la caché a partir de los datasets de base de datos.
     - Actualización de la caché a partir del topic JAXI_PUBLICATIONS. 
- La ejecución completa tardará horas.
+ La ejecución completa se realiza en background y puede tardar horas en función del volumen de datasets a procesar .
 
 * Se añaden script relacionados con la actualización de la caché de elementos de variable de un dataset y se añaden dos nuevas propiedades en el common_metadata en este orden
 [etc/changes-from-release/6.0.0/db](etc/changes-from-release/6.0.0/db).
