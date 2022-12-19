@@ -5,6 +5,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.base.GetHelp
 import org.siemac.metamac.statistical.resources.web.server.handlers.base.GetInitialValuesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.base.GetLatestResourceVersionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.base.ResendStreamMessageActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.CopyDatasetActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.CreateDatabaseDatasourceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.CreateDatasetCategorisationsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.CreateDatasetConstraintActionHandler;
@@ -91,6 +92,7 @@ import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlAction
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatabaseDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatasetCategorisationsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatasetConstraintAction;
@@ -232,6 +234,7 @@ public class ServerModule extends HandlerModule {
         // DATASETS
         bindHandler(GetDatasetVersionAction.class, GetDatasetVersionActionHandler.class);
         bindHandler(SaveDatasetVersionAction.class, SaveDatasetVersionActionHandler.class);
+        bindHandler(CopyDatasetAction.class, CopyDatasetActionHandler.class);
         bindHandler(DeleteDatasetVersionsAction.class, DeleteDatasetVersionsActionHandler.class);
         bindHandler(GetDatasetVersionsAction.class, GetDatasetVersionsActionHandler.class);
         bindHandler(GetDatasetsAction.class, GetDatasetsActionHandler.class);

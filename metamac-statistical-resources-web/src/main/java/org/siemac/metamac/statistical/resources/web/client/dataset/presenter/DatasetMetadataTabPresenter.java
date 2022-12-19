@@ -30,6 +30,8 @@ import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMess
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionAction;
@@ -403,7 +405,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             public void onWaitSuccess(GetConceptSchemesPaginatedListResult result) {
                 getView().setConceptSchemesForStatisticalUnit(result);
             }
-        });;
+        });
     }
 
     @Override
@@ -414,7 +416,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             public void onWaitSuccess(GetConceptsPaginatedListResult result) {
                 getView().setConceptsForStatisticalUnit(result);
             }
-        });;
+        });
     }
 
     @Override
@@ -445,5 +447,15 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
 
     private void goToDatasetList() {
         placeManager.revealRelativePlace(-2);
+    }
+
+    @Override
+    public void copyDataset(String urn) {
+        dispatcher.execute(new CopyDatasetAction(urn), new WaitingAsyncCallbackHandlingError<CopyDatasetResult>(this) {
+            @Override
+            public void onWaitSuccess(CopyDatasetResult result) {
+                fireSuccessMessage(getMessages().datasetCopied());
+            }
+        });
     }
 }

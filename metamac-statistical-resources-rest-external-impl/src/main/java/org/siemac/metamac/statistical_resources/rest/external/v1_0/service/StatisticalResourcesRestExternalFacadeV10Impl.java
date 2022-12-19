@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResources;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResourcesListEndpoints;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
 import java.util.ArrayList;
@@ -78,20 +79,23 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     private StatisticalResourcesConfiguration             configurationService;
 
     @Override
-    public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang) {
-        return findDatasetsCommon(null, null, null, query, orderBy, limit, offset, lang);
+    public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findDatasetsCommon(null, null, null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
-    public Datasets findDatasets(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang) {
+    public Datasets findDatasets(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
         checkParameterNotWildcardAll(StatisticalResourcesRestExternalConstants.PARAMETER_AGENCY_ID, agencyID);
-        return findDatasetsCommon(agencyID, null, null, query, orderBy, limit, offset, lang);
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findDatasetsCommon(agencyID, null, null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
-    public Datasets findDatasets(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
+    public Datasets findDatasets(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
         checkParameterNotWildcardAll(StatisticalResourcesRestExternalConstants.PARAMETER_RESOURCE_ID, resourceID);
-        return findDatasetsCommon(agencyID, resourceID, null, query, orderBy, limit, offset, lang);
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findDatasetsCommon(agencyID, resourceID, null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
@@ -129,14 +133,16 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Collections findCollections(String query, String orderBy, String limit, String offset, List<String> lang) {
-        return findCollectionsCommon(null, null, query, orderBy, limit, offset, lang);
+    public Collections findCollections(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findCollectionsCommon(null, null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
-    public Collections findCollections(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang) {
+    public Collections findCollections(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
         checkParameterNotWildcardAll(StatisticalResourcesRestExternalConstants.PARAMETER_AGENCY_ID, agencyID);
-        return findCollectionsCommon(agencyID, null, query, orderBy, limit, offset, lang);
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findCollectionsCommon(agencyID, null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
@@ -153,13 +159,15 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Queries findQueries(String query, String orderBy, String limit, String offset, List<String> lang) {
-        return findQueriesCommon(null, query, orderBy, limit, offset, lang);
+    public Queries findQueries(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findQueriesCommon(null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
-    public Queries findQueries(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang) {
-        return findQueriesCommon(agencyID, query, orderBy, limit, offset, lang);
+    public Queries findQueries(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findQueriesCommon(agencyID, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
@@ -191,14 +199,16 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Multidatasets findMultidatasets(String query, String orderBy, String limit, String offset, List<String> lang) {
-        return findMultidatasetsCommon(null, null, query, orderBy, limit, offset, lang);
+    public Multidatasets findMultidatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findMultidatasetsCommon(null, null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
-    public Multidatasets findMultidatasets(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang) {
+    public Multidatasets findMultidatasets(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
         checkParameterNotWildcardAll(StatisticalResourcesRestExternalConstants.PARAMETER_AGENCY_ID, agencyID);
-        return findMultidatasetsCommon(agencyID, null, query, orderBy, limit, offset, lang);
+        Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
+        return findMultidatasetsCommon(agencyID, null, query, orderBy, limit, offset, lang, parsedFields);
     }
 
     @Override
@@ -214,7 +224,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
     }
 
-    private Datasets findDatasetsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, List<String> lang) {
+    private Datasets findDatasetsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
         try {
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
@@ -223,14 +233,14 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Datasets datasets = datasetsDo2RestMapper.toDatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            Datasets datasets = datasetsDo2RestMapper.toDatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
             return datasets;
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
-    private Collections findCollectionsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
+    private Collections findCollectionsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
         try {
             SculptorCriteria sculptorCriteria = collectionsRest2DoMapper.getCollectionCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
@@ -239,14 +249,14 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Collections collections = collectionsDo2RestMapper.toCollections(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            Collections collections = collectionsDo2RestMapper.toCollections(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
             return collections;
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
-    private Queries findQueriesCommon(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang) {
+    private Queries findQueriesCommon(String agencyID, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
         try {
             SculptorCriteria sculptorCriteria = queriesRest2DoMapper.getQueryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
@@ -255,14 +265,14 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Queries queries = queriesDo2RestMapper.toQueries(entitiesPagedResult, agencyID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            Queries queries = queriesDo2RestMapper.toQueries(entitiesPagedResult, agencyID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
             return queries;
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
-    private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang) {
+    private Multidatasets findMultidatasetsCommon(String agencyID, String resourceID, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
         try {
             SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
@@ -271,7 +281,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
             return multidatasets;
         } catch (Exception e) {
             throw manageException(e);

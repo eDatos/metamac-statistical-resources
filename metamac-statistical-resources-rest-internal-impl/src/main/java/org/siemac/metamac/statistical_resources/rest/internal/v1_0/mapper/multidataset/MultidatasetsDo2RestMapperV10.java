@@ -15,10 +15,11 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 
 public interface MultidatasetsDo2RestMapperV10 {
 
-    public Multidatasets toMultidatasets(PagedResult<MultidatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages);
+    public Multidatasets toMultidatasets(PagedResult<MultidatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
+        Set<String> parsedFields);
     public Multidataset toMultidataset(MultidatasetVersion source, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceDto source);
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceBaseDto source);
-    public ResourceInternal toResource(MultidatasetVersion source, List<String> selectedLanguages);
+    public ResourceInternal toResource(MultidatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields);
     public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
 }

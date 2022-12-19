@@ -9,7 +9,13 @@
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
 
-## 5.0.0 a 5.0.X-SNAPSHOT
+## 6.0.0 a 7.0.0
+* **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
+  devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
+  la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
+  de aplicaciones de eDatos que consuman la API de statistical-resources a través de JAX-RS.
+
+## 5.0.1 a 6.0.0
 **BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
 A partir de esta versión los metadatos "date_next_update" y "next_version_date" dejan de ser fechas en formato "dateTime" para convertirse en un formato abierto que cumpla con las especificaciones de sdmx 2.1. Por este motivo, las APIs van a devolver en estos metadatos un InternationalString con la conversión del valor introducido.
 Ej: si 2022-M12
@@ -21,7 +27,7 @@ ns2:dateNextUpdate
 <cdomain:text xml:lang="ca">12/2022</cdomain:text>
 </ns2:dateNextUpdate>
 
-* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/5.0.0/db](etc/changes-from-release/5.0.0/db).
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/5.0.1/db](etc/changes-from-release/5.0.1/db).
 
 *******************************
 *** La ejecución de esta tarea requiere una serie de pasos en cada entorno que se detallan a continuación:*******
