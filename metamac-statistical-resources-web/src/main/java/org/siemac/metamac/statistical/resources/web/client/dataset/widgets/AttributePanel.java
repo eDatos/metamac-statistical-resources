@@ -127,7 +127,7 @@ public class AttributePanel extends VLayout {
             // Updated attributeInstances from database because it could have been changed
             if (instancesSectionStack.getListGrid().getSelectedRecords() != null && instancesSectionStack.getListGrid().getSelectedRecords().length > 0) {
                 ListGridRecord[] attributeInstances = instancesSectionStack.getListGrid().getSelectedRecords();
-                if (attributeInstances != null && attributeInstances.length == 1
+                if (attributeInstances.length == 1
                         && (CommonUtils.hasDimensionRelationshipType(dsdAttributeDto) || CommonUtils.hasGroupRelationshipType(dsdAttributeDto))) {
                     instancesSectionStack.getListGrid().setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos));
 
