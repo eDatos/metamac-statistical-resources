@@ -21,6 +21,8 @@ La manera de actualizar la caché es como hasta ahora:
 * Se añaden script relacionados con la actualización de la caché de elementos de variable de un dataset y se añaden dos nuevas propiedades en el common_metadata en este orden
 [etc/changes-from-release/6.0.0/db](etc/changes-from-release/6.0.0/db).
 
+NOTA DE LA VERSIÓN: En esta versión se comienza a consumir el topi JAXI-PUBLICATIONS cuyo productor es externo (app  del IBESTAT)  Se ha tomado la decisión de crear la clase AVRO que recoge los mensajes de ese topic en el statistical-resources donde están el resto de clases AVRO de los datasets(query, collection, dataset...) En este último caso el productor sí es el propio statistical-resources. Por tanto, Cualquier consumidor del esquema JAXI deberá tomar la dependencia de statistical-resources para utilizar dicha clase (al igual que ya lo hacen para el resto de clases AVRO del statistical-resources)
+
 ## 6.0.0 a 7.0.0
 * **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
   devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
