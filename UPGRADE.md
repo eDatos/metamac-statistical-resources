@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 6.0.0 a 6.0.X
+## 6.0.0 a 6.0.1-SNAPSHOT
 La tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
 Se cambiará la tabla. Y luego habrá que lanzar la actualización de toda la caché para cargar todos los datos de nuevo.
 La manera de actualizar la caché es como hasta ahora:
