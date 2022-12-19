@@ -1,132 +1,128 @@
 {
     "resource": [
         {
-            "resourceID": {
-                "id": "dataset1",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)",
-                "type": "DATASET"
-            },
             "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=01.000#",
+            "id": "dataset1",
+            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)",
             "selfLink": {
                 "kind": "statisticalResources#resource",
                 "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset1/01.000#dataset"
             },
-            "selectedLanguages": {
-                "language": [
-                    "es"
-                ],
-                "total": 1
+            "name": {
+                "text": [
+                    {
+                        "value": "title-dataset1 en Espanol",
+                        "lang": "es"
+                    }
+                ]
             },
+            "kind": "statisticalResources#resource",
             "statisticalOperation": {
-                "id": "PlPpCudkvi",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=PlPpCudkvi",
+                "id": "IrC1f1yfvs",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=IrC1f1yfvs",
                 "name": {
                     "text": [
                         {
-                            "value": "title-PlPpCudkvi en Espanol",
+                            "value": "title-IrC1f1yfvs en Espanol",
                             "lang": "es"
                         }
                     ]
                 },
-                "type": "STATISTICAL_OPERATION"
-            },
-            "kind": "statisticalResources#resource"
+                "kind": "statisticalOperations#operation"
+            }
         },
         {
-            "resourceID": {
-                "id": "dataset1",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(02.000)",
-                "type": "DATASET"
-            },
             "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=02.000#",
+            "id": "dataset1",
+            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(02.000)",
             "selfLink": {
                 "kind": "statisticalResources#resource",
                 "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset1/02.000#dataset"
             },
-            "selectedLanguages": {
-                "language": [
-                    "es"
-                ],
-                "total": 1
+            "name": {
+                "text": [
+                    {
+                        "value": "title-dataset1 en Espanol",
+                        "lang": "es"
+                    }
+                ]
             },
+            "kind": "statisticalResources#resource",
             "statisticalOperation": {
-                "id": "ahvuZvS6fx",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=ahvuZvS6fx",
+                "id": "jTABBHjahU",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=jTABBHjahU",
                 "name": {
                     "text": [
                         {
-                            "value": "title-ahvuZvS6fx en Espanol",
+                            "value": "title-jTABBHjahU en Espanol",
                             "lang": "es"
                         }
                     ]
                 },
-                "type": "STATISTICAL_OPERATION"
-            },
-            "kind": "statisticalResources#resource"
+                "kind": "statisticalOperations#operation"
+            }
         },
         {
-            "resourceID": {
-                "id": "dataset1",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency2:dataset1(01.000)",
-                "type": "DATASET"
-            },
             "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency2&resourceId=dataset1&version=01.000#",
+            "id": "dataset1",
+            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency2:dataset1(01.000)",
             "selfLink": {
                 "kind": "statisticalResources#resource",
                 "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency2/dataset1/01.000#dataset"
             },
-            "selectedLanguages": {
-                "language": [
-                    "es"
-                ],
-                "total": 1
+            "name": {
+                "text": [
+                    {
+                        "value": "title-dataset1 en Espanol",
+                        "lang": "es"
+                    }
+                ]
             },
+            "kind": "statisticalResources#resource",
             "statisticalOperation": {
-                "id": "l3e5vyifji",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=l3e5vyifji",
+                "id": "Vl00rord2I",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=Vl00rord2I",
                 "name": {
                     "text": [
                         {
-                            "value": "title-l3e5vyifji en Espanol",
+                            "value": "title-Vl00rord2I en Espanol",
                             "lang": "es"
                         }
                     ]
                 },
-                "type": "STATISTICAL_OPERATION"
-            },
-            "kind": "statisticalResources#resource"
+                "kind": "statisticalOperations#operation"
+            }
         },
         {
-            "resourceID": {
-                "id": "dataset2",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset2(01.000)",
-                "type": "DATASET"
-            },
             "visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset2&version=01.000#",
+            "id": "dataset2",
+            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset2(01.000)",
             "selfLink": {
                 "kind": "statisticalResources#resource",
                 "href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset2/01.000#dataset"
             },
-            "selectedLanguages": {
-                "language": [
-                    "es"
-                ],
-                "total": 1
+            "name": {
+                "text": [
+                    {
+                        "value": "title-dataset2 en Espanol",
+                        "lang": "es"
+                    }
+                ]
             },
+            "kind": "statisticalResources#resource",
             "statisticalOperation": {
-                "id": "0A8l1YHrR7",
-                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=0A8l1YHrR7",
+                "id": "Hbk3pJA7aQ",
+                "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=Hbk3pJA7aQ",
                 "name": {
                     "text": [
                         {
-                            "value": "title-0A8l1YHrR7 en Espanol",
+                            "value": "title-Hbk3pJA7aQ en Espanol",
                             "lang": "es"
                         }
                     ]
                 },
-                "type": "STATISTICAL_OPERATION"
-            },
-            "kind": "statisticalResources#resource"
+                "kind": "statisticalOperations#operation"
+            }
         }
     ],
     "kind": "statisticalResources#resources",

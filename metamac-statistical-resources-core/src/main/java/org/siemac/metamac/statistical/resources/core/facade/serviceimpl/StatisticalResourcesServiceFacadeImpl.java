@@ -1192,7 +1192,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
         // Operate
-        //getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+        getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
         
         updateAllGeographicCoverageExternalPublicationVariableElementsCache(ctx);
     }

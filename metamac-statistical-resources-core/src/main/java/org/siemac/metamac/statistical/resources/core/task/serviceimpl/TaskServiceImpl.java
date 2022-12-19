@@ -623,10 +623,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         if (!createJobKeyForUpdateGeocoverageCacheResource(datasetUrn).equals(jobKey)) {
             checkExistUpdateGeocoverageCacheResource(ctx, datasetUrn);
         }
-        
-        if (!createJobKeyForUpdateExternalGeocoverageCacheResource().equals(jobKey)) {
-            checkExistUpdateExternalGeocoverageCacheResource(ctx);
-        }
     }
 
     private void checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ServiceContext ctx, JobKey jobKey) throws MetamacException {

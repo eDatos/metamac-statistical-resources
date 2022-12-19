@@ -1454,13 +1454,13 @@
          "title":"ResourceWithStatisticalOperation",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
                   "statisticalOperation":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                }
             }
@@ -2029,13 +2029,13 @@
          "title":"ResourceWithStatisticalOperation",
          "allOf":[
             {
-               "$ref":"#/definitions/Resource"
+               "$ref":"#/definitions/CommonResource"
             },
             {
                "properties":{
                   "statisticalOperation":{
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/CommonResource"
                   },
                }
             }
@@ -3826,64 +3826,22 @@
          ],
          "description":""
       },
-	"ItemBase":{
-         "type":"object",
-         "title":"ItemBase",
-         "properties":{
-            "id":{
-               "description":"",
-               "type":"string",
-               required: true
-            },
-            "urn":{
-               "description":"",
-               "type":"string",
-               required: true
-            },
-            "name":{
-               "name":"",
-               "$ref":"#/definitions/InternationalString",
-               required: true       
-            },
-         },
-         "description":""
-      },	
-       "Resource":{
+	  "Resource":{
          "type":"object",
          "title":"Resource",
-         "properties":{
-            "resourceID":{
-               "description":"",
-               "$ref":"#/definitions/ItemBase",
-               required: true
+         "allOf":[
+            {
+               "$ref":"#/definitions/ResourceWithStatisticalOperation"
             },
-            "type":{
-               "description":"",
-               "type":"string"
-            },
-            "visualizerHtmlLink":{
-               "description":"",
-               "type":"string"
-            },
-            "selfLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "selectedLanguages":{
-               "description":"",
-               "$ref":"#/definitions/SelectedLanguages",
-               required: true
-            },
-            "statisticalOperation":{
-               "description":"",
-               "$ref":"#/definitions/ItemBase"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            },
-         },
-         "description":""
+            {
+               "properties":{
+                  "visualizerHtmlLink":{
+					"description":"",
+					"type":"string"
+				},
+               }
+            }
+         ],
       },
       "Resources":{
          "type":"object",
