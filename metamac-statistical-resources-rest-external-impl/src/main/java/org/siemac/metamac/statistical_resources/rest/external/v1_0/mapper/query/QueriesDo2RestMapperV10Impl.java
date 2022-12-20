@@ -185,8 +185,13 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setSelfLink(toQuerySelfLink(source));
         target.setName(commonDo2RestMapper.toInternationalString(source.getLifeCycleStatisticalResource().getTitle(), selectedLanguages));
         boolean includeStatisticalOperation = containsField(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+
         if (includeStatisticalOperation) {
-            target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getDataset().getIdentifiableStatisticalResource().getStatisticalOperation(), selectedLanguages));
+            if (source.getStatus() == QueryStatusEnum.ACTIVE) {
+                target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getDataset().getIdentifiableStatisticalResource().getStatisticalOperation(), selectedLanguages));
+            } else {
+                target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getFixedDatasetVersion().getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
+            }
         }
         return target;
     }
