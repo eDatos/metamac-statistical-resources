@@ -14,7 +14,7 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String CRON_EXPRESSION_FOR_DB_DATA_IMPORT    = "metamac.statistical_resources.data_import.cron_expression";
     public static final String DATABASE_DATASET_IMPORT_ENABLED       = "environment.metamac.statistical_resources.data_import.enabled";
     public static final String DB_DATA_VIEWS_ROLE                    = "metamac.statistical_resources.bbbd.data_views_role";
-
+ 
     // DataSources
 
     public static final String DB_URL                                = "metamac.statistical_resources.db.url";

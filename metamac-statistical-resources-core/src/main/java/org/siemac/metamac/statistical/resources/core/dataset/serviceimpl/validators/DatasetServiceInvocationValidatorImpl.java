@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.joda.time.DateTime;
@@ -108,6 +109,11 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
+    public static void checkFindResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        // NOTHING
+    }
+
+    
     public static void checkDeleteDatasetVersion(String datasetVersionUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
     }
@@ -370,6 +376,14 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkUpdateAllGeographicCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+    
+    public static void checkUpdateGeographicCoverageExternalPublicationVariableElementsCache(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+    
+    public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
 }

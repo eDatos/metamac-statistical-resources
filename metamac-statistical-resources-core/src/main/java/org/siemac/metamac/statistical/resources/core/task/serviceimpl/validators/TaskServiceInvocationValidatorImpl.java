@@ -119,6 +119,10 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
     }
 
+    public static void checkExistUpdateExternalGeocoverageCacheTaskInResource(List<MetamacExceptionItem> exceptions) throws MetamacException {
+        // NOTHING TO DO HERE
+    }
+    
     public static void checkMarkTaskAsFinished(String job, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(job, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
     }
@@ -178,9 +182,17 @@ public class TaskServiceInvocationValidatorImpl {
     public static void checkPlanifyUpdateGeocoverageCache(TaskInfoDataset taskInfoDataset, boolean sendNotification, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
     }
+    
+    public static void checkPlanifyUpdateExternalGeocoverageCache(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+     // NOTHING TO DO HERE
+    }
 
     public static void checkProcessUpdateGeocoverageCacheTask(String jobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
+    }
+    
+    public static void checkProcessUpdateExternalGeocoverageCacheTask(String jobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
     }
 }

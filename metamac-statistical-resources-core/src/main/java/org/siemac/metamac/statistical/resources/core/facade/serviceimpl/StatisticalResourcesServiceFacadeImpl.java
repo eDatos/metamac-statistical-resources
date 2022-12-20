@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -238,7 +239,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
-
+  
     public StatisticalResourcesServiceFacadeImpl() {
     }
 
@@ -1192,8 +1193,22 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Operate
         getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+        
+        updateAllGeographicCoverageExternalPublicationVariableElementsCache(ctx);
     }
+    
+    private void updateAllGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx) throws MetamacException {
+        getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
+    }
+    
+    @Override
+    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
+       getDatasetService().updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+    }
+ 
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
         DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 

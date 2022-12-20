@@ -634,7 +634,6 @@
             <xs:enumeration value="VALID_TO" />
             <xs:enumeration value="STATISTICAL_OPERATION_URN" />
             <xs:enumeration value="IS_LAST_VERSION" />
-            <xs:enumeration value="GEOCOV_VARELEM_ID" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -744,6 +743,35 @@
         </xs:sequence>
     </xs:complexType>    
     
+    <!-- RESOURCES ENTITY --> 
+    <!-- Lists -->
+    <xs:complexType name="Resources">
+        <xs:complexContent>
+            <xs:extension base="common:ListBase">
+                <xs:sequence>
+                    <xs:element name="resource" type="common-tns:ExtendedResource" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+     <xs:simpleType name="ResourcesCriteriaPropertyOrder">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="ID" />
+            <xs:enumeration value="STATISTICAL_OPERATION_ID" />  
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!-- Criterias -->
+    <xs:simpleType name="ResourcesCriteriaPropertyRestriction">
+        <xs:restriction base="xs:token">
+        	<xs:enumeration value="URN" />
+            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
+            <xs:enumeration value="GEOCOV_VARELEM_ID" />
+            <xs:enumeration value="IS_LAST_VERSION" />
+        </xs:restriction>
+    </xs:simpleType>
+    
     <!-- Elements -->
     <xs:element name="dataset" type="tns:Dataset" />
     <xs:element name="datasets" type="tns:Datasets" />
@@ -753,4 +781,5 @@
     <xs:element name="queries" type="tns:Queries" />
     <xs:element name="multidataset" type="tns:Multidataset" />
     <xs:element name="multidatasets" type="tns:Multidatasets" />
+    <xs:element name="resources" type="tns:Resources" />
 </xs:schema>

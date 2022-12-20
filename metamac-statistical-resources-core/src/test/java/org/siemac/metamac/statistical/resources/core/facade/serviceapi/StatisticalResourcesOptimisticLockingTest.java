@@ -1362,6 +1362,11 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
         // no optimistic locking in this operation
     }
+    
+    @Override
+    public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
+        // no optimistic locking in this operation
+    }
 
     // ------------------------------------------------------------
     // CUBE

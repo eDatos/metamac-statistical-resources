@@ -54,6 +54,10 @@ Application DatasetsStatisticalResources {
     		PagedResult<@DatasetVersion> findDatasetVersionsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
+
+			"Finds resource from caché by criteria"
+			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+			
     		
     		"Link a dataset view to the latest version of the indicator"
 	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;
@@ -113,7 +117,11 @@ Application DatasetsStatisticalResources {
     		// Geocoverage variable elements cache
     		void updateGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
+    		void updateAllGeographicExternalCoverageVariableElementsCache() throws MetamacException;
+    		void updateGeographicCoverageExternalPublicationVariableElementsCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
+    		
 		}
+
 
 		// ----------------------------------------------------------------
 		// 							ENTITIES
@@ -189,7 +197,7 @@ Application DatasetsStatisticalResources {
 			Long id key;
 
 			- @SiemacMetadataStatisticalResource siemacMetadataStatisticalResource databaseColumn="SIEMAC_RESOURCE_FK" not nullable cascade="all";
-			
+						
 			- @DataSourceTypeEnum dataSourceType;
 			DateTimeTZ dateLastTimeDataImport nullable;
 			//Content descriptors
@@ -249,10 +257,7 @@ Application DatasetsStatisticalResources {
 			- Bag<@Datasource> datasources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersion;
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
-
-			"Variable elements of geographical coverage of datasets"
-			- Bag<@ExternalItem> geographicCoverageVariableElements cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS" databaseColumn="EXTERNAL_ITEM_FK" databaseJoinColumn="DATASET_VERSION_FK";
-
+			
 			Repository DatasetVersionRepository {
 				save;
 				delete;
@@ -421,6 +426,33 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}
+    	}  	
+    	
+		Entity GeoCovVarElementCacheDatasetVersion {
+			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
+			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
+			!auditable
+			!optimisticLocking
+
+			Long id not nullable key;
+			String code databaseColumn="code" not nullable;
+			String urn databaseColumn="urn" not nullable;
+			- @InternationalString title cascade="persist,merge" fetch="eager" databaseColumn="title_fk" nullable;
+			- @ExternalItem variableElement cascade="all-delete-orphan" fetch="lazy" databaseColumn="variable_element_fk" not nullable;
+			String operationCode databaseColumn="operation_code";
+			String operationUrn databaseColumn="operation_urn";
+			- @InternationalString operationTitle cascade="persist,merge" fetch="eager" databaseColumn="operation_title_fk" nullable;
+			String htmlLink databaseColumn="htmlLink";
+			boolean isExternalSource databaseColumn="is_external_source" not nullable;
+			boolean isLastVersion databaseColumn="is_last_version" not nullable;
+			Repository GeoCovVarElementCacheDatasetVersionRepository {
+				save;
+				delete;	
+				findByCondition;
+				findByCondition(PagingParameter pagingParameter);
+				deleteAllByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
+				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
+			}
+		}
 	}
 }

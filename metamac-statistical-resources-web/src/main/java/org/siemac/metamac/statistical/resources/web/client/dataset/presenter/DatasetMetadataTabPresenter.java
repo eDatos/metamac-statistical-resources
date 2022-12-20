@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
@@ -23,7 +24,6 @@ import org.siemac.metamac.statistical.resources.web.client.events.RequestDataset
 import org.siemac.metamac.statistical.resources.web.client.events.SetDatasetEvent;
 import org.siemac.metamac.statistical.resources.web.client.events.ShowUnauthorizedDatasetWarningMessageEvent;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
-import org.siemac.metamac.statistical.resources.web.client.utils.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageResult;
@@ -66,7 +66,6 @@ import org.siemac.metamac.web.common.client.utils.CommonErrorUtils;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
-import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
@@ -321,9 +320,9 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
     @Override
     public void previewData(DatasetVersionDto datasetVersionDto) {
         try {
-            String url = MetamacPortalWebUtils.buildDatasetVersionUrl(datasetVersionDto);
+            String url = MetamacPortalWebUtils.buildDatasetVersionUrl(datasetVersionDto, CommonUtils.getMetamacPortalBaseUrl());
             Window.open(url, "_blank", "");
-        } catch (MetamacWebException e) {
+        } catch (Exception e) {
             ShowMessageEvent.fireErrorMessage(this, e);
         }
     }

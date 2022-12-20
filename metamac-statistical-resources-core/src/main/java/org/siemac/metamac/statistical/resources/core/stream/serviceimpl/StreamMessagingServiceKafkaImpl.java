@@ -66,7 +66,7 @@ public class StreamMessagingServiceKafkaImpl<K, V extends SpecificRecordBase> im
 
         getProducer().sendMessage(m, topic);
     }
-
+    
     private ProducerBase<K, V> getProducer() throws MetamacException {
         if (producer == null) {
             producer = new KafkaCustomProducer<>(getProducerProperties());

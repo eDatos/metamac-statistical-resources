@@ -26,9 +26,11 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multid
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multidatasets;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Resources;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -42,6 +44,8 @@ import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.multid
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.multidataset.MultidatasetsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.query.QueriesDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.query.QueriesRest2DoMapper;
+import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.resources.ResourcesDo2RestMapperV10;
+import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.resources.ResourcesRest2DoMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +81,12 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
 
     @Autowired
     private StatisticalResourcesConfiguration             configurationService;
+    
+    @Autowired
+    private ResourcesRest2DoMapper                          resourcesRest2DoMapper;
+    
+    @Autowired
+    private ResourcesDo2RestMapperV10                     resourcesDo2RestMapper;
 
     @Override
     public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
@@ -224,6 +234,26 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
     }
 
+    @Override
+    public Resources findResources(String query, String orderBy, String limit, String offset, List<String> lang) {
+        return findResourcesCommon(query, orderBy, limit, offset, lang);
+    }
+    
+    private Resources findResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
+        try {
+            SculptorCriteria sculptorCriteria = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
+
+            // Find
+            PagedResult<GeoCovVarElementCacheDatasetVersion> entitiesPagedResult = commonService.findResources(sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+
+            // Transform
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+    
     private Datasets findDatasetsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
         try {
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
