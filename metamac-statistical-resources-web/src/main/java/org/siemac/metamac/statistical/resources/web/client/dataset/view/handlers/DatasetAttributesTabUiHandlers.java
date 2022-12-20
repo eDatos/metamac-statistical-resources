@@ -11,6 +11,7 @@ import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 public interface DatasetAttributesTabUiHandlers extends BaseUiHandlers {
 
     void retrieveAttributeInstances(DsdAttributeDto dsdAttributeDto);
+    void retrieveAttributeInstancesForRefresh(DsdAttributeDto dsdAttributeDto);
     void saveAttributeInstance(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto);
     void deleteAttributeInstance(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto);
     void deleteAttributeInstances(DsdAttributeDto dsdAttributeDto, List<String> uuid);

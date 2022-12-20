@@ -76,6 +76,7 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
 
         void setAttributes(DatasetVersionDto datasetVersionDto, List<DsdAttributeDto> attributes);
         void setAttributeInstances(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos);
+        void setAttributeInstancesForRefresh(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos);
         void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverages);
         void setItemsForDatasetLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults);
         void setItemsForDimensionOrGroupLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults);
@@ -196,6 +197,17 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
         });
     }
 
+    @Override
+    public void retrieveAttributeInstancesForRefresh(final DsdAttributeDto dsdAttributeDto) {
+        dispatcher.execute(new GetDatasetAttributeInstancesAction(datasetVersionUrn, dsdAttributeDto.getIdentifier()), new WaitingAsyncCallbackHandlingError<GetDatasetAttributeInstancesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDatasetAttributeInstancesResult result) {
+                getView().setAttributeInstancesForRefresh(dsdAttributeDto, result.getDsdAttributeInstanceDtos());
+            }
+        });
+    }
+    
     @Override
     public void saveAttributeInstance(final DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         dispatcher.execute(new SaveDatasetAttributeInstanceAction(datasetVersionUrn, dsdAttributeInstanceDto), new WaitingAsyncCallbackHandlingError<SaveDatasetAttributeInstanceResult>(this) {
