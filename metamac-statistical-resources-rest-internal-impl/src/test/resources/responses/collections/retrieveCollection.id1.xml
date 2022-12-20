@@ -160,7 +160,7 @@
                 <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/mediator02</ns2:managementAppLink>
             </ns2:resource>
         </ns2:mediators>
-        <ns2:replaces kind="statisticalResources#collection">
+        <ns2:replaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#collection">
             <cdomain:id>replace01</cdomain:id>
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:replace01</cdomain:urn>
             <cdomain:selfLink kind="statisticalResources#collection" href="http://data.istac.es/apis/statistical-resources/v1.0/collections/agency1/replace01"/>
@@ -276,7 +276,7 @@
                                 <ns2:description>
                                     <cdomain:text xml:lang="es">description-resource-BYvIX6jBTL en Espanol</cdomain:text>
                                 </ns2:description>
-                                <ns2:dataset kind="statisticalResources#dataset">
+                                <ns2:dataset xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#dataset">
                                     <cdomain:id>rYBbljlM6W_000001</cdomain:id>
                                     <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=rc7u71cJ8z:rYBbljlM6W_000001(01.000)</cdomain:urn>
                                     <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/rc7u71cJ8z/rYBbljlM6W_000001/~latest"/>
@@ -303,7 +303,7 @@
                                 <ns2:description>
                                     <cdomain:text xml:lang="es">description-resource-1d3Xj6qR71 en Espanol</cdomain:text>
                                 </ns2:description>
-                                <ns2:query kind="statisticalResources#query">
+                                <ns2:query xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#query">
                                     <cdomain:id>resource-3tuiKkbKXA</cdomain:id>
                                     <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=zkwDMVQL3A:resource-3tuiKkbKXA</cdomain:urn>
                                     <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/zkwDMVQL3A/resource-3tuiKkbKXA"/>
@@ -322,7 +322,7 @@
                         <ns2:description>
                             <cdomain:text xml:lang="es">description-resource-PNbYvuKUBd en Espanol</cdomain:text>
                         </ns2:description>
-                        <ns2:dataset kind="statisticalResources#dataset">
+                        <ns2:dataset xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#dataset">
                             <cdomain:id>hPCOadvUoY_000001</cdomain:id>
                             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=w86PXWxGtT:hPCOadvUoY_000001(01.000)</cdomain:urn>
                             <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/w86PXWxGtT/hPCOadvUoY_000001/~latest"/>
@@ -349,7 +349,7 @@
                         <ns2:description>
                             <cdomain:text xml:lang="es">description-resource-HiiZ45bXQZ en Espanol</cdomain:text>
                         </ns2:description>
-                        <ns2:query kind="statisticalResources#query">
+                        <ns2:query xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#query">
                             <cdomain:id>resource-n2fE4u3ONJ</cdomain:id>
                             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=jmAnfQiqHi:resource-n2fE4u3ONJ</cdomain:urn>
                             <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/jmAnfQiqHi/resource-n2fE4u3ONJ"/>
@@ -376,7 +376,7 @@
                 <ns2:description>
                     <cdomain:text xml:lang="es">description-resource-ohYegrFoqO en Espanol</cdomain:text>
                 </ns2:description>
-                <ns2:query kind="statisticalResources#query">
+                <ns2:query xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#query">
                     <cdomain:id>resource-qRBQ3coiub</cdomain:id>
                     <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=lKDd9a3fEZ:resource-qRBQ3coiub</cdomain:urn>
                     <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/lKDd9a3fEZ/resource-qRBQ3coiub"/>
