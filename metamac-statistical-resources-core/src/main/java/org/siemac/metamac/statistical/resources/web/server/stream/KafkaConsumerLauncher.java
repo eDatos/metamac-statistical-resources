@@ -278,7 +278,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
         pendigOffsetsToCommit.put(record.partition(), record.offset());
 
-        LOGGER.debug(logMessage);
+        LOGGER.info(logMessage);
 
         try {
             ServiceContext serviceContext = createServiceContext(logMessage);

@@ -1190,18 +1190,14 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-
-        updateAllGeographicCoverageExternalPublicationVariableElementsCache(ctx);
-        
+       
         // Operate
         getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
         
-    }
-    
-    private void updateAllGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx) throws MetamacException {
         getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
+        
     }
-    
+     
     @Override
     public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security

@@ -167,6 +167,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_TRIGGER_IMPORT_DATA          = "trigger_importdata_";
     public static final String                PREFIX_TRIGGER_RECOVERY_IMPORT_DATA = "trigger_recoveryimportdata_";
     public static final String                GROUP_IMPORTATION                   = "importation";
+    public static final String                GROUP_EXTERNAL_CACHE                = "externalCacheUpdate";
    
     @Autowired
     private TaskServiceInvocationValidator    taskServiceInvocationValidator;
@@ -585,8 +586,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
             task.setExtensionPoint(taskName);
             createTask(ctx, task);
-
-            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withPriority(10).withSchedule(simpleSchedule()).build();
 
             try {
                 // Scheduler a duplication job
@@ -1402,7 +1402,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private TriggerKey createTriggerKeyForUpdateExternalGeocoverageCache() {
-        return new TriggerKey(createJobNameForUpdateExternalGeocoverageCache());
+        return new TriggerKey(createJobNameForUpdateExternalGeocoverageCache(), GROUP_EXTERNAL_CACHE);
     }
     
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {
