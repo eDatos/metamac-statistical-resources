@@ -578,7 +578,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .withIdentity(jobKey)
                     .usingJobData(UpdateExternalGeocoverageCacheJob.USER, ctx.getUserId())
                     .usingJobData(UpdateExternalGeocoverageCacheJob.TASK_NAME, taskName)
-                    .usingJobData(UpdateGeocoverageCacheJob.SEND_NOTIFICATION, sendNotification)
                     .requestRecovery()
                     .build();
             // @formatter:on

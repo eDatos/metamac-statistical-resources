@@ -13,7 +13,6 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
-import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskServiceFacade;
 import org.slf4j.Logger;
@@ -51,7 +50,6 @@ public class UpdateExternalGeocoverageCacheJob implements Job {
 
         String user = data.getString(USER);
         String taskName = data.getString(TASK_NAME);
-        boolean sendNotification = data.getBoolean(SEND_NOTIFICATION);
 
         ServiceContext serviceContext = new ServiceContext(user, context.getFireInstanceId(), "statistical-resources-core");
 
@@ -65,9 +63,6 @@ public class UpdateExternalGeocoverageCacheJob implements Job {
 
         } catch (MetamacException e) {
             logger.error("UpdateExternalGeocoverageCacheJob: the cache update job with key " + jobKey.getName() + " has failed", e);
-            if (sendNotification) {
-                getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB, e);
-            }
 
             try {
                 getTaskServiceFacade().markTaskAsFinished(serviceContext, taskName);
