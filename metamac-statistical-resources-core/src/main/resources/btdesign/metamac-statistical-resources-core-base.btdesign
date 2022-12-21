@@ -119,7 +119,7 @@ Application BaseStatisticalResources {
 			- @ExternalItem maintainer cascade="all" fetch="lazy" databaseColumn="MAINTAINER_FK" nullable;
 			
 			Repository LifeCycleStatisticalResourceRepository {
-				gap
+				String findLastUsedCodeForResourceType(String operationUrn);
 			}
 		}
 

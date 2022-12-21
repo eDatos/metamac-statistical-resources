@@ -22,6 +22,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.predicates.ObjectEqualsStringFieldPredicate;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
+import org.siemac.metamac.statistical.resources.core.base.components.LifeCycleStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
@@ -77,6 +78,9 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
     @Autowired
     private RelatedResourceRepository                 relatedResourceRepository;
+
+    @Autowired
+    private LifeCycleStatisticalResourceGeneratedCode    lifeCycleStatisticalResourceGeneratedCode;
 
     public QueryServiceImpl() {
     }
@@ -149,6 +153,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         Query query = new Query();
         fillMetadataForCreateQuery(query, queryVersion, statisticalOperation);
 
+        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
         // Fill metadata
         fillMetadataForCreateQueryVersion(ctx, queryVersion, statisticalOperation);
 
@@ -156,6 +161,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         identifiableStatisticalResourceRepository.checkDuplicatedUrn(queryVersion.getLifeCycleStatisticalResource());
         identifiableStatisticalResourceRepository.checkDuplicatedUrn(query.getIdentifiableStatisticalResource());
 
+        queryVersion.getLifeCycleStatisticalResource().setCode(code);
         checkQueryCompatibility(ctx, queryVersion);
 
         // Save query
@@ -165,6 +171,10 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         return getQueryVersionRepository().save(queryVersion);
     }
 
+    private String assignCode(String statisticalOperatioUrn, String statisticalOperationCode) throws MetamacException {
+        return lifeCycleStatisticalResourceGeneratedCode.fillGeneratedCodeForCreateSiemacMetadataResource(statisticalOperatioUrn, statisticalOperationCode);
+    }
+    
     @Override
     public QueryVersion updateQueryVersion(ServiceContext ctx, QueryVersion queryVersion) throws MetamacException {
         // Validations
