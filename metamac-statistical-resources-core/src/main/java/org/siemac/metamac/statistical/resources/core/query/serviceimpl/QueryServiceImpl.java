@@ -337,8 +337,6 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
         List<String> dimensionIds = datasetVersionRepository.retrieveDimensionsIds(datasetVersion);
 
-        boolean hasTemporal = dimensionIds.contains(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
-
         boolean compatible = true;
 
         compatible = compatible && checkQueryType(queryVersion, dimensionIds);
