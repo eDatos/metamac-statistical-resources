@@ -7,16 +7,16 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
+import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
-import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryListUiHandlers;
-import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.SearchRelatedResourceLinkItem;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDatasetVersionRelatedResourcePaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
+import org.siemac.metamac.web.common.client.utils.ExternalItemUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomWindow;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
@@ -48,11 +48,12 @@ public class NewQueryWindow extends CustomWindow {
 
         CustomButtonItem saveItem = new CustomButtonItem(FIELD_SAVE, getConstants().queryCreate());
 
-        SearchExternalItemLinkItem searchDatasetItem = createQueryDatasetItem();
+        relatedDatasetItem = createQueryDatasetItem();
+        relatedDatasetItem.setRequired(true);
 
         form = new CustomDynamicForm();
         form.setMargin(5);
-        form.setFields(nameItem, saveItem, searchDatasetItem);
+        form.setFields(nameItem, relatedDatasetItem, saveItem);
 
         addItem(form);
         show();
@@ -78,7 +79,7 @@ public class NewQueryWindow extends CustomWindow {
 
     private SearchExternalItemLinkItem createQueryDatasetItem() {
 
-        final SearchExternalItemLinkItem item = new SearchExternalItemLinkItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD()) {
+        final SearchExternalItemLinkItem item = new SearchExternalItemLinkItem(QueryDS.RELATED_DATASET_VERSION, getConstants().datasetRelatedDSD()) {
 
             @Override
             public void onSearch() {
@@ -88,7 +89,7 @@ public class NewQueryWindow extends CustomWindow {
 
                             @Override
                             public void retrieveResultSet(int firstResult, int maxResults, DatasetVersionWebCriteria criteria) {
-                                // retrieveResourcesForRelatedDsd(firstResult, maxResults, criteria);
+                                retrieveDatasetsAsResources(firstResult, maxResults, criteria);
                             }
                         });
 
@@ -99,16 +100,20 @@ public class NewQueryWindow extends CustomWindow {
 
                     @Override
                     public void onClick(ClickEvent event) {
-//                        ExternalItemDto selectedResource = searchDatasetWindow.getSelectedResource();
-//                        searchDatasetWindow.markForDestroy();
-//                        // Set selected resource in form
-//                        // setRelatedDsd(selectedResource);
-//                        form.validate(false);
+                        ExternalItemDto selectedResource = ExternalItemUtils.getExternalItemDtoFromRelatedResourceDto(searchDatasetWindow.getSelectedResource(), TypeExternalArtefactsEnum.DATASET);
+                        searchDatasetWindow.markForDestroy();
+                        // Set selected resource in form
+                        setRelatedDataset(selectedResource);
+                        form.validate(false);
                     }
                 });
             }
         };
         return item;
+    }
+
+    private void setRelatedDataset(ExternalItemDto relatedDsdDto) {
+        form.setValue(QueryDS.RELATED_DATASET_VERSION, relatedDsdDto);
     }
 
     public void retrieveResourcesForRelatedDataset(int firstResult, int maxResults, DatasetVersionWebCriteria criteria) {
