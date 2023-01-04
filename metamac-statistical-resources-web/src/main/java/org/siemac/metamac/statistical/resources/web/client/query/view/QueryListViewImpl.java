@@ -6,20 +6,25 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
+import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.base.view.LifeCycleBaseListViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.record.QueryRecord;
 import org.siemac.metamac.statistical.resources.web.client.query.presenter.QueryListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.query.utils.QueryClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryListUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.query.view.widgets.NewQueryWindow;
 import org.siemac.metamac.statistical.resources.web.client.query.view.widgets.QueryVersionSearchSectionStack;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.QueryVersionWebCriteria;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -33,6 +38,7 @@ import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHandlers> implements QueryListPresenter.QueryListView {
 
     private QueryVersionSearchSectionStack searchSectionStack;
+    private NewQueryWindow newQueryWindow;
 
     @Inject
     public QueryListViewImpl() {
@@ -88,6 +94,17 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
     }
 
     @Override
+    public void setDatasetsForQuery(GetDatasetVersionsResult result) {
+        List<RelatedResourceDto> relatedResourceDtos = RelatedResourceUtils.getDatasetVersionBaseDtosAsRelatedResourceDtos(result.getDatasetVersionBaseDtos());
+        newQueryWindow.setDatasetsForQuery(relatedResourceDtos, result.getFirstResultOut(), relatedResourceDtos.size(), result.getTotalResults());
+    }
+
+    @Override
+    public void setStatisticalOperationsForDatasetSelection(GetStatisticalOperationsPaginatedListResult result) {
+        newQueryWindow.setStatisticalOperationsForDatasetSelection(result.getOperationsList());
+    }
+
+    @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
     }
@@ -109,11 +126,32 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
 
     @Override
     public ClickHandler getNewButtonClickHandler() {
+//        return new ClickHandler() {
+//
+//            @Override
+//            public void onClick(ClickEvent event) {
+//                getUiHandlers().goToNewQuery();
+//            }
+//        };
         return new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().goToNewQuery();
+                if (StatisticalResourcesDefaults.defaultLanguage == null) { 
+                    return; 
+                }
+                newQueryWindow = new NewQueryWindow(getConstants().queryCreate());
+                newQueryWindow.setUiHandlers(getUiHandlers());
+                newQueryWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                        if (newQueryWindow.validateForm()) {
+//                            getUiHandlers().createDataset(newQueryWindow.getNewQueryDto());
+                            newQueryWindow.destroy();
+                        }
+                    }
+                });
             }
         };
     }

@@ -79,6 +79,8 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
         void setStatisticalOperationsForDatasetVersionSelectionInSearchSection(List<ExternalItemDto> results);
         void setDatasetVersionsForSearchSection(GetDatasetVersionsResult result);
         void setStatisticalOperationsForSearchSection(GetStatisticalOperationsPaginatedListResult result);
+        void setDatasetsForQuery(GetDatasetVersionsResult result);
+        void setStatisticalOperationsForDatasetSelection(GetStatisticalOperationsPaginatedListResult result);
     }
 
     @Inject
@@ -251,6 +253,41 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
                         getView().setStatisticalOperationsForSearchSection(result);
                     }
                 });
+    }
+
+    public void retrieveDatasetForRelatedDataset(int firstResult, int maxResults, DatasetVersionWebCriteria criteria) {
+        dispatcher.execute(new GetDatasetVersionsAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetDatasetVersionsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDatasetVersionsResult result) {
+                getView().setDatasetsForQuery(result);
+            }
+
+        });
+    }
+
+    @Override
+    public void retrieveDatasetsForQuery(int firstResult, int maxResults, DatasetVersionWebCriteria criteria) {
+        criteria.setHasData(true);
+        dispatcher.execute(new GetDatasetVersionsAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetDatasetVersionsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDatasetVersionsResult result) {
+                getView().setDatasetsForQuery(result);
+            }
+
+        });
+    }
+
+    @Override
+    public void retrieveStatisticalOperationsForDatasetSelection() {
+        dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(0, Integer.MAX_VALUE, null), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
+                getView().setStatisticalOperationsForDatasetSelection(result);
+            }
+        });
     }
 
     //

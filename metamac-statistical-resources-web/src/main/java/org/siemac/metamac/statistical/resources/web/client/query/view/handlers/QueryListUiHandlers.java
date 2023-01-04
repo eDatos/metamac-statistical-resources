@@ -31,4 +31,7 @@ public interface QueryListUiHandlers extends BaseUiHandlers {
     void retrieveStatisticalOperationsForDatasetVersionSelectionInSearchSection();
     void retrieveDatasetVersionsForSearchSection(int firstResult, int maxResults, DatasetVersionWebCriteria criteria);
     void retrieveStatisticalOperationsForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria);
+    void retrieveDatasetForRelatedDataset(int firstResult, int maxResults, DatasetVersionWebCriteria criteria);
+    void retrieveDatasetsForQuery(int firstResult, int maxResults, DatasetVersionWebCriteria criteria);
+    void retrieveStatisticalOperationsForDatasetSelection();
 }

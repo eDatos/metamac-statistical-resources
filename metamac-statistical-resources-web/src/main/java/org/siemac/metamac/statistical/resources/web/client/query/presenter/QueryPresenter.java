@@ -285,7 +285,7 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
             @Override
             public void onWaitSuccess(GetDatasetDimensionCoverageResult result) {
                 getView().setDatasetDimensionCodes(dimensionId, result.getCodesDimension());
-            };
+            }
 
         });
     }
