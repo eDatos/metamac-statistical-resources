@@ -18,7 +18,6 @@ CREATE TABLE tb_geocov_varelem_cache_datasets_versions (
 	htmlLink varchar(4000),
 	is_external_source boolean NOT NULL,
 	is_last_version boolean NOT NULL,
-	is_activated boolean NOT NULL DEFAULT true,
 	CONSTRAINT pk_tb_geocov_varelem_cache_datasets_versions PRIMARY KEY (id),
 	CONSTRAINT pk_tb_geocov_varelem_cache_datasets_versions_urn_variable_element UNIQUE (urn, variable_element_fk),
 	CONSTRAINT fk_tb_geocov_varelem_cache_datasets_versions_var_element_fk FOREIGN KEY (variable_element_fk) REFERENCES tb_external_items(id) DEFERRABLE initially IMMEDIATE,
