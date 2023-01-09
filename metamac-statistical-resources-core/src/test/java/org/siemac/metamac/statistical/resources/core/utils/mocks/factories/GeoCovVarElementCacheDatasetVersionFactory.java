@@ -66,6 +66,7 @@ public class GeoCovVarElementCacheDatasetVersionFactory extends StatisticalResou
         geoCovVarElementCacheDatasetVersionMock.setIsExternalSource(false);
         geoCovVarElementCacheDatasetVersionMock.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
         geoCovVarElementCacheDatasetVersionMock.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
+        geoCovVarElementCacheDatasetVersionMock.setIsActivated(true);
         return geoCovVarElementCacheDatasetVersionMock;
  
     }

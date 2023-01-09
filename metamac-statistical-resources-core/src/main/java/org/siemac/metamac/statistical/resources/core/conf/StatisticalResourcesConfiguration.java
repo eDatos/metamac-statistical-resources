@@ -18,6 +18,8 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public String retriveFilterColumnNameForDbDataImport() throws MetamacException;
 
     public String retriveCronExpressionForDbDataImport() throws MetamacException;
+    
+    public String retrieveCronExpressionForGeograficCoverageCacheClear() throws MetamacException;
 
     public boolean retriveDatabaseDatasetImportJobIsEnabled();
 

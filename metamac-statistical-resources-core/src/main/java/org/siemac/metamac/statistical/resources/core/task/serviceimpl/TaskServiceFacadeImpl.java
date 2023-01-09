@@ -70,6 +70,11 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     }
 
     @Override
+    public void executeGeographicCoverageCacheClearTask(ServiceContext ctx) throws MetamacException {
+        taskservice.processGeographicCoverageCacheClearTask(ctx);
+    }
+    
+    @Override
     public void markTaskAsFailed(ServiceContext ctx, String job, String datasetVersionId, String datasetUrn, Exception exception) throws MetamacException {
         taskservice.markTaskAsFailed(ctx, job, datasetVersionId, datasetUrn);
     }
@@ -99,6 +104,12 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
 
     }
 
+    @Override
+    public void scheduleGeographicCoverageCacheClearJob(ServiceContext ctx) {
+        taskservice.scheduleGeographicCoverageCacheClearJob(ctx);
+
+    }
+    
     @Override
     public void sendDatabaseImportationErrorNotification(ServiceContext ctx, String datasetVersionUrn, MetamacException metamacException) {
         taskservice.sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, metamacException);

@@ -57,7 +57,7 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testProcessRollbackImportationTask() throws Exception {
         // Already checked without test
     }
-
+        
     @Override
     public void testExistsTaskForResource() throws Exception {
         // See integration test in DataManipulateTest
@@ -145,6 +145,16 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testScheduleDatabaseDatasetPollingJob() throws Exception {
         // No test
     }
+    
+    @Override
+    public void testProcessGeographicCoverageCacheClearTask() throws Exception {
+        // Already checked without test
+    }
+    
+    @Override
+    public void testScheduleGeographicCoverageCacheClearJob() throws Exception {
+        // No test
+    }        
 
     @Override
     public void testSendDatabaseImportationErrorNotification() throws Exception {

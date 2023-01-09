@@ -1386,7 +1386,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             jaxiDatasetVersionAvro = (DatasetAvro) message;
         }
 
-        geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
+        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
         if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
             List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
                     exceptionItems);
@@ -1428,6 +1428,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.TRUE);
         geoCovVarElementCacheDatasetVersion.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
         geoCovVarElementCacheDatasetVersion.setIsLastVersion(true);
+        geoCovVarElementCacheDatasetVersion.setIsActivated(true);
         geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
 
@@ -1443,11 +1444,14 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // We prevent this by planning only one dataset version at a time, and then waiting until that job finishes to planify the next one.
         // That's why we run a loop that checks whether a job with a dataset urn has been created before planning it. We can have
         // multiple jobs for different datasets, but not for multiple versions of the same dataset.
-        while (!datasetVersions.isEmpty()) {
+        int i = 0;
+        while (!datasetVersions.isEmpty() && i == 0) {
             ListIterator<DatasetVersion> datasetVersionsIt = datasetVersions.listIterator();
 
-            while (datasetVersionsIt.hasNext()) {
-                DatasetVersion datasetVersion = datasetVersionsIt.next();
+            while (datasetVersionsIt.hasNext()  && i == 0) {
+                //DatasetVersion datasetVersion = datasetVersionsIt.next();
+                String urn = "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ISTAC:E30103A_000003(001.000)";
+                DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, urn);
                 String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
 
                 if (!getTaskService().existsTaskForResource(ctx, datasetUrn)) {
@@ -1471,10 +1475,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                             return null;
                         }
                     });
-
+                    
                     datasetVersionsIt.remove();
                 }
+                i++;
             }
+            i++;
+
         }
     }
 

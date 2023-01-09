@@ -64,6 +64,16 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     }
 
     @Override
+    public void testExecuteGeographicCoverageCacheClearTask() throws Exception {
+        // No test
+    }
+    
+    @Override
+    public void testScheduleGeographicCoverageCacheClearJob() throws Exception {
+        // No test
+    }
+    
+    @Override
     public void testSendDatabaseImportationErrorNotification() throws Exception {
         // No test
     }

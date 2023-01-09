@@ -41,7 +41,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryTest extends Statistic
         
     @Test
     @MetamacMock(GEO_COV_VAR_ELEMENT_CACHE_02)
-    public void testDeleteAllByDatasetVersionUrn() throws Exception {
+    public void testDisabledByDatasetVersionUrn() throws Exception {
         GeoCovVarElementCacheDatasetVersion actual = geoCovVarElementCacheDatasetVersionFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_02);
         
         List<GeoCovVarElementCacheDatasetVersion> expected = geoCovVarElementCacheDatasetVersionRepository.retrieveByDatasetVersionUrn(actual.getUrn());
@@ -49,14 +49,14 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryTest extends Statistic
         Assert.assertNotNull(expected);
         Assert.assertEquals(expected.size(), 1);
         
-        geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(actual.getUrn());
+        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(actual.getUrn());
         
         expected = geoCovVarElementCacheDatasetVersionRepository.retrieveByDatasetVersionUrn(actual.getUrn());
         
         Assert.assertEquals(expected.size(), 0);
 
     }
-    
+        
     private static void assertEqualsGeoCovVarElementCacheDatasetVersion(GeoCovVarElementCacheDatasetVersion expected, GeoCovVarElementCacheDatasetVersion actual) throws MetamacException {
         if ((expected != null && actual == null) || (expected == null && actual != null)) {
             fail("The expected GeoCovVarElementCacheDatasetVersion cache Item and the actual are not equals");

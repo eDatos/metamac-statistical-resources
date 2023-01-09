@@ -23,6 +23,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataS
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -113,9 +114,12 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
         if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
             conditionalCriteria.addAll(conditionalCriteriaQuery);
         } else {
-            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).distinctRoot().build());
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).distinctRoot().build());
         }
      
+        // only activated records are available
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(true).buildSingle());
+        
         // Find
         return datasetService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
     }
