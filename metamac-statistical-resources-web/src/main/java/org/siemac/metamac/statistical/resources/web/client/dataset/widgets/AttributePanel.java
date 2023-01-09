@@ -83,7 +83,7 @@ public class AttributePanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
-                if (mainFormLayout.isCreateMode()) {
+                if (mainFormLayout.isCreateMode() && (CommonUtils.hasDimensionRelationshipType(dsdAttributeDto) || CommonUtils.hasGroupRelationshipType(dsdAttributeDto))) {
                     mainFormLayout.hide();
                 } else {
                     getUiHandlers().retrieveAttributeInstancesForRefresh(dsdAttributeDto);
