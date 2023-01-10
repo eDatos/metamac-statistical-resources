@@ -5,6 +5,6 @@
 -- por tanto, no debe salir en las consultas que se hagan a la caché.
 -- ---------------------------------------------------------------------------------------------------
 
-ALTER TABLE tb_geocov_varelem_cache_datasets_versions_peruebas ADD COLUMN  is_activated boolean not null default true 
+ALTER TABLE tb_geocov_varelem_cache_datasets_versions ADD COLUMN  is_activated boolean not null default true; 
 
 commit;
