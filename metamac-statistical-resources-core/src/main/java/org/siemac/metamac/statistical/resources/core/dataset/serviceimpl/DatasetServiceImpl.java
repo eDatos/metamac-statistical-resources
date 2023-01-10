@@ -1386,7 +1386,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             jaxiDatasetVersionAvro = (DatasetAvro) message;
         }
 
-        geoCovVarElementCacheDatasetVersionRepository.deleteAllByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
+        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
         if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
             List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
                     exceptionItems);
@@ -1428,6 +1428,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.TRUE);
         geoCovVarElementCacheDatasetVersion.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
         geoCovVarElementCacheDatasetVersion.setIsLastVersion(true);
+        geoCovVarElementCacheDatasetVersion.setIsActivated(true);
         geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
 

@@ -170,7 +170,15 @@ public class TaskServiceInvocationValidatorImpl {
         // NOTHING TO DO HERE
     }
 
+    public static void checkProcessGeographicCoverageCacheClearTask(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+        
     public static void checkScheduleDatabaseDatasetPollingJob(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+    
+    public static void checkScheduleGeographicCoverageCacheClearJob(List<MetamacExceptionItem> exceptions) {
         // NOTHING TO DO HERE
     }
 

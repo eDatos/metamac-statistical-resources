@@ -445,12 +445,13 @@ Application DatasetsStatisticalResources {
 			String htmlLink databaseColumn="htmlLink";
 			boolean isExternalSource databaseColumn="is_external_source" not nullable;
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
+			boolean isActivated databaseColumn="is_activated" not nullable;
 			Repository GeoCovVarElementCacheDatasetVersionRepository {
 				save;
 				delete;	
 				findByCondition;
 				findByCondition(PagingParameter pagingParameter);
-				deleteAllByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
+				disabledByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 			}
 		}

@@ -56,6 +56,11 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
+    public String retrieveCronExpressionForGeograficCoverageCacheClear() throws MetamacException {
+        return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_GEOGRAPHIC_COVERAGE_CACHE_CLEAR);
+    }
+    
+    @Override
     public boolean retriveDatabaseDatasetImportJobIsEnabled() {
         return environmentConfigurationProperties.getBoolean(StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED, Boolean.FALSE);
     }

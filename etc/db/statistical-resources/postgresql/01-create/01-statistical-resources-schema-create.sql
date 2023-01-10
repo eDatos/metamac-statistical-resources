@@ -367,6 +367,7 @@ CREATE TABLE TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS (
   htmlLink VARCHAR(255) NOT NULL,
   is_external_source BOOLEAN NOT NULL,
   is_last_version BOOLEAN NOT NULL,
+  is_activated BOOLEAN NOT NULL,
   title_fk BIGINT,
   variable_element_fk BIGINT NOT NULL,
   operation_title_fk BIGINT

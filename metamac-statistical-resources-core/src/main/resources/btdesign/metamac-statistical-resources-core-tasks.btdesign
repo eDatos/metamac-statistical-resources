@@ -27,11 +27,16 @@ Application DatasetsStatisticalResources {
     		executeUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the update geographical coverage cache task for external publications"
     		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
-    		"Perform the database dataset pooling task"
-    		executeDatabaseDatasetPollingTask()  throws MetamacException;
     		
+    		"Perform the database dataset pooling task"
+    		executeDatabaseDatasetPollingTask()  throws MetamacException;   		
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
+			
+			"Perform geographic coverage cache clear task"
+    		executeGeographicCoverageCacheClearTask()  throws MetamacException;
+			"Schedule geographic coverage cache clear"
+			scheduleGeographicCoverageCacheClearJob();
 			
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
@@ -70,7 +75,9 @@ Application DatasetsStatisticalResources {
     		"Perform the geographical coverage cache update task for external datasets"
     		processUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the database dataset polling task"
-    		processDatabaseDatasetPollingTask() throws MetamacException;
+    		processDatabaseDatasetPollingTask() throws MetamacException;   		
+    		"Perform the geographic coverage cache clear task"
+    		processGeographicCoverageCacheClearTask() throws MetamacException;
     		
      		"Check if exists any kind of job task in the @param resourceId"
     		boolean existsTaskForResource(String resourceId) throws MetamacException;
@@ -110,6 +117,9 @@ Application DatasetsStatisticalResources {
 			
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
+			
+			"Schedule geographic coverage cache clear"
+			scheduleGeographicCoverageCacheClearJob();
 			
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
