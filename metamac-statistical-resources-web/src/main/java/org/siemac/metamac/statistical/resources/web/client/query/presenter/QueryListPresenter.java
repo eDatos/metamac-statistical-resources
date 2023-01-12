@@ -9,7 +9,9 @@ import java.util.List;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
@@ -22,6 +24,10 @@ import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.QueryVersionWebCriteria;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionsIdsAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionsIdsResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
@@ -32,6 +38,8 @@ import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVers
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.query.SaveQueryVersionAction;
+import org.siemac.metamac.statistical.resources.web.shared.query.SaveQueryVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.UpdateQueryVersionsProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.UpdateQueryVersionsProcStatusAction.Builder;
 import org.siemac.metamac.statistical.resources.web.shared.query.UpdateQueryVersionsProcStatusResult;
@@ -81,6 +89,8 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
         void setStatisticalOperationsForSearchSection(GetStatisticalOperationsPaginatedListResult result);
         void setDatasetsForQuery(GetDatasetVersionsResult result);
         void setStatisticalOperationsForDatasetSelection(GetStatisticalOperationsPaginatedListResult result);
+        void setDatasetDimensionCodes(String dimensionId, List<CodeItemDto> codesDimension);
+        void setDatasetDimensionsIds(List<String> datasetDimensionsIds);
     }
 
     @Inject
@@ -89,6 +99,17 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         getView().setUiHandlers(this);
+    }
+
+    @Override
+    public void retrieveDimensionsForDataset(String urn) {
+        dispatcher.execute(new GetDatasetDimensionsIdsAction(urn), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionsIdsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDatasetDimensionsIdsResult result) {
+                getView().setDatasetDimensionsIds(result.getDatasetVersionDimensionsIds());
+            }
+        });
     }
 
     @Override
@@ -164,6 +185,19 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
                 retrieveQueries(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, getView().getQueryVersionWebCriteria());
             }
         });
+    }
+
+    @Override
+    public void createQuery(QueryVersionDto datasetDto) {
+        dispatcher.execute(new SaveQueryVersionAction(datasetDto, StatisticalResourcesDefaults.getSelectedStatisticalOperation().getCode()),
+                new WaitingAsyncCallbackHandlingError<SaveQueryVersionResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(SaveQueryVersionResult result) {
+                        fireSuccessMessage(getMessages().datasetSaved());
+                        //retrieveDatasets(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, getView().getQueryVersionWebCriteria());
+                    }
+                });
     }
 
     //
@@ -287,6 +321,18 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
             public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
                 getView().setStatisticalOperationsForDatasetSelection(result);
             }
+        });
+    }
+
+    @Override
+    public void retrieveDimensionCodesForDataset(String urn, final String dimensionId, MetamacWebCriteria webCriteria) {
+        dispatcher.execute(new GetDatasetDimensionCoverageAction(urn, dimensionId, webCriteria), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionCoverageResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetDatasetDimensionCoverageResult result) {
+                getView().setDatasetDimensionCodes(dimensionId, result.getCodesDimension());
+            }
+
         });
     }
 

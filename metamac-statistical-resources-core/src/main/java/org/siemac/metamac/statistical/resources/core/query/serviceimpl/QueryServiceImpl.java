@@ -147,13 +147,15 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     @Override
     public QueryVersion createQueryVersion(ServiceContext ctx, QueryVersion queryVersion, ExternalItem statisticalOperation) throws MetamacException {
         // Validations
+
+        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
+        queryVersion.getLifeCycleStatisticalResource().setCode(code);
         queryServiceInvocationValidator.checkCreateQueryVersion(ctx, queryVersion, statisticalOperation);
 
         // Create query
         Query query = new Query();
         fillMetadataForCreateQuery(query, queryVersion, statisticalOperation);
 
-        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
         // Fill metadata
         fillMetadataForCreateQueryVersion(ctx, queryVersion, statisticalOperation);
 
@@ -161,7 +163,6 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         identifiableStatisticalResourceRepository.checkDuplicatedUrn(queryVersion.getLifeCycleStatisticalResource());
         identifiableStatisticalResourceRepository.checkDuplicatedUrn(query.getIdentifiableStatisticalResource());
 
-        queryVersion.getLifeCycleStatisticalResource().setCode(code);
         checkQueryCompatibility(ctx, queryVersion);
 
         // Save query
@@ -337,13 +338,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
         List<String> dimensionIds = datasetVersionRepository.retrieveDimensionsIds(datasetVersion);
 
-        boolean compatible = true;
-
-        compatible = compatible && checkQueryType(queryVersion, dimensionIds);
-
-        compatible = compatible && checkQuerySelection(queryVersion, datasetVersion, dimensionIds);
-
-        return compatible;
+        return checkQueryType(queryVersion, dimensionIds) && checkQuerySelection(queryVersion, datasetVersion, dimensionIds);
     }
 
     private boolean checkQuerySelection(QueryVersion queryVersion, DatasetVersion datasetVersion, List<String> dimensionIds) throws MetamacException {

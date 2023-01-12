@@ -7,6 +7,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.base.view.LifeCycleBaseListViewImpl;
@@ -105,6 +106,16 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
     }
 
     @Override
+    public void setDatasetDimensionCodes(String dimensionId, List<CodeItemDto> codesDimension) {
+        newQueryWindow.setDatasetDimensionCodes(dimensionId, codesDimension);
+    }
+
+    @Override
+    public void setDatasetDimensionsIds(List<String> datasetDimensionsIds) {
+        newQueryWindow.setDatasetDimensionsIds(datasetDimensionsIds);
+    }
+
+    @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
     }
@@ -126,13 +137,6 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
 
     @Override
     public ClickHandler getNewButtonClickHandler() {
-//        return new ClickHandler() {
-//
-//            @Override
-//            public void onClick(ClickEvent event) {
-//                getUiHandlers().goToNewQuery();
-//            }
-//        };
         return new ClickHandler() {
 
             @Override
@@ -142,16 +146,6 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
                 }
                 newQueryWindow = new NewQueryWindow(getConstants().queryCreate());
                 newQueryWindow.setUiHandlers(getUiHandlers());
-                newQueryWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
-
-                    @Override
-                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                        if (newQueryWindow.validateForm()) {
-//                            getUiHandlers().createDataset(newQueryWindow.getNewQueryDto());
-                            newQueryWindow.destroy();
-                        }
-                    }
-                });
             }
         };
     }
