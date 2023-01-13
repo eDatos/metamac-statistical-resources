@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.client.query.view.widgets;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
-import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.getRelatedResourceValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,18 +95,7 @@ public class NewQueryWindow extends CustomWindow {
             }
         });
         items.add(typeSelectorItem);
-        CustomButtonItem saveItem = new CustomButtonItem(FIELD_SAVE, getConstants().queryCreate());
-        saveItem.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
-            @Override
-            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                if (validateForm()) {
-                    uiHandlers.createQuery(getNewQueryDto());
-                    destroy();
-                }
-            }
-        });
-        items.add(saveItem);
         return items;
     }
     public HasClickHandlers getSave() {
@@ -139,11 +127,11 @@ public class NewQueryWindow extends CustomWindow {
         }
 
         queryDto.setSelection(selection);
-        // Integer latestDataNumber = null;
-        // if (isLatestData) {
-        // latestDataNumber = ((CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
-        // }
-        // queryDto.setLatestDataNumber(latestDataNumber);
+        Integer latestDataNumber = null;
+        if (isLatestData) {
+            latestDataNumber = ((CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
+        }
+        queryDto.setLatestDataNumber(latestDataNumber);
         return queryDto;
     }
 
@@ -212,6 +200,19 @@ public class NewQueryWindow extends CustomWindow {
             latestData.setRequired(true);
             fields.add(latestData);
         }
+        CustomButtonItem saveItem = new CustomButtonItem(FIELD_SAVE, getConstants().queryCreate());
+        saveItem.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+            @Override
+            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                if (validateForm()) {
+                    QueryVersionDto queryVersionDto = getNewQueryDto();
+                    uiHandlers.createQuery(queryVersionDto);
+                    destroy();
+                }
+            }
+        });
+        fields.add(saveItem);
         form.setFields(fields.toArray(new FormItem[fields.size()]));
         form.redraw();
     }

@@ -195,7 +195,7 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
                     @Override
                     public void onWaitSuccess(SaveQueryVersionResult result) {
                         fireSuccessMessage(getMessages().datasetSaved());
-                        //retrieveDatasets(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, getView().getQueryVersionWebCriteria());
+                        placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeQueryPlaceRequest(result.getSavedQueryVersionDto().getUrn()), -1);
                     }
                 });
     }
