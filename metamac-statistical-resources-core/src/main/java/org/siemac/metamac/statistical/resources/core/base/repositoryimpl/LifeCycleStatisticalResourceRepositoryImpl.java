@@ -19,11 +19,11 @@ public class LifeCycleStatisticalResourceRepositoryImpl extends LifeCycleStatist
         //the query returns the maximum sequential number
         //It must be taken into account that there are codes that do not comply with the 'CODIGO_XXXXXX' format
         //Also see: SiemacMetadataStatisticalResourceRepositoryImpl
-        String hql = "select max(substring(TSR.code, length(tsr.code) - 5, length(tsr.code))) \r\n" + 
-                "from tb_queries_versions tqv\r\n" + 
-                "join tb_stat_resources tsr on tsr.id = tqv.lifecycle_resource_fk\r\n" + 
-                "join tb_external_items tei on tei.id = tsr.stat_operation_fk\r\n" + 
-                "where substring(TSR.code, length(tsr.code) - 5, length(tsr.code)) ~ \'^[0-9\\.]+$\'\r\n" + 
+        String hql = "select max(substring(TSR.code, length(tsr.code) - 5, length(tsr.code))) " + 
+                "from tb_queries_versions tqv " + 
+                "join tb_stat_resources tsr on tsr.id = tqv.lifecycle_resource_fk " + 
+                "join tb_external_items tei on tei.id = tsr.stat_operation_fk " + 
+                "where substring(TSR.code, length(tsr.code) - 5, length(tsr.code)) ~ \'^[0-9\\.]+$\' " + 
                 "and tei.urn = :operationUrn ";
         //@formatter:on
 
