@@ -8,7 +8,12 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 6.0.0 a 6.0.1-SNAPSHOT
+## 6.0.0 a 7.0.0
+* **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
+  devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
+  la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
+  de aplicaciones de eDatos que consuman la API de statistical-resources a través de JAX-RS.
+
 La tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
 Se cambiará la tabla. Y luego habrá que lanzar la actualización de toda la caché para cargar todos los datos de nuevo.
 La manera de actualizar la caché es como hasta ahora:
@@ -22,12 +27,6 @@ La manera de actualizar la caché es como hasta ahora:
 [etc/changes-from-release/6.0.0/db](etc/changes-from-release/6.0.0/db).
 
 NOTAS DE LA VERSIÓN: En esta versión se comienza a consumir el topic JAXI_PUBLICATIONS. Por norma general, es la aplicación productora la responsable de contener las clases AVRO que definen los mensajes, así como las propiedades de configuración. Como en este caso el productor es externo al ecosistema eDatos, se ha tomado la decisión de que sea el statistical-resources el "productor" dentro de eDatos y, por tanto, es donde se almacenarán tanto las propiedades como la clase AVRO que recoge los mensajes de ese topic. Por tanto, cualquier consumidor del esquema JAXI_PUBLICATIONS deberá tener como dependencia al statistical-resources para utilizar dicha clase, al igual que ya lo hacen para el resto de clases AVRO del statistical-resources.
-
-## 6.0.0 a 7.0.0
-* **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
-  devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
-  la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
-  de aplicaciones de eDatos que consuman la API de statistical-resources a través de JAX-RS.
 
 ## 5.0.1 a 6.0.0
 **BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
