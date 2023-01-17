@@ -49,7 +49,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
 
         //@formatter:off
           Query query = getEntityManager().createNativeQuery(
-                  "SELECT a.id, a.variable_element_fk, a.title_fk, a.operation_title_fk, b.title_fk "
+                  "SELECT a.id, a.variable_element_fk, a.title_fk, a.operation_title_fk, b.title_fk as variable_element_title_fk "
                 + "FROM tb_geocov_varelem_cache_datasets_versions a "
                 + "INNER JOIN tb_external_items b ON a.variable_element_fk = b.id "
                 + "WHERE  a.IS_ACTIVATED = false");
