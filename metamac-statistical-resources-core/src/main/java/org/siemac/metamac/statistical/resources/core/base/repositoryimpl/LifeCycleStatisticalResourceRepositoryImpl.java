@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("lifeCycleStatisticalResourceRepository")
 public class LifeCycleStatisticalResourceRepositoryImpl extends LifeCycleStatisticalResourceRepositoryBase {
-
+    private static final String LINE_BREAK = "\r\n";
     public LifeCycleStatisticalResourceRepositoryImpl() {
     }
 
@@ -19,11 +19,12 @@ public class LifeCycleStatisticalResourceRepositoryImpl extends LifeCycleStatist
         //the query returns the maximum sequential number
         //It must be taken into account that there are codes that do not comply with the 'CODIGO_XXXXXX' format
         //Also see: SiemacMetadataStatisticalResourceRepositoryImpl
-        String hql = "select max(substring(TSR.code, length(tsr.code) - 5, length(tsr.code))) " + 
-                "from tb_queries_versions tqv " + 
-                "join tb_stat_resources tsr on tsr.id = tqv.lifecycle_resource_fk " + 
-                "join tb_external_items tei on tei.id = tsr.stat_operation_fk " + 
-                "where substring(TSR.code, length(tsr.code) - 5, length(tsr.code)) ~ \'^[0-9\\.]+$\' " + 
+        
+        String hql = "select max(substring(TSR.code, length(tsr.code) - 5, length(tsr.code))) " + LINE_BREAK +
+                "from tb_queries_versions tqv " + LINE_BREAK +
+                "join tb_stat_resources tsr on tsr.id = tqv.lifecycle_resource_fk " + LINE_BREAK + 
+                "join tb_external_items tei on tei.id = tsr.stat_operation_fk " + LINE_BREAK +
+                "where substring(TSR.code, length(tsr.code) - 5, length(tsr.code)) ~ \'^[0-9\\.]+$\' " + LINE_BREAK + 
                 "and tei.urn = :operationUrn ";
         //@formatter:on
 
