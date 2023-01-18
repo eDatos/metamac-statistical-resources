@@ -10,8 +10,11 @@ import javax.persistence.Query;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.joda.time.DateTime;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Repository;
 @Repository("geoCovVarElementCacheDatasetVersionRepository")
 public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
     extends GeoCovVarElementCacheDatasetVersionRepositoryBase {
+    
+    private static Logger                     logger                              = LoggerFactory.getLogger(GeoCovVarElementCacheDatasetVersionRepositoryImpl.class);
     
     public static final int MAX_SIZE_IN_CLAUSE = 5000;
 
@@ -94,18 +99,20 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
 
         }
 
-        executeSqlSentence("DELETE FROM TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS WHERE id IN (", geoCovVarElementCacheDatasetVersionId);
+        executeSqlSentence("DELETE FROM TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS WHERE id IN (", geoCovVarElementCacheDatasetVersionId, "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS");
         
-        executeSqlSentence("DELETE FROM TB_EXTERNAL_ITEMS WHERE id IN (", variableElementId);
-        
-        executeSqlSentence("DELETE FROM TB_LOCALISED_STRINGS WHERE international_string_fk IN (", internationalStrings);
-          
-        executeSqlSentence("DELETE FROM TB_INTERNATIONAL_STRINGS WHERE id IN (", internationalStrings);
-
+        executeSqlSentence("DELETE FROM TB_EXTERNAL_ITEMS WHERE id IN (", variableElementId, "TB_EXTERNAL_ITEMS");
+     
+        executeSqlSentence("DELETE FROM TB_LOCALISED_STRINGS WHERE international_string_fk IN (", internationalStrings, "TB_LOCALISED_STRINGS");
+             
+        executeSqlSentence("DELETE FROM TB_INTERNATIONAL_STRINGS WHERE id IN (", internationalStrings, "TB_INTERNATIONAL_STRINGS");
+ 
     }
     
 
-    private void executeSqlSentence(String sqlSentence, Set<String> parametersIn) {
+    private void executeSqlSentence(String sqlSentence, Set<String> parametersIn, String tableAudit) {
+        logger.info("Execution start - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
+        
         Set<String> partialParametersIn = new HashSet<>();
         
         for (String parameterIn : parametersIn) {
@@ -121,5 +128,8 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
             Query query = getEntityManager().createNativeQuery(sqlSentence + String.join(", ", partialParametersIn) + ")");
             query.executeUpdate();
         }
+        
+        logger.info("Execution end - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
+        
     }
 }
