@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.dataset.repositoryimpl;
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
-import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +41,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
 
     }
 
+    
     public void disabledByDatasetVersionUrn(String datasetVersionUrn) {
 
       //@formatter:off
@@ -50,21 +50,13 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         query.setParameter("urn", datasetVersionUrn).executeUpdate();
     }
     
-    public List<Object> findNoActivatedElements() {
+    public List<GeoCovVarElementCacheDatasetVersion> findNoActivatedElements() {
 
-        //@formatter:off
-          Query query = getEntityManager().createNativeQuery(
-                  "SELECT a.id, a.variable_element_fk, a.title_fk, a.operation_title_fk, b.title_fk as variable_element_title_fk "
-                + "FROM tb_geocov_varelem_cache_datasets_versions a "
-                + "INNER JOIN tb_external_items b ON a.variable_element_fk = b.id "
-                + "WHERE  a.IS_ACTIVATED = false");
-          //@formatter:on
-          return query.getResultList();
+        List<ConditionalCriteria> condition = criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(false)
+                .distinctRoot().build();
+
+        return findByCondition(condition);
       }
-
-    private String getStringFromBigInteger(BigInteger id) {
-        return id.toString();
-    }
 
     public void deleteAll() {
 
@@ -72,19 +64,17 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         Set<String> variableElementId = new HashSet<>();
         Set<String> internationalStrings = new HashSet<>();
         
-        List<Object> disabledElements = findNoActivatedElements();
+        List<GeoCovVarElementCacheDatasetVersion> disabledElements = findNoActivatedElements();
 
-        for (Object row : disabledElements) {
+        for (GeoCovVarElementCacheDatasetVersion row : disabledElements) {
+         
+            geoCovVarElementCacheDatasetVersionId.add(String.valueOf(row.getId()));
 
-            Object[] cols = (Object[]) row;
+            variableElementId.add(String.valueOf(row.getVariableElement().getId()));
 
-            geoCovVarElementCacheDatasetVersionId.add(getStringFromBigInteger((BigInteger) cols[0]));
-
-            variableElementId.add(getStringFromBigInteger((BigInteger) cols[1]));
-
-            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[2]));
-            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
-            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[4]));
+            internationalStrings.add(String.valueOf(row.getVariableElement().getTitle().getId()));
+            internationalStrings.add(String.valueOf(row.getTitle().getId()));
+            internationalStrings.add(String.valueOf(row.getOperationTitle().getId()));
         }
 
         executeSqlSentenceWithIn("DELETE FROM TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS WHERE id IN ", geoCovVarElementCacheDatasetVersionId, "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS");
@@ -106,18 +96,22 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         for (String parameterIn : parametersIn) {
             partialParametersIn.add(parameterIn);
             if (partialParametersIn.size() > MAX_SIZE_IN_CLAUSE) {
-                Query query = getEntityManager().createNativeQuery(sqlSentence + "(" +  String.join(", ", partialParametersIn) + ")");
+                Query query = getEntityManager().createNativeQuery(fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
                 query.executeUpdate();
                 partialParametersIn.clear();
             }
         }
         
         if (!partialParametersIn.isEmpty()) {
-            Query query = getEntityManager().createNativeQuery(sqlSentence + String.join(", ", partialParametersIn) + ")");
+            Query query = getEntityManager().createNativeQuery(fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
             query.executeUpdate();
         }
         
         logger.info("Execution end - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
         
+    }
+    
+    private String fillSqlSentenceWithIn(String sqlSentence, Set<String> partialParametersIn) {
+        return sqlSentence + "(" +  String.join(", ", partialParametersIn) + ")";
     }
 }
