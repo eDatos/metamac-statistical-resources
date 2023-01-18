@@ -36,7 +36,7 @@ public final class PublicationsUtils {
                     queriesByUrn.put(cube.getQueryUrn(), cube.getQuery());
                 } else if (cube.getMultidataset() != null) {
                     multidatasetByUrn.put(cube.getMultidatasetUrn(), cube.getMultidataset());
-                }
+                } 
             }
         }
 
@@ -44,9 +44,25 @@ public final class PublicationsUtils {
         resources.addAll(buildRelatedResourcesForDatasets(datasetsByUrn.values()));
         resources.addAll(buildRelatedResourcesForQueries(queriesByUrn.values()));
         resources.addAll(buildRelatedResourcesForMultidatasets(multidatasetByUrn.values()));
+        
         return resources;
     }
 
+    public static List<String> computeUrlsHasPart(PublicationVersion resource) {
+        List<String> urls = new ArrayList<String>();
+
+        for (ElementLevel elementLevel : resource.getChildrenAllLevels()) {
+            if (elementLevel.isCube()) {
+                Cube cube = elementLevel.getCube();
+                if (cube.getUrl() != null) {
+                    urls.add(cube.getUrl());
+                } 
+            }
+        }
+  
+        return urls;
+    }
+    
     private static Collection<RelatedResource> buildRelatedResourcesForMultidatasets(Collection<Multidataset> multidatasets) {
         Set<RelatedResource> resources = new HashSet<>();
         for (Multidataset multidataset : multidatasets) {

@@ -186,7 +186,7 @@ public class PublicationDto2DoMapperImpl extends BaseDto2DoMapperImpl implements
             Chapter parentChapter = chapterRepository.retrieveChapterByUrn(source.getParentChapterUrn());
             target.getElementLevel().setParent(parentChapter.getElementLevel());
         }
-
+ 
         return target;
     }
 
@@ -220,6 +220,7 @@ public class PublicationDto2DoMapperImpl extends BaseDto2DoMapperImpl implements
             ValidationUtils.checkMetadataUnmodifiable(source.getOrderInLevel(), target.getElementLevel().getOrderInLevel(), ServiceExceptionParameters.CUBE__ORDER_IN_LEVEL, exceptions);
             ValidationUtils.checkMetadataUnmodifiable(source.getCode(), target.getNameableStatisticalResource().getCode(), ServiceExceptionParameters.CUBE__CODE, exceptions);
             ValidationUtils.checkMetadataUnmodifiable(source.getUrn(), target.getNameableStatisticalResource().getUrn(), ServiceExceptionParameters.CUBE__URN, exceptions);
+            ValidationUtils.checkMetadataUnmodifiable(source.getUrl(), target.getUrl(), ServiceExceptionParameters.CUBE_URL, exceptions);
             ExceptionUtils.throwIfException(exceptions);
         }
 
@@ -261,6 +262,8 @@ public class PublicationDto2DoMapperImpl extends BaseDto2DoMapperImpl implements
             target.setMultidataset(null);
         }
 
+        target.setUrl(source.getUrl());
+               
         return target;
 
     }

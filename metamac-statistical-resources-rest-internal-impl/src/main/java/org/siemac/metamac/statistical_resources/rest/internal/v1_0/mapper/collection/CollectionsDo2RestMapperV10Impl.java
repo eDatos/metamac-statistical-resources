@@ -299,7 +299,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastVersion(source.getMultidatasetUrn());
                 target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null));
-            }
+            } 
         } else {
             if (source.getDataset() != null) {
                 DatasetVersion dataset = datasetVersionRepository.retrieveLastPublishedVersion(source.getDatasetUrn());

@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.colle
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -200,7 +201,8 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
 
     private Resources toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResource> hasPart = null;
-
+        List<String> urls = new ArrayList<String>();
+        
         if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
             // Is necessary to calculate the has part
             hasPart = PublicationsUtils.computeHasPart(source);
@@ -208,7 +210,14 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             // All has part resources are already published
             hasPart = source.getHasPart();
         }
-        return commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        urls = PublicationsUtils.computeUrlsHasPart(source);
+        
+        Resources resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        Resources urlResources = commonDo2RestMapper.toUrlResources(urls);
+        if (!urlResources.getResources().isEmpty()) {
+            resources.getResources().addAll(urlResources.getResources());  
+        }
+        return resources;
     }
 
     private CollectionData toCollectionData(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {

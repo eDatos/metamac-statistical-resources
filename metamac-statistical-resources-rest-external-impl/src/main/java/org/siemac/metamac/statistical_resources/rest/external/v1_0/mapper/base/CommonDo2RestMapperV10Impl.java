@@ -116,6 +116,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.Mul
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.CommonMetadataRestExternalFacade;
@@ -647,6 +648,30 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return targets;
     }
 
+    @Override
+    public Resources toUrlResources(List<String> sources) throws MetamacException {
+        if (CollectionUtils.isEmpty(sources)) {
+            return null;
+        }
+        Resources targets = new Resources();
+        for (String source : sources) {
+            targets.getResources().add(toUrlResource(source));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
+        return targets;
+    }
+    
+    
+    private Resource toUrlResource(String url) {
+        if (url == null) {
+            return null;
+        }
+        Resource target = new Resource();
+        target.setKind(StatisticalResourcesRestConstants.KIND_URL);
+        target.setUrn(url); //TODO EDATOS-3823 ponerlo en campo Url.
+        return target;
+    }
+    
     @Override
     public Resource toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
