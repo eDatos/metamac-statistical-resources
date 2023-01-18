@@ -253,7 +253,7 @@ public class PublicationStructureElementPanel extends VLayout {
         });
 
         CustomTextItem url = new CustomTextItem(ElementLevelDS.URL, getConstants().url());
-        
+        url.setRequired(true);
         url.setShowIfCondition(new FormItemIfFunction() {
 
             @Override
@@ -288,7 +288,6 @@ public class PublicationStructureElementPanel extends VLayout {
         form.setValue(ElementLevelDS.TITLE, element.getTitle());
         form.setValue(ElementLevelDS.DESCRIPTION, element.getDescription());
         form.setValue(ElementLevelDS.URN, element.getUrn());
-        form.setValue(ElementLevelDS.URL, StringUtils.EMPTY);
         
         if (element instanceof CubeDto) {
             CubeDto cubeDto = (CubeDto) element;
@@ -299,7 +298,8 @@ public class PublicationStructureElementPanel extends VLayout {
         } else {
             form.setValue(ElementLevelDS.DATASET, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.QUERY, StringUtils.EMPTY);
-            form.setValue(ElementLevelDS.MULTIDATASET, StringUtils.EMPTY); 
+            form.setValue(ElementLevelDS.MULTIDATASET, StringUtils.EMPTY);
+            form.setValue(ElementLevelDS.URL, StringUtils.EMPTY);
         }
 
         form.markForRedraw();
@@ -310,8 +310,7 @@ public class PublicationStructureElementPanel extends VLayout {
         editionForm.setValue(ElementLevelDS.TITLE, element.getTitle());
         editionForm.setValue(ElementLevelDS.DESCRIPTION, element.getDescription());
         editionForm.setValue(ElementLevelDS.URN, element.getUrn());
-        form.setValue(ElementLevelDS.URL, StringUtils.EMPTY);
-
+       
         if (element instanceof CubeDto) {
             CubeDto cubeDto = (CubeDto) element;
 

@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.publication.serviceimpl.validators;
 
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -175,7 +177,9 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
     // ------------------------------------------------------------------------
 
     public static void checkCreateCube(String publicationVersionUrn, Cube cube, List<MetamacExceptionItem> exceptions) {
+        if (cube.getUrl() == null) {
         StatisticalResourcesValidationUtils.checkParameterRequired(publicationVersionUrn, ServiceExceptionParameters.PUBLICATION_VERSION_URN, exceptions);
+        }
         checkNewCube(cube, exceptions);
 
     }
@@ -205,11 +209,24 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
             return;
         }
 
+        checkUrlValid(cube.getUrl(), exceptions);
         checkCube(cube, exceptions);
         checkNewNameableStatisticalResource(cube.getNameableStatisticalResource(), ServiceExceptionParameters.CUBE, exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getElementLevel().getOrderInLevel(), ServiceExceptionParameters.CUBE__ORDER_IN_LEVEL, exceptions);
     }
 
+    private static void checkUrlValid(String url, List<MetamacExceptionItem> exceptions) {
+        // TODO EDATOS-3823
+        if (url != null) {
+            try {
+                new URL(url).toURI();
+            } catch (MalformedURLException | URISyntaxException e ) {
+            }
+
+        }
+    
+    }  
+    
     private static void checkExistingCube(Cube cube, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(cube, ServiceExceptionParameters.CUBE, exceptions);
 
@@ -241,6 +258,10 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
     }
 
     private static void checkOnlyOneRelatedResourceType(Cube cube, List<MetamacExceptionItem> exceptions) {
+        if (cube.getUrl() != null) {
+            return;
+        }
+        
         int numberOfRelatedResourceTypes = 0;
 
         if (cube.getDataset() != null) {
