@@ -22,6 +22,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.predicates.ObjectEqualsStringFieldPredicate;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
+import org.siemac.metamac.statistical.resources.core.base.components.LifeCycleStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
@@ -77,6 +78,9 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
     @Autowired
     private RelatedResourceRepository                 relatedResourceRepository;
+
+    @Autowired
+    private LifeCycleStatisticalResourceGeneratedCode    lifeCycleStatisticalResourceGeneratedCode;
 
     public QueryServiceImpl() {
     }
@@ -143,6 +147,9 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     @Override
     public QueryVersion createQueryVersion(ServiceContext ctx, QueryVersion queryVersion, ExternalItem statisticalOperation) throws MetamacException {
         // Validations
+
+        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
+        queryVersion.getLifeCycleStatisticalResource().setCode(code);
         queryServiceInvocationValidator.checkCreateQueryVersion(ctx, queryVersion, statisticalOperation);
 
         // Create query
@@ -165,6 +172,10 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         return getQueryVersionRepository().save(queryVersion);
     }
 
+    private String assignCode(String statisticalOperatioUrn, String statisticalOperationCode) throws MetamacException {
+        return lifeCycleStatisticalResourceGeneratedCode.fillGeneratedCodeForCreateSiemacMetadataResource(statisticalOperatioUrn, statisticalOperationCode);
+    }
+    
     @Override
     public QueryVersion updateQueryVersion(ServiceContext ctx, QueryVersion queryVersion) throws MetamacException {
         // Validations
@@ -327,15 +338,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
         List<String> dimensionIds = datasetVersionRepository.retrieveDimensionsIds(datasetVersion);
 
-        boolean hasTemporal = dimensionIds.contains(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
-
-        boolean compatible = true;
-
-        compatible = compatible && checkQueryType(queryVersion, dimensionIds);
-
-        compatible = compatible && checkQuerySelection(queryVersion, datasetVersion, dimensionIds);
-
-        return compatible;
+        return checkQueryType(queryVersion, dimensionIds) && checkQuerySelection(queryVersion, datasetVersion, dimensionIds);
     }
 
     private boolean checkQuerySelection(QueryVersion queryVersion, DatasetVersion datasetVersion, List<String> dimensionIds) throws MetamacException {
