@@ -67,8 +67,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.publication_version.must_have_at_least_one_cube");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_CHAPTER_MUST_HAVE_AT_LEAST_ONE_CUBE                      = create(
             "exception.resources.publication_version.chapter_must_have_at_least_one_cube");
-    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET          = create(
-            "exception.resources.publication_version.cube_must_link_to_dataset_query_or_multidataset");
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET_URL      = create(
+            "exception.resources.publication_version.cube_must_link_to_dataset_query_or_multidataset_url");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_DATASET                          = create(
             "exception.resources.publication_version.linked_to_dataset_with_no_published_version");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_QUERY                            = create(

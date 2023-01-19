@@ -1,7 +1,5 @@
 package org.siemac.metamac.statistical.resources.core.publication.serviceimpl.validators;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
@@ -10,6 +8,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.serviceimpl.utils.ValidationUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.BaseInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
@@ -209,23 +208,10 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
             return;
         }
 
-        checkUrlValid(cube.getUrl(), exceptions);
         checkCube(cube, exceptions);
         checkNewNameableStatisticalResource(cube.getNameableStatisticalResource(), ServiceExceptionParameters.CUBE, exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getElementLevel().getOrderInLevel(), ServiceExceptionParameters.CUBE__ORDER_IN_LEVEL, exceptions);
     }
-
-    private static void checkUrlValid(String url, List<MetamacExceptionItem> exceptions) {
-        // TODO EDATOS-3823
-        if (url != null) {
-            try {
-                new URL(url).toURI();
-            } catch (MalformedURLException | URISyntaxException e ) {
-            }
-
-        }
-    
-    }  
     
     private static void checkExistingCube(Cube cube, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(cube, ServiceExceptionParameters.CUBE, exceptions);
@@ -252,6 +238,10 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
 
         if (cube.getMultidataset() != null) {
             StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getMultidatasetUrn(), ServiceExceptionParameters.CUBE__MULTIDATASET__URN, exceptions);
+        }
+        
+        if (cube.getUrl() != null) {
+            ValidationUtils.validateUrl(cube.getUrl(), ServiceExceptionParameters.CUBE_URL, exceptions);
         }
 
         StatisticalResourcesValidationUtils.checkMetadataEmpty(cube.getElementLevel().getChildren(), ServiceExceptionParameters.CUBE__CHILDREN, exceptions);

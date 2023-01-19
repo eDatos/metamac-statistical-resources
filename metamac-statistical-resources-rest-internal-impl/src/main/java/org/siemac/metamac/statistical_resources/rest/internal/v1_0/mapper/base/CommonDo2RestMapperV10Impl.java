@@ -124,6 +124,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.Mul
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.internal.invocation.CommonMetadataRestExternalFacade;
@@ -715,6 +716,29 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
         return targets;
+    }
+    
+    @Override
+    public ResourcesInternal toUrlResources(List<String> sources) throws MetamacException {
+        if (CollectionUtils.isEmpty(sources)) {
+            return null;
+        }
+        ResourcesInternal targets = new ResourcesInternal();
+        for (String source : sources) {
+            targets.getResources().add(toUrlResource(source));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
+        return targets;
+    }
+    
+    private ResourceInternal toUrlResource(String url) {
+        if (url == null) {
+            return null;
+        }
+        ResourceInternal target = new ResourceInternal();
+        target.setKind(StatisticalResourcesRestConstants.KIND_URL);
+        target.setUrn(url); //TODO EDATOS-3823 ponerlo en campo Url.
+        return target;
     }
 
     @Override

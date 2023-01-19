@@ -23,4 +23,5 @@ public interface CollectionsDo2RestMapperV10 {
     public ResourceLink toCollectionSelfLink(LifeCycleStatisticalResourceBaseDto source);
     public ResourceInternalWithStatisticalOperation toResource(PublicationVersion source, List<String> selectedLanguages, Set<String> parsedFields);
     public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public ResourceInternal toResource(String url, List<String> selectedLanguages);
 }

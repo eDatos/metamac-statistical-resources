@@ -18,4 +18,5 @@ public interface CollectionsDo2RestMapperV10 {
     public Collection toCollection(PublicationVersion source, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public ResourceWithStatisticalOperation toResource(PublicationVersion source, List<String> selectedLanguages, Set<String> parsedFields);
     public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public Resource toResource(String url, List<String> selectedLanguages);
 }

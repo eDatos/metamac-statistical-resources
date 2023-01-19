@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.colle
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -238,13 +239,22 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
 
     private ResourcesInternal toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResource> hasPart = null;
-
+        List<String> urls = new ArrayList<String>();
+        
         if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
             hasPart = PublicationsUtils.computeHasPart(source); // Is necessary to calculate the has part
         } else {
             hasPart = source.getHasPart(); // All has part resources are already published
         }
-        return commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        
+        urls = PublicationsUtils.computeUrlsHasPart(source);
+        
+        ResourcesInternal resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        ResourcesInternal urlResources = commonDo2RestMapper.toUrlResources(urls);
+        if (!urlResources.getResources().isEmpty()) {
+            resources.getResources().addAll(urlResources.getResources());  
+        }
+        return resources; 
     }
 
     private CollectionData toCollectionData(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
@@ -299,7 +309,9 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastVersion(source.getMultidatasetUrn());
                 target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null));
-            } 
+            } else if (source.getUrl() != null) {
+                target.setUrl(toResource(source.getUrl(), selectedLanguages));
+            }
         } else {
             if (source.getDataset() != null) {
                 DatasetVersion dataset = datasetVersionRepository.retrieveLastPublishedVersion(source.getDatasetUrn());
@@ -310,12 +322,26 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastPublishedVersion(source.getMultidatasetUrn());
                 target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null));
+            } else if (source.getUrl() != null) {
+                target.setUrl(toResource(source.getUrl(), selectedLanguages));
             }
         }
 
         return target;
     }
 
+
+    @Override
+    public ResourceInternal toResource(String url, List<String> selectedLanguages) {
+        if (url == null) {
+            return null;
+        }
+        ResourceInternal target = new ResourceInternal();
+        target.setUrn(url);
+        target.setKind(StatisticalResourcesRestInternalConstants.KIND_URL);
+        return target;
+    }
+    
     private CollectionNodes toCollectionNodes(List<ElementLevel> sources, List<String> selectedLanguages) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
