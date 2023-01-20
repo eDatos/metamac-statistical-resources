@@ -151,9 +151,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     public QueryVersion createQueryVersion(ServiceContext ctx, QueryVersion queryVersion, ExternalItem statisticalOperation) throws MetamacException {
         // Validations
         
-        checkStatisticalOperation(statisticalOperation);
-        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
-        queryVersion.getLifeCycleStatisticalResource().setCode(code);
+        checkStatisticalOperationAndSetCode(queryVersion, statisticalOperation);
         queryServiceInvocationValidator.checkCreateQueryVersion(ctx, queryVersion, statisticalOperation);
 
         // Create query
@@ -174,6 +172,12 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
         queryVersion.setQuery(query);
         return getQueryVersionRepository().save(queryVersion);
+    }
+
+    private void checkStatisticalOperationAndSetCode(QueryVersion queryVersion, ExternalItem statisticalOperation) throws MetamacException {
+        checkStatisticalOperation(statisticalOperation);
+        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
+        queryVersion.getLifeCycleStatisticalResource().setCode(code);
     }
 
     private void checkStatisticalOperation(ExternalItem statisticalOperation) throws MetamacException {
