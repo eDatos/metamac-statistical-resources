@@ -3287,6 +3287,19 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         assertEqualsInternationalStringDto(expected.getTitle(), actual.getTitle());
     }
 
+    @Test
+    @MetamacMock({CUBE_01_BASIC_NAME})
+    public void testUpdateCubeUrl() throws Exception {
+        String cubeUrn = cubeMockFactory.retrieveMock(CUBE_01_BASIC_NAME).getNameableStatisticalResource().getUrn();
+        CubeDto expected = statisticalResourcesServiceFacade.retrieveCube(getServiceContextAdministrador(), cubeUrn);
+        expected.setQueryUrn(null);
+        expected.setDatasetUrn(null);
+        expected.setMultidatasetUrn(null);
+        expected.setUrl("http://www.pruebasUpdate.com");
+        CubeDto actual = statisticalResourcesServiceFacade.updateCube(getServiceContextAdministrador(), expected);
+        assertEquals(expected.getUrl(), actual.getUrl());
+    }
+    
     @Override
     @Test
     @MetamacMock({CUBE_01_BASIC_NAME, CUBE_02_BASIC_NAME})

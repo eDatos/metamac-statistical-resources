@@ -533,6 +533,10 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
         return queryVersion;
     }
 
+    public static String generateUrl(boolean isHttps) {
+        return isHttps ? "https://www.pruebas.com" : "http://www.pruebas.com" ;
+    }
+    
     public static Query generateQueryWithGeneratedVersion() {
         return getStatisticalResourcesPersistedDoMocks().mockQueryWithGeneratedQueryVersion();
     }

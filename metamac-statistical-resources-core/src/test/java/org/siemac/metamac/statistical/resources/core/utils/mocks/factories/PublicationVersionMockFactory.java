@@ -30,6 +30,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.QUERY_20_PUBLISHED_NOT_VISIBLE_USED_IN_PUBLICATION_VERSION_86_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.createPublishedQueryLinkedToDataset;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.generateQueryWithGeneratedVersion;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.generateUrl;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.buildQueryVersionMockSimpleWithFixedDatasetVersion;
 
 import java.util.Arrays;
@@ -900,6 +901,14 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     // PUBLICATION STRUCTURE
     // -----------------------------------------------------------------
 
+    public static ElementLevel createUrlCubeElementLevel(PublicationVersion publicationVersion, String url) {
+        return getStatisticalResourcesPersistedDoMocks().mockUrlCubeElementLevel(publicationVersion, url);
+    }
+
+    protected static ElementLevel createUrlCubeElementLevel(PublicationVersion publicationVersion, String url, ElementLevel parentElementLevel) {
+        return getStatisticalResourcesPersistedDoMocks().mockUrlCubeElementLevel(publicationVersion, url, parentElementLevel);
+    }
+    
     public static ElementLevel createQueryCubeElementLevel(PublicationVersion publicationVersion, Query query) {
         return getStatisticalResourcesPersistedDoMocks().mockQueryCubeElementLevel(publicationVersion, query);
     }
@@ -1020,6 +1029,9 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         // ----> Cube 01.02.01
         ElementLevel elementLevel01_02_01 = createQueryCubeElementLevel(publicationVersion, generateQueryWithGeneratedVersion(), elementLevel01_02);
         elementLevel01_02_01.setOrderInLevel(Long.valueOf(1));
+     // ----> Cube 01.02.02
+        ElementLevel elementLevel01_02_02 = createUrlCubeElementLevel(publicationVersion, generateUrl(false), elementLevel01_02);
+        elementLevel01_02_02.setOrderInLevel(Long.valueOf(2));
         // --> Cube 01.03
         ElementLevel elementLevel01_03 = createDatasetCubeElementLevel(publicationVersion, DatasetMockFactory.generateDatasetWithGeneratedVersion(), elementLevel01);
         elementLevel01_03.setOrderInLevel(Long.valueOf(3));
@@ -1035,6 +1047,9 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         // Cube 04
         ElementLevel elementLevel04 = createQueryCubeElementLevel(publicationVersion, generateQueryWithGeneratedVersion());
         elementLevel04.setOrderInLevel(Long.valueOf(4));
+     // Cube 04
+        ElementLevel elementLevel05 = createUrlCubeElementLevel(publicationVersion, generateUrl(false));
+        elementLevel05.setOrderInLevel(Long.valueOf(5));
         return publicationVersion;
     }
 

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.MultidatasetsAsserts.assertEqualsMultidataset;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.PublicationsAsserts.assertEqualsPublicationVersion;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.PublicationsAsserts.assertEqualsPublicationVersionCollection;
@@ -60,6 +61,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
+import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
@@ -1595,6 +1597,30 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
     }
 
     @Test
+    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    public void testCreateCubeUrl() throws Exception {
+        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        Cube expected = notPersistedDoMocks.mockUrlCube("http://www.pruebas.com");
+        Cube actual = publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
+
+        assertRelaxedEqualsCube(expected, actual);
+    }
+   
+    @Test
+    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    public void testCreateCubeUrlFormatError() throws Exception {
+        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        Cube expected = notPersistedDoMocks.mockUrlCube("://www.pruebas.com");
+        try {
+            Cube actual = publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
+            fail("create cube url must start with http or https");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+    }
+    
+    @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME, DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME})
     public void testCreateCubeErrorParameterRequiredPublicationVersionUrn() throws Exception {
         expectedMetamacException(new MetamacException(ServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionParameters.PUBLICATION_VERSION_URN));
@@ -1995,6 +2021,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(expected.getDataset());
         assertNotNull(expected.getQuery());
         assertNull(expected.getMultidataset());
+        assertNull(expected.getUrl());
 
         expected.setQuery(null);
         expected.setMultidataset(expectedMultidataset);
@@ -2004,10 +2031,53 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertRelaxedEqualsCube(expected, actual);
         assertNull(actual.getDataset());
         assertNull(actual.getQuery());
+        assertNull(actual.getUrl());
         assertNotNull(actual.getMultidataset());
         assertEqualsMultidataset(expectedMultidataset, actual.getMultidataset());
     }
 
+    @SuppressWarnings("static-access")
+    @Test
+    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    public void testUpdateCubeSetWithUrl() throws Exception {
+        String expectedUrl = "http://www.pruebas.com";
+
+        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME);
+        Cube expected = publicationVersion.getChildrenFirstLevel().get(3).getCube();
+
+        assertNull(expected.getDataset());
+        assertNotNull(expected.getQuery());
+        assertNull(expected.getMultidataset());
+        assertNull(expected.getUrl());
+
+        expected.setQuery(null);
+        expected.setUrl(expectedUrl);
+
+        Cube actual = publicationService.updateCube(getServiceContextAdministrador(), expected);
+
+        assertRelaxedEqualsCube(expected, actual);
+        assertNull(actual.getDataset());
+        assertNull(actual.getQuery());
+        assertNull(actual.getMultidataset());
+        assertEquals(expectedUrl, actual.getUrl());
+    }
+    
+    @Test
+    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    public void testUpdateCubeUrlFormatError() throws Exception {
+        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME);
+        Cube expected = publicationVersion.getChildrenFirstLevel().get(4).getCube();
+        try {
+            expected.setUrl("www.pruebas.com");
+            Cube actual = publicationService.updateCube(getServiceContextAdministrador(), expected);
+            fail("update cube url must start with http or https");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+    }
+    
     @SuppressWarnings("static-access")
     @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})

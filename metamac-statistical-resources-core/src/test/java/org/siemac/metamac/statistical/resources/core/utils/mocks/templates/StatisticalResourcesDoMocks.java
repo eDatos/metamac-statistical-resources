@@ -228,6 +228,12 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
         return cube;
     }
 
+    public Cube mockUrlCube(String url) {
+        Cube cube = mockCube();
+        cube.setUrl(url);
+        return cube;
+    }
+    
     // ELEMENT LEVEL
     private ElementLevel mockElementLevel() {
         return mockElementLevel(null, null);
@@ -283,7 +289,16 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
     public ElementLevel mockQueryCubeElementLevel(PublicationVersion publicationVersion, Query query) {
         return mockQueryCubeElementLevel(publicationVersion, query, null);
     }
+    
+    public ElementLevel mockUrlCubeElementLevel(PublicationVersion publicationVersion, String url) {
+        return mockUrlCubeElementLevel(publicationVersion, url, null);
+    }
 
+    public ElementLevel mockUrlCubeElementLevel(PublicationVersion publicationVersion, String url, ElementLevel parentElementLevel) {
+        ElementLevel elementLevel = mockCubeElementLevel(publicationVersion, parentElementLevel, mockUrlCube(url));
+        return elementLevel;
+    }
+    
     public ElementLevel mockQueryCubeElementLevel(PublicationVersion publicationVersion, Query query, ElementLevel parentElementLevel) {
         ElementLevel elementLevel = mockCubeElementLevel(publicationVersion, parentElementLevel, mockQueryCube(query));
         return elementLevel;
