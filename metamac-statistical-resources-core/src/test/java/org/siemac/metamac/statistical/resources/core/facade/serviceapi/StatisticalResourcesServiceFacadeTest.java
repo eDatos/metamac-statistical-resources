@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.core.facade.serviceapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
@@ -496,30 +497,13 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
         ExternalItemDto maintainer = StatisticalResourcesDtoMocks.mockAgencyExternalItemDto("SIEMAC");
         QueryVersionDto queryVersionDto = StatisticalResourcesDtoMocks.mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME));
-        queryVersionDto.setCode("ULTIMOS_DATOS_ALOJAMIENTO");
         queryVersionDto.setMaintainer(maintainer);
         queryVersionDto.getSelection().clear();
         queryVersionDto.getSelection().put("DIM_01", Arrays.asList(new CodeItemDto("CODE_01", "code 01")));
         queryVersionDto.getSelection().put("DIM_02", Arrays.asList(new CodeItemDto("CODE_11", "code 11")));
-
-        String persistedQueryUrn = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryVersionDto, statisticalOperation).getUrn();
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=SIEMAC:ULTIMOS_DATOS_ALOJAMIENTO(1.0)", persistedQueryUrn);
-    }
-
-    @MetamacMock({DATASET_VERSION_06_FOR_QUERIES_NAME, QUERY_VERSION_01_WITH_SELECTION_NAME})
-    @Test
-    public void testCreateErrorDuplicatedUrn() throws Exception {
-        QueryVersion originalQueryVersion = queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME);
-
-        expectedMetamacException(new MetamacException(ServiceExceptionType.IDENTIFIABLE_STATISTICAL_RESOURCE_URN_DUPLICATED, originalQueryVersion.getLifeCycleStatisticalResource().getUrn()));
-
-        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
-        ExternalItemDto maintainer = StatisticalResourcesDtoMocks.mockAgencyExternalItemDto(originalQueryVersion.getLifeCycleStatisticalResource().getMaintainer().getCode());
-        QueryVersionDto queryVersionDto = StatisticalResourcesDtoMocks.mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME));
-        queryVersionDto.setCode(originalQueryVersion.getLifeCycleStatisticalResource().getCode());
-        queryVersionDto.setMaintainer(maintainer);
-
-        statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryVersionDto, statisticalOperation).getUrn();
+        QueryVersionDto queryVersionGenerated = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryVersionDto, statisticalOperation);
+        String persistedQueryUrn = queryVersionGenerated.getUrn();
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=SIEMAC:" + statisticalOperation.getCode() +"_000001(1.0)", persistedQueryUrn);
     }
 
     @Test
@@ -4272,5 +4256,21 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         assertNotNull(newDatasetVersionDto.getViewCode());
         assertEquals(DatasetVersionUtils.generateViewCode(newDatasetVersionDto.getCode()), newDatasetVersionDto.getViewCode());
 
+    }
+    
+    @Test
+    @MetamacMock({DATASET_VERSION_06_FOR_QUERIES_NAME})
+    public void testGenerateDifferentUrn() throws Exception {
+        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
+
+        QueryVersionDto queryToPersist = mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME));
+        queryToPersist.getSelection().clear();
+        queryToPersist.getSelection().put("DIM_01", Arrays.asList(new CodeItemDto("CODE_01", "code 01")));
+        queryToPersist.getSelection().put("DIM_02", Arrays.asList(new CodeItemDto("CODE_11", "code 11")));
+
+        QueryVersionDto persistedQuery = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryToPersist, statisticalOperation);
+        QueryVersionDto persistedQueryCopy = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryToPersist, statisticalOperation);
+        
+        assertNotSame(persistedQuery, persistedQueryCopy);
     }
 }

@@ -19,6 +19,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.predicates.ObjectEqualsStringFieldPredicate;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
@@ -38,6 +39,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.query.QueryLifecycleService;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
@@ -46,6 +48,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.validators.QueryServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
+import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeDimensionToCodeStringTransformer;
 import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeItemToCodeStringTransformer;
@@ -147,9 +150,8 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     @Override
     public QueryVersion createQueryVersion(ServiceContext ctx, QueryVersion queryVersion, ExternalItem statisticalOperation) throws MetamacException {
         // Validations
-
-        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
-        queryVersion.getLifeCycleStatisticalResource().setCode(code);
+        
+        checkStatisticalOperationAndSetCode(queryVersion, statisticalOperation);
         queryServiceInvocationValidator.checkCreateQueryVersion(ctx, queryVersion, statisticalOperation);
 
         // Create query
@@ -172,6 +174,17 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         return getQueryVersionRepository().save(queryVersion);
     }
 
+    private void checkStatisticalOperationAndSetCode(QueryVersion queryVersion, ExternalItem statisticalOperation) throws MetamacException {
+        checkStatisticalOperation(statisticalOperation);
+        String code = assignCode(statisticalOperation.getUrn(), statisticalOperation.getCode());
+        queryVersion.getLifeCycleStatisticalResource().setCode(code);
+    }
+
+    private void checkStatisticalOperation(ExternalItem statisticalOperation) throws MetamacException {
+        List<MetamacExceptionItem> exceptions = new ArrayList<>();
+        StatisticalResourcesValidationUtils.checkParameterRequired(statisticalOperation, ServiceExceptionParameters.STATISTICAL_OPERATION, exceptions);
+        ExceptionUtils.throwIfException(exceptions);
+    }
     private String assignCode(String statisticalOperatioUrn, String statisticalOperationCode) throws MetamacException {
         return lifeCycleStatisticalResourceGeneratedCode.fillGeneratedCodeForCreateSiemacMetadataResource(statisticalOperatioUrn, statisticalOperationCode);
     }
