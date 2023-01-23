@@ -30,9 +30,11 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.QueryMetadata;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
@@ -42,6 +44,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRe
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
+import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -68,11 +71,15 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
 
     @Autowired
     private DatasetVersionRepository       datasetVersionRepository;
+    
+    @Autowired
+    private StatisticalResourcesConfiguration configurationService;
 
     private static final Logger            logger = LoggerFactory.getLogger(QueriesDo2RestMapperV10Impl.class);
 
     @Override
-    public Queries toQueries(PagedResult<QueryVersion> sources, String agencyID, String query, String orderBy, Integer limit, List<String> selectedLanguages, Set<String> parsedFields) {
+    public Queries toQueries(PagedResult<QueryVersion> sources, String agencyID, String query, String orderBy, Integer limit, List<String> selectedLanguages, Set<String> parsedFields)
+            throws MetamacException {
 
         Queries targets = new Queries();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_QUERIES);
@@ -174,7 +181,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceWithStatisticalOperation toResource(QueryVersion source, List<String> selectedLanguages, Set<String> parsedFields) {
+    public ResourceWithStatisticalOperation toResource(QueryVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -193,6 +200,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                 target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getFixedDatasetVersion().getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
             }
         }
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.QUERY, source.getLifeCycleStatisticalResource(), configurationService));
+        
         return target;
     }
 

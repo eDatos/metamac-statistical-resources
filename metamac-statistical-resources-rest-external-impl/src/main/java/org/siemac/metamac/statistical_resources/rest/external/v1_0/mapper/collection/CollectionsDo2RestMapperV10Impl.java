@@ -29,8 +29,10 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collections;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Table;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
@@ -44,6 +46,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRe
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multidataset.MultidatasetsDo2RestMapperV10;
@@ -79,12 +82,16 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
 
     @Autowired
     private PublicationVersionRepository  publicationVersionRepository;
+    
+    @Autowired
+    private StatisticalResourcesConfiguration configurationService;
+
 
     private static final Logger           logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
 
     @Override
     public Collections toCollections(PagedResult<PublicationVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
-        Set<String> parsedFields) {
+        Set<String> parsedFields) throws MetamacException {
 
         Collections targets = new Collections();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_COLLECTIONS);
@@ -132,7 +139,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     }
 
     @Override
-    public ResourceWithStatisticalOperation toResource(PublicationVersion source, List<String> selectedLanguages, Set<String> parsedFields) {
+    public ResourceWithStatisticalOperation toResource(PublicationVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -146,6 +153,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         if (includeStatisticalOperation) {
             target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
         }
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService));
         return target;
     }
 
@@ -299,8 +307,8 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             return null;
         }
         Resource target = new Resource();
-        target.setUrn(url);
-        target.setKind(StatisticalResourcesRestExternalConstants.KIND_URL);
+        target.setVisualizerHtmlLink(url);
+        target.setKind(StatisticalResourcesRestExternalConstants.KIND_URL);    
         return target;
     }
     

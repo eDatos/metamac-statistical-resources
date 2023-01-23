@@ -758,7 +758,7 @@
         <xs:complexContent>
             <xs:extension base="common:Resource">
                 <xs:sequence>
-                    <xs:element name="urnProvider" type="xs:string" minOccurs="1" />
+                    <xs:element name="urnProvider" type="xs:string" minOccurs="0" />
                     <xs:element name="managementAppLink" type="xs:string" />
                 </xs:sequence>
             </xs:extension>
@@ -815,13 +815,13 @@
         </xs:sequence>
     </xs:complexType>
    
-    <!-- RESOURCES ENTITY --> 
+     <!-- RESOURCES ENTITY --> 
     <!-- Lists -->
     <xs:complexType name="Resources">
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="resource" type="common-tns:ExtendedResource" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="resource" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

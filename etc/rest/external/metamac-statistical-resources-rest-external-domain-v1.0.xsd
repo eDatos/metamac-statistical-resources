@@ -750,7 +750,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="resource" type="common-tns:ExtendedResource" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="resource" type="common-tns:ResourceWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>

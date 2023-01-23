@@ -668,7 +668,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         Resource target = new Resource();
         target.setKind(StatisticalResourcesRestConstants.KIND_URL);
-        target.setUrn(url); //TODO EDATOS-3823 ponerlo en campo Url.
+        target.setVisualizerHtmlLink(url);
         return target;
     }
     
