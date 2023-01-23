@@ -7,7 +7,8 @@
             "DATASET",
             "COLLECTION",
             "QUERY",
-            "MULTIDATASET"
+            "MULTIDATASET",
+            "URL"
         ]
     }
     ,

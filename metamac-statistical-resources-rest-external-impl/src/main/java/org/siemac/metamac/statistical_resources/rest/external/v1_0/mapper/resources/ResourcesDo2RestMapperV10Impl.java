@@ -10,7 +10,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Resources;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ExtendedResource;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,17 +34,17 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
 
         // Values
         for (GeoCovVarElementCacheDatasetVersion source : sources.getValues()) {
-            ExtendedResource target = toResource(source, selectedLanguages);
+            ResourceWithStatisticalOperation target = toResource(source, selectedLanguages);
             targets.getResources().add(target);
         }
         return targets;
     } 
      
-    private ExtendedResource toResource(GeoCovVarElementCacheDatasetVersion source, List<String> selectedLanguages) {
+    private ResourceWithStatisticalOperation toResource(GeoCovVarElementCacheDatasetVersion source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        ExtendedResource target = new ExtendedResource();
+        ResourceWithStatisticalOperation target = new ResourceWithStatisticalOperation();
         target.setId(source.getCode());
         target.setUrn(source.getUrn());
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
