@@ -52,7 +52,6 @@ public class GeoCovVarElementCacheDatasetVersionFactory extends StatisticalResou
         geoCovVarElementCacheDatasetVersionMock.setIsExternalSource(false);
         geoCovVarElementCacheDatasetVersionMock.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
         geoCovVarElementCacheDatasetVersionMock.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
-
         return geoCovVarElementCacheDatasetVersionMock;
  
     }
@@ -65,6 +64,8 @@ public class GeoCovVarElementCacheDatasetVersionFactory extends StatisticalResou
         geoCovVarElementCacheDatasetVersionMock.setCode(dv.getSiemacMetadataStatisticalResource().getCode());
         geoCovVarElementCacheDatasetVersionMock.setIsExternalSource(false);
         geoCovVarElementCacheDatasetVersionMock.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
+        geoCovVarElementCacheDatasetVersionMock.setTitle(StatisticalResourcesPersistedDoMocks.mockInternationalStringMetadata(dv.getSiemacMetadataStatisticalResource().getCode(), dv.getSiemacMetadataStatisticalResource().getCode() + "-title"));
+        geoCovVarElementCacheDatasetVersionMock.setOperationTitle(StatisticalResourcesPersistedDoMocks.mockInternationalStringMetadata("statOper01", "statOper01-title"));
         geoCovVarElementCacheDatasetVersionMock.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
         geoCovVarElementCacheDatasetVersionMock.setIsActivated(true);
         return geoCovVarElementCacheDatasetVersionMock;
