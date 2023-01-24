@@ -49,7 +49,28 @@ public class MetamacPortalWebUtils {
         builder.append(URL_SINGLEPAGE_SEPARATOR);
         return builder.toString();
     }
-      
+     
+    public static String buildQueryVersionUrl(String maintainerCode, String code, String urlBase) throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEndpointUrl(urlBase));
+        builder.append(PAGE_DATA_RESOURCE);
+        builder.append(URL_QUERY_SEPARATOR);
+        builder.append(buildQueryParametersForNotVersionableResource(maintainerCode, code, StatisticalResourceTypeEnum.QUERY));
+        builder.append(URL_SINGLEPAGE_SEPARATOR);
+
+        return builder.toString();
+    }
+    
+    public static String buildMultidatasetVersionUrl(String maintainerCode, String code, String urlBase) throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEndpointUrl(urlBase));
+        builder.append(PAGE_DATA_RESOURCE);
+        builder.append(URL_QUERY_SEPARATOR);
+        builder.append(buildQueryParametersForMultidataset(maintainerCode, code));
+
+        return builder.toString();
+    }
+    
     public static String buildQueryVersionUrl(QueryVersionDto queryVersionDto, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));
@@ -71,6 +92,16 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
+    public static String buildPublicationVersionUrl(String maintainerCode, String code, String urlBase) throws IllegalArgumentException {
+        StringBuilder builder = new StringBuilder();
+        builder.append(buildEndpointUrl(urlBase));
+        builder.append(PAGE_COLLECTION_RESOURCE);
+        builder.append(URL_QUERY_SEPARATOR);
+        builder.append(buildQueryParametersForNotVersionableResource(maintainerCode, code, StatisticalResourceTypeEnum.COLLECTION));
+
+        return builder.toString();
+    }
+    
     public static String buildMultidatasetVersionUrl(MultidatasetVersionDto multidatasetVersionDto, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));
@@ -104,7 +135,7 @@ public class MetamacPortalWebUtils {
         return builder.toString();
 
     }
-
+    
     private static String buildQueryParametersForVersionableResource(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto, StatisticalResourceTypeEnum type)
             throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
@@ -150,19 +181,26 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
+    private static String buildQueryParametersForMultidataset(String maintainerCode, String code) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append(URL_QUERY_PARAMETER_MULTIDATASET_ID);
+        builder.append(URL_QUERY_EQUALS);
+        builder.append(maintainerCode);
+        builder.append(URL_QUERY_COLON);
+        builder.append(code);
+
+        return builder.toString();
+    }
+    
     private static String buildQueryParametersForMultidataset(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto) {
         StringBuilder builder = new StringBuilder();
 
         if (lifeCycleStatisticalResourceDto != null) {
-
             String maintainerCode = lifeCycleStatisticalResourceDto.getMaintainer() != null ? lifeCycleStatisticalResourceDto.getMaintainer().getCode() : null;
             String code = lifeCycleStatisticalResourceDto.getCode();
 
-            builder.append(URL_QUERY_PARAMETER_MULTIDATASET_ID);
-            builder.append(URL_QUERY_EQUALS);
-            builder.append(maintainerCode);
-            builder.append(URL_QUERY_COLON);
-            builder.append(code);
+            return buildQueryParametersForMultidataset(maintainerCode, code);
         }
         return builder.toString();
     }
