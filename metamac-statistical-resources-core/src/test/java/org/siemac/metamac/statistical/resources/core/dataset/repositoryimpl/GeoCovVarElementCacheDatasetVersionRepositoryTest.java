@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class GeoCovVarElementCacheDatasetVersionRepositoryTest extends StatisticalResourcesBaseTest implements GeoCovVarElementCacheDatasetVersionRepositoryTestBase {
     @Autowired
     private GeoCovVarElementCacheDatasetVersionRepository         geoCovVarElementCacheDatasetVersionRepository;
-    
+        
     @Test
     @MetamacMock(GEO_COV_VAR_ELEMENT_CACHE_01)
     public void testRetrieveByDatasetVersionUrn() throws Exception {
@@ -56,7 +56,29 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryTest extends Statistic
         Assert.assertEquals(expected.size(), 0);
 
     }
+     
+    @Test
+    @MetamacMock(GEO_COV_VAR_ELEMENT_CACHE_02)
+    public void testDeleteAll() throws Exception {
         
+        GeoCovVarElementCacheDatasetVersion actual = geoCovVarElementCacheDatasetVersionFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_02);
+        
+        List<GeoCovVarElementCacheDatasetVersion> expected = geoCovVarElementCacheDatasetVersionRepository.retrieveByDatasetVersionUrn(actual.getUrn());
+        
+        Assert.assertNotNull(expected);
+        Assert.assertEquals(expected.size(), 1);
+        
+        expected.get(0).setIsActivated(false);
+        geoCovVarElementCacheDatasetVersionRepository.save(expected.get(0));
+        
+        geoCovVarElementCacheDatasetVersionRepository.deleteAll();
+        
+        expected = geoCovVarElementCacheDatasetVersionRepository.retrieveByDatasetVersionUrn(actual.getUrn());
+        
+        Assert.assertEquals(expected.size(), 0);
+
+    }
+    
     private static void assertEqualsGeoCovVarElementCacheDatasetVersion(GeoCovVarElementCacheDatasetVersion expected, GeoCovVarElementCacheDatasetVersion actual) throws MetamacException {
         if ((expected != null && actual == null) || (expected == null && actual != null)) {
             fail("The expected GeoCovVarElementCacheDatasetVersion cache Item and the actual are not equals");
