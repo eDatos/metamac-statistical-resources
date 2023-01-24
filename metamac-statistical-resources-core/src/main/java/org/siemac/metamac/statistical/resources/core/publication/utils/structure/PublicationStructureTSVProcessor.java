@@ -55,8 +55,8 @@ public class PublicationStructureTSVProcessor {
     private static final Logger logger                      = LoggerFactory.getLogger(PublicationStructureTSVProcessor.class);
 
     private static final char   TSV_SEPARATOR               = '\t';
-    private static final String RELATED_RESOURCE_SEPARATOR  = "\\.";
-
+    private static final String SEPARATOR                   = ".";
+    private static final String RELATED_RESOURCE_SEPARATOR  = "\\" + SEPARATOR;
     private static final String HEADER_TYPE                 = "TYPE";
     private static final String HEADER_RELATED_RESOURCE     = "RELATED_RESOURCE";
     private static final int    INDEX_TYPE                  = 0;
@@ -234,11 +234,35 @@ public class PublicationStructureTSVProcessor {
                 element.setRelatedResourceType(type);
                 return;
             }
+        } else if (isCubeUrlType(relatedResourceElements)) {
+            addUrlRelatedResourceType(element, relatedResource);
+            return;
         }
         exceptions.add(MetamacExceptionItemBuilder.metamacExceptionItem()
                 .withCommonServiceExceptionType(ServiceExceptionType.PUBLICATION_VERSION_STRUCTURE_IMPORTATION_CUBE_WITH_WRONG_RELATED_RESOURCE).withMessageParameters(lineNumber).build());
     }
 
+    private boolean isCubeUrlType(String[] relatedResourceElements) {
+        if (relatedResourceElements.length >= 2) {
+            StatisticalResourceTypeEnum type = getRelatedResourceType(relatedResourceElements[relatedResourceElements.length - 1]);
+            return type != null && (StatisticalResourceTypeEnum.URL == type);
+        }
+        return false;
+    }
+    
+    private void addUrlRelatedResourceType(Element element, String relatedResource) {
+        element.setRelatedResourCode(readUrl(relatedResource));
+        element.setRelatedResourceType(StatisticalResourceTypeEnum.URL);
+    }
+
+    private String readUrl(String relatedResource) {
+        int lastSeparator = relatedResource.lastIndexOf(SEPARATOR);
+        if (lastSeparator > 0) {
+            return relatedResource.substring(0, lastSeparator);
+        }
+        return null;
+    }
+    
     private StatisticalResourceTypeEnum getRelatedResourceType(String type) {
         StatisticalResourceTypeEnum relatedResourceType = null;
 
@@ -248,6 +272,8 @@ public class PublicationStructureTSVProcessor {
             relatedResourceType = StatisticalResourceTypeEnum.QUERY;
         } else if (StatisticalResourceTypeEnum.MULTIDATASET.toString().equals(type)) {
             relatedResourceType = StatisticalResourceTypeEnum.MULTIDATASET;
+        } else if (StatisticalResourceTypeEnum.URL.toString().equals(type)) {
+            relatedResourceType = StatisticalResourceTypeEnum.URL;
         }
 
         return relatedResourceType;
