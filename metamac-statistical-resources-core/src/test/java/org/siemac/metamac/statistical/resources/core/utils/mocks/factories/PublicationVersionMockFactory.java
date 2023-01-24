@@ -242,6 +242,9 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     public static final String                   PUBLICATION_VERSION_100_MAXIMUM_VERSION_REACHED                                                                    = "PUBLICATION_VERSION_100_MAXIMUM_VERSION_REACHED";
 
     public static final String                   PUBLICATION_VERSION_101_MAXIMUM_MINOR_VERSION_REACHED                                                              = "PUBLICATION_VERSION_101_MAXIMUM_MINOR_VERSION_REACHED";
+    
+    public static final String                   PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION                                                 = "PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION";
+
 
     private static PublicationVersionMockFactory instance                                                                                                           = null;
 
@@ -412,6 +415,12 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         return publicationVersion;
     }
 
+    private static PublicationVersion getPublicationVersion102WithComplexStructureForUrlPublication() {
+        PublicationVersion publicationVersion = createComplexStructure2();
+        publicationVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);
+        return publicationVersion;
+    }
+    
     private static PublicationVersion getPublicationVersion23WithComplexStructureProductionValidation() {
         PublicationVersion publicationVersion = createComplexStructure();
         publicationVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.PRODUCTION_VALIDATION);
@@ -1009,6 +1018,45 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     }
 
     public static PublicationVersion createComplexStructure() {
+        PublicationVersion publicationVersion = createPublicationVersion();
+        publicationVersion.getSiemacMetadataStatisticalResource().setVersionLogic(INIT_VERSION);
+        publicationVersion.getSiemacMetadataStatisticalResource().setCreationDate(new DateTime().minusDays(2));
+
+        // Structure
+        // Chapter 01
+        ElementLevel elementLevel01 = createChapterElementLevel(publicationVersion);
+        elementLevel01.setOrderInLevel(Long.valueOf(1));
+        // --> Chapter 01.01
+        ElementLevel elementLevel01_01 = createChapterElementLevel(publicationVersion, elementLevel01);
+        elementLevel01_01.setOrderInLevel(Long.valueOf(1));
+        // ----> Cube 01.01.01
+        ElementLevel elementLevel01_01_01 = createDatasetCubeElementLevel(publicationVersion, DatasetMockFactory.generateDatasetWithGeneratedVersion(), elementLevel01_01);
+        elementLevel01_01_01.setOrderInLevel(Long.valueOf(1));
+        // --> Chapter 01.02
+        ElementLevel elementLevel01_02 = createChapterElementLevel(publicationVersion, elementLevel01);
+        elementLevel01_02.setOrderInLevel(Long.valueOf(2));
+        // ----> Cube 01.02.01
+        ElementLevel elementLevel01_02_01 = createQueryCubeElementLevel(publicationVersion, generateQueryWithGeneratedVersion(), elementLevel01_02);
+        elementLevel01_02_01.setOrderInLevel(Long.valueOf(1));
+     // ----> Cube 01.02.02
+        ElementLevel elementLevel01_03 = createDatasetCubeElementLevel(publicationVersion, DatasetMockFactory.generateDatasetWithGeneratedVersion(), elementLevel01);
+        elementLevel01_03.setOrderInLevel(Long.valueOf(3));
+        // Chapter 02
+        ElementLevel elementLevel02 = createChapterElementLevel(publicationVersion);
+        elementLevel02.setOrderInLevel(Long.valueOf(2));
+        // --> Cube 02.01
+        ElementLevel elementLevel02_01 = createQueryCubeElementLevel(publicationVersion, generateQueryWithGeneratedVersion(), elementLevel02);
+        elementLevel02_01.setOrderInLevel(Long.valueOf(1));
+        // Chapter 03
+        ElementLevel elementLevel03 = createChapterElementLevel(publicationVersion);
+        elementLevel03.setOrderInLevel(Long.valueOf(3));
+        // Cube 04
+        ElementLevel elementLevel04 = createQueryCubeElementLevel(publicationVersion, generateQueryWithGeneratedVersion());
+        elementLevel04.setOrderInLevel(Long.valueOf(4));
+        return publicationVersion;
+    }
+    
+    public static PublicationVersion createComplexStructure2() {
         PublicationVersion publicationVersion = createPublicationVersion();
         publicationVersion.getSiemacMetadataStatisticalResource().setVersionLogic(INIT_VERSION);
         publicationVersion.getSiemacMetadataStatisticalResource().setCreationDate(new DateTime().minusDays(2));

@@ -27,6 +27,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_07_OPERATION_0001_CODE_000003_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_11_OPERATION_0002_CODE_MAX_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_12_DRAFT_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_13_PRODUCTION_VALIDATION_NAME;
@@ -1597,9 +1598,9 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
     }
 
     @Test
-    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testCreateCubeUrl() throws Exception {
-        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION).getSiemacMetadataStatisticalResource().getUrn();
         Cube expected = notPersistedDoMocks.mockUrlCube("http://www.pruebas.com");
         Cube actual = publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
 
@@ -1607,9 +1608,9 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
     }
    
     @Test
-    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testCreateCubeUrlFormatError() throws Exception {
-        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION).getSiemacMetadataStatisticalResource().getUrn();
         Cube expected = notPersistedDoMocks.mockUrlCube("://www.pruebas.com");
         try {
             Cube actual = publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
@@ -2038,11 +2039,11 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
 
     @SuppressWarnings("static-access")
     @Test
-    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testUpdateCubeSetWithUrl() throws Exception {
         String expectedUrl = "http://www.pruebas.com";
 
-        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME);
+        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION);
         Cube expected = publicationVersion.getChildrenFirstLevel().get(3).getCube();
 
         assertNull(expected.getDataset());
@@ -2063,10 +2064,9 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
     }
     
     @Test
-    @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testUpdateCubeUrlFormatError() throws Exception {
-        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME).getSiemacMetadataStatisticalResource().getUrn();
-        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME);
+        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION);
         Cube expected = publicationVersion.getChildrenFirstLevel().get(4).getCube();
         try {
             expected.setUrl("www.pruebas.com");
