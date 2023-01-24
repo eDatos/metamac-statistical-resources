@@ -25,5 +25,5 @@ public interface QueriesDo2RestMapperV10 {
     public ResourceLink toQuerySelfLink(LifeCycleStatisticalResourceBaseDto source);
     public JsonStatData toJsonStatQuery(QueryVersion source, DatasetVersion datasetVersion, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception;
     public ResourceInternal toResource(QueryVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
-    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
 }

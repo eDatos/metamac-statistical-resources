@@ -23,6 +23,6 @@ public interface CollectionsDo2RestMapperV10 {
     public ResourceLink toCollectionSelfLink(LifeCycleStatisticalResourceDto source);
     public ResourceLink toCollectionSelfLink(LifeCycleStatisticalResourceBaseDto source);
     public ResourceInternalWithStatisticalOperation toResource(PublicationVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
-    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
     public ResourceInternal toResource(String url, List<String> selectedLanguages) throws MetamacException;
 }

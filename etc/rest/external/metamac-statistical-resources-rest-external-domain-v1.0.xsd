@@ -21,6 +21,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:DatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
         </xs:sequence>
@@ -38,6 +39,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:CollectionMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:CollectionData" minOccurs="0" />
         </xs:sequence>
@@ -55,6 +57,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:QueryMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
         </xs:sequence>
@@ -72,6 +75,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:MultidatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:MultidatasetData" minOccurs="0" />
         </xs:sequence>

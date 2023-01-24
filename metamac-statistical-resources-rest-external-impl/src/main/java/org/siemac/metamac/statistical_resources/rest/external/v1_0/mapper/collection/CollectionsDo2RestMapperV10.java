@@ -18,6 +18,6 @@ public interface CollectionsDo2RestMapperV10 {
         Set<String> parsedFields) throws MetamacException;
     public Collection toCollection(PublicationVersion source, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public ResourceWithStatisticalOperation toResource(PublicationVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
-    public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
     public Resource toResource(String url, List<String> selectedLanguages);
 }

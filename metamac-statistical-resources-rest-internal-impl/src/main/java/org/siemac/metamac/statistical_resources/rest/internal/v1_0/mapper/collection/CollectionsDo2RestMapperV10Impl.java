@@ -126,7 +126,8 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         target.setParentLink(toCollectionParentLink(source));
         target.setChildLinks(toCollectionChildLinks(source));
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
-
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
+        
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
         if (includeMetadata) {
@@ -158,12 +159,13 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         if (includeStatisticalOperation) {
             target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
         }
-        target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
+        
         return target;
     }
 
     @Override
-    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) {
+    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -179,11 +181,17 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         target.setKind(StatisticalResourcesRestInternalConstants.KIND_COLLECTION);
         target.setSelfLink(toCollectionSelfLink(source));
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
-
+        target.setVisualizerHtmlLink(toVisualizerHtmlLink(source));
         target.setManagementAppLink(toPublicationVersionManagementApplicationLink(source));
         return target;
     }
 
+    private String toVisualizerHtmlLink(RelatedResourceResult source) throws MetamacException {
+        String agencyID = source.getMaintainerNestedCode();
+        String resourceID = source.getCode();
+        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, agencyID, resourceID, null, configurationService, false);  
+    }
+    
     @Override
     public ResourceLink toCollectionSelfLink(LifeCycleStatisticalResourceDto source) {
         String agencyID = source.getMaintainer().getCodeNested();
@@ -258,7 +266,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         
         ResourcesInternal resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
         ResourcesInternal urlResources = commonDo2RestMapper.toUrlResources(urls);
-        if (!urlResources.getResources().isEmpty()) {
+        if (urlResources != null && !urlResources.getResources().isEmpty()) {
             resources.getResources().addAll(urlResources.getResources());  
         }
         return resources; 

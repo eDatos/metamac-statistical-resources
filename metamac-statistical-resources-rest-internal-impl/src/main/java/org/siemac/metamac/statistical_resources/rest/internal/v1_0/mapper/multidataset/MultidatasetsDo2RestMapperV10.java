@@ -22,5 +22,5 @@ public interface MultidatasetsDo2RestMapperV10 {
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceDto source);
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceBaseDto source);
     public ResourceInternal toResource(MultidatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
-    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
 }

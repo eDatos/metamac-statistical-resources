@@ -27,5 +27,5 @@ public interface DatasetsDo2RestMapperV10 {
     public ResourceLink toDatasetSelfLink(LifeCycleStatisticalResourceBaseDto source);
     public ResourceInternalWithStatisticalOperation toResource(DatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
     public ResourceInternal toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages) throws MetamacException;
-    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages);
+    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
 }
