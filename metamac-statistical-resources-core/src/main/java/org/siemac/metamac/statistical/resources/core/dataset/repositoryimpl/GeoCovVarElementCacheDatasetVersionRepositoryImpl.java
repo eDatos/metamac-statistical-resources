@@ -1,6 +1,9 @@
 package org.siemac.metamac.statistical.resources.core.dataset.repositoryimpl;
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -9,6 +12,8 @@ import javax.persistence.Query;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.joda.time.DateTime;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
@@ -77,18 +82,28 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
             internationalStrings.add(String.valueOf(row.getOperationTitle().getId()));
         }
 
-        executeSqlSentenceWithIn("DELETE FROM TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS WHERE id IN ", geoCovVarElementCacheDatasetVersionId, "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS");
-        
-        executeSqlSentenceWithIn("DELETE FROM TB_EXTERNAL_ITEMS WHERE id IN ", variableElementId, "TB_EXTERNAL_ITEMS");
-     
-        executeSqlSentenceWithIn("DELETE FROM TB_LOCALISED_STRINGS WHERE international_string_fk IN ", internationalStrings, "TB_LOCALISED_STRINGS");
-             
-        executeSqlSentenceWithIn("DELETE FROM TB_INTERNATIONAL_STRINGS WHERE id IN ", internationalStrings, "TB_INTERNATIONAL_STRINGS");
- 
+        Session session = (Session) getEntityManager().getDelegate();
+        try {
+            session.doWork(new Work() {
+
+                @Override
+                public void execute(Connection connection) throws SQLException {
+                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS WHERE id IN ", geoCovVarElementCacheDatasetVersionId, "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS");
+
+                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_EXTERNAL_ITEMS WHERE id IN ", variableElementId, "TB_EXTERNAL_ITEMS");
+
+                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_LOCALISED_STRINGS WHERE international_string_fk IN ", internationalStrings, "TB_LOCALISED_STRINGS");
+
+                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_INTERNATIONAL_STRINGS WHERE id IN ", internationalStrings, "TB_INTERNATIONAL_STRINGS");
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Error deleting all disabled entries from geographic coverage cache", e);
+        }
     }
     
 
-    private void executeSqlSentenceWithIn(String sqlSentence, Set<String> parametersIn, String tableAudit) {
+    private void executeSqlSentenceWithIn(Connection connection, String sqlSentence, Set<String> parametersIn, String tableAudit) throws SQLException {
         logger.info("Execution start - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
         
         Set<String> partialParametersIn = new HashSet<>();
@@ -96,19 +111,29 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         for (String parameterIn : parametersIn) {
             partialParametersIn.add(parameterIn);
             if (partialParametersIn.size() > MAX_SIZE_IN_CLAUSE) {
-                Query query = getEntityManager().createNativeQuery(fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
-                query.executeUpdate();
+                executeSqlStatement(connection, fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
                 partialParametersIn.clear();
             }
         }
         
         if (!partialParametersIn.isEmpty()) {
-            Query query = getEntityManager().createNativeQuery(fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
-            query.executeUpdate();
+            executeSqlStatement(connection, fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
         }
         
         logger.info("Execution end - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
         
+    }
+    
+    private void executeSqlStatement(Connection connection, String sb) throws SQLException {
+        Statement statement = null;
+        try {
+            statement = connection.createStatement();
+            statement.execute(sb);
+        } finally {
+            if (statement != null) {
+                statement.close();
+            }
+        }
     }
     
     private String fillSqlSentenceWithIn(String sqlSentence, Set<String> partialParametersIn) {
