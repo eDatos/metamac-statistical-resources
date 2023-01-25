@@ -285,6 +285,17 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public void scheduleGeographicCoverageCacheClearJob(ServiceContext ctx) {
+        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+
+            @Override
+            protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                planifyGeographicCoverageCacheClearJob(ctx);
+                return null;
+            }
+        });
+    }
+    
+    private void planifyGeographicCoverageCacheClearJob(ServiceContext ctx) {
         try {
             taskServiceInvocationValidator.checkScheduleGeographicCoverageCacheClearJob(ctx);
 
@@ -302,6 +313,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.error("An unexpected error has occurred scheduling Geographic coverage cache clear job", e);
         }
     }
+    
+    
     
     
     @Override
