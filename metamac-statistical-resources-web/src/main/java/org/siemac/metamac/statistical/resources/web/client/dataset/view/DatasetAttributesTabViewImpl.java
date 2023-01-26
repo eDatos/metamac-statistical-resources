@@ -136,14 +136,14 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     }
 
     private CustomToolStripButton createImportAttributesButton() {
-        CustomToolStripButton importDatasourcesButton = new CustomToolStripButton(getConstants().actionLoadDatasource(),
+        CustomToolStripButton importDatasourcesButton = new CustomToolStripButton(getConstants().actionLoadAttributes(),
                 org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
         importDatasourcesButton.setVisible(Boolean.TRUE);
         importDatasourcesButton.addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                importAttributesWithMappingWindow = new ImportAttributesWithPreviewWindow("Importar atributos");
+                importAttributesWithMappingWindow = new ImportAttributesWithPreviewWindow(getConstants().actionLoadAttributes());
                 importAttributesWithMappingWindow.show();
             }
         });

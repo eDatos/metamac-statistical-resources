@@ -114,7 +114,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             if (ImportableResourceTypeEnum.PUBLICATION_VERSION_STRUCTURE.equals(importableResourceType)) {
                 importPublicationVersionStructure(uploadedFile, args);
             } else {
-                importDatasource(mustBeZip, uploadedFile, outputFolder, args, basicVersionableStatisticalResourceDto);
+                importElement(args, mustBeZip, basicVersionableStatisticalResourceDto, outputFolder, uploadedFile);
             }
 
             sendSuccessImportationResponse(response, fileName, mustBeZip, basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
@@ -136,6 +136,15 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             logger.log(Level.SEVERE, e.getMessage());
 
             sendFailedImportationResponse(response, errorMessage, mustBeZip, basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
+        }
+    }
+
+    private void importElement(HashMap<String, String> args, Boolean mustBeZip, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, File outputFolder, File uploadedFile)
+            throws MetamacWebException, ZipException, IOException, MetamacException {
+        if (BooleanUtils.toBoolean(args.get(StatisticalResourcesSharedTokens.LOAD_PARAM_ATTRIBUTES))) {
+            importAttributes(mustBeZip, uploadedFile, outputFolder, args, basicVersionableStatisticalResourceDto);
+        } else {
+            importDatasource(mustBeZip, uploadedFile, outputFolder, args, basicVersionableStatisticalResourceDto);
         }
     }
 
@@ -239,6 +248,11 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
                 throw exceptionsJobPlanifying;
             }
         }
+    }
+
+    private void importAttributes(Boolean mustBeZip, File uploadedFile, File outputFolder, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto)
+            throws MetamacWebException, ZipException, IOException, MetamacException {
+
     }
 
     private void importPublicationVersionStructure(File uploadedFile, HashMap<String, String> args) throws MetamacException, MalformedURLException {
