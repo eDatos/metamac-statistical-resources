@@ -227,16 +227,17 @@ public class PublicationStructureTSVProcessor {
             return;
         }
         String[] relatedResourceElements = relatedResource.split(RELATED_RESOURCE_SEPARATOR);
-        if (relatedResourceElements.length == 2) {
+
+        if (isCubeUrlType(relatedResourceElements)) {
+            addUrlRelatedResourceType(element, relatedResource);
+            return;
+        } else if (relatedResourceElements.length == 2) {
             element.setRelatedResourCode(relatedResourceElements[0]);
             StatisticalResourceTypeEnum type = getRelatedResourceType(relatedResourceElements[1]);
             if (type != null) {
                 element.setRelatedResourceType(type);
                 return;
             }
-        } else if (isCubeUrlType(relatedResourceElements)) {
-            addUrlRelatedResourceType(element, relatedResource);
-            return;
         }
         exceptions.add(MetamacExceptionItemBuilder.metamacExceptionItem()
                 .withCommonServiceExceptionType(ServiceExceptionType.PUBLICATION_VERSION_STRUCTURE_IMPORTATION_CUBE_WITH_WRONG_RELATED_RESOURCE).withMessageParameters(lineNumber).build());

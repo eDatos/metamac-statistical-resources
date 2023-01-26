@@ -70,7 +70,6 @@ import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTes
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
-import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
@@ -79,9 +78,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
-import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.CommonAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticalResourcesMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesNotPersistedDoMocks;
@@ -103,16 +100,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class PublicationServiceTest extends StatisticalResourcesBaseTest implements PublicationServiceTestBase {
 
     @Autowired
-    private PublicationVersionRepository     publicationVersionRepository;
-
-    @Autowired
     private PublicationService               publicationService;
-
-    @Autowired
-    private DatasetService                   datasetService;
-
-    @Autowired
-    private QueryService                     queryService;
 
     @Autowired
     @Qualifier("txManager")
@@ -1613,7 +1601,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION).getSiemacMetadataStatisticalResource().getUrn();
         Cube expected = notPersistedDoMocks.mockUrlCube("://www.pruebas.com");
         try {
-            Cube actual = publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
+            publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
             fail("create cube url must start with http or https");
         } catch (MetamacException e) {
             assertEquals(1, e.getExceptionItems().size());
@@ -2070,7 +2058,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         Cube expected = publicationVersion.getChildrenFirstLevel().get(4).getCube();
         try {
             expected.setUrl("www.pruebas.com");
-            Cube actual = publicationService.updateCube(getServiceContextAdministrador(), expected);
+            publicationService.updateCube(getServiceContextAdministrador(), expected);
             fail("update cube url must start with http or https");
         } catch (MetamacException e) {
             assertEquals(1, e.getExceptionItems().size());
