@@ -323,7 +323,7 @@ public class RestDoMocks {
         return target;
     }
     private PublicationVersion mockPublicationVersionBasic(String agencyID, String resourceID, String version) {
-        PublicationVersion target = PublicationVersionMockFactory.createComplexStructure();
+        PublicationVersion target = PublicationVersionMockFactory.createComplexStructureWithUrl();
         target.getSiemacMetadataStatisticalResource().setUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=" + agencyID + ":" + resourceID + "(" + version + ")");
         target.getSiemacMetadataStatisticalResource().getMaintainer().setCodeNested(agencyID);
         // This is needed because the file in resources has daylight saving and we need to force summer time
