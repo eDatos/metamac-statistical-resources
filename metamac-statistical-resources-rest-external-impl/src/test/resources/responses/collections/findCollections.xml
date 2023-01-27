@@ -7,7 +7,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=VVHYyNxGdw&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=YjEMzk2D4U&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
     </stat:collection>
     <stat:collection kind="statisticalResources#collection">
         <cdomain:id>collection1</cdomain:id>
@@ -16,7 +16,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=Q21CE2CJRb&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=nL1Y7YrwNr&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
     </stat:collection>
     <stat:collection kind="statisticalResources#collection">
         <cdomain:id>collection1</cdomain:id>
@@ -25,7 +25,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=fIgvoeNLZS&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=20U54or5PS&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
     </stat:collection>
     <stat:collection kind="statisticalResources#collection">
         <cdomain:id>collection2</cdomain:id>
@@ -34,6 +34,6 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection2 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=UHFRGvo1Wk&amp;resourceId=collection2</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=JkmxoGcgbj&amp;resourceId=collection2</cdomain:visualizerHtmlLink>
     </stat:collection>
 </stat:collections>

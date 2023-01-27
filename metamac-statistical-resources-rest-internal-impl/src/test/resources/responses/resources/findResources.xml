@@ -7,12 +7,12 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
         <ns2:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>kmHuBdamv9</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=kmHuBdamv9</cdomain:urn>
+            <cdomain:id>nxMDe5TqqA</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=nxMDe5TqqA</cdomain:urn>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-kmHuBdamv9 en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-nxMDe5TqqA en Espanol</cdomain:text>
             </cdomain:name>
         </ns2:statisticalOperation>
     </ns2:resource>
@@ -23,12 +23,12 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset1&amp;version=02.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset1&amp;version=02.000#</cdomain:visualizerHtmlLink>
         <ns2:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>WqwRYsxSP2</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=WqwRYsxSP2</cdomain:urn>
+            <cdomain:id>EjuAM7Degy</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=EjuAM7Degy</cdomain:urn>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-WqwRYsxSP2 en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-EjuAM7Degy en Espanol</cdomain:text>
             </cdomain:name>
         </ns2:statisticalOperation>
     </ns2:resource>
@@ -39,12 +39,12 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency2&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency2&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
         <ns2:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>pOphkdVRyx</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=pOphkdVRyx</cdomain:urn>
+            <cdomain:id>JihHERPYQw</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=JihHERPYQw</cdomain:urn>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-pOphkdVRyx en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-JihHERPYQw en Espanol</cdomain:text>
             </cdomain:name>
         </ns2:statisticalOperation>
     </ns2:resource>
@@ -55,12 +55,12 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset2 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http: //localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset2&amp;version=01.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&amp;agencyId=agency1&amp;resourceId=dataset2&amp;version=01.000#</cdomain:visualizerHtmlLink>
         <ns2:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>Cvckg2pV1i</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=Cvckg2pV1i</cdomain:urn>
+            <cdomain:id>kUKMk8AM0v</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=kUKMk8AM0v</cdomain:urn>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-Cvckg2pV1i en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-kUKMk8AM0v en Espanol</cdomain:text>
             </cdomain:name>
         </ns2:statisticalOperation>
     </ns2:resource>
