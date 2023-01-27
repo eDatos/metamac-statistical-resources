@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Query;
-
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.hibernate.Session;
@@ -45,14 +43,20 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         return findByCondition(condition);
 
     }
-
-    
+  
     public void disabledByDatasetVersionUrn(String datasetVersionUrn) {
+        Session session = (Session) getEntityManager().getDelegate();
+        try {
+            session.doWork(new Work() {
 
-      //@formatter:off
-        Query query = getEntityManager().createNativeQuery("UPDATE tb_geocov_varelem_cache_datasets_versions g set is_activated=false WHERE  g.urn=:urn");
-        //@formatter:on
-        query.setParameter("urn", datasetVersionUrn).executeUpdate();
+                @Override
+                public void execute(Connection connection) throws SQLException {
+                    executeSqlStatement(connection, "UPDATE tb_geocov_varelem_cache_datasets_versions g set is_activated=false WHERE  g.urn='" + datasetVersionUrn + "'");
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Error disabling entries by urn from geographic coverage cache -> urn {} ", datasetVersionUrn,  e);
+        }
     }
     
     public List<GeoCovVarElementCacheDatasetVersion> findNoActivatedElements() {
