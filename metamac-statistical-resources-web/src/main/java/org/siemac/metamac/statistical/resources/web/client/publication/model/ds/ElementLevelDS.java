@@ -18,7 +18,7 @@ public class ElementLevelDS extends DataSource {
     public static final String DATASET               = "str-dataset";
     public static final String QUERY                 = "str-query";
     public static final String MULTIDATASET          = "str-multidataset";
-    public static final String URL          = "str-url";
+    public static final String URL                   = "str-url";
 
     public static final String INFO                  = "str-info";
 
