@@ -1,12 +1,15 @@
 package org.siemac.metamac.statistical.resources.core.dataset.repositoryimpl;
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
+import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.Query;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -59,31 +62,41 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         }
     }
     
-    public List<GeoCovVarElementCacheDatasetVersion> findNoActivatedElements() {
+    public List<Object> findNoActivatedElements() {
 
-        List<ConditionalCriteria> condition = criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(false)
-                .distinctRoot().build();
-
-        return findByCondition(condition);
+        //@formatter:off
+          Query query = getEntityManager().createNativeQuery(
+                  "SELECT a.id, a.variable_element_fk, a.title_fk, a.operation_title_fk, b.title_fk as variable_element_title_fk "
+                + "FROM tb_geocov_varelem_cache_datasets_versions a "
+                + "INNER JOIN tb_external_items b ON a.variable_element_fk = b.id "
+                + "WHERE  a.IS_ACTIVATED = false");
+          //@formatter:on
+          return query.getResultList();
       }
+    
+    private String getStringFromBigInteger(BigInteger id) {
+        return id.toString();
+    }
 
     public void deleteAll() {
 
         Set<String> geoCovVarElementCacheDatasetVersionId = new HashSet<>();
         Set<String> variableElementId = new HashSet<>();
         Set<String> internationalStrings = new HashSet<>();
-        
-        List<GeoCovVarElementCacheDatasetVersion> disabledElements = findNoActivatedElements();
 
-        for (GeoCovVarElementCacheDatasetVersion row : disabledElements) {
-         
-            geoCovVarElementCacheDatasetVersionId.add(String.valueOf(row.getId()));
+        List<Object> disabledElements = findNoActivatedElements();
 
-            variableElementId.add(String.valueOf(row.getVariableElement().getId()));
+        for (Object row : disabledElements) {
 
-            internationalStrings.add(String.valueOf(row.getVariableElement().getTitle().getId()));
-            internationalStrings.add(String.valueOf(row.getTitle().getId()));
-            internationalStrings.add(String.valueOf(row.getOperationTitle().getId()));
+            Object[] cols = (Object[]) row;
+
+            geoCovVarElementCacheDatasetVersionId.add(getStringFromBigInteger((BigInteger) cols[0]));
+
+            variableElementId.add(getStringFromBigInteger((BigInteger) cols[1]));
+
+            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[2]));
+            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
+            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[4]));
         }
 
         Session session = (Session) getEntityManager().getDelegate();
@@ -92,7 +105,8 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
 
                 @Override
                 public void execute(Connection connection) throws SQLException {
-                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS WHERE id IN ", geoCovVarElementCacheDatasetVersionId, "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS");
+                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS WHERE id IN ", geoCovVarElementCacheDatasetVersionId,
+                            "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS");
 
                     executeSqlSentenceWithIn(connection, "DELETE FROM TB_EXTERNAL_ITEMS WHERE id IN ", variableElementId, "TB_EXTERNAL_ITEMS");
 
@@ -104,6 +118,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         } catch (Exception e) {
             logger.error("Error deleting all disabled entries from geographic coverage cache", e);
         }
+
     }
     
 
