@@ -19,9 +19,11 @@ import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
 
 public class ImportAttributesWithPreviewWindow extends UploadResourceWithPreviewWindow {
+    private String dataVersionUrn;
 
-    public ImportAttributesWithPreviewWindow(String title) {
+    public ImportAttributesWithPreviewWindow(String title, String datasetVersionUrn) {
         super(title);
+        dataVersionUrn = datasetVersionUrn;
         List<FormItem> items = new ArrayList<FormItem>();
         CustomButtonItem uploadButton = new CustomButtonItem("button-import", MetamacWebCommon.getConstants().accept());
         uploadButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
@@ -32,6 +34,9 @@ public class ImportAttributesWithPreviewWindow extends UploadResourceWithPreview
             }
         });
 
+        HiddenItem updateAttributeInstance = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
+        updateAttributeInstance.setValue(dataVersionUrn);
+        mainForm.addFields(updateAttributeInstance);
         items.add(uploadButton);
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
     }
@@ -83,6 +88,7 @@ public class ImportAttributesWithPreviewWindow extends UploadResourceWithPreview
         // TODO Auto-generated method stub
         
     }
+
     private class UploadAttributeForm extends UploadForm {
 
         private UploadItem uploadItem;
@@ -112,8 +118,6 @@ public class ImportAttributesWithPreviewWindow extends UploadResourceWithPreview
 
             HiddenItem loadParamAttributes = new HiddenItem(StatisticalResourcesSharedTokens.LOAD_PARAM_ATTRIBUTES);
             loadParamAttributes.setValue(true);
-            
-
             setFields(uploadItem, loadParamAttributes);
         }
 

@@ -41,6 +41,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     private AttributePanel                    attributePanel;
     private CustomToolStripButton             importAttributesButton;
     private ImportAttributesWithPreviewWindow importAttributesWithMappingWindow;
+    private DatasetVersionDto                 datasetVersionDto;
 
     public DatasetAttributesTabViewImpl() {
 
@@ -97,6 +98,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     public void setAttributes(DatasetVersionDto datasetVersionDto, List<DsdAttributeDto> attributes) {
         listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeRecords(attributes));
         attributePanel.updateButtonsVisibility(datasetVersionDto);
+        this.datasetVersionDto = datasetVersionDto;
         attributePanel.hide();
     }
 
@@ -143,7 +145,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
 
             @Override
             public void onClick(ClickEvent event) {
-                importAttributesWithMappingWindow = new ImportAttributesWithPreviewWindow(getConstants().actionLoadAttributes());
+                importAttributesWithMappingWindow = new ImportAttributesWithPreviewWindow(getConstants().actionLoadAttributes(), datasetVersionDto.getUrn());
                 importAttributesWithMappingWindow.show();
             }
         });

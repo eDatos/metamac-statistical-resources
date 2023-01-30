@@ -253,6 +253,34 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     private void importAttributes(Boolean mustBeZip, File uploadedFile, File outputFolder, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto)
             throws MetamacWebException, ZipException, IOException, MetamacException {
 
+        StatisticalResourcesServiceFacade statisticalResourcesServiceFacade = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext()
+                .getBean(StatisticalResourcesServiceFacade.BEAN_ID);
+
+        List<File> filesToImport = new ArrayList<File>();
+
+        Boolean storeDimensionsMapping = null;
+        boolean isFileZip = isZip(uploadedFile);
+
+        if (isFileZip) {
+            // If the uploaded file is a zip, the mapping cannot be set by the user. That's why the mappings are not stored in this case.
+            storeDimensionsMapping = false;
+            filesToImport = ZipUtils.unzipArchive(uploadedFile, outputFolder);
+        } else {
+            storeDimensionsMapping = true;
+            filesToImport.add(uploadedFile);
+        }
+
+        List<URL> fileUrls = getURLsFromFiles(filesToImport);
+
+        String statisticalOperationCode = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_OPERATION_CODE);
+        String datasetVersionUrn = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
+
+        if (BooleanUtils.isTrue(mustBeZip) && !isFileZip) {
+            throwMetamacWebException(WebMessageExceptionsConstants.ERROR_IMPORT_IS_NOT_ZIP);
+        } else if (BooleanUtils.isFalse(mustBeZip) && isFileZip) {
+            throwMetamacWebException(WebMessageExceptionsConstants.ERROR_IMPORT_IS_ZIP);
+        }
+
     }
 
     private void importPublicationVersionStructure(File uploadedFile, HashMap<String, String> args) throws MetamacException, MalformedURLException {
