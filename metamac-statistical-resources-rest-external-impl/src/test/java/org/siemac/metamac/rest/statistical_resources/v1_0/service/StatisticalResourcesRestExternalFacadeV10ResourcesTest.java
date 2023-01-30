@@ -10,7 +10,7 @@ import javax.ws.rs.core.Response.Status;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Resources;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ExtendedResource;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class StatisticalResourcesRestExternalFacadeV10ResourcesTest extends Stat
         String query = "IS_LAST_VERSION EQ 'true'";
         Resources resources = statisticalResourcesRestExternalFacadeClientXml.findResources(query, null, null, null, null);
         
-        ExtendedResource resource = resources.getResources().get(0);
+        ResourceWithStatisticalOperation resource = resources.getResources().get(0);
         
         assertEquals(DATASET_1_CODE, resource.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)", resource.getUrn());

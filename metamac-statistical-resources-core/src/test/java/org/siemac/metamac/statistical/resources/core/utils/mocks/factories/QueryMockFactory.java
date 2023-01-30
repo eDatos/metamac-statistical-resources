@@ -24,6 +24,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_27_V1_PUBLISHED_FOR_QUERY_06_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockDescriptor;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockProvider;
@@ -533,6 +534,16 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
         return queryVersion;
     }
 
+    public static String generateUrl(boolean isHttps, String element) {
+        String url = "";
+        if (StringUtils.isEmpty(element)) {
+            url = "pruebas.com";
+        } else {
+            url = element + " - pruebas.com";
+        }
+        return isHttps ? "https://www." + url : "http://www." + url;
+    }
+    
     public static Query generateQueryWithGeneratedVersion() {
         return getStatisticalResourcesPersistedDoMocks().mockQueryWithGeneratedQueryVersion();
     }

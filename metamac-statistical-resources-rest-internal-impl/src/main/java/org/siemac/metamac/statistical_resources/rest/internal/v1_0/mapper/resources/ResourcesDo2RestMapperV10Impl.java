@@ -5,12 +5,12 @@ import java.util.List;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
-import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternalWithStatisticalOperation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Resources;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ExtendedResource;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,17 +34,17 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
 
         // Values
         for (GeoCovVarElementCacheDatasetVersion source : sources.getValues()) {
-            ExtendedResource target = toResource(source, selectedLanguages);
+            ResourceInternalWithStatisticalOperation target = toResource(source, selectedLanguages);
             targets.getResources().add(target);
         }
         return targets;
     } 
      
-    private ExtendedResource toResource(GeoCovVarElementCacheDatasetVersion source, List<String> selectedLanguages) {
+    private ResourceInternalWithStatisticalOperation toResource(GeoCovVarElementCacheDatasetVersion source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        ExtendedResource target = new ExtendedResource();
+        ResourceInternalWithStatisticalOperation target = new ResourceInternalWithStatisticalOperation();
         target.setId(source.getCode());
         target.setUrn(source.getUrn());
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
@@ -56,8 +56,8 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         return target;
     }
     
-    private Resource toStatisticalOperationResource(GeoCovVarElementCacheDatasetVersion source, List<String> selectedLanguages) {
-        Resource target = new Resource();
+    private ResourceInternal toStatisticalOperationResource(GeoCovVarElementCacheDatasetVersion source, List<String> selectedLanguages) {
+        ResourceInternal target = new ResourceInternal();
         target.setId(source.getOperationCode());
         target.setUrn(source.getOperationUrn());
         target.setName(commonDo2RestMapper.toInternationalString(source.getOperationTitle(), selectedLanguages));

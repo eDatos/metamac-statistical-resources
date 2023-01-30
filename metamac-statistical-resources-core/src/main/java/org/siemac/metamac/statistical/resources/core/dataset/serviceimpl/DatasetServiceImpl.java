@@ -1391,8 +1391,15 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
                     exceptionItems);
             if (exceptionItems.isEmpty()) {
+                InternationalString datasetTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getTitle());        
+                InternationalString operationTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getStatisticalOperation().getTitle());
+
                 for (ExternalItem variableElement : externalItemGeographicCoverage) {
-                    updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, variableElement);
+                    GeoCovVarElementCacheDatasetVersion result = updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, datasetTitle,  operationTitle, variableElement);
+                    if (datasetTitle.getId() == null) {
+                        datasetTitle = result.getTitle();
+                        operationTitle = result.getOperationTitle();
+                    }
                 }
             } else {
                 MetamacException metamacException = new MetamacException();
@@ -1416,20 +1423,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         });
     }
     
-    private void updateGeographicCoverageVariableElementsCache(DatasetAvro jaxiDatasetVersionAvro, ExternalItem variableElement) {
+    private GeoCovVarElementCacheDatasetVersion updateGeographicCoverageVariableElementsCache(DatasetAvro jaxiDatasetVersionAvro, InternationalString datasetTitle, InternationalString operationTitle, ExternalItem variableElement) {
         GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
         geoCovVarElementCacheDatasetVersion.setCode(jaxiDatasetVersionAvro.getCode());
         geoCovVarElementCacheDatasetVersion.setUrn(jaxiDatasetVersionAvro.getUrn());
-        geoCovVarElementCacheDatasetVersion.setTitle(restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getTitle()));        
+        geoCovVarElementCacheDatasetVersion.setTitle(datasetTitle);
         geoCovVarElementCacheDatasetVersion.setOperationCode(jaxiDatasetVersionAvro.getStatisticalOperation().getCode());
         geoCovVarElementCacheDatasetVersion.setOperationUrn(jaxiDatasetVersionAvro.getStatisticalOperation().getUrn());
-        geoCovVarElementCacheDatasetVersion.setOperationTitle(restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getStatisticalOperation().getTitle())); 
+        geoCovVarElementCacheDatasetVersion.setOperationTitle(operationTitle);
         geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.TRUE);
         geoCovVarElementCacheDatasetVersion.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
         geoCovVarElementCacheDatasetVersion.setIsLastVersion(true);
         geoCovVarElementCacheDatasetVersion.setIsActivated(true);
-        geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
+        return geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
 
     private TransactionTemplate getTransactionTemplate() {

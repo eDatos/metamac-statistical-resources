@@ -1,6 +1,5 @@
 package org.siemac.metamac.statistical.resources.core.task.serviceimpl;
 
-import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 import static org.quartz.DateBuilder.futureDate;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -73,6 +72,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStr
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
@@ -125,6 +125,7 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.validators.
 import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
+import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -301,8 +302,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.error("An unexpected error has occurred scheduling Geographic coverage cache clear job", e);
         }
     }
-    
-    
+   
     @Override
     public synchronized String planifyImportationDataset(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
         // Validation
@@ -1033,7 +1033,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(taskInfoDataset.getDatasetVersionId());
 
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
-                
+
         logger.debug("Updating geocoverage cache for dataset {}", datasetVersionUrn);
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
 
@@ -1041,23 +1041,26 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.debug("Dataset geographic coverage is empty");
             return;
         }
-        
+
         String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
-           
+
         // discard all variable elements present in the array to avoid duplicated or outdated data
-        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(datasetVersionUrn); 
-        
+        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(datasetVersionUrn);
+
         if (Boolean.TRUE.equals(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion())) {
             updateAllGeographicCoverageVariableElementsCache(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), datasetVersionUrn);
         }
-   
+
         if (logger.isDebugEnabled()) {
             logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
         }
-        
+        InternationalString datasetTitle = InternationalStringUtils.copy(datasetVersion.getSiemacMetadataStatisticalResource().getTitle());
+        InternationalString operationTitle = InternationalStringUtils.copy(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
+
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
+
                 @Override
                 protected boolean eval(CodeResourceInternal code) {
                     return StringUtils.equals(code.getUrn(), geoCoverage.getUrn());
@@ -1070,8 +1073,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
 
             ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
-            updateGeographicCoverageVariableElementsCache(datasetVersion, territoryVariableElement);
-            
+            GeoCovVarElementCacheDatasetVersion result = updateGeographicCoverageVariableElementsCache(datasetVersion, datasetTitle, operationTitle, territoryVariableElement);
+            if (datasetTitle.getId() == null) {
+                datasetTitle = result.getTitle();
+                operationTitle = result.getOperationTitle();
+            }
+
         }
 
         logger.debug("Processing geographic coverage to create the cache correctlyfinished");
@@ -1145,21 +1152,21 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     
-    private void updateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, ExternalItem variableElement) throws MetamacException {
+    private GeoCovVarElementCacheDatasetVersion updateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, InternationalString datasetTitle, InternationalString operationTitle, ExternalItem variableElement) throws MetamacException {
         GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
         geoCovVarElementCacheDatasetVersion.setCode(datasetVersion.getSiemacMetadataStatisticalResource().getCode());
         geoCovVarElementCacheDatasetVersion.setUrn(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-        geoCovVarElementCacheDatasetVersion.setTitle(datasetVersion.getSiemacMetadataStatisticalResource().getTitle());        
+        geoCovVarElementCacheDatasetVersion.setTitle(datasetTitle);        
         geoCovVarElementCacheDatasetVersion.setOperationCode(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
         geoCovVarElementCacheDatasetVersion.setOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-        geoCovVarElementCacheDatasetVersion.setOperationTitle(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
+        geoCovVarElementCacheDatasetVersion.setOperationTitle(operationTitle);
         geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.FALSE);
         String maintainer = datasetVersion.getLifeCycleStatisticalResource().getMaintainer() != null ? datasetVersion.getLifeCycleStatisticalResource().getMaintainer().getCode() : null;
         geoCovVarElementCacheDatasetVersion.setHtmlLink(MetamacPortalWebUtils.buildDatasetVersionUrl(maintainer, datasetVersion.getLifeCycleStatisticalResource().getCode(), datasetVersion.getLifeCycleStatisticalResource().getVersionLogic(), configurationService.retrievePortalExternalWebApplicationUrlVisualizer()));
         geoCovVarElementCacheDatasetVersion.setIsLastVersion(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion());
         geoCovVarElementCacheDatasetVersion.setIsActivated(true);
-        geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
+        return geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
  
     private void processRollbackDuplicationTask(ServiceContext ctx, Task task) throws MetamacException {
@@ -1626,34 +1633,21 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
+
+    
     @Override
     public void processGeographicCoverageCacheClearTask(ServiceContext ctx) throws MetamacException {
         taskServiceInvocationValidator.checkProcessGeographicCoverageCacheClearTask(ctx);
 
         DateTime executionDate = new DateTime();
 
-        logger.info("Execution start - delete all disabled entries from geopgraphic coverage cache at : {} ", executionDate);
-        
-        List<ConditionalCriteria> condition = criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(false).distinctRoot()
-                .build();
-
-        List<GeoCovVarElementCacheDatasetVersion> disabledElements = geoCovVarElementCacheDatasetVersionRepository.findByCondition(condition);
-
-        for (GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion : disabledElements) {
-            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
-
-                @Override
-                protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                    geoCovVarElementCacheDatasetVersionRepository.delete(geoCovVarElementCacheDatasetVersion);
-                    return null;
-                }
-            });
-            
-        }
-
+        logger.info("Execution start - delete all disabled entries from geographic coverage cache at : {} ", executionDate);
+    
+        geoCovVarElementCacheDatasetVersionRepository.deleteAll();
+ 
         executionDate = new DateTime();
         
-        logger.info("Execution end - delete all disabled entries from geopgraphic coverage cache at : {} ", executionDate);
+        logger.info("Execution end - delete all disabled entries from geographic coverage cache at : {} ", executionDate);
         
     }
     

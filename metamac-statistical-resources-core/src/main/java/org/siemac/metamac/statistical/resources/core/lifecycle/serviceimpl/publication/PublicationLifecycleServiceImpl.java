@@ -140,8 +140,9 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
 
     private void checkAllCubesLinkToDatasetQueryOrMultidataset(PublicationVersion resource, List<MetamacExceptionItem> exceptionItems) {
         for (ElementLevel elementLevel : resource.getChildrenAllLevels()) {
-            if (elementLevel.isCube() && elementLevel.getCube().getDataset() == null && elementLevel.getCube().getQuery() == null && elementLevel.getCube().getMultidataset() == null) {
-                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET,
+            if (elementLevel.isCube() && elementLevel.getCube().getDataset() == null && elementLevel.getCube().getQuery() == null && elementLevel.getCube().getMultidataset() == null
+                    && elementLevel.getCube().getUrl() == null) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET_URL,
                         elementLevel.getCube().getNameableStatisticalResource().getUrn()));
             }
         }

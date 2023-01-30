@@ -213,6 +213,8 @@ Application PublicationsStatisticalResources {
 			- @Query query cascade="none" nullable databaseColumn="QUERY_FK";
 			"Multidataset"
 			- @Multidataset multidataset cascade="none" nullable databaseColumn="MULTIDATASET_FK";
+			
+			String url nullable databaseColumn="url";
             
 			"Provides access to Cube"
             Repository CubeRepository {
