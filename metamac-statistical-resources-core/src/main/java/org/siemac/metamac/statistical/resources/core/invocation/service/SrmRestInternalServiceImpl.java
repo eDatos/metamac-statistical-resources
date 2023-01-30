@@ -507,7 +507,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = params[0];
             String resourceId = params[1];
             String version = params[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().findOrganisations(agencyId, resourceId, version, null, null, null, null);
+            return restApiLocator.getSrmRestInternalFacadeV10().findOrganisations(agencyId, resourceId, version, null, null, null, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -520,7 +520,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String offset = String.valueOf(firstResult);
             String orderBy = null;
             return restApiLocator.getSrmRestInternalFacadeV10().findOrganisations(RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, query, orderBy, limit,
-                    offset);
+                    offset, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -646,7 +646,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = params[0];
             String resourceId = params[1];
             String version = params[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().findCategories(agencyId, resourceId, version, null, null, null, null);
+            return restApiLocator.getSrmRestInternalFacadeV10().findCategories(agencyId, resourceId, version, null, null, null, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -659,7 +659,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String offset = String.valueOf(firstResult);
             String orderBy = null;
             return restApiLocator.getSrmRestInternalFacadeV10().findCategories(RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, query, orderBy, limit,
-                    offset);
+                    offset, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }

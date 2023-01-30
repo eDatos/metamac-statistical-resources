@@ -126,7 +126,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         List<String> urns = getUrnsFromExternalItems(allItems);
         List<String> publishedUrns = getUrnsFromExternalItems(publishedItems);
         Mockito.when(srmRestInternalFacadeV10.findOrganisations(Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL),
-                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedOrganisationsUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString()))
+                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedOrganisationsUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(), null))
                 .thenReturn(SrmRestInternalFacadeV10MockUtils.mockOrganisationsWithOnlyUrns(publishedUrns));
     }
 
@@ -150,7 +150,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         List<String> urns = getUrnsFromExternalItems(allItems);
         List<String> publishedUrns = getUrnsFromExternalItems(publishedItems);
         Mockito.when(srmRestInternalFacadeV10.findCategories(Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL),
-                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedCategoriesUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString()))
+                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedCategoriesUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(), null))
                 .thenReturn(SrmRestInternalFacadeV10MockUtils.mockCategoriesWithOnlyUrns(publishedUrns));
     }
 
