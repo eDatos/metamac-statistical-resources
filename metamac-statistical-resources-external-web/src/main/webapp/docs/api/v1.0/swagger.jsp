@@ -445,6 +445,10 @@
             "urn":{
                "description":"",
                "type":"string"
+            },
+            "visualizerHtmlLink":{
+               "description":"",
+               "type":"string"
             }
          },
          "description":""
@@ -2364,6 +2368,13 @@
                      },
                      "description":"",
                      "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"string"
                   }
                }
             }
@@ -2702,6 +2713,13 @@
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"string"
+                  },
+                  "visualizerHtmlLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
