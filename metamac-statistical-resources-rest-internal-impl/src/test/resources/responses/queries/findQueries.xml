@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:queries xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:ns2="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain" xmlns:ns3="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain" kind="statisticalResources#queries" total="40" limit="25" offset="4" selfLink="http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1?limit=25&amp;offset=4" nextLink="http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1?limit=25&amp;offset=29" lastLink="http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1?limit=25&amp;offset=29">
+<ns2:queries xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:ns2="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain" kind="statisticalResources#queries" total="40" limit="25" offset="4" selfLink="http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1?limit=25&amp;offset=4" nextLink="http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1?limit=25&amp;offset=29" lastLink="http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1?limit=25&amp;offset=29">
     <ns2:query kind="statisticalResources#query">
         <cdomain:id>query1</cdomain:id>
         <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1</cdomain:urn>
@@ -7,7 +7,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=kzuhrmE8MD/queries/query;id=agency1:query1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=QSHcycjiHE&amp;resourceId=query1#</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=fUzYIitgFE/queries/query;id=agency1:query1(01.000)</ns2:managementAppLink>
     </ns2:query>
     <ns2:query kind="statisticalResources#query">
         <cdomain:id>query1</cdomain:id>
@@ -16,7 +17,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=kqIuPiVCKv/queries/query;id=agency1:query1(02.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=j2FQIMsf92&amp;resourceId=query1#</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=J5U8oaybHf/queries/query;id=agency1:query1(02.000)</ns2:managementAppLink>
     </ns2:query>
     <ns2:query kind="statisticalResources#query">
         <cdomain:id>query1</cdomain:id>
@@ -25,7 +27,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=zBcwfjDzxR/queries/query;id=agency2:query1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=LdKpY1TU5q&amp;resourceId=query1#</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=0MrETGGkII/queries/query;id=agency2:query1(01.000)</ns2:managementAppLink>
     </ns2:query>
     <ns2:query kind="statisticalResources#query">
         <cdomain:id>query2</cdomain:id>
@@ -34,6 +37,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query2 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=TNo9L9hOxF/queries/query;id=agency1:query2(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=4LpojvtTnz&amp;resourceId=query2#</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=wXHBsfhRuK/queries/query;id=agency1:query2(01.000)</ns2:managementAppLink>
     </ns2:query>
 </ns2:queries>
