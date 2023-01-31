@@ -145,7 +145,20 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
 
             @Override
             public void onClick(ClickEvent event) {
-                importAttributesWithMappingWindow = new ImportAttributesWithPreviewWindow(getConstants().actionLoadAttributes(), datasetVersionDto.getUrn());
+                importAttributesWithMappingWindow = new ImportAttributesWithPreviewWindow(getConstants().actionLoadAttributes(), datasetVersionDto.getUrn()) {
+                    
+                    @Override
+                    protected void uploadSuccess(String message) {
+                        getUiHandlers().attributesImportationSucceed(message);
+                        
+                    }
+                    
+                    @Override
+                    protected void uploadFailed(String error) {
+                        getUiHandlers().attributesImportationFailed(error);
+                        
+                    }
+                };
                 importAttributesWithMappingWindow.show();
             }
         });

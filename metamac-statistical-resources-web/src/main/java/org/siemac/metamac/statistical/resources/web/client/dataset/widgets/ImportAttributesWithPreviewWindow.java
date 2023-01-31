@@ -18,7 +18,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
 
-public class ImportAttributesWithPreviewWindow extends UploadResourceWithPreviewWindow {
+public abstract class ImportAttributesWithPreviewWindow extends UploadResourceWithPreviewWindow {
     private String dataVersionUrn;
 
     public ImportAttributesWithPreviewWindow(String title, String datasetVersionUrn) {
@@ -73,22 +73,23 @@ public class ImportAttributesWithPreviewWindow extends UploadResourceWithPreview
 
     @Override
     protected void onPreviewFailed(String errorMessage) {
-        // TODO Auto-generated method stub
-        
+        uploadFailed(errorMessage);
     }
 
     @Override
     protected void onSubmitComplete(String response) {
-        // TODO Auto-generated method stub
-        
+        uploadSuccess(response);
     }
 
     @Override
     protected void onSubmitFailed(String errorMessage) {
-        // TODO Auto-generated method stub
-        
+        uploadFailed(errorMessage);
     }
 
+    protected abstract void uploadFailed(String error);
+    protected abstract void uploadSuccess(String message);
+
+    
     private class UploadAttributeForm extends UploadForm {
 
         private UploadItem uploadItem;
