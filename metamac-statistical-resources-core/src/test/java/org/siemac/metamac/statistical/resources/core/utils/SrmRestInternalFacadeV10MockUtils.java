@@ -83,7 +83,7 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
     private static List<ItemResourceInternal> mockItemResourcesInternalWithOnlyUrns(List<String> urns) {
         List<ItemResourceInternal> resources = new ArrayList<ItemResourceInternal>();
         for (String urn : urns) {
-            ItemResourceInternal resource = new CategoryResourceInternal();
+            ItemResourceInternal resource = new ItemResourceInternal();
             resource.setUrn(urn);
             resources.add(resource);
         }
