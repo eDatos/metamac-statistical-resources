@@ -28,6 +28,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeRes
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contact;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contacts;
@@ -238,7 +239,7 @@ public class SrmRestMocks {
     public static Concepts mockConceptsByConceptScheme(String agencyID, String resourceID, String version, List<String> conceptsId) {
         Concepts concepts = new Concepts();
         for (String conceptId : conceptsId) {
-            ItemResourceInternal concept = mockConceptResource(agencyID, resourceID, version, conceptId, null);
+            ConceptResourceInternal concept = mockConceptResource(agencyID, resourceID, version, conceptId, null);
             concepts.getConcepts().add(concept);
         }
         return concepts;
@@ -282,8 +283,8 @@ public class SrmRestMocks {
         return code;
     }
 
-    public static ItemResourceInternal mockConceptResource(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
-        ItemResourceInternal concept = new ItemResourceInternal();
+    public static ConceptResourceInternal mockConceptResource(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
+        ConceptResourceInternal concept = new ConceptResourceInternal();
         concept.setUrn("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=" + agencyID + ":" + maintainableParentID + "(" + maintainableVersionID + ")." + resourceID);
         concept.setId(resourceID);
         concept.setName(mockInternationalString(resourceID));
@@ -294,8 +295,8 @@ public class SrmRestMocks {
         return concept;
     }
     
-    public static ItemResourceInternal mockConceptResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
-        ItemResourceInternal concept = mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn);
+    public static ConceptResourceInternal mockConceptResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
+        ConceptResourceInternal concept = mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn);
         concept.setDescription(mockInternationalString("Description " + resourceID));
         return concept;
     }
