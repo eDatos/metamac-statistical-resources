@@ -16,6 +16,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructures;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisations;
@@ -64,12 +65,12 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
 
     public static Categories mockCategoriesWithOnlyUrns(List<String> urns) {
         Categories categories = new Categories();
-        categories.getCategories().addAll(mockItemResourcesInternalWithOnlyUrns(urns));
+        categories.getCategories().addAll(mockCategoryResourceInternalWithOnlyUrns(urns));
         populateListBaseWithResourcesWithOnlyUrns(categories, urns);
         return categories;
     }
 
-    private static List<CategoryResourceInternal> mockItemResourcesInternalWithOnlyUrns(List<String> urns) {
+    private static List<CategoryResourceInternal> mockCategoryResourceInternalWithOnlyUrns(List<String> urns) {
         List<CategoryResourceInternal> resources = new ArrayList<CategoryResourceInternal>();
         for (String urn : urns) {
             CategoryResourceInternal resource = new CategoryResourceInternal();
@@ -79,6 +80,16 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
         return resources;
     }
 
+    private static List<ItemResourceInternal> mockItemResourcesInternalWithOnlyUrns(List<String> urns) {
+        List<ItemResourceInternal> resources = new ArrayList<ItemResourceInternal>();
+        for (String urn : urns) {
+            ItemResourceInternal resource = new CategoryResourceInternal();
+            resource.setUrn(urn);
+            resources.add(resource);
+        }
+        return resources;
+    }
+    
     private static List<CodelistsResourceInternal> mockCodelistsResourceInternalWithOnlyUrns(List<String> urns) {
         List<CodelistsResourceInternal> resources = new ArrayList<CodelistsResourceInternal>();
         for (String urn : urns) {
