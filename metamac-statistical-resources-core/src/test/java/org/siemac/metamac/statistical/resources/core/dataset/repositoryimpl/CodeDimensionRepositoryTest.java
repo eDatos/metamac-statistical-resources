@@ -56,6 +56,11 @@ public class CodeDimensionRepositoryTest extends StatisticalResourcesBaseTest im
         }
     }
 
+    @Override
+    public void testFindTitleForDatasetVersionByDimensionId() throws Exception {
+
+    }
+
     @Test
     @MetamacMock(DATASET_VERSION_27_WITH_COVERAGE_FILLED_NAME)
     public void testFindCodesForDatasetVersionByDimensionIdNotExist() throws Exception {

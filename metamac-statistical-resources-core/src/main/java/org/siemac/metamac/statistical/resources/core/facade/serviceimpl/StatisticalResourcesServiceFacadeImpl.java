@@ -1127,7 +1127,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceCreated.getAttributeId());
 
-        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(dsdAttribute, attributeInstanceCreated);
+        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceCreated);
     }
 
     @Override
@@ -1147,7 +1147,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         if (attributeInstanceUpdated != null) {
             DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceUpdated.getAttributeId());
 
-            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(dsdAttribute, attributeInstanceUpdated);
+            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceUpdated);
         } else {
             return null;
         }
@@ -1178,7 +1178,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeId);
 
-        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtosToDsdAttributeInstanceDtos(dsdAttribute, instances);
+        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtosToDsdAttributeInstanceDtos(datasetVersionDto.getId(), dsdAttribute, instances);
     }
 
     @Override

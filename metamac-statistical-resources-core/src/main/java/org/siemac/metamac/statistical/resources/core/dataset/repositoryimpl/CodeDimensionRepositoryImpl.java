@@ -36,4 +36,24 @@ public class CodeDimensionRepositoryImpl extends CodeDimensionRepositoryBase {
                 , 
                 parameters);
     }
+
+    @Override
+    public String findTitleForDatasetVersionByDimensionId(long datasetVersionId, String dimensionId, String filter) throws MetamacException {
+        Map<String,Object> parameters = new HashMap<String, Object>();
+        parameters.put("dimensionId", dimensionId);
+        parameters.put("datasetVersionId", datasetVersionId);
+
+        String filterSql = StringUtils.EMPTY;
+        if (StringUtils.isNotBlank(filter)) {
+            parameters.put("filter", "%"+filter+"%");
+            filterSql =" and (code.identifier like :filter)";
+        }
+        return findByQuery(
+                "from CodeDimension code "+
+                        "where code.dsdComponentId = :dimensionId "+
+                        "and code.datasetVersion.id = :datasetVersionId" +
+                        filterSql
+                ,
+                parameters).get(0).getTitle();
+    }
 }
