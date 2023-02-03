@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.dataset.repositoryimpl;
 
+import static org.junit.Assert.assertNull;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_27_WITH_COVERAGE_FILLED_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks.mockCodeDimension;
@@ -18,6 +19,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensio
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -56,9 +58,15 @@ public class CodeDimensionRepositoryTest extends StatisticalResourcesBaseTest im
         }
     }
 
+    @Test
     @Override
+    @MetamacMock(DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME)
     public void testFindTitleForDatasetVersionByDimensionId() throws Exception {
-
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME);
+        CodeDimension codeDimensionMock = mockCodeDimension(datasetVersion, "TIME_PERIOD","2010-M02", "Febrero 2010");
+        CodeDimension codeDimension = codeDimensionRepository.findTitleForDatasetVersionByDimensionId(datasetVersion.getId(), "TIME_PERIOD", "2010-M01");
+        assertNull(codeDimension.getTitle());
+        Assert.assertEquals(codeDimensionMock.getTitle(),codeDimension.getTitle());
     }
 
     @Test
