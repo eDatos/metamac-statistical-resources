@@ -531,7 +531,7 @@
                     <reuseForks>true</reuseForks>
                     <argLine>-Xms1024m -Xmx2048m</argLine>
                     <excludes>
-                        <exclude>**/DataManipulateTest.java</exclude>
+                    	<exclude>**/DataManipulateTest.java</exclude>               	
                         <exclude>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</exclude>
                         <exclude>**/TranslationServiceTest.java</exclude>                    
                      </excludes>
@@ -561,7 +561,7 @@
                 <version>2.22.2</version>
                 <configuration>
                     <includes>
-                        <include>**/DataManipulateTest.java</include>
+                  	    <include>**/DataManipulateTest.java</include>  
                         <include>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</include>
                         <include>**/TranslationServiceTest.java</include>
                     </includes>
