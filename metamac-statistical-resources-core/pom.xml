@@ -531,7 +531,15 @@
                     <reuseForks>true</reuseForks>
                     <argLine>-Xms1024m -Xmx2048m</argLine>
                     <excludes>
-                        <exclude>**/DataManipulateTest.java</exclude>
+                    	<exclude>**/DataManipulateTest.java</exclude>
+                    	<exclude>**/CubeRepositoryTest.java</exclude>
+                    	<exclude>**/QueryDto2DoMapperTest.java</exclude>
+                    	<exclude>**/DatasetVersioningServiceTest.java</exclude>
+                    	<exclude>**/MultidatasetCubeRepositoryTest.java</exclude>
+                    	<exclude>**/MultidatasetVersionRepositoryTest.java</exclude>
+                    	<exclude>**/PublicationPublishingServiceTest.java</exclude>
+                    	<exclude>**/StatisticalResourcesServiceFacadeTest.java</exclude>
+                    	<exclude>**/StatisticalResourcesOptimisticLockingTest.java</exclude>                   	
                         <exclude>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</exclude>
                         <exclude>**/TranslationServiceTest.java</exclude>                    
                      </excludes>
@@ -561,7 +569,15 @@
                 <version>2.22.2</version>
                 <configuration>
                     <includes>
-                        <include>**/DataManipulateTest.java</include>
+                   	    <include>**/DataManipulateTest.java</include>
+                        <include>**/CubeRepositoryTest.java</include>
+                    	<include>**/QueryDto2DoMapperTest.java</include>
+                    	<include>**/DatasetVersioningServiceTest.java</include>
+                    	<include>**/MultidatasetCubeRepositoryTest.java</include>
+                    	<include>**/MultidatasetVersionRepositoryTest.java</include>
+                    	<include>**/PublicationPublishingServiceTest.java</include>
+                    	<include>**/StatisticalResourcesServiceFacadeTest.java</include>
+                    	<include>**/StatisticalResourcesOptimisticLockingTest.java</include>
                         <include>**/DatasetServiceWithoutDatasetRepositoryMockitoTest.java</include>
                         <include>**/TranslationServiceTest.java</include>
                     </includes>
