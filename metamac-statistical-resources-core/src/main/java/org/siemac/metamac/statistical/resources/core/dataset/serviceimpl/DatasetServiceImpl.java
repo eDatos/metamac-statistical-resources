@@ -1352,11 +1352,43 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     // CACHE
     // ------------------------------------------------------------------------
 
+ 
+    private AttributeValue getSpatialAttributeValueFromDsdAttribute(DatasetVersion datasetVersion, DsdAttribute spatialAttribute) throws MetamacException {
+        if (spatialAttribute != null) {
+            for (AttributeValue attrValue : datasetVersion.getAttributesCoverage()) {
+                if (attrValue.getDsdComponentId().equals(spatialAttribute.getComponentId())) {
+                    return attrValue;
+                }
+            }
+        }
+        return null;
+    }
+    
+    @Override
+    public void updateGeographicCoverageFromSpatialAttribute(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+        DsdAttribute spatialAttribute = DsdProcessor.getSpatialAttributeFromDsd(srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn()));
+        AttributeValue spatialAttributeValue = getSpatialAttributeValueFromDsdAttribute(datasetVersion, spatialAttribute);
+
+        if (spatialAttributeValue != null) {
+            Codes codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(spatialAttribute.getCodelistRepresentationUrn());
+
+            for (CodeResourceInternal code : codes.getCodes()) {
+                if (spatialAttributeValue.getIdentifier().equals(code.getId())) {
+                    ExternalItem item = restMapper.buildExternalItemFromCode(code);
+                    if (!StatisticalResourcesCollectionUtils.isExternalItemInCollection(datasetVersion.getGeographicCoverage(), item)) {
+                        datasetVersion.getGeographicCoverage().clear();
+                        datasetVersion.addGeographicCoverage(item);
+                    }
+                }
+            }
+        }
+    }
+    
     @Override
     public void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
         datasetServiceInvocationValidator.checkUpdateGeographicCoverageVariableElementsCache(ctx, datasetVersion);
-
         updateGeocoverageCache(ctx, datasetVersion, true);
+
     }
 
     @Override

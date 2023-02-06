@@ -82,11 +82,8 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.template
 import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -1934,6 +1931,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     
     @Override
     public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
+        // no test
+    }
+    
+    @Override
+    public void testUpdateGeographicCoverageFromSpatialAttribute() throws Exception {
         // no test
     }
     
