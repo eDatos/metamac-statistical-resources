@@ -2129,4 +2129,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             ExceptionUtils.throwIfException(exceptions);
         }
     }
+
+    @Override
+    public void importAttributesInDatasetVersion(ServiceContext ctx) throws MetamacException {
+        // TODO Auto-generated method stub
+        
+    }
 }

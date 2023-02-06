@@ -386,4 +386,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
+    public static void checkImportAttributesInDatasetVersion(List<MetamacExceptionItem> exceptions) {
+        
+    }
 }

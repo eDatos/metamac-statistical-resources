@@ -1693,7 +1693,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
                 List<String> dimensionsColumnsName = getDimensionsColumnsName(dataStructure);
 
-                List<String> attributesColumnsName = getAttibutesColumnsName(dataStructure);
+                List<String> attributesColumnsName = getAttributesColumnsName(dataStructure);
 
                 String measureColumnName = getMeasureColumnName(dataStructure);
 
@@ -1748,7 +1748,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return dimensionsColumnName;
     }
     
-    private List<String> getAttibutesColumnsName(DataStructure dataStructure) throws MetamacException {
+    private List<String> getAttributesColumnsName(DataStructure dataStructure) throws MetamacException {
         List<String> attibutesColumnName = new ArrayList<>();
 
         for (AttributeBase attributeBase : dataStructure.getDataStructureComponents().getAttributes().getAttributes()) {

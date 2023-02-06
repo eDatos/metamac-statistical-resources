@@ -2434,4 +2434,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         datasetVersionDto.setPublicationStreamStatus(null);
         return createDataset(ctx, datasetVersionDto, statisticalOperationDto);
     }
+
+    public void importAttributesInDatasetVersion() {
+        
+    }
 }

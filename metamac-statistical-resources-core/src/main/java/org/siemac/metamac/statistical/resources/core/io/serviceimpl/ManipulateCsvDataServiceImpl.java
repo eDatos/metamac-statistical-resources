@@ -3,8 +3,10 @@ package org.siemac.metamac.statistical.resources.core.io.serviceimpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
@@ -12,6 +14,7 @@ import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
+import org.siemac.metamac.statistical.resources.core.io.utils.CsvAttributesParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +22,7 @@ import com.arte.statistic.parser.csv.CsvParser;
 import com.arte.statistic.parser.csv.CsvReader;
 import com.arte.statistic.parser.csv.constants.CsvConstants;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -61,6 +65,41 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
                 // Insert slice
                 if (processData) {
                     insertDataAndAttributes(datasetID, dataDtos, validateDataVersusDsd);
+                    dataDtos.clear();
+                }
+            }
+        } finally {
+            IOUtils.closeQuietly(is);
+        }
+    }
+
+    public void importCsvAttributes(File csvFile, String datasetID, String dataSourceID, ValidateDataVersusDsd validateDataVersusDsd) throws Exception {
+        InputStream is = null;
+        try {
+            // Parse Csv
+            String charsetName = FileUtils.guessCharset(csvFile);
+            is = new FileInputStream(csvFile);
+
+            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB);
+
+            Map<String, List<AttributeInstanceDto>> dataDtos = new HashMap<>();
+            AttributeInstanceDto attributeInstanceDto = null;
+
+            boolean processData = true;
+            while (processData) {
+                for (int i = 0; i < SPLIT_DATA_FACTOR; i++) {
+//                    attributeInstanceDto = metamacCsv2StatRepoMapper.toObservation(csvReader.next(), dataSourceID);
+                    if (attributeInstanceDto == null) {
+                        // Insert incomplete slice
+//                        insertDataAndAttributes(datasetID, dataDtos, validateDataVersusDsd);
+                        processData = false;
+                        break;
+                    }
+//                    dataDtos.add(attributeInstanceDto);
+                }
+                // Insert slice
+                if (processData) {
+//                    insertDataAndAttributes(datasetID, dataDtos, validateDataVersusDsd);
                     dataDtos.clear();
                 }
             }

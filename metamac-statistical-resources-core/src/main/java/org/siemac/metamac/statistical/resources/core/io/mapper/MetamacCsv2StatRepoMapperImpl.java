@@ -49,6 +49,34 @@ public class MetamacCsv2StatRepoMapperImpl implements MetamacCsv2StatRepoMapper 
 
         return observationExtendedDto;
     }
+
+    public ObservationExtendedDto toAttribute(CsvObservation observation, String datasourceId) throws MetamacException {
+        ObservationExtendedDto observationExtendedDto = null;
+
+        if (observation == null) {
+            return null; // Reached end of file
+        }
+
+        observationExtendedDto = new ObservationExtendedDto();
+
+        // Key
+        observationExtendedDto.getCodesDimension().addAll(processKeyOfObservation(observation.getCodesDimensions()));
+
+        // Data
+        observationExtendedDto.setPrimaryMeasure(StringUtils.isEmpty(observation.getObservationValue()) ? null : observation.getObservationValue());
+
+        // Attributes
+        observationExtendedDto.addAttribute(ManipulateDataUtils.createDataSourceIdentificationAttribute(observationExtendedDto.getCodesDimension(), datasourceId)); // Add identification datasource
+
+        for (CsvObservationAttribute csvObservationAttribute : observation.getAttributes()) {
+            // All attributes of CSV are in observation level
+            AttributeInstanceObservationDto attributeObservationDto = processAttribute(observationExtendedDto.getCodesDimension(), csvObservationAttribute);
+            observationExtendedDto.addAttribute(attributeObservationDto);
+        }
+
+        return observationExtendedDto;
+    }
+
     private List<CodeDimensionDto> processKeyOfObservation(List<CsvObservationCodeDimension> observations) {
         List<CodeDimensionDto> codeDimensionDtos = new ArrayList<>(observations.size());
 
