@@ -1042,6 +1042,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             datasetService.updateGeographicCoverageFromSpatialAttribute(ctx, datasetVersion);
             if (geographicCoverage.isEmpty()) {
                 logger.debug("Dataset geographic coverage is empty");
+                markTaskAsFinished(ctx, jobKey);
                 return;
             }
         }
