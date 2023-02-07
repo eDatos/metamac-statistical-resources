@@ -13,6 +13,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
@@ -35,10 +36,10 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
 
 
     @Override
-    public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(Long dsdVersionId, DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
+    public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(Long datasetVersionId, DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
         DsdAttributeInstanceDto target = new DsdAttributeInstanceDto();
         target.setAttributeId(source.getAttributeId());
-        target.setCodeDimensions(attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(dsdVersionId, source));
+        target.setCodeDimensions(attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(datasetVersionId, source));
         target.setValue(attributeInstanceValue2AttributeValueDto(dsdAttribute, source));
         target.setUuid(source.getUuid());
         return target;
@@ -82,7 +83,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
         return externalItemDto;
     }
 
-    private Map<String, List<CodeItemDto>> attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(Long dsdVersionId, AttributeInstanceDto source) {
+    private Map<String, List<CodeItemDto>> attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(Long datasetVersionId, AttributeInstanceDto source) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -91,11 +92,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
         for (String dimensionId : source.getCodesByDimension().keySet()) {
             List<CodeItemDto> codeItems = new ArrayList<CodeItemDto>();
             for (String codeDimIdentifier : source.getCodesByDimension().get(dimensionId)) {
-                try {
-                    codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionId(dsdVersionId, dimensionId, codeDimIdentifier)));
-                } catch (MetamacException e) {
-                    e.printStackTrace();
-                }
+                    codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionId(datasetVersionId, dimensionId, codeDimIdentifier)));
             }
             target.put(dimensionId, codeItems);
         }

@@ -64,9 +64,9 @@ public class CodeDimensionRepositoryTest extends StatisticalResourcesBaseTest im
     public void testFindTitleForDatasetVersionByDimensionId() throws Exception {
         DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME);
         CodeDimension codeDimensionMock = mockCodeDimension(datasetVersion, "TIME_PERIOD","2010-M02", "Febrero 2010");
-        CodeDimension codeDimension = codeDimensionRepository.findTitleForDatasetVersionByDimensionId(datasetVersion.getId(), "TIME_PERIOD", "2010-M01");
-        assertNull(codeDimension.getTitle());
-        Assert.assertEquals(codeDimensionMock.getTitle(),codeDimension.getTitle());
+        String title = codeDimensionRepository.findTitleForDatasetVersionByDimensionId(datasetVersion.getId(), "TIME_PERIOD", "2010-M01");
+        assertNull(title);
+        Assert.assertEquals(codeDimensionMock.getTitle(),title);
     }
 
     @Test
