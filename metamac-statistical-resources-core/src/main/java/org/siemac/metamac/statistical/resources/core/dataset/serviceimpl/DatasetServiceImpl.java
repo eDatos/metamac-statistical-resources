@@ -2130,9 +2130,4 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    @Override
-    public void importAttributesInDatasetVersion(ServiceContext ctx) throws MetamacException {
-        // TODO Auto-generated method stub
-        
-    }
 }

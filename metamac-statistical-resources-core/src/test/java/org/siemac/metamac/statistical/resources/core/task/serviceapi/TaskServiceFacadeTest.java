@@ -77,4 +77,10 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testSendDatabaseImportationErrorNotification() throws Exception {
         // No test
     }
+
+    @Override
+    public void testImportAttributesInDatasetVersion() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

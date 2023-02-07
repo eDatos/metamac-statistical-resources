@@ -114,4 +114,9 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     public void sendDatabaseImportationErrorNotification(ServiceContext ctx, String datasetVersionUrn, MetamacException metamacException) {
         taskservice.sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, metamacException);
     }
+
+    @Override
+    public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskservice.importAttributesInDatasetVersion(ctx, dataVersionUrn, taskInfoDataset);
+    }
 }

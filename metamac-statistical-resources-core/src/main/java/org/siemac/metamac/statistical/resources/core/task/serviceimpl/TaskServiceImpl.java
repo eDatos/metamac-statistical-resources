@@ -1882,5 +1882,25 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         protected abstract T doInMetamacTransaction(TransactionStatus status) throws MetamacException;
+    }
+
+    @Override
+    public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        try {
+            DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(taskInfoDataset.getDataStructureUrn());
+            for (FileDescriptor fileDescriptor : taskInfoDataset.getFiles()) {
+                manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile());
+            }
+        } catch (Exception e) {
+            // Convert parser exception to metamac exception
+            MetamacException throwableMetamacException = null;
+            if (e instanceof MetamacException) {
+                throwableMetamacException = (MetamacException) e;
+            } else {
+                throwableMetamacException = MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(ExceptionHelper.excMessage(e))
+                        .build();
+            }
+            throw throwableMetamacException;
+        }
     }    
 }
