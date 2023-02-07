@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.CsvAttributesParser;
@@ -83,13 +84,13 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
             CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB);
 
-            Map<String, List<AttributeInstanceDto>> dataDtos = new HashMap<>();
+            Map<String, DsdAttributeInstanceDto> dataDtos = new HashMap<>();
             AttributeInstanceDto attributeInstanceDto = null;
 
             boolean processData = true;
             while (processData) {
                 for (int i = 0; i < SPLIT_DATA_FACTOR; i++) {
-//                    attributeInstanceDto = metamacCsv2StatRepoMapper.toObservation(csvReader.next(), dataSourceID);
+                    csvReader.setNextLine(dataDtos);
                     if (attributeInstanceDto == null) {
                         // Insert incomplete slice
 //                        insertDataAndAttributes(datasetID, dataDtos, validateDataVersusDsd);
