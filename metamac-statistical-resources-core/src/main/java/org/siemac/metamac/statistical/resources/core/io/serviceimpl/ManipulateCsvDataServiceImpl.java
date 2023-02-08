@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
@@ -75,7 +76,7 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     }
 
     @Override
-    public void importCsvAttributes(File csvFile) throws Exception {
+    public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions) throws Exception {
         InputStream is = null;
         try {
             // Parse Csv
@@ -90,13 +91,13 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
             boolean processData = true;
             while (processData) {
                 for (int i = 0; i < SPLIT_DATA_FACTOR; i++) {
-                    csvReader.setNextLine(dataDtos);
-                    if (attributeInstanceDto == null) {
-                        // Insert incomplete slice
+                    csvReader.setNextLine(dataDtos, codeDimensions);
+//                    if (attributeInstanceDto == null) {
+//                         Insert incomplete slice
 //                        insertDataAndAttributes(datasetID, dataDtos, validateDataVersusDsd);
-                        processData = false;
-                        break;
-                    }
+//                        processData = false;
+//                        break;
+//                    }
 //                    dataDtos.add(attributeInstanceDto);
                 }
                 // Insert slice

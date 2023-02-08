@@ -292,7 +292,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         DatasetVersionDto datasetVersion = datasetService.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
         TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, dimensionRepresentationMapping, false, basicVersionableStatisticalResourceDto);
         
-        taskServiceFacade.importAttributesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), "", taskInfo);
+        taskServiceFacade.importAttributesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn, taskInfo);
 
     }
 

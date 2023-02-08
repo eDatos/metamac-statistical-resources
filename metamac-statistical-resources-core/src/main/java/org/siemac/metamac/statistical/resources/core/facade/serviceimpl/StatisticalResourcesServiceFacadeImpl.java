@@ -116,7 +116,6 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatas
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
-import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -78,6 +78,7 @@ import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesCo
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
@@ -1888,8 +1889,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
         try {
             DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(taskInfoDataset.getDataStructureUrn());
+            List<String> idsDimensions = getDimensionsColumnsName(dataStructure);
+            Map<String, List<CodeDimension>> codeDimensions = getCodeDimensions(ctx, idsDimensions, dataVersionUrn);
             for (FileDescriptor fileDescriptor : taskInfoDataset.getFiles()) {
-                manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile());
+                manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile(), dataStructure, codeDimensions);
             }
         } catch (Exception e) {
             // Convert parser exception to metamac exception
@@ -1902,5 +1905,16 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
             throw throwableMetamacException;
         }
-    }    
+    }
+
+    private Map<String, List<CodeDimension>> getCodeDimensions(ServiceContext ctx, List<String> idsDimensions, String datasetVersionUrn) throws MetamacException {
+        Map<String, List<CodeDimension>> codesDimensions = new HashMap<String, List<CodeDimension>>();
+        for (String idDimension : idsDimensions) {
+            List<CodeDimension> codes = datasetService.filterCoverageForDatasetVersionDimension(ctx, datasetVersionUrn,
+                    idDimension, null);
+            codesDimensions.put(idDimension, codes);
+        }
+        return codesDimensions;
+    }
+    
 }
