@@ -92,7 +92,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
         for (String dimensionId : source.getCodesByDimension().keySet()) {
             List<CodeItemDto> codeItems = new ArrayList<CodeItemDto>();
             for (String codeDimIdentifier : source.getCodesByDimension().get(dimensionId)) {
-                    codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionId(datasetVersionId, dimensionId, codeDimIdentifier)));
+                    codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionIdAndIdentifier(datasetVersionId, dimensionId, codeDimIdentifier)));
             }
             target.put(dimensionId, codeItems);
         }

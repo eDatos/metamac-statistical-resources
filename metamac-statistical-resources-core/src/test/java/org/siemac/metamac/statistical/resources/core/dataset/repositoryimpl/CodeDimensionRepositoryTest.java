@@ -61,10 +61,10 @@ public class CodeDimensionRepositoryTest extends StatisticalResourcesBaseTest im
     @Test
     @Override
     @MetamacMock(DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME)
-    public void testFindTitleForDatasetVersionByDimensionId() throws Exception {
+    public void testFindTitleForDatasetVersionByDimensionIdAndIdentifier() throws Exception {
         DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME);
         CodeDimension codeDimensionMock = mockCodeDimension(datasetVersion, "TIME_PERIOD","2010-M02", "Febrero 2010");
-        String title = codeDimensionRepository.findTitleForDatasetVersionByDimensionId(datasetVersion.getId(), "TIME_PERIOD", "2010-M01");
+        String title = codeDimensionRepository.findTitleForDatasetVersionByDimensionIdAndIdentifier(datasetVersion.getId(), "TIME_PERIOD", "2010-M01");
         assertNull(title);
         Assert.assertEquals(codeDimensionMock.getTitle(),title);
     }

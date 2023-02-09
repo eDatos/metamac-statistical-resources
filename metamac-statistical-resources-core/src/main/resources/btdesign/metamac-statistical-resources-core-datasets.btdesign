@@ -324,7 +324,7 @@ Application DatasetsStatisticalResources {
     		Repository CodeDimensionRepository {
     			findByQuery;
     			List<@CodeDimension> findCodesForDatasetVersionByDimensionId(long datasetVersionId, String dimensionId, String filter) throws MetamacException;
-    			String findTitleForDatasetVersionByDimensionId(long datasetVersionId, String dimensionId, String filter) throws MetamacException;
+    			String findTitleForDatasetVersionByDimensionIdAndIdentifier(long datasetVersionId, String dimensionId, String codeDimIdentifier) throws MetamacException;
     		}
     	}
 
