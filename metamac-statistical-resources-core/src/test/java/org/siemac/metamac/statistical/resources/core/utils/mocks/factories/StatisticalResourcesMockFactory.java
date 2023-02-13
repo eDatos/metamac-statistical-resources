@@ -26,7 +26,10 @@ public abstract class StatisticalResourcesMockFactory<EntityMock> extends MockFa
     public static final String OPERATION_01_CODE               = "C00025A";
     public static final String OPERATION_02_CODE               = "C00025B";
     public static final String OPERATION_03_CODE               = "C00025C";
-
+    public static final String OPERATION_04_CODE               = "C00025D";
+    public static final String OPERATION_05_CODE               = "C00025E";
+    public static final String OPERATION_06_CODE               = "C00025F";
+    
     public static final String INIT_VERSION                    = "1.0";
     public static final String SECOND_VERSION                  = "2.0";
     public static final String THIRD_VERSION                   = "3.0";

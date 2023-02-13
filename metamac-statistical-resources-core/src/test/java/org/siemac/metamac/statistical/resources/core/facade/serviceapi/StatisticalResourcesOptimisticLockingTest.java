@@ -9,7 +9,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.CubeMockFactory.CUBE_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_06_FOR_QUERIES_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_16_DRAFT_READY_FOR_PRODUCTION_VALIDATION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_20_PRODUCTION_VALIDATION_READY_FOR_DIFFUSION_VALIDATION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME;
@@ -1201,10 +1201,10 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
     @Override
     @Test
-    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME)
+    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME)
     public void testVersioningDatasetVersion() throws Exception {
         // Retrieve dataset - session 1
-        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME);
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME);
 
         DatasetVersionDto datasetVersionDtoSession01 = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(),
                 datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
@@ -1212,7 +1212,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
         // Retrieve dataset - session 2
         DatasetVersionDto datasetVersionDtoSession02 = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(),
-                datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME).getSiemacMetadataStatisticalResource().getUrn());
+                datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME).getSiemacMetadataStatisticalResource().getUrn());
         assertEquals(Long.valueOf(0), datasetVersionDtoSession02.getOptimisticLockingVersion());
 
         // Versioning - session 1 --> OK
@@ -1222,7 +1222,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         assertEquals(Long.valueOf(0), datasetVersionDtoSession1NewResource.getOptimisticLockingVersion());
 
         DatasetVersionDto datasetVersionDtoSession1AfterUpdate01 = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(),
-                datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME).getSiemacMetadataStatisticalResource().getUrn());
+                datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME).getSiemacMetadataStatisticalResource().getUrn());
 
         assertTrue(datasetVersionDtoSession1AfterUpdate01.getOptimisticLockingVersion() > datasetVersionDtoSession01.getOptimisticLockingVersion());
 
