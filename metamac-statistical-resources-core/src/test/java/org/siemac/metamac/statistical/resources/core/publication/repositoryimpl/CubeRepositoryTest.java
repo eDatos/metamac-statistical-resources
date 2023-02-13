@@ -7,12 +7,12 @@ import static org.siemac.metamac.statistical.resources.core.utils.asserts.Public
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.CubeMockFactory.CUBE_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.CubeMockFactory.CUBE_02_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.CubeMockFactory.CUBE_03_BASIC_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_22_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_23_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_22_C1_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_23_C1_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_04_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME;
 
 import java.util.List;
 
@@ -77,38 +77,38 @@ public class CubeRepositoryTest extends StatisticalResourcesBaseTest implements 
 
     @Override
     @Test
-    @MetamacMock({PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME})
+    @MetamacMock({PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME})
     public void testFindDatasetsLinkedWithPublicationVersion() throws Exception {
         List<String> result = cubeRepository.findDatasetsLinkedWithPublicationVersion(
-                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME).getSiemacMetadataStatisticalResource().getUrn());
+                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME).getSiemacMetadataStatisticalResource().getUrn());
         assertEquals(2, result.size());
-        assertTrue(result.contains(datasetMockFactory.retrieveMock(DATASET_23_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME).getIdentifiableStatisticalResource().getUrn()));
-        assertTrue(result.contains(datasetMockFactory.retrieveMock(DATASET_22_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME).getIdentifiableStatisticalResource().getUrn()));
+        assertTrue(result.contains(datasetMockFactory.retrieveMock(DATASET_23_C1_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME).getIdentifiableStatisticalResource().getUrn()));
+        assertTrue(result.contains(datasetMockFactory.retrieveMock(DATASET_22_C1_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME).getIdentifiableStatisticalResource().getUrn()));
     }
 
     @Test
-    @MetamacMock({PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME})
+    @MetamacMock({PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME})
     public void testFindDatasetsLinkedWithPublicationVersionWithoutDatasets() throws Exception {
         List<String> result = cubeRepository.findDatasetsLinkedWithPublicationVersion(
-                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME).getSiemacMetadataStatisticalResource().getUrn());
+                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME).getSiemacMetadataStatisticalResource().getUrn());
         assertEquals(0, result.size());
     }
 
     @Override
     @Test
-    @MetamacMock({PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME})
+    @MetamacMock({PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME})
     public void testFindQueriesLinkedWithPublicationVersion() throws Exception {
         List<String> result = cubeRepository.findQueriesLinkedWithPublicationVersion(
-                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME).getSiemacMetadataStatisticalResource().getUrn());
+                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME).getSiemacMetadataStatisticalResource().getUrn());
         assertEquals(1, result.size());
-        assertTrue(result.contains(queryMockFactory.retrieveMock(QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME).getIdentifiableStatisticalResource().getUrn()));
+        assertTrue(result.contains(queryMockFactory.retrieveMock(QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME).getIdentifiableStatisticalResource().getUrn()));
     }
 
     @Test
-    @MetamacMock({PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME})
+    @MetamacMock({PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME})
     public void testFindQueriesLinkedWithPublicationVersionWithoutQueries() throws Exception {
         List<String> result = cubeRepository.findQueriesLinkedWithPublicationVersion(
-                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME).getSiemacMetadataStatisticalResource().getUrn());
+                publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME).getSiemacMetadataStatisticalResource().getUrn());
         assertEquals(0, result.size());
     }
 

@@ -3443,14 +3443,14 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Test
     public void testCreateMultidatasetHasExpectedUrn() throws Exception {
-        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto(StatisticalResourcesMockFactory.OPERATION_01_CODE);
+        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto(StatisticalResourcesMockFactory.OPERATION_04_CODE);
         ExternalItemDto maintainer = StatisticalResourcesDtoMocks.mockAgencyExternalItemDto("SIEMAC");
 
         MultidatasetVersionDto multidatasetVersionDto = StatisticalResourcesDtoMocks.mockMultidatasetVersionDto();
         multidatasetVersionDto.setMaintainer(maintainer);
 
         String persistedMultidatasetUrn = statisticalResourcesServiceFacade.createMultidataset(getServiceContextAdministrador(), multidatasetVersionDto, statisticalOperation).getUrn();
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Multidataset=SIEMAC:C00025A_000001(1.0)", persistedMultidatasetUrn);
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Multidataset=SIEMAC:C00025D_000001(1.0)", persistedMultidatasetUrn);
     }
 
     @Test
