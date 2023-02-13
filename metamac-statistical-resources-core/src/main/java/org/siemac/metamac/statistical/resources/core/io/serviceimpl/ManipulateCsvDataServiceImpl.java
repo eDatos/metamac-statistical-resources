@@ -10,10 +10,13 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.facade.serviceimpl.StatisticalResourcesServiceFacadeImpl;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.CsvAttributesParser;
@@ -24,7 +27,6 @@ import com.arte.statistic.parser.csv.CsvParser;
 import com.arte.statistic.parser.csv.CsvReader;
 import com.arte.statistic.parser.csv.constants.CsvConstants;
 
-import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -36,6 +38,9 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
     @Autowired
     private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
+
+    @Autowired
+    StatisticalResourcesServiceFacadeImpl    statisticalResourcesServiceFacade;
 
     private static int                       SPLIT_DATA_FACTOR = 5000;
 
@@ -76,7 +81,8 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     }
 
     @Override
-    public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions) throws Exception {
+    public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId,
+            ServiceContext ctx, String datasetVersionUrn) throws Exception {
         InputStream is = null;
         try {
             // Parse Csv
@@ -85,32 +91,23 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
             CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB);
 
-            Map<String, DsdAttributeInstanceDto> dataDtos = new HashMap<>();
-            AttributeInstanceDto attributeInstanceDto = null;
+            Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDto = new HashMap<>();
 
             boolean processData = true;
-            while (processData) {
-                for (int i = 0; i < SPLIT_DATA_FACTOR; i++) {
-                    csvReader.setNextLine(dataDtos, codeDimensions);
-//                    if (attributeInstanceDto == null) {
-//                         Insert incomplete slice
-//                        insertDataAndAttributes(datasetID, dataDtos, validateDataVersusDsd);
-//                        processData = false;
-//                        break;
-//                    }
-//                    dataDtos.add(attributeInstanceDto);
-                }
-                // Insert slice
-                if (processData) {
-//                    insertDataAndAttributes(datasetID, dataDtos, validateDataVersusDsd);
-                    dataDtos.clear();
-                }
+            for (int i = 0; i < SPLIT_DATA_FACTOR || processData; i++) {
+                processData = csvReader.setNextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId);
             }
+            insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDto);
         } finally {
             IOUtils.closeQuietly(is);
         }
     }
 
+    private void insertAttributes(ServiceContext ctx, String datasetVersionUrn, Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDto) throws MetamacException {
+        for (Map.Entry<String, DsdAttributeInstanceDto> entry : dsdAttributeInstanceDto.entrySet()) {
+            statisticalResourcesServiceFacade.createAttributeInstance(ctx, datasetVersionUrn, entry.getValue());
+        }
+    }
     private void insertDataAndAttributes(String datasetID, List<ObservationExtendedDto> dataDtos, ValidateDataVersusDsd validateDataVersusDsd) throws Exception {
         // Persist Observations and attributes at level observation.
         if (!dataDtos.isEmpty()) {

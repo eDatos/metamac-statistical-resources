@@ -31,7 +31,7 @@ Application DatasetsStatisticalResources {
     		"Perform the database dataset pooling task"
     		executeDatabaseDatasetPollingTask()  throws MetamacException;
     		"Import a set of files provided by urn as attributes in a datasetVersion"
-    		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset, String codeListRepresentationUrns) throws MetamacException;
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
 			
@@ -67,7 +67,7 @@ Application DatasetsStatisticalResources {
 			"Perform the importation task"
     		processImportationTask(String importationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Import a set of files provided by urn as attributes in a datasetVersion"
-    		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset, String codeListRepresentationUrns) throws MetamacException;
     		"Perform the database importation task"
     		processDatabaseImportationTask(String databaseImportationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform a rollback in a importation task"

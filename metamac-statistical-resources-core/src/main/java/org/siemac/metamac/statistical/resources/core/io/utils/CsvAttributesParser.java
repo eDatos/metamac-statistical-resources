@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
@@ -21,9 +22,6 @@ public class CsvAttributesParser {
     private String[]                          headers          = null;
     private int                               lineSizeExpected = 0;
     private int                               lineNumber       = 0;
-    private static final String               DIMENSIONS       = "Dimensiones";
-    private static final String               DIMENSIONS_GROUP = "Grupo de dimensiones";
-    private static final String               DATASET          = "Dataset";
 
     public CsvAttributesParser(InputStream pxStream, String charsetName, char separator) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
@@ -45,33 +43,56 @@ public class CsvAttributesParser {
         return line == null || line.length == 0;
     }
 
-    public void setNextLine(Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDtos, Map<String, List<CodeDimension>> codeDimensions) throws Exception {
+    public boolean setNextLine(Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDtos, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId) throws Exception {
         DsdAttributeInstanceDto dsdAttributeInstanceDto = null;
         String[] line = csvReader.readNext();
+        if (line == null) {
+            return false;
+        }
         dsdAttributeInstanceDto = dsdAttributeInstanceDtos.get(line[0]);
-        DsdAttributeInstanceDto dsdAttributeCreatedInstanceDto = csvToDsdAttributeInstanceDto(dsdAttributeInstanceDto, line, codeDimensions);
+        DsdAttributeInstanceDto dsdAttributeCreatedInstanceDto = csvToDsdAttributeInstanceDto(dsdAttributeInstanceDto, line, codeDimensions, externalItemsAttributeId);
         dsdAttributeInstanceDtos.put(dsdAttributeCreatedInstanceDto.getAttributeId(), dsdAttributeCreatedInstanceDto);
+        return true;
     }
 
-    private DsdAttributeInstanceDto csvToDsdAttributeInstanceDto(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<CodeDimension>> codeDimensions) {
+    private DsdAttributeInstanceDto csvToDsdAttributeInstanceDto(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId) {
+        String attributeId = line[0];
         if (dsdAttributeInstanceDto == null) {
             dsdAttributeInstanceDto = new DsdAttributeInstanceDto();
             AttributeValueDto attributeValueDto = new AttributeValueDto();
-            dsdAttributeInstanceDto.setAttributeId(line[0]);
-            attributeValueDto.setStringValue(line[5]);
+            dsdAttributeInstanceDto.setAttributeId(attributeId);
+            ExternalItemDto externalItem = getExternalItemDto(line[5], attributeId, externalItemsAttributeId);
+            if (externalItem == null) {
+                attributeValueDto.setStringValue(line[5]);
+            }
+            attributeValueDto.setExternalItemValue(externalItem);
             dsdAttributeInstanceDto.setValue(attributeValueDto);
         }
-        setDimensions(line, codeDimensions);
+        dsdAttributeInstanceDto.setCodeDimensions(getDimensions(line, codeDimensions));
         return dsdAttributeInstanceDto;
     }
 
-    private void setDimensions(String[] line, Map<String, List<CodeDimension>> codesDimensions) {
+    private ExternalItemDto getExternalItemDto(String code, String attributeId, Map<String, List<ExternalItemDto>> externalItemsAttributeId) {
+        List<ExternalItemDto> externalItems = externalItemsAttributeId.get(attributeId);
+        if (externalItems == null) {
+            return null;
+        }
+        for (ExternalItemDto externalItem : externalItems) {
+            if (code.equals(externalItem.getCode())) {
+                return externalItem;
+            }
+        }
+        return null;
+    }
+
+    private Map<String, List<CodeItemDto>> getDimensions(String[] line, Map<String, List<CodeDimension>> codesDimensions) {
+        Map<String, List<CodeItemDto>> codeItemDtos = new HashMap<>();
         String dimension = line[3];
         if (!StringUtils.isBlank(dimension)) {
             List<CodeDimension> codeDimensions = codesDimensions.get(dimension);
-            Map<String, List<CodeItemDto>> codeItemDtos = new HashMap<>();
             setCodeItems(line, dimension, codeItemDtos, codeDimensions);
         }
+        return codeItemDtos;
     }
 
     private void setCodeItems(String[] line, String dimension, Map<String, List<CodeItemDto>> codesDimensions, List<CodeDimension> codeDimensions) {
@@ -80,14 +101,20 @@ public class CsvAttributesParser {
         for (String dimensionValue : dimensionValues) {
             CodeItemDto codeItemDto = new CodeItemDto();
             CodeDimension codeDimension = getCodeDimension(dimensionValue, codeDimensions);
-                codeItemDto.setCode(codeDimension != null ? codeDimension.getIdentifier() : dimensionValue);
-                codeItemDto.setTitle(codeDimension != null ? codeDimension.getTitle() : dimensionValue);
+            codeItemDto.setCode(codeDimension != null ? codeDimension.getIdentifier() : dimensionValue);
+            codeItemDto.setTitle(codeDimension != null ? codeDimension.getTitle() : dimensionValue);
             codeItemDtos.add(codeItemDto);
         }
         codesDimensions.put(dimension, codeItemDtos);
     }
 
-    private CodeDimension getCodeDimension(String title, List<CodeDimension> codeDimensions) {
-        return codeDimensions.stream().filter(codeDimension -> title.equals(codeDimension.getTitle())).findAny().orElse(null);
+    private CodeDimension getCodeDimension(String tittle, List<CodeDimension> codeDimensions) {
+        // return codeDimensions != null ? codeDimensions.stream().filter(codeDimension -> title.equals(codeDimension.getTitle())).findAny().orElse(null) : null;
+        for (CodeDimension codeDimension : codeDimensions) {
+            if (tittle.equals(codeDimension.getTitle())) {
+                return codeDimension;
+            }
+        }
+        return null;
     }
 }
