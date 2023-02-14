@@ -32,8 +32,6 @@ import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
@@ -265,29 +263,12 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         TaskServiceFacade taskServiceFacade = (TaskServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(TaskServiceFacade.BEAN_ID);
         StatisticalResourcesServiceFacade datasetService = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(StatisticalResourcesServiceFacade.BEAN_ID);
         List<File> filesToImport = new ArrayList<File>();
-
-        Boolean storeDimensionsMapping = null;
-        boolean isFileZip = isZip(uploadedFile);
-
-        if (isFileZip) {
-            // If the uploaded file is a zip, the mapping cannot be set by the user. That's why the mappings are not stored in this case.
-            storeDimensionsMapping = false;
-            filesToImport = ZipUtils.unzipArchive(uploadedFile, outputFolder);
-        } else {
-            storeDimensionsMapping = true;
-            filesToImport.add(uploadedFile);
-        }
+        filesToImport.add(uploadedFile);
 
         List<URL> fileUrls = getURLsFromFiles(filesToImport);
 
-        String statisticalOperationCode = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_OPERATION_CODE);
         String datasetVersionUrn = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
 
-        if (BooleanUtils.isTrue(mustBeZip) && !isFileZip) {
-            throwMetamacWebException(WebMessageExceptionsConstants.ERROR_IMPORT_IS_NOT_ZIP);
-        } else if (BooleanUtils.isFalse(mustBeZip) && isFileZip) {
-            throwMetamacWebException(WebMessageExceptionsConstants.ERROR_IMPORT_IS_ZIP);
-        }
         HashMap<String, String> dimensionRepresentationMapping = new HashMap<String, String>();
         DatasetVersionDto datasetVersion = datasetService.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
         TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, dimensionRepresentationMapping, false, basicVersionableStatisticalResourceDto);

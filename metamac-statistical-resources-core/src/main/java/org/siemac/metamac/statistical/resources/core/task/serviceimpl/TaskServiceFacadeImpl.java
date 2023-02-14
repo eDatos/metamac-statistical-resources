@@ -116,7 +116,7 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     }
 
     @Override
-    public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset, String codeListRepresentationUrns) throws MetamacException {
-        taskservice.importAttributesInDatasetVersion(ctx, dataVersionUrn, taskInfoDataset, codeListRepresentationUrns);
+    public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskservice.importAttributesInDatasetVersion(ctx, dataVersionUrn, taskInfoDataset);
     }
 }
