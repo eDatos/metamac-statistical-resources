@@ -33,7 +33,6 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationExcepti
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
-import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -90,7 +89,6 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.NextVersionTypeEnumUtils;
-import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionBaseParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
@@ -786,9 +784,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
 
         checkValidDataSourceTypeForImportationTask(expectedDataSourceTypeEnum, datasetVersion);
-
-        checkRequiredDataProviderInDataset(basicVersionableStatisticalResourceDto, datasetVersion, expectedDataSourceTypeEnum);
-        
+      
         if (DataSourceTypeEnum.FILE.equals(datasetVersion.getDataSourceType())) {
             ProcStatusValidator.checkDatasetVersionCanImportDatasources(datasetVersion, basicVersionableStatisticalResourceDto);
         }
@@ -2136,29 +2132,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private void checkTableNameFormat(String tableName, String datasetVersionUrn) throws MetamacException {
         if (!DatabaseDatasetImportUtils.checkTableNameFormat(tableName)) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.INVALID_TABLENAME_FORMAT).withMessageParameters(tableName, datasetVersionUrn).build();
-        }
-    }
-    
-    private Boolean checkDataProviderEmptyInDatabaseImport(DatasetVersion datasetVersion, DataSourceTypeEnum expectedDataSourceTypeEnum) {
-        return datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider() != null && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().isEmpty()
-                && DataSourceTypeEnum.DATABASE.equals(expectedDataSourceTypeEnum);
-    }
-
-    private Boolean checkDataProviderEmptyInZipImport(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, DatasetVersion datasetVersion,
-            DataSourceTypeEnum expectedDataSourceTypeEnum) {
-        return Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle()) && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider() != null
-                && basicVersionableStatisticalResourceDto.getDataProvidersUrn().isEmpty() && datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().isEmpty()
-                && !ProcStatusEnum.DRAFT.getName().equals(basicVersionableStatisticalResourceDto.getNextProcStatus())
-                && !ProcStatusEnum.DRAFT.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus())
-                && !ProcStatusEnum.VALIDATION_REJECTED.equals(datasetVersion.getSiemacMetadataStatisticalResource().getProcStatus());
-    }
-
-    private void checkRequiredDataProviderInDataset(BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, DatasetVersion datasetVersion, DataSourceTypeEnum expectedDataSourceTypeEnum) throws MetamacException {
-
-        if (checkDataProviderEmptyInDatabaseImport(datasetVersion, expectedDataSourceTypeEnum) || checkDataProviderEmptyInZipImport(basicVersionableStatisticalResourceDto, datasetVersion, expectedDataSourceTypeEnum)) {
-            List<MetamacExceptionItem> exceptions = new ArrayList<>();
-            exceptions.add(new MetamacExceptionItem(CommonServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionBaseParameters.DATASET_VERSION__DATA_PROVIDER));
-            ExceptionUtils.throwIfException(exceptions);
         }
     }
 }

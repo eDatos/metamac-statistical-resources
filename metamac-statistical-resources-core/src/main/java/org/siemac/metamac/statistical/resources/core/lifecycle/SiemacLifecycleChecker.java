@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.lifecycle;
 
+import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils.addParameter;
+
 import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -11,8 +13,6 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.check
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.RelatedResourceChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils.addParameter;
 
 @Component
 public class SiemacLifecycleChecker {
@@ -53,7 +53,7 @@ public class SiemacLifecycleChecker {
 
     public void checkSendToValidationRejected(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         lifecycleChecker.checkSendToValidationRejected(resource, metadataName, exceptionItems);
-        checkSiemacMetadataVersionOrReject(resource, metadataName, exceptionItems);
+        checkSiemacMetadataAllActions(resource, metadataName, exceptionItems);
     }
 
     // ------------------------------------------------------------------------------------------------------
@@ -125,7 +125,7 @@ public class SiemacLifecycleChecker {
     // ------------------------------------------------------------------------------------------------------
     public void checkVersioning(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         lifecycleChecker.checkVersioning(resource, metadataName, exceptionItems);
-        checkSiemacMetadataVersionOrReject(resource, metadataName, exceptionItems);
+        checkSiemacMetadataAllActions(resource, metadataName, exceptionItems);
     }
 
     // ------------------------------------------------------------------------------------------------------
@@ -134,9 +134,5 @@ public class SiemacLifecycleChecker {
 
     private void checkSiemacMetadataAllActions(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
         lifecycleCommonMetadataChecker.checkSiemacCommonMetadata(resource, metadataName, exceptionItems);
-    }
-    
-    private void checkSiemacMetadataVersionOrReject(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
-        lifecycleCommonMetadataChecker.checkSiemacCommonMetadataVersioningWithoutDataProvider(resource, metadataName, exceptionItems);
     }
 }
