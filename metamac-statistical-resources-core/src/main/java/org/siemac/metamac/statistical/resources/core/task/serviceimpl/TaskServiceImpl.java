@@ -1893,7 +1893,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             List<String> idsDimensions = getDimensionsColumnsName(dataStructure);
             Map<String, List<CodeDimension>> codeDimensions = getCodeDimensions(ctx, idsDimensions, dataVersionUrn);
             List<DsdAttribute> dsdAttributes = DsdProcessor.getAttributes(dataStructure);
-            Map<String, List<ExternalItemDto>> externalItemsAttributesId = getCodesFromSrm(dsdAttributes);
+            Map<String, List<ExternalItemDto>> externalItemsAttributesId = getExternalItemsFromSrm(dsdAttributes);
             for (FileDescriptor fileDescriptor : taskInfoDataset.getFiles()) {
                 manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile(), dataStructure, codeDimensions, externalItemsAttributesId, ctx, dataVersionUrn);
             }
@@ -1915,7 +1915,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return codesDimensions;
     }
 
-    private Map<String, List<ExternalItemDto>> getCodesFromSrm(List<DsdAttribute> dsdAttributes) throws MetamacException {
+    private Map<String, List<ExternalItemDto>> getExternalItemsFromSrm(List<DsdAttribute> dsdAttributes) throws MetamacException {
         Map<String, List<ExternalItemDto>> codes = new HashMap<>();
         for (DsdAttribute dsdAttribute : dsdAttributes) {
             if (!dsdAttribute.isAttributeAtObservationLevel()) {
