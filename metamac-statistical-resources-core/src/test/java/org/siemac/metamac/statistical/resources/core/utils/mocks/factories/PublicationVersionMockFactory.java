@@ -20,6 +20,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_09_PRODUCTION_VALIDATION_USED_IN_PUBLICATION_VERSION_86_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_10_DIFFUSION_VALIDATION_USED_IN_PUBLICATION_VERSION_86_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_11_VALIDATION_REJECTED_USED_IN_PUBLICATION_VERSION_86_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_04_C1_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_04_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME;
@@ -96,8 +97,12 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
 
     public static final String                   PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME                                              = "PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04";
 
+    public static final String                   PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME                                           = "PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04";
+    
     public static final String                   PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME                             = "PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION";
 
+    public static final String                   PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME                         = "PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION";
+    
     public static final String                   PUBLICATION_VERSION_19_WITH_STRUCTURE_PRODUCTION_VALIDATION_NAME                                                   = "PUBLICATION_VERSION_19_WITH_STRUCTURE_PRODUCTION_VALIDATION";
 
     public static final String                   PUBLICATION_VERSION_20_WITH_STRUCTURE_DIFFUSION_VALIDATION_NAME                                                    = "PUBLICATION_VERSION_20_WITH_STRUCTURE_DIFFUSION_VALIDATION";
@@ -340,12 +345,21 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         MockDescriptor publication = getPublicationMockDescriptor(PUBLICATION_04_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME), publication);
     }
+    
+    private static MockDescriptor getPublicationVersion17C1WithStructureForPublicationVersion04() {
+        MockDescriptor publication = getPublicationMockDescriptor(PUBLICATION_04_C1_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME);
+        return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME), publication);
+    }
 
     private static MockDescriptor getPublicationVersion18WithStructureForPublicationVersion04AndLastVersion() {
         MockDescriptor publication = getPublicationMockDescriptor(PUBLICATION_04_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME), publication);
     }
 
+    private static MockDescriptor getPublicationVersion18C1WithStructureForPublicationVersion04AndLastVersion() {
+        MockDescriptor publication = getPublicationMockDescriptor(PUBLICATION_04_C1_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME);
+        return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME), publication);
+    }    
     private static PublicationVersion getPublicationVersion19WithStructureProductionValidation() {
         // General metadata
         PublicationVersion publicationVersion = createPublicationVersion();

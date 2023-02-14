@@ -65,8 +65,10 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
 
     public static final String      QUERY_08_SINGLE_VERSION_USED_IN_MULTIPLE_PUBLICATIONS_NAME                              = "QUERY_08_SINGLE_VERSION_USED_IN_MULTIPLE_PUBLICATIONS";
 
-    public static final String      QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                     = "QUERY_09_SINGLE_VERSION_USED_IN_PUB_17";
+    public static final String      QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                  = "QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_17";
 
+    public static final String      QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                     = "QUERY_09_SINGLE_VERSION_USED_IN_PUB_17";
+    
     public static final String      QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS_NAME                                 = "QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS";
 
     public static final String      QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS_NAME                           = "QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS";

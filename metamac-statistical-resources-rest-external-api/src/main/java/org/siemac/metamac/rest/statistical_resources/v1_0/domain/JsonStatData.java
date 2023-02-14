@@ -127,6 +127,22 @@ public class JsonStatData {
     }
 
     public void setNote(List<String> note) {
+        // compliance with standard: if list is empty or only contains nulls then set it as `null`, not `[]` nor `[ null ]`
+        if (note == null) {
+            this.note = null;
+            return;
+        }
+        boolean allNulls = true;
+        for (String elem : note) {
+            if (elem != null) {
+                allNulls = false;
+                break;
+            }
+        }
+        if (allNulls) {
+            this.note = null;
+            return;
+        }
         this.note = note;
     }
 
