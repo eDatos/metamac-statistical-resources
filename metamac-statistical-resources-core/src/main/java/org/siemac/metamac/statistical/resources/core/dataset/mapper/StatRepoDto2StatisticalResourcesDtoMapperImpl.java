@@ -84,7 +84,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
     }
 
     private Map<String, List<CodeItemDto>> attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(Long datasetVersionId, AttributeInstanceDto source) throws MetamacException {
-        if (source == null) {
+        if (source.getCodesByDimension() == null) {
             return null;
         }
         Map<String, List<CodeItemDto>> target = new HashMap<String, List<CodeItemDto>>();
