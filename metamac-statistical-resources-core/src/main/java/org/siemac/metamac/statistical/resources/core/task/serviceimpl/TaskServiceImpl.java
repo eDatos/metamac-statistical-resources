@@ -1090,12 +1090,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         
         markTaskAsFinished(ctx, jobKey);
     }
-
-    public void markTaskAsFailed(ServiceContext ctx, String jobKey) throws MetamacException {
-        Task task = retrieveTaskByJob(ctx, jobKey);
-        task.setStatus(TaskStatusTypeEnum.FAILED);
-        updateTask(ctx, task);
-    }
     
     private void markTaskAsFinishedInTransaction(ServiceContext ctx, String jobKey) {
         logger.debug("Marking  task as finished {}", jobKey);
@@ -1334,22 +1328,18 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } else if (jobKey.startsWith(PREFIX_JOB_DATABASE_IMPORT_DATA)) {
             processRollbackDatabaseImportTask(ctx, task.getJob());
         } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
-            processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob(), task.getStatus());
+            processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
         } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE)) {
             processRollbackUpdateExternalPublicationGeocoverageCacheTask(ctx, task.getJob());
         }
     }
 
-    private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskStatusTypeEnum currentStatus) throws MetamacException {
-        if (!currentStatus.equals(TaskStatusTypeEnum.FAILED)) {
+    private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
         String datasetVersionUrn = extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(jobKey);
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
         getNoticesRestInternalService().createUpdateGeocoverageCacheNotification(datasetVersion, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
                 ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionUrn);
-     
-        markTaskAsFailed(ctx, jobKey);
-        }
     }
     
     private void processRollbackUpdateExternalPublicationGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
@@ -1382,7 +1372,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } else if (jobKey.startsWith(PREFIX_JOB_DATABASE_IMPORT_DATA)) {
             processRollbackDatabaseImportTask(ctx, task.getJob());
         } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
-            processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob(), task.getStatus());
+            processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
         }
     }
 
