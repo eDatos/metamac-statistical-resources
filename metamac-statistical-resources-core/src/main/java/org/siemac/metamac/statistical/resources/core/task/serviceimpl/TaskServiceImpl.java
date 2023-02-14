@@ -1038,8 +1038,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
 
         if (geographicCoverage.isEmpty()) {
-            logger.debug("Dataset geographic coverage is empty");
-            return;
+            logger.debug("Dataset geographic coverage is empty. trying to recover information from spatial attribute");
+            datasetService.updateGeographicCoverageFromSpatialAttribute(ctx, datasetVersion);
+            if (geographicCoverage.isEmpty()) {
+                logger.debug("Dataset geographic coverage is empty");
+                return;
+            }
         }
 
         String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
@@ -1082,10 +1086,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         logger.debug("Processing geographic coverage to create the cache correctlyfinished");
+       
         
         markTaskAsFinished(ctx, jobKey);
     }
-
+    
     private void markTaskAsFinishedInTransaction(ServiceContext ctx, String jobKey) {
         logger.debug("Marking  task as finished {}", jobKey);
 
@@ -1335,14 +1340,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         getNoticesRestInternalService().createUpdateGeocoverageCacheNotification(datasetVersion, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
                 ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionUrn);
-     
-        markTaskAsFinished(ctx, jobKey);
     }
     
     private void processRollbackUpdateExternalPublicationGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
 
         getNoticesRestInternalService().createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
-        
+                
         markTaskAsFinished(ctx, jobKey);
     }
 

@@ -91,6 +91,16 @@ public class DsdProcessor {
         return null;
     }
 
+    public static DsdAttribute getSpatialAttributeFromDsd(DataStructure dsd) throws MetamacException {
+        List<DsdAttribute> attributes = DsdProcessor.getAttributes(dsd);
+        for (DsdAttribute attr : attributes) {
+            if (DsdComponentType.SPATIAL.equals(attr.getType())) {
+                return attr;
+            }
+        }
+        return null;
+    }
+    
     public static List<DsdAttribute> getAttributes(DataStructure dsd) throws MetamacException {
         List<DsdAttribute> attributes = new ArrayList<DsdAttribute>();
         DataStructureComponents components = dsd.getDataStructureComponents();

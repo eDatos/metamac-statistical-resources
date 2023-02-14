@@ -386,4 +386,9 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
+    
+    public static void checkUpdateGeographicCoverageFromSpatialAttribute(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
+    }
+    
 }
