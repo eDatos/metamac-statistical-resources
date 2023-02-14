@@ -20,8 +20,6 @@ public class CsvAttributesParser {
 
     private au.com.bytecode.opencsv.CSVReader csvReader        = null;
     private String[]                          headers          = null;
-    private int                               lineSizeExpected = 0;
-    private int                               lineNumber       = 0;
 
     public CsvAttributesParser(InputStream pxStream, String charsetName, char separator) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
@@ -34,8 +32,6 @@ public class CsvAttributesParser {
         if (isEmptyLine(header)) {
             throw new Exception("[Incorrect header] Header not found");
         }
-        lineNumber++;
-        lineSizeExpected = header.length;
         return headers;
     }
 
@@ -57,19 +53,32 @@ public class CsvAttributesParser {
 
     private DsdAttributeInstanceDto csvToDsdAttributeInstanceDto(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId) {
         String attributeId = line[0];
+        AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (dsdAttributeInstanceDto == null) {
             dsdAttributeInstanceDto = new DsdAttributeInstanceDto();
-            AttributeValueDto attributeValueDto = new AttributeValueDto();
             dsdAttributeInstanceDto.setAttributeId(attributeId);
-            ExternalItemDto externalItem = getExternalItemDto(line[5], attributeId, externalItemsAttributeId);
-            if (externalItem == null) {
-                attributeValueDto.setStringValue(line[5]);
-            }
-            attributeValueDto.setExternalItemValue(externalItem);
-            dsdAttributeInstanceDto.setValue(attributeValueDto);
         }
-        dsdAttributeInstanceDto.setCodeDimensions(getDimensions(line, codeDimensions));
+        setAttribute(dsdAttributeInstanceDto, line, externalItemsAttributeId, attributeId, attributeValueDto);
+        setCodeDimensions(dsdAttributeInstanceDto, line, codeDimensions);
         return dsdAttributeInstanceDto;
+    }
+
+    private void setCodeDimensions(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<CodeDimension>> codeDimensions) {
+        if (dsdAttributeInstanceDto.getCodeDimensions() == null) {
+            dsdAttributeInstanceDto.setCodeDimensions(getDimensions(line, codeDimensions));
+        } else {
+            dsdAttributeInstanceDto.getCodeDimensions().putAll(getDimensions(line, codeDimensions));
+        }
+    }
+
+    private void setAttribute(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<ExternalItemDto>> externalItemsAttributeId, String attributeId,
+            AttributeValueDto attributeValueDto) {
+        ExternalItemDto externalItem = getExternalItemDto(line[5], attributeId, externalItemsAttributeId);
+        if (externalItem == null) {
+            attributeValueDto.setStringValue(line[5]);
+        }
+        attributeValueDto.setExternalItemValue(externalItem);
+        dsdAttributeInstanceDto.setValue(attributeValueDto);
     }
 
     private ExternalItemDto getExternalItemDto(String code, String attributeId, Map<String, List<ExternalItemDto>> externalItemsAttributeId) {
