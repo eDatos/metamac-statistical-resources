@@ -98,6 +98,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     public void setAttributes(DatasetVersionDto datasetVersionDto, List<DsdAttributeDto> attributes) {
         listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeRecords(attributes));
         attributePanel.updateButtonsVisibility(datasetVersionDto);
+        this.datasetVersionDto = datasetVersionDto;
         attributePanel.hide();
     }
 
