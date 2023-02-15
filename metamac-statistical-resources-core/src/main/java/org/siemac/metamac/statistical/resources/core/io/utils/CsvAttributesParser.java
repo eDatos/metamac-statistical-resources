@@ -39,7 +39,7 @@ public class CsvAttributesParser {
         return line == null || line.length == 0;
     }
 
-    public boolean setNextLine(Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDtos, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId) throws Exception {
+    public boolean nextLine(Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDtos, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId) throws Exception {
         DsdAttributeInstanceDto dsdAttributeInstanceDto = null;
         String[] line = csvReader.readNext();
         if (line == null) {
@@ -118,7 +118,10 @@ public class CsvAttributesParser {
     }
 
     private CodeDimension getCodeDimension(String tittle, List<CodeDimension> codeDimensions) {
-        // return codeDimensions != null ? codeDimensions.stream().filter(codeDimension -> title.equals(codeDimension.getTitle())).findAny().orElse(null) : null;
+        if(codeDimensions == null) {
+            return null;
+        }
+
         for (CodeDimension codeDimension : codeDimensions) {
             if (tittle.equals(codeDimension.getTitle())) {
                 return codeDimension;

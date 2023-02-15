@@ -95,7 +95,7 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
             boolean processData = true;
             for (int i = 0; i < SPLIT_DATA_FACTOR || processData; i++) {
-                processData = csvReader.setNextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId);
+                processData = csvReader.nextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId);
             }
             insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDto);
         } finally {

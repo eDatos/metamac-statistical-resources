@@ -49,7 +49,6 @@ public class MetamacCsv2StatRepoMapperImpl implements MetamacCsv2StatRepoMapper 
 
         return observationExtendedDto;
     }
-
     private List<CodeDimensionDto> processKeyOfObservation(List<CsvObservationCodeDimension> observations) {
         List<CodeDimensionDto> codeDimensionDtos = new ArrayList<>(observations.size());
 
