@@ -141,11 +141,11 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
         return generateDatasetWithGeneratedVersion();
     }
 
-    private static Dataset getDataset03With2DatasetVersion() {
+    private static Dataset getDataset03With2DatasetVersions() {
         return getDataset03With2DatasetVersionsBase(DATASET_VERSION_03_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME);
     }
     
-    private static Dataset getDataset03With2C1DatasetVersion() {
+    private static Dataset getDataset03With2C1DatasetVersions() {
         return getDataset03With2DatasetVersionsBase(DATASET_VERSION_03_C1_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME);
     }
     
