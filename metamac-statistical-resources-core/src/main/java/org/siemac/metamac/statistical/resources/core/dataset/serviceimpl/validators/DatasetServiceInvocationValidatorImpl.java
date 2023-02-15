@@ -387,6 +387,6 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
     public static void checkImportAttributesInDatasetVersion(List<MetamacExceptionItem> exceptions) {
-        
+        // NOTHING
     }
 }
