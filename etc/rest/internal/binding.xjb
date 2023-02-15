@@ -2,7 +2,8 @@
 <jaxb:bindings version="2.0"
 	xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc"
+	xmlns:xjc= "http://java.sun.com/xml/ns/jaxb/xjc" jaxb:extensionBindingPrefixes="xjc annox"
+	xmlns:annox="http://annox.dev.java.net"
 	schemaLocation="metamac-statistical-resources-rest-internal-domain-v1.0.xsd">
 
 	<jaxb:globalBindings> 
@@ -10,4 +11,9 @@
 		<xjc:javaType xmlType="xs:dateTime" adapter="org.siemac.metamac.statistical_resources.rest.internal.adapter.DateTimeAdapter" name="java.util.Date" />
 		<xjc:javaType xmlType="xs:date" adapter="org.siemac.metamac.statistical_resources.rest.internal.adapter.DateAdapter" name="java.util.Date" />
 	</jaxb:globalBindings>
+	<jaxb:bindings schemaLocation="metamac-statistical-resources-rest-internal-domain-v1.0.xsd" node="/xs:schema">
+		<jaxb:bindings node="xs:complexType[@name='ResourceInternalWithStatisticalOperation']">
+			<annox:annotate>@org.codehaus.jackson.annotate.JsonPropertyOrder({"id", "kind", "name", "description", "managementAppLink", "nestedId", "selfLink", "urn", "urnProvider", "visualizerHtmlLink", "statisticalOperation"})</annox:annotate>
+		</jaxb:bindings>
+	</jaxb:bindings>
 </jaxb:bindings>

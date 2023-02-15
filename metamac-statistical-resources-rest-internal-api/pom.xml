@@ -215,6 +215,7 @@
                             <args>
                                 <arg>-Xbg</arg>
                                 <arg>-npa</arg> <!-- no generate package-info -->
+                                <arg>-Xannotate</arg>
                             </args>
                             <episodes>
 	                           <episode>
@@ -244,6 +245,16 @@
                         <groupId>org.apache.cxf.xjcplugins</groupId>
                         <artifactId>cxf-xjc-boolean</artifactId>
                         <version>${cxf-xjc-boolean.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics-annotate</artifactId>
+                        <version>1.0.4</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.jackson</groupId>
+                        <artifactId>jackson-core-asl</artifactId>
+                        <version>${jackson.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>            
