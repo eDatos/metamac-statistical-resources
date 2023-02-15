@@ -1,8 +1,10 @@
 package org.siemac.metamac.statistical.resources.core.utils.mocks.factories;
 
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.fillAsPublished;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_03_C1_FOR_DATASET_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_03_FOR_DATASET_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_05_FOR_DATASET_04_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_22_V1_PUBLISHED_FOR_DATASET_05_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_23_V2_PUBLISHED_FOR_DATASET_05_NAME;
@@ -59,6 +61,8 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
     public static final String DATASET_02_BASIC_WITH_GENERATED_VERSION_NAME = "DATASET_02_BASIC_WITH_GENERATED_VERSION";
 
     public static final String DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME = "DATASET_03_WITH_2_DATASET_VERSIONS";
+    
+    public static final String DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME = "DATASET_03_WITH_2_C1_DATASET_VERSIONS";
 
     public static final String DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME = "DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS";
 
@@ -137,7 +141,15 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
         return generateDatasetWithGeneratedVersion();
     }
 
-    private static Dataset getDataset03With2DatasetVersions() {
+    private static Dataset getDataset03With2DatasetVersion() {
+        return getDataset03With2DatasetVersionsBase(DATASET_VERSION_03_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME);
+    }
+    
+    private static Dataset getDataset03With2C1DatasetVersion() {
+        return getDataset03With2DatasetVersionsBase(DATASET_VERSION_03_C1_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME);
+    }
+    
+    private static Dataset getDataset03With2DatasetVersionsBase(String datasetId1, String datasetId2) {
         DatasetMock dataset = buildDatasetSimpleMock(1);
         getStatisticalResourcesPersistedDoMocks().mockDataset(dataset);
 
@@ -155,7 +167,7 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
         StatisticalResourcesPersistedDoMocks.mockDatasetVersionCoverages(templateV1);
         DatasetVersion datasetVersionV1 = getStatisticalResourcesPersistedDoMocks().mockDatasetVersion(templateV1);
         fillAsPublished(datasetVersionV1);
-        registerDatasetVersionMock(DATASET_VERSION_03_FOR_DATASET_03_NAME, datasetVersionV1);
+        registerDatasetVersionMock(datasetId1, datasetVersionV1);
 
         DatasetVersionMock templateV2 = DatasetVersionMockFactory.buildSimpleVersion(dataset, SECOND_VERSION);
         // last version
@@ -167,7 +179,7 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
 
         StatisticalResourcesPersistedDoMocks.mockDatasetVersionCoveragesWithTemporalAndRelated(templateV2);
         DatasetVersion datasetVersionV2 = getStatisticalResourcesPersistedDoMocks().mockDatasetVersion(templateV2);
-        registerDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME, datasetVersionV2);
+        registerDatasetVersionMock(datasetId2, datasetVersionV2);
 
         datasetVersionV2.getSiemacMetadataStatisticalResource().setReplacesVersion(StatisticalResourcesNotPersistedDoMocks.mockRelatedResourceLinkedToDatasetVersion(datasetVersionV1));
 

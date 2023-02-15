@@ -62,8 +62,12 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
 
     public static final String               DATASET_VERSION_03_FOR_DATASET_03_NAME                                                                        = "DATASET_VERSION_03_FOR_DATASET_03";
 
+    public static final String               DATASET_VERSION_03_C1_FOR_DATASET_03_NAME                                                                     = "DATASET_VERSION_03_C1_FOR_DATASET_03";
+    
     public static final String               DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME                                                       = "DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION";
 
+    public static final String               DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME                                                    = "DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION";
+    
     public static final String               DATASET_VERSION_05_FOR_DATASET_04_NAME                                                                        = "DATASET_VERSION_05_FOR_DATASET_04";
 
     public static final String               DATASET_VERSION_06_FOR_QUERIES_NAME                                                                           = "DATASET_VERSION_06_FOR_QUERIES";

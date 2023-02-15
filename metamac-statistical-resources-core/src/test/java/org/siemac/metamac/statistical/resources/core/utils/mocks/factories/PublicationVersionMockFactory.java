@@ -64,9 +64,11 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.Stati
 public class PublicationVersionMockFactory extends StatisticalResourcesMockFactory<PublicationVersion> {
 
     public static final String                   PUBLICATION_VERSION_01_BASIC_NAME                                                                                  = "PUBLICATION_VERSION_01_BASIC";
-
+ 
     public static final String                   PUBLICATION_VERSION_02_BASIC_NAME                                                                                  = "PUBLICATION_VERSION_02_BASIC";
 
+    public static final String                   PUBLICATION_VERSION_03_BASIC_NAME                                                                                  = "PUBLICATION_VERSION_03_BASIC";
+    
     public static final String                   PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME                                                                     = "PUBLICATION_VERSION_03_FOR_PUBLICATION_03";
 
     public static final String                   PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME                                                    = "PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION";
@@ -271,6 +273,10 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         return createPublicationVersion();
     }
 
+    private static PublicationVersion getPublicationVersion03Basic() {
+        return createPublicationVersion();
+    }
+    
     private static MockDescriptor getPublicationVersion03ForPublication03() {
         MockDescriptor pubMockDesc = getPublicationMockDescriptor(PublicationMockFactory.PUBLICATION_03_BASIC_WITH_2_PUBLICATION_VERSIONS_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME), pubMockDesc);
