@@ -7,6 +7,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecyc
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToPublished;
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToValidationRejected;
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToVersioning;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME;
@@ -309,11 +310,22 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_03_FOR_DATASET_03_NAME), mock);
     }
 
+    private static MockDescriptor getDatasetVersion03C1ForDataset03() {
+        MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME);
+        return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_03_C1_FOR_DATASET_03_NAME), mock);
+    }
+    
+    
     private static MockDescriptor getDatasetVersion04ForDataset03AndLastVersion() {
         MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME);
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME), mock);
     }
 
+    private static MockDescriptor getDatasetVersion04ForDataset03C1AndLastVersion() {
+        MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME);
+        return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME), mock);
+    }
+    
     private static MockDescriptor getDatasetVersion05ForDataset04() {
         MockDescriptor mock = getDatasetMockDescriptor(DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME);
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_05_FOR_DATASET_04_NAME), mock);

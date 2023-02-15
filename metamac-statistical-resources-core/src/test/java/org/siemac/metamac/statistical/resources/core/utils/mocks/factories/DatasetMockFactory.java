@@ -142,15 +142,15 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
     }
 
     private static Dataset getDataset03With2DatasetVersions() {
-        return getDataset03With2DatasetVersionsBase(DATASET_VERSION_03_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME);
+        return getDataset03With2DatasetVersionsBase(1, DATASET_VERSION_03_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME);
     }
     
     private static Dataset getDataset03With2C1DatasetVersions() {
-        return getDataset03With2DatasetVersionsBase(DATASET_VERSION_03_C1_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME);
+        return getDataset03With2DatasetVersionsBase(2, DATASET_VERSION_03_C1_FOR_DATASET_03_NAME, DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME);
     }
     
-    private static Dataset getDataset03With2DatasetVersionsBase(String datasetId1, String datasetId2) {
-        DatasetMock dataset = buildDatasetSimpleMock(1);
+    private static Dataset getDataset03With2DatasetVersionsBase(int id, String datasetId1, String datasetId2) {
+        DatasetMock dataset = buildDatasetSimpleMock(id);
         getStatisticalResourcesPersistedDoMocks().mockDataset(dataset);
 
         DatasetVersionMock templateV1 = DatasetVersionMockFactory.buildSimpleVersion(dataset, INIT_VERSION);

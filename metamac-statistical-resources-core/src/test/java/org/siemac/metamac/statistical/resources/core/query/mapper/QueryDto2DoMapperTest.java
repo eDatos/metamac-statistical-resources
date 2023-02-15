@@ -32,7 +32,7 @@ public class QueryDto2DoMapperTest extends StatisticalResourcesBaseTest {
     @Test
     @MetamacMock(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME)
     public void testQueryDtoToDoQueryLinkedToFixedDatasetVersion() throws MetamacException {
-        QueryVersionDto expected = StatisticalResourcesDtoMocks.mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DatasetVersionMockFactory.DATASET_VERSION_03_FOR_DATASET_03_NAME));
+        QueryVersionDto expected = StatisticalResourcesDtoMocks.mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DatasetVersionMockFactory.DATASET_VERSION_03_C1_FOR_DATASET_03_NAME));
         QueryVersion actual = queryDto2DoMapper.queryVersionDtoToDo(expected);
         assertEqualsQueryVersion(expected, actual);
         assertTrue(expected.getRelatedDatasetVersion().getUrn().equals(actual.getFixedDatasetVersion().getSiemacMetadataStatisticalResource().getUrn()));
@@ -41,7 +41,7 @@ public class QueryDto2DoMapperTest extends StatisticalResourcesBaseTest {
     @Test
     @MetamacMock(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME)
     public void testQueryDtoToDoLinkedToDataset() throws MetamacException {
-        DatasetVersion lastVersion = datasetVersionMockFactory.retrieveMock(DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME);
+        DatasetVersion lastVersion = datasetVersionMockFactory.retrieveMock(DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME);
 
         QueryVersionDto expected = StatisticalResourcesDtoMocks.mockQueryVersionDto(lastVersion);
         QueryVersion actual = queryDto2DoMapper.queryVersionDtoToDo(expected);
