@@ -294,13 +294,19 @@ public class QueryAsserts extends BaseAsserts {
         }
     }
 
+    
     // -----------------------------------------------------------------
     // DATASET VERSION: QUERY AND DATASETVERSION URN
     // -----------------------------------------------------------------
     private static void assertEqualsRelatedDatasetVersionInQueryVersion(QueryVersion entity, RelatedResourceDto relatedDataset) {
         DatasetVersion datasetLinkedToQuery = null;
         if (entity.getDataset() != null) {
-            datasetLinkedToQuery = entity.getDataset().getVersions().get(entity.getDataset().getVersions().size() - 1);
+            for (DatasetVersion dv : entity.getDataset().getVersions()) {
+                if (dv.getSiemacMetadataStatisticalResource().getLastVersion()) {
+                    datasetLinkedToQuery = dv;
+                    break;
+                }
+            }
         } else if (entity.getFixedDatasetVersion() != null) {
             datasetLinkedToQuery = entity.getFixedDatasetVersion();
         }
