@@ -10,8 +10,10 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetAttributesTabPresenter.DatasetAttributesTabView;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetAttributesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.AttributePanel;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportAttributesWithPreviewWindow;
@@ -99,6 +101,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
         listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeRecords(attributes));
         attributePanel.updateButtonsVisibility(datasetVersionDto);
         this.datasetVersionDto = datasetVersionDto;
+        updateButtonVisibility();
         attributePanel.hide();
     }
 
@@ -140,7 +143,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     private CustomToolStripButton createImportAttributesButton() {
         CustomToolStripButton importDatasourcesButton = new CustomToolStripButton(getConstants().actionLoadAttributes(),
                 org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
-        importDatasourcesButton.setVisible(Boolean.TRUE);
+        importDatasourcesButton.setVisible(Boolean.FALSE);
         importDatasourcesButton.addClickHandler(new ClickHandler() {
 
             @Override
@@ -163,5 +166,13 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
             }
         });
         return importDatasourcesButton;
+    }
+
+    private void updateButtonVisibility() {
+        importAttributesButton.setVisible(getButtonsVisibility(datasetVersionDto, DataSourceTypeEnum.FILE));
+    }
+
+    private boolean getButtonsVisibility(DatasetVersionDto datasetVersionDto, DataSourceTypeEnum dataSourceTypeEnum) {
+        return dataSourceTypeEnum.equals(datasetVersionDto.getDataSourceType()) && DatasetClientSecurityUtils.canImportDatasourcesInDatasetVersion(datasetVersionDto);
     }
 }
