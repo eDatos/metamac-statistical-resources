@@ -1919,7 +1919,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         Map<String, List<ExternalItemDto>> codes = new HashMap<>();
         for (DsdAttribute dsdAttribute : dsdAttributes) {
             if (!dsdAttribute.isAttributeAtObservationLevel()) {
-                codes.put(dsdAttribute.getComponentId(), StatisticalResourcesExternalItemUtils.buildExternalItemDtoFromCodes(srmRestInternalService.findCodes(dsdAttribute.getCodelistRepresentationUrn(), 0, null, "")));
+                codes.put(dsdAttribute.getComponentId(), StatisticalResourcesExternalItemUtils.buildExternalItemDtoFromCodes(srmRestInternalService.findCodes(dsdAttribute.getCodelistRepresentationUrn(), "0", null, "")));
             }
         }
         return codes;

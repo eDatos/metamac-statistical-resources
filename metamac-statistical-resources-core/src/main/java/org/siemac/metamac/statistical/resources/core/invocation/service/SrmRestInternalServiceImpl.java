@@ -359,14 +359,16 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
     @Override
     public Codes findCodes(String codelistUrn, int firstResult, int maxResult, String query) throws MetamacException {
         try {
-            return findCodes(codelistUrn, firstResult, maxResult, query);
+            String offset = String.valueOf(firstResult);
+            String limit = String.valueOf(maxResult);
+            return findCodes(codelistUrn, offset, limit, query);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
     }
 
     @Override
-    public Codes findCodes(String codelistUrn, Integer firstResult, Integer maxResult, String query) throws MetamacException {
+    public Codes findCodes(String codelistUrn, String firstResult, String maxResult, String query) throws MetamacException {
         try {
             String limit = maxResult != null ? String.valueOf(maxResult) : null;
             String offset = firstResult != null ? String.valueOf(firstResult) : null;

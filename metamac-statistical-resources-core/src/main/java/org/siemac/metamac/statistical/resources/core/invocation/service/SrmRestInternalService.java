@@ -66,7 +66,7 @@ public interface SrmRestInternalService {
     public List<ResourceInternal> findCodes(String query) throws MetamacException;
     public Codes findCodes(int firstResult, int maxResult, String query) throws MetamacException;
     public Codes findCodes(String codelistUrn, int firstResult, int maxResult, String query) throws MetamacException;
-    public Codes findCodes(String codelistUrn, Integer firstResult, Integer maxResult, String query) throws MetamacException;
+    public Codes findCodes(String codelistUrn, String firstResult, String maxResult, String query) throws MetamacException;
     public List<String> findCodesAsUrnsList(String query) throws MetamacException;
 
     public Codes retrieveCodesOfCodelistEfficiently(String codelistUrn) throws MetamacException;
