@@ -745,7 +745,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private ProcStatusEnum getNextProcStatus(ServiceContext ctx, TaskInfoDataset taskInfoDataset) {
         if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
-            return ProcStatusEnum.PUBLISHED;;
+            return ProcStatusEnum.PUBLISHED;
         }
         return taskInfoDataset.getDatasetNextProcStatus() != null ? ProcStatusEnum.valueOf(taskInfoDataset.getDatasetNextProcStatus()) : null;
     }
