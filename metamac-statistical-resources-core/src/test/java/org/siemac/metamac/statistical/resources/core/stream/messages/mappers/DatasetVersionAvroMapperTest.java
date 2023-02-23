@@ -24,14 +24,14 @@ public class DatasetVersionAvroMapperTest {
     private static DatasetVersionRepository datasetVersionRepository;
 
     @Mock
-    private static DatasetRepository        datasetRepository;
+    private static DatasetRepository datasetRepository;
 
     @Mock
-    private static ConfigurationService     configurationService;
+    private static ConfigurationService configurationService;
 
     @Mock
-    private static TranslationService     translationService;
-    
+    private static TranslationService translationService;
+
     @Before
     public void setUp() throws MetamacException {
         MockitoAnnotations.initMocks(this);
@@ -51,8 +51,7 @@ public class DatasetVersionAvroMapperTest {
         DatasetVersionAvro expected = MappersMockUtils.mockDatasetVersionAvro();
         DatasetVersion source = MappersMockUtils.mockDatasetVersion();
 
-        DatasetVersionAvro actual = DatasetVersionDo2AvroMapper.do2Avro(source);
-
+        DatasetVersionAvro actual = DatasetVersionDo2AvroMapper.do2Avro(source, configurationService.retrieveStatisticalResourcesInternalApiUrlBase());
         assertEqualDatasetVersionAvro(expected, actual);
     }
 

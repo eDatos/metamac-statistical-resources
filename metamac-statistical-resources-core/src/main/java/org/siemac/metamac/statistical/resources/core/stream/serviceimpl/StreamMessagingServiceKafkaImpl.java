@@ -34,11 +34,11 @@ public class StreamMessagingServiceKafkaImpl<K, V extends SpecificRecordBase> im
     private StatisticalResourcesConfiguration statisticalResourcesConfig;
 
     @Autowired
-    private QueryVersionDo2AvroMapper         queryVersionDo2AvroMapper;
+    private QueryVersionDo2AvroMapper queryVersionDo2AvroMapper;
 
-    private ProducerBase<K, V>                producer;
+    private ProducerBase<K, V> producer;
 
-    private final String                      CONSUMER_QUERY_1_NAME = "statresources_producer_1";
+    private final String CONSUMER_QUERY_1_NAME = "statresources_producer_1";
 
     @Override
     public void sendMessage(HasSiemacMetadata message) throws MetamacException {
@@ -66,7 +66,7 @@ public class StreamMessagingServiceKafkaImpl<K, V extends SpecificRecordBase> im
 
         getProducer().sendMessage(m, topic);
     }
-    
+
     private ProducerBase<K, V> getProducer() throws MetamacException {
         if (producer == null) {
             producer = new KafkaCustomProducer<>(getProducerProperties());
@@ -103,9 +103,10 @@ public class StreamMessagingServiceKafkaImpl<K, V extends SpecificRecordBase> im
 
     @SuppressWarnings("unchecked")
     private V serializeMessage(HasSiemacMetadata version) throws MetamacException {
+        String urlBaseExternalVisualizer = statisticalResourcesConfig.retrievePortalExternalWebApplicationUrlVisualizer();
         switch (version.getSiemacMetadataStatisticalResource().getType()) {
             case DATASET:
-                return (V) DatasetVersionDo2AvroMapper.do2Avro((DatasetVersion) version);
+                return (V) DatasetVersionDo2AvroMapper.do2Avro((DatasetVersion) version, urlBaseExternalVisualizer);
             case COLLECTION:
                 return (V) PublicationVersionDo2AvroMapper.do2Avro((PublicationVersion) version);
             case MULTIDATASET:
