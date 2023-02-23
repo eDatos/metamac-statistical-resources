@@ -1889,6 +1889,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     @Override
     public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
         try {
+            taskServiceInvocationValidator.checkImportAttributesInDatasetVersion(ctx, dataVersionUrn, taskInfoDataset);
             DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(taskInfoDataset.getDataStructureUrn());
             List<String> idsDimensions = getDimensionsColumnsName(dataStructure);
             Map<String, List<CodeDimension>> codeDimensions = getCodeDimensions(ctx, idsDimensions, dataVersionUrn);

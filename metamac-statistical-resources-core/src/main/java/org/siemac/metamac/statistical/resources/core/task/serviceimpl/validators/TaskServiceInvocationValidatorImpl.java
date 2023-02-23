@@ -86,7 +86,8 @@ public class TaskServiceInvocationValidatorImpl {
     }
 
     public static void checkImportAttributesInDatasetVersion(String dataVersionUrn, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
-        
+        StatisticalResourcesValidationUtils.checkParameterRequired(dataVersionUrn, ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDataStructureUrn(), ServiceExceptionParameters.TASK_INFO_DATASET_DSD_URN, exceptions);
     }
 
     public static void checkProcessRollbackImportationTask(String recoveryJobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {

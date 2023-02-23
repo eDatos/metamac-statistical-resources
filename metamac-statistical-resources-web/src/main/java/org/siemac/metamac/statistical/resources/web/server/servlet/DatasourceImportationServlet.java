@@ -149,7 +149,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     private void importElement(HashMap<String, String> args, Boolean mustBeZip, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto, File outputFolder, File uploadedFile)
             throws MetamacWebException, ZipException, IOException, MetamacException {
         if (BooleanUtils.toBoolean(args.get(StatisticalResourcesSharedTokens.LOAD_PARAM_ATTRIBUTES))) {
-            importAttributes(uploadedFile, outputFolder, args, basicVersionableStatisticalResourceDto);
+            importAttributes(uploadedFile, args, basicVersionableStatisticalResourceDto);
         } else {
             importDatasource(mustBeZip, uploadedFile, outputFolder, args, basicVersionableStatisticalResourceDto);
         }
@@ -257,7 +257,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         }
     }
 
-    private void importAttributes(File uploadedFile, File outputFolder, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto)
+    private void importAttributes(File uploadedFile, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto)
             throws MetamacWebException, ZipException, IOException, MetamacException {
 
         TaskServiceFacade taskServiceFacade = (TaskServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(TaskServiceFacade.BEAN_ID);

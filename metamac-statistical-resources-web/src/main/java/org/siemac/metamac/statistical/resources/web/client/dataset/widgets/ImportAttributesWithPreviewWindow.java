@@ -59,8 +59,7 @@ public abstract class ImportAttributesWithPreviewWindow extends UploadResourceWi
 
     @Override
     protected void copyHiddenValuesToMainForm(UploadForm mainForm, DynamicForm extraForm) {
-        // TODO Auto-generated method stub
-        
+        // NOTHING
     }
 
     @Override

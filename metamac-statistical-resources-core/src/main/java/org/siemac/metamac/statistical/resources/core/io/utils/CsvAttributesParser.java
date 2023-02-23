@@ -20,6 +20,10 @@ public class CsvAttributesParser {
 
     private au.com.bytecode.opencsv.CSVReader csvReader        = null;
     private String[]                          headers          = null;
+    private static final int COLUMN_ID_ATRIBUTTE = 0;
+    private static final int COLUMN_DIMENSION_NAME = 1;
+    private static final int COLUMN_DIMENSION_VALUES = 2;
+    private static final int COLUMN_ATTRIBUTE_VALUE = 3;
 
     public CsvAttributesParser(InputStream pxStream, String charsetName, char separator) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
@@ -45,14 +49,14 @@ public class CsvAttributesParser {
         if (line == null) {
             return false;
         }
-        dsdAttributeInstanceDto = dsdAttributeInstanceDtos.get(line[0]);
+        dsdAttributeInstanceDto = dsdAttributeInstanceDtos.get(line[COLUMN_ID_ATRIBUTTE]);
         DsdAttributeInstanceDto dsdAttributeCreatedInstanceDto = csvToDsdAttributeInstanceDto(dsdAttributeInstanceDto, line, codeDimensions, externalItemsAttributeId);
         dsdAttributeInstanceDtos.put(dsdAttributeCreatedInstanceDto.getAttributeId(), dsdAttributeCreatedInstanceDto);
         return true;
     }
 
     private DsdAttributeInstanceDto csvToDsdAttributeInstanceDto(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId) {
-        String attributeId = line[0];
+        String attributeId = line[COLUMN_ID_ATRIBUTTE];
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (dsdAttributeInstanceDto == null) {
             dsdAttributeInstanceDto = new DsdAttributeInstanceDto();
@@ -73,9 +77,9 @@ public class CsvAttributesParser {
 
     private void setAttribute(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<ExternalItemDto>> externalItemsAttributeId, String attributeId,
             AttributeValueDto attributeValueDto) {
-        ExternalItemDto externalItem = getExternalItemDto(line[5], attributeId, externalItemsAttributeId);
+        ExternalItemDto externalItem = getExternalItemDto(line[COLUMN_ATTRIBUTE_VALUE], attributeId, externalItemsAttributeId);
         if (externalItem == null) {
-            attributeValueDto.setStringValue(line[5]);
+            attributeValueDto.setStringValue(line[COLUMN_ATTRIBUTE_VALUE]);
         }
         attributeValueDto.setExternalItemValue(externalItem);
         dsdAttributeInstanceDto.setValue(attributeValueDto);
@@ -96,7 +100,7 @@ public class CsvAttributesParser {
 
     private Map<String, List<CodeItemDto>> getDimensions(String[] line, Map<String, List<CodeDimension>> codesDimensions) {
         Map<String, List<CodeItemDto>> codeItemDtos = new HashMap<>();
-        String dimension = line[3];
+        String dimension = line[COLUMN_DIMENSION_NAME];
         if (!StringUtils.isBlank(dimension)) {
             List<CodeDimension> codeDimensions = codesDimensions.get(dimension);
             setCodeItems(line, dimension, codeItemDtos, codeDimensions);
@@ -105,7 +109,7 @@ public class CsvAttributesParser {
     }
 
     private void setCodeItems(String[] line, String dimension, Map<String, List<CodeItemDto>> codesDimensions, List<CodeDimension> codeDimensions) {
-        String[] dimensionValues = line[4].split(", ");
+        String[] dimensionValues = line[COLUMN_DIMENSION_VALUES].split(", ");
         List<CodeItemDto> codeItemDtos = new ArrayList<>();
         for (String dimensionValue : dimensionValues) {
             CodeItemDto codeItemDto = new CodeItemDto();

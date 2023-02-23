@@ -334,7 +334,7 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
 
     @Override
     public void attributesImportationSucceed(String fileName) {
-        ShowMessageEvent.fireSuccessMessage(DatasetAttributesTabPresenter.this, getMessages().datasourcesImportationPlanned());
+        ShowMessageEvent.fireSuccessMessage(DatasetAttributesTabPresenter.this, getMessages().attributesImportationSuccess());
     }
 
     @Override
