@@ -164,7 +164,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private static Logger                         logger                                       = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    private static final String ZERO = "0";
     public static final String                    SCHEDULER_INSTANCE_NAME                      = "StatisticalResourcesScheduler";
     public static final String                    PREFIX_JOB_IMPORT_DATA                       = "job_importdata_";
     public static final String                    PREFIX_JOB_DATABASE_IMPORT_DATA              = "job_databaseimportdata_";
@@ -1923,7 +1922,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         Map<String, List<ExternalItemDto>> codes = new HashMap<>();
         for (DsdAttribute dsdAttribute : dsdAttributes) {
             if (!dsdAttribute.isAttributeAtObservationLevel()) {
-                codes.put(dsdAttribute.getComponentId(), StatisticalResourcesExternalItemUtils.buildExternalItemDtoFromCodes(srmRestInternalService.findCodes(dsdAttribute.getCodelistRepresentationUrn(), ZERO, null, "")));
+                codes.put(dsdAttribute.getComponentId(), StatisticalResourcesExternalItemUtils.buildExternalItemDtoFromCodes(srmRestInternalService.findCodes(dsdAttribute.getCodelistRepresentationUrn(), 0, null, "")));
             }
         }
         return codes;
