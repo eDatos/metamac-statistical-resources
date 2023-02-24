@@ -16,9 +16,11 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValue
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 
+import au.com.bytecode.opencsv.CSVReader;
+
 public class CsvAttributesParser {
 
-    private au.com.bytecode.opencsv.CSVReader csvReader        = null;
+    private CSVReader csvReader        = null;
     private String[]                          headers          = null;
     private static final int COLUMN_ID_ATRIBUTTE = 0;
     private static final int COLUMN_DIMENSION_NAME = 1;
