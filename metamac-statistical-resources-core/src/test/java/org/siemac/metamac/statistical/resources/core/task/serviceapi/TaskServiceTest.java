@@ -160,4 +160,10 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testSendDatabaseImportationErrorNotification() throws Exception {
         // No test
     }
+
+    @Override
+    public void testImportAttributesInDatasetVersion() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -357,10 +357,10 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
     }
 
     @Override
-    public Codes findCodes(String codelistUrn, int firstResult, int maxResult, String query) throws MetamacException {
+    public Codes findCodes(String codelistUrn, Integer firstResult, Integer maxResult, String query) throws MetamacException {
         try {
-            String limit = String.valueOf(maxResult);
-            String offset = String.valueOf(firstResult);
+            String limit = maxResult != null ? String.valueOf(maxResult) : null;
+            String offset = firstResult != null ? String.valueOf(firstResult) : null;
             String agencyId = null;
             String resourceId = null;
             String version = null;
