@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.presenter;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,6 +43,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsP
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.CommonErrorUtils;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
@@ -328,6 +330,16 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
                 getView().setItemsForDimensionOrGroupLevelAttributeValueSelection(result.getConcepts(), result.getFirstResultOut(), result.getTotalResults());
             }
         });
+    }
+
+    @Override
+    public void attributesImportationSucceed(String fileName) {
+        ShowMessageEvent.fireSuccessMessage(DatasetAttributesTabPresenter.this, getMessages().attributesImportationSuccess());
+    }
+
+    @Override
+    public void attributesImportationFailed(String errorMessage) {
+        ShowMessageEvent.fireErrorMessage(DatasetAttributesTabPresenter.this, errorMessage);
     }
 
     //

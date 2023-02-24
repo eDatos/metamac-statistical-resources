@@ -29,7 +29,9 @@ Application DatasetsStatisticalResources {
     		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		
     		"Perform the database dataset pooling task"
-    		executeDatabaseDatasetPollingTask()  throws MetamacException;   		
+    		executeDatabaseDatasetPollingTask()  throws MetamacException;
+    		"Import a set of files provided by urn as attributes in a datasetVersion"
+    		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset) throws MetamacException;
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
 			
@@ -64,6 +66,8 @@ Application DatasetsStatisticalResources {
             String planifyUpdateExternalGeocoverageCache(@TaskInfoDataset taskInfoDataset) throws MetamacException;
 			"Perform the importation task"
     		processImportationTask(String importationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		"Import a set of files provided by urn as attributes in a datasetVersion"
+    		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the database importation task"
     		processDatabaseImportationTask(String databaseImportationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform a rollback in a importation task"

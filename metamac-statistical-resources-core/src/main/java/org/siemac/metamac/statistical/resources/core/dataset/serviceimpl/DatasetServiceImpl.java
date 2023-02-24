@@ -848,7 +848,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.FILE_ENCODING_ERROR).withMessageParameters(getFilenameFromPath(url.getPath())).build();
             }
         }
-        if (exceptionItems.size() > 0) {
+        if (!exceptionItems.isEmpty()) {
             throw new MetamacException(exceptionItems);
         }
     }
@@ -2134,4 +2134,5 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.INVALID_TABLENAME_FORMAT).withMessageParameters(tableName, datasetVersionUrn).build();
         }
     }
+
 }
