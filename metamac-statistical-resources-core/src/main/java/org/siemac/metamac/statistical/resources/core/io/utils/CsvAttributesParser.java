@@ -29,11 +29,11 @@ public class CsvAttributesParser {
 
     public CsvAttributesParser(InputStream pxStream, String charsetName, char separator) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
-        csvReader = new au.com.bytecode.opencsv.CSVReader(bufferedReader, separator);
+        csvReader = new CSVReader(bufferedReader, separator);
         headers = readDefinition(csvReader);
     }
 
-    private String[] readDefinition(au.com.bytecode.opencsv.CSVReader csvReader) throws Exception {
+    private String[] readDefinition(CSVReader csvReader) throws Exception {
         String[] header = csvReader.readNext();
         if (isEmptyLine(header)) {
             throw new Exception("[Incorrect header] Header not found");
