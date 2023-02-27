@@ -16,7 +16,7 @@ import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
-import org.siemac.metamac.statistical.resources.core.facade.serviceimpl.StatisticalResourcesServiceFacadeImpl;
+import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.CsvAttributesParser;
@@ -40,7 +40,7 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
 
     @Autowired
-    StatisticalResourcesServiceFacadeImpl    statisticalResourcesServiceFacade;
+    StatisticalResourcesServiceFacade        statisticalResourcesServiceFacade;
 
     private static int                       SPLIT_DATA_FACTOR = 5000;
 

@@ -7,7 +7,11 @@
     <bean id="datasetRepositoriesServiceFacade" class="org.mockito.Mockito" factory-method="mock">
         <constructor-arg value="es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade" />
     </bean>
-    
+
+    <bean id="statisticalResourcesServiceFacade" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade" />
+    </bean>
+
     <bean id="datasetService" class="org.mockito.Mockito" factory-method="mock">
         <constructor-arg value="org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService" />
     </bean>
