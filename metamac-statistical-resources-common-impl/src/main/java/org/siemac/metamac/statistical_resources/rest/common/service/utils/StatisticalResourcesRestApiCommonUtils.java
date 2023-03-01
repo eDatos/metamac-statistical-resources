@@ -86,6 +86,7 @@ public class StatisticalResourcesRestApiCommonUtils {
         validFields.add(StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION);
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
+        validFields.add("+dimension.pluralName"/*StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_DIMENSION_PLURAL_NAME*/); // TODO: create constant from comment and use it
         return parseFields(fieldsParam, validFields);
     }
 

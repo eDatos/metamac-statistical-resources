@@ -82,6 +82,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionVisualisation;
@@ -751,6 +752,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
 
+        Concept dimensionConcept = srmRestExternalFacade.retrieveConceptByUrn(source.getConceptIdentity().getUrn());
+        target.setPluralName(dimensionConcept.getPluralName());
+
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields));
         return target;
@@ -858,10 +862,15 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         // This map contains nodes that are not in the result. If a child of this nodes is in the result, we use this map to put it inside the nearest parent node in result
         Map<String, String> parentsReplacedToVisualisation = new HashMap<String, String>();
 
-        boolean includeDescription = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION);
-        String conceptField = includeDescription ? SrmRestConstants.FIELD_INCLUDE_DESCRIPTION : null;
-        Concepts concepts = srmRestExternalFacade.retrieveConceptsByConceptSchemeByUrn(conceptSchemeUrn, conceptField);
-        for (ItemResource concept : concepts.getConcepts()) {
+        List<String> conceptField = new ArrayList<>();
+        if (containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION)) {
+            conceptField.add(SrmRestConstants.FIELD_INCLUDE_DESCRIPTION);
+        }
+        if (containsField(fields, "+dimension.pluralName"/*StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_DIMENSION_PLURAL_NAME*/)) { // TODO: create constant from comment and use it
+            conceptField.add(SrmRestConstants.FIELD_INCLUDE_PLURAL_NAME);
+        }
+        Concepts concepts = srmRestExternalFacade.retrieveConceptsByConceptSchemeByUrn(conceptSchemeUrn, StringUtils.join(conceptField, ","));
+        for (ConceptResource concept : concepts.getConcepts()) {
             String id = concept.getId();
             boolean skip = false;
             if (effectiveDimensionValuesToData != null) {
