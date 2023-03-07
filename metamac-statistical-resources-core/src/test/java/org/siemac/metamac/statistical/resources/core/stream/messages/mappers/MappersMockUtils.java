@@ -9,7 +9,6 @@ import java.util.Map;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.NameableStatisticalResource;
@@ -61,35 +60,35 @@ import org.siemac.metamac.statistical.resources.core.stream.messages.Versionable
 
 public class MappersMockUtils {
 
-    private static final boolean                         EXPECTED_TRUE                  = true;
-    protected static final boolean                       EXPECTED_FALSE                 = false;
-    protected static final String                        EXPECTED_TITLE                 = "EXPECTED_TITLE";
-    protected static final String                        EXPECTED_FILENAME              = "EXPECTED_FILENAME";
-    protected static final String                        EXPECTED_IDENTIFIER            = "EXPECTED_IDENTIFIER";
-    protected static final TypeRelatedResourceEnum       EXPECTED_RELATED_RESOURCE_TYPE = TypeRelatedResourceEnum.DATASET;
-    protected static final ProcStatusEnum                PRODUCTION_VALIDATION          = ProcStatusEnum.PRODUCTION_VALIDATION;
-    protected static final boolean                       EXPECTED_LAST_VERSION          = true;
-    protected static final String                        EXPECTED_USER                  = "Expected User Name";
-    protected static final NextVersionTypeEnum           EXPECTED_NEXT_VERSION_TYPE     = NextVersionTypeEnum.NON_SCHEDULED_UPDATE;
-    protected static final DateTime                      EXPECTED_PAST_DATE             = new DateTime(2016, 06, 01, 0, 0, 0, 0).minusDays(30);
-    protected static final DateTime                      EXPECTED_FUTURE_DATE           = new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30);
-    protected static final String                        EXPECTED_PAST_DATE_SDMX        = "2016-M05";
-    protected static final String                        EXPECTED_FUTURE_DATE_SDMX      = "2016-M07";
-    protected static final String                        EXPECTED_VERSION_LOGIC         = "EXPECTED_VERSION_LOGIC";
-    protected static final long                          EXPECTED_VERSION               = 33l;
-    protected static final String                        EXPECTED_URI                   = "/EXPECTED_URI";
-    protected static final String                        EXPECTED_URN                   = "EXPECTED_URN";
-    protected static final String                        EXPECTED_URN_PROVIDER          = "EXPECTED_URN_PROVIDER";
-    protected static final TypeExternalArtefactsEnum     EXPECTED_TYPE                  = TypeExternalArtefactsEnum.CONFIGURATION;
-    protected static final TypeExternalArtefactsEnumAvro EXPECTED_TYPE_AVRO             = TypeExternalArtefactsEnumAvro.CONFIGURATION;
-    protected static final String                        EXPECTED_LOCALE                = "EXPECTED_LOCALE";
-    protected static final String                        EXPECTED_LABEL                 = "EXPECTED_LABEL";
-    protected static final String                        EXPECTED_MANAGEMENT_APP_URL    = "EXPECTED_MANAGEMENT_APP_URL";
-    protected static final String                        EXPECTED_CODE_NESTED           = "EXPECTED_CODE_NESTED";
-    protected static final String                        EXPECTED_CODE                  = "EXPECTED_CODE";
-    public static final String                           EXPECTED_API_BASE              = "http://EXPECTED_API_BASE";
-    protected static final String                        EXPECTED_SELF_LINK             = EXPECTED_API_BASE + EXPECTED_URI;
-    private static final int                             EXPECTED_COPYRIGHT             = 0;
+    private static final boolean EXPECTED_TRUE = true;
+    protected static final boolean EXPECTED_FALSE = false;
+    protected static final String EXPECTED_TITLE = "EXPECTED_TITLE";
+    protected static final String EXPECTED_FILENAME = "EXPECTED_FILENAME";
+    protected static final String EXPECTED_IDENTIFIER = "EXPECTED_IDENTIFIER";
+    protected static final TypeRelatedResourceEnum EXPECTED_RELATED_RESOURCE_TYPE = TypeRelatedResourceEnum.DATASET;
+    protected static final ProcStatusEnum PRODUCTION_VALIDATION = ProcStatusEnum.PRODUCTION_VALIDATION;
+    protected static final boolean EXPECTED_LAST_VERSION = true;
+    protected static final String EXPECTED_USER = "Expected User Name";
+    protected static final NextVersionTypeEnum EXPECTED_NEXT_VERSION_TYPE = NextVersionTypeEnum.NON_SCHEDULED_UPDATE;
+    protected static final DateTime EXPECTED_PAST_DATE = new DateTime(2016, 06, 01, 0, 0, 0, 0).minusDays(30);
+    protected static final DateTime EXPECTED_FUTURE_DATE = new DateTime(2016, 06, 01, 0, 0, 0, 0).plusDays(30);
+    protected static final String EXPECTED_PAST_DATE_SDMX = "2016-M05";
+    protected static final String EXPECTED_FUTURE_DATE_SDMX = "2016-M07";
+    protected static final String EXPECTED_VERSION_LOGIC = "EXPECTED_VERSION_LOGIC";
+    protected static final long EXPECTED_VERSION = 33l;
+    protected static final String EXPECTED_URI = "/EXPECTED_URI";
+    protected static final String EXPECTED_URN = "EXPECTED_URN";
+    protected static final String EXPECTED_URN_PROVIDER = "EXPECTED_URN_PROVIDER";
+    protected static final TypeExternalArtefactsEnum EXPECTED_TYPE = TypeExternalArtefactsEnum.CONFIGURATION;
+    protected static final TypeExternalArtefactsEnumAvro EXPECTED_TYPE_AVRO = TypeExternalArtefactsEnumAvro.CONFIGURATION;
+    protected static final String EXPECTED_LOCALE = "EXPECTED_LOCALE";
+    protected static final String EXPECTED_LABEL = "EXPECTED_LABEL";
+    protected static final String EXPECTED_MANAGEMENT_APP_URL = "EXPECTED_MANAGEMENT_APP_URL";
+    protected static final String EXPECTED_CODE_NESTED = "EXPECTED_CODE_NESTED";
+    protected static final String EXPECTED_CODE = "EXPECTED_CODE";
+    public static final String EXPECTED_API_BASE = "http://EXPECTED_API_BASE";
+    protected static final String EXPECTED_SELF_LINK = EXPECTED_API_BASE + EXPECTED_URI;
+    private static final int EXPECTED_COPYRIGHT = 0;
 
     public static ExternalItem mockExternalItem() {
         ExternalItem source = new ExternalItem();
@@ -139,7 +138,7 @@ public class MappersMockUtils {
         InternationalStringAvro target = InternationalStringAvro.newBuilder().setLocalisedStrings(list).build();
         return target;
     }
-   
+
     public static InternationalStringAvro mockInternationalStringAvroFutureDate() throws MetamacException {
         List<InternationalStringItemAvro> list = new ArrayList<>();
         InternationalStringItemAvro item = InternationalStringItemAvro.newBuilder().setLabel(EXPECTED_FUTURE_DATE_SDMX).setLocale(EXPECTED_LOCALE).build();
@@ -147,7 +146,7 @@ public class MappersMockUtils {
         InternationalStringAvro target = InternationalStringAvro.newBuilder().setLocalisedStrings(list).build();
         return target;
     }
-    
+
     public static RelatedResource mockRelatedResource(DatasetVersion datasetVersion) {
         RelatedResource target = new RelatedResource();
         target.setVersion(EXPECTED_VERSION);
@@ -346,7 +345,7 @@ public class MappersMockUtils {
         DatasetVersion d = new DatasetVersion();
         SiemacMetadataStatisticalResource siemac = mockSiemacMetadataStatisticalResource(TypeRelatedResourceEnum.DATASET_VERSION, d, expectedUrn, true);
         d.setSiemacMetadataStatisticalResource(siemac);
-        d.setDateStart(EXPECTED_PAST_DATE_SDMX  );
+        d.setDateStart(EXPECTED_PAST_DATE_SDMX);
         d.setDateEnd(EXPECTED_FUTURE_DATE_SDMX);
         d.setRelatedDsdChanged(EXPECTED_TRUE);
         d.setDatasetRepositoryId(EXPECTED_IDENTIFIER);
@@ -711,9 +710,14 @@ public class MappersMockUtils {
                 .setTemporalGranularities(mockExternalItemAvroList())
                 .setStatisticalUnit(mockExternalItemAvroList())
                 .setIsPartOf(new ArrayList<RelatedResourceAvro>())
+                .setVisualizerHtmlLink(mockDatasetVisualizerHtmlLink())
                 .build();
         // @formatter:on
         return target;
+    }
+
+    protected static String mockDatasetVisualizerHtmlLink() {
+        return EXPECTED_API_BASE + "/data.html?resourceType=dataset&agencyId=" + EXPECTED_CODE + "&resourceId=" + EXPECTED_CODE + "&version=" + EXPECTED_CODE;
     }
 
     protected static List<CodeDimensionAvro> mockCodeDimensionAvroList() {
@@ -856,10 +860,10 @@ public class MappersMockUtils {
         list.add(EXPECTED_URN + "2");
         return list;
     }
-    
+
     public static Map<String, String> mockMapTranslateDateSdmx() {
         Map<String, String> map = new HashMap<>();
         map.put(MappersMockUtils.EXPECTED_LOCALE, MappersMockUtils.EXPECTED_FUTURE_DATE_SDMX);
         return map;
-    } 
+    }
 }
