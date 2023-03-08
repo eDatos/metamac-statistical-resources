@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.core.io.serviceimpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -93,9 +94,9 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
             Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDto = new HashMap<>();
 
-            boolean processData = true;
-            for (int i = 0; i < SPLIT_DATA_FACTOR || processData; i++) {
-                processData = csvReader.nextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId);
+            String idAttribute = "";
+            for (int i = 0; i < SPLIT_DATA_FACTOR || idAttribute != null; i++) {
+                idAttribute = csvReader.nextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId, idAttribute);
             }
             insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDto);
         } finally {
@@ -105,7 +106,18 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
     private void insertAttributes(ServiceContext ctx, String datasetVersionUrn, Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDto) throws MetamacException {
         for (Map.Entry<String, DsdAttributeInstanceDto> entry : dsdAttributeInstanceDto.entrySet()) {
-            statisticalResourcesServiceFacade.createAttributeInstance(ctx, datasetVersionUrn, entry.getValue());
+            List<DsdAttributeInstanceDto> attributeInstances = new ArrayList<>();
+            //to define the attribute at the dataset level we need to know if it has already been created previously
+            if (entry.getValue().getCodeDimensions() == null || entry.getValue().getCodeDimensions().isEmpty()) {
+                attributeInstances = statisticalResourcesServiceFacade.retrieveAttributeInstances(ctx, datasetVersionUrn, entry.getValue().getAttributeId());
+            }
+            if (attributeInstances.isEmpty()) {
+                statisticalResourcesServiceFacade.createAttributeInstance(ctx, datasetVersionUrn, entry.getValue());
+            } else {
+                DsdAttributeInstanceDto attributeInstanceDto = attributeInstances.get(0);
+                attributeInstanceDto.setValue(entry.getValue().getValue());
+                statisticalResourcesServiceFacade.updateAttributeInstance(ctx, datasetVersionUrn, attributeInstanceDto);
+            }
         }
     }
     private void insertDataAndAttributes(String datasetID, List<ObservationExtendedDto> dataDtos, ValidateDataVersusDsd validateDataVersusDsd) throws Exception {

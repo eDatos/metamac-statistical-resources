@@ -228,6 +228,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType IMPORTATION_DATASET_VERSION_ERROR                                            = create(
             "exception.resources.dataset.importation.dataset_version_error");
     public static final CommonServiceExceptionType IMPORTATION_CSV_FILE_ERROR                                                   = create("exception.resources.dataset.importation.csv_file_error");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID                               = create("exception.resources.attribute.importation.dimension_value_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_CODE_ENUM_NOT_VALID                                         = create(
             "exception.resources.dataset.importation.attribute_code_enumeration_not_valid");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_NOT_MATCH                                                   = create("exception.resources.dataset.importation.attribute_not_match");

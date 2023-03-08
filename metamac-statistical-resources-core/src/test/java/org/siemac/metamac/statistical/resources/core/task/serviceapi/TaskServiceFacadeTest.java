@@ -29,6 +29,11 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     }
 
     @Override
+    public void testExecuteRecoveryImportationAttributes() throws Exception {
+        
+    }
+
+    @Override
     public void testExecuteDuplicationTask() throws Exception {
         // See integration test in DataManipulateTest
     }

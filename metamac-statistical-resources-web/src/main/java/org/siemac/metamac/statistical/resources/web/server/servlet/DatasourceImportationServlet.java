@@ -39,7 +39,6 @@ import org.siemac.metamac.statistical.resources.core.facade.serviceapi.Statistic
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
-import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskServiceFacade;
 import org.siemac.metamac.statistical.resources.web.client.WebMessageExceptionsConstants;
 import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
@@ -260,7 +259,6 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
     private void importAttributes(File uploadedFile, HashMap<String, String> args, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto)
             throws MetamacWebException, ZipException, IOException, MetamacException {
 
-        TaskServiceFacade taskServiceFacade = (TaskServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(TaskServiceFacade.BEAN_ID);
         StatisticalResourcesServiceFacade datasetService = (StatisticalResourcesServiceFacade) ApplicationContextProvider.getApplicationContext().getBean(StatisticalResourcesServiceFacade.BEAN_ID);
         List<File> filesToImport = new ArrayList<File>();
         filesToImport.add(uploadedFile);
@@ -269,11 +267,9 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
 
         String datasetVersionUrn = args.get(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
 
-        HashMap<String, String> dimensionRepresentationMapping = new HashMap<String, String>();
-        DatasetVersionDto datasetVersion = datasetService.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
-        TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, dimensionRepresentationMapping, false, basicVersionableStatisticalResourceDto);
-        
-        taskServiceFacade.importAttributesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn, taskInfo);
+        DatasetVersionDto datasetVersionDto = datasetService.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
+
+        datasetService.importAttributesFromFile(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls);
 
     }
 

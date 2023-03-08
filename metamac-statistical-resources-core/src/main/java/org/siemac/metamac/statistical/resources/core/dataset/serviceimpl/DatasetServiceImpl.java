@@ -770,6 +770,16 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
+    public void importAttributesFromFile(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls) throws MetamacException {
+        datasetServiceInvocationValidator.checkImportAttributesFromFile(ctx, datasetVersionUrn, fileUrls);
+        DatasetVersion datasetVersion = getDatasetVersionRepository().retrieveByUrn(datasetVersionUrn);
+
+        checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+        TaskInfoDataset taskInfo = buildImportationTaskInfo(datasetVersion, fileUrls, new HashMap<>(), null, null);
+        getTaskService().planifyImportationAttributes(ctx, taskInfo);
+    }
+
+    @Override
     public void importDatabaseDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
             boolean storeDimensionRepresentationMapping) throws MetamacException {
         importDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping, DataSourceTypeEnum.DATABASE, new BasicVersionableStatisticalResourceDto());
@@ -799,7 +809,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     private TaskInfoDataset buildImportationTaskInfo(DatasetVersion datasetVersion, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
-            boolean storeDimensionRepresentationMapping, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
+            Boolean storeDimensionRepresentationMapping, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) {
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         TaskInfoDataset taskInfo = new TaskInfoDataset();
@@ -808,14 +818,14 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
         taskInfo.setStoreAlternativeRepresentations(storeDimensionRepresentationMapping);
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-        taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
-        taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
-        taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto.getNextUpdateDate());
-        taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto.getUpdateFrequency());
-        taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto.getDataProvidersUrn());
-        taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
-        taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto.getNextProcStatus());
-        taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
+        taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextVersion() : null);
+        taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextVersionDate() : null);
+        taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextUpdateDate() : null);
+        taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getUpdateFrequency() : null);
+        taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getDataProvidersUrn() : null);
+        taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getVersionRationaleTypes() : null);
+        taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextProcStatus() : null);
+        taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getAutomaticLifeCicle() : null);
         for (String dimensionId : dimensionRepresentationMapping.keySet()) {
             AlternativeEnumeratedRepresentation representation = new AlternativeEnumeratedRepresentation();
             representation.setComponentId(dimensionId);

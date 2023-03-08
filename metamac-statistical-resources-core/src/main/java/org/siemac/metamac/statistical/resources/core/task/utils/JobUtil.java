@@ -33,6 +33,10 @@ public class JobUtil {
         return file;
     }
 
+    public static String createJobNameForImportationAttributes(String resourceId) {
+        return TaskServiceImpl.PREFIX_JOB_IMPORT_ATTRIBUTES + resourceId;
+    }
+
     public static String createJobNameForImportationResource(String resourceId) {
         return TaskServiceImpl.PREFIX_JOB_IMPORT_DATA + resourceId;
     }
@@ -41,8 +45,16 @@ public class JobUtil {
         return TaskServiceImpl.PREFIX_JOB_DATABASE_IMPORT_DATA + resourceId;
     }
 
+    public static String createJobNameForImportAttributes(String resourceId) {
+        return TaskServiceImpl.PREFIX_JOB_IMPORT_ATTRIBUTES + resourceId;
+    }
+
     public static String createJobNameForRecoveryImportationResource(String resourceId) {
         return TaskServiceImpl.PREFIX_JOB_RECOVERY_IMPORT_DATA + resourceId;
+    }
+
+    public static String createJobNameForRecoveryImportationAttributes(String resourceId) {
+        return TaskServiceImpl.PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES + resourceId;
     }
 
     public static String createJobNameForDuplicationResource(String resourceId) {

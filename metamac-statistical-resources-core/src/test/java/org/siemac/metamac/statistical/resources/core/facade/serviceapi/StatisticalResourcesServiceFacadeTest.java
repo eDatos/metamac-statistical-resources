@@ -4286,4 +4286,14 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         
         assertNotSame(persistedQuery, persistedQueryCopy);
     }
+
+    @Override
+    public void testImportAttributesFromFile() throws Exception {
+        String datasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
+
+        URL url = new URL("file", null, "myfile.px");
+
+        statisticalResourcesServiceFacade.importAttributesFromFile(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url));
+    }
 }
