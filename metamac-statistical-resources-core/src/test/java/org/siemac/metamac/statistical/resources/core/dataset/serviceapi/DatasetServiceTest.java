@@ -2123,4 +2123,10 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         
         return basicVersionableStatisticalResourceDto;
     }
+
+    @Override
+    public void testImportAttributesFromFile() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

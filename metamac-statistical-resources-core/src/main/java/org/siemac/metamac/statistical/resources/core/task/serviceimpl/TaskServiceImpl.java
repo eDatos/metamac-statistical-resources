@@ -8,9 +8,11 @@ import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnByDots;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForDatabaseImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForDuplicationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationResource;
+import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationAttributes;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateExternalGeocoverageCache;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeocoverageCache;
+import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationAttributes;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -103,11 +105,13 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.AbstractImpo
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.DatabaseDatasetPollingJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.DuplicationDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.GeographicCoverageCacheClearJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportAttributesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetFromDatabaseJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateCsvDataService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulatePxDataService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateSdmx21DataCallbackImpl;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportAttributesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
@@ -175,6 +179,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                    PREFIX_TRIGGER_RECOVERY_IMPORT_DATA          = "trigger_recoveryimportdata_";
     public static final String                    GROUP_IMPORTATION                            = "importation";
     public static final String                    GROUP_EXTERNAL_CACHE                         = "externalCacheUpdate";
+    public static final String                    PREFIX_JOB_IMPORT_ATTRIBUTES                 = "job_import_attributes_";
+    public static final String                    PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES        = "job_recovery_import_attributes_";
 
     @Autowired
     private TaskServiceInvocationValidator        taskServiceInvocationValidator;
@@ -374,6 +380,62 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return jobKey.getName();
     }
 
+    @Override
+    public String planifyImportationAttributes(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        // Validation
+        taskServiceInvocationValidator.checkPlanifyImportationDataset(ctx, taskInfoDataset);
+        String datasetUrn = taskInfoDataset.getDatasetUrn();
+
+        try {
+            JobKey jobKey = createJobKeyImportAttributes(datasetUrn);
+            TriggerKey triggerKey = createTriggerAttributesKey(datasetUrn);
+            String taskName = createTaskImportAttributesName(taskInfoDataset.getDatasetVersionId());
+            // Save InputStream (TempFile)
+            StringBuilder filePaths = new StringBuilder();
+            StringBuilder fileNames = new StringBuilder();
+            StringBuilder fileFormats = new StringBuilder();
+            checkExistTaskInResource(ctx, jobKey, datasetUrn);
+            serializeFilePathsAndNames(taskInfoDataset, filePaths, fileNames, fileFormats);
+            JobDetail job = createImportAttributesJob(ctx, jobKey, filePaths, fileNames, fileFormats, taskInfoDataset, taskName);
+            checkExistTaskInResource(ctx, jobKey, datasetUrn);
+
+            checkGarbage(datasetUrn, ctx, jobKey, taskInfoDataset, taskName);
+            // No existing Job
+            Task newTask = new Task(taskName);
+            newTask.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
+            newTask.setExtensionPoint(taskInfoDataset.getDatasetVersionId() + JobUtil.SERIALIZATION_SEPARATOR + fileNames.toString()); // DatasetId | filename0 | ... @| filenameN
+            createTask(ctx, newTask);
+            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+
+            // Scheduler an importation job
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
+            sched.scheduleJob(job, trigger);
+            return jobKey.getName();
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build(); // Error
+        }
+    }
+
+    private void checkGarbage(String datasetUrn, ServiceContext ctx, JobKey jobKey, TaskInfoDataset taskInfoDataset, String taskName) throws MetamacException {
+        Task task = null;
+        // Checking garbage
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Task.class).withProperty(TaskProperties.job()).eq(taskName).distinctRoot().build();
+        PagedResult<Task> tasks = findTasksByCondition(ctx, conditions, PagingParameter.pageAccess(1, 1));
+        if (!tasks.getValues().isEmpty()) {
+            task = tasks.getValues().get(0);
+        }
+        if (task != null && createJobKeyForImportationAttributes(datasetUrn).equals(jobKey)) {
+            TaskInfoDataset recoveryTaskInfo = new TaskInfoDataset();
+            recoveryTaskInfo.setDatasetVersionId(taskInfoDataset.getDatasetVersionId());
+            recoveryTaskInfo.setDatasetUrn(datasetUrn);
+            // It's not necessary notify to user because this method is not for application startup recovers
+            planifyRecoveryImportAttributes(ctx, recoveryTaskInfo, Boolean.FALSE); // Perform a clean recovery
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_JOB_RECOVERY_IN_PROCESS).withLoggedLevel(ExceptionLevelEnum.ERROR).build(); // Error
+        }
+
+    }
+
     private void processRollbackDatabaseImportTask(ServiceContext ctx, String jobKey) throws MetamacException {
         // IDEA METAMAC-2866 Database import recovery not defined yet, task is deleted in order to not generated side effects. This behavior will be temporary until it's studied if it's
         // necessary to create a recovery job.
@@ -390,12 +452,24 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) ? createJobNameForDatabaseImportationResource(datasetVersionId) : createJobNameForImportationResource(datasetVersionId));
     }
 
+    private String createTaskImportAttributesName(String datasetVersionId) {
+        return createJobNameForImportationAttributes(datasetVersionId);
+    }
+
+    protected JobKey createJobKeyImportAttributes(String datasetUrn) {
+        return createJobKeyForImportationAttributes(datasetUrn);
+    }
+
     protected JobKey createJobKey(ServiceContext ctx, String datasetUrn) {
         return (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) ? createJobKeyForDatabaseImportationResource(datasetUrn) : createJobKeyForImportationResource(datasetUrn));
     }
 
     protected TriggerKey createTriggerKey(ServiceContext ctx, String datasetUrn) {
         return (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) ? createTriggerKeyForDbImportationDataset(datasetUrn) : createTriggerKeyForImportationDataset(datasetUrn));
+    }
+
+    protected TriggerKey createTriggerAttributesKey(String datasetUrn) {
+        return createTriggerKeyForImportationAttributes(datasetUrn);
     }
 
     private JobDetail createJob(ServiceContext serviceContext, JobKey jobKey, String taskName, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats,
@@ -427,7 +501,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             DateTime dt = (DateTime) serviceContext.getProperty(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_EXECUTION_DATE);
 
             // @formatter:off
-            jobBuilder.ofType(ImportDatasetFromDatabaseJob.class)
+            jobBuilder.ofType(ImportAttributesJob.class)
                 .usingJobData(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_FLAG, Boolean.TRUE)
                 .usingJobData(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_EXECUTION_DATE, dt.getMillis())
                 .usingJobData(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_DATASOURCE_IDENTIFIER, (String) serviceContext.getProperty(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_DATASOURCE_IDENTIFIER))
@@ -436,6 +510,23 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } else {
             jobBuilder.ofType(ImportDatasetJob.class);
         }
+
+        return jobBuilder.requestRecovery().build();
+    }
+
+    private JobDetail createImportAttributesJob(ServiceContext serviceContext, JobKey jobKey, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats, TaskInfoDataset taskInfoDataset, String taskName) {
+        JobBuilder jobBuilder = 
+                newJob().withIdentity(jobKey)
+                .usingJobData(ImportAttributesJob.FILE_PATHS, filePaths.toString())
+                .usingJobData(ImportAttributesJob.FILE_FORMATS, fileFormats.toString())
+                .usingJobData(ImportAttributesJob.FILE_NAMES, fileNames.toString())
+                .usingJobData(ImportAttributesJob.DATASET_URN, taskInfoDataset.getDatasetUrn())
+                .usingJobData(ImportAttributesJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId())
+                .usingJobData(ImportAttributesJob.TASK_NAME, taskName)
+                .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId())
+                .usingJobData(AbstractImportDatasetJob.DATA_STRUCTURE_URN, taskInfoDataset.getDataStructureUrn());
+        
+                jobBuilder.ofType(ImportAttributesJob.class);
 
         return jobBuilder.requestRecovery().build();
     }
@@ -462,6 +553,41 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                                         .usingJobData(RecoveryImportDatasetJob.USER, ctx.getUserId())
                                         .usingJobData(RecoveryImportDatasetJob.NOTIFY_TO_USER, notifyToUser)
                                         .usingJobData(RecoveryImportDatasetJob.DATASET_URN, datasetUrn)
+                                        .requestRecovery()
+                                        .build();
+        // @formatter:on
+
+        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryImportTriggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+
+        try {
+            sched.scheduleJob(recoveryImportJob, recoveryImportTrigger);
+        } catch (SchedulerException e) {
+            logger.error("PlannifyRecoveryImportDataset: the recovery importation with key " + recoveryImportJobKey.getName() + " has failed", e);
+        }
+
+        return recoveryImportJobKey.getName();
+    }
+
+    @Override
+    public String planifyRecoveryImportAttributes(ServiceContext ctx, TaskInfoDataset taskInfoDataset, Boolean notifyToUser) throws MetamacException {
+     // Validation
+        taskServiceInvocationValidator.checkPlanifyRecoveryImportDataset(ctx, taskInfoDataset, notifyToUser);
+
+        String datasetUrn = taskInfoDataset.getDatasetUrn();
+
+        // Job keys
+        JobKey recoveryImportJobKey = createJobKeyForRecoveryImportationAttributes(datasetUrn);
+        TriggerKey recoveryImportTriggerKey = createTriggerKeyForRecoveryImportationAttributes(datasetUrn);
+
+        // Scheduler an importation job
+        Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
+        // put triggers in group named after the cluster node instance just to distinguish (in logging) what was scheduled from where
+        // @formatter:off
+        JobDetail recoveryImportJob = newJob(RecoveryImportAttributesJob.class)
+                                        .withIdentity(recoveryImportJobKey)
+                                        .usingJobData(RecoveryImportAttributesJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId())
+                                        .usingJobData(RecoveryImportAttributesJob.USER, ctx.getUserId())
+                                        .usingJobData(RecoveryImportAttributesJob.NOTIFY_TO_USER, notifyToUser)
                                         .requestRecovery()
                                         .build();
         // @formatter:on
@@ -986,6 +1112,22 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     @Override
+    public void processRollbackImportationAttributesTask(ServiceContext ctx, String recoveryJobKey, TaskInfoDataset taskInfoDataset) {
+        Task task = null;
+        try {
+            task = retrieveTaskByJob(ctx, createJobKeyForImportationAttributes(taskInfoDataset.getDatasetVersionId()).getName());
+            // Delete failed entry
+            logger.info("Deleting failed task starting");
+            getTaskRepository().delete(task);
+            logger.info("Deleting failed task finished");
+        } catch (Exception e) {
+            getTaskRepository().delete(task);
+            logger.error("Error while perform a recovery in dataset", e);
+        }
+
+    }
+
+    @Override
     public void processDuplicationTask(ServiceContext ctx, String duplicationJobKey, TaskInfoDataset taskInfoDataset, String newDatasetId, List<Mapping> datasourceMappings) throws MetamacException {
         // Validation
         taskServiceInvocationValidator.checkProcessDuplicationTask(ctx, duplicationJobKey, taskInfoDataset, newDatasetId, datasourceMappings);
@@ -1313,16 +1455,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         Task task = retrieveTaskByJob(ctx, jobKey);
         // Plannify a recovery job
         if (jobKey.startsWith(PREFIX_JOB_IMPORT_DATA)) {
-            // Update
-            task.setStatus(TaskStatusTypeEnum.FAILED);
-            updateTask(ctx, task);
-
             String datasetVersionUrn = extractDatasetVersionUrnFromImportationDatasetJobKey(jobKey);
-            String datasetUrn = retrieveDatasetUrn(ctx, datasetVersionUrn);
 
-            TaskInfoDataset recoveryTaskInfo = new TaskInfoDataset();
-            recoveryTaskInfo.setDatasetVersionId(datasetVersionUrn);
-            recoveryTaskInfo.setDatasetUrn(datasetUrn);
+            TaskInfoDataset recoveryTaskInfo = setDatasetDataToPlanifyRecovery(ctx, task, datasetVersionUrn);
             planifyRecoveryImportDataset(ctx, recoveryTaskInfo, Boolean.TRUE);
         } else if (jobKey.startsWith(PREFIX_JOB_DUPLICATION_DATA)) {
             processRollbackDuplicationTaskOnApplicationStartup(ctx, task);
@@ -1332,7 +1467,24 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
         } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE)) {
             processRollbackUpdateExternalPublicationGeocoverageCacheTask(ctx, task.getJob());
+        } else if (jobKey.startsWith(PREFIX_JOB_IMPORT_ATTRIBUTES)) {
+            String datasetVersionUrn = extractDatasetVersionUrnFromImportationAttributesJobKey(jobKey);
+            TaskInfoDataset recoveryTaskInfo = setDatasetDataToPlanifyRecovery(ctx, task, datasetVersionUrn);
+            planifyRecoveryImportAttributes(ctx, recoveryTaskInfo, Boolean.TRUE);
         }
+    }
+
+    private TaskInfoDataset setDatasetDataToPlanifyRecovery(ServiceContext ctx, Task task, String datasetVersionUrn) throws MetamacException {
+        // Update
+        task.setStatus(TaskStatusTypeEnum.FAILED);
+        updateTask(ctx, task);
+
+        String datasetUrn = retrieveDatasetUrn(ctx, datasetVersionUrn);
+
+        TaskInfoDataset recoveryTaskInfo = new TaskInfoDataset();
+        recoveryTaskInfo.setDatasetVersionId(datasetVersionUrn);
+        recoveryTaskInfo.setDatasetUrn(datasetUrn);
+        return recoveryTaskInfo;
     }
 
     private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
@@ -1360,13 +1512,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         Task task = retrieveTaskByJob(ctx, jobKey);
         // Plannify a recovery job
         if (jobKey.startsWith(PREFIX_JOB_IMPORT_DATA)) {
-            // Update
-            task.setStatus(TaskStatusTypeEnum.FAILED);
-            updateTask(ctx, task);
-
-            TaskInfoDataset recoveryTaskInfo = new TaskInfoDataset();
-            recoveryTaskInfo.setDatasetVersionId(datasetVersionId);
-            recoveryTaskInfo.setDatasetUrn(datasetUrn);
+            TaskInfoDataset recoveryTaskInfo = setTaskInfoToPlanifyRecovery(ctx, datasetVersionId, datasetUrn, task);
             planifyRecoveryImportDataset(ctx, recoveryTaskInfo, Boolean.FALSE);
         } else if (jobKey.startsWith(PREFIX_JOB_DUPLICATION_DATA)) {
             processRollbackDuplicationTask(ctx, task);
@@ -1374,7 +1520,21 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processRollbackDatabaseImportTask(ctx, task.getJob());
         } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
             processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
+        } else if (jobKey.startsWith(PREFIX_JOB_IMPORT_ATTRIBUTES)) {
+            TaskInfoDataset recoveryTaskInfo = setTaskInfoToPlanifyRecovery(ctx, datasetVersionId, datasetUrn, task);
+            planifyRecoveryImportAttributes(ctx, recoveryTaskInfo, Boolean.FALSE);
         }
+    }
+
+    private TaskInfoDataset setTaskInfoToPlanifyRecovery(ServiceContext ctx, String datasetVersionId, String datasetUrn, Task task) throws MetamacException {
+        // Update
+        task.setStatus(TaskStatusTypeEnum.FAILED);
+        updateTask(ctx, task);
+
+        TaskInfoDataset recoveryTaskInfo = new TaskInfoDataset();
+        recoveryTaskInfo.setDatasetVersionId(datasetVersionId);
+        recoveryTaskInfo.setDatasetUrn(datasetUrn);
+        return recoveryTaskInfo;
     }
 
     @Override
@@ -1395,12 +1555,20 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return new JobKey(createJobNameForImportationResource(resourceId), GROUP_IMPORTATION);
     }
 
+    private JobKey createJobKeyForImportationAttributes(String resourceId) {
+        return new JobKey(createJobNameForImportationAttributes(resourceId), GROUP_IMPORTATION);
+    }
+
     private JobKey createJobKeyForDatabaseImportationResource(String resourceId) {
         return new JobKey(createJobNameForDatabaseImportationResource(resourceId), GROUP_IMPORTATION);
     }
 
     private JobKey createJobKeyForRecoveryImportationResource(String resourceId) {
         return new JobKey(createJobNameForRecoveryImportationResource(resourceId), GROUP_IMPORTATION);
+    }
+
+    private JobKey createJobKeyForRecoveryImportationAttributes(String resourceId) {
+        return new JobKey(createJobNameForRecoveryImportationAttributes(resourceId), GROUP_IMPORTATION);
     }
 
     private JobKey createJobKeyForDuplicationResource(String resourceId) {
@@ -1419,12 +1587,20 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return new TriggerKey(createJobNameForImportationResource(datasetId), GROUP_IMPORTATION);
     }
 
+    private TriggerKey createTriggerKeyForImportationAttributes(String datasetId) {
+        return new TriggerKey(createJobNameForImportationAttributes(datasetId), GROUP_IMPORTATION);
+    }
+
     private TriggerKey createTriggerKeyForDbImportationDataset(String datasetId) {
         return new TriggerKey(createJobNameForDatabaseImportationResource(datasetId), GROUP_IMPORTATION);
     }
 
     private TriggerKey createTriggerKeyForRecoveryImportationDataset(String datasetId) {
         return new TriggerKey(createJobNameForRecoveryImportationResource(datasetId), GROUP_IMPORTATION);
+    }
+
+    private TriggerKey createTriggerKeyForRecoveryImportationAttributes(String datasetId) {
+        return new TriggerKey(createJobNameForRecoveryImportationAttributes(datasetId), GROUP_IMPORTATION);
     }
 
     private TriggerKey createTriggerKeyForDuplicationDataset(String datasetId) {
@@ -1441,6 +1617,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {
         return extractDatasetVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_IMPORT_DATA);
+    }
+
+    private String extractDatasetVersionUrnFromImportationAttributesJobKey(String jobKeyName) {
+        return extractDatasetVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_IMPORT_ATTRIBUTES);
     }
 
     private String extractDatasetVersionUrnFromDatabaseImportationDatasetJobKey(String jobKeyName) {

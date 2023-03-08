@@ -57,7 +57,7 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testProcessRollbackImportationTask() throws Exception {
         // Already checked without test
     }
-        
+
     @Override
     public void testExistsTaskForResource() throws Exception {
         // See integration test in DataManipulateTest
@@ -164,6 +164,23 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     @Override
     public void testImportAttributesInDatasetVersion() throws Exception {
         // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void testPlanifyImportationAttributes() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void testPlanifyRecoveryImportAttributes() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void testProcessRollbackImportationAttributesTask() {
         
     }
 }

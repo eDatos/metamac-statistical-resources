@@ -19,8 +19,10 @@ Application DatasetsStatisticalResources {
     		executeImportationTask(String importationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the importation task from database"
     		executeDatabaseImportationTask(String databaseImportationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
-    		"Perform the receovery importation task"
+    		"Perform the recovery importation task"
     		executeRecoveryImportationTask(String recoveryJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException; 
+    		"Perform the recovery importation attributes task"
+    		executeRecoveryImportationAttributes(String recoveryJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the duplication task"
     		executeDuplicationTask(String duplicationJobKey, @TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
     		"Perform the update geographical coverage cache task"
@@ -56,8 +58,12 @@ Application DatasetsStatisticalResources {
 			
 			"Plannify a scheduled task to import"
 			String planifyImportationDataset(@TaskInfoDataset taskInfoDataset) throws MetamacException;
+			"Plannify a scheduled task to import attributes"
+			String planifyImportationAttributes(@TaskInfoDataset taskInfoDataset) throws MetamacException; 
 			"Plannify a scheduled task to recovery import"
 			String planifyRecoveryImportDataset(@TaskInfoDataset taskInfoDataset, Boolean notifyToUser) throws MetamacException;
+			"Plannify a scheduled task to recovery import"
+			String planifyRecoveryImportAttributes(@TaskInfoDataset taskInfoDataset, Boolean notifyToUser) throws MetamacException;
 			"Plannify a scheduled task to recovery import"
             String planifyDuplicationDataset(@TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
 			"Plannify a scheduled task to update the geographical coverage cache"
@@ -72,6 +78,8 @@ Application DatasetsStatisticalResources {
     		processDatabaseImportationTask(String databaseImportationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform a rollback in a importation task"
     		processRollbackImportationTask(String recoveryJobKey, @TaskInfoDataset taskInfoDataset);
+    		"Perform a rollback in a importation attributes task"
+    		processRollbackImportationAttributesTask(String recoveryJobKey, @TaskInfoDataset taskInfoDataset);
     		"Perform the duplication task"
     		processDuplicationTask(String duplicationJobKey, @TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
     		"Perform the geographical coverage cache update task"

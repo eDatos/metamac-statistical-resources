@@ -4286,4 +4286,10 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         
         assertNotSame(persistedQuery, persistedQueryCopy);
     }
+
+    @Override
+    public void testImportAttributesFromFile() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

@@ -1990,4 +1990,10 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
     }
 
+    @Override
+    public void testImportAttributesFromFile() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

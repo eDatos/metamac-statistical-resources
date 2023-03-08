@@ -36,6 +36,14 @@ public class TaskServiceInvocationValidatorImpl {
         }
     }
 
+    public static void checkPlanifyImportationAttributes(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        
+    }
+
+    public static void checkPlanifyRecoveryImportAttributes(TaskInfoDataset taskInfoDataset, Boolean notifyToUser, List<MetamacExceptionItem> exceptions) {
+        
+    }
+
     private static void checkImportDataSourcesInStatisticalOperationWithAutomaticLifeCicle(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
         if (Boolean.TRUE.equals(taskInfoDataset.getDatasetAutomaticLifeCicle())) {
             StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionRationaleTypes(), ServiceExceptionParameters.DATASET_VERSION_RATIONALE_TYPES, exceptions);
@@ -94,6 +102,10 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(recoveryJobKey, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset, ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_INFO_DATASET_DATASET_VERSION_ID, exceptions);
+    }
+
+    public static void checkProcessRollbackImportationAttributesTask(String recoveryJobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        
     }
 
     public static void checkProcessDuplicationTask(String duplicationJobKey, TaskInfoDataset taskInfoDataset, String newDatasetId, List<Mapping> datasourceMappings,

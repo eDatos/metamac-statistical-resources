@@ -119,4 +119,9 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
         taskservice.importAttributesInDatasetVersion(ctx, dataVersionUrn, taskInfoDataset);
     }
+
+    @Override
+    public void executeRecoveryImportationAttributes(ServiceContext ctx, String recoveryJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskservice.processRollbackImportationAttributesTask(ctx, recoveryJobKey, taskInfoDataset);
+    }
 }
