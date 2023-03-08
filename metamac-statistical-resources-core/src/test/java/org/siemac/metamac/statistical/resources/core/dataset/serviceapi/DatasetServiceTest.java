@@ -2111,7 +2111,6 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     
     private BasicVersionableStatisticalResourceDto getMockBasicVersionableStatisticalResourceDto() {
         BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto = new BasicVersionableStatisticalResourceDto();
-        Date date = new Date();
         basicVersionableStatisticalResourceDto.setAutomaticLifeCicle(true);
         List<String> versionRationaleTypes = new ArrayList<>();
         versionRationaleTypes.add(VersionRationaleTypeEnum.MINOR_DATA_UPDATE.getName());
@@ -2126,7 +2125,8 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
     @Override
     public void testImportAttributesFromFile() throws Exception {
-        // TODO Auto-generated method stub
-        
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_118_PUBLISHED_DATABASE_DATASET_NAME);
+        List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
+        datasetService.importAttributesFromFile(getServiceContextWithoutPrincipal(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), urls);
     }
 }

@@ -37,11 +37,13 @@ public class TaskServiceInvocationValidatorImpl {
     }
 
     public static void checkPlanifyImportationAttributes(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
-        
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDataStructureUrn(), ServiceExceptionParameters.TASK_INFO_DATASET_DSD_URN, exceptions);
     }
 
     public static void checkPlanifyRecoveryImportAttributes(TaskInfoDataset taskInfoDataset, Boolean notifyToUser, List<MetamacExceptionItem> exceptions) {
-        
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDataStructureUrn(), ServiceExceptionParameters.TASK_INFO_DATASET_DSD_URN, exceptions);
     }
 
     private static void checkImportDataSourcesInStatisticalOperationWithAutomaticLifeCicle(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {

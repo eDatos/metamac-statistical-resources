@@ -4289,7 +4289,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Override
     public void testImportAttributesFromFile() throws Exception {
-        // TODO Auto-generated method stub
-        
+        String datasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
+
+        URL url = new URL("file", null, "myfile.px");
+
+        statisticalResourcesServiceFacade.importAttributesFromFile(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url));
     }
 }

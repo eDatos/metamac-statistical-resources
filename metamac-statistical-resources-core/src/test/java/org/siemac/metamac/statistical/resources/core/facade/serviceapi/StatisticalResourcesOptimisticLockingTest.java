@@ -1992,8 +1992,27 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
     @Override
     public void testImportAttributesFromFile() throws Exception {
-        // TODO Auto-generated method stub
-        
+     // Retrieve dataset - session 1
+        String datasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        DatasetVersionDto datasetVersionDtoSession01 = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
+        assertEquals(Long.valueOf(0), datasetVersionDtoSession01.getOptimisticLockingVersion());
+
+        // Retrieve dataset - session 2
+        DatasetVersionDto datasetVersionDtoSession02 = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
+        assertEquals(Long.valueOf(0), datasetVersionDtoSession02.getOptimisticLockingVersion());
+
+        // save - session 1 --> OK
+        DatasetVersionDto datasetVersionDtoSession1AfterUpdate01 = statisticalResourcesServiceFacade.updateDatasetVersion(getServiceContextAdministrador(), datasetVersionDtoSession01);
+        assertTrue(datasetVersionDtoSession1AfterUpdate01.getOptimisticLockingVersion() > datasetVersionDtoSession01.getOptimisticLockingVersion());
+
+        // import - session 2 --> FAIL
+        try {
+            List<URL> urls = Arrays.asList(new URL("file", null, "prueba.px"));
+            statisticalResourcesServiceFacade.importAttributesFromFile(getServiceContextAdministrador(), datasetVersionDtoSession02, urls);
+            fail("optimistic locking");
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.OPTIMISTIC_LOCKING, 0, null, e.getExceptionItems().get(0));
+        }
     }
 
 }

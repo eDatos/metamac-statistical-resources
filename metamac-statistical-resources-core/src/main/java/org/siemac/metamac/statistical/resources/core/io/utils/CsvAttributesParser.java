@@ -11,20 +11,17 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
-import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 public class CsvAttributesParser {
-
-    private static final Logger log                      = LoggerFactory.getLogger(CsvAttributesParser.class);  
 
     private CSVReader           csvReader                = null;
     private String[]            headers                  = null;
@@ -139,8 +136,7 @@ public class CsvAttributesParser {
             CodeItemDto codeItemDto = new CodeItemDto();
             CodeDimension codeDimension = getCodeDimension(dimensionValue, codeDimensions);
             if (codeDimension == null && (codeDimensions != null && !codeDimensions.isEmpty())) {
-                log.error(new StringBuilder("Error: Dimension ").append(line[COLUMN_DIMENSION_NAME]).append(" value invalid").toString());
-                throw new MetamacException(CommonServiceExceptionType.UNKNOWN, "Error: Dimension value invalid");
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID).withMessageParameters(line[COLUMN_DIMENSION_NAME], line[COLUMN_ID_ATRIBUTTE]).build();
             }
             codeItemDto.setCode(codeDimension != null ? codeDimension.getIdentifier() : dimensionValue);
             codeItemDto.setTitle(codeDimension != null ? codeDimension.getTitle() : dimensionValue);
