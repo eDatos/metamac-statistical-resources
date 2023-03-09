@@ -387,14 +387,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         String datasetUrn = taskInfoDataset.getDatasetUrn();
 
         try {
-            JobKey jobKey = createJobKeyImportAttributes(datasetUrn);
-            TriggerKey triggerKey = createTriggerAttributesKey(datasetUrn);
+            JobKey jobKey = createJobKeyImportAttributes(taskInfoDataset.getDatasetVersionId());
+            TriggerKey triggerKey = createTriggerAttributesKey(taskInfoDataset.getDatasetVersionId());
             String taskName = createTaskImportAttributesName(taskInfoDataset.getDatasetVersionId());
             // Save InputStream (TempFile)
             StringBuilder filePaths = new StringBuilder();
             StringBuilder fileNames = new StringBuilder();
             StringBuilder fileFormats = new StringBuilder();
-            checkExistTaskInResource(ctx, jobKey, datasetUrn);
             serializeFilePathsAndNames(taskInfoDataset, filePaths, fileNames, fileFormats);
             JobDetail job = createImportAttributesJob(ctx, jobKey, filePaths, fileNames, fileFormats, taskInfoDataset, taskName);
             checkExistTaskInResource(ctx, jobKey, datasetUrn);

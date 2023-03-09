@@ -151,7 +151,7 @@ public class CsvAttributesParser {
         }
 
         for (CodeDimension codeDimension : codeDimensions) {
-            if (tittle.equals(codeDimension.getTitle())) {
+            if (tittle.equals(codeDimension.getIdentifier())) {
                 return codeDimension;
             }
         }
