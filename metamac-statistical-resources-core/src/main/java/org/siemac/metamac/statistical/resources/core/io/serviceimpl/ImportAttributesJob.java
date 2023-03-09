@@ -20,10 +20,16 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
+import org.siemac.metamac.sso.client.MetamacPrincipal;
+import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
+import org.siemac.metamac.sso.client.SsoClientConstants;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskServiceFacade;
@@ -64,13 +70,18 @@ public class ImportAttributesJob implements Job {
         String taskName = data.getString(TASK_NAME);
         String dataStructureUrn = data.getString(DATA_STRUCTURE_URN);
         serviceContext = new ServiceContext(user, context.getFireInstanceId(), "statistical-resources-core");
+        MetamacPrincipal metamacPrincipal = new MetamacPrincipal();
+        metamacPrincipal.setUserId(serviceContext.getUserId());
+        metamacPrincipal.getAccesses().add(new MetamacPrincipalAccess(StatisticalResourcesRoleEnum.ADMINISTRADOR.getName(), StatisticalResourcesConstants.APPLICATION_ID, null));
+        serviceContext.setProperty(SsoClientConstants.PRINCIPAL_ATTRIBUTE, metamacPrincipal);
         try {
             TaskInfoDataset taskInfoDataset = new TaskInfoDataset();
             taskInfoDataset.getFiles().addAll(inflateFileDescriptors(filePaths, fileNames, fileFormats));
             taskInfoDataset.setDatasetUrn(datasetUrn);
             taskInfoDataset.setDatasetVersionId(datasetVersionId);
             taskInfoDataset.setDataStructureUrn(dataStructureUrn);
-            executeImportTask(serviceContext, datasetVersionId, taskInfoDataset);
+            executeImportTask(serviceContext, datasetVersionId, taskInfoDataset, jobKey.getName());
+            sendSuccessNotification(fileNames, user);
         } catch (UnsupportedEncodingException e) {
             logger.error("The importation with key {} has failed due to an unsupported encoding", jobKey.getName(), e);
             MetamacException metamacException = MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(ExceptionHelper.excMessage(e))
@@ -138,7 +149,12 @@ public class ImportAttributesJob implements Job {
         return noticesRestInternalService;
     }
 
-    private void executeImportTask(ServiceContext serviceContext, String datasetVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
+    private void executeImportTask(ServiceContext serviceContext, String datasetVersionUrn, TaskInfoDataset taskInfoDataset, String jobName) throws MetamacException {
         getTaskServiceFacade().importAttributesInDatasetVersion(serviceContext, datasetVersionUrn, taskInfoDataset);
+        getTaskServiceFacade().markTaskAsFinished(serviceContext, jobName);
+    }
+
+    private void sendSuccessNotification(String fileNames, String user) {
+        getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_ATTRIBUTE_JOB, ServiceNoticeMessage.IMPORT_ATTRIBUTES_JOB_OK, fileNames);
     }
 }

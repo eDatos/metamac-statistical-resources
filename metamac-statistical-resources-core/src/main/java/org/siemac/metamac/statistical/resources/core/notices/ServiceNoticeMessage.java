@@ -5,6 +5,7 @@ public class ServiceNoticeMessage {
     // Clone dataset
     public static final String DUPLICATION_DATASET_JOB_OK             = "notice_message.resources.message.duplication_dataset_job.ok";
     public static final String IMPORT_DATASET_JOB_OK                  = "notice_message.resources.message.import_dataset_job.ok";
+    public static final String IMPORT_ATTRIBUTES_JOB_OK               = "notice_message.resources.message.import_attributes_job.ok";
     public static final String DATABASE_IMPORT_DATASET_JOB_DETECTED   = "notice_message.resources.message.database_import_dataset_job";
     public static final String RESOURCE_SEND_PRODUCTION_VALIDATION_OK = "notice_message.resources.action.send_production_validation.ok";
     public static final String RESOURCE_SEND_DIFFUSION_VALIDATION_OK  = "notice_message.resources.action.send_diffusion_validation.ok";
