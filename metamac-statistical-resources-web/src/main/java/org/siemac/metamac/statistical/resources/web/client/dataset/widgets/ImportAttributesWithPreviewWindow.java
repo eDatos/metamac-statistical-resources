@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetAttributesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWindow;
@@ -19,6 +20,8 @@ import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
 
 public abstract class ImportAttributesWithPreviewWindow extends UploadResourceWithPreviewWindow {
+
+    private DatasetAttributesTabUiHandlers uiHandlers;
 
     public ImportAttributesWithPreviewWindow(String title, String datasetVersionUrn) {
         super(title);
@@ -123,5 +126,13 @@ public abstract class ImportAttributesWithPreviewWindow extends UploadResourceWi
         public UploadItem getUploadItem() {
             return uploadItem;
         }
+    }
+
+    public void setDatasetVersion(String datasetVersionUrn) {
+        ((HiddenItem) mainForm.getItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN)).setDefaultValue(datasetVersionUrn);
+    }
+
+    public void setUiHandlers(DatasetAttributesTabUiHandlers uiHandlers) {
+        this.uiHandlers = uiHandlers;
     }
 }

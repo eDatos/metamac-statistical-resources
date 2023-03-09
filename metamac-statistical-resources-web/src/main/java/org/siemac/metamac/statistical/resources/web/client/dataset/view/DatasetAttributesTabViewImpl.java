@@ -38,20 +38,13 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 
 public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttributesTabUiHandlers> implements DatasetAttributesTabView {
 
-    private VLayout                           panel;
-    private BaseCustomListGrid                listGrid;
-    private AttributePanel                    attributePanel;
-    private CustomToolStripButton             importAttributesButton;
-    private ToolStrip                         toolStrip;
-    private ImportAttributesWithPreviewWindow importAttributesWithMappingWindow;
-    private DatasetVersionDto                 datasetVersionDto;
+    private VLayout             panel;
+    private BaseCustomListGrid  listGrid;
+    private AttributePanel      attributePanel;
+    private DatasetVersionDto   datasetVersionDto;
+    private AttributesListPanel attributesListPanel;
 
     public DatasetAttributesTabViewImpl() {
-
-        toolStrip = new ToolStrip();
-        toolStrip.setWidth100();
-        importAttributesButton = createImportAttributesButton();
-        toolStrip.addButton(importAttributesButton);
 
         // LIST
 
@@ -78,6 +71,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
             }
         });
 
+        attributesListPanel = new AttributesListPanel();
         // MAIN FORM LAYOUT
 
         attributePanel = new AttributePanel();
@@ -87,7 +81,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
 
         panel = new VLayout();
         panel.setAutoHeight();
-        panel.addMember(toolStrip);
+        panel.addMember(attributesListPanel);
         panel.addMember(listGrid);
         panel.addMember(attributePanel);
     }
@@ -102,7 +96,8 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
         listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeRecords(attributes));
         attributePanel.updateButtonsVisibility(datasetVersionDto);
         this.datasetVersionDto = datasetVersionDto;
-        updateToolStripVisibility();
+        attributesListPanel.updateButtonsVisibility();
+        createImportAttributesWithMappingWindow(datasetVersionDto.getUrn());
         attributePanel.hide();
     }
 
@@ -141,39 +136,66 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
         attributePanel.setItemsForDimensionOrGroupLevelAttributeValueSelection(externalItemDtos, firstResult, totalResults);
     }
 
-    private CustomToolStripButton createImportAttributesButton() {
-        CustomToolStripButton importDatasourcesButton = new CustomToolStripButton(getConstants().actionLoadAttributes(),
-                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
-        importDatasourcesButton.setVisible(Boolean.TRUE);
-        importDatasourcesButton.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                importAttributesWithMappingWindow = new ImportAttributesWithPreviewWindow(getConstants().actionLoadAttributes(), datasetVersionDto.getUrn()) {
-
-                    @Override
-                    protected void uploadSuccess(String message) {
-                        getUiHandlers().attributesImportationSucceed(message);
-
-                    }
-
-                    @Override
-                    protected void uploadFailed(String error) {
-                        getUiHandlers().attributesImportationFailed(error);
-
-                    }
-                };
-                importAttributesWithMappingWindow.show();
-            }
-        });
-        return importDatasourcesButton;
+    @Override
+    public void createImportAttributesWithMappingWindow(String datasetVersionUrn) {
+        attributesListPanel.createImportAttributesWithMappingWindow(datasetVersionUrn);
     }
 
-    private void updateToolStripVisibility() {
-        toolStrip.setVisible(getButtonsVisibility(datasetVersionDto, DataSourceTypeEnum.FILE));
-    }
+    private class AttributesListPanel extends VLayout {
 
-    private boolean getButtonsVisibility(DatasetVersionDto datasetVersionDto, DataSourceTypeEnum dataSourceTypeEnum) {
-        return dataSourceTypeEnum.equals(datasetVersionDto.getDataSourceType()) && DatasetClientSecurityUtils.canImportDatasourcesInDatasetVersion(datasetVersionDto);
+        private CustomToolStripButton              importAttributesButton;
+        private ImportAttributesWithPreviewWindow  importAttributesWithPreviewWindow;
+        
+        public AttributesListPanel() {
+            ToolStrip toolStrip = new ToolStrip();
+            toolStrip.setWidth100();
+
+            importAttributesButton = createImportAttributeButton();
+            toolStrip.addButton(importAttributesButton);
+            addMember(toolStrip);
+        }
+
+        private CustomToolStripButton createImportAttributeButton() {
+            CustomToolStripButton importDatasourcesButton = new CustomToolStripButton(getConstants().actionLoadAttributes(),
+                    org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.importResource().getURL());
+            importDatasourcesButton.setVisible(Boolean.FALSE);
+            importDatasourcesButton.addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    if (importAttributesWithPreviewWindow != null) {
+                        importAttributesWithPreviewWindow.show();
+                    }
+                }
+            });
+            return importDatasourcesButton;
+        }
+
+        public void updateButtonsVisibility() {
+            importAttributesButton.setVisible(getButtonsVisibility(datasetVersionDto, DataSourceTypeEnum.FILE));
+        }
+
+        private boolean getButtonsVisibility(DatasetVersionDto datasetVersionDto, DataSourceTypeEnum dataSourceTypeEnum) {
+            return dataSourceTypeEnum.equals(datasetVersionDto.getDataSourceType()) && DatasetClientSecurityUtils.canImportDatasourcesInDatasetVersion(datasetVersionDto);
+        }
+
+        public void createImportAttributesWithMappingWindow(String datasetVersionUrn) {
+            importAttributesWithPreviewWindow = new ImportAttributesWithPreviewWindow(getConstants().actionLoadAttributes(), datasetVersionUrn) {
+
+                @Override
+                protected void uploadSuccess(String message) {
+                    getUiHandlers().attributesImportationSucceed(message);
+
+                }
+
+                @Override
+                protected void uploadFailed(String error) {
+                    getUiHandlers().attributesImportationFailed(error);
+
+                }
+            };
+            importAttributesWithPreviewWindow.setDatasetVersion(datasetVersionUrn);
+            importAttributesWithPreviewWindow.setUiHandlers(getUiHandlers());
+        }
     }
 }
