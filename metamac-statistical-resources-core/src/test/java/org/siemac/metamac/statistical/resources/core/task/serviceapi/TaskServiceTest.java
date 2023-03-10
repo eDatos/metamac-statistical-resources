@@ -183,4 +183,9 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testProcessRollbackImportationAttributesTask() {
         
     }
+
+    @Override
+    public void testExistsTaskImportAttributes() throws Exception {
+        // See integration test in DataManipulateTest
+    }
 }

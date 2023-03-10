@@ -80,7 +80,7 @@ public class ImportAttributesJob implements Job {
             taskInfoDataset.setDatasetUrn(datasetUrn);
             taskInfoDataset.setDatasetVersionId(datasetVersionId);
             taskInfoDataset.setDataStructureUrn(dataStructureUrn);
-            executeImportTask(serviceContext, datasetVersionId, taskInfoDataset, jobKey.getName());
+            executeImportTask(serviceContext, datasetVersionId, taskInfoDataset, taskName);
             sendSuccessNotification(fileNames, user);
         } catch (UnsupportedEncodingException e) {
             logger.error("The importation with key {} has failed due to an unsupported encoding", jobKey.getName(), e);
