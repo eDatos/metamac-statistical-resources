@@ -381,14 +381,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     @Override
-    public String planifyImportationAttributes(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
+    public synchronized String planifyImportationAttributes(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
         // Validation
         taskServiceInvocationValidator.checkPlanifyImportationDataset(ctx, taskInfoDataset);
         String datasetUrn = taskInfoDataset.getDatasetUrn();
 
         try {
-            JobKey jobKey = createJobKeyImportAttributes(taskInfoDataset.getDatasetVersionId());
-            TriggerKey triggerKey = createTriggerAttributesKey(taskInfoDataset.getDatasetVersionId());
+            JobKey jobKey = createJobKeyImportAttributes(datasetUrn);
+            TriggerKey triggerKey = createTriggerAttributesKey(datasetUrn);
             String taskName = createTaskImportAttributesName(taskInfoDataset.getDatasetVersionId());
             // Save InputStream (TempFile)
             StringBuilder filePaths = new StringBuilder();
@@ -500,7 +500,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             DateTime dt = (DateTime) serviceContext.getProperty(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_EXECUTION_DATE);
 
             // @formatter:off
-            jobBuilder.ofType(ImportAttributesJob.class)
+            jobBuilder.ofType(ImportDatasetFromDatabaseJob.class)
                 .usingJobData(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_FLAG, Boolean.TRUE)
                 .usingJobData(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_EXECUTION_DATE, dt.getMillis())
                 .usingJobData(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_DATASOURCE_IDENTIFIER, (String) serviceContext.getProperty(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_DATASOURCE_IDENTIFIER))
@@ -1350,6 +1350,17 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         taskServiceInvocationValidator.checkExistsTaskForResource(ctx, resourceId);
         return existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
                 || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId);
+    }
+
+    @Override
+    public boolean existsTaskImportAttributes(ServiceContext ctx, String resourceId) throws MetamacException {
+        taskServiceInvocationValidator.checkExistImportationTaskInResource(ctx, resourceId);
+        try {
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
+            return sched.checkExists(createJobKeyForImportationAttributes(resourceId));
+        } catch (SchedulerException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
+        }
     }
 
     @Override

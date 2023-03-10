@@ -43,6 +43,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsP
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
+import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.CommonErrorUtils;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
@@ -82,6 +83,7 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
         void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverages);
         void setItemsForDatasetLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults);
         void setItemsForDimensionOrGroupLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults);
+        void createImportAttributesWithMappingWindow(String datasetVersionUrn);
     }
 
     @ProxyCodeSplit
@@ -335,6 +337,8 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
     @Override
     public void attributesImportationSucceed(String fileName) {
         ShowMessageEvent.fireSuccessMessage(DatasetAttributesTabPresenter.this, getMessages().attributesImportationPlanned());
+        placeManager.revealCurrentPlace();
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
     }
 
     @Override
