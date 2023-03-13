@@ -63,37 +63,37 @@ import org.springframework.stereotype.Component;
 public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapperV10 {
 
     @Autowired
-    private CommonDo2RestMapperV10        commonDo2RestMapper;
+    private CommonDo2RestMapperV10 commonDo2RestMapper;
 
     @Autowired
-    private DatasetsDo2RestMapperV10      datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
 
     @Autowired
-    private DatasetVersionRepository      datasetVersionRepository;
+    private DatasetVersionRepository datasetVersionRepository;
 
     @Autowired
-    private QueryVersionRepository        queryVersionRepository;
+    private QueryVersionRepository queryVersionRepository;
 
     @Autowired
     private MultidatasetVersionRepository multidatasetVersionRepository;
 
     @Autowired
-    private QueriesDo2RestMapperV10       queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10 queriesDo2RestMapper;
 
     @Autowired
     private MultidatasetsDo2RestMapperV10 multidatasetsDo2RestMapper;
 
     @Autowired
-    private PublicationVersionRepository  publicationVersionRepository;
+    private PublicationVersionRepository publicationVersionRepository;
 
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
-    
-    private static final Logger           logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
 
     @Override
     public Collections toCollections(PagedResult<PublicationVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
-        Set<String> parsedFields) throws MetamacException {
+            Set<String> parsedFields) throws MetamacException {
 
         Collections targets = new Collections();
         targets.setKind(StatisticalResourcesRestInternalConstants.KIND_COLLECTIONS);
@@ -127,7 +127,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         target.setChildLinks(toCollectionChildLinks(source));
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
-        
+
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
         if (includeMetadata) {
@@ -160,7 +160,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
         }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
-        
+
         return target;
     }
 
@@ -189,9 +189,9 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     private String toVisualizerHtmlLink(RelatedResourceResult source) throws MetamacException {
         String agencyID = source.getMaintainerNestedCode();
         String resourceID = source.getCode();
-        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, agencyID, resourceID, null, configurationService, false);  
+        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, agencyID, resourceID, null, configurationService, false);
     }
-    
+
     @Override
     public ResourceLink toCollectionSelfLink(LifeCycleStatisticalResourceDto source) {
         String agencyID = source.getMaintainer().getCodeNested();
@@ -255,21 +255,21 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     private ResourcesInternal toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResource> hasPart = null;
         List<String> urls = new ArrayList<String>();
-        
+
         if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
             hasPart = PublicationsUtils.computeHasPart(source); // Is necessary to calculate the has part
         } else {
             hasPart = source.getHasPart(); // All has part resources are already published
         }
-        
+
         urls = PublicationsUtils.computeUrlsHasPart(source);
-        
+
         ResourcesInternal resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
         ResourcesInternal urlResources = commonDo2RestMapper.toUrlResources(urls);
         if (urlResources != null && !urlResources.getResources().isEmpty()) {
-            resources.getResources().addAll(urlResources.getResources());  
+            resources.getResources().addAll(urlResources.getResources());
         }
-        return resources; 
+        return resources;
     }
 
     private CollectionData toCollectionData(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
@@ -345,18 +345,17 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         return target;
     }
 
-
     @Override
     public ResourceInternal toResource(String url, List<String> selectedLanguages) {
         if (url == null) {
             return null;
         }
         ResourceInternal target = new ResourceInternal();
-        target.setUrn(url);
+        target.setVisualizerHtmlLink(url);
         target.setKind(StatisticalResourcesRestInternalConstants.KIND_URL);
         return target;
     }
-    
+
     private CollectionNodes toCollectionNodes(List<ElementLevel> sources, List<String> selectedLanguages) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
