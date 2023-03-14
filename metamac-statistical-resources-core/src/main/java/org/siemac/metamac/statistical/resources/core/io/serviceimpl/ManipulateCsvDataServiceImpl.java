@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -90,13 +89,13 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
             String charsetName = FileUtils.guessCharset(csvFile);
             is = new FileInputStream(csvFile);
 
-            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB);
+            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure);
 
-            Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDto = new HashMap<>();
+            List<DsdAttributeInstanceDto> dsdAttributeInstanceDto = new ArrayList<>();
 
             String idAttribute = "";
             for (int i = 0; i < SPLIT_DATA_FACTOR || idAttribute != null; i++) {
-                idAttribute = csvReader.nextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId, idAttribute);
+                idAttribute = csvReader.nextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId);
             }
             insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDto);
         } finally {
@@ -104,22 +103,23 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
         }
     }
 
-    private void insertAttributes(ServiceContext ctx, String datasetVersionUrn, Map<String, DsdAttributeInstanceDto> dsdAttributeInstanceDto) throws MetamacException {
-        for (Map.Entry<String, DsdAttributeInstanceDto> entry : dsdAttributeInstanceDto.entrySet()) {
+    private void insertAttributes(ServiceContext ctx, String datasetVersionUrn, List<DsdAttributeInstanceDto> dsdAttributeInstanceDto) throws MetamacException {
+        for (DsdAttributeInstanceDto entry : dsdAttributeInstanceDto) {
             List<DsdAttributeInstanceDto> attributeInstances = new ArrayList<>();
             //to define the attribute at the dataset level we need to know if it has already been created previously
-            if (entry.getValue().getCodeDimensions() == null || entry.getValue().getCodeDimensions().isEmpty()) {
-                attributeInstances = statisticalResourcesServiceFacade.retrieveAttributeInstances(ctx, datasetVersionUrn, entry.getValue().getAttributeId());
+            if (entry.getCodeDimensions() == null || entry.getCodeDimensions().isEmpty()) {
+                attributeInstances = statisticalResourcesServiceFacade.retrieveAttributeInstances(ctx, datasetVersionUrn, entry.getAttributeId());
             }
             if (attributeInstances.isEmpty()) {
-                statisticalResourcesServiceFacade.createAttributeInstance(ctx, datasetVersionUrn, entry.getValue());
+                statisticalResourcesServiceFacade.createAttributeInstance(ctx, datasetVersionUrn, entry);
             } else {
                 DsdAttributeInstanceDto attributeInstanceDto = attributeInstances.get(0);
-                attributeInstanceDto.setValue(entry.getValue().getValue());
+                attributeInstanceDto.setValue(entry.getValue());
                 statisticalResourcesServiceFacade.updateAttributeInstance(ctx, datasetVersionUrn, attributeInstanceDto);
             }
         }
     }
+
     private void insertDataAndAttributes(String datasetID, List<ObservationExtendedDto> dataDtos, ValidateDataVersusDsd validateDataVersusDsd) throws Exception {
         // Persist Observations and attributes at level observation.
         if (!dataDtos.isEmpty()) {
@@ -127,5 +127,4 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
             datasetRepositoriesServiceFacade.createOrUpdateObservationsExtended(datasetID, dataDtos);
         }
     }
-
 }
