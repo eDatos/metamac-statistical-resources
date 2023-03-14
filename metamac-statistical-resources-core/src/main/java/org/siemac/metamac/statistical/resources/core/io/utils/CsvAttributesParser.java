@@ -26,32 +26,30 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class CsvAttributesParser {
 
-    private CSVReader           csvReader                = null;
-    private String[]            headers                  = null;
-    private static final int    COLUMN_ID_ATRIBUTTE      = 0;
-    private static final int    COLUMN_DIMENSION_NAME    = 1;
-    private static final int    COLUMN_DIMENSION_VALUES  = 2;
-    private static final int    COLUMN_ATTRIBUTE_VALUE   = 3;
-    private List<String> idsDimensions;
-    private List<String> idsAttributes;
+    private CSVReader        csvReader               = null;
+    private String[]         headers                 = null;
+    private static final int COLUMN_ID_ATRIBUTTE     = 0;
+    private static final int COLUMN_DIMENSION_NAME   = 1;
+    private static final int COLUMN_DIMENSION_VALUES = 2;
+    private static final int COLUMN_ATTRIBUTE_VALUE  = 3;
+    private List<String>     idsDimensions           = new ArrayList<>();;
+    private List<String>     idsAttributes           = new ArrayList<>();;
 
     public CsvAttributesParser(InputStream pxStream, String charsetName, char separator, DataStructure dataStructure) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
         csvReader = new CSVReader(bufferedReader, separator);
         headers = readDefinition(csvReader);
-        getIdsDsdAttributes(dataStructure);
-        getIdsDsdDimensions(dataStructure);
+        initializeIdsDsdDimensions(dataStructure);
+        initializeIdsDsdAttributes(dataStructure);
     }
 
-    private void getIdsDsdDimensions(DataStructure dataStructure) {
-        idsDimensions = new ArrayList<>();
+    private void initializeIdsDsdDimensions(DataStructure dataStructure) {
         for (DimensionBase dimensionBase : dataStructure.getDataStructureComponents().getDimensions().getDimensions()) {
             idsDimensions.add(dimensionBase.getId());
         }
     }
 
-    private void getIdsDsdAttributes(DataStructure dataStructure) {
-        idsAttributes = new ArrayList<>();
+    private void initializeIdsDsdAttributes(DataStructure dataStructure) {
         for (AttributeBase base : dataStructure.getDataStructureComponents().getAttributes().getAttributes()) {
             idsAttributes.add(base.getId());
         }
@@ -69,7 +67,8 @@ public class CsvAttributesParser {
         return line == null || line.length == 0;
     }
 
-    public String nextLine(List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId) throws Exception {
+    public String nextLine(List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId)
+            throws Exception {
         String[] line = csvReader.readNext();
         if (line == null) {
             return null;
@@ -106,8 +105,8 @@ public class CsvAttributesParser {
         setCodeDimensions(dsdAttributeInstanceDto, line, codeDimensions);
     }
 
-    private DsdAttributeInstanceDto csvToDsdCreateAttributeInstanceDto(String[] line, Map<String, List<CodeDimension>> codeDimensions,
-            Map<String, List<ExternalItemDto>> externalItemsAttributeId) throws MetamacException {
+    private DsdAttributeInstanceDto csvToDsdCreateAttributeInstanceDto(String[] line, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId)
+            throws MetamacException {
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         DsdAttributeInstanceDto dsdAttributeInstanceDto = new DsdAttributeInstanceDto();
         dsdAttributeInstanceDto.setAttributeId(line[COLUMN_ID_ATRIBUTTE]);
@@ -124,8 +123,7 @@ public class CsvAttributesParser {
         }
     }
 
-    private void setAttribute(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<ExternalItemDto>> externalItemsAttributeId,
-            AttributeValueDto attributeValueDto) {
+    private void setAttribute(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<ExternalItemDto>> externalItemsAttributeId, AttributeValueDto attributeValueDto) {
         ExternalItemDto externalItem = getExternalItemDto(line[COLUMN_ATTRIBUTE_VALUE], dsdAttributeInstanceDto.getAttributeId(), externalItemsAttributeId);
         if (externalItem == null && checkAttributeExternalItemDefinition(dsdAttributeInstanceDto.getAttributeId(), externalItemsAttributeId)) {
             attributeValueDto.setStringValue(line[COLUMN_ATTRIBUTE_VALUE]);
@@ -169,7 +167,8 @@ public class CsvAttributesParser {
             CodeItemDto codeItemDto = new CodeItemDto();
             CodeDimension codeDimension = getCodeDimension(dimensionValue, codeDimensions);
             if (codeDimension == null && (codeDimensions != null && !codeDimensions.isEmpty())) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID).withMessageParameters(line[COLUMN_DIMENSION_NAME], line[COLUMN_ID_ATRIBUTTE]).build();
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID)
+                        .withMessageParameters(line[COLUMN_DIMENSION_NAME], line[COLUMN_ID_ATRIBUTTE]).build();
             }
             codeItemDto.setCode(codeDimension != null ? codeDimension.getIdentifier() : dimensionValue);
             codeItemDto.setTitle(codeDimension != null ? codeDimension.getTitle() : dimensionValue);
@@ -179,7 +178,7 @@ public class CsvAttributesParser {
     }
 
     private CodeDimension getCodeDimension(String tittle, List<CodeDimension> codeDimensions) {
-        if(codeDimensions == null) {
+        if (codeDimensions == null) {
             return null;
         }
 
