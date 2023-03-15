@@ -169,6 +169,8 @@
             <xs:element name="maintainer" type="common:Resource" />
             <xs:element name="validFrom" type="xs:dateTime" />
             <xs:element name="validTo" type="xs:dateTime" minOccurs="0" />
+            <xs:element name="dateStart" type="common:InternationalString" />
+            <xs:element name="dateEnd" type="common:InternationalString" />
         </xs:sequence>
     </xs:complexType>
 

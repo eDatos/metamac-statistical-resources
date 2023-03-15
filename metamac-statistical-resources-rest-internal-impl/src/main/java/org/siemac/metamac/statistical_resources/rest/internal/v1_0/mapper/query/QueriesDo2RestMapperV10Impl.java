@@ -6,16 +6,13 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.sortTimeListFromRecentToOldest;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.ws.rs.core.Response.Status;
 
+import com.google.common.base.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -25,15 +22,7 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attributes;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimensions;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Queries;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryMetadata;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternalWithStatisticalOperation;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesInternal;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.*;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
@@ -284,6 +273,22 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setRejectValidationUser(source.getLifeCycleStatisticalResource().getRejectValidationUser());
         target.setPublicationDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getPublicationDate()));
         target.setPublicationUser(source.getLifeCycleStatisticalResource().getPublicationUser());
+
+        Dimension temporalDimension = null;
+        for (Dimension dimension : target.getDimensions().getDimensions()) {
+            if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
+                temporalDimension = dimension;
+                break;
+            }
+        }
+
+        if (temporalDimension != null) {
+            List<NonEnumeratedDimensionValue> temporalDimensionValues = ((NonEnumeratedDimensionValues) temporalDimension.getDimensionValues()).getValues();
+            if (temporalDimensionValues != null && temporalDimensionValues.size() > 0) {
+                target.setDateStart(commonDo2RestMapper.toSdmxObservationalTimePeriod(temporalDimensionValues.get(temporalDimensionValues.size() - 1).getId(), selectedLanguages));
+                target.setDateEnd(commonDo2RestMapper.toSdmxObservationalTimePeriod(temporalDimensionValues.get(0).getId(), selectedLanguages));
+            }
+        }
 
         return target;
     }
