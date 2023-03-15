@@ -173,7 +173,7 @@
             <xs:element name="maintainer" type="tns:ResourceInternal" />
             <xs:element name="validFrom" type="xs:dateTime" />
             <xs:element name="validTo" type="xs:dateTime" minOccurs="0" />
-            <xs:element name="nextVersion" type="tns:NextVersionType" /> <!--esto puede suponer un problema?-->
+            <xs:element name="nextVersion" type="tns:NextVersionType" />
             <xs:element name="nextVersionDate" type="common:InternationalString"  minOccurs="0" /> 
             <xs:element name="procStatus" type="tns:ProcStatusType"/>
             <xs:element name="creationDate" type="xs:dateTime" minOccurs="0"/>
