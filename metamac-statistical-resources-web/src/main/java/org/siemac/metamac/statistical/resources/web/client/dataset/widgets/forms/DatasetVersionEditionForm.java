@@ -66,8 +66,6 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
         CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), false, false, CommonUtils.getDateFormatTypeHashMap());
-        customDatePickerItem.setIconCreateDateItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
-        customDatePickerItem.setIconCustomSdmxTimePeriodItem(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
         customDatePickerItem.defaultDateType();
         return customDatePickerItem;
 
