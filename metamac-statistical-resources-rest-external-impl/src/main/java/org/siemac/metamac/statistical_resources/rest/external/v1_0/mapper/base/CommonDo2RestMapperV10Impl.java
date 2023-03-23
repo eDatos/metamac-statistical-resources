@@ -82,7 +82,6 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionVisualisation;
