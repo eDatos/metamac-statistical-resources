@@ -118,7 +118,7 @@ public class DataMockUtils {
 
         DataStructure dsd = SrmMockUtils.mockDsdWithGeoTimeAndMeasureDimensions("urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=TFFS:CRED_EXT_DEBT(1.0)", "GEO_DIM", "TIME_PERIOD", "MEAS_DIM",
                 conceptSchemeReference, codelistReference);
-        Mockito.when(apisLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), null)).thenReturn(dsd);
+        Mockito.when(apisLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), (String) Mockito.isNull())).thenReturn(dsd);
     }
 
     public static void mockDsdAndRelatedWithNoAttributes(SrmRestInternalService srmRestInternalService) throws Exception {
