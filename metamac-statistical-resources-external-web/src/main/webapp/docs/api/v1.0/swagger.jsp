@@ -834,6 +834,10 @@
             "variable":{
                "description":"",
                "$ref":"#/definitions/Resource"
+            },
+            "pluralName":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
             }
          },
          "description":""
@@ -2960,6 +2964,13 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "pluralName":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/InternationalString"
                   }
                }
             }

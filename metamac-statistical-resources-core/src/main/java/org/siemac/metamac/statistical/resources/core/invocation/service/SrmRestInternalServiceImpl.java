@@ -66,7 +66,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = dataStructureComponents[0];
             String dsdId = dataStructureComponents[1];
             String version = dataStructureComponents[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(agencyId, dsdId, version);
+            return restApiLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(agencyId, dsdId, version, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
