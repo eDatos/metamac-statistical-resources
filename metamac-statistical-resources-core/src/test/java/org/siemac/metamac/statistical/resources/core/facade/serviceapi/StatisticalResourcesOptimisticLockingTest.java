@@ -2015,4 +2015,9 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         }
     }
 
+    @Override
+    public void testCheckAttributeInstance() throws Exception {
+        // no optimistic locking in this operation
+    }
+
 }

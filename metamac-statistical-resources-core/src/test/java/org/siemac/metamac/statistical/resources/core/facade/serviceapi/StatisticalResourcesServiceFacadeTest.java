@@ -4296,4 +4296,10 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
         statisticalResourcesServiceFacade.importAttributesFromFile(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url));
     }
+
+    @Override
+    public void testCheckAttributeInstance() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

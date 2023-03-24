@@ -152,6 +152,8 @@ Application FacadeStatisticalResources {
     		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
     		"Create an attribute instance"
     		@DsdAttributeInstanceDto createAttributeInstance(String datasetVersionUrn, @DsdAttributeInstanceDto dsdAttributeInstanceDto) throws MetamacException;
+    		"Check attribute instance"
+    		checkAttributeInstance(String datasetVersionUrn, @DsdAttributeInstanceDto dsdAttributeInstanceDto, List<org.siemac.metamac.core.common.exception.MetamacExceptionItem> exceptions) throws MetamacException;
     		"Update an attribute instance"
     		@DsdAttributeInstanceDto updateAttributeInstance(String datasetVersionUrn, @DsdAttributeInstanceDto dsdAttributeInstanceDto) throws MetamacException;
     		"Delete an attribute instance"

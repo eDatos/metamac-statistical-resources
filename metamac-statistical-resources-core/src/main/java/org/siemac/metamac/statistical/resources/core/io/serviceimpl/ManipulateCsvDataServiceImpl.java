@@ -42,7 +42,7 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     @Autowired
     StatisticalResourcesServiceFacade        statisticalResourcesServiceFacade;
 
-    private static int                       SPLIT_DATA_FACTOR = 5000;
+    private static final int                 SPLIT_DATA_FACTOR = 5000;
 
     @Override
     public void importCsv(ServiceContext ctx, File csvFile, DataStructure dataStructure, String datasetID, String dataSourceID, ValidateDataVersusDsd validateDataVersusDsd) throws Exception {
@@ -97,16 +97,30 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
             for (int i = 0; i < SPLIT_DATA_FACTOR || idAttribute != null; i++) {
                 idAttribute = csvReader.nextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId);
             }
+            checkAttributeInstances(csvReader, datasetVersionUrn, dsdAttributeInstanceDto, ctx);
+            checkAnyErrorInTSV(csvReader);
             insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDto);
         } finally {
             IOUtils.closeQuietly(is);
         }
     }
 
+    private void checkAttributeInstances(CsvAttributesParser csvReader, String datasetVersionUrn, List<DsdAttributeInstanceDto> dsdAttributeInstancesDto, ServiceContext ctx) throws MetamacException {
+        for (DsdAttributeInstanceDto dsdAttributeInstanceDto : dsdAttributeInstancesDto) {
+            statisticalResourcesServiceFacade.checkAttributeInstance(ctx, datasetVersionUrn, dsdAttributeInstanceDto, csvReader.getExceptions());
+        }
+    }
+
+    private void checkAnyErrorInTSV(CsvAttributesParser csvReader) throws MetamacException {
+        if (!csvReader.getExceptions().isEmpty()) {
+            throw new MetamacException(csvReader.getExceptions());
+        }
+    }
+
     private void insertAttributes(ServiceContext ctx, String datasetVersionUrn, List<DsdAttributeInstanceDto> dsdAttributeInstanceDto) throws MetamacException {
         for (DsdAttributeInstanceDto entry : dsdAttributeInstanceDto) {
             List<DsdAttributeInstanceDto> attributeInstances = new ArrayList<>();
-            //to define the attribute at the dataset level we need to know if it has already been created previously
+            // to define the attribute at the dataset level we need to know if it has already been created previously
             if (entry.getCodeDimensions() == null || entry.getCodeDimensions().isEmpty()) {
                 attributeInstances = statisticalResourcesServiceFacade.retrieveAttributeInstances(ctx, datasetVersionUrn, entry.getAttributeId());
             }
