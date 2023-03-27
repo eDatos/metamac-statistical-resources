@@ -12,7 +12,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
@@ -169,8 +168,7 @@ public class CsvAttributesParser {
             CodeItemDto codeItemDto = new CodeItemDto();
             CodeDimension codeDimension = getCodeDimension(dimensionValue, codeDimensions);
             if (codeDimension == null && (codeDimensions != null && !codeDimensions.isEmpty())) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID)
-                        .withMessageParameters(line[COLUMN_DIMENSION_NAME], line[COLUMN_ID_ATRIBUTTE]).build();
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID, line[COLUMN_DIMENSION_NAME], line[COLUMN_ID_ATRIBUTTE]));
             }
             codeItemDto.setCode(codeDimension != null ? codeDimension.getIdentifier() : dimensionValue);
             codeItemDto.setTitle(codeDimension != null ? codeDimension.getTitle() : dimensionValue);
