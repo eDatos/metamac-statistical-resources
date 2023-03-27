@@ -3,7 +3,7 @@
 {
    "swagger":"2.0",
    "info":{
-      "description":"Los recursos de información estadística son los resultados que se obtienen de una operación estadística. El objetivo de esta API es permite consultar todos los recursos de información estadística de la organización.",
+      "description":"Los recursos de información estadística son los resultados que se obtienen de una operación estadística. El objetivo de esta API es consultar todos los recursos de información estadística de la organización.",
       "version":"1.0",
       "title":"API de recursos estadísticos v1.0"
    },
@@ -3905,7 +3905,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -3983,7 +3983,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4073,7 +4073,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4118,7 +4118,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4196,7 +4196,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4280,7 +4280,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4389,7 +4389,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4434,7 +4434,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4512,7 +4512,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4615,7 +4615,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4660,7 +4660,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4738,7 +4738,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4828,7 +4828,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4873,7 +4873,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
