@@ -35,6 +35,11 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>org.siemac.metamac</groupId>
+            <artifactId>metamac-web-common</artifactId>
+            <version>${metamac-web-common.version}</version>
+        </dependency>
+		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
