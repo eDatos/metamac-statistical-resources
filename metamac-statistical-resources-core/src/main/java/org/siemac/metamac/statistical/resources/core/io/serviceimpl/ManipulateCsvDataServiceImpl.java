@@ -12,10 +12,12 @@ import org.apache.commons.io.IOUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
@@ -91,17 +93,24 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
             CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure);
 
-            List<DsdAttributeInstanceDto> dsdAttributeInstanceDto = new ArrayList<>();
+            List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos = new ArrayList<>();
 
             String idAttribute = "";
             for (int i = 0; i < SPLIT_DATA_FACTOR || idAttribute != null; i++) {
-                idAttribute = csvReader.nextLine(dsdAttributeInstanceDto, codeDimensions, externalItemsAttributeId);
+                idAttribute = csvReader.nextLine(dsdAttributeInstanceDtos, codeDimensions, externalItemsAttributeId);
             }
-            checkAttributeInstances(csvReader, datasetVersionUrn, dsdAttributeInstanceDto, ctx);
+            checkAttributeInstancesIsNotEmpty(dsdAttributeInstanceDtos);
+            checkAttributeInstances(csvReader, datasetVersionUrn, dsdAttributeInstanceDtos, ctx);
             checkAnyErrorInTSV(csvReader);
-            insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDto);
+            insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDtos);
         } finally {
             IOUtils.closeQuietly(is);
+        }
+    }
+
+    private void checkAttributeInstancesIsNotEmpty(List<DsdAttributeInstanceDto> dsdAttributeInstancesDtos) throws MetamacException {
+        if (dsdAttributeInstancesDtos.isEmpty()) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_FILE_EMPTY).build();
         }
     }
 
