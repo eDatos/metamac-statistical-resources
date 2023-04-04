@@ -15,6 +15,10 @@
     <packaging>jar</packaging>
     <name>METAMAC :: STATISTICAL RESOURCES :: REST :: EXTERNAL API</name>
 
+    <properties>
+        <jackson-dataformat-csv.version>2.14.2</jackson-dataformat-csv.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.cxf.xjc-utils</groupId>
@@ -70,6 +74,11 @@
             <!-- Does not include in classpath -->
             <scope>provided</scope>
         </dependency>
+        <dependency>
+          <groupId>com.fasterxml.jackson.dataformat</groupId>
+          <artifactId>jackson-dataformat-csv</artifactId>
+          <version>${jackson-dataformat-csv.version}</version>
+        </dependency> 
     </dependencies>
 
     <build>

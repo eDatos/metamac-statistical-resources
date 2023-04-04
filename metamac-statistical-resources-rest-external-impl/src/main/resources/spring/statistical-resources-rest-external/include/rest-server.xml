@@ -24,6 +24,8 @@
             <entry key="json" value="application/json" />
             <entry key="xml" value="application/xml" />
             <entry key="jsonstat" value="application/jsonstat+json" />
+            <entry key="tsv" value="text/tab-separated-values" />
+        	<entry key="csv" value="text/csv" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>

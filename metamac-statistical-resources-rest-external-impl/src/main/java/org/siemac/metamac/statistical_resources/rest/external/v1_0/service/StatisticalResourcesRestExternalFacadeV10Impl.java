@@ -5,17 +5,29 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResourcesListEndpoints;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.io.DeleteOnCloseFileInputStream;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collections;
@@ -34,8 +46,15 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarEle
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
+import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelectionMapper;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PlainTextExporter;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PlainTextTypeEnum;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -56,37 +75,37 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     private StatisticalResourcesRestExternalCommonService commonService;
 
     @Autowired
-    private DatasetsDo2RestMapperV10                      datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
 
     @Autowired
-    private DatasetsRest2DoMapper                         datasetsRest2DoMapper;
+    private DatasetsRest2DoMapper datasetsRest2DoMapper;
 
     @Autowired
-    private CollectionsDo2RestMapperV10                   collectionsDo2RestMapper;
+    private CollectionsDo2RestMapperV10 collectionsDo2RestMapper;
 
     @Autowired
-    private CollectionsRest2DoMapper                      collectionsRest2DoMapper;
+    private CollectionsRest2DoMapper collectionsRest2DoMapper;
 
     @Autowired
-    private QueriesDo2RestMapperV10                       queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10 queriesDo2RestMapper;
 
     @Autowired
-    private QueriesRest2DoMapper                          queriesRest2DoMapper;
+    private QueriesRest2DoMapper queriesRest2DoMapper;
 
     @Autowired
-    private MultidatasetsDo2RestMapperV10                 multidatasetsDo2RestMapper;
+    private MultidatasetsDo2RestMapperV10 multidatasetsDo2RestMapper;
 
     @Autowired
-    private MultidatasetsRest2DoMapper                    multidatasetsRest2DoMapper;
+    private MultidatasetsRest2DoMapper multidatasetsRest2DoMapper;
 
     @Autowired
-    private StatisticalResourcesConfiguration             configurationService;
-    
+    private StatisticalResourcesConfiguration configurationService;
+
     @Autowired
-    private ResourcesRest2DoMapper                          resourcesRest2DoMapper;
-    
+    private ResourcesRest2DoMapper resourcesRest2DoMapper;
+
     @Autowired
-    private ResourcesDo2RestMapperV10                     resourcesDo2RestMapper;
+    private ResourcesDo2RestMapperV10 resourcesDo2RestMapper;
 
     @Override
     public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
@@ -137,6 +156,39 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguage, parsedFields);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
+    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        try {
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
+            ResourceAccess resourceAccess = buildResourceAccessForDataset(dataset, "es");
+            String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
+            Response response = exportResourceAccessToPlainText(resourceAccess, fileNamePrefix, PlainTextTypeEnum.TSV);
+            return response;
+            // return Response.status(Status.OK).entity(dataset).header("Content-Disposition", getContentDisposition("", "")).build();
+
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
+    public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        try {
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
+            return Response.status(Status.OK).entity(dataset).header("Content-Disposition", getContentDisposition("", "")).build();
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -238,7 +290,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     public Resources findResources(String query, String orderBy, String limit, String offset, List<String> lang) {
         return findResourcesCommon(query, orderBy, limit, offset, lang);
     }
-    
+
     private Resources findResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
         try {
             SculptorCriteria sculptorCriteria = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset, true);
@@ -253,7 +305,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             throw manageException(e);
         }
     }
-    
+
     private Datasets findDatasetsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
         try {
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
@@ -311,7 +363,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
+            Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages,
+                    parsedFields);
             return multidatasets;
         } catch (Exception e) {
             throw manageException(e);
@@ -361,4 +414,61 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
         return result;
     }
+
+    public static String getContentDisposition(String fileNamePrefix, String format) {
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return "attachment; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
+    }
+
+    private ResourceAccess buildResourceAccessForDataset(Dataset dataset, String lang) {
+        try {
+            DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(dataset.getData().getDimensions(), dataset.getMetadata().getRelatedDsd());
+            String langDefault = "es";
+            if (lang == null) {
+                lang = langDefault;
+            }
+            return new ResourceAccess(DsdExternalProcessor.getSrmRestExternalFacade(), dataset, datasetSelection, lang, langDefault);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+    private Response exportResourceAccessToPlainText(ResourceAccess resourceAccess, String proposedFilename, PlainTextTypeEnum plainTextTypeEnum) {
+        FileOutputStream outputStreamObservations = null;
+        FileOutputStream outputStreamAttributes = null;
+        try {
+            final File tmpFileObservations = File.createTempFile("metamac", plainTextTypeEnum.getExtension());
+            outputStreamObservations = new FileOutputStream(tmpFileObservations);
+            exportResourceToPlainTextWithoutAttributes(PlainTextTypeEnum.TSV, resourceAccess, outputStreamObservations);
+            String filename = addExtensionToFilenameIfNeeded(plainTextTypeEnum.getExtension(), proposedFilename + "-observations");
+            return buildResponseOkWithFile(tmpFileObservations, filename, plainTextTypeEnum.getMimeType());
+        } catch (Exception e) {
+            throw manageException(e);
+        } finally {
+            IOUtils.closeQuietly(outputStreamObservations);
+            IOUtils.closeQuietly(outputStreamAttributes);
+        }
+    }
+    public static String addExtensionToFilenameIfNeeded(String proposedExtension, String existingFilename) {
+        String currentExtension = FilenameUtils.getExtension(existingFilename);
+        if (!StringUtils.isEmpty(currentExtension)) {
+            return existingFilename;
+        } else {
+            return buildFilename("." + proposedExtension, existingFilename);
+        }
+    }
+    private static String buildFilename(String extension, String... parts) {
+        return buildFilenameWithoutExtension(parts) + extension;
+    }
+    private static String buildFilenameWithoutExtension(String... parts) {
+        StringBuilder filename = new StringBuilder();
+        return filename.append(StringUtils.join(parts, "-")).toString().replace(".", "_");
+    }
+    private Response buildResponseOkWithFile(File file, String filename, String mimeType) throws FileNotFoundException {
+        return Response.ok(new DeleteOnCloseFileInputStream(file), mimeType).header("Content-Disposition", "attachment; filename=" + filename).build();
+    }
+    public void exportResourceToPlainTextWithoutAttributes(PlainTextTypeEnum plainTextTypeEnum, ResourceAccess resourceAccess, OutputStream resultObservationsOutputStream) throws MetamacException {
+        PlainTextExporter exporter = new PlainTextExporter(plainTextTypeEnum, resourceAccess);
+        exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(resultObservationsOutputStream);
+    }
+
 }

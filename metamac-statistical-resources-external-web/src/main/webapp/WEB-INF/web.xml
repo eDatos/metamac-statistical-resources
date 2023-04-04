@@ -72,6 +72,14 @@
         <url-pattern>/apis/*</url-pattern>
     </servlet-mapping>
 
+     <filter>
+        <filter-name>PlainTextFilter</filter-name>
+        <filter-class>org.siemac.metamac.statistical.resources.web.external.request.filter.PlainTextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>PlainTextFilter</filter-name>
+        <url-pattern>/apis/*</url-pattern>
+    </filter-mapping>
     <filter>
         <filter-name>JsonStatFilter</filter-name>
         <filter-class>org.siemac.metamac.statistical.resources.web.external.jsonstat.JsonStatFilter</filter-class>
