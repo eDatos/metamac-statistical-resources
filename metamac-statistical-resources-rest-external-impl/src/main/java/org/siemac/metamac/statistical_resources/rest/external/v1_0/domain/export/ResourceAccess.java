@@ -1,10 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
 
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PortalUtils.buildMapDimensionLabel;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PortalUtils.buildMapDimensionToMapDimensionsLabelVisualisationMode;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PortalUtils.buildMapDimensionsValuesLabels;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PortalUtils.buildMapDimensionsValuesLocalisedLabels;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PortalUtils.dataToDataArray;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionLabel;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionToMapDimensionsLabelVisualisationMode;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionsValuesLabels;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionsValuesLocalisedLabels;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.dataToDataArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,6 +38,9 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MeasureQuantity
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.px.PxExporter;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils;
 
 public class ResourceAccess {
 
@@ -436,22 +439,6 @@ public class ResourceAccess {
         return attributeValue;
     }
 
-    public CellCommentDetails observationAttributesAtPermutation(Map<String, String> permutation) {
-        CellCommentDetails cellCommentDetails = new CellCommentDetails();
-        for (Attribute attribute : getAttributesMetadata()) {
-            if (!AttributeAttachmentLevelType.PRIMARY_MEASURE.equals(attribute.getAttachmentLevel())) {
-                continue; // only observation attachment level
-            }
-            String attributeId = attribute.getId();
-            int offset = calculateOffsetAtPermutation(permutation);
-
-            String attributeValue = obtainAttributeValue(attributeId, offset);
-            cellCommentDetails.addCommentLine(attributeValue);
-        }
-
-        return cellCommentDetails;
-    }
-
     public String obtainAttributeValue(String attributeId, int offset) {
         String[] attributeValues = getAttributeValues(attributeId);
         String attributeValue = null;
@@ -669,7 +656,7 @@ public class ResourceAccess {
             if (data.getAttributes() != null) {
                 for (DataAttribute dataAttribute : data.getAttributes().getAttributes()) {
                     if (dataAttribute.getId().equals(attribute.getId())) {
-                        attributesValuesByAttributeId.put(attribute.getId(), dataToDataArray(dataAttribute.getValue()));
+                        attributesValuesByAttributeId.put(attribute.getId(), PortalUtils.dataToDataArray(dataAttribute.getValue()));
                     }
                 }
             }

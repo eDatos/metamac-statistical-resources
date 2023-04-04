@@ -2,6 +2,8 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.expor
 
 import java.util.List;
 
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
+
 public class DatasetSelectionDimension {
 
     private final String id;

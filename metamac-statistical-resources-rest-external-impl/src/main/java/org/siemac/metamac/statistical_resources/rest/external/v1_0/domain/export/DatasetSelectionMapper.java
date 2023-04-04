@@ -3,7 +3,7 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.expor
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection.FIXED_DIMENSIONS_START_POSITION;
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection.LEFT_DIMENSIONS_START_POSITION;
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection.TOP_DIMENSIONS_START_POSITION;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.LabelVisualisationModeEnum.CODE_AND_LABEL;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum.CODE_AND_LABEL;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataStructureDe
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentations;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
 
 public class DatasetSelectionMapper {
 

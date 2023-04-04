@@ -5,7 +5,7 @@
  * See generator home page at: http://code.google.com/p/fluent-builders-generator-eclipse-plugin/
  */
 
-package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
+package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.px;
 
 import java.util.ArrayList;
 import java.util.Date;

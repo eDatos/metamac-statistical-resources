@@ -53,8 +53,8 @@ import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdE
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelectionMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PlainTextExporter;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PlainTextTypeEnum;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ResourceAccess;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.PlainTextTypeEnum;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;

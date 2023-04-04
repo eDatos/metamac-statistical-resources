@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
+package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +23,8 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDi
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
 
 public class PortalUtils {
 

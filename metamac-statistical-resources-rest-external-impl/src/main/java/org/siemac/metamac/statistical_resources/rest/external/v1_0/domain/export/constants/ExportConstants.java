@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
+package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants;
 
 import java.util.HashMap;
 import java.util.Map;

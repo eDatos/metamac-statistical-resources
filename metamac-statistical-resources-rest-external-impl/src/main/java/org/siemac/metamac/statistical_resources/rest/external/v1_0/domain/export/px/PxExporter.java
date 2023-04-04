@@ -1,16 +1,16 @@
-package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
+package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.px;
 
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.COMMA;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.EQUALS;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.LEFT_BRACE;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.LEFT_PARENTHESES;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.NEW_LINE;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.QUOTE;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.RIGHT_BRACE;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.RIGHT_PARENTHESES;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.SEMICOLON;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportConstants.SPACE;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.PortalUtils.buildInternationalStringFromSingleCode;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.COMMA;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.EQUALS;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.LEFT_BRACE;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.LEFT_PARENTHESES;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.NEW_LINE;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.QUOTE;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.RIGHT_BRACE;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.RIGHT_PARENTHESES;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.SEMICOLON;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.constants.ExportConstants.SPACE;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildInternationalStringFromSingleCode;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -28,7 +28,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.TreeMap;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -42,7 +41,6 @@ import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttachmentLevelType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeValues;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
@@ -53,6 +51,10 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NextVersionType
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelectionDimension;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ResourceAccess;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,12 +65,10 @@ public class PxExporter {
     private final Logger logger = LoggerFactory.getLogger(PxExporter.class);
 
     private final ResourceAccess datasetAccess;
-    private final String ATTRIBUTE_LINE_SEPARATOR = "#";
     private Set<String> languages = new HashSet<String>();
     private Map<String, Integer> languageOrder = new HashMap<String, Integer>();
     private final DatasetSelection datasetSelection;
-    private Integer showDecimals = null;
-    private final static int MAX_PX_MATRIX_LENGTH = 8;
+    private static final int MAX_PX_MATRIX_LENGTH = 8;
 
     public PxExporter(SrmRestExternalFacade srmRestExternalFacade, Dataset dataset, DatasetSelection datasetSelection, String lang, String langDefault) throws MetamacException {
         datasetAccess = new ResourceAccess(srmRestExternalFacade, dataset, datasetSelection, lang, langDefault);
@@ -188,39 +188,11 @@ public class PxExporter {
 
         writeContact(printWriter);
 
-        // REFPERIOD: NOT SUPPORT
-        // BASEPERIOD: NOT SUPPORT
-        // DATABASE: NOT SUPPORT
-
         writeSource(printWriter);
 
         writeSurvey(printWriter);
 
         writeLink(printWriter);
-
-        // NOTEX, NOTE, VALUENOTEX, VALUENOTE, CELLNOTEX, CELLNOTE
-        writeAttributes(printWriter);
-
-        // INFOFILE: NOT SUPPORT
-        // FIRST-PUBLISHED: NOT SUPPORT
-        // META-ID: NOT SUPPORT
-        // OFFICIAL-STATISTICS: NOT SUPPORT
-        // INFO: NOT SUPPORT
-        // DATASYMBOL1: NOT SUPPORT
-        // DATASYMBOL2: NOT SUPPORT
-        // DATASYMBOL3: NOT SUPPORT
-        // DATASYMBOL4: NOT SUPPORT
-        // DATASYMBOL5: NOT SUPPORT
-        // DATASYMBOL6: NOT SUPPORT
-        // DATASYMBOLSUM: NOT SUPPORT
-        // DATASYMBOLNIL: NOT SUPPORT
-        // DATANOTECELL: NOT SUPPORT
-        // DATANOTESUM: NOT SUPPORT
-        // DATANOTE: NOT SUPPORT
-        // KEYS: NOT SUPPORT
-        // ATTRIBUTE-ID: NOT SUPPORT
-        // ATTRIBUTE-TEXT: NOT SUPPORT
-        // ATTRIBUTES: NOT SUPPORT
 
         writePrecision(printWriter);
 
@@ -359,7 +331,7 @@ public class PxExporter {
      * @throws MetamacException
      */
     private void writeShowDecimals(PrintWriter printWriter) throws MetamacException {
-        showDecimals = datasetAccess.getRelatedDsd().getShowDecimals();
+        Integer showDecimals = datasetAccess.getRelatedDsd().getShowDecimals();
 
         if (showDecimals != null) {
             // Check if correction for Precisions is needed: If precision is more less than showdecimals, then showdecimals is changed to precission value
@@ -746,22 +718,6 @@ public class PxExporter {
         writeLine(printWriter, pxLineContainer);
     }
 
-    /**
-     * If exist more than one attribute for a same key (example: pair dimensionId-dimensionValueId for VALUENOTE) concat values with <br/>
-     * (# in PX)
-     *
-     * @throws MetamacException
-     */
-    private void writeAttributes(PrintWriter printWriter) throws MetamacException {
-        List<Attribute> attributes = datasetAccess.getAttributesMetadata();
-        if (CollectionUtils.isEmpty(attributes)) {
-            return;
-        }
-        writeAttributesNote(printWriter, attributes);
-        writeAttributesValueNote(printWriter, attributes);
-        writeAttributesCellNote(printWriter, attributes);
-    }
-
     private void writePrecision(PrintWriter printWriter) throws MetamacException {
         if (datasetAccess.existsContVariable()) {
             // Measure dimension Has an enumerated representation
@@ -779,235 +735,6 @@ public class PxExporter {
             }
         } else {
             return; // Nothing
-        }
-    }
-
-    /**
-     * Builds NOTE and NOTEX attributes: attributes with dataset attachment level
-     *
-     * @throws MetamacException
-     */
-    private void writeAttributesNote(PrintWriter printWriter, List<Attribute> attributes) throws MetamacException {
-        StringBuilder notex = new StringBuilder();
-        StringBuilder note = new StringBuilder();
-        for (Attribute attribute : attributes) {
-            if (!AttributeAttachmentLevelType.DATASET.equals(attribute.getAttachmentLevel())) {
-                continue;
-            }
-            String attributeId = attribute.getId();
-            String[] attributeValues = datasetAccess.getAttributeValues(attributeId);
-            if (attributeValues == null) {
-                continue;
-            }
-            StringBuilder value = PxKeysEnum.NOTEX.getKeyword().equals(attributeId) ? notex : note;
-            addAttributeValue(value, attributeValues[0]);
-        }
-        if (notex.length() != 0) {
-            PxLineContainer pxLineContainer = PxLineContainerBuilder.pxLineContainer().withPxKey(PxKeysEnum.NOTEX).withValue(notex.toString()).build();
-            writeLine(printWriter, pxLineContainer);
-        }
-        if (note.length() != 0) {
-            PxLineContainer pxLineContainer = PxLineContainerBuilder.pxLineContainer().withPxKey(PxKeysEnum.NOTE).withValue(note.toString()).build();
-            writeLine(printWriter, pxLineContainer);
-        }
-    }
-
-    /**
-     * Builds VALUENOTE and VALUENOTEX attributes: attributes with dimension attachment level but only one dimension
-     *
-     * @throws MetamacException
-     */
-    private void writeAttributesValueNote(PrintWriter printWriter, List<Attribute> attributes) throws MetamacException {
-        // Attribute values indexed by dimensionId and dimensionValueId
-        Map<String, Map<String, StringBuilder>> valueNotex = new HashMap<String, Map<String, StringBuilder>>();
-        Map<String, Map<String, StringBuilder>> valueNote = new HashMap<String, Map<String, StringBuilder>>();
-
-        // Builds attribute values
-        for (Attribute attribute : attributes) {
-            if (!AttributeAttachmentLevelType.DIMENSION.equals(attribute.getAttachmentLevel()) || attribute.getDimensions().getDimensions().size() != 1) {
-                continue;
-            }
-            String attributeId = attribute.getId();
-            String[] attributeValues = datasetAccess.getAttributeValues(attributeId);
-            if (attributeValues == null) {
-                continue;
-            }
-            String dimensionId = attribute.getDimensions().getDimensions().get(0).getDimensionId();
-            Map<String, Map<String, StringBuilder>> attributeValuesByDimensionId = PxKeysEnum.VALUENOTEX.getKeyword().equals(attributeId) ? valueNotex : valueNote;
-            if (!attributeValuesByDimensionId.containsKey(dimensionId)) {
-                attributeValuesByDimensionId.put(dimensionId, new HashMap<String, StringBuilder>());
-            }
-            List<String> dimensionValuesId = datasetAccess.getDimensionValuesOrderedForData(dimensionId);
-            List<String> selectedDimensionValuesId = datasetSelection.getDimension(dimensionId).getSelectedDimensionValues();
-            Map<String, StringBuilder> attributeValuesByDimensionValueId = attributeValuesByDimensionId.get(dimensionId);
-            for (int i = 0; i < dimensionValuesId.size(); i++) {
-                String dimensionValueId = dimensionValuesId.get(i);
-                if (!selectedDimensionValuesId.contains(dimensionValueId)) {
-                    continue;
-                }
-                String attributeValue = attributeValues[i];
-                if (StringUtils.isEmpty(attributeValue)) {
-                    continue;
-                }
-                if (!attributeValuesByDimensionValueId.containsKey(dimensionValueId)) {
-                    attributeValuesByDimensionValueId.put(dimensionValueId, new StringBuilder());
-                }
-                StringBuilder value = attributeValuesByDimensionValueId.get(dimensionValueId);
-                attributeValue = datasetAccess.applyLabelVisualizationModeForAttributeValue(attributeId, attributeValue);
-                addAttributeValue(value, attributeValue);
-            }
-        }
-
-        // Print in stream
-        writeAttributeValueNoteField(printWriter, PxKeysEnum.VALUENOTEX, valueNotex);
-        writeAttributeValueNoteField(printWriter, PxKeysEnum.VALUENOTE, valueNote);
-    }
-
-    private void writeAttributeValueNoteField(PrintWriter printWriter, PxKeysEnum pxKey, Map<String, Map<String, StringBuilder>> valueNote) throws MetamacException {
-        for (String dimensionId : datasetAccess.getDimensionsOrderedForData()) {
-            if (valueNote.containsKey(dimensionId)) {
-                List<String> dimensionValuesId = datasetAccess.getDimensionValuesOrderedForData(dimensionId);
-                for (String dimensionValueId : dimensionValuesId) {
-                    if (valueNote.get(dimensionId).containsKey(dimensionValueId)) {
-                        String dimensionValueLabel = PortalUtils.getLabel(datasetAccess.getDimensionValueLabel(dimensionId, dimensionValueId), datasetAccess.getLangDefault());
-                        // Localised Value Note is not supported
-                        // @formatter:off
-                        PxLineContainer pxLineContainer = PxLineContainerBuilder.pxLineContainer()
-                                .withPxKey(pxKey)
-                                .withValue(valueNote.get(dimensionId).get(dimensionValueId).toString())
-                                .withIndexedValue(Arrays.asList(datasetAccess.getDimensionLabelDefaultLocale(dimensionId), dimensionValueLabel)).build();
-                        // @formatter:on
-                        writeLine(printWriter, pxLineContainer);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Builds CELLNOTE and CELLNOTEX attributes: attributes with observation attachment level or dimension attachment level but more than one dimension
-     *
-     * @throws MetamacException
-     */
-    private void writeAttributesCellNote(PrintWriter printWriter, List<Attribute> attributes) throws MetamacException {
-
-        // Attribute values indexed by all dimension values of attribute. Dimensions ordered: First stub and then heading
-        Map<String, StringBuilder> cellNotex = new HashMap<String, StringBuilder>();
-        Map<String, StringBuilder> cellNote = new HashMap<String, StringBuilder>();
-        List<String> allDimensionsDatasetOrderedForPx = getPxDimensionsDatasetOrdered();
-
-        // Builds attribute values
-        for (Attribute attribute : attributes) {
-            if (!AttributeAttachmentLevelType.PRIMARY_MEASURE.equals(attribute.getAttachmentLevel())
-                    && !(AttributeAttachmentLevelType.DIMENSION.equals(attribute.getAttachmentLevel()) && attribute.getDimensions().getDimensions().size() > 1)) {
-                continue;
-            }
-            String attributeId = attribute.getId();
-            String[] attributeValues = datasetAccess.getAttributeValues(attributeId);
-            if (attributeValues == null) {
-                continue;
-            }
-
-            Map<String, StringBuilder> cellNoteToAttribute = PxKeysEnum.CELLNOTEX.getKeyword().equals(attributeId) ? cellNotex : cellNote;
-            List<String> dimensionsAttributeOrderedForData = datasetAccess.getDimensionsAttributeOrderedForData(attribute);
-            writeAttributeCellNote(attributeId, attributeValues, dimensionsAttributeOrderedForData, allDimensionsDatasetOrderedForPx, cellNoteToAttribute);
-        }
-
-        // Print in stream
-        writeAttributeCellNoteField(printWriter, PxKeysEnum.CELLNOTEX, cellNotex);
-        writeAttributeCellNoteField(printWriter, PxKeysEnum.CELLNOTE, cellNote);
-    }
-
-    private void writeAttributeCellNote(String attributeId, String[] attributeValues, List<String> dimensionsAttributeOrderedForData, List<String> dimensionsDatasetOrderedForPx,
-            Map<String, StringBuilder> cellNote) {
-
-        Stack<DataOrderingStackElement> stack = new Stack<DataOrderingStackElement>();
-        stack.push(new DataOrderingStackElement(null, -1, null));
-        Map<String, String> dimensionValuesForAttributeValue = new HashMap<String, String>(dimensionsAttributeOrderedForData.size());
-
-        int dimensionLastPosition = dimensionsAttributeOrderedForData.size() - 1;
-        int attributeValueIndex = 0;
-        while (stack.size() > 0) {
-            DataOrderingStackElement elem = stack.pop();
-            int dimensionPosition = elem.getDimensionPosition();
-            String dimensionCodeId = elem.getDimensionCodeId();
-
-            if (dimensionPosition != -1) {
-                String dimensionId = elem.getDimensionId();
-                dimensionValuesForAttributeValue.put(dimensionId, dimensionCodeId);
-            }
-
-            if (dimensionPosition == dimensionLastPosition) {
-                // We have all dimensions here
-                String attributeValue = attributeValues[attributeValueIndex++];
-                if (!StringUtils.isEmpty(attributeValue) && allDimensionValuesAreSelected(dimensionsDatasetOrderedForPx, dimensionValuesForAttributeValue)) {
-                    StringBuilder key = new StringBuilder();
-                    key.append(QUOTE);
-                    Iterator<String> iterator = dimensionsDatasetOrderedForPx.iterator();
-                    while (iterator.hasNext()) {
-                        String dimensionId = iterator.next();
-                        if (dimensionValuesForAttributeValue.containsKey(dimensionId)) {
-                            String dimensionValueId = dimensionValuesForAttributeValue.get(dimensionId);
-                            key.append(PortalUtils.getLabel(datasetAccess.getDimensionValueLabel(dimensionId, dimensionValueId), datasetAccess.getLangDefault()));
-                        } else {
-                            key.append("*");
-                        }
-                        if (iterator.hasNext()) {
-                            key.append(QUOTE + COMMA + QUOTE);
-                        }
-                    }
-                    key.append(QUOTE);
-                    String keyString = key.toString();
-                    StringBuilder value = cellNote.get(keyString);
-                    if (value == null) {
-                        value = new StringBuilder();
-                        cellNote.put(keyString, value);
-                    }
-                    attributeValue = datasetAccess.applyLabelVisualizationModeForAttributeValue(attributeId, attributeValue);
-                    addAttributeValue(value, attributeValue);
-                }
-            } else {
-                String dimensionId = dimensionsAttributeOrderedForData.get(dimensionPosition + 1);
-                List<String> dimensionValues = datasetAccess.getDimensionValuesOrderedForData(dimensionId);
-                for (int i = dimensionValues.size() - 1; i >= 0; i--) {
-                    DataOrderingStackElement temp = new DataOrderingStackElement(dimensionId, dimensionPosition + 1, dimensionValues.get(i));
-                    stack.push(temp);
-                }
-            }
-        }
-    }
-
-    private boolean allDimensionValuesAreSelected(List<String> dimensionsDatasetOrderedForPx, Map<String, String> dimensionValuesForAttributeValue) {
-        for (String dimensionId : dimensionsDatasetOrderedForPx) {
-            if (dimensionValuesForAttributeValue.containsKey(dimensionId)) {
-                String dimensionValueId = dimensionValuesForAttributeValue.get(dimensionId);
-                if (!datasetSelection.getDimension(dimensionId).getSelectedDimensionValues().contains(dimensionValueId)) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private void writeAttributeCellNoteField(PrintWriter printWriter, PxKeysEnum pxKey, Map<String, StringBuilder> cellNote) throws MetamacException {
-        if (cellNote.size() == 0) {
-            return;
-        }
-        // Get keys ordered to obtain same result to same dataset
-        List<String> keys = new ArrayList<String>(cellNote.keySet());
-        Collections.sort(keys);
-
-        for (String key : keys) {
-            // Localised is not supported for Attribute Cell
-            // @formatter:off
-            PxLineContainer pxLineContainer = PxLineContainerBuilder.pxLineContainer()
-                    .withPxKey(pxKey)
-                    .withValue(cellNote.get(key).toString())
-                    .withIndexedValue(Arrays.asList(StringUtils.removeStart(StringUtils.removeEnd(key, "\""), "\"").split("\",\"")))
-                    .build();
-            // @formatter:on
-            writeLine(printWriter, pxLineContainer);
         }
     }
 
@@ -1095,10 +822,6 @@ public class PxExporter {
 
     private void writeLocalisedLine(PrintWriter printWriter, PxKeysEnum pxKey, List<InternationalString> indexValues, InternationalString value) throws MetamacException {
         writeLocalisedLine(printWriter, pxKey, indexValues, Arrays.asList(value));
-    }
-
-    private void writeLocalisedLine(PrintWriter printWriter, PxKeysEnum pxKey, InternationalString indexValue, List<InternationalString> values) throws MetamacException {
-        writeLocalisedLine(printWriter, pxKey, Arrays.asList(indexValue), values);
     }
 
     private void writeLocalisedLine(PrintWriter printWriter, PxKeysEnum pxKey, List<InternationalString> indexValues, List<InternationalString> values) throws MetamacException {
@@ -1271,14 +994,6 @@ public class PxExporter {
             dimensionsOrderedToAttributes.add(dimension.getId());
         }
         return dimensionsOrderedToAttributes;
-    }
-
-    private void addAttributeValue(StringBuilder attributeGlobalValue, String attributeValue) {
-        if (attributeGlobalValue.length() != 0) {
-            attributeGlobalValue.append(ATTRIBUTE_LINE_SEPARATOR);
-        }
-        attributeValue = formatMultilineValue(attributeValue);
-        attributeGlobalValue.append(attributeValue);
     }
 
     private String extractStatisticalOperationCodeFromLink(ResourceLink selfLink) {

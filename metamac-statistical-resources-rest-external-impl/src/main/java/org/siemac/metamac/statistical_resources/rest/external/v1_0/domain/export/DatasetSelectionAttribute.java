@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
 
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
+
 public class DatasetSelectionAttribute {
 
     private final String id;

@@ -14,6 +14,8 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.PlainTextTypeEnum;
 
 public class PlainTextExporter {
 
