@@ -372,4 +372,30 @@ public class PortalUtils {
         }
         return internationalString;
     }
+
+    /**
+     * Builds a map indexed by attributeId with the effective label visualisation mode.
+     * If attributes has not attributes values in metadata, returns 'only code'
+     * If configuration does not exist for component, returns default configuration
+     */
+    public static Map<String, LabelVisualisationModeEnum> buildMapAttributesLabelVisualisationMode(DatasetSelection datasetSelection, List<Attribute> attributes) {
+        Map<String, LabelVisualisationModeEnum> labelVisualisationsMode = new HashMap<String, LabelVisualisationModeEnum>(attributes.size());
+        for (Attribute attribute : attributes) {
+            String attributeId = attribute.getId();
+            LabelVisualisationModeEnum labelVisualisationMode = null;
+            if (attribute.getAttributeValues() == null) {
+                // Attribute has not translation for the codes
+                labelVisualisationMode = LabelVisualisationModeEnum.CODE;
+            } else {
+                labelVisualisationMode = datasetSelection != null ? datasetSelection.getAttributeLabelVisualisationModel(attributeId) : null;
+                if (labelVisualisationMode == null) {
+                    // default value
+                    labelVisualisationMode = LabelVisualisationModeEnum.CODE_AND_LABEL;
+                }
+            }
+            labelVisualisationsMode.put(attributeId, labelVisualisationMode);
+        }
+        return labelVisualisationsMode;
+    }
+
 }

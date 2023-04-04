@@ -20,18 +20,28 @@ public class DatasetSelection {
     private List<DatasetSelectionDimension> dimensions = new ArrayList<DatasetSelectionDimension>();
     private final Map<String, DatasetSelectionDimension> dimensionsMap = new HashMap<String, DatasetSelectionDimension>();
 
+    private List<DatasetSelectionAttribute> attributes = new ArrayList<DatasetSelectionAttribute>();
+    private final Map<String, DatasetSelectionAttribute> attributesMap = new HashMap<String, DatasetSelectionAttribute>();
+
     private final Map<String, Integer> multipliers = new HashMap<String, Integer>();
 
-    public DatasetSelection(List<DatasetSelectionDimension> dimensions, boolean userSelection) {
-        this(dimensions);
+    public DatasetSelection(List<DatasetSelectionDimension> dimensions, List<DatasetSelectionAttribute> attributes, boolean userSelection) {
+        this(dimensions, attributes);
         this.userSelection = userSelection;
     }
 
-    public DatasetSelection(List<DatasetSelectionDimension> dimensions) {
+    public DatasetSelection(List<DatasetSelectionDimension> dimensions, List<DatasetSelectionAttribute> attributes) {
         if (dimensions != null) {
             this.dimensions = new ArrayList<DatasetSelectionDimension>(dimensions);
             for (DatasetSelectionDimension dimension : dimensions) {
                 dimensionsMap.put(dimension.getId(), dimension);
+            }
+        }
+
+        if (attributes != null) {
+            this.attributes = new ArrayList<DatasetSelectionAttribute>(attributes);
+            for (DatasetSelectionAttribute attribute : attributes) {
+                attributesMap.put(attribute.getId(), attribute);
             }
         }
 
@@ -190,5 +200,15 @@ public class DatasetSelection {
 
     public int getMultiplierForDimension(DatasetSelectionDimension dimension) {
         return multipliers.get(dimension.getId());
+    }
+
+    public LabelVisualisationModeEnum getAttributeLabelVisualisationModel(String attributeId) {
+        DatasetSelectionAttribute attribute = getAttribute(attributeId);
+        LabelVisualisationModeEnum labelVisualisationMode = attribute != null ? attribute.getLabelVisualisationMode() : null;
+        return labelVisualisationMode;
+    }
+
+    public DatasetSelectionAttribute getAttribute(String attributeId) {
+        return attributesMap.get(attributeId);
     }
 }

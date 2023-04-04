@@ -21,7 +21,9 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttach
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeDimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentation;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.ComponentType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataAttribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataStructureDefinition;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DatasetMetadata;
@@ -145,6 +147,7 @@ public class ResourceAccess {
         this.langDefault = langDefault;
 
         initializeDimensions(dimensions, datasetSelection);
+        initializeAttributes(data, attributes, datasetSelection);
         initializeObservations(data);
         initializeDimensionsForData(data);
         initializeMultipliers();
@@ -644,5 +647,50 @@ public class ResourceAccess {
 
     public int getPrimaryMeasureAttributesCount() {
         return primaryMeasureAttributesCount;
+    }
+
+    /**
+     * Init definitions and values of attributes
+     *
+     * @param attributes
+     */
+    private void initializeAttributes(Data data, Attributes attributes, DatasetSelection datasetSelection) throws MetamacException {
+        if (attributes == null) {
+            attributesMetadata = new ArrayList<Attribute>();
+        } else {
+            attributesMetadata = attributes.getAttributes();
+        }
+
+        Map<String, Attribute> attributesMetadataMap = new HashMap<String, Attribute>(attributesMetadata.size());
+
+        // Attribute Instances
+        attributesValuesByAttributeId = new HashMap<String, String[]>(attributesMetadata.size());
+        for (Attribute attribute : attributesMetadata) {
+            if (data.getAttributes() != null) {
+                for (DataAttribute dataAttribute : data.getAttributes().getAttributes()) {
+                    if (dataAttribute.getId().equals(attribute.getId())) {
+                        attributesValuesByAttributeId.put(attribute.getId(), dataToDataArray(dataAttribute.getValue()));
+                    }
+                }
+            }
+
+            if (AttributeAttachmentLevelType.PRIMARY_MEASURE.equals(attribute.getAttachmentLevel())) {
+                primaryMeasureAttributesCount += calculateNonEmptyCount(attributesValuesByAttributeId.get(attribute.getId()));
+            }
+
+            // Measure Attribute
+            if (ComponentType.MEASURE.equals(attribute.getType())) {
+                measureAttribute = attribute;
+            }
+
+            // Attributes Metadata Map
+            attributesMetadataMap.put(attribute.getId(), attribute);
+        }
+
+        this.attributesMetadataMap = attributesMetadataMap;
+        attributesLabelVisualisationMode = PortalUtils.buildMapAttributesLabelVisualisationMode(datasetSelection, attributesMetadata);
+        attributesValuesCurrentLocaleLabels = PortalUtils.buildMapAttributesValuesLabels(attributesMetadata, lang, langDefault);
+        attributesValuesLabels = PortalUtils.buildMapAttributesValuesLocalisedLabels(attributesMetadata);
+        attributesLabels = PortalUtils.buildMapAttributesLabels(attributesMetadata, lang, langDefault);
     }
 }

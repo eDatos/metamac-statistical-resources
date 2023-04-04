@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttachmentLevelType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -77,6 +79,20 @@ public class PlainTextExporter {
         }
         header.append(HEADER_OBSERVATION);
 
+        for (Attribute attribute : datasetAccess.getAttributesMetadata()) {
+            if (!AttributeAttachmentLevelType.PRIMARY_MEASURE.equals(attribute.getAttachmentLevel())) {
+                continue; // only observation attachment level
+            }
+            String attributeId = attribute.getId();
+            LabelVisualisationModeEnum labelVisualisation = datasetAccess.getAttributeLabelVisualisationMode(attributeId);
+            if (labelVisualisation.isLabel() || labelVisualisation.isCode()) {
+                header.append(plainTextTypeEnum.getSeparator() + escapeString(attributeId, ESCAPE_IF_NECESSARY));
+            }
+            if (labelVisualisation.isCode() && labelVisualisation.isLabel()) {
+                header.append(plainTextTypeEnum.getSeparator() + escapeString(attributeId + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE, ESCAPE_IF_NECESSARY));
+            }
+        }
+
         printWriter.println(header);
     }
     private void writeBodyForPlainTextObservations(PrintWriter printWriter) {
@@ -103,6 +119,31 @@ public class PlainTextExporter {
                     observation = StringUtils.EMPTY;
                 }
                 line.append(escapeString(observation, ESCAPE_IF_NECESSARY));
+
+                // Attributes
+                for (Attribute attribute : datasetAccess.getAttributesMetadata()) {
+                    if (!AttributeAttachmentLevelType.PRIMARY_MEASURE.equals(attribute.getAttachmentLevel())) {
+                        continue; // only observation attachment level
+                    }
+
+                    String attributeId = attribute.getId();
+                    String attributeValue = datasetAccess.measureAttributeValueAtPermutation(attributeId, permutationAtCell);
+                    if (attributeValue == null) {
+                        attributeValue = StringUtils.EMPTY;
+                        line.append(plainTextTypeEnum.getSeparator() + escapeString(attributeValue, ESCAPE_IF_NECESSARY));
+                    } else {
+                        LabelVisualisationModeEnum labelVisualisation = datasetAccess.getAttributeLabelVisualisationMode(attributeId);
+                        if (labelVisualisation.isLabel()) {
+                            String attributeValueLabel = datasetAccess.getAttributeValueLabelCurrentLocale(attributeId, attributeValue);
+                            line.append(attributeValueLabel != null
+                                    ? plainTextTypeEnum.getSeparator() + escapeString(attributeValueLabel, ESCAPE_IF_NECESSARY)
+                                    : plainTextTypeEnum.getSeparator() + escapeString(attributeValue, ESCAPE_IF_NECESSARY));
+                        }
+                        if (labelVisualisation.isCode()) {
+                            line.append(plainTextTypeEnum.getSeparator() + escapeString(attributeValue, ESCAPE_IF_NECESSARY));
+                        }
+                    }
+                }
 
                 printWriter.println(line);
             }

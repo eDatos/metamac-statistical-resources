@@ -422,7 +422,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     private ResourceAccess buildResourceAccessForDataset(Dataset dataset, String lang) {
         try {
-            DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(dataset.getData().getDimensions(), dataset.getMetadata().getRelatedDsd());
+            DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(dataset.getData().getDimensions(), dataset.getMetadata().getAttributes(),
+                    dataset.getMetadata().getRelatedDsd());
             String langDefault = "es";
             if (lang == null) {
                 lang = langDefault;

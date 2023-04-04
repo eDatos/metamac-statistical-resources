@@ -13,6 +13,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentations;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataStructureDefinition;
@@ -31,11 +33,13 @@ public class DatasetSelectionMapper {
      *            We generate the dimensions and attributes object with the one that compose the dataset, where it´s data has been previously
      *            filtered previously when it was retrieved. We enrich the object with the exportationBody, to take into account the user input
      */
-    public static DatasetSelection datasetToDatasetSelection(DimensionRepresentations dimensionRepresentations, DataStructureDefinition relatedDsd) {
+    public static DatasetSelection datasetToDatasetSelection(DimensionRepresentations dimensionRepresentations, Attributes datasetAttributes, DataStructureDefinition relatedDsd) {
         Map<String, DatasetSelectionDimension> selectionDimensionsMap = null;
+        Map<String, DatasetSelectionAttribute> selectionAttributesMap = null;
 
         List<DatasetSelectionDimension> dimensions = dimensionsToDatasetSelectionDimensions(dimensionRepresentations, selectionDimensionsMap, relatedDsd);
-        return new DatasetSelection(dimensions, false);
+        List<DatasetSelectionAttribute> attributes = attributesToDatasetSelectionAttributes(datasetAttributes, selectionAttributesMap);
+        return new DatasetSelection(dimensions, attributes, false);
     }
 
     private static List<DatasetSelectionDimension> dimensionsToDatasetSelectionDimensions(DimensionRepresentations dimensionRepresentations,
@@ -105,6 +109,35 @@ public class DatasetSelectionMapper {
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
                 throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    private static List<DatasetSelectionAttribute> attributesToDatasetSelectionAttributes(Attributes attributes, Map<String, DatasetSelectionAttribute> selectionAttributesMap) {
+        if (attributes == null) {
+            return null;
+        }
+        List<DatasetSelectionAttribute> datasetSelectionAttributes = new ArrayList<DatasetSelectionAttribute>();
+        for (Attribute attribute : attributes.getAttributes()) {
+            final DatasetSelectionAttribute selectionAttribute = selectionAttributesMap != null ? selectionAttributesMap.get(attribute.getId()) : null;
+            datasetSelectionAttributes.add(attributeToDatasetSelectionAttribute(attribute, selectionAttribute));
+        }
+        return datasetSelectionAttributes;
+    }
+
+    private static DatasetSelectionAttribute attributeToDatasetSelectionAttribute(Attribute attribute, DatasetSelectionAttribute selectionAttribute) {
+        DatasetSelectionAttribute datasetSelectionAttribute = new DatasetSelectionAttribute(attribute.getId());
+
+        // Default values
+        LabelVisualisationModeEnum labelVisualizationMode = CODE_AND_LABEL;
+
+        // If we have data sent via api, use that instead
+        if (selectionAttribute != null) {
+            if (selectionAttribute.getLabelVisualisationMode() != null) {
+                labelVisualizationMode = toLabelVisualisationMode(selectionAttribute.getLabelVisualisationMode());
+            }
+        }
+
+        datasetSelectionAttribute.setLabelVisualisationMode(labelVisualizationMode);
+        return datasetSelectionAttribute;
     }
 
 }
