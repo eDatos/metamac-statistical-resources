@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collections;
@@ -44,7 +45,7 @@ import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourc
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ResourceAccess;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.PlainTextTypeEnum;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.entities.PlainTextResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -153,6 +154,15 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Override
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv");
+    }
+
+    @Override
+    public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "csv");
+    }
+
+    public Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
@@ -164,26 +174,11 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, "es");
             String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
-            Response response = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, fileNamePrefix, PlainTextTypeEnum.TSV);
-            return response;
-            // return Response.status(Status.OK).entity(dataset).header("Content-Disposition", getContentDisposition("", "")).build();
+            List<PlainTextResourceAccess> plainTextResourceAccessList = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess);
+            return Response.status(Status.OK).entity(plainTextResourceAccessList).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
-            throw manageException(e);
-        }
-    }
-
-    @Override
-    public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
-        try {
-            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
-            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
-            return Response.status(Status.OK).entity(dataset).header("Content-Disposition", getContentDisposition("", "")).build();
-        } catch (Exception e) {
-            throw manageException(e);
+            return manageExceptionResponse(e);
         }
     }
 
@@ -411,6 +406,15 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     public static String getContentDisposition(String fileNamePrefix, String format) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
         return "attachment; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
+    }
+
+    /**
+     * Throws response error, logging exception
+     * When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
+     */
+    private Response manageExceptionResponse(Exception e) {
+        RestException errorResponse = manageException(e);
+        return Response.fromResponse(errorResponse.getResponse()).header("Accept", "application/xml").header("Content-Type", "application/xml").build();
     }
 
 }

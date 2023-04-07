@@ -1,126 +1,83 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
 
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
+import static org.siemac.metamac.core.common.exception.CommonServiceExceptionType.UNKNOWN;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttachmentLevelType;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
-import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.entities.PlainTextResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.PlainTextTypeEnum;
 
 public class PlainTextExporter {
 
     private final ResourceAccess datasetAccess;
     private final DatasetSelection datasetSelection;
-    private static final String ESCAPE_DOUBLE_QUOTES = "\"";
     private static final String HEADER_OBSERVATION = "OBS_VALUE";
     private static final String HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE = "_CODE";
-    private static final boolean ESCAPE_IF_NECESSARY = true;
-    private PlainTextTypeEnum plainTextTypeEnum = null;
 
-    public PlainTextExporter(PlainTextTypeEnum plainTextTypeEnum, ResourceAccess resourceAccess) throws MetamacException {
+    public PlainTextExporter(ResourceAccess resourceAccess) {
         datasetAccess = resourceAccess;
         datasetSelection = resourceAccess.getDataSelection();
-        this.plainTextTypeEnum = plainTextTypeEnum;
-        if (this.plainTextTypeEnum == null) {
-            throw new MetamacException(ServiceExceptionType.UNKNOWN, "Plain Text format is required ");
-        }
     }
-    public PlainTextExporter(SrmRestExternalFacade srmRestExternalFacade, PlainTextTypeEnum plainTextTypeEnum, Dataset dataset, DatasetSelection datasetSelection, String lang, String langAlternative)
-            throws MetamacException {
-        datasetAccess = new ResourceAccess(srmRestExternalFacade, dataset, datasetSelection, lang, langAlternative);
-        this.datasetSelection = datasetSelection;
-        this.plainTextTypeEnum = plainTextTypeEnum;
-        if (this.plainTextTypeEnum == null) {
-            throw new MetamacException(ServiceExceptionType.UNKNOWN, "Plain Text format is required ");
-        }
-    }
-    public PlainTextExporter(SrmRestExternalFacade srmRestExternalFacade, PlainTextTypeEnum plainTextTypeEnum, Query query, DatasetSelection datasetSelection, String lang, String langAlternative)
-            throws MetamacException {
-        datasetAccess = new ResourceAccess(srmRestExternalFacade, query, null, datasetSelection, lang, langAlternative);
-        this.datasetSelection = datasetSelection;
-        this.plainTextTypeEnum = plainTextTypeEnum;
-        if (this.plainTextTypeEnum == null) {
-            throw new MetamacException(ServiceExceptionType.UNKNOWN, "Plain Text format is required ");
-        }
-    }
-    public void writeObservationsAndAttributesWithObservationAttachmentLevel(OutputStream os) throws MetamacException {
-        PrintWriter printWriter = null;
+
+    public List<PlainTextResourceAccess> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
         try {
-            printWriter = new PrintWriter(new OutputStreamWriter(os, Charset.forName("UTF-8")));
-            writeHeaderForPlainTextObservations(printWriter);
-            writeBodyForPlainTextObservations(printWriter);
+            return getBodyForPlainTextObservations();
         } catch (Exception e) {
-            throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error exporting to " + plainTextTypeEnum.getName());
-        } finally {
-            if (printWriter != null) {
-                printWriter.flush();
-            }
+            throw new MetamacException(e, UNKNOWN, "Error exporting");
         }
     }
 
-    private void writeHeaderForPlainTextObservations(PrintWriter printWriter) {
-        StringBuilder header = new StringBuilder();
-        for (String dimensionId : datasetAccess.getDimensionsOrderedForData()) {
-            LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDimensionLabelVisualisationMode(dimensionId);
-            if (labelVisualisation.isLabel() || labelVisualisation.isCode()) {
-                header.append(escapeString(dimensionId, ESCAPE_IF_NECESSARY) + plainTextTypeEnum.getSeparator());
-            }
-            if (labelVisualisation.isCode() && labelVisualisation.isLabel()) {
-                header.append(escapeString(dimensionId + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE, ESCAPE_IF_NECESSARY) + plainTextTypeEnum.getSeparator());
-            }
-        }
-        header.append(HEADER_OBSERVATION);
-
-        for (Attribute attribute : datasetAccess.getAttributesMetadata()) {
-            if (!AttributeAttachmentLevelType.PRIMARY_MEASURE.equals(attribute.getAttachmentLevel())) {
-                continue; // only observation attachment level
-            }
-            String attributeId = attribute.getId();
-            LabelVisualisationModeEnum labelVisualisation = datasetAccess.getAttributeLabelVisualisationMode(attributeId);
-            if (labelVisualisation.isLabel() || labelVisualisation.isCode()) {
-                header.append(plainTextTypeEnum.getSeparator() + escapeString(attributeId, ESCAPE_IF_NECESSARY));
-            }
-            if (labelVisualisation.isCode() && labelVisualisation.isLabel()) {
-                header.append(plainTextTypeEnum.getSeparator() + escapeString(attributeId + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE, ESCAPE_IF_NECESSARY));
-            }
-        }
-
-        printWriter.println(header);
+    private String getHeaderName(LabelVisualisationModeEnum labelVisualisation, String name) {
+        return removeUnsupportedCharaters(name);
     }
-    private void writeBodyForPlainTextObservations(PrintWriter printWriter) {
+
+    private String getHeaderNameCode(LabelVisualisationModeEnum labelVisualisation, String name) {
+        if (labelVisualisation.isLabelAndCode()) {
+            return removeUnsupportedCharaters(name + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE);
+        }
+        return "";
+    }
+
+    private List<PlainTextResourceAccess> getBodyForPlainTextObservations() {
+        List<PlainTextResourceAccess> plainTextResourceAccessList = new ArrayList<PlainTextResourceAccess>();
+
         for (int i = 0; i < datasetSelection.getRows(); i++) {
             for (int j = 0; j < datasetSelection.getColumns(); j++) {
+                PlainTextResourceAccess plainTextResourceAccess = new PlainTextResourceAccess();
                 Map<String, String> permutationAtCell = datasetSelection.permutationAtCell(i, j);
                 // The observation is complete
-                StringBuilder line = new StringBuilder();
                 // Dimension values
                 for (String dimensionId : datasetAccess.getDimensionsOrderedForData()) {
+
                     String dimensionValueId = permutationAtCell.get(dimensionId);
                     LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDimensionLabelVisualisationMode(dimensionId);
+
+                    String headerName = getHeaderName(labelVisualisation, dimensionId);
+
                     if (labelVisualisation.isLabel()) {
                         String dimensionValueLabel = datasetAccess.getDimensionValueLabelCurrentLocale(dimensionId, dimensionValueId);
-                        line.append(escapeString(dimensionValueLabel, ESCAPE_IF_NECESSARY) + plainTextTypeEnum.getSeparator());
+                        plainTextResourceAccess.getFields().put(headerName, removeUnsupportedCharaters(dimensionValueLabel));
                     }
+
+                    // if label and code, it needs another column name for code.
+                    if (labelVisualisation.isLabelAndCode()) {
+                        headerName = getHeaderNameCode(labelVisualisation, dimensionId);
+                    }
+
                     if (labelVisualisation.isCode()) {
-                        line.append(escapeString(dimensionValueId, ESCAPE_IF_NECESSARY) + plainTextTypeEnum.getSeparator());
+                        plainTextResourceAccess.getFields().put(headerName, removeUnsupportedCharaters(dimensionValueId));
                     }
                 }
                 // Observation
                 String observation = datasetAccess.observationAtPermutation(permutationAtCell);
-                if (observation == null) {
-                    observation = StringUtils.EMPTY;
-                }
-                line.append(escapeString(observation, ESCAPE_IF_NECESSARY));
+
+                plainTextResourceAccess.getFields().put(HEADER_OBSERVATION, removeUnsupportedCharaters(observation));
 
                 // Attributes
                 for (Attribute attribute : datasetAccess.getAttributesMetadata()) {
@@ -129,43 +86,48 @@ public class PlainTextExporter {
                     }
 
                     String attributeId = attribute.getId();
+                    LabelVisualisationModeEnum labelVisualisation = datasetAccess.getAttributeLabelVisualisationMode(attributeId);
+                    String headerName = getHeaderName(labelVisualisation, attributeId);
+
                     String attributeValue = datasetAccess.measureAttributeValueAtPermutation(attributeId, permutationAtCell);
                     if (attributeValue == null) {
-                        attributeValue = StringUtils.EMPTY;
-                        line.append(plainTextTypeEnum.getSeparator() + escapeString(attributeValue, ESCAPE_IF_NECESSARY));
+                        plainTextResourceAccess.getFields().put(headerName, null);
                     } else {
-                        LabelVisualisationModeEnum labelVisualisation = datasetAccess.getAttributeLabelVisualisationMode(attributeId);
+
                         if (labelVisualisation.isLabel()) {
                             String attributeValueLabel = datasetAccess.getAttributeValueLabelCurrentLocale(attributeId, attributeValue);
-                            line.append(attributeValueLabel != null
-                                    ? plainTextTypeEnum.getSeparator() + escapeString(attributeValueLabel, ESCAPE_IF_NECESSARY)
-                                    : plainTextTypeEnum.getSeparator() + escapeString(attributeValue, ESCAPE_IF_NECESSARY));
+                            plainTextResourceAccess.getFields().put(headerName,
+                                    attributeValueLabel != null ? removeUnsupportedCharaters(attributeValueLabel) : removeUnsupportedCharaters(attributeValue));
                         }
+                        
+                        // if label and code, it needs another column name for code.
+                        if (labelVisualisation.isLabelAndCode()) {
+                            headerName = getHeaderNameCode(labelVisualisation, attributeId);
+                        }
+                        
                         if (labelVisualisation.isCode()) {
-                            line.append(plainTextTypeEnum.getSeparator() + escapeString(attributeValue, ESCAPE_IF_NECESSARY));
+                            plainTextResourceAccess.getFields().put(headerName, removeUnsupportedCharaters(attributeValue));
                         }
                     }
                 }
-
-                printWriter.println(line);
+                plainTextResourceAccessList.add(plainTextResourceAccess);
             }
+
         }
+        return plainTextResourceAccessList;
     }
 
-    private String escapeString(String source, boolean escapeOnlyIfNecessary) {
-        if (StringUtils.isEmpty(source)) {
-            return source;
+    public static String removeUnsupportedCharaters(String string) {
+        if (StringUtils.isNotBlank(string)) {
+            string = string.replace('\n', ' ');
+            string = string.replace('\t', ' ');
+            string = string.replace('\r', ' ');
+            string = string.replace('\b', ' ');
+            string = string.replace('\f', ' ');
+        } else {
+            return null;
         }
-        if (escapeOnlyIfNecessary) {
-            if (!source.contains(plainTextTypeEnum.getSeparator())) {
-                return source;
-            }
-            if (source.startsWith(ESCAPE_DOUBLE_QUOTES) && source.endsWith(ESCAPE_DOUBLE_QUOTES)) {
-                return source; // Already escaped
-            }
-        }
-        // Escape always
-        return ESCAPE_DOUBLE_QUOTES + source + ESCAPE_DOUBLE_QUOTES;
+        return string;
     }
 
 }

@@ -20,4 +20,8 @@ public enum LabelVisualisationModeEnum {
         return CODE_AND_LABEL.equals(this) || CODE.equals(this);
     }
 
+    public boolean isLabelAndCode() {
+        return CODE_AND_LABEL.equals(this);
+    }
+
 }

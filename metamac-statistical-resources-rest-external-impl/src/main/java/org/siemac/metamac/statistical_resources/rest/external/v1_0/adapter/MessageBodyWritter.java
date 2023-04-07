@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.export.entities.PlainTextTransformer;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.entities.PlainTextTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
