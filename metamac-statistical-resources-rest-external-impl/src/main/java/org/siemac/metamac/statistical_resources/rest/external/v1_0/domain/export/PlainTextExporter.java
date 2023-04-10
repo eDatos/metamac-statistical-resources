@@ -3,11 +3,14 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.expor
 import static org.siemac.metamac.core.common.exception.CommonServiceExceptionType.UNKNOWN;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
+import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttachmentLevelType;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.entities.PlainTextResourceAccess;
@@ -17,12 +20,15 @@ public class PlainTextExporter {
 
     private final ResourceAccess datasetAccess;
     private final DatasetSelection datasetSelection;
+    private final List<String> selectedLanguages;
     private static final String HEADER_OBSERVATION = "OBS_VALUE";
     private static final String HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE = "_CODE";
+    private static final String HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
 
-    public PlainTextExporter(ResourceAccess resourceAccess) {
+    public PlainTextExporter(ResourceAccess resourceAccess, List<String> selectedLanguages) {
         datasetAccess = resourceAccess;
         datasetSelection = resourceAccess.getDataSelection();
+        this.selectedLanguages = selectedLanguages;
     }
 
     public List<PlainTextResourceAccess> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
@@ -61,8 +67,8 @@ public class PlainTextExporter {
                     String headerName = getHeaderName(labelVisualisation, dimensionId);
 
                     if (labelVisualisation.isLabel()) {
-                        String dimensionValueLabel = datasetAccess.getDimensionValueLabelCurrentLocale(dimensionId, dimensionValueId);
-                        plainTextResourceAccess.getFields().put(headerName, removeUnsupportedCharaters(dimensionValueLabel));
+                        InternationalString dimensionValueLabel = datasetAccess.getDimensionValueLabelCurrentLocale(dimensionId, dimensionValueId);
+                        plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, dimensionValueLabel));
                     }
 
                     // if label and code, it needs another column name for code.
@@ -91,20 +97,24 @@ public class PlainTextExporter {
 
                     String attributeValue = datasetAccess.measureAttributeValueAtPermutation(attributeId, permutationAtCell);
                     if (attributeValue == null) {
-                        plainTextResourceAccess.getFields().put(headerName, null);
+                        plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, new InternationalString()));
                     } else {
 
                         if (labelVisualisation.isLabel()) {
-                            String attributeValueLabel = datasetAccess.getAttributeValueLabelCurrentLocale(attributeId, attributeValue);
-                            plainTextResourceAccess.getFields().put(headerName,
-                                    attributeValueLabel != null ? removeUnsupportedCharaters(attributeValueLabel) : removeUnsupportedCharaters(attributeValue));
+                            InternationalString attributeValueLabel = datasetAccess.getAttributeValueLabelCurrentLocale(attributeId, attributeValue);
+                            if (attributeValueLabel != null) {
+                                plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, attributeValueLabel));
+                            } else {
+                                plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, new InternationalString()));
+                            }
+
                         }
-                        
+
                         // if label and code, it needs another column name for code.
                         if (labelVisualisation.isLabelAndCode()) {
                             headerName = getHeaderNameCode(labelVisualisation, attributeId);
                         }
-                        
+
                         if (labelVisualisation.isCode()) {
                             plainTextResourceAccess.getFields().put(headerName, removeUnsupportedCharaters(attributeValue));
                         }
@@ -115,6 +125,34 @@ public class PlainTextExporter {
 
         }
         return plainTextResourceAccessList;
+    }
+
+    private Map<String, String> internationalString2MapExport(String nameField, InternationalString source) {
+        Map<String, String> target = new LinkedHashMap<>();
+
+        InternationalString copySource = new InternationalString();
+
+        if (source != null) {
+            copySource = source;
+        }
+
+        String header;
+        for (String language : getSelectedLanguages()) {
+            header = nameField + HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language));
+        }
+
+        return target;
+    }
+
+    private static String getLocalisedStringByLang(List<LocalisedString> source, String language) {
+        // in the api, lamba functions is not allowed. the search is done with a loop.
+        for (LocalisedString loc : source) {
+            if (language.equals(loc.getLang())) {
+                return removeUnsupportedCharaters(loc.getValue());
+            }
+        }
+        return null;
     }
 
     public static String removeUnsupportedCharaters(String string) {
@@ -128,6 +166,10 @@ public class PlainTextExporter {
             return null;
         }
         return string;
+    }
+
+    public List<String> getSelectedLanguages() {
+        return selectedLanguages;
     }
 
 }

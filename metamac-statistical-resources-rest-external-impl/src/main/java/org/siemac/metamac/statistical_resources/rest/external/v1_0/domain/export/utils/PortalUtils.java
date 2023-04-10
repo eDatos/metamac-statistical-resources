@@ -58,22 +58,14 @@ public class PortalUtils {
     }
 
     /**
-     * Calculate the value as name of the dimension
-     */
-    public static String buildMapDimensionLabel(Dimension dimension, String lang, String langAlternative) throws MetamacException {
-        String dimensionLabel = getLabel(dimension.getName(), lang, langAlternative);
-        return dimensionLabel;
-    }
-
-    /**
      * Builds a map indexed by dimensionId with a value as name of the dimension
      */
-    public static Map<String, String> buildMapDimensionsLabels(List<Dimension> dimensions, String lang, String langAlternative) throws MetamacException {
-        Map<String, String> dimensionsLabels = new HashMap<String, String>(dimensions.size());
+    public static Map<String, InternationalString> buildMapDimensionsLabels(List<Dimension> dimensions) throws MetamacException {
+        Map<String, InternationalString> dimensionsLabels = new HashMap<String, InternationalString>(dimensions.size());
 
         for (Dimension dimension : dimensions) {
             String dimensionId = dimension.getId();
-            dimensionsLabels.put(dimensionId, buildMapDimensionLabel(dimension, lang, langAlternative));
+            dimensionsLabels.put(dimensionId, dimension.getName());
         }
         return dimensionsLabels;
     }
@@ -81,23 +73,21 @@ public class PortalUtils {
     /**
      * Builds map indexed by dimensionValueId and value as title of the dimension value
      */
-    public static Map<String, String> buildMapDimensionsValuesLabels(Dimension dimension, String lang, String langAlternative) throws MetamacException {
-        Map<String, String> dimensionValuesLabels = null;
+    public static Map<String, InternationalString> buildMapDimensionsValuesLabels(Dimension dimension) throws MetamacException {
+        Map<String, InternationalString> dimensionValuesLabels = null;
         if (dimension.getDimensionValues() instanceof EnumeratedDimensionValues) {
             EnumeratedDimensionValues dimensionValues = (EnumeratedDimensionValues) dimension.getDimensionValues();
-            dimensionValuesLabels = new HashMap<String, String>(dimensionValues.getValues().size());
+            dimensionValuesLabels = new HashMap<String, InternationalString>(dimensionValues.getValues().size());
             for (EnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
                 String dimensionValueId = dimensionValue.getId();
-                String dimensionValueLabel = getLabel(dimensionValue.getName(), lang, langAlternative);
-                dimensionValuesLabels.put(dimensionValueId, dimensionValueLabel);
+                dimensionValuesLabels.put(dimensionValueId, dimensionValue.getName());
             }
         } else if (dimension.getDimensionValues() instanceof NonEnumeratedDimensionValues) {
             NonEnumeratedDimensionValues dimensionValues = (NonEnumeratedDimensionValues) dimension.getDimensionValues();
-            dimensionValuesLabels = new HashMap<String, String>(dimensionValues.getValues().size());
+            dimensionValuesLabels = new HashMap<String, InternationalString>(dimensionValues.getValues().size());
             for (NonEnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
                 String dimensionValueId = dimensionValue.getId();
-                String dimensionValueLabel = getLabel(dimensionValue.getName(), lang, langAlternative);
-                dimensionValuesLabels.put(dimensionValueId, dimensionValueLabel);
+                dimensionValuesLabels.put(dimensionValueId, dimensionValue.getName());
             }
         } else {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "Dimension values unexpected: " + dimension.getDimensionValues().getClass().getCanonicalName());
@@ -108,10 +98,10 @@ public class PortalUtils {
     /**
      * Builds a map indexed by dimensionId with a map indexed by dimensionValueId and value as title of the dimension value
      */
-    public static Map<String, Map<String, String>> buildMapDimensionsValuesLabels(List<Dimension> dimensions, String lang, String langAlternative) throws MetamacException {
-        Map<String, Map<String, String>> dimensionsValuesLabels = new HashMap<String, Map<String, String>>(dimensions.size());
+    public static Map<String, Map<String, InternationalString>> buildMapDimensionsValuesLabels(List<Dimension> dimensions) throws MetamacException {
+        Map<String, Map<String, InternationalString>> dimensionsValuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensions.size());
         for (Dimension dimension : dimensions) {
-            Map<String, String> dimensionValuesLabels = buildMapDimensionsValuesLabels(dimension, lang, langAlternative);
+            Map<String, InternationalString> dimensionValuesLabels = buildMapDimensionsValuesLabels(dimension);
             dimensionsValuesLabels.put(dimension.getId(), dimensionValuesLabels);
         }
         return dimensionsValuesLabels;
@@ -157,13 +147,12 @@ public class PortalUtils {
     /**
      * Builds a map indexed by dimensionId with a value as name of the dimension
      */
-    public static Map<String, String> buildMapAttributesLabels(List<Attribute> attributes, String lang, String langAlternative) throws MetamacException {
-        Map<String, String> attributesValuesLabels = new HashMap<String, String>(attributes.size());
+    public static Map<String, InternationalString> buildMapAttributesLabels(List<Attribute> attributes) throws MetamacException {
+        Map<String, InternationalString> attributesValuesLabels = new HashMap<String, InternationalString>(attributes.size());
 
         for (Attribute attribute : attributes) {
             String attributeId = attribute.getId();
-            String attributeLabel = getLabel(attribute.getName(), lang, langAlternative);
-            attributesValuesLabels.put(attributeId, attributeLabel);
+            attributesValuesLabels.put(attributeId, attribute.getName());
         }
 
         return attributesValuesLabels;
@@ -172,28 +161,26 @@ public class PortalUtils {
     /**
      * Builds a map indexed by attributeId with a map indexed by attributeValueId and value as title of the attribute value
      */
-    public static Map<String, Map<String, String>> buildMapAttributesValuesLabels(List<Attribute> attributes, String lang, String langAlternative) throws MetamacException {
-        Map<String, Map<String, String>> attributesValuesLabels = new HashMap<String, Map<String, String>>(attributes.size());
+    public static Map<String, Map<String, InternationalString>> buildMapAttributesValuesLabels(List<Attribute> attributes) throws MetamacException {
+        Map<String, Map<String, InternationalString>> attributesValuesLabels = new HashMap<String, Map<String, InternationalString>>(attributes.size());
         for (Attribute attribute : attributes) {
             String attributeId = attribute.getId();
-            Map<String, String> attributeValuesLabels = null;
+            Map<String, InternationalString> attributeValuesLabels = null;
             if (attribute.getAttributeValues() == null) {
-                attributeValuesLabels = new HashMap<String, String>();
+                attributeValuesLabels = new HashMap<String, InternationalString>();
             } else if (attribute.getAttributeValues() instanceof EnumeratedAttributeValues) {
                 EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
-                attributeValuesLabels = new HashMap<String, String>(attributeValues.getValues().size());
+                attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
                 for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
                     String attributeValueId = attributeValue.getId();
-                    String attributeValueLabel = getLabel(attributeValue.getName(), lang, langAlternative);
-                    attributeValuesLabels.put(attributeValueId, attributeValueLabel);
+                    attributeValuesLabels.put(attributeValueId, attributeValue.getName());
                 }
             } else if (attribute.getAttributeValues() instanceof NonEnumeratedAttributeValues) {
                 NonEnumeratedAttributeValues attributeValues = (NonEnumeratedAttributeValues) attribute.getAttributeValues();
-                attributeValuesLabels = new HashMap<String, String>(attributeValues.getValues().size());
+                attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
                 for (NonEnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
                     String attributeValueId = attributeValue.getId();
-                    String attributeValueLabel = getLabel(attributeValue.getName(), lang, langAlternative);
-                    attributeValuesLabels.put(attributeValueId, attributeValueLabel);
+                    attributeValuesLabels.put(attributeValueId, attributeValue.getName());
                 }
             } else {
                 throw new MetamacException(ServiceExceptionType.UNKNOWN, "Attribute values unexpected: " + attribute.getAttributeValues().getClass().getCanonicalName());

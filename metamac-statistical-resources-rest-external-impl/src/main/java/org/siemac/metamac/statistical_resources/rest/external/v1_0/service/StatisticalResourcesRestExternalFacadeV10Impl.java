@@ -172,13 +172,13 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
 
-            ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, "es");
+            ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
             String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
-            List<PlainTextResourceAccess> plainTextResourceAccessList = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess);
+            List<PlainTextResourceAccess> plainTextResourceAccessList = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages);
             return Response.status(Status.OK).entity(plainTextResourceAccessList).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
-            return manageExceptionResponse(e);
+            throw manageExceptionResponse(e);
         }
     }
 
@@ -412,9 +412,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
      * Throws response error, logging exception
      * When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
      */
-    private Response manageExceptionResponse(Exception e) {
-        RestException errorResponse = manageException(e);
-        return Response.fromResponse(errorResponse.getResponse()).header("Accept", "application/xml").header("Content-Type", "application/xml").build();
-    }
+    private RestException manageExceptionResponse(Exception e) {
+        RestException ex = manageException(e);
 
+        return new RestException(ex.getException(), ex.getStatus(), "application/xml");
+    }
 }

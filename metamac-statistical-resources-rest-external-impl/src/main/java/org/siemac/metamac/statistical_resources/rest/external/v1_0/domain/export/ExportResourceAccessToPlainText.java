@@ -4,8 +4,6 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor;
@@ -13,44 +11,26 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export
 
 public class ExportResourceAccessToPlainText {
 
-    public List<PlainTextResourceAccess> exportResourceAccessToPlainText(ResourceAccess resourceAccess) {
+    public List<PlainTextResourceAccess> exportResourceAccessToPlainText(ResourceAccess resourceAccess, List<String> selectedLanguages) {
 
         try {
-            return exportResourceToPlainTextWithoutAttributes(resourceAccess);
+            return exportResourceToPlainTextWithoutAttributes(resourceAccess, selectedLanguages);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    public static String addExtensionToFilenameIfNeeded(String proposedExtension, String existingFilename) {
-        String currentExtension = FilenameUtils.getExtension(existingFilename);
-        if (!StringUtils.isEmpty(currentExtension)) {
-            return existingFilename;
-        } else {
-            return buildFilename("." + proposedExtension, existingFilename);
-        }
-    }
-    private static String buildFilename(String extension, String... parts) {
-        return buildFilenameWithoutExtension(parts) + extension;
-    }
-    private static String buildFilenameWithoutExtension(String... parts) {
-        StringBuilder filename = new StringBuilder();
-        return filename.append(StringUtils.join(parts, "-")).toString().replace(".", "_");
-    }
 
-    public List<PlainTextResourceAccess> exportResourceToPlainTextWithoutAttributes(ResourceAccess resourceAccess) throws MetamacException {
-        PlainTextExporter exporter = new PlainTextExporter(resourceAccess);
+    public List<PlainTextResourceAccess> exportResourceToPlainTextWithoutAttributes(ResourceAccess resourceAccess, List<String> selectedLanguages) throws MetamacException {
+        PlainTextExporter exporter = new PlainTextExporter(resourceAccess, selectedLanguages);
         return exporter.writeObservationsAndAttributesWithObservationAttachmentLevel();
     }
 
-    public ResourceAccess buildResourceAccessForDataset(Dataset dataset, String lang) {
+    public ResourceAccess buildResourceAccessForDataset(Dataset dataset, List<String> selectedLanguages) {
         try {
             DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(dataset.getData().getDimensions(), dataset.getMetadata().getAttributes(),
                     dataset.getMetadata().getRelatedDsd());
-            String langDefault = "es";
-            if (lang == null) {
-                lang = langDefault;
-            }
-            return new ResourceAccess(DsdExternalProcessor.getSrmRestExternalFacade(), dataset, datasetSelection, lang, langDefault);
+
+            return new ResourceAccess(DsdExternalProcessor.getSrmRestExternalFacade(), dataset, datasetSelection, selectedLanguages);
         } catch (Exception e) {
             throw manageException(e);
         }

@@ -4347,7 +4347,8 @@
                "application/json",
                "application/xml",
                "application/jsonstat+json",
-               "text/tab-separated-values"
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                {

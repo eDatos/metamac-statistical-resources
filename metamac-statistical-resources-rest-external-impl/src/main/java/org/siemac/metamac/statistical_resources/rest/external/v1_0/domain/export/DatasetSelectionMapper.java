@@ -25,14 +25,14 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export
 
 public class DatasetSelectionMapper {
 
-    private static final int MAX_SIZE_URL = 2000;
+    private DatasetSelectionMapper() {
+        // without impl
+    }
 
     /**
      * @param dimensionRepresentations
+     * @param datasetAttributes
      * @param relatedDsd
-     * @param exportationBody
-     *            We generate the dimensions and attributes object with the one that compose the dataset, where it´s data has been previously
-     *            filtered previously when it was retrieved. We enrich the object with the exportationBody, to take into account the user input
      */
     public static DatasetSelection datasetToDatasetSelection(DimensionRepresentations dimensionRepresentations, Attributes datasetAttributes, DataStructureDefinition relatedDsd) {
         Map<String, DatasetSelectionDimension> selectionDimensionsMap = null;

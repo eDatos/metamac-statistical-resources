@@ -1,12 +1,12 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
 
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionLabel;
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionToMapDimensionsLabelVisualisationMode;
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionsValuesLabels;
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionsValuesLocalisedLabels;
 import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.dataToDataArray;
 
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
@@ -18,7 +18,6 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttachmentLevelType;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeDimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.ComponentType;
@@ -33,21 +32,19 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedAttributeValue;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValue;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValues;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MeasureQuantity;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.px.PxExporter;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils;
 
 public class ResourceAccess {
 
+    private static final int MAX_PX_MATRIX_LENGTH = 8;
+
     private DatasetSelection datasetSelection;
 
-    private String lang;
-    private String langDefault;
+    private List<String> selectedLanguages;
 
     private Data data;
     private Dimensions dimensions;
@@ -65,17 +62,17 @@ public class ResourceAccess {
     private List<Dimension> dimensionsMetadata;
     private Map<String, Dimension> dimensionsMetadataMap;
     private Dimension measureDimension;
-    private Map<String, String> dimensionLabelsCurrentLocale;
-    private Map<String, String> dimensionLabelsDefaultLocale;
-    private Map<String, Map<String, String>> dimensionsValuesCurrentLocaleLabels;
+    private Map<String, InternationalString> dimensionLabelsCurrentLocale;
+    private Map<String, InternationalString> dimensionLabelsDefaultLocale;
+    private Map<String, Map<String, InternationalString>> dimensionsValuesCurrentLocaleLabels;
     private Map<String, Map<String, InternationalString>> dimensionsValuesLabels;
     private Map<String, LabelVisualisationModeEnum> dimensionsLabelVisualisationMode;
 
     private List<Attribute> attributesMetadata;
     private Map<String, Attribute> attributesMetadataMap;
     private Attribute measureAttribute;
-    private Map<String, String> attributesLabels;
-    private Map<String, Map<String, String>> attributesValuesCurrentLocaleLabels;
+    private Map<String, InternationalString> attributesLabels;
+    private Map<String, Map<String, InternationalString>> attributesValuesCurrentLocaleLabels;
     private Map<String, Map<String, InternationalString>> attributesValuesLabels;
     private Map<String, LabelVisualisationModeEnum> attributesLabelVisualisationMode;
 
@@ -94,7 +91,7 @@ public class ResourceAccess {
 
     private int primaryMeasureAttributesCount = 0;
 
-    public ResourceAccess(SrmRestExternalFacade srmRestExternalFacade, Dataset dataset, DatasetSelection datasetSelection, String lang, String langAlternative) throws MetamacException {
+    public ResourceAccess(SrmRestExternalFacade srmRestExternalFacade, Dataset dataset, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
         this.srmRestExternalFacade = srmRestExternalFacade;
 
         data = dataset.getData();
@@ -104,7 +101,7 @@ public class ResourceAccess {
 
         uniqueId = dataset.getId();
         if (datasetSelection != null && datasetSelection.isUserSelection()) {
-            uniqueId = PxExporter.generateMatrixFromString(dataset.getId());
+            uniqueId = generateMatrixFromString(dataset.getId());
         }
 
         name = dataset.getName();
@@ -116,38 +113,11 @@ public class ResourceAccess {
         this.dataset = dataset;
         metadata = dataset.getMetadata();
 
-        initialize(data, dimensions, attributes, datasetSelection, lang, langAlternative);
+        initialize(data, dimensions, attributes, datasetSelection, selectedLanguages);
     }
 
-    public ResourceAccess(SrmRestExternalFacade srmRestExternalFacade, Query query, Dataset relatedDataset, DatasetSelection datasetSelection, String lang, String langAlternative)
-            throws MetamacException {
-        this.srmRestExternalFacade = srmRestExternalFacade;
-
-        data = query.getData();
-        dimensions = query.getMetadata().getDimensions();
-        attributes = query.getMetadata().getAttributes();
-        this.datasetSelection = datasetSelection;
-
-        // Query id can be too long for PX Matrix
-        uniqueId = PxExporter.generateMatrixFromString(query.getId());
-
-        name = query.getName();
-        id = query.getId();
-        urn = query.getUrn();
-        description = query.getDescription();
-        relatedDsd = query.getMetadata().getRelatedDsd();
-
-        if (relatedDataset != null) {
-            dataset = relatedDataset;
-            metadata = relatedDataset.getMetadata();
-        }
-
-        initialize(data, dimensions, attributes, datasetSelection, lang, langAlternative);
-    }
-
-    private void initialize(Data data, Dimensions dimensions, Attributes attributes, DatasetSelection datasetSelection, String lang, String langDefault) throws MetamacException {
-        this.lang = lang;
-        this.langDefault = langDefault;
+    private void initialize(Data data, Dimensions dimensions, Attributes attributes, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
+        this.setSelectedLanguages(selectedLanguages);
 
         initializeDimensions(dimensions, datasetSelection);
         initializeAttributes(data, attributes, datasetSelection);
@@ -205,14 +175,6 @@ public class ResourceAccess {
         return description;
     }
 
-    public String getLang() {
-        return lang;
-    }
-
-    public String getLangDefault() {
-        return langDefault;
-    }
-
     public List<Dimension> getDimensionsMetadata() {
         return dimensionsMetadata;
     }
@@ -237,15 +199,15 @@ public class ResourceAccess {
         return measureDimension;
     }
 
-    public String getDimensionLabelCurrentLocale(String dimensionId) {
+    public InternationalString getDimensionLabelCurrentLocale(String dimensionId) {
         return dimensionLabelsCurrentLocale.get(dimensionId);
     }
 
-    public String getDimensionLabelDefaultLocale(String dimensionId) {
+    public InternationalString getDimensionLabelDefaultLocale(String dimensionId) {
         return dimensionLabelsDefaultLocale.get(dimensionId);
     }
 
-    public String getDimensionValueLabelCurrentLocale(String dimensionId, String dimensionValueId) {
+    public InternationalString getDimensionValueLabelCurrentLocale(String dimensionId, String dimensionValueId) {
         return dimensionsValuesCurrentLocaleLabels.get(dimensionId).get(dimensionValueId);
     }
 
@@ -253,11 +215,11 @@ public class ResourceAccess {
         return dimensionsValuesLabels.get(dimensionId).get(dimensionValueId);
     }
 
-    public String getAttributeLabel(String attributeId) {
+    public InternationalString getAttributeLabel(String attributeId) {
         return attributesLabels.get(attributeId);
     }
 
-    public String getAttributeValueLabelCurrentLocale(String attributeId, String attributeValue) {
+    public InternationalString getAttributeValueLabelCurrentLocale(String attributeId, String attributeValue) {
         return attributesValuesCurrentLocaleLabels.get(attributeId).get(attributeValue);
     }
 
@@ -289,59 +251,38 @@ public class ResourceAccess {
         return dimensionValuesOrderedForDataByDimensionId.get(dimensionId);
     }
 
-    public List<String> getDimensionsAttributeOrderedForData(Attribute attribute) {
-        List<String> allDimensionsOrderedForData = getDimensionsOrderedForData();
-        if (AttributeAttachmentLevelType.DIMENSION.equals(attribute.getAttachmentLevel())) {
-            List<String> dimensionsAttribute = new ArrayList<String>();
-            for (AttributeDimension attributeDimension : attribute.getDimensions().getDimensions()) {
-                dimensionsAttribute.add(attributeDimension.getDimensionId());
-            }
-            List<String> dimensionsAttributeOrdered = new ArrayList<String>(dimensionsAttribute.size());
-            for (String dimensionDatasetId : getDimensionsOrderedForData()) {
-                if (dimensionsAttribute.contains(dimensionDatasetId)) {
-                    dimensionsAttributeOrdered.add(dimensionDatasetId);
-                }
-            }
-            return dimensionsAttributeOrdered;
-        } else if (AttributeAttachmentLevelType.PRIMARY_MEASURE.equals(attribute.getAttachmentLevel())) {
-            return allDimensionsOrderedForData;
-        } else {
-            throw new IllegalArgumentException("Attribute attachement level unsupported in this operation: " + attribute.getAttachmentLevel());
-        }
-    }
-
     /**
      * Init dimensions and dimensions values
      */
     private void initializeDimensions(Dimensions dimensions, DatasetSelection datasetSelection) throws MetamacException {
         dimensionsMetadata = dimensions.getDimensions();
 
-        Map<String, Dimension> dimensionsMetadataMap = new HashMap<String, Dimension>(dimensionsMetadata.size());
+        Map<String, Dimension> metadataMap = new HashMap<String, Dimension>(dimensionsMetadata.size());
         Map<String, LabelVisualisationModeEnum> labelVisualisationsMode = new HashMap<String, LabelVisualisationModeEnum>(dimensionsMetadata.size());
-        Map<String, Map<String, String>> dimensionsValuesCurrentLocaleLabels = new HashMap<String, Map<String, String>>(dimensionsMetadata.size());
-        Map<String, Map<String, InternationalString>> dimensionsValuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
-        Map<String, String> dimensionsLabelsCurrentLocale = new HashMap<String, String>(dimensionsMetadata.size());
-        Map<String, String> dimensionsLabelsDefaultLocale = new HashMap<String, String>(dimensionsMetadata.size());
+        Map<String, Map<String, InternationalString>> valuesCurrentLocaleLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
+        Map<String, Map<String, InternationalString>> valuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
+        Map<String, InternationalString> dimensionsLabelsCurrentLocale = new HashMap<String, InternationalString>(dimensionsMetadata.size());
+        Map<String, InternationalString> dimensionsLabelsDefaultLocale = new HashMap<String, InternationalString>(dimensionsMetadata.size());
 
         for (Dimension dimension : dimensionsMetadata) {
             String dimensionId = dimension.getId();
 
-            dimensionsMetadataMap.put(dimensionId, dimension);
+            metadataMap.put(dimensionId, dimension);
             labelVisualisationsMode.put(dimensionId, buildMapDimensionToMapDimensionsLabelVisualisationMode(datasetSelection, dimension));
-            dimensionsValuesCurrentLocaleLabels.put(dimension.getId(), buildMapDimensionsValuesLabels(dimension, lang, langDefault));
-            dimensionsValuesLabels.put(dimension.getId(), buildMapDimensionsValuesLocalisedLabels(dimension));
-            dimensionsLabelsCurrentLocale.put(dimensionId, buildMapDimensionLabel(dimension, lang, langDefault));
-            dimensionsLabelsDefaultLocale.put(dimensionId, buildMapDimensionLabel(dimension, langDefault, langDefault));
+            valuesCurrentLocaleLabels.put(dimension.getId(), buildMapDimensionsValuesLabels(dimension));
+            valuesLabels.put(dimension.getId(), buildMapDimensionsValuesLocalisedLabels(dimension));
+            dimensionsLabelsCurrentLocale.put(dimensionId, dimension.getName());
+            dimensionsLabelsDefaultLocale.put(dimensionId, dimension.getName());
 
             if (DimensionType.MEASURE_DIMENSION.equals(dimension.getType())) {
                 measureDimension = dimension;
             }
         }
 
-        this.dimensionsMetadataMap = dimensionsMetadataMap;
+        this.dimensionsMetadataMap = metadataMap;
         dimensionsLabelVisualisationMode = labelVisualisationsMode;
-        this.dimensionsValuesCurrentLocaleLabels = dimensionsValuesCurrentLocaleLabels;
-        this.dimensionsValuesLabels = dimensionsValuesLabels;
+        this.dimensionsValuesCurrentLocaleLabels = valuesCurrentLocaleLabels;
+        this.dimensionsValuesLabels = valuesLabels;
         dimensionLabelsCurrentLocale = dimensionsLabelsCurrentLocale;
         dimensionLabelsDefaultLocale = dimensionsLabelsDefaultLocale;
     }
@@ -385,33 +326,6 @@ public class ResourceAccess {
         }
     }
 
-    public String applyLabelVisualizationModeForAttributeValue(String attributeId, String attributeValue) {
-        // Visualisation mode
-        LabelVisualisationModeEnum labelVisualisation = getAttributeLabelVisualisationMode(attributeId);
-        switch (labelVisualisation) {
-            case CODE:
-                // no extra action
-                break;
-            case LABEL: {
-                String attributeValueLabel = getAttributeValueLabelCurrentLocale(attributeId, attributeValue);
-                if (attributeValueLabel != null) {
-                    attributeValue = attributeValueLabel;
-                }
-            }
-                break;
-            case CODE_AND_LABEL: {
-                String attributeValueLabel = getAttributeValueLabelCurrentLocale(attributeId, attributeValue);
-                if (attributeValueLabel != null) {
-                    attributeValue = attributeValueLabel + " (" + attributeValue + ")";
-                }
-            }
-                break;
-            default:
-                break;
-        }
-        return attributeValue;
-    }
-
     /**
      * Retrieve the observation for a specific key <param>permutation</param>
      *
@@ -439,100 +353,9 @@ public class ResourceAccess {
         return attributeValue;
     }
 
-    public String obtainAttributeValue(String attributeId, int offset) {
-        String[] attributeValues = getAttributeValues(attributeId);
-        String attributeValue = null;
-        if (attributeValues != null) {
-            attributeValue = attributeValues[offset];
-            attributeValue = applyLabelVisualizationModeForAttributeValue(attributeId, attributeValue);
-        }
-        return attributeValue;
-    }
-
-    public String applyLabelVisualizationModeForAttribute(String attributeId) {
-        // Visualisation mode
-        LabelVisualisationModeEnum labelVisualisation = getAttributeLabelVisualisationMode(attributeId);
-        String resultText = null;
-        switch (labelVisualisation) {
-            case CODE:
-                resultText = attributeId;
-                break;
-            case LABEL: {
-                String attributeLabel = getAttributeLabel(attributeId);
-                if (attributeLabel != null) {
-                    resultText = attributeLabel;
-                }
-            }
-                break;
-            case CODE_AND_LABEL: {
-                String attributeLabel = getAttributeLabel(attributeId);
-                if (attributeLabel != null) {
-                    resultText = attributeLabel + " (" + attributeId + ")";
-                }
-            }
-                break;
-            default:
-                break;
-        }
-        return resultText;
-    }
-
-    public String applyLabelVisualizationModeForDimension(String dimensionId) {
-        LabelVisualisationModeEnum labelVisualisation = getDimensionLabelVisualisationMode(dimensionId);
-        String resultText = null;
-        switch (labelVisualisation) {
-            case CODE:
-                resultText = dimensionId;
-                break;
-            case LABEL: {
-                String dimensionValueLabel = getDimensionLabelCurrentLocale(dimensionId);
-                if (dimensionValueLabel != null) {
-                    resultText = dimensionValueLabel;
-                }
-            }
-                break;
-            case CODE_AND_LABEL: {
-                String dimensionValueLabel = getDimensionLabelCurrentLocale(dimensionId);
-                if (dimensionValueLabel != null) {
-                    resultText = dimensionValueLabel + " (" + dimensionId + ")";
-                }
-            }
-                break;
-            default:
-                break;
-        }
-        return resultText;
-    }
-
-    public String applyLabelVisualizationModeForDimensionValue(String dimensionId, String dimensionValueId) {
-        LabelVisualisationModeEnum labelVisualisation = getDimensionLabelVisualisationMode(dimensionId);
-        switch (labelVisualisation) {
-            case CODE:
-                // no extra action
-                break;
-            case LABEL: {
-                String dimensionValueLabel = getDimensionValueLabelCurrentLocale(dimensionId, dimensionValueId);
-                if (dimensionValueLabel != null) {
-                    dimensionValueId = dimensionValueLabel;
-                }
-            }
-                break;
-            case CODE_AND_LABEL: {
-                String dimensionValueLabel = getDimensionValueLabelCurrentLocale(dimensionId, dimensionValueId);
-                if (dimensionValueLabel != null) {
-                    dimensionValueId = dimensionValueLabel + " (" + dimensionValueId + ")";
-                }
-            }
-                break;
-            default:
-                break;
-        }
-        return dimensionValueId;
-    }
-
     private void initializeMultipliers() {
-        List<DimensionRepresentation> dimensions = getData().getDimensions().getDimensions();
-        ListIterator<DimensionRepresentation> dimensionsListIterator = dimensions.listIterator(dimensions.size());
+        List<DimensionRepresentation> dimensionsRepresentation = getData().getDimensions().getDimensions();
+        ListIterator<DimensionRepresentation> dimensionsListIterator = dimensionsRepresentation.listIterator(dimensionsRepresentation.size());
         int incrementCounter = 1;
 
         // Iterate the list in reverse order: right to left or down to up in the display table for calculate cell spacing
@@ -547,8 +370,8 @@ public class ResourceAccess {
      * Calculate a map indexed by dimension with map as value. The value map is indexed by code and its value is a index.
      */
     private void initializeIndex() {
-        List<DimensionRepresentation> dimensions = getData().getDimensions().getDimensions();
-        for (DimensionRepresentation dimension : dimensions) {
+        List<DimensionRepresentation> dimensionsRepresentation = getData().getDimensions().getDimensions();
+        for (DimensionRepresentation dimension : dimensionsRepresentation) {
             Map<String, Long> representationIndexMap = new HashMap<String, Long>();
             List<CodeRepresentation> representations = dimension.getRepresentations().getRepresentations();
             for (CodeRepresentation representation : representations) {
@@ -579,12 +402,10 @@ public class ResourceAccess {
         return extractUnitCode(attributeValue.getMeasureQuantity(), attributeValue.getUrn());
     }
 
-    // IDEA This will be more efficient if the concept is included on the dataset
     private InternationalString extractUnitCode(MeasureQuantity measureQuantity, String urn) {
         if (measureQuantity != null) {
             Concept conceptDetail = srmRestExternalFacade.retrieveConceptByUrn(urn);
             if (conceptDetail.getQuantity() != null) {
-                // TODO EDATOS-2944 - Mostrar la información de "Medida" en el visualizador. Cuando cambie el modo de devolver el multiplicador, tambien ha de cambiar aqui
                 InternationalString value = prepareQuantityInternationalString(measureQuantity.getUnitCode().getName(), String.valueOf(conceptDetail.getQuantity().getUnitMultiplier()));
                 if (value != null) {
                     return value;
@@ -598,22 +419,6 @@ public class ResourceAccess {
         return getMeasureDimension() != null;
     }
 
-    public List<EnumeratedDimensionValue> getSelectedValuesForMeasureDimension() {
-        List<EnumeratedDimensionValue> result = new ArrayList<>();
-
-        Dimension measureDimension = getMeasureDimension();
-        if (!(measureDimension.getDimensionValues() instanceof EnumeratedDimensionValues)) {
-            return result;
-        }
-
-        List<String> selectedDimensionValues = datasetSelection.getDimension(measureDimension.getId()).getSelectedDimensionValues();
-        for (EnumeratedDimensionValue dimensionValue : ((EnumeratedDimensionValues) measureDimension.getDimensionValues()).getValues()) {
-            if (selectedDimensionValues.contains(dimensionValue.getId())) {
-                result.add(dimensionValue);
-            }
-        }
-        return result;
-    }
     private static InternationalString prepareQuantityInternationalString(InternationalString current, String prependString) {
         if (current == null) {
             return null;
@@ -648,7 +453,7 @@ public class ResourceAccess {
             attributesMetadata = attributes.getAttributes();
         }
 
-        Map<String, Attribute> attributesMetadataMap = new HashMap<String, Attribute>(attributesMetadata.size());
+        Map<String, Attribute> attrMetadataMap = new HashMap<String, Attribute>(attributesMetadata.size());
 
         // Attribute Instances
         attributesValuesByAttributeId = new HashMap<String, String[]>(attributesMetadata.size());
@@ -671,13 +476,25 @@ public class ResourceAccess {
             }
 
             // Attributes Metadata Map
-            attributesMetadataMap.put(attribute.getId(), attribute);
+            attrMetadataMap.put(attribute.getId(), attribute);
         }
 
-        this.attributesMetadataMap = attributesMetadataMap;
+        this.attributesMetadataMap = attrMetadataMap;
         attributesLabelVisualisationMode = PortalUtils.buildMapAttributesLabelVisualisationMode(datasetSelection, attributesMetadata);
-        attributesValuesCurrentLocaleLabels = PortalUtils.buildMapAttributesValuesLabels(attributesMetadata, lang, langDefault);
+        attributesValuesCurrentLocaleLabels = PortalUtils.buildMapAttributesValuesLabels(attributesMetadata);
         attributesValuesLabels = PortalUtils.buildMapAttributesValuesLocalisedLabels(attributesMetadata);
-        attributesLabels = PortalUtils.buildMapAttributesLabels(attributesMetadata, lang, langDefault);
+        attributesLabels = PortalUtils.buildMapAttributesLabels(attributesMetadata);
+    }
+
+    public List<String> getSelectedLanguages() {
+        return selectedLanguages;
+    }
+
+    public void setSelectedLanguages(List<String> selectedLanguages) {
+        this.selectedLanguages = selectedLanguages;
+    }
+
+    public static String generateMatrixFromString(String string) {
+        return Base64.getEncoder().encodeToString(string.getBytes()).substring(0, MAX_PX_MATRIX_LENGTH);
     }
 }

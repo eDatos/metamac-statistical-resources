@@ -22,7 +22,6 @@ public class DatasetSelection {
     private List<DatasetSelectionDimension> dimensions = new ArrayList<DatasetSelectionDimension>();
     private final Map<String, DatasetSelectionDimension> dimensionsMap = new HashMap<String, DatasetSelectionDimension>();
 
-    private List<DatasetSelectionAttribute> attributes = new ArrayList<DatasetSelectionAttribute>();
     private final Map<String, DatasetSelectionAttribute> attributesMap = new HashMap<String, DatasetSelectionAttribute>();
 
     private final Map<String, Integer> multipliers = new HashMap<String, Integer>();
@@ -41,7 +40,6 @@ public class DatasetSelection {
         }
 
         if (attributes != null) {
-            this.attributes = new ArrayList<DatasetSelectionAttribute>(attributes);
             for (DatasetSelectionAttribute attribute : attributes) {
                 attributesMap.put(attribute.getId(), attribute);
             }
@@ -70,8 +68,7 @@ public class DatasetSelection {
 
     public LabelVisualisationModeEnum getDimensionLabelVisualisationModel(String dimensionId) {
         DatasetSelectionDimension dimension = getDimension(dimensionId);
-        LabelVisualisationModeEnum labelVisualisationMode = dimension != null ? dimension.getLabelVisualisationMode() : null;
-        return labelVisualisationMode;
+        return dimension != null ? dimension.getLabelVisualisationMode() : null;
     }
 
     private void initializeMultipliers(List<DatasetSelectionDimension> dimensions) {
@@ -100,7 +97,7 @@ public class DatasetSelection {
      */
     public int getRows() {
         List<DatasetSelectionDimension> leftDimensions = getLeftDimensions();
-        if (leftDimensions.size() > 0) {
+        if (!leftDimensions.isEmpty()) {
             DatasetSelectionDimension biggerLeftDimension = leftDimensions.get(0);
             return multipliers.get(biggerLeftDimension.getId()) * biggerLeftDimension.getSelectedDimensionValues().size();
         } else {
@@ -115,7 +112,7 @@ public class DatasetSelection {
      */
     public int getColumns() {
         List<DatasetSelectionDimension> topDimensions = getTopDimensions();
-        if (topDimensions.size() > 0) {
+        if (!topDimensions.isEmpty()) {
             DatasetSelectionDimension biggerTopDimension = topDimensions.get(0);
             return multipliers.get(biggerTopDimension.getId()) * biggerTopDimension.getSelectedDimensionValues().size();
         } else {
@@ -133,19 +130,6 @@ public class DatasetSelection {
 
     public List<DatasetSelectionDimension> getFixedDimensions() {
         return getDimensionsInPositionRange(FIXED_DIMENSIONS_START_POSITION, FIXED_DIMENSIONS_START_POSITION + 20);
-    }
-
-    public void moveTopDimensionsToLeft() {
-        int currentAvailablePosition = LEFT_DIMENSIONS_START_POSITION;
-        for (DatasetSelectionDimension dimension : getDimensions()) {
-            // We are not interested on fixedDimensions
-            if (getFixedDimensions().contains(dimension)) {
-                continue;
-            }
-            dimension.setPosition(currentAvailablePosition);
-            currentAvailablePosition += 1;
-        }
-        recalculateMultipliers();
     }
 
     private List<DatasetSelectionDimension> getDimensionsInPositionRange(int from, int to) {
@@ -192,7 +176,7 @@ public class DatasetSelection {
         }
 
         for (DatasetSelectionDimension dimension : getFixedDimensions()) {
-            if (dimension.getSelectedDimensionValues().size() > 0) {
+            if (!dimension.getSelectedDimensionValues().isEmpty()) {
                 permutation.put(dimension.getId(), dimension.getSelectedDimensionValues().get(0));
             }
         }
@@ -200,14 +184,9 @@ public class DatasetSelection {
         return permutation;
     }
 
-    public int getMultiplierForDimension(DatasetSelectionDimension dimension) {
-        return multipliers.get(dimension.getId());
-    }
-
     public LabelVisualisationModeEnum getAttributeLabelVisualisationModel(String attributeId) {
         DatasetSelectionAttribute attribute = getAttribute(attributeId);
-        LabelVisualisationModeEnum labelVisualisationMode = attribute != null ? attribute.getLabelVisualisationMode() : null;
-        return labelVisualisationMode;
+        return attribute != null ? attribute.getLabelVisualisationMode() : null;
     }
 
     public DatasetSelectionAttribute getAttribute(String attributeId) {
