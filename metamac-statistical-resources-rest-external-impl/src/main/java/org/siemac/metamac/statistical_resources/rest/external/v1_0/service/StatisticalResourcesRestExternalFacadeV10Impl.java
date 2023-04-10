@@ -21,7 +21,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
+import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collections;
@@ -164,9 +166,15 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     public Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format) {
         try {
+
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+
+            checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
+            checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
+
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
-            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
 
@@ -416,5 +424,13 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         RestException ex = manageException(e);
 
         return new RestException(ex.getException(), ex.getStatus(), "application/xml");
+    }
+
+    private void checkParameterData(Set<String> parsedFields, String field) {
+
+        if (parsedFields.contains(field)) {
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.PARAMETER_UNEXPECTED, field);
+            throw new RestException(exception, Status.BAD_REQUEST);
+        }
     }
 }
