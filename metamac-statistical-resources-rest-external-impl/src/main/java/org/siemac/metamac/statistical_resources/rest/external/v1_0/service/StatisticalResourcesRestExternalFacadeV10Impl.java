@@ -197,7 +197,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
         Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
 
-        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion, lang);
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
 
         ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
@@ -384,6 +384,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
     }
 
+    // if sources is not empty, the user has introduced the languages. Otherwise, the common-metadata languages will be returned. The default language in common-metadata will be returned always.
     private List<String> languagesRequestedToEffectiveLanguages(List<String> sources) throws MetamacException {
 
         List<String> targets = null;
@@ -402,6 +403,25 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
                 targets.add(languageDefault);
             }
         }
+        return targets;
+    }
+
+    // if sources is not empty, the user has introduced the languages. Otherwise, the dataset languages will be returned. The default language in common-metadata will be returned always.
+    private List<String> languagesRequestedToEffectiveLanguages(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+        List<String> targets = null;
+        if (CollectionUtils.isEmpty(selectedLanguages)) {
+            targets = new ArrayList<String>();
+            for (ExternalItem lang : source.getSiemacMetadataStatisticalResource().getLanguages()) {
+                targets.add(lang.getCode().toLowerCase());
+            }
+            String languageDefault = configurationService.retrieveLanguageDefault();
+            if (!targets.contains(languageDefault)) {
+                targets.add(languageDefault);
+            }
+        } else {
+            return languagesRequestedToEffectiveLanguages(selectedLanguages);
+        }
+
         return targets;
     }
 
