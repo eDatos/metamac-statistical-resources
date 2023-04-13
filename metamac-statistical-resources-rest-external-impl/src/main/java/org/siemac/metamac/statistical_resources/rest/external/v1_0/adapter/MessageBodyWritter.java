@@ -19,13 +19,14 @@ public abstract class MessageBodyWritter {
     private final Logger logger = LoggerFactory.getLogger(MessageBodyWritter.class);
 
     private CsvSchema schema;
+    private Set<String> headers;
 
     protected List<Map<String, ?>> getFlattenInformation(List<?> myList) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Class[] params = {};
         Method meth = PlainTextTransformer.class.getDeclaredMethod("flatten", params);
 
         List<Map<String, ?>> listOfMaps = new ArrayList<>();
-        Set<String> headers = null;
+        headers = null;
         schema = null;
         for (Object obj : myList) {
             Map<String, ?> keyVals = (Map<String, ?>) meth.invoke(obj, params);
@@ -64,5 +65,9 @@ public abstract class MessageBodyWritter {
 
     protected CsvSchema getSchema() {
         return schema;
+    }
+
+    protected Set<String> getHeaders() {
+        return headers;
     }
 }

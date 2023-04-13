@@ -1,9 +1,9 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export;
 
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionToMapDimensionsLabelVisualisationMode;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionsValuesLabels;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.buildMapDimensionsValuesLocalisedLabels;
-import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils.dataToDataArray;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.ExportUtils.buildMapDimensionToMapDimensionsLabelVisualisationMode;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.ExportUtils.buildMapDimensionsValuesLabels;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.ExportUtils.buildMapDimensionsValuesLocalisedLabels;
+import static org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.ExportUtils.dataToDataArray;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -36,7 +36,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MeasureQuantity
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.PortalUtils;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.ExportUtils;
 
 public class ResourceAccess {
 
@@ -461,7 +461,7 @@ public class ResourceAccess {
             if (data.getAttributes() != null) {
                 for (DataAttribute dataAttribute : data.getAttributes().getAttributes()) {
                     if (dataAttribute.getId().equals(attribute.getId())) {
-                        attributesValuesByAttributeId.put(attribute.getId(), PortalUtils.dataToDataArray(dataAttribute.getValue()));
+                        attributesValuesByAttributeId.put(attribute.getId(), ExportUtils.dataToDataArray(dataAttribute.getValue()));
                     }
                 }
             }
@@ -480,10 +480,10 @@ public class ResourceAccess {
         }
 
         this.attributesMetadataMap = attrMetadataMap;
-        attributesLabelVisualisationMode = PortalUtils.buildMapAttributesLabelVisualisationMode(datasetSelection, attributesMetadata);
-        attributesValuesCurrentLocaleLabels = PortalUtils.buildMapAttributesValuesLabels(attributesMetadata);
-        attributesValuesLabels = PortalUtils.buildMapAttributesValuesLocalisedLabels(attributesMetadata);
-        attributesLabels = PortalUtils.buildMapAttributesLabels(attributesMetadata);
+        attributesLabelVisualisationMode = ExportUtils.buildMapAttributesLabelVisualisationMode(datasetSelection, attributesMetadata);
+        attributesValuesCurrentLocaleLabels = ExportUtils.buildMapAttributesValuesLabels(attributesMetadata);
+        attributesValuesLabels = ExportUtils.buildMapAttributesValuesLocalisedLabels(attributesMetadata);
+        attributesLabels = ExportUtils.buildMapAttributesLabels(attributesMetadata);
     }
 
     public List<String> getSelectedLanguages() {

@@ -164,30 +164,47 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "csv");
     }
 
-    public Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format) {
+    @Override
+    public Response retrieveDatasetXLS(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xls");
+    }
+
+    @Override
+    public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx");
+    }
+
+    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format) {
         try {
 
-            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-
-            checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
-            checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
-
-            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
-
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
-
-            ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
-
-            ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
+            List<PlainTextResourceAccess> plainTextResourceAccessList = createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation);
             String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
-            List<PlainTextResourceAccess> plainTextResourceAccessList = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages);
             return Response.status(Status.OK).entity(plainTextResourceAccessList).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
+    }
+
+    private List<PlainTextResourceAccess> createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation)
+            throws Exception {
+
+        Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+
+        checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
+        checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
+
+        DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+        Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+
+        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+        Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
+
+        ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
+
+        ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
+        List<PlainTextResourceAccess> plainTextResourceAccessList = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages);
+        return plainTextResourceAccessList;
     }
 
     @Override
@@ -411,9 +428,13 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         return result;
     }
 
-    public static String getContentDisposition(String fileNamePrefix, String format) {
+    private static String getContentDisposition(String fileNamePrefix, String format) {
+        return "attachment; filename=" + getExportFileName(fileNamePrefix, format);
+    }
+
+    private static String getExportFileName(String fileNamePrefix, String format) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return "attachment; filename=" + fileNamePrefix + "_" + timestamp + "." + format;
+        return fileNamePrefix + "_" + timestamp + "." + format;
     }
 
     /**

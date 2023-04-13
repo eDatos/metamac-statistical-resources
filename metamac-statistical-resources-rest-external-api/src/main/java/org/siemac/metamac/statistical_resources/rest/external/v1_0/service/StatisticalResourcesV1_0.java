@@ -60,6 +60,18 @@ public interface StatisticalResourcesV1_0 {
     Response retrieveDatasetCSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
             @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
+    @GET
+    @Produces("application/vnd.ms-excel")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetXLS(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
     @Produces({"application/jsonstat+json"})
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     JsonStatData retrieveDatasetJsonStat(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version,

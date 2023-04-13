@@ -1,14 +1,11 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
@@ -26,20 +23,12 @@ import org.siemac.metamac.statistical_resources.rest.common.StatisticalResources
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.DatasetSelection;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
 
-public class PortalUtils {
+public class ExportUtils {
 
     public static final String DEFAULT = "__default__";
 
-    /**
-     * Returns label in locale 'lang'. If it does not exist, return label in 'langAlternative'
-     */
-    public static String getLabel(InternationalString internationalString, String lang, String langAlternative) {
-        String label = getLabel(internationalString, lang);
-        if (label != null) {
-            return label;
-        }
-        label = getLabel(internationalString, langAlternative);
-        return label;
+    private ExportUtils() {
+        // without impl
     }
 
     /**
@@ -55,56 +44,6 @@ public class PortalUtils {
             }
         }
         return null;
-    }
-
-    /**
-     * Builds a map indexed by dimensionId with a value as name of the dimension
-     */
-    public static Map<String, InternationalString> buildMapDimensionsLabels(List<Dimension> dimensions) throws MetamacException {
-        Map<String, InternationalString> dimensionsLabels = new HashMap<String, InternationalString>(dimensions.size());
-
-        for (Dimension dimension : dimensions) {
-            String dimensionId = dimension.getId();
-            dimensionsLabels.put(dimensionId, dimension.getName());
-        }
-        return dimensionsLabels;
-    }
-
-    /**
-     * Builds map indexed by dimensionValueId and value as title of the dimension value
-     */
-    public static Map<String, InternationalString> buildMapDimensionsValuesLabels(Dimension dimension) throws MetamacException {
-        Map<String, InternationalString> dimensionValuesLabels = null;
-        if (dimension.getDimensionValues() instanceof EnumeratedDimensionValues) {
-            EnumeratedDimensionValues dimensionValues = (EnumeratedDimensionValues) dimension.getDimensionValues();
-            dimensionValuesLabels = new HashMap<String, InternationalString>(dimensionValues.getValues().size());
-            for (EnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
-                String dimensionValueId = dimensionValue.getId();
-                dimensionValuesLabels.put(dimensionValueId, dimensionValue.getName());
-            }
-        } else if (dimension.getDimensionValues() instanceof NonEnumeratedDimensionValues) {
-            NonEnumeratedDimensionValues dimensionValues = (NonEnumeratedDimensionValues) dimension.getDimensionValues();
-            dimensionValuesLabels = new HashMap<String, InternationalString>(dimensionValues.getValues().size());
-            for (NonEnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
-                String dimensionValueId = dimensionValue.getId();
-                dimensionValuesLabels.put(dimensionValueId, dimensionValue.getName());
-            }
-        } else {
-            throw new MetamacException(ServiceExceptionType.UNKNOWN, "Dimension values unexpected: " + dimension.getDimensionValues().getClass().getCanonicalName());
-        }
-        return dimensionValuesLabels;
-    }
-
-    /**
-     * Builds a map indexed by dimensionId with a map indexed by dimensionValueId and value as title of the dimension value
-     */
-    public static Map<String, Map<String, InternationalString>> buildMapDimensionsValuesLabels(List<Dimension> dimensions) throws MetamacException {
-        Map<String, Map<String, InternationalString>> dimensionsValuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensions.size());
-        for (Dimension dimension : dimensions) {
-            Map<String, InternationalString> dimensionValuesLabels = buildMapDimensionsValuesLabels(dimension);
-            dimensionsValuesLabels.put(dimension.getId(), dimensionValuesLabels);
-        }
-        return dimensionsValuesLabels;
     }
 
     /**
@@ -133,15 +72,28 @@ public class PortalUtils {
     }
 
     /**
-     * Builds a map indexed by dimensionId with a map indexed by dimensionValueId and value as localised title of the dimension value
+     * Builds map indexed by dimensionValueId and value as title of the dimension value
      */
-    public static Map<String, Map<String, InternationalString>> buildMapDimensionsValuesLocalisedLabels(List<Dimension> dimensions) throws MetamacException {
-        Map<String, Map<String, InternationalString>> dimensionsValuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensions.size());
-        for (Dimension dimension : dimensions) {
-            Map<String, InternationalString> dimensionValuesLabels = buildMapDimensionsValuesLocalisedLabels(dimension);
-            dimensionsValuesLabels.put(dimension.getId(), dimensionValuesLabels);
+    public static Map<String, InternationalString> buildMapDimensionsValuesLabels(Dimension dimension) throws MetamacException {
+        Map<String, InternationalString> dimensionValuesLabels = null;
+        if (dimension.getDimensionValues() instanceof EnumeratedDimensionValues) {
+            EnumeratedDimensionValues dimensionValues = (EnumeratedDimensionValues) dimension.getDimensionValues();
+            dimensionValuesLabels = new HashMap<String, InternationalString>(dimensionValues.getValues().size());
+            for (EnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
+                String dimensionValueId = dimensionValue.getId();
+                dimensionValuesLabels.put(dimensionValueId, dimensionValue.getName());
+            }
+        } else if (dimension.getDimensionValues() instanceof NonEnumeratedDimensionValues) {
+            NonEnumeratedDimensionValues dimensionValues = (NonEnumeratedDimensionValues) dimension.getDimensionValues();
+            dimensionValuesLabels = new HashMap<String, InternationalString>(dimensionValues.getValues().size());
+            for (NonEnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
+                String dimensionValueId = dimensionValue.getId();
+                dimensionValuesLabels.put(dimensionValueId, dimensionValue.getName());
+            }
+        } else {
+            throw new MetamacException(ServiceExceptionType.UNKNOWN, "Dimension values unexpected: " + dimension.getDimensionValues().getClass().getCanonicalName());
         }
-        return dimensionsValuesLabels;
+        return dimensionValuesLabels;
     }
 
     /**
@@ -240,126 +192,8 @@ public class PortalUtils {
         return labelVisualisationMode;
     }
 
-    /**
-     * Builds a map indexed by dimensionId with the effective label visualisation mode.
-     * If configuration does not exist for component, returns default configuration
-     */
-    public static Map<String, LabelVisualisationModeEnum> buildMapDimensionsLabelVisualisationMode(DatasetSelection datasetSelection, List<Dimension> dimensions) {
-        Map<String, LabelVisualisationModeEnum> labelVisualisationsMode = new HashMap<String, LabelVisualisationModeEnum>(dimensions.size());
-        for (Dimension dimension : dimensions) {
-            LabelVisualisationModeEnum labelVisualisationMode = buildMapDimensionToMapDimensionsLabelVisualisationMode(datasetSelection, dimension);
-            labelVisualisationsMode.put(dimension.getId(), labelVisualisationMode);
-        }
-        return labelVisualisationsMode;
-    }
-
     public static String[] dataToDataArray(String data) {
         return StringUtils.splitByWholeSeparatorPreserveAllTokens(data, StatisticalResourcesRestConstants.DATA_SEPARATOR);
-    }
-
-    public static boolean isDimensionWithEnumeratedRepresentation(Dimension dimension) {
-        return (dimension.getDimensionValues() instanceof EnumeratedDimensionValues);
-    }
-
-    /**
-     * Concatenates two international Strings, each label in a determinated lang in source plus each label in the same lang in "toadd".
-     *
-     * @param current, maybe null, then a copy of "toAdd" is returned
-     * @param toAdd
-     * @return
-     */
-    public static InternationalString concatenateInternationalString(InternationalString current, InternationalString toAdd) {
-        InternationalString result = new InternationalString();
-        if (toAdd == null) {
-            return copyInternationalString(current);
-        }
-
-        for (LocalisedString localisedString : toAdd.getTexts()) {
-            String label = getLabel(current, localisedString.getLang());
-            if (label == null) {
-                label = localisedString.getValue();
-            } else {
-                label = label + ". " + localisedString.getValue();
-            }
-            LocalisedString localisedStringResult = new LocalisedString();
-            localisedStringResult.setLang(localisedString.getLang());
-            localisedStringResult.setValue(label);
-            result.getTexts().add(localisedStringResult);
-        }
-
-        return result;
-    }
-
-    private static InternationalString copyInternationalString(InternationalString current) {
-        if (current == null) {
-            return current;
-        }
-
-        InternationalString result = new InternationalString();
-        for (LocalisedString localisedString : current.getTexts()) {
-            LocalisedString localisedStringResult = new LocalisedString();
-            localisedStringResult.setLang(localisedString.getLang());
-            localisedStringResult.setValue(localisedString.getValue());
-            result.getTexts().add(localisedStringResult);
-        }
-
-        return result;
-
-    }
-
-    /**
-     * @see org.siemac.metamac.core.common.util.shared.UrnUtils#splitUrnStructure
-     */
-    public static String[] splitUrnStructure(String urn) {
-        String tripletIdentifier = UrnUtils.removePrefix(urn);
-        return splitUrnWithoutPrefixItemScheme(tripletIdentifier);
-    }
-
-    /**
-     * @see org.siemac.metamac.core.common.util.shared.UrnUtils#splitUrnWithoutPrefixItemScheme
-     */
-    // TODO move to UrnUtils.splitUrnWithoutPrefixItemScheme ?
-    public static String[] splitUrnWithoutPrefixItemScheme(String tripletIdentifier) {
-        String agencyID = StringUtils.substringBefore(tripletIdentifier, UrnUtils.COLON.toString());
-        String resourceID = null;
-        String version = null;
-
-        if (StringUtils.contains(tripletIdentifier, UrnUtils.LEFT_PARENTHESIS) && StringUtils.contains(tripletIdentifier, UrnUtils.RIGHT_PARENTHESIS)) {
-            resourceID = StringUtils.substringBetween(tripletIdentifier, UrnUtils.COLON, UrnUtils.LEFT_PARENTHESIS);
-            version = StringUtils.substringBetween(tripletIdentifier, UrnUtils.LEFT_PARENTHESIS, UrnUtils.RIGHT_PARENTHESIS);
-        } else {
-            resourceID = StringUtils.substringAfter(tripletIdentifier, UrnUtils.COLON.toString());
-        }
-
-        return new String[]{agencyID, resourceID, version};
-    }
-
-    public static InternationalString buildInternationalStringFromSingleCode(String code, List<String> languages) {
-        if (code == null) {
-            return null;
-        }
-        Map<String, String> localisedStrings = new HashMap<String, String>();
-        for (String language : languages) {
-            localisedStrings.put(language, code);
-        }
-        return localisedStringsToInternationalString(localisedStrings);
-    }
-
-    public static InternationalString buildInternationalStringFromSingleCode(String code, Set<String> languages) {
-        return buildInternationalStringFromSingleCode(code, new ArrayList<String>(languages));
-    }
-
-    public static InternationalString localisedStringsToInternationalString(Map<String, String> localisedStrings) {
-        InternationalString internationalString = new InternationalString();
-        for (Map.Entry<String, String> entry : localisedStrings.entrySet()) {
-            if (!DEFAULT.equals(entry.getKey())) {
-                LocalisedString localisedString = new LocalisedString();
-                localisedString.setLang(entry.getKey());
-                localisedString.setValue(entry.getValue());
-                internationalString.getTexts().add(localisedString);
-            }
-        }
-        return internationalString;
     }
 
     /**
