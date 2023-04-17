@@ -23,7 +23,6 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentat
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.ComponentType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataAttribute;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DataStructureDefinition;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DatasetMetadata;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
@@ -52,7 +51,6 @@ public class ResourceAccess {
 
     private InternationalString name;
     private DatasetMetadata metadata;
-    private DataStructureDefinition relatedDsd;
     private String urn;
     private String id;
     private String uniqueId;
@@ -108,7 +106,6 @@ public class ResourceAccess {
         id = dataset.getId();
         urn = dataset.getUrn();
         description = dataset.getDescription();
-        relatedDsd = dataset.getMetadata().getRelatedDsd();
 
         this.dataset = dataset;
         metadata = dataset.getMetadata();
@@ -153,10 +150,6 @@ public class ResourceAccess {
 
     public DatasetMetadata getMetadata() {
         return metadata;
-    }
-
-    public DataStructureDefinition getRelatedDsd() {
-        return relatedDsd;
     }
 
     public String getUniqueId() {
