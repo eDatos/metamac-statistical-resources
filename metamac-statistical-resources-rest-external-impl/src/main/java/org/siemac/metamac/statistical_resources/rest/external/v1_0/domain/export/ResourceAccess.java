@@ -15,7 +15,6 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
-import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttachmentLevelType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
@@ -29,10 +28,6 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimensions;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedAttributeValue;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValue;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MeasureQuantity;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.ExportUtils;
@@ -387,47 +382,8 @@ public class ResourceAccess {
         return offset;
     }
 
-    public InternationalString extractUnitCode(EnumeratedDimensionValue dimensionValue) {
-        return extractUnitCode(dimensionValue.getMeasureQuantity(), dimensionValue.getUrn());
-    }
-
-    public InternationalString extractUnitCode(EnumeratedAttributeValue attributeValue) {
-        return extractUnitCode(attributeValue.getMeasureQuantity(), attributeValue.getUrn());
-    }
-
-    private InternationalString extractUnitCode(MeasureQuantity measureQuantity, String urn) {
-        if (measureQuantity != null) {
-            Concept conceptDetail = srmRestExternalFacade.retrieveConceptByUrn(urn);
-            if (conceptDetail.getQuantity() != null) {
-                InternationalString value = prepareQuantityInternationalString(measureQuantity.getUnitCode().getName(), String.valueOf(conceptDetail.getQuantity().getUnitMultiplier()));
-                if (value != null) {
-                    return value;
-                }
-            }
-        }
-        return null;
-    }
-
     public boolean existsContVariable() {
         return getMeasureDimension() != null;
-    }
-
-    private static InternationalString prepareQuantityInternationalString(InternationalString current, String prependString) {
-        if (current == null) {
-            return null;
-        }
-
-        InternationalString result = new InternationalString();
-
-        for (LocalisedString localisedString : current.getTexts()) {
-            String label = localisedString.getValue() + " (x" + prependString + ")";
-            LocalisedString localisedStringResult = new LocalisedString();
-            localisedStringResult.setLang(localisedString.getLang());
-            localisedStringResult.setValue(label);
-            result.getTexts().add(localisedStringResult);
-        }
-
-        return result;
     }
 
     public int getPrimaryMeasureAttributesCount() {
