@@ -15,14 +15,7 @@
 	<packaging>jar</packaging>
 	<name>METAMAC :: STATISTICAL RESOURCES :: REST :: EXTERNAL IMPL</name>
 	<description>METAMAC :: STATISTICAL RESOURCES :: REST :: EXTERNAL IMPL</description>
-	
-    <properties>
-	        <!-- Excel -->
-        <apache-poi.version>5.2.3</apache-poi.version>
-        <apache-poi-schemas.version>5.2.3</apache-poi-schemas.version>
-        <commons-io.version>2.11.0</commons-io.version>
-    
-    </properties>
+
 	<dependencies>
         <!-- Metamac -->
 		<dependency>
@@ -75,23 +68,6 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-xc</artifactId>
             <version>${jackson.version}</version>
-        </dependency>
-        
-        <!-- Excel support -->
- 		<dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${apache-poi.version}</version>
-        </dependency>
-        <dependency>
-           <groupId>org.apache.poi</groupId>
-           <artifactId>poi-ooxml-lite</artifactId>
-           <version>${apache-poi-schemas.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
         </dependency>
         
         <!-- FOR JSONP -->
