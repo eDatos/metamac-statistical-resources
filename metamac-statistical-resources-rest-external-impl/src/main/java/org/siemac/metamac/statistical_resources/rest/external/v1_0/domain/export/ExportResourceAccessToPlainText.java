@@ -7,7 +7,6 @@ import java.util.List;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
-import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor;
 
 public class ExportResourceAccessToPlainText {
 
@@ -30,7 +29,7 @@ public class ExportResourceAccessToPlainText {
             DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(dataset.getData().getDimensions(), dataset.getMetadata().getAttributes(),
                     dataset.getMetadata().getRelatedDsd());
 
-            return new ResourceAccess(DsdExternalProcessor.getSrmRestExternalFacade(), dataset, datasetSelection, selectedLanguages);
+            return new ResourceAccess(dataset, datasetSelection, selectedLanguages);
         } catch (Exception e) {
             throw manageException(e);
         }

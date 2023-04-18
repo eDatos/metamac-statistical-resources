@@ -28,7 +28,6 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionType;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimensions;
-import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.utils.ExportUtils;
 
@@ -80,12 +79,9 @@ public class ResourceAccess {
     private final Map<String, Integer> multipliers = new HashMap<String, Integer>();
     private final Map<String, Map<String, Long>> representationIndex = new HashMap<String, Map<String, Long>>(); // Map<Dimension, Map<Code, Index>
 
-    private SrmRestExternalFacade srmRestExternalFacade;
-
     private int primaryMeasureAttributesCount = 0;
 
-    public ResourceAccess(SrmRestExternalFacade srmRestExternalFacade, Dataset dataset, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
-        this.srmRestExternalFacade = srmRestExternalFacade;
+    public ResourceAccess(Dataset dataset, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
 
         data = dataset.getData();
         dimensions = dataset.getMetadata().getDimensions();
