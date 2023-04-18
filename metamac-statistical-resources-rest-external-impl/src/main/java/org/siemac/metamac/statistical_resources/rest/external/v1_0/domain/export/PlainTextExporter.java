@@ -157,15 +157,10 @@ public class PlainTextExporter {
 
     public static String removeUnsupportedCharaters(String string) {
         if (StringUtils.isNotBlank(string)) {
-            string = string.replace('\n', ' ');
-            string = string.replace('\t', ' ');
-            string = string.replace('\r', ' ');
-            string = string.replace('\b', ' ');
-            string = string.replace('\f', ' ');
+            return string.replaceAll("[\n\t\r\b\f]", " ");
         } else {
             return null;
         }
-        return string;
     }
 
     public List<String> getSelectedLanguages() {
