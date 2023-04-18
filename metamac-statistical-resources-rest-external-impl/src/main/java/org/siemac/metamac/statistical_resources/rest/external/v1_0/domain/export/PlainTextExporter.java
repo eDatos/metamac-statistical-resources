@@ -9,11 +9,11 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.AttributeAttachmentLevelType;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.entities.PlainTextResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.enume.LabelVisualisationModeEnum;
 
 public class PlainTextExporter {
@@ -31,7 +31,7 @@ public class PlainTextExporter {
         this.selectedLanguages = selectedLanguages;
     }
 
-    public List<PlainTextResourceAccess> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
+    public List<FlattenResource> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
         try {
             return getBodyForPlainTextObservations();
         } catch (Exception e) {
@@ -50,12 +50,12 @@ public class PlainTextExporter {
         return "";
     }
 
-    private List<PlainTextResourceAccess> getBodyForPlainTextObservations() {
-        List<PlainTextResourceAccess> plainTextResourceAccessList = new ArrayList<PlainTextResourceAccess>();
+    private List<FlattenResource> getBodyForPlainTextObservations() {
+        List<FlattenResource> plainTextResourceAccessList = new ArrayList<FlattenResource>();
 
         for (int i = 0; i < datasetSelection.getRows(); i++) {
             for (int j = 0; j < datasetSelection.getColumns(); j++) {
-                PlainTextResourceAccess plainTextResourceAccess = new PlainTextResourceAccess();
+                FlattenResource plainTextResourceAccess = new FlattenResource();
                 Map<String, String> permutationAtCell = datasetSelection.permutationAtCell(i, j);
                 // The observation is complete
                 // Dimension values

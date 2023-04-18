@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -47,7 +48,6 @@ import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourc
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.ResourceAccess;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export.entities.PlainTextResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -177,7 +177,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format) {
         try {
 
-            List<PlainTextResourceAccess> plainTextResourceAccessList = createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation);
+            List<FlattenResource> plainTextResourceAccessList = createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation);
             String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
             return Response.status(Status.OK).entity(plainTextResourceAccessList).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
@@ -186,7 +186,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
     }
 
-    private List<PlainTextResourceAccess> createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation)
+    private List<FlattenResource> createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation)
             throws Exception {
 
         Set<String> parsedFields = parseFieldsStatisticalResources(fields);
@@ -203,7 +203,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
 
         ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
-        List<PlainTextResourceAccess> plainTextResourceAccessList = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages);
+        List<FlattenResource> plainTextResourceAccessList = exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages);
         return plainTextResourceAccessList;
     }
 

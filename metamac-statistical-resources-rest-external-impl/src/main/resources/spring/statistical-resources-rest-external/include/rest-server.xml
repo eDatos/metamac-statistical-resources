@@ -58,8 +58,8 @@
     
     <bean id="jsonProvider" class="org.siemac.metamac.rest.json.MetamacJacksonJaxbJsonProvider" />
     <bean id="jsonStatProvider" class="org.siemac.metamac.statistical_resources.rest.external.provider.MetamacJacksonJaxbJsonStatProvider" />
-    <bean id="xstreamTsvCsvProvider" class="org.siemac.metamac.statistical_resources.rest.external.v1_0.adapter.PlainTextMessageBodyWritter" />
-    <bean id="xstreamXlsProvider" class="org.siemac.metamac.statistical_resources.rest.external.v1_0.adapter.XlsMessageBodyWritter" /> 
+    <bean id="xstreamTsvCsvProvider" class="org.siemac.metamac.rest.common.export.mappers.PlainTextMessageBodyWritter" />
+    <bean id="xstreamXlsProvider" class="org.siemac.metamac.rest.common.export.mappers.ExcelMessageBodyWritter" /> 
 
     <bean id="wadlGenerator" class="org.apache.cxf.jaxrs.model.wadl.WadlGenerator">
         <property name="namespacePrefix" value="ns" />
