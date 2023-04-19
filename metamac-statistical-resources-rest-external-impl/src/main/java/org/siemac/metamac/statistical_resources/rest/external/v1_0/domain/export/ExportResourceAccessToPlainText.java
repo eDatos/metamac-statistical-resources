@@ -5,12 +5,12 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 
 public class ExportResourceAccessToPlainText {
 
-    public List<FlattenResource> exportResourceAccessToPlainText(ResourceAccess resourceAccess, List<String> selectedLanguages) {
+    public List<PlainTextResource> exportResourceAccessToPlainText(ResourceAccess resourceAccess, List<String> selectedLanguages) {
 
         try {
             return exportResourceToPlainTextWithoutAttributes(resourceAccess, selectedLanguages);
@@ -19,7 +19,7 @@ public class ExportResourceAccessToPlainText {
         }
     }
 
-    public List<FlattenResource> exportResourceToPlainTextWithoutAttributes(ResourceAccess resourceAccess, List<String> selectedLanguages) throws MetamacException {
+    public List<PlainTextResource> exportResourceToPlainTextWithoutAttributes(ResourceAccess resourceAccess, List<String> selectedLanguages) throws MetamacException {
         PlainTextExporter exporter = new PlainTextExporter(resourceAccess, selectedLanguages);
         return exporter.writeObservationsAndAttributesWithObservationAttachmentLevel();
     }

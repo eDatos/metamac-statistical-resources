@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.FlattenResource;
+import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attribute;
@@ -31,7 +31,7 @@ public class PlainTextExporter {
         this.selectedLanguages = selectedLanguages;
     }
 
-    public List<FlattenResource> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
+    public List<PlainTextResource> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
         try {
             return getBodyForPlainTextObservations();
         } catch (Exception e) {
@@ -50,12 +50,12 @@ public class PlainTextExporter {
         return "";
     }
 
-    private List<FlattenResource> getBodyForPlainTextObservations() {
-        List<FlattenResource> plainTextResourceAccessList = new ArrayList<FlattenResource>();
+    private List<PlainTextResource> getBodyForPlainTextObservations() {
+        List<PlainTextResource> plainTextResourceAccessList = new ArrayList<PlainTextResource>();
 
         for (int i = 0; i < datasetSelection.getRows(); i++) {
             for (int j = 0; j < datasetSelection.getColumns(); j++) {
-                FlattenResource plainTextResourceAccess = new FlattenResource();
+                PlainTextResource plainTextResourceAccess = new PlainTextResource();
                 Map<String, String> permutationAtCell = datasetSelection.permutationAtCell(i, j);
                 // The observation is complete
                 // Dimension values
