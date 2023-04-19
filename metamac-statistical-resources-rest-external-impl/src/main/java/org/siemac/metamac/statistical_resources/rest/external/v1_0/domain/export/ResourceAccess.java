@@ -33,53 +33,53 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export
 
 public class ResourceAccess {
 
-    private static final int MAX_PX_MATRIX_LENGTH = 8;
+    private static final int                              MAX_PX_MATRIX_LENGTH          = 8;
 
-    private DatasetSelection datasetSelection;
+    private DatasetSelection                              datasetSelection;
 
-    private List<String> selectedLanguages;
+    private List<String>                                  selectedLanguages;
 
-    private Data data;
-    private Dimensions dimensions;
-    private Attributes attributes;
+    private Data                                          data;
+    private Dimensions                                    dimensions;
+    private Attributes                                    attributes;
 
-    private InternationalString name;
-    private DatasetMetadata metadata;
-    private String urn;
-    private String id;
-    private String uniqueId;
-    private InternationalString description;
+    private InternationalString                           name;
+    private DatasetMetadata                               metadata;
+    private String                                        urn;
+    private String                                        id;
+    private String                                        uniqueId;
+    private InternationalString                           description;
 
     // Metadata
-    private List<Dimension> dimensionsMetadata;
-    private Map<String, Dimension> dimensionsMetadataMap;
-    private Dimension measureDimension;
-    private Map<String, InternationalString> dimensionLabelsCurrentLocale;
-    private Map<String, InternationalString> dimensionLabelsDefaultLocale;
+    private List<Dimension>                               dimensionsMetadata;
+    private Map<String, Dimension>                        dimensionsMetadataMap;
+    private Dimension                                     measureDimension;
+    private Map<String, InternationalString>              dimensionLabelsCurrentLocale;
+    private Map<String, InternationalString>              dimensionLabelsDefaultLocale;
     private Map<String, Map<String, InternationalString>> dimensionsValuesCurrentLocaleLabels;
     private Map<String, Map<String, InternationalString>> dimensionsValuesLabels;
-    private Map<String, LabelVisualisationModeEnum> dimensionsLabelVisualisationMode;
+    private Map<String, LabelVisualisationModeEnum>       dimensionsLabelVisualisationMode;
 
-    private List<Attribute> attributesMetadata;
-    private Map<String, Attribute> attributesMetadataMap;
-    private Attribute measureAttribute;
-    private Map<String, InternationalString> attributesLabels;
+    private List<Attribute>                               attributesMetadata;
+    private Map<String, Attribute>                        attributesMetadataMap;
+    private Attribute                                     measureAttribute;
+    private Map<String, InternationalString>              attributesLabels;
     private Map<String, Map<String, InternationalString>> attributesValuesCurrentLocaleLabels;
     private Map<String, Map<String, InternationalString>> attributesValuesLabels;
-    private Map<String, LabelVisualisationModeEnum> attributesLabelVisualisationMode;
+    private Map<String, LabelVisualisationModeEnum>       attributesLabelVisualisationMode;
 
     // Data
-    private String[] observations;
-    private Map<String, String[]> attributesValuesByAttributeId;
-    private List<String> dimensionsOrderedForData;
-    private Map<String, List<String>> dimensionValuesOrderedForDataByDimensionId;
+    private String[]                                      observations;
+    private Map<String, String[]>                         attributesValuesByAttributeId;
+    private List<String>                                  dimensionsOrderedForData;
+    private Map<String, List<String>>                     dimensionValuesOrderedForDataByDimensionId;
 
-    private Dataset dataset;
+    private Dataset                                       dataset;
 
-    private final Map<String, Integer> multipliers = new HashMap<String, Integer>();
-    private final Map<String, Map<String, Long>> representationIndex = new HashMap<String, Map<String, Long>>(); // Map<Dimension, Map<Code, Index>
+    private final Map<String, Integer>                    multipliers                   = new HashMap<String, Integer>();
+    private final Map<String, Map<String, Long>>          representationIndex           = new HashMap<String, Map<String, Long>>(); // Map<Dimension, Map<Code, Index>
 
-    private int primaryMeasureAttributesCount = 0;
+    private int                                           primaryMeasureAttributesCount = 0;
 
     public ResourceAccess(Dataset dataset, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
 

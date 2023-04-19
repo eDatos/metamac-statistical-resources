@@ -13,18 +13,18 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export
 public class DatasetSelection {
 
     // We only support a max of 20 dimensions each type
-    public static final int LEFT_DIMENSIONS_START_POSITION = 0;
-    public static final int TOP_DIMENSIONS_START_POSITION = 20;
-    public static final int FIXED_DIMENSIONS_START_POSITION = 40;
+    public static final int                              LEFT_DIMENSIONS_START_POSITION  = 0;
+    public static final int                              TOP_DIMENSIONS_START_POSITION   = 20;
+    public static final int                              FIXED_DIMENSIONS_START_POSITION = 40;
 
-    private boolean userSelection = true;
+    private boolean                                      userSelection                   = true;
 
-    private List<DatasetSelectionDimension> dimensions = new ArrayList<DatasetSelectionDimension>();
-    private final Map<String, DatasetSelectionDimension> dimensionsMap = new HashMap<String, DatasetSelectionDimension>();
+    private List<DatasetSelectionDimension>              dimensions                      = new ArrayList<DatasetSelectionDimension>();
+    private final Map<String, DatasetSelectionDimension> dimensionsMap                   = new HashMap<String, DatasetSelectionDimension>();
 
-    private final Map<String, DatasetSelectionAttribute> attributesMap = new HashMap<String, DatasetSelectionAttribute>();
+    private final Map<String, DatasetSelectionAttribute> attributesMap                   = new HashMap<String, DatasetSelectionAttribute>();
 
-    private final Map<String, Integer> multipliers = new HashMap<String, Integer>();
+    private final Map<String, Integer>                   multipliers                     = new HashMap<String, Integer>();
 
     public DatasetSelection(List<DatasetSelectionDimension> dimensions, List<DatasetSelectionAttribute> attributes, boolean userSelection) {
         this(dimensions, attributes);

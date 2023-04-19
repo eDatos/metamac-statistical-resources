@@ -18,12 +18,12 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export
 
 public class PlainTextExporter {
 
-    private final ResourceAccess datasetAccess;
+    private final ResourceAccess   datasetAccess;
     private final DatasetSelection datasetSelection;
-    private final List<String> selectedLanguages;
-    private static final String HEADER_OBSERVATION = "OBS_VALUE";
-    private static final String HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE = "_CODE";
-    private static final String HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
+    private final List<String>     selectedLanguages;
+    private static final String    HEADER_OBSERVATION                    = "OBS_VALUE";
+    private static final String    HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE   = "_CODE";
+    private static final String    HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
 
     public PlainTextExporter(ResourceAccess resourceAccess, List<String> selectedLanguages) {
         datasetAccess = resourceAccess;

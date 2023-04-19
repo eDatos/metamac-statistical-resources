@@ -4,7 +4,7 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export
 
 public class DatasetSelectionAttribute {
 
-    private final String id;
+    private final String               id;
     private LabelVisualisationModeEnum labelVisualisationMode;
 
     public DatasetSelectionAttribute(String id) {

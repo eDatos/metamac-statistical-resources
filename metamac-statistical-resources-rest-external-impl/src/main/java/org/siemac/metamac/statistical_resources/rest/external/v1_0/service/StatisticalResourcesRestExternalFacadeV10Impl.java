@@ -68,37 +68,37 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     private StatisticalResourcesRestExternalCommonService commonService;
 
     @Autowired
-    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10                      datasetsDo2RestMapper;
 
     @Autowired
-    private DatasetsRest2DoMapper datasetsRest2DoMapper;
+    private DatasetsRest2DoMapper                         datasetsRest2DoMapper;
 
     @Autowired
-    private CollectionsDo2RestMapperV10 collectionsDo2RestMapper;
+    private CollectionsDo2RestMapperV10                   collectionsDo2RestMapper;
 
     @Autowired
-    private CollectionsRest2DoMapper collectionsRest2DoMapper;
+    private CollectionsRest2DoMapper                      collectionsRest2DoMapper;
 
     @Autowired
-    private QueriesDo2RestMapperV10 queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10                       queriesDo2RestMapper;
 
     @Autowired
-    private QueriesRest2DoMapper queriesRest2DoMapper;
+    private QueriesRest2DoMapper                          queriesRest2DoMapper;
 
     @Autowired
-    private MultidatasetsDo2RestMapperV10 multidatasetsDo2RestMapper;
+    private MultidatasetsDo2RestMapperV10                 multidatasetsDo2RestMapper;
 
     @Autowired
-    private MultidatasetsRest2DoMapper multidatasetsRest2DoMapper;
+    private MultidatasetsRest2DoMapper                    multidatasetsRest2DoMapper;
 
     @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private StatisticalResourcesConfiguration             configurationService;
 
     @Autowired
-    private ResourcesRest2DoMapper resourcesRest2DoMapper;
+    private ResourcesRest2DoMapper                        resourcesRest2DoMapper;
 
     @Autowired
-    private ResourcesDo2RestMapperV10 resourcesDo2RestMapper;
+    private ResourcesDo2RestMapperV10                     resourcesDo2RestMapper;
 
     @Override
     public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {

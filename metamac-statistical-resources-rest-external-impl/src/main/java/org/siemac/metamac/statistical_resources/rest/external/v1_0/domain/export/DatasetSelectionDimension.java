@@ -6,11 +6,11 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.export
 
 public class DatasetSelectionDimension {
 
-    private final String id;
-    private List<String> selectedDimensionValues;
+    private final String               id;
+    private List<String>               selectedDimensionValues;
 
     private LabelVisualisationModeEnum labelVisualisationMode;
-    private Integer position;
+    private Integer                    position;
 
     public DatasetSelectionDimension(String id) {
         this.id = id;
