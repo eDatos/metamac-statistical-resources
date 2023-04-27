@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.core.facade.serviceapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
@@ -496,30 +497,13 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
         ExternalItemDto maintainer = StatisticalResourcesDtoMocks.mockAgencyExternalItemDto("SIEMAC");
         QueryVersionDto queryVersionDto = StatisticalResourcesDtoMocks.mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME));
-        queryVersionDto.setCode("ULTIMOS_DATOS_ALOJAMIENTO");
         queryVersionDto.setMaintainer(maintainer);
         queryVersionDto.getSelection().clear();
         queryVersionDto.getSelection().put("DIM_01", Arrays.asList(new CodeItemDto("CODE_01", "code 01")));
         queryVersionDto.getSelection().put("DIM_02", Arrays.asList(new CodeItemDto("CODE_11", "code 11")));
-
-        String persistedQueryUrn = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryVersionDto, statisticalOperation).getUrn();
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=SIEMAC:ULTIMOS_DATOS_ALOJAMIENTO(1.0)", persistedQueryUrn);
-    }
-
-    @MetamacMock({DATASET_VERSION_06_FOR_QUERIES_NAME, QUERY_VERSION_01_WITH_SELECTION_NAME})
-    @Test
-    public void testCreateErrorDuplicatedUrn() throws Exception {
-        QueryVersion originalQueryVersion = queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME);
-
-        expectedMetamacException(new MetamacException(ServiceExceptionType.IDENTIFIABLE_STATISTICAL_RESOURCE_URN_DUPLICATED, originalQueryVersion.getLifeCycleStatisticalResource().getUrn()));
-
-        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
-        ExternalItemDto maintainer = StatisticalResourcesDtoMocks.mockAgencyExternalItemDto(originalQueryVersion.getLifeCycleStatisticalResource().getMaintainer().getCode());
-        QueryVersionDto queryVersionDto = StatisticalResourcesDtoMocks.mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME));
-        queryVersionDto.setCode(originalQueryVersion.getLifeCycleStatisticalResource().getCode());
-        queryVersionDto.setMaintainer(maintainer);
-
-        statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryVersionDto, statisticalOperation).getUrn();
+        QueryVersionDto queryVersionGenerated = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryVersionDto, statisticalOperation);
+        String persistedQueryUrn = queryVersionGenerated.getUrn();
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=SIEMAC:" + statisticalOperation.getCode() +"_000001(1.0)", persistedQueryUrn);
     }
 
     @Test
@@ -2310,6 +2294,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // no test
     }
 
+    @Override
+    public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
+        // no test
+    }
+    
     // ------------------------------------------------------------------------
     // CATEGORISATIONS
     // ------------------------------------------------------------------------
@@ -3282,6 +3271,19 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         assertEqualsInternationalStringDto(expected.getTitle(), actual.getTitle());
     }
 
+    @Test
+    @MetamacMock({CUBE_01_BASIC_NAME})
+    public void testUpdateCubeUrl() throws Exception {
+        String cubeUrn = cubeMockFactory.retrieveMock(CUBE_01_BASIC_NAME).getNameableStatisticalResource().getUrn();
+        CubeDto expected = statisticalResourcesServiceFacade.retrieveCube(getServiceContextAdministrador(), cubeUrn);
+        expected.setQueryUrn(null);
+        expected.setDatasetUrn(null);
+        expected.setMultidatasetUrn(null);
+        expected.setUrl("http://www.pruebasUpdate.com");
+        CubeDto actual = statisticalResourcesServiceFacade.updateCube(getServiceContextAdministrador(), expected);
+        assertEquals(expected.getUrl(), actual.getUrl());
+    }
+    
     @Override
     @Test
     @MetamacMock({CUBE_01_BASIC_NAME, CUBE_02_BASIC_NAME})
@@ -3441,14 +3443,14 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Test
     public void testCreateMultidatasetHasExpectedUrn() throws Exception {
-        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto(StatisticalResourcesMockFactory.OPERATION_01_CODE);
+        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto(StatisticalResourcesMockFactory.OPERATION_04_CODE);
         ExternalItemDto maintainer = StatisticalResourcesDtoMocks.mockAgencyExternalItemDto("SIEMAC");
 
         MultidatasetVersionDto multidatasetVersionDto = StatisticalResourcesDtoMocks.mockMultidatasetVersionDto();
         multidatasetVersionDto.setMaintainer(maintainer);
 
         String persistedMultidatasetUrn = statisticalResourcesServiceFacade.createMultidataset(getServiceContextAdministrador(), multidatasetVersionDto, statisticalOperation).getUrn();
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Multidataset=SIEMAC:C00025A_000001(1.0)", persistedMultidatasetUrn);
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Multidataset=SIEMAC:C00025D_000001(1.0)", persistedMultidatasetUrn);
     }
 
     @Test
@@ -4249,5 +4251,49 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
             }
         }
         return null;
+    }
+
+    @Override
+    @Test
+    @MetamacMock(STATISTIC_OFFICIALITY_01_BASIC_NAME)
+    public void testCopyDatasetVersion() throws Exception {
+        StatisticOfficiality officiality = statisticOfficialityMockFactory.retrieveMock(STATISTIC_OFFICIALITY_01_BASIC_NAME);
+        DatasetVersionDto datasetVersionDto = StatisticalResourcesDtoMocks.mockDatasetVersionDto(officiality);
+        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
+
+        mockDsdAndCreateDatasetRepository(datasetVersionDto, statisticalOperation);
+
+        DatasetVersionDto newDatasetVersionDto = statisticalResourcesServiceFacade.copyDatasetVersion(getServiceContextAdministrador(), datasetVersionDto, statisticalOperation);
+        assertNotNull(newDatasetVersionDto);
+        assertNotNull(newDatasetVersionDto.getUrn());
+        assertNotNull(newDatasetVersionDto.getViewCode());
+        assertEquals(DatasetVersionUtils.generateViewCode(newDatasetVersionDto.getCode()), newDatasetVersionDto.getViewCode());
+
+    }
+    
+    @Test
+    @MetamacMock({DATASET_VERSION_06_FOR_QUERIES_NAME})
+    public void testGenerateDifferentUrn() throws Exception {
+        ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto();
+
+        QueryVersionDto queryToPersist = mockQueryVersionDto(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME));
+        queryToPersist.getSelection().clear();
+        queryToPersist.getSelection().put("DIM_01", Arrays.asList(new CodeItemDto("CODE_01", "code 01")));
+        queryToPersist.getSelection().put("DIM_02", Arrays.asList(new CodeItemDto("CODE_11", "code 11")));
+
+        QueryVersionDto persistedQuery = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryToPersist, statisticalOperation);
+        QueryVersionDto persistedQueryCopy = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryToPersist, statisticalOperation);
+        
+        assertNotSame(persistedQuery, persistedQueryCopy);
+    }
+
+    @Override
+    public void testImportAttributesFromFile() throws Exception {
+        String datasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
+
+        URL url = new URL("file", null, "myfile.px");
+
+        statisticalResourcesServiceFacade.importAttributesFromFile(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url));
     }
 }

@@ -41,6 +41,15 @@
         
         {"name" : "maintainer", "type" : ["null", "ExternalItemAvro"]} 
      ]
- }
+ },
+ {
+         "namespace" : "es.ibestat.jaxi.stream.messages",
+         "name" : "ProcStatusEnumAvro",
+         "type" : "enum" ,
+         "symbols" : [
+            "PUBLISHED",
+            "ARCHIVED"
+         ]
+     }
  ]
  

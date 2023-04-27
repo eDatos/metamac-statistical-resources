@@ -20,7 +20,7 @@
     "description": {
         "text": [
             {
-                "value": "description-VuUcawhKdg_000001 en Espanol",
+                "value": "description-jOSEReFxXN_000001 en Espanol",
                 "lang": "es"
             }
         ]
@@ -28,7 +28,7 @@
     "keywords": {
         "text": [
             {
-                "value": "keyword1 keyword2 keyword3-VuUcawhKdg_000001 en Espanol",
+                "value": "keyword1 keyword2 keyword3-jOSEReFxXN_000001 en Espanol",
                 "lang": "es"
             }
         ]
@@ -39,6 +39,7 @@
         ],
         "total": 1
     },
+    "visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=GGHdmRV6Vs&resourceId=dataset1&version=01.000#",
     "metadata": {
         "isRequiredBy": {
             "resource": [
@@ -439,7 +440,7 @@
             ],
             "total": 2
         },
-        "dateStart":{
+        "dateStart": {
             "text": [
                 {
                     "value": "2013-01-02",
@@ -1922,11 +1923,11 @@
             "total": 2
         },
         "statisticalOperation": {
-            "id": "VuUcawhKdg",
-            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=VuUcawhKdg",
+            "id": "jOSEReFxXN",
+            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=jOSEReFxXN",
             "selfLink": {
                 "kind": "statisticalOperations#operation",
-                "href": "http://data.istac.es/apis/operations/latest/VuUcawhKdg"
+                "href": "http://data.istac.es/apis/operations/latest/jOSEReFxXN"
             },
             "name": {
                 "text": [
@@ -1964,7 +1965,7 @@
         "subtitle": {
             "text": [
                 {
-                    "value": "subtitle-VuUcawhKdg_000001 en Espanol",
+                    "value": "subtitle-jOSEReFxXN_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -1972,7 +1973,7 @@
         "titleAlternative": {
             "text": [
                 {
-                    "value": "titleAlternative-VuUcawhKdg_000001 en Espanol",
+                    "value": "titleAlternative-jOSEReFxXN_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2039,7 +2040,7 @@
         "conformsTo": {
             "text": [
                 {
-                    "value": "conformsTo-VuUcawhKdg_000001 en Espanol",
+                    "value": "conformsTo-jOSEReFxXN_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2177,6 +2178,7 @@
                     }
                 ]
             },
+            "visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=kflCFT1frr&resourceId=replace01&version=01.000#",
             "kind": "statisticalResources#dataset"
         },
         "isPartOf": {
@@ -2196,6 +2198,7 @@
                             }
                         ]
                     },
+                    "visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf01",
                     "kind": "statisticalResources#collection"
                 },
                 {
@@ -2213,6 +2216,7 @@
                             }
                         ]
                     },
+                    "visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf02",
                     "kind": "statisticalResources#collection"
                 }
             ],
@@ -2276,23 +2280,23 @@
         "accessRights": {
             "text": [
                 {
-                    "value": "accessRights-VuUcawhKdg_000001 en Espanol",
+                    "value": "accessRights-jOSEReFxXN_000001 en Espanol",
                     "lang": "es"
                 }
             ]
         },
         "maintainer": {
-            "id": "HHpHkEsq34",
+            "id": "GGHdmRV6Vs",
             "nestedId": "agency1",
-            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).HHpHkEsq34",
+            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).GGHdmRV6Vs",
             "selfLink": {
                 "kind": "structuralResources#agency",
-                "href": "http://data.istac.es/apis/srm/latest/HHpHkEsq34"
+                "href": "http://data.istac.es/apis/srm/latest/GGHdmRV6Vs"
             },
             "name": {
                 "text": [
                     {
-                        "value": "title-HHpHkEsq34 en Espanol",
+                        "value": "title-GGHdmRV6Vs en Espanol",
                         "lang": "es"
                     }
                 ]
@@ -2360,7 +2364,7 @@
         "dataProviderAnnotations": {
             "text": [
                 {
-                    "value": "dataProviderAnnotations-VuUcawhKdg_000001 en Espanol",
+                    "value": "dataProviderAnnotations-jOSEReFxXN_000001 en Espanol",
                     "lang": "es"
                 }
             ]
@@ -2368,7 +2372,7 @@
         "abstract": {
             "text": [
                 {
-                    "value": "abstract-VuUcawhKdg_000001 en Espanol",
+                    "value": "abstract-jOSEReFxXN_000001 en Espanol",
                     "lang": "es"
                 }
             ]

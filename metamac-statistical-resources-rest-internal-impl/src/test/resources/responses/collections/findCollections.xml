@@ -7,7 +7,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=pMsY5gqD5Z/collections/collection;id=agency1:collection1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=pj2eomElG1&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=rdFSmJ2EWj/collections/collection;id=agency1:collection1(01.000)</ns2:managementAppLink>
     </ns2:collection>
     <ns2:collection kind="statisticalResources#collection">
         <cdomain:id>collection1</cdomain:id>
@@ -16,7 +17,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=LfpogZZoqd/collections/collection;id=agency1:collection1(02.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=mP0D1m9MRz&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=PcGFGcWafV/collections/collection;id=agency1:collection1(02.000)</ns2:managementAppLink>
     </ns2:collection>
     <ns2:collection kind="statisticalResources#collection">
         <cdomain:id>collection1</cdomain:id>
@@ -25,7 +27,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=DVQld1vwcP/collections/collection;id=agency2:collection1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=4cDozxmuDl&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=V5iXcC0dXz/collections/collection;id=agency2:collection1(01.000)</ns2:managementAppLink>
     </ns2:collection>
     <ns2:collection kind="statisticalResources#collection">
         <cdomain:id>collection2</cdomain:id>
@@ -34,6 +37,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection2 en Espanol</cdomain:text>
         </cdomain:name>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=qARw6LTpYj/collections/collection;id=agency1:collection2(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=8v69WUGhKj&amp;resourceId=collection2</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=lbFMLJ6msa/collections/collection;id=agency1:collection2(01.000)</ns2:managementAppLink>
     </ns2:collection>
 </ns2:collections>

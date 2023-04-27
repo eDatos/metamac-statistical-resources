@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.MultidatasetsAsserts.assertEqualsMultidataset;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.PublicationsAsserts.assertEqualsPublicationVersion;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.PublicationsAsserts.assertEqualsPublicationVersionCollection;
@@ -26,6 +27,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_07_OPERATION_0001_CODE_000003_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_11_OPERATION_0002_CODE_MAX_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_12_DRAFT_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_13_PRODUCTION_VALIDATION_NAME;
@@ -60,6 +62,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
+import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
@@ -67,7 +70,6 @@ import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTes
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
-import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
@@ -76,9 +78,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
-import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.CommonAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticalResourcesMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesNotPersistedDoMocks;
@@ -100,16 +100,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 public class PublicationServiceTest extends StatisticalResourcesBaseTest implements PublicationServiceTestBase {
 
     @Autowired
-    private PublicationVersionRepository     publicationVersionRepository;
-
-    @Autowired
     private PublicationService               publicationService;
-
-    @Autowired
-    private DatasetService                   datasetService;
-
-    @Autowired
-    private QueryService                     queryService;
 
     @Autowired
     @Qualifier("txManager")
@@ -1595,6 +1586,30 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
     }
 
     @Test
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
+    public void testCreateCubeUrl() throws Exception {
+        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION).getSiemacMetadataStatisticalResource().getUrn();
+        Cube expected = notPersistedDoMocks.mockUrlCube("http://www.pruebas.com");
+        Cube actual = publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
+
+        assertRelaxedEqualsCube(expected, actual);
+    }
+   
+    @Test
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
+    public void testCreateCubeUrlFormatError() throws Exception {
+        String publicationVersionUrn = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION).getSiemacMetadataStatisticalResource().getUrn();
+        Cube expected = notPersistedDoMocks.mockUrlCube("://www.pruebas.com");
+        try {
+            publicationService.createCube(getServiceContextAdministrador(), publicationVersionUrn, expected);
+            fail("create cube url must start with http or https");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+    }
+    
+    @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME, DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME})
     public void testCreateCubeErrorParameterRequiredPublicationVersionUrn() throws Exception {
         expectedMetamacException(new MetamacException(ServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionParameters.PUBLICATION_VERSION_URN));
@@ -1995,6 +2010,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(expected.getDataset());
         assertNotNull(expected.getQuery());
         assertNull(expected.getMultidataset());
+        assertNull(expected.getUrl());
 
         expected.setQuery(null);
         expected.setMultidataset(expectedMultidataset);
@@ -2004,10 +2020,52 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertRelaxedEqualsCube(expected, actual);
         assertNull(actual.getDataset());
         assertNull(actual.getQuery());
+        assertNull(actual.getUrl());
         assertNotNull(actual.getMultidataset());
         assertEqualsMultidataset(expectedMultidataset, actual.getMultidataset());
     }
 
+    @SuppressWarnings("static-access")
+    @Test
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
+    public void testUpdateCubeSetWithUrl() throws Exception {
+        String expectedUrl = "http://www.pruebas.com";
+
+        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION);
+        Cube expected = publicationVersion.getChildrenFirstLevel().get(3).getCube();
+
+        assertNull(expected.getDataset());
+        assertNotNull(expected.getQuery());
+        assertNull(expected.getMultidataset());
+        assertNull(expected.getUrl());
+
+        expected.setQuery(null);
+        expected.setUrl(expectedUrl);
+
+        Cube actual = publicationService.updateCube(getServiceContextAdministrador(), expected);
+
+        assertRelaxedEqualsCube(expected, actual);
+        assertNull(actual.getDataset());
+        assertNull(actual.getQuery());
+        assertNull(actual.getMultidataset());
+        assertEquals(expectedUrl, actual.getUrl());
+    }
+    
+    @Test
+    @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
+    public void testUpdateCubeUrlFormatError() throws Exception {
+        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION);
+        Cube expected = publicationVersion.getChildrenFirstLevel().get(4).getCube();
+        try {
+            expected.setUrl("www.pruebas.com");
+            publicationService.updateCube(getServiceContextAdministrador(), expected);
+            fail("update cube url must start with http or https");
+        } catch (MetamacException e) {
+            assertEquals(1, e.getExceptionItems().size());
+            assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
+        }
+    }
+    
     @SuppressWarnings("static-access")
     @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})

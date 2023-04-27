@@ -24,6 +24,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_27_V1_PUBLISHED_FOR_QUERY_06_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockDescriptor;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockProvider;
@@ -64,8 +65,10 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
 
     public static final String      QUERY_08_SINGLE_VERSION_USED_IN_MULTIPLE_PUBLICATIONS_NAME                              = "QUERY_08_SINGLE_VERSION_USED_IN_MULTIPLE_PUBLICATIONS";
 
-    public static final String      QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                     = "QUERY_09_SINGLE_VERSION_USED_IN_PUB_17";
+    public static final String      QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                  = "QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_17";
 
+    public static final String      QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                     = "QUERY_09_SINGLE_VERSION_USED_IN_PUB_17";
+    
     public static final String      QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS_NAME                                 = "QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS";
 
     public static final String      QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS_NAME                           = "QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS";
@@ -533,6 +536,16 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
         return queryVersion;
     }
 
+    public static String generateUrl(boolean isHttps, String element) {
+        String url = "";
+        if (StringUtils.isEmpty(element)) {
+            url = "pruebas.com";
+        } else {
+            url = element + " - pruebas.com";
+        }
+        return isHttps ? "https://www." + url : "http://www." + url;
+    }
+    
     public static Query generateQueryWithGeneratedVersion() {
         return getStatisticalResourcesPersistedDoMocks().mockQueryWithGeneratedQueryVersion();
     }

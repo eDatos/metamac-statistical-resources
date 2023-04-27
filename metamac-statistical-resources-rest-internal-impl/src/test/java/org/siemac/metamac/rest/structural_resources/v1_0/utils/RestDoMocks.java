@@ -27,6 +27,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeVal
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
@@ -290,6 +291,24 @@ public class RestDoMocks {
         attributeDto.setValue(mockInternationalStringAttributeDto(value));
         return attributeDto;
     }
+    
+    public GeoCovVarElementCacheDatasetVersion mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
+        DatasetVersion dv = mockDatasetVersion(agencyId, resourceId, versionId);
+
+        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
+        geoCovVarElementCacheDatasetVersion.setOperationUrn(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
+        geoCovVarElementCacheDatasetVersion.setOperationCode(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+        geoCovVarElementCacheDatasetVersion.setOperationTitle(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
+        geoCovVarElementCacheDatasetVersion.setCode(dv.getSiemacMetadataStatisticalResource().getCode());
+        geoCovVarElementCacheDatasetVersion.setTitle(dv.getSiemacMetadataStatisticalResource().getTitle());
+        geoCovVarElementCacheDatasetVersion.setIsExternalSource(isLastVersion);
+        geoCovVarElementCacheDatasetVersion.setIsExternalSource(true);
+        geoCovVarElementCacheDatasetVersion.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
+        geoCovVarElementCacheDatasetVersion.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
+        geoCovVarElementCacheDatasetVersion.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variableX", variableElementId));
+        
+        return geoCovVarElementCacheDatasetVersion;
+    }
 
     private DatasetVersion mockDatasetVersionBasic(String agencyID, String resourceID, String version) {
         DatasetVersion target = coreDoMocks.mockDatasetVersion();
@@ -304,7 +323,7 @@ public class RestDoMocks {
         return target;
     }
     private PublicationVersion mockPublicationVersionBasic(String agencyID, String resourceID, String version) {
-        PublicationVersion target = PublicationVersionMockFactory.createComplexStructure();
+        PublicationVersion target = PublicationVersionMockFactory.createComplexStructureWithUrl();
         target.getSiemacMetadataStatisticalResource().setUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=" + agencyID + ":" + resourceID + "(" + version + ")");
         target.getSiemacMetadataStatisticalResource().getMaintainer().setCodeNested(agencyID);
         // This is needed because the file in resources has daylight saving and we need to force summer time

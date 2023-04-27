@@ -7,8 +7,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.MultidatasetsAsserts.assertEqualsMultidatasetVersion;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_02_BASIC_WITH_GENERATED_VERSION_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_02_C1_BASIC_WITH_GENERATED_VERSION_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_03_BASIC_WITH_2_C1_MULTIDATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_03_BASIC_WITH_2_MULTIDATASET_VERSIONS_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_05_C1_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_06_C1_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory.MULTIDATASET_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_03_FOR_MULTIDATASET_03_NAME;
@@ -16,7 +20,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_12_DRAFT_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_41_PUB_NOT_VISIBLE_REPLACES_PUB_VERSION_42_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_42_PUB_IS_REPLACED_BY_PUB_VERSION_41_NAME;
 
@@ -89,11 +93,11 @@ public class MultidatasetVersionRepositoryTest extends StatisticalResourcesBaseT
     }
 
     @Test
-    @MetamacMock({MULTIDATASET_02_BASIC_WITH_GENERATED_VERSION_NAME, MULTIDATASET_03_BASIC_WITH_2_MULTIDATASET_VERSIONS_NAME, MULTIDATASET_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME,
-            MULTIDATASET_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME})
+    @MetamacMock({MULTIDATASET_02_C1_BASIC_WITH_GENERATED_VERSION_NAME, MULTIDATASET_03_BASIC_WITH_2_C1_MULTIDATASET_VERSIONS_NAME, MULTIDATASET_05_C1_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME,
+        MULTIDATASET_06_C1_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME})
     public void testRetrieveLastVersionWithLatestVersionNoVisible() throws Exception {
-        String multidatasetUrn = multidatasetMockFactory.retrieveMock(MULTIDATASET_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME).getIdentifiableStatisticalResource().getUrn();
-        MultidatasetVersion expected = multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_NAME);
+        String multidatasetUrn = multidatasetMockFactory.retrieveMock(MULTIDATASET_06_C1_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME).getIdentifiableStatisticalResource().getUrn();
+        MultidatasetVersion expected = multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1_NAME);
         MultidatasetVersion actual = multidatasetVersionRepository.retrieveLastVersion(multidatasetUrn);
         assertEqualsMultidatasetVersion(expected, actual);
     }

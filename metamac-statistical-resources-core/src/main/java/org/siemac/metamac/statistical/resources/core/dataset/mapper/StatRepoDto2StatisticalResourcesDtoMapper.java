@@ -12,6 +12,7 @@ public interface StatRepoDto2StatisticalResourcesDtoMapper {
 
     public static final String BEAN_ID = "statRepoDto2StatisticalResourcesDtoMapper";
 
-    public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(DsdAttribute attribute, AttributeInstanceDto source) throws MetamacException;
-    public List<DsdAttributeInstanceDto> attributeDtosToDsdAttributeInstanceDtos(DsdAttribute attribute, List<AttributeInstanceDto> sources) throws MetamacException;
+    public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(Long datasetVersionId, DsdAttribute attribute, AttributeInstanceDto source) throws MetamacException;
+
+    public List<DsdAttributeInstanceDto> attributeDtosToDsdAttributeInstanceDtos(Long datasetVersionId, DsdAttribute attribute, List<AttributeInstanceDto> sources) throws MetamacException;
 }

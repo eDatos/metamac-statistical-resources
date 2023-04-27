@@ -3,7 +3,7 @@
 {
    "swagger":"2.0",
    "info":{
-      "description":"Los recursos de información estadística son los resultados que se obtienen de una operación estadística. El objetivo de esta API es permite consultar todos los recursos de información estadística de la organización.",
+      "description":"Los recursos de información estadística son los resultados que se obtienen de una operación estadística. El objetivo de esta API es consultar todos los recursos de información estadística de la organización.",
       "version":"1.0",
       "title":"API de recursos estadísticos v1.0"
    },
@@ -26,6 +26,10 @@
       },
       {
          "name":"Multidatasets estadísticos",
+         "description":""
+      },
+      {
+         "name":"Utilidades",
          "description":""
       }
    ],
@@ -318,7 +322,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -441,6 +445,10 @@
             "urn":{
                "description":"",
                "type":"string"
+            },
+            "visualizerHtmlLink":{
+               "description":"",
+               "type":"string"
             }
          },
          "description":""
@@ -520,7 +528,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -795,7 +803,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -826,6 +834,10 @@
             "variable":{
                "description":"",
                "$ref":"#/definitions/Resource"
+            },
+            "pluralName":{
+               "description":"",
+               "$ref":"#/definitions/InternationalString"
             }
          },
          "description":""
@@ -1262,7 +1274,7 @@
                      "description":"",
                      "type":"array",
                      "items":{
-                        "$ref":"#/definitions/Resource"
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
                   }
                }
@@ -1426,7 +1438,11 @@
             "urn":{
                "description":"",
                "type":"string"
-            }
+            },
+            "visualizerHtmlLink":{
+				"description":"",
+				"type":"string"
+			}
          },
          "description":""
       },
@@ -1444,6 +1460,23 @@
             }
          },
          "description":""
+      },
+      "ResourceWithStatisticalOperation":{
+         "type":"object",
+         "title":"ResourceWithStatisticalOperation",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                  "statisticalOperation":{
+                     "description":"",
+                     "$ref":"#/definitions/Resource"
+                  },
+               }
+            }
+         ],
       },
       "Resources":{
          "type":"object",
@@ -1970,6 +2003,13 @@
                      },
                      "description":"",
                      "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"string"
                   }
                }
             }
@@ -2002,6 +2042,23 @@
             }
          ],
          "description":""
+      },
+      "ResourceWithStatisticalOperation":{
+         "type":"object",
+         "title":"ResourceWithStatisticalOperation",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                  "statisticalOperation":{
+                     "description":"",
+                     "$ref":"#/definitions/Resource"
+                  },
+               }
+            }
+         ],
       },
       "Resources":{
          "type":"object",
@@ -2315,6 +2372,13 @@
                      },
                      "description":"",
                      "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"string"
                   }
                }
             }
@@ -2417,7 +2481,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
                   }
                }
             }
@@ -2658,6 +2722,13 @@
                      },
                      "description":"",
                      "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"string"
                   }
                }
             }
@@ -2846,7 +2917,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
                   }
                }
             }
@@ -2893,6 +2964,13 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "pluralName":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/InternationalString"
                   }
                }
             }
@@ -3208,7 +3286,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/Resource"
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
                   }
                }
             }
@@ -3787,7 +3865,28 @@
             }
          ],
          "description":""
-      }
+      },
+      "Resources":{
+         "type":"object",
+         "title":"Resources",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "resource":{
+                     "description":"",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":""
+      },
    },
    "paths":{
       "/v1.0/collections":{
@@ -3806,7 +3905,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -3831,6 +3930,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -3878,7 +3983,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -3903,6 +4008,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -3962,7 +4073,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4007,7 +4118,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4032,6 +4143,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4079,7 +4196,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4104,6 +4221,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4157,7 +4280,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4182,6 +4305,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4260,7 +4389,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4305,7 +4434,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4330,6 +4459,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, RELATED_DATASET_URN, TYPE, STATUS, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4377,7 +4512,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4402,6 +4537,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, RELATED_DATASET_URN, TYPE, STATUS, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4474,7 +4615,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4519,7 +4660,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4544,6 +4685,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4591,7 +4738,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                },
                {
                   "name":"limit",
@@ -4616,6 +4763,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
                }
             ],
             "responses":{
@@ -4675,7 +4828,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en<br/>\r\n- lang=pt"
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
                }
             ],
             "responses":{
@@ -4691,6 +4844,72 @@
                },
                "404":{
                   "description":"No encontrado. El recurso solicitado no existe."
+               },
+               "406":{
+                  "description":"No aceptable. El formato solicitado no es válido."
+               },
+               "500":{
+                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+               },
+               "503":{
+                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+               }
+            }
+         }
+      },
+      "/v1.0/resources":{
+         "get":{
+            "tags":[
+               "Utilidades"
+            ],
+            "description":"Permite obtener el listado de datasets cacheados por elemento de variable u operación estadística.",
+            "operationId":"resource__v1.0_resources_findResources_GET",
+            "produces":[
+               "application/json",
+               "application/xml"
+            ],
+            "parameters":[
+               {
+                  "name":"lang",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+               },
+               {
+                  "name":"limit",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Número máximo de resultados a obtener"
+               },
+               {
+                  "name":"offset",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+               },
+               {
+                  "name":"orderBy",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+               },
+               {
+                  "name":"query",
+                  "in":"query",
+                  "type":"string",
+                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID (dataset code), GEOCOV_VARELEM_ID, STATISTICAL_OPERATION_URN, IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+               }
+            ],
+            "responses":{
+               "200":{
+                  "schema":{
+                     "description":"",
+                     "$ref":"#/definitions/Resources"
+                  },
+                  "headers":{
+
+                  },
+                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
                },
                "406":{
                   "description":"No aceptable. El formato solicitado no es válido."

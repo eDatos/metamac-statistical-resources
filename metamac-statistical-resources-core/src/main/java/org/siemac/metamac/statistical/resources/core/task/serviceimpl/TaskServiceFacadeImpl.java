@@ -60,10 +60,20 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     }
 
     @Override
+    public void executeUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskservice.processUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
+    }
+    
+    @Override
     public void executeDatabaseDatasetPollingTask(ServiceContext ctx) throws MetamacException {
         taskservice.processDatabaseDatasetPollingTask(ctx);
     }
 
+    @Override
+    public void executeGeographicCoverageCacheClearTask(ServiceContext ctx) throws MetamacException {
+        taskservice.processGeographicCoverageCacheClearTask(ctx);
+    }
+    
     @Override
     public void markTaskAsFailed(ServiceContext ctx, String job, String datasetVersionId, String datasetUrn, Exception exception) throws MetamacException {
         taskservice.markTaskAsFailed(ctx, job, datasetVersionId, datasetUrn);
@@ -95,7 +105,23 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     }
 
     @Override
+    public void scheduleGeographicCoverageCacheClearJob(ServiceContext ctx) {
+        taskservice.scheduleGeographicCoverageCacheClearJob(ctx);
+
+    }
+    
+    @Override
     public void sendDatabaseImportationErrorNotification(ServiceContext ctx, String datasetVersionUrn, MetamacException metamacException) {
         taskservice.sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, metamacException);
+    }
+
+    @Override
+    public void importAttributesInDatasetVersion(ServiceContext ctx, String dataVersionUrn, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskservice.importAttributesInDatasetVersion(ctx, dataVersionUrn, taskInfoDataset);
+    }
+
+    @Override
+    public void executeRecoveryImportationAttributes(ServiceContext ctx, String recoveryJobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
+        taskservice.processRollbackImportationAttributesTask(ctx, recoveryJobKey, taskInfoDataset);
     }
 }

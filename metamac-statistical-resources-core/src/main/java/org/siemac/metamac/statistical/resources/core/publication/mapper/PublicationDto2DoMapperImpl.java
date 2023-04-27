@@ -186,7 +186,7 @@ public class PublicationDto2DoMapperImpl extends BaseDto2DoMapperImpl implements
             Chapter parentChapter = chapterRepository.retrieveChapterByUrn(source.getParentChapterUrn());
             target.getElementLevel().setParent(parentChapter.getElementLevel());
         }
-
+ 
         return target;
     }
 
@@ -261,6 +261,8 @@ public class PublicationDto2DoMapperImpl extends BaseDto2DoMapperImpl implements
             target.setMultidataset(null);
         }
 
+        target.setUrl(source.getUrl());
+               
         return target;
 
     }

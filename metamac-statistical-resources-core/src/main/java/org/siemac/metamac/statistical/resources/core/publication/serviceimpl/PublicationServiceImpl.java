@@ -357,6 +357,8 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         } else if (StatisticalResourceTypeEnum.MULTIDATASET.equals(type)) {
             Multidataset multidataset = retrieveMultidatasetByCode(ctx, element.getRelatedResourceCode(), element.getLineNumber());
             cube.setMultidataset(multidataset);
+        } else if (StatisticalResourceTypeEnum.URL.equals(type)) {
+            cube.setUrl(element.getRelatedResourceCode());
         }
     }
 

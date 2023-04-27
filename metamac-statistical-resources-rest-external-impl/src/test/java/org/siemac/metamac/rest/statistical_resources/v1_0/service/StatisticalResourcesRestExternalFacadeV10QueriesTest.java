@@ -37,7 +37,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testFindQueries() throws Exception {
-        Queries queries = statisticalResourcesRestExternalFacadeClientXml.findQueries(null, null, null, null, null);
+        Queries queries = statisticalResourcesRestExternalFacadeClientXml.findQueries(null, null, null, null, null, null);
 
         assertEquals(4, queries.getQueries().size());
         assertEquals(StatisticalResourcesRestExternalConstants.KIND_QUERIES, queries.getKind());

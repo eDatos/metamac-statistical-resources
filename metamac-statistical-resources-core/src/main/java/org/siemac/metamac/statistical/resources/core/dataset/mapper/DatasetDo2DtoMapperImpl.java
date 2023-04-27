@@ -261,7 +261,8 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         target.getIsRequiredBy().clear();
         target.getIsRequiredBy().addAll(relatedResourceResultCollectionToDtoCollection(isRequiredBy));
 
-        target.setIsTaskInBackground(taskService.existsTaskForResource(ctx, source.getDataset().getIdentifiableStatisticalResource().getUrn()));
+        target.setIsTaskInBackground(taskService.existsTaskForResource(ctx, source.getDataset().getIdentifiableStatisticalResource().getUrn()) 
+                || taskService.existsTaskImportAttributes(ctx, source.getDataset().getIdentifiableStatisticalResource().getUrn()));
 
         target.setKeepAllData(source.isKeepAllData());
 

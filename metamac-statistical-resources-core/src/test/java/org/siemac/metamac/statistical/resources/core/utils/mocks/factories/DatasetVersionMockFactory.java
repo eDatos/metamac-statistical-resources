@@ -7,6 +7,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecyc
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToPublished;
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToValidationRejected;
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToVersioning;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME;
@@ -62,8 +63,12 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
 
     public static final String               DATASET_VERSION_03_FOR_DATASET_03_NAME                                                                        = "DATASET_VERSION_03_FOR_DATASET_03";
 
+    public static final String               DATASET_VERSION_03_C1_FOR_DATASET_03_NAME                                                                     = "DATASET_VERSION_03_C1_FOR_DATASET_03";
+    
     public static final String               DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME                                                       = "DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION";
 
+    public static final String               DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME                                                    = "DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION";
+    
     public static final String               DATASET_VERSION_05_FOR_DATASET_04_NAME                                                                        = "DATASET_VERSION_05_FOR_DATASET_04";
 
     public static final String               DATASET_VERSION_06_FOR_QUERIES_NAME                                                                           = "DATASET_VERSION_06_FOR_QUERIES";
@@ -83,7 +88,11 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     public static final String               DATASET_VERSION_13_OPER_0002_CODE_000003_PROD_VAL_NAME                                                        = "DATASET_VERSION_13_OPER_0002_CODE_000003_PROD_VAL";
 
     public static final String               DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME                                                             = "DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED";
+    
+    public static final String               DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED_NAME                                                          = "DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED";
 
+    public static final String               DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME                                                          = "DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED";
+    
     public static final String               DATASET_VERSION_15_DRAFT_NOT_READY_NAME                                                                       = "DATASET_VERSION_15_DRAFT_NOT_READY";
 
     public static final String               DATASET_VERSION_16_DRAFT_READY_FOR_PRODUCTION_VALIDATION_NAME                                                 = "DATASET_VERSION_16_DRAFT_READY_FOR_PRODUCTION_VALIDATION";
@@ -301,11 +310,22 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_03_FOR_DATASET_03_NAME), mock);
     }
 
+    private static MockDescriptor getDatasetVersion03C1ForDataset03() {
+        MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME);
+        return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_03_C1_FOR_DATASET_03_NAME), mock);
+    }
+    
+    
     private static MockDescriptor getDatasetVersion04ForDataset03AndLastVersion() {
         MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME);
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME), mock);
     }
 
+    private static MockDescriptor getDatasetVersion04ForDataset03C1AndLastVersion() {
+        MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME);
+        return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME), mock);
+    }
+    
     private static MockDescriptor getDatasetVersion05ForDataset04() {
         MockDescriptor mock = getDatasetMockDescriptor(DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME);
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_05_FOR_DATASET_04_NAME), mock);
@@ -350,11 +370,23 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     }
 
     private static DatasetVersion getDatasetVersion14Oper03Code01Published() {
-        DatasetVersion datasetVersion = createDatasetVersionInSpecificOperation(OPERATION_03_CODE, 1);
+        return getDatasetVersion14Oper03Code01PublishedBase(OPERATION_03_CODE);
+    }
+
+    private static DatasetVersion getDatasetVersion14Oper03Code01C1Published() {
+        return getDatasetVersion14Oper03Code01PublishedBase(OPERATION_05_CODE);
+    }
+
+    private static DatasetVersion getDatasetVersion14Oper03Code01C2Published() {
+        return getDatasetVersion14Oper03Code01PublishedBase(OPERATION_06_CODE);
+    }
+    
+    private static DatasetVersion getDatasetVersion14Oper03Code01PublishedBase(String operation) {
+        DatasetVersion datasetVersion = createDatasetVersionInSpecificOperation(operation, 1);
         fillAsPublished(datasetVersion);
         return datasetVersion;
     }
-
+    
     private static DatasetVersion getDatasetVersion15DraftNotReady() {
         DatasetVersion datasetVersion = createDatasetVersionWithSequence(1);
         datasetVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);

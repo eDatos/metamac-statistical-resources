@@ -4,8 +4,8 @@
         "type" : "record",
         "name" : "InternationalStringItemAvro",
         "fields" : [
-            {"type" : ["null", "string"], "name" : "locale"},
-            {"type" : ["null", "string"], "name" : "label"}
+            {"name" : "locale", "type" : ["null", "string"]},
+            {"name" : "label", "type" : ["null", "string"]}
         ]
     },
     {
@@ -13,7 +13,7 @@
         "type" : "record",
         "name" : "InternationalStringAvro",
         "fields" : [
-           {"name" : "localisedStrings", "type" : ["null", {"type": "array", "items": "InternationalStringItemAvro"}]} 
+           {"name" : "localisedStrings", "type" : ["null", {"type": "array", "items": "org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringItemAvro"}]} 
         ]    
     }
 ]

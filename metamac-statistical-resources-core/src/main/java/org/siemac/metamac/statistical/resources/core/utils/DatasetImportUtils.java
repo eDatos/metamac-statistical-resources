@@ -35,14 +35,15 @@ public class DatasetImportUtils {
     }
     
     private static void setDatasetVersionDataProviders(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException {
+        datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().clear();
         if (taskInfoDataset.getDatasetVersionDataProviderUrn() != null && !taskInfoDataset.getDatasetVersionDataProviderUrn().isEmpty()) {
-            datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().clear();
+            
             for (String datasetVersionDataProviderUrn : taskInfoDataset.getDatasetVersionDataProviderUrn()) {
                 ExternalItem dataProvider = StatisticalResourcesExternalItemUtils.buildExternalItemFromItem(srmRestInternalService.retrieveDataProviderByUrn(datasetVersionDataProviderUrn),
                         TypeExternalArtefactsEnum.DATA_PROVIDER);
                 datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().add(dataProvider);
             }
-        }
+        } 
     }
     
     private static void setDatasetVersionVersionRationaleType(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {

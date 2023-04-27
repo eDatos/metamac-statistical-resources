@@ -334,6 +334,7 @@ public class CommonUtils {
         statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.DATASET.name(), getCoreMessages().statisticalResourceTypeEnumDATASET());
         statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.QUERY.name(), getCoreMessages().statisticalResourceTypeEnumQUERY());
         statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.MULTIDATASET.name(), getCoreMessages().statisticalResourceTypeEnumMULTIDATASET());
+        statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.URL.name(), getCoreMessages().statisticalResourceTypeEnumURL());
         return statisticalResourceTypeHashMap;
     }
 

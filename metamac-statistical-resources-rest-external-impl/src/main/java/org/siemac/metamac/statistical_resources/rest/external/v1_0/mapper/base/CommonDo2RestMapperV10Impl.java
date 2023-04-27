@@ -116,6 +116,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.Mul
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.CommonMetadataRestExternalFacade;
@@ -648,29 +649,53 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public Resources toUrlResources(List<String> sources) throws MetamacException {
+        if (CollectionUtils.isEmpty(sources)) {
+            return null;
+        }
+        Resources targets = new Resources();
+        for (String source : sources) {
+            targets.getResources().add(toUrlResource(source));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
+        return targets;
+    }
+    
+    
+    private Resource toUrlResource(String url) {
+        if (url == null) {
+            return null;
+        }
+        Resource target = new Resource();
+        target.setKind(StatisticalResourcesRestConstants.KIND_URL);
+        target.setVisualizerHtmlLink(url);
+        return target;
+    }
+    
+    @Override
     public Resource toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
         switch (source.getType()) {
             case DATASET_VERSION:
-                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages);
+                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages, null);
             case QUERY_VERSION:
-                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages);
+                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages, null);
             case PUBLICATION_VERSION:
-                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages);
+                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages, null);
             case MULTIDATASET_VERSION:
-                return multidatasetsDo2RestMapper.toResource(source.getMultidatasetVersion(), selectedLanguages);
+                return multidatasetsDo2RestMapper.toResource(source.getMultidatasetVersion(), selectedLanguages, null);
             case DATASET:
                 DatasetVersion datasetVersion = datasetService.retrieveLatestDatasetVersionByDatasetUrn(SERVICE_CONTEXT, source.getDataset().getIdentifiableStatisticalResource().getUrn());
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getQuery().getIdentifiableStatisticalResource().getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
             case MULTIDATASET:
                 MultidatasetVersion multidatasetVersion = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(SERVICE_CONTEXT,
                         source.getMultidataset().getIdentifiableStatisticalResource().getUrn());
-                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages);
+                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -696,7 +721,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -725,6 +750,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setId(source.getComponentId());
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
+        target.setPluralName(source.getPluralName());
 
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields));

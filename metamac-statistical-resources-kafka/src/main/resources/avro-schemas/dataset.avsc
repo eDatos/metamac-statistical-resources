@@ -1,3 +1,4 @@
+  [
   {
       "namespace": "org.siemac.metamac.statistical.resources.core.stream.messages",
       "type" : "record",
@@ -8,5 +9,29 @@
           {"name" : "dimensionRepresentationMappings", "type" : ["null", {"type" : "array", "items" : "DimensionRepresentationMappingAvro"}]}
       ]
   }
-  
+  ,
+   {
+    "namespace": "es.ibestat.jaxi.stream.messages",
+    "type" : "record",
+    "name" : "DatasetAvro",
+    "fields" : [
+        {"name" : "code", "type" : ["null", "string"]},
+        {"name" : "urn", "type" : ["null", "string"]},
+        {"name" : "statisticalOperation", "type" : ["null", "ExternalItemAvro"]},
+        {"name" : "title", "type" : ["null", "org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro"]},
+        {"name" : "subtitle", "type" : ["null", "org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro"]},
+        {"name" : "titleAlternative", "type" : ["null", "org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro"]},
+        {"name" : "publicationDate", "type" : ["null", "org.siemac.metamac.statistical.resources.core.stream.messages.DatetimeAvro"]},
+        {"name" : "archivationDate", "type" : ["null", "org.siemac.metamac.statistical.resources.core.stream.messages.DatetimeAvro"]},
+        {"name" : "lastVersion", "type" : ["null", "boolean"]},
+        {"name" : "procStatus" , "type" : ["null", "ProcStatusEnumAvro"]},
+        {"name" : "geographicCoverage", "type" : ["null", {"type" : "array", "items": "ExternalItemAvro"}]},
+        {"name" : "temporalCoverage", "type" : ["null", {"type": "array", "items" : "org.siemac.metamac.statistical.resources.core.stream.messages.TemporalCodeAvro"}]},
+        {"name" : "geographicGranularities", "type" : ["null", {"type" : "array", "items": "ExternalItemAvro"}]},
+        {"name" : "temporalGranularities", "type" : ["null", {"type" : "array", "items": "ExternalItemAvro"}]},
+        {"name" : "htmlLink", "type" : ["null", "string"]},
+        {"name" : "jsonLink", "type" : ["null", "string"]}
+    ]
+}
+]  
   

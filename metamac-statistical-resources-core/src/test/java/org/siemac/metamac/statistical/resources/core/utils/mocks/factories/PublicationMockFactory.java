@@ -7,7 +7,9 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.createTwoPublishedVersionsForDataset;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_27_V1_PUBLISHED_FOR_PUBLICATION_05_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_28_V2_PUBLISHED_FOR_PUBLICATION_05_NAME;
@@ -49,13 +51,15 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
     public static final String            PUBLICATION_03_BASIC_WITH_2_PUBLICATION_VERSIONS_NAME                      = "PUBLICATION_03_BASIC_WITH_2_PUBLICATION_VERSIONS";
 
     public static final String            PUBLICATION_04_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME                 = "PUBLICATION_04_STRUCTURED_WITH_2_PUBLICATION_VERSIONS";
-
+    
+    public static final String            PUBLICATION_04_C1_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME              = "PUBLICATION_04_C1_STRUCTURED_WITH_2_PUBLICATION_VERSIONS";
+    
     public static final String            PUBLICATION_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME                       = "PUBLICATION_05_WITH_MULTIPLE_PUBLISHED_VERSIONS";
 
     public static final String            PUBLICATION_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME = "PUBLICATION_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE";
 
     public static final String            PUBLICATION_07_WITH_TWO_VERSIONS_LAST_ONE_READY_TO_PUBLISHED_NAME          = "PUBLICATION_07_WITH_TWO_VERSIONS_LAST_ONE_READY_TO_PUBLISHED";
-
+    
     private static PublicationMockFactory instance                                                                   = null;
 
     private PublicationMockFactory() {
@@ -100,11 +104,25 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
         return publication;
     }
 
-    private static PublicationVersion createPublication04Version01(PublicationMock publication, DateTime validFrom) {
+    private static Publication getPublication04C1StructuredWith2PublicationVersions() {
+
+        PublicationMock publication = createPublicationToAddVersions(1);
+
+        PublicationVersion version01 = createPublication04C1Version01(publication, new DateTime().minusDays(2));
+        registerPublicationVersionMock(PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME, version01);
+
+        PublicationVersion version02 = createPublication04Version02(publication);
+        registerPublicationVersionMock(PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME, version02);
+
+        version02.getSiemacMetadataStatisticalResource().setReplacesVersion(StatisticalResourcesPersistedDoMocks.mockPublicationVersionRelated(version01));
+        return publication;
+    }
+    
+    private static PublicationVersion createPublication04Version01Base(PublicationMock publication, DateTime validFrom, String query, String dataset1, String dataset2) {
         PublicationVersionMock publicationVersion = PublicationVersionMockFactory.buildPublishedReadyPublicationVersion(publication, INIT_VERSION, validFrom, null, false);
 
         Query query01 = QueryMockFactory.generateQueryWithGeneratedVersion();
-        registerQueryMock(QueryMockFactory.QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME, query01);
+        registerQueryMock(query, query01);
 
         // Structure
         // Chapter 01
@@ -115,7 +133,7 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
         elementLevel01_01.setOrderInLevel(Long.valueOf(1));
         // ----> Cube 01.01.01
         Dataset dataset01 = DatasetMockFactory.generateDatasetWithGeneratedVersion();
-        registerDatasetMock(DatasetMockFactory.DATASET_22_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME, dataset01);
+        registerDatasetMock(dataset1, dataset01);
         ElementLevel elementLevel01_01_01 = createDatasetCubeElementLevel(publicationVersion, dataset01, elementLevel01_01);
         elementLevel01_01_01.setOrderInLevel(Long.valueOf(1));
 
@@ -128,7 +146,7 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
 
         // --> Cube 01.03
         Dataset dataset02 = DatasetMockFactory.generateDatasetWithGeneratedVersion();
-        registerDatasetMock(DatasetMockFactory.DATASET_23_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME, dataset02);
+        registerDatasetMock(dataset2, dataset02);
         ElementLevel elementLevel01_03 = createDatasetCubeElementLevel(publicationVersion, dataset02, elementLevel01);
         elementLevel01_03.setOrderInLevel(Long.valueOf(3));
 
@@ -147,6 +165,16 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
         return publicationVersion;
     }
 
+    private static PublicationVersion createPublication04Version01(PublicationMock publication, DateTime validFrom) {
+        return createPublication04Version01Base(publication, validFrom, QueryMockFactory.QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME,
+                DatasetMockFactory.DATASET_22_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME, DatasetMockFactory.DATASET_23_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME);
+    }
+
+    private static PublicationVersion createPublication04C1Version01(PublicationMock publication, DateTime validFrom) {
+        return createPublication04Version01Base(publication, validFrom, QueryMockFactory.QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME,
+                DatasetMockFactory.DATASET_22_C1_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME, DatasetMockFactory.DATASET_23_C1_SIMPLE_LINKED_TO_PUB_VERSION_17_NAME);
+    }
+    
     private static PublicationVersion createPublication04Version02(PublicationMock publication) {
         // General metadata
         PublicationVersionMock publicationVersion = PublicationVersionMock.buildSimpleVersion(publication, SECOND_VERSION);

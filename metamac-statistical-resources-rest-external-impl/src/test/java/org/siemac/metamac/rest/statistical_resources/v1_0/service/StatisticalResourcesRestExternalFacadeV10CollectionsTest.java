@@ -21,7 +21,7 @@ public class StatisticalResourcesRestExternalFacadeV10CollectionsTest extends St
 
     @Test
     public void testFindCollections() throws Exception {
-        Collections collections = statisticalResourcesRestExternalFacadeClientXml.findCollections(null, null, null, null, null);
+        Collections collections = statisticalResourcesRestExternalFacadeClientXml.findCollections(null, null, null, null, null, null);
 
         assertEquals(4, collections.getCollections().size());
         assertEquals(StatisticalResourcesRestExternalConstants.KIND_COLLECTIONS, collections.getKind());

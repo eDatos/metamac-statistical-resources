@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -15,8 +16,10 @@ import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Item;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 
 public class StatisticalResourcesExternalItemUtils {
@@ -110,5 +113,26 @@ public class StatisticalResourcesExternalItemUtils {
             return internationalStringDto;
         }
         return null;
+    }
+
+    public static List<ExternalItemDto> buildExternalItemDtoFromCodes(Codes codes) {
+        List<ExternalItemDto> externalItemDtos = new ArrayList<>();
+        for (ResourceInternal resource : codes.getCodes()) {
+            externalItemDtos.add(buildExternalItemDtoFromResource( resource, TypeExternalArtefactsEnum.CODE));
+        }
+        return externalItemDtos;
+    }
+
+    private static ExternalItemDto buildExternalItemDtoFromResource(ResourceInternal resource, TypeExternalArtefactsEnum type) {
+        ExternalItemDto externalItemDto = new ExternalItemDto();
+        externalItemDto.setCode(resource.getId());
+        externalItemDto.setCodeNested(resource.getNestedId());
+        externalItemDto.setUri(resource.getSelfLink().getHref());
+        externalItemDto.setUrn(resource.getUrn());
+        externalItemDto.setUrnProvider(resource.getUrnProvider());
+        externalItemDto.setType(type);
+        externalItemDto.setTitle(getInternationalStringDtoFromInternationalString(resource.getName()));
+        externalItemDto.setManagementAppUrl(resource.getManagementAppLink());
+        return externalItemDto;
     }
 }
