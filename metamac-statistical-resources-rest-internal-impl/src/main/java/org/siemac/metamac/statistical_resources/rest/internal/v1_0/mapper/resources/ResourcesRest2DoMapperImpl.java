@@ -7,10 +7,10 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesCriteriaPropertyOrder;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesCriteriaPropertyOrder;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.BaseRest2DoMapperV10Impl;
 import org.springframework.stereotype.Component;
 
@@ -21,8 +21,7 @@ public class ResourcesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl impleme
 
     public ResourcesRest2DoMapperImpl() {
         resourcesCriteriaMapper = new RestCriteria2SculptorCriteria<GeoCovVarElementCacheDatasetVersion>(GeoCovVarElementCacheDatasetVersion.class, ResourcesCriteriaPropertyOrder.class,
-                ResourcesCriteriaPropertyRestriction.class,
-                new ResourcesCriteriaCallback());
+                ResourcesCriteriaPropertyRestriction.class, new ResourcesCriteriaCallback());
     }
 
     @Override

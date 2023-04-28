@@ -8,10 +8,10 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.MultidatasetCriteriaPropertyOrder;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.MultidatasetCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionProperties;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.MultidatasetCriteriaPropertyOrder;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.MultidatasetCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.BaseRest2DoMapperV10Impl;
 import org.springframework.stereotype.Component;
 

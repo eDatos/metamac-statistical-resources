@@ -18,11 +18,7 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MultidatasetData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MultidatasetMetadata;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MultidatasetNodes;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.MultidatasetTable;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidatasets;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -35,6 +31,10 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.MultidatasetData;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.MultidatasetNodes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.MultidatasetTable;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
@@ -51,31 +51,31 @@ import org.springframework.stereotype.Component;
 public class MultidatasetsDo2RestMapperV10Impl implements MultidatasetsDo2RestMapperV10 {
 
     @Autowired
-    private CommonDo2RestMapperV10        commonDo2RestMapper;
+    private CommonDo2RestMapperV10            commonDo2RestMapper;
 
     @Autowired
-    private DatasetsDo2RestMapperV10      datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10          datasetsDo2RestMapper;
 
     @Autowired
-    private DatasetVersionRepository      datasetVersionRepository;
+    private DatasetVersionRepository          datasetVersionRepository;
 
     @Autowired
-    private QueryVersionRepository        queryVersionRepository;
+    private QueryVersionRepository            queryVersionRepository;
 
     @Autowired
-    private QueriesDo2RestMapperV10       queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10           queriesDo2RestMapper;
 
     @Autowired
-    private MultidatasetVersionRepository multidatasetVersionRepository;
-    
+    private MultidatasetVersionRepository     multidatasetVersionRepository;
+
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
 
-    private static final Logger           logger = LoggerFactory.getLogger(MultidatasetsDo2RestMapperV10.class);
+    private static final Logger               logger = LoggerFactory.getLogger(MultidatasetsDo2RestMapperV10.class);
 
     @Override
     public Multidatasets toMultidatasets(PagedResult<MultidatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
-        Set<String> parsedFields) throws MetamacException {
+            Set<String> parsedFields) throws MetamacException {
 
         Multidatasets targets = new Multidatasets();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_MULTIDATASETS);
@@ -139,7 +139,7 @@ public class MultidatasetsDo2RestMapperV10Impl implements MultidatasetsDo2RestMa
             target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
         }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.MULTIDATASET, source.getLifeCycleStatisticalResource(), configurationService, false));
-        
+
         return target;
     }
 
@@ -167,9 +167,9 @@ public class MultidatasetsDo2RestMapperV10Impl implements MultidatasetsDo2RestMa
     private String toVisualizerHtmlLink(RelatedResourceResult source) throws MetamacException {
         String agencyID = source.getMaintainerNestedCode();
         String resourceID = source.getCode();
-        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.MULTIDATASET, agencyID, resourceID, null, configurationService, false);  
+        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.MULTIDATASET, agencyID, resourceID, null, configurationService, false);
     }
-    
+
     private MultidatasetMetadata toMultidatasetMetadata(MultidatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
