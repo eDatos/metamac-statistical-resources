@@ -13,7 +13,6 @@ public class MetamacPortalWebUtils {
     private static final String PAGE_DATA_RESOURCE                  = "data.html";
     private static final String PAGE_COLLECTION_RESOURCE            = "collection.html";
     private static final String URL_SEPARATOR                       = "/";
-    private static final String URL_SINGLEPAGE_SEPARATOR            = "#";
     private static final String URL_QUERY_SEPARATOR                 = "?";
     private static final String URL_QUERY_EQUALS                    = "=";
     private static final String URL_QUERY_AND                       = "&";
@@ -35,7 +34,6 @@ public class MetamacPortalWebUtils {
         builder.append(PAGE_DATA_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForVersionableResource(datasetVersionDto, StatisticalResourceTypeEnum.DATASET));
-        builder.append(URL_SINGLEPAGE_SEPARATOR);
 
         return builder.toString();
     }
@@ -46,21 +44,20 @@ public class MetamacPortalWebUtils {
         builder.append(PAGE_DATA_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForVersionableResource(maintainerCode, code, version, StatisticalResourceTypeEnum.DATASET));
-        builder.append(URL_SINGLEPAGE_SEPARATOR);
+
         return builder.toString();
     }
-     
+
     public static String buildQueryVersionUrl(String maintainerCode, String code, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));
         builder.append(PAGE_DATA_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForNotVersionableResource(maintainerCode, code, StatisticalResourceTypeEnum.QUERY));
-        builder.append(URL_SINGLEPAGE_SEPARATOR);
 
         return builder.toString();
     }
-    
+
     public static String buildMultidatasetVersionUrl(String maintainerCode, String code, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));
@@ -70,14 +67,13 @@ public class MetamacPortalWebUtils {
 
         return builder.toString();
     }
-    
+
     public static String buildQueryVersionUrl(QueryVersionDto queryVersionDto, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));
         builder.append(PAGE_DATA_RESOURCE);
         builder.append(URL_QUERY_SEPARATOR);
         builder.append(buildQueryParametersForNotVersionableResource(queryVersionDto, StatisticalResourceTypeEnum.QUERY));
-        builder.append(URL_SINGLEPAGE_SEPARATOR);
 
         return builder.toString();
     }
@@ -101,7 +97,7 @@ public class MetamacPortalWebUtils {
 
         return builder.toString();
     }
-    
+
     public static String buildMultidatasetVersionUrl(MultidatasetVersionDto multidatasetVersionDto, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));
@@ -121,7 +117,6 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
-   
     private static String buildQueryParametersForVersionableResource(String maintainerCode, String code, String version, StatisticalResourceTypeEnum type) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
 
@@ -135,7 +130,7 @@ public class MetamacPortalWebUtils {
         return builder.toString();
 
     }
-    
+
     private static String buildQueryParametersForVersionableResource(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto, StatisticalResourceTypeEnum type)
             throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
@@ -192,7 +187,7 @@ public class MetamacPortalWebUtils {
 
         return builder.toString();
     }
-    
+
     private static String buildQueryParametersForMultidataset(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto) {
         StringBuilder builder = new StringBuilder();
 
