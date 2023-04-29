@@ -26,13 +26,6 @@
 		</xs:complexContent>
 	</xs:complexType>
 
-	<xs:element name="metadata" type="tns:DatasetMetadata"/>
-	<xs:complexType name="custinfo">
-  <xs:sequence>
-    <xs:element ref="metadata"/>
-  </xs:sequence>
-</xs:complexType>
-
 	<xs:complexType name="Collection">
 		<xs:complexContent>
 			<xs:extension base="common-tns:CollectionBase">
