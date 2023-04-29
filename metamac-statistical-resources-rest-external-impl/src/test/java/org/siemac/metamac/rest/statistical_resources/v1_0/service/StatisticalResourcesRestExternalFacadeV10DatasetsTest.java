@@ -19,15 +19,16 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends StatisticalResourcesRestExternalFacadeV10BaseTest {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesRestExternalFacadeV10DatasetsTest.class);
 
     @Test
@@ -232,9 +233,9 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
     }
 
     @Test
-    @Ignore("EDATOS-3662: deactivated since test throws exception (`org.apache.cxf.jaxrs.client.ClientWebApplicationException: " +
-        "Method org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData.getValue is not a valid resource method`) " +
-        "because it doesn't work with json stat endpoint being in a subresource")
+    @Ignore("EDATOS-3662: deactivated since test throws exception (`org.apache.cxf.jaxrs.client.ClientWebApplicationException: "
+            + "Method org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData.getValue is not a valid resource method`) "
+            + "because it doesn't work with json stat endpoint being in a subresource")
     public void testRetrieveJsonStatdataset() throws Exception {
         Dataset dataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDataset(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, null);
         JsonStatData jsonStatDataset = statisticalResourcesRestExternalFacadeClientXml.retrieveDatasetJsonStat(AGENCY_1, DATASET_1_CODE, VERSION_1, defaultLanguages, null, null, null);
@@ -248,9 +249,12 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
         // value order
         // we have dimensions: [ GEO_DIM, TIME_PERIOD, measure01, dim01 ] and categories sizes 13, 4, 3, 3
         List<DimensionRepresentation> datasetDimensions = dataset.getData().getDimensions().getDimensions();
-        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 12, 3, 2, 2), commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 12, 3, 2, 2)); // get last element
-        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 0, 0, 0, 0),  commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 0, 0, 0, 0)); // get first element
-        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 3, 1, 0, 2),  commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 3, 1, 0, 2));
+        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 12, 3, 2, 2),
+                commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 12, 3, 2, 2)); // get last element
+        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 0, 0, 0, 0),
+                commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 0, 0, 0, 0)); // get first element
+        assertEquals(commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, datasetData, 3, 1, 0, 2),
+                commonDo2JsonStatRestMapper.getValueFromPosition(datasetDimensions, jsonStatDataset.getValue(), 3, 1, 0, 2));
 
         // dimension order
         List<String> datasetDimensionsIds = new ArrayList<>();
