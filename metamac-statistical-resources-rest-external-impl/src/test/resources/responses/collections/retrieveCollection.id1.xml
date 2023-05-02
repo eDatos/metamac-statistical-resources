@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <stat:collection xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:stat="http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain" xmlns:ns3="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain" kind="statisticalResources#collection">
-    <stat:id>collection1</stat:id>
-    <stat:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection1</stat:urn>
-    <stat:selfLink kind="statisticalResources#collection" href="http://data.istac.es/apis/statistical-resources/v1.0/collections/agency1/collection1"/>
-    <stat:parentLink kind="statisticalResources#collections" href="http://data.istac.es/apis/statistical-resources/v1.0/collections"/>
-    <stat:name>
+    <ns3:id>collection1</ns3:id>
+    <ns3:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection1</ns3:urn>
+    <ns3:selfLink kind="statisticalResources#collection" href="http://data.istac.es/apis/statistical-resources/v1.0/collections/agency1/collection1"/>
+    <ns3:parentLink kind="statisticalResources#collections" href="http://data.istac.es/apis/statistical-resources/v1.0/collections"/>
+    <ns3:name>
         <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
-    </stat:name>
-    <stat:description>
-        <cdomain:text xml:lang="es">description-8G97UQNkQh_000001 en Espanol</cdomain:text>
-    </stat:description>
-    <stat:keywords>
-        <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-8G97UQNkQh_000001 en Espanol</cdomain:text>
-    </stat:keywords>
-    <stat:selectedLanguages total="1">
-        <stat:language>es</stat:language>
-    </stat:selectedLanguages>
-    <stat:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=zCRFgNVn3t&amp;resourceId=collection1</stat:visualizerHtmlLink>
-    <stat:metadata>
-        <stat:language kind="structuralResources#code">
+    </ns3:name>
+    <ns3:description>
+        <cdomain:text xml:lang="es">description-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+    </ns3:description>
+    <ns3:keywords>
+        <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+    </ns3:keywords>
+    <ns3:selectedLanguages total="1">
+        <ns3:language>es</ns3:language>
+    </ns3:selectedLanguages>
+    <ns3:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=C0U4FB40eC&amp;resourceId=collection1</ns3:visualizerHtmlLink>
+    <ns3:metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:CollectionMetadata">
+        <ns3:language kind="structuralResources#code">
             <cdomain:id>language01</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).language01</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/language01"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-language01 en Espanol</cdomain:text>
             </cdomain:name>
-        </stat:language>
-        <stat:languages total="2">
+        </ns3:language>
+        <ns3:languages total="2">
             <cdomain:resource kind="structuralResources#code">
                 <cdomain:id>language01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).language01</cdomain:urn>
@@ -43,34 +43,34 @@
                     <cdomain:text xml:lang="es">title-language02 en Espanol</cdomain:text>
                 </cdomain:name>
             </cdomain:resource>
-        </stat:languages>
-        <stat:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>8G97UQNkQh</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=8G97UQNkQh</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/8G97UQNkQh"/>
+        </ns3:languages>
+        <ns3:statisticalOperation kind="statisticalOperations#operation">
+            <cdomain:id>Nz1s7tyXAj</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=Nz1s7tyXAj</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/Nz1s7tyXAj"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Tn2JaF3RSI en Espanol</cdomain:text>
             </cdomain:name>
-        </stat:statisticalOperation>
-        <stat:subtitle>
-            <cdomain:text xml:lang="es">subtitle-8G97UQNkQh_000001 en Espanol</cdomain:text>
-        </stat:subtitle>
-        <stat:titleAlternative>
-            <cdomain:text xml:lang="es">titleAlternative-8G97UQNkQh_000001 en Espanol</cdomain:text>
-        </stat:titleAlternative>
-        <stat:abstract>
-            <cdomain:text xml:lang="es">abstract-8G97UQNkQh_000001 en Espanol</cdomain:text>
-        </stat:abstract>
-        <stat:type>COLLECTION</stat:type>
-        <stat:creator kind="structuralResources#organisationUnit">
+        </ns3:statisticalOperation>
+        <ns3:subtitle>
+            <cdomain:text xml:lang="es">subtitle-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+        </ns3:subtitle>
+        <ns3:titleAlternative>
+            <cdomain:text xml:lang="es">titleAlternative-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+        </ns3:titleAlternative>
+        <ns3:abstract>
+            <cdomain:text xml:lang="es">abstract-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+        </ns3:abstract>
+        <ns3:type>COLLECTION</ns3:type>
+        <ns3:creator kind="structuralResources#organisationUnit">
             <cdomain:id>creator</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).creator</cdomain:urn>
             <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/creator"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-creator en Espanol</cdomain:text>
             </cdomain:name>
-        </stat:creator>
-        <stat:contributors total="2">
+        </ns3:creator>
+        <ns3:contributors total="2">
             <cdomain:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>contributor01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).contributor01</cdomain:urn>
@@ -87,13 +87,13 @@
                     <cdomain:text xml:lang="es">title-contributor02 en Espanol</cdomain:text>
                 </cdomain:name>
             </cdomain:resource>
-        </stat:contributors>
-        <stat:createdDate>2013-06-20T20:00:20.021+01:00</stat:createdDate>
-        <stat:lastUpdate>2013-06-22T20:00:20.021+01:00</stat:lastUpdate>
-        <stat:conformsTo>
-            <cdomain:text xml:lang="es">conformsTo-8G97UQNkQh_000001 en Espanol</cdomain:text>
-        </stat:conformsTo>
-        <stat:publishers total="2">
+        </ns3:contributors>
+        <ns3:createdDate>2013-06-20T20:00:20.021+01:00</ns3:createdDate>
+        <ns3:lastUpdate>2013-06-22T20:00:20.021+01:00</ns3:lastUpdate>
+        <ns3:conformsTo>
+            <cdomain:text xml:lang="es">conformsTo-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+        </ns3:conformsTo>
+        <ns3:publishers total="2">
             <cdomain:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>publisher01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisher01</cdomain:urn>
@@ -110,8 +110,8 @@
                     <cdomain:text xml:lang="es">title-publisher02 en Espanol</cdomain:text>
                 </cdomain:name>
             </cdomain:resource>
-        </stat:publishers>
-        <stat:publisherContributors total="2">
+        </ns3:publishers>
+        <ns3:publisherContributors total="2">
             <cdomain:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>publisherContributor01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisherContributor01</cdomain:urn>
@@ -128,8 +128,8 @@
                     <cdomain:text xml:lang="es">title-publisherContributor02 en Espanol</cdomain:text>
                 </cdomain:name>
             </cdomain:resource>
-        </stat:publisherContributors>
-        <stat:mediators total="2">
+        </ns3:publisherContributors>
+        <ns3:mediators total="2">
             <cdomain:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>mediator01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).mediator01</cdomain:urn>
@@ -146,63 +146,63 @@
                     <cdomain:text xml:lang="es">title-mediator02 en Espanol</cdomain:text>
                 </cdomain:name>
             </cdomain:resource>
-        </stat:mediators>
-        <stat:replaces xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#collection">
+        </ns3:mediators>
+        <ns3:replaces kind="statisticalResources#collection">
             <cdomain:id>replace01</cdomain:id>
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:replace01</cdomain:urn>
             <cdomain:selfLink kind="statisticalResources#collection" href="http://data.istac.es/apis/statistical-resources/v1.0/collections/agency1/replace01"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-replace01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=3OwbTeDr29&amp;resourceId=replace01</cdomain:visualizerHtmlLink>
-        </stat:replaces>
-        <stat:hasPart total="5">
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=44IV5GdUk1&amp;resourceId=replace01</cdomain:visualizerHtmlLink>
+        </ns3:replaces>
+        <ns3:hasPart total="5">
             <cdomain:resource kind="statisticalResources#url">
                 <cdomain:visualizerHtmlLink>http://www.elementLevel01_02_02 - pruebas.com</cdomain:visualizerHtmlLink>
             </cdomain:resource>
             <cdomain:resource kind="statisticalResources#url">
                 <cdomain:visualizerHtmlLink>http://www.elementLevel05 - pruebas.com</cdomain:visualizerHtmlLink>
             </cdomain:resource>
-        </stat:hasPart>
-        <stat:rightsHolder kind="structuralResources#agency">
+        </ns3:hasPart>
+        <ns3:rightsHolder kind="structuralResources#agency">
             <cdomain:id>AGENCIES</cdomain:id>
             <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY</cdomain:urn>
             <cdomain:name>
                 <cdomain:text xml:lang="es">AGENCIES en Español</cdomain:text>
             </cdomain:name>
-            <stat:contacts total="2">
-                <stat:contact>
-                    <stat:name>
+            <ns3:contacts total="2">
+                <ns3:contact>
+                    <ns3:name>
                         <cdomain:text xml:lang="es">Oficina Tenerife en Español</cdomain:text>
                         <cdomain:text xml:lang="en">Oficina Tenerife in English</cdomain:text>
-                    </stat:name>
-                </stat:contact>
-                <stat:contact>
-                    <stat:name>
+                    </ns3:name>
+                </ns3:contact>
+                <ns3:contact>
+                    <ns3:name>
                         <cdomain:text xml:lang="es">Oficina Las Palmas en Español</cdomain:text>
                         <cdomain:text xml:lang="en">Oficina Las Palmas in English</cdomain:text>
-                    </stat:name>
-                </stat:contact>
-            </stat:contacts>
-        </stat:rightsHolder>
-        <stat:copyrightDate>2023</stat:copyrightDate>
-        <stat:license>
+                    </ns3:name>
+                </ns3:contact>
+            </ns3:contacts>
+        </ns3:rightsHolder>
+        <ns3:copyrightDate>2023</ns3:copyrightDate>
+        <ns3:license>
             <cdomain:text xml:lang="es">license en Español</cdomain:text>
-        </stat:license>
-        <stat:accessRights>
-            <cdomain:text xml:lang="es">accessRights-8G97UQNkQh_000001 en Espanol</cdomain:text>
-        </stat:accessRights>
-        <stat:maintainer kind="structuralResources#agency">
-            <cdomain:id>zCRFgNVn3t</cdomain:id>
+        </ns3:license>
+        <ns3:accessRights>
+            <cdomain:text xml:lang="es">accessRights-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+        </ns3:accessRights>
+        <ns3:maintainer kind="structuralResources#agency">
+            <cdomain:id>C0U4FB40eC</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).zCRFgNVn3t</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/zCRFgNVn3t"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).C0U4FB40eC</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/C0U4FB40eC"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-zCRFgNVn3t en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-C0U4FB40eC en Espanol</cdomain:text>
             </cdomain:name>
-        </stat:maintainer>
-        <stat:version>01.000</stat:version>
-        <stat:dataProviders total="2">
+        </ns3:maintainer>
+        <ns3:version>01.000</ns3:version>
+        <ns3:dataProviders total="2">
             <cdomain:resource kind="structuralResources#dataProvider">
                 <cdomain:id>dataProvider01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.DataProvider=MaintainerMock:DataProviderSchemeMock(1.0).dataProvider01</cdomain:urn>
@@ -219,169 +219,169 @@
                     <cdomain:text xml:lang="es">title-dataProvider02 en Espanol</cdomain:text>
                 </cdomain:name>
             </cdomain:resource>
-        </stat:dataProviders>
-        <stat:dataProviderAnnotations>
-            <cdomain:text xml:lang="es">dataProviderAnnotations-8G97UQNkQh_000001 en Espanol</cdomain:text>
-        </stat:dataProviderAnnotations>
-        <stat:formatExtentResources>5</stat:formatExtentResources>
-    </stat:metadata>
-    <stat:data>
-        <stat:nodes>
-            <stat:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:Chapter">
-                <stat:name>
-                    <cdomain:text xml:lang="es">title-resource-9Ac4nYS2bE en Espanol</cdomain:text>
-                </stat:name>
-                <stat:description>
-                    <cdomain:text xml:lang="es">description-resource-9Ac4nYS2bE en Espanol</cdomain:text>
-                </stat:description>
-                <stat:nodes>
-                    <stat:node xsi:type="stat:Chapter">
-                        <stat:name>
-                            <cdomain:text xml:lang="es">title-resource-SDiwgugE2P en Espanol</cdomain:text>
-                        </stat:name>
-                        <stat:description>
-                            <cdomain:text xml:lang="es">description-resource-SDiwgugE2P en Espanol</cdomain:text>
-                        </stat:description>
-                        <stat:nodes>
-                            <stat:node xsi:type="stat:Table">
-<stat:name>
-    <cdomain:text xml:lang="es">title-resource-PPOD9qcFIe en Espanol</cdomain:text>
-</stat:name>
-<stat:description>
-    <cdomain:text xml:lang="es">description-resource-PPOD9qcFIe en Espanol</cdomain:text>
-</stat:description>
-<stat:dataset xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
-    <cdomain:id>gOlH6x1SgT_000001</cdomain:id>
-    <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=y6aN2XGN0k:gOlH6x1SgT_000001(01.000)</cdomain:urn>
-    <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/y6aN2XGN0k/gOlH6x1SgT_000001/~latest"/>
+        </ns3:dataProviders>
+        <ns3:dataProviderAnnotations>
+            <cdomain:text xml:lang="es">dataProviderAnnotations-Nz1s7tyXAj_000001 en Espanol</cdomain:text>
+        </ns3:dataProviderAnnotations>
+        <ns3:formatExtentResources>5</ns3:formatExtentResources>
+    </ns3:metadata>
+    <ns3:data>
+        <ns3:nodes>
+            <ns3:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Chapter">
+                <ns3:name>
+                    <cdomain:text xml:lang="es">title-resource-ZXVmNqPGJu en Espanol</cdomain:text>
+                </ns3:name>
+                <ns3:description>
+                    <cdomain:text xml:lang="es">description-resource-ZXVmNqPGJu en Espanol</cdomain:text>
+                </ns3:description>
+                <ns3:nodes>
+                    <ns3:node xsi:type="ns3:Chapter">
+                        <ns3:name>
+                            <cdomain:text xml:lang="es">title-resource-dbSAcsKtgD en Espanol</cdomain:text>
+                        </ns3:name>
+                        <ns3:description>
+                            <cdomain:text xml:lang="es">description-resource-dbSAcsKtgD en Espanol</cdomain:text>
+                        </ns3:description>
+                        <ns3:nodes>
+                            <ns3:node xsi:type="ns3:Table">
+<ns3:name>
+    <cdomain:text xml:lang="es">title-resource-l1HGViZEG3 en Espanol</cdomain:text>
+</ns3:name>
+<ns3:description>
+    <cdomain:text xml:lang="es">description-resource-l1HGViZEG3 en Espanol</cdomain:text>
+</ns3:description>
+<ns3:dataset kind="statisticalResources#dataset">
+    <cdomain:id>6NFo2RpoK7_000001</cdomain:id>
+    <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=yxwvbDTzeb:6NFo2RpoK7_000001(01.000)</cdomain:urn>
+    <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/yxwvbDTzeb/6NFo2RpoK7_000001/~latest"/>
     <cdomain:name>
-        <cdomain:text xml:lang="es">title-gOlH6x1SgT_000001 en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">title-6NFo2RpoK7_000001 en Espanol</cdomain:text>
     </cdomain:name>
-    <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=38HC8eyBce&amp;resourceId=gOlH6x1SgT_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
-</stat:dataset>
-                            </stat:node>
-                        </stat:nodes>
-                    </stat:node>
-                    <stat:node xsi:type="stat:Chapter">
-                        <stat:name>
-                            <cdomain:text xml:lang="es">title-resource-lbgCpHZY1e en Espanol</cdomain:text>
-                        </stat:name>
-                        <stat:description>
-                            <cdomain:text xml:lang="es">description-resource-lbgCpHZY1e en Espanol</cdomain:text>
-                        </stat:description>
-                        <stat:nodes>
-                            <stat:node xsi:type="stat:Table">
-<stat:name>
-    <cdomain:text xml:lang="es">title-resource-f1T67exXyn en Espanol</cdomain:text>
-</stat:name>
-<stat:description>
-    <cdomain:text xml:lang="es">description-resource-f1T67exXyn en Espanol</cdomain:text>
-</stat:description>
-<stat:query xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#query">
-    <cdomain:id>resource-ICDa2vVtEu</cdomain:id>
-    <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=GvsRQY0nJc:resource-ICDa2vVtEu</cdomain:urn>
-    <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/GvsRQY0nJc/resource-ICDa2vVtEu"/>
+    <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=89ALWkvWEl&amp;resourceId=6NFo2RpoK7_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
+</ns3:dataset>
+                            </ns3:node>
+                        </ns3:nodes>
+                    </ns3:node>
+                    <ns3:node xsi:type="ns3:Chapter">
+                        <ns3:name>
+                            <cdomain:text xml:lang="es">title-resource-ZSxpbnpVW2 en Espanol</cdomain:text>
+                        </ns3:name>
+                        <ns3:description>
+                            <cdomain:text xml:lang="es">description-resource-ZSxpbnpVW2 en Espanol</cdomain:text>
+                        </ns3:description>
+                        <ns3:nodes>
+                            <ns3:node xsi:type="ns3:Table">
+<ns3:name>
+    <cdomain:text xml:lang="es">title-resource-yxavHxXM7T en Espanol</cdomain:text>
+</ns3:name>
+<ns3:description>
+    <cdomain:text xml:lang="es">description-resource-yxavHxXM7T en Espanol</cdomain:text>
+</ns3:description>
+<ns3:query kind="statisticalResources#query">
+    <cdomain:id>resource-CTkPLY3bfs</cdomain:id>
+    <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=x8sH3FlGfU:resource-CTkPLY3bfs</cdomain:urn>
+    <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/x8sH3FlGfU/resource-CTkPLY3bfs"/>
     <cdomain:name>
-        <cdomain:text xml:lang="es">title-resource-ICDa2vVtEu en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">title-resource-CTkPLY3bfs en Espanol</cdomain:text>
     </cdomain:name>
-    <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=G0qCyIDFxI&amp;resourceId=resource-ICDa2vVtEu</cdomain:visualizerHtmlLink>
-</stat:query>
-                            </stat:node>
-                            <stat:node xsi:type="stat:Table">
-<stat:name>
-    <cdomain:text xml:lang="es">title-resource-KKfk0ov0sx en Espanol</cdomain:text>
-</stat:name>
-<stat:description>
-    <cdomain:text xml:lang="es">description-resource-KKfk0ov0sx en Espanol</cdomain:text>
-</stat:description>
-<stat:url kind="statisticalResources#url">
+    <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=UzLRCOS7RL&amp;resourceId=resource-CTkPLY3bfs</cdomain:visualizerHtmlLink>
+</ns3:query>
+                            </ns3:node>
+                            <ns3:node xsi:type="ns3:Table">
+<ns3:name>
+    <cdomain:text xml:lang="es">title-resource-uEVvQLqiGp en Espanol</cdomain:text>
+</ns3:name>
+<ns3:description>
+    <cdomain:text xml:lang="es">description-resource-uEVvQLqiGp en Espanol</cdomain:text>
+</ns3:description>
+<ns3:url kind="statisticalResources#url">
     <cdomain:visualizerHtmlLink>http://www.elementLevel01_02_02 - pruebas.com</cdomain:visualizerHtmlLink>
-</stat:url>
-                            </stat:node>
-                        </stat:nodes>
-                    </stat:node>
-                    <stat:node xsi:type="stat:Table">
-                        <stat:name>
-                            <cdomain:text xml:lang="es">title-resource-gAIkr8kqM1 en Espanol</cdomain:text>
-                        </stat:name>
-                        <stat:description>
-                            <cdomain:text xml:lang="es">description-resource-gAIkr8kqM1 en Espanol</cdomain:text>
-                        </stat:description>
-                        <stat:dataset xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
-                            <cdomain:id>cmauVL5H0Z_000001</cdomain:id>
-                            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=3dY4DlM6bv:cmauVL5H0Z_000001(01.000)</cdomain:urn>
-                            <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/3dY4DlM6bv/cmauVL5H0Z_000001/~latest"/>
+</ns3:url>
+                            </ns3:node>
+                        </ns3:nodes>
+                    </ns3:node>
+                    <ns3:node xsi:type="ns3:Table">
+                        <ns3:name>
+                            <cdomain:text xml:lang="es">title-resource-QFx7CkJmTa en Espanol</cdomain:text>
+                        </ns3:name>
+                        <ns3:description>
+                            <cdomain:text xml:lang="es">description-resource-QFx7CkJmTa en Espanol</cdomain:text>
+                        </ns3:description>
+                        <ns3:dataset kind="statisticalResources#dataset">
+                            <cdomain:id>xGz2cymfqc_000001</cdomain:id>
+                            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=77DmhgrLc7:xGz2cymfqc_000001(01.000)</cdomain:urn>
+                            <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/77DmhgrLc7/xGz2cymfqc_000001/~latest"/>
                             <cdomain:name>
-<cdomain:text xml:lang="es">title-cmauVL5H0Z_000001 en Espanol</cdomain:text>
+<cdomain:text xml:lang="es">title-xGz2cymfqc_000001 en Espanol</cdomain:text>
                             </cdomain:name>
-                            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=8dSt1zyJHD&amp;resourceId=cmauVL5H0Z_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
-                        </stat:dataset>
-                    </stat:node>
-                </stat:nodes>
-            </stat:node>
-            <stat:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:Chapter">
-                <stat:name>
-                    <cdomain:text xml:lang="es">title-resource-lV5k4SG2lO en Espanol</cdomain:text>
-                </stat:name>
-                <stat:description>
-                    <cdomain:text xml:lang="es">description-resource-lV5k4SG2lO en Espanol</cdomain:text>
-                </stat:description>
-                <stat:nodes>
-                    <stat:node xsi:type="stat:Table">
-                        <stat:name>
-                            <cdomain:text xml:lang="es">title-resource-NCWuyqfq0E en Espanol</cdomain:text>
-                        </stat:name>
-                        <stat:description>
-                            <cdomain:text xml:lang="es">description-resource-NCWuyqfq0E en Espanol</cdomain:text>
-                        </stat:description>
-                        <stat:query xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#query">
-                            <cdomain:id>resource-oaxEsuNoAH</cdomain:id>
-                            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=jrtMsfqIfr:resource-oaxEsuNoAH</cdomain:urn>
-                            <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/jrtMsfqIfr/resource-oaxEsuNoAH"/>
+                            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=1qe6DYVcan&amp;resourceId=xGz2cymfqc_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
+                        </ns3:dataset>
+                    </ns3:node>
+                </ns3:nodes>
+            </ns3:node>
+            <ns3:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Chapter">
+                <ns3:name>
+                    <cdomain:text xml:lang="es">title-resource-dI8EhpUh5R en Espanol</cdomain:text>
+                </ns3:name>
+                <ns3:description>
+                    <cdomain:text xml:lang="es">description-resource-dI8EhpUh5R en Espanol</cdomain:text>
+                </ns3:description>
+                <ns3:nodes>
+                    <ns3:node xsi:type="ns3:Table">
+                        <ns3:name>
+                            <cdomain:text xml:lang="es">title-resource-Zgn3DWWAOl en Espanol</cdomain:text>
+                        </ns3:name>
+                        <ns3:description>
+                            <cdomain:text xml:lang="es">description-resource-Zgn3DWWAOl en Espanol</cdomain:text>
+                        </ns3:description>
+                        <ns3:query kind="statisticalResources#query">
+                            <cdomain:id>resource-YLCxGNCffE</cdomain:id>
+                            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=VPgoYQQ3Ud:resource-YLCxGNCffE</cdomain:urn>
+                            <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/VPgoYQQ3Ud/resource-YLCxGNCffE"/>
                             <cdomain:name>
-<cdomain:text xml:lang="es">title-resource-oaxEsuNoAH en Espanol</cdomain:text>
+<cdomain:text xml:lang="es">title-resource-YLCxGNCffE en Espanol</cdomain:text>
                             </cdomain:name>
-                            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=2gGrIBkSJ2&amp;resourceId=resource-oaxEsuNoAH</cdomain:visualizerHtmlLink>
-                        </stat:query>
-                    </stat:node>
-                </stat:nodes>
-            </stat:node>
-            <stat:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:Chapter">
-                <stat:name>
-                    <cdomain:text xml:lang="es">title-resource-awy4tWED8L en Espanol</cdomain:text>
-                </stat:name>
-                <stat:description>
-                    <cdomain:text xml:lang="es">description-resource-awy4tWED8L en Espanol</cdomain:text>
-                </stat:description>
-            </stat:node>
-            <stat:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:Table">
-                <stat:name>
-                    <cdomain:text xml:lang="es">title-resource-Fvj17J1J1v en Espanol</cdomain:text>
-                </stat:name>
-                <stat:description>
-                    <cdomain:text xml:lang="es">description-resource-Fvj17J1J1v en Espanol</cdomain:text>
-                </stat:description>
-                <stat:query xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#query">
-                    <cdomain:id>resource-gqsGCnn1zg</cdomain:id>
-                    <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=8iRQhVYf90:resource-gqsGCnn1zg</cdomain:urn>
-                    <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/8iRQhVYf90/resource-gqsGCnn1zg"/>
+                            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=L6P7FA57z4&amp;resourceId=resource-YLCxGNCffE</cdomain:visualizerHtmlLink>
+                        </ns3:query>
+                    </ns3:node>
+                </ns3:nodes>
+            </ns3:node>
+            <ns3:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Chapter">
+                <ns3:name>
+                    <cdomain:text xml:lang="es">title-resource-FM0t1usXyG en Espanol</cdomain:text>
+                </ns3:name>
+                <ns3:description>
+                    <cdomain:text xml:lang="es">description-resource-FM0t1usXyG en Espanol</cdomain:text>
+                </ns3:description>
+            </ns3:node>
+            <ns3:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Table">
+                <ns3:name>
+                    <cdomain:text xml:lang="es">title-resource-vEUb9KHsFv en Espanol</cdomain:text>
+                </ns3:name>
+                <ns3:description>
+                    <cdomain:text xml:lang="es">description-resource-vEUb9KHsFv en Espanol</cdomain:text>
+                </ns3:description>
+                <ns3:query kind="statisticalResources#query">
+                    <cdomain:id>resource-VcIFltEYpX</cdomain:id>
+                    <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=12ZrTHH8DO:resource-VcIFltEYpX</cdomain:urn>
+                    <cdomain:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/12ZrTHH8DO/resource-VcIFltEYpX"/>
                     <cdomain:name>
-                        <cdomain:text xml:lang="es">title-resource-gqsGCnn1zg en Espanol</cdomain:text>
+                        <cdomain:text xml:lang="es">title-resource-VcIFltEYpX en Espanol</cdomain:text>
                     </cdomain:name>
-                    <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=a7CXwBfwsO&amp;resourceId=resource-gqsGCnn1zg</cdomain:visualizerHtmlLink>
-                </stat:query>
-            </stat:node>
-            <stat:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:Table">
-                <stat:name>
-                    <cdomain:text xml:lang="es">title-resource-7ruJLtJIdX en Espanol</cdomain:text>
-                </stat:name>
-                <stat:description>
-                    <cdomain:text xml:lang="es">description-resource-7ruJLtJIdX en Espanol</cdomain:text>
-                </stat:description>
-                <stat:url kind="statisticalResources#url">
+                    <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=mALMDEovIN&amp;resourceId=resource-VcIFltEYpX</cdomain:visualizerHtmlLink>
+                </ns3:query>
+            </ns3:node>
+            <ns3:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Table">
+                <ns3:name>
+                    <cdomain:text xml:lang="es">title-resource-DfhDyFRYfj en Espanol</cdomain:text>
+                </ns3:name>
+                <ns3:description>
+                    <cdomain:text xml:lang="es">description-resource-DfhDyFRYfj en Espanol</cdomain:text>
+                </ns3:description>
+                <ns3:url kind="statisticalResources#url">
                     <cdomain:visualizerHtmlLink>http://www.elementLevel05 - pruebas.com</cdomain:visualizerHtmlLink>
-                </stat:url>
-            </stat:node>
-        </stat:nodes>
-    </stat:data>
+                </ns3:url>
+            </ns3:node>
+        </ns3:nodes>
+    </ns3:data>
 </stat:collection>

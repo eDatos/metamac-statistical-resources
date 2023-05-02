@@ -10,7 +10,7 @@
     <xs:import namespace="http://www.siemac.org/metamac/rest/common/v1.0/domain" schemaLocation="metamac-rest-api:metamac-rest-common-domain-v1.0.xsd" />
     <xs:import namespace="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain" schemaLocation="metamac-statistical-resources-rest-api-common-domain-v1.0.xsd" />
 
-	<xs:complexType name="dataset">
+	<xs:complexType name="Dataset">
 		<xs:complexContent>
 			<xs:extension base="common-tns:DatasetBase">
 			</xs:extension>
@@ -66,4 +66,8 @@
 		</xs:complexContent>
 	</xs:complexType>
 
+  <!-- Elements -->
+    <xs:element name="dataset" type="tns:Dataset" />
+    <xs:element name="collection" type="tns:Collection" />
+    <xs:element name="query" type="tns:Query" />
 </xs:schema>

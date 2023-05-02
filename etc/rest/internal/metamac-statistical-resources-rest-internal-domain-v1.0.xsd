@@ -164,4 +164,8 @@
 		</xs:restriction>
 	</xs:simpleType>
 
+  <!-- Elements -->
+    <xs:element name="dataset" type="tns:Dataset" />
+    <xs:element name="collection" type="tns:Collection" />
+    <xs:element name="query" type="tns:Query" />
 </xs:schema>
