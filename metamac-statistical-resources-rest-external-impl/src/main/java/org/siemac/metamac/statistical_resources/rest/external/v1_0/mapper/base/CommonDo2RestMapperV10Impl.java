@@ -35,7 +35,6 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
-import org.siemac.metamac.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.rest.common_metadata.v1_0.domain.Configuration;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -113,6 +112,8 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnume
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Organisation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceType;
@@ -432,17 +433,17 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Resource toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        Resource target = new Resource();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResourceExternalItem(source, statisticalOperationsApiExternalEndpoint, target, selectedLanguages);
         updateNameForNonVersionableResource(target, source);
         return target;
     }
 
-    private void updateNameForNonVersionableResource(Resource target, ExternalItem source) {
+    private void updateNameForNonVersionableResource(ResourceStatisticalResourceBase target, ExternalItem source) {
         switch (source.getType()) {
             case STATISTICAL_OPERATION:
                 target.setName(getUpdatedStatisticalOperationName(source.getCode()));
@@ -458,13 +459,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Resources toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages) {
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages) {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
-        Resources targets = new Resources();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (ExternalItem source : sources) {
-            Resource target = toResourceExternalItemStatisticalOperations(source, selectedLanguages);
+            ResourceStatisticalResourceBase target = toResourceExternalItemStatisticalOperations(source, selectedLanguages);
             targets.getResources().add(target);
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
@@ -479,17 +480,17 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Resource toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        Resource target = new Resource();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResourceExternalItem(source, srmApiExternalEndpoint, target, selectedLanguages);
         return target;
     }
 
     @Override
-    public void toResourceExternalItemSrm(ExternalItem source, Resource target, List<String> selectedLanguages) {
+    public void toResourceExternalItemSrm(ExternalItem source, ResourceStatisticalResourceBase target, List<String> selectedLanguages) {
         if (source == null) {
             return;
         }
@@ -497,13 +498,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Resources toResourcesExternalItemsSrm(Collection<ExternalItem> sources, List<String> selectedLanguages) {
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsSrm(Collection<ExternalItem> sources, List<String> selectedLanguages) {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
-        Resources targets = new Resources();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (ExternalItem source : sources) {
-            Resource target = toResourceExternalItemSrm(source, selectedLanguages);
+            ResourceStatisticalResourceBase target = toResourceExternalItemSrm(source, selectedLanguages);
             targets.getResources().add(target);
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
@@ -599,11 +600,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Resource toResource(Resource source, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResource(Resource source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        Resource target = new Resource();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResource(source, target, selectedLanguages);
         return target;
     }
@@ -636,11 +637,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Resources toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException {
+    public ResourcesStatisticalResourceBase toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
-        Resources targets = new Resources();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (RelatedResource source : sources) {
             targets.getResources().add(toResource(source, selectedLanguages));
         }
@@ -649,11 +650,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Resources toUrlResources(List<String> sources) throws MetamacException {
+    public ResourcesStatisticalResourceBase toUrlResources(List<String> sources) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
-        Resources targets = new Resources();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (String source : sources) {
             targets.getResources().add(toUrlResource(source));
         }
@@ -661,18 +662,18 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return targets;
     }
 
-    private Resource toUrlResource(String url) {
+    private ResourceStatisticalResourceBase toUrlResource(String url) {
         if (url == null) {
             return null;
         }
-        Resource target = new Resource();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         target.setKind(StatisticalResourcesRestConstants.KIND_URL);
         target.setVisualizerHtmlLink(url);
         return target;
     }
 
     @Override
-    public Resource toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException {
+    public ResourceStatisticalResourceBase toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -702,7 +703,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
     }
     @Override
-    public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
+    public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -927,6 +928,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         if (source == null) {
             return null;
         }
+
         EnumeratedDimensionValue target = new EnumeratedDimensionValue();
         toResource(source, target, selectedLanguages);
         if (source.getParent() != null) {
@@ -1734,11 +1736,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return organisation;
     }
 
-    private void toResource(Agency agency, Resource resource, List<String> selectedLanguages) {
+    private void toResource(Agency agency, ResourceStatisticalResourceBase resource, List<String> selectedLanguages) {
         toResource(agency, resource, agency.getKind(), selectedLanguages);
     }
 
-    private void toResource(Item source, Resource target, String kind, List<String> selectedLanguages) {
+    private void toResource(Item source, ResourceStatisticalResourceBase target, String kind, List<String> selectedLanguages) {
         target.setKind(kind);
         target.setId(source.getId());
         target.setNestedId(source.getNestedId());

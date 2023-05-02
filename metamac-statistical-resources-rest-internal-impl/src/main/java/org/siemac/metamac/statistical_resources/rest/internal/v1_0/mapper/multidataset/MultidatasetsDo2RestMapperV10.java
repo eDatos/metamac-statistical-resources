@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -13,6 +12,7 @@ import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalRes
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 
 public interface MultidatasetsDo2RestMapperV10 {
 
@@ -21,6 +21,6 @@ public interface MultidatasetsDo2RestMapperV10 {
     public Multidataset toMultidataset(MultidatasetVersion source, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceDto source);
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceBaseDto source);
-    public Resource toResource(MultidatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
-    public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
+    public ResourceStatisticalResourceBase toResource(MultidatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
+    public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
 }

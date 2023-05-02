@@ -9,9 +9,7 @@ import java.util.Set;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
-import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
-import org.siemac.metamac.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
@@ -30,6 +28,8 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataStru
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NextVersionType;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ProcStatusType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
@@ -46,12 +46,12 @@ public interface CommonDo2RestMapperV10 {
             Set<String> fields) throws MetamacException;
     public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages) throws MetamacException;
 
-    public Resource toResource(Resource source, List<String> selectedLanguages);
-    public void toResource(Resource source, Resource target, List<String> selectedLanguages);
-    public Resources toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException;
-    public Resource toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException;
-    public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
-    public Resources toUrlResources(List<String> sources) throws MetamacException;
+    public ResourceStatisticalResourceBase toResource(ResourceStatisticalResourceBase source, List<String> selectedLanguages);
+    public void toResource(ResourceStatisticalResourceBase source, ResourceStatisticalResourceBase target, List<String> selectedLanguages);
+    public ResourcesStatisticalResourceBase toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException;
+    public ResourceStatisticalResourceBase toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException;
+    public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
+    public ResourcesStatisticalResourceBase toUrlResources(List<String> sources) throws MetamacException;
 
     public ResourceLink toResourceLink(String kind, String href);
     public String toResourceLink(String resourceSubpath, String agencyID, String resourceID, String version);
@@ -72,11 +72,11 @@ public interface CommonDo2RestMapperV10 {
     public List<String> codeItemToString(List<CodeItem> sources);
     public List<String> temporalCoverageToString(List<TemporalCode> sources);
 
-    public Resources toResourcesExternalItemsSrm(Collection<ExternalItem> sources, List<String> selectedLanguages);
-    public Resource toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages);
-    public void toResourceExternalItemSrm(ExternalItem source, Resource target, List<String> selectedLanguages);
-    public Resource toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages);
-    public Resources toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages);
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsSrm(Collection<ExternalItem> sources, List<String> selectedLanguages);
+    public ResourceStatisticalResourceBase toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages);
+    public void toResourceExternalItemSrm(ExternalItem source, ResourceStatisticalResourceBase target, List<String> selectedLanguages);
+    public ResourceStatisticalResourceBase toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages);
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages);
     public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException;
 
     public RestException buildRestException(String message);

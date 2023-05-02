@@ -14,9 +14,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
-import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
-import org.siemac.metamac.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
@@ -43,7 +41,9 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collecti
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CollectionNode;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CollectionNodes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Table;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
@@ -159,7 +159,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     }
 
     @Override
-    public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
+    public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -169,7 +169,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
 
-        Resource target = new Resource();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         target.setId(source.getCode());
         target.setUrn(toCollectionUrn(source.getMaintainerNestedCode(), source.getCode()));
         target.setKind(StatisticalResourcesRestExternalConstants.KIND_COLLECTION);
@@ -198,13 +198,13 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         return target;
     }
 
-    private Resource toCollectionReplaces(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toCollectionReplaces(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         // There is no need to check if the replaced resource is published. The "replaces" metadata is always filled with a published collection.
         RelatedResource replaces = source.getSiemacMetadataStatisticalResource().getReplaces();;
         return commonDo2RestMapper.toResource(replaces, selectedLanguages);
     }
 
-    private Resource toCollectionIsReplacedBy(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toCollectionIsReplacedBy(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         RelatedResourceResult relatedResourceReplacesBy = null;
 
         if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
@@ -215,7 +215,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         return toResource(relatedResourceReplacesBy, selectedLanguages);
     }
 
-    private Resources toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourcesStatisticalResourceBase toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResource> hasPart = null;
         List<String> urls = new ArrayList<String>();
 
@@ -228,8 +228,8 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         }
         urls = PublicationsUtils.computeUrlsHasPart(source);
 
-        Resources resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
-        Resources urlResources = commonDo2RestMapper.toUrlResources(urls);
+        ResourcesStatisticalResourceBase resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        ResourcesStatisticalResourceBase urlResources = commonDo2RestMapper.toUrlResources(urls);
         if (urlResources != null && !urlResources.getResources().isEmpty()) {
             resources.getResources().addAll(urlResources.getResources());
             resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
@@ -311,11 +311,11 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     }
 
     @Override
-    public Resource toResource(String url, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResource(String url, List<String> selectedLanguages) {
         if (url == null) {
             return null;
         }
-        Resource target = new Resource();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         target.setVisualizerHtmlLink(url);
         target.setKind(StatisticalResourcesRestExternalConstants.KIND_URL);
         return target;
