@@ -7,8 +7,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=N0lbPyBB7g&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
-        <cdomain:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=ms3O4LVMTx/collections/collection;id=agency1:collection1(01.000)</cdomain:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=UyFFdCSVPO&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=YyMw0H28xr/collections/collection;id=agency1:collection1(01.000)</ns2:managementAppLink>
     </ns2:collection>
     <ns2:collection kind="statisticalResources#collection">
         <cdomain:id>collection1</cdomain:id>
@@ -17,8 +17,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=jJGdwKnt89&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
-        <cdomain:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=ZDaSknprtY/collections/collection;id=agency1:collection1(02.000)</cdomain:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=Ntj9DBi7N0&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=rpK9YvNQlw/collections/collection;id=agency1:collection1(02.000)</ns2:managementAppLink>
     </ns2:collection>
     <ns2:collection kind="statisticalResources#collection">
         <cdomain:id>collection1</cdomain:id>
@@ -27,8 +27,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=mbApRMHDQu&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
-        <cdomain:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=1aq8FyvstT/collections/collection;id=agency2:collection1(01.000)</cdomain:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=R7eHidllu1&amp;resourceId=collection1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=TbzjNhxZve/collections/collection;id=agency2:collection1(01.000)</ns2:managementAppLink>
     </ns2:collection>
     <ns2:collection kind="statisticalResources#collection">
         <cdomain:id>collection2</cdomain:id>
@@ -37,7 +37,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-collection2 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=t5C23MGXRC&amp;resourceId=collection2</cdomain:visualizerHtmlLink>
-        <cdomain:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=svGSdIGifn/collections/collection;id=agency1:collection2(01.000)</cdomain:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=08atnRmMqP&amp;resourceId=collection2</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=w4vD5xYbYF/collections/collection;id=agency1:collection2(01.000)</ns2:managementAppLink>
     </ns2:collection>
 </ns2:collections>

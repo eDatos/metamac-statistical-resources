@@ -8,15 +8,15 @@
         <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
     </ns3:name>
     <ns3:description>
-        <cdomain:text xml:lang="es">description-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-8UYM0ltYFc_000001 en Espanol</cdomain:text>
     </ns3:description>
     <ns3:keywords>
-        <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">keyword1 keyword2 keyword3-8UYM0ltYFc_000001 en Espanol</cdomain:text>
     </ns3:keywords>
     <ns3:selectedLanguages total="1">
         <ns3:language>es</ns3:language>
     </ns3:selectedLanguages>
-    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=bESbFVzMVX&amp;resourceId=dataset1&amp;version=01.000</ns3:visualizerHtmlLink>
+    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=OpbuVp7c3T&amp;resourceId=dataset1&amp;version=01.000</ns3:visualizerHtmlLink>
     <ns3:metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:DatasetMetadata">
         <ns3:language kind="structuralResources#code">
             <cdomain:id>language01</cdomain:id>
@@ -27,51 +27,51 @@
             </cdomain:name>
         </ns3:language>
         <ns3:languages total="2">
-            <cdomain:resource kind="structuralResources#code">
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>language01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).language01</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/language01"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-language01 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>language02</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).language02</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/language02"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-language02 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:languages>
         <ns3:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>YzAQ0I2ID8</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=YzAQ0I2ID8</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/YzAQ0I2ID8"/>
+            <cdomain:id>8UYM0ltYFc</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=8UYM0ltYFc</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/8UYM0ltYFc"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Tn2JaF3RSI en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:statisticalOperation>
         <ns3:statisticalOperationInstances total="2">
-            <cdomain:resource kind="statisticalOperations#instance">
+            <ns3:resource kind="statisticalOperations#instance">
                 <cdomain:id>instance01</cdomain:id>
                 <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Instance=instance01.instance01</cdomain:urn>
                 <cdomain:selfLink kind="statisticalOperations#instance" href="http://data.istac.es/apis/operations/latest/instance01"/>
-            </cdomain:resource>
-            <cdomain:resource kind="statisticalOperations#instance">
+            </ns3:resource>
+            <ns3:resource kind="statisticalOperations#instance">
                 <cdomain:id>instance02</cdomain:id>
                 <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Instance=instance02.instance02</cdomain:urn>
                 <cdomain:selfLink kind="statisticalOperations#instance" href="http://data.istac.es/apis/operations/latest/instance02"/>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:statisticalOperationInstances>
         <ns3:subtitle>
-            <cdomain:text xml:lang="es">subtitle-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">subtitle-8UYM0ltYFc_000001 en Espanol</cdomain:text>
         </ns3:subtitle>
         <ns3:titleAlternative>
-            <cdomain:text xml:lang="es">titleAlternative-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">titleAlternative-8UYM0ltYFc_000001 en Espanol</cdomain:text>
         </ns3:titleAlternative>
         <ns3:abstract>
-            <cdomain:text xml:lang="es">abstract-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">abstract-8UYM0ltYFc_000001 en Espanol</cdomain:text>
         </ns3:abstract>
         <ns3:type>DATASET</ns3:type>
         <ns3:creator kind="structuralResources#organisationUnit">
@@ -83,94 +83,94 @@
             </cdomain:name>
         </ns3:creator>
         <ns3:contributors total="2">
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>contributor01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).contributor01</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/contributor01"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-contributor01 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>contributor02</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).contributor02</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/contributor02"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-contributor02 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:contributors>
         <ns3:createdDate>2012-01-02T03:04:05Z</ns3:createdDate>
         <ns3:lastUpdate>2013-01-02T03:04:05Z</ns3:lastUpdate>
         <ns3:conformsTo>
-            <cdomain:text xml:lang="es">conformsTo-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">conformsTo-8UYM0ltYFc_000001 en Espanol</cdomain:text>
         </ns3:conformsTo>
         <ns3:publishers total="2">
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>publisher01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisher01</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/publisher01"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-publisher01 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>publisher02</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisher02</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/publisher02"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-publisher02 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:publishers>
         <ns3:publisherContributors total="2">
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>publisherContributor01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisherContributor01</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/publisherContributor01"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-publisherContributor01 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>publisherContributor02</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisherContributor02</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/publisherContributor02"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-publisherContributor02 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:publisherContributors>
         <ns3:mediators total="2">
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>mediator01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).mediator01</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/mediator01"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-mediator01 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#organisationUnit">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#organisationUnit">
                 <cdomain:id>mediator02</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).mediator02</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#organisationUnit" href="http://data.istac.es/apis/srm/latest/mediator02"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-mediator02 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:mediators>
         <ns3:newnessUntilDate>2013-09-02T15:04:05+01:00</ns3:newnessUntilDate>
-        <ns3:replaces kind="statisticalResources#dataset">
+        <ns3:replaces xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>replace01</cdomain:id>
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:replace01(01.000)</cdomain:urn>
             <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/replace01/01.000"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-replace01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=KsVD7J9BP6&amp;resourceId=replace01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=CFjakqnTeZ&amp;resourceId=replace01&amp;version=01.000</cdomain:visualizerHtmlLink>
         </ns3:replaces>
         <ns3:isPartOf total="2">
-            <cdomain:resource kind="statisticalResources#collection">
+            <ns3:resource kind="statisticalResources#collection">
                 <cdomain:id>isPartOf01</cdomain:id>
                 <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf01</cdomain:urn>
                 <cdomain:selfLink kind="statisticalResources#collection" href="http://data.istac.es/apis/statistical-resources/v1.0/collections/agency01/isPartOf01"/>
@@ -178,8 +178,8 @@
                     <cdomain:text xml:lang="es">título isPartOf01</cdomain:text>
                 </cdomain:name>
                 <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=agency01&amp;resourceId=isPartOf01</cdomain:visualizerHtmlLink>
-            </cdomain:resource>
-            <cdomain:resource kind="statisticalResources#collection">
+            </ns3:resource>
+            <ns3:resource kind="statisticalResources#collection">
                 <cdomain:id>isPartOf02</cdomain:id>
                 <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf02</cdomain:urn>
                 <cdomain:selfLink kind="statisticalResources#collection" href="http://data.istac.es/apis/statistical-resources/v1.0/collections/agency01/isPartOf02"/>
@@ -187,7 +187,7 @@
                     <cdomain:text xml:lang="es">título isPartOf02</cdomain:text>
                 </cdomain:name>
                 <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=agency01&amp;resourceId=isPartOf02</cdomain:visualizerHtmlLink>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:isPartOf>
         <ns3:rightsHolder kind="structuralResources#agency">
             <cdomain:id>AGENCIES</cdomain:id>
@@ -215,15 +215,15 @@
             <cdomain:text xml:lang="es">license en Español</cdomain:text>
         </ns3:license>
         <ns3:accessRights>
-            <cdomain:text xml:lang="es">accessRights-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">accessRights-8UYM0ltYFc_000001 en Espanol</cdomain:text>
         </ns3:accessRights>
         <ns3:maintainer kind="structuralResources#agency">
-            <cdomain:id>bESbFVzMVX</cdomain:id>
+            <cdomain:id>OpbuVp7c3T</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).bESbFVzMVX</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/bESbFVzMVX"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).OpbuVp7c3T</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/OpbuVp7c3T"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-bESbFVzMVX en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-OpbuVp7c3T en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:maintainer>
         <ns3:version>01.000</ns3:version>
@@ -238,132 +238,132 @@
         <ns3:validTo>2013-02-16T14:04:12Z</ns3:validTo>
         <ns3:nextVersion>NO_UPDATES</ns3:nextVersion>
         <ns3:dataProviders total="2">
-            <cdomain:resource kind="structuralResources#dataProvider">
+            <ns3:resource kind="structuralResources#dataProvider">
                 <cdomain:id>dataProvider01</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.DataProvider=MaintainerMock:DataProviderSchemeMock(1.0).dataProvider01</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#dataProvider" href="http://data.istac.es/apis/srm/latest/dataProvider01"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-dataProvider01 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#dataProvider">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#dataProvider">
                 <cdomain:id>dataProvider02</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.DataProvider=MaintainerMock:DataProviderSchemeMock(1.0).dataProvider02</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#dataProvider" href="http://data.istac.es/apis/srm/latest/dataProvider02"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-dataProvider02 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:dataProviders>
         <ns3:dataProviderAnnotations>
-            <cdomain:text xml:lang="es">dataProviderAnnotations-YzAQ0I2ID8_000001 en Espanol</cdomain:text>
+            <cdomain:text xml:lang="es">dataProviderAnnotations-8UYM0ltYFc_000001 en Espanol</cdomain:text>
         </ns3:dataProviderAnnotations>
         <ns3:isRequiredBy total="2"/>
         <ns3:geographicCoverages total="13">
-            <cdomain:resource kind="structuralResources#code">
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>santa-cruz-tenerife</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).santa-cruz-tenerife</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/santa-cruz-tenerife"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-santa-cruz-tenerife en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>tenerife</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).tenerife</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/tenerife"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-tenerife en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>la-laguna</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).la-laguna</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/la-laguna"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-la-laguna en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>santa-cruz</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).santa-cruz</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/santa-cruz"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-santa-cruz en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>la-palma</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).la-palma</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/la-palma"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-la-palma en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>santa-cruz-la-palma</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).santa-cruz-la-palma</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/santa-cruz-la-palma"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-santa-cruz-la-palma en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>los-llanos-de-aridane</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).los-llanos-de-aridane</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/los-llanos-de-aridane"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-los-llanos-de-aridane en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>la-gomera</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).la-gomera</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/la-gomera"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-la-gomera en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>el-hierro</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).el-hierro</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/el-hierro"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-el-hierro en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>las-palmas-gran-canaria</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).las-palmas-gran-canaria</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/las-palmas-gran-canaria"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-las-palmas-gran-canaria en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>gran-canaria</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).gran-canaria</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/gran-canaria"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-gran-canaria en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>fuerteventura</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).fuerteventura</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/fuerteventura"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-fuerteventura en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>lanzarote</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).lanzarote</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/lanzarote"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-lanzarote en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:geographicCoverages>
         <ns3:temporalCoverages total="4">
             <cdomain:item>
@@ -392,58 +392,58 @@
             </cdomain:item>
         </ns3:temporalCoverages>
         <ns3:measureCoverages total="2">
-            <cdomain:resource kind="structuralResources#code">
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>code-d2-1</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).code-d2-1</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/code-d2-1"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-code-d2-1 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>code-d2-2</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).code-d2-2</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/code-d2-2"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-code-d2-2 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:measureCoverages>
         <ns3:geographicGranularities total="2">
-            <cdomain:resource kind="structuralResources#code">
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>municipalities</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).municipalities</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/municipalities"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-municipalities en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>countries</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).countries</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/countries"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-countries en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:geographicGranularities>
         <ns3:temporalGranularities total="2">
-            <cdomain:resource kind="structuralResources#code">
-                <cdomain:id>yearly</cdomain:id>
-                <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).yearly</cdomain:urn>
-                <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/yearly"/>
-                <cdomain:name>
-                    <cdomain:text xml:lang="es">title-yearly en Espanol</cdomain:text>
-                </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#code">
+            <ns3:resource kind="structuralResources#code">
                 <cdomain:id>monthly</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).monthly</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/monthly"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-monthly en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#code">
+                <cdomain:id>yearly</cdomain:id>
+                <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).yearly</cdomain:urn>
+                <cdomain:selfLink kind="structuralResources#code" href="http://data.istac.es/apis/srm/latest/yearly"/>
+                <cdomain:name>
+                    <cdomain:text xml:lang="es">title-yearly en Espanol</cdomain:text>
+                </cdomain:name>
+            </ns3:resource>
         </ns3:temporalGranularities>
         <ns3:dateStart>
             <cdomain:text xml:lang="es">2013-01-02</cdomain:text>
@@ -452,33 +452,33 @@
             <cdomain:text xml:lang="es">2013-03-05</cdomain:text>
         </ns3:dateEnd>
         <ns3:statisticalUnit total="3">
-            <cdomain:resource kind="structuralResources#concept">
+            <ns3:resource kind="structuralResources#concept">
                 <cdomain:id>statisticalUnit1</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=MaintainerMock:ConceptSchemeMock(1.0).statisticalUnit1</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#concept" href="http://data.istac.es/apis/srm/latest/statisticalUnit1"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-statisticalUnit1 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#concept">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#concept">
                 <cdomain:id>statisticalUnit2</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=MaintainerMock:ConceptSchemeMock(1.0).statisticalUnit2</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#concept" href="http://data.istac.es/apis/srm/latest/statisticalUnit2"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-statisticalUnit2 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#concept">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#concept">
                 <cdomain:id>statisticalUnit3</cdomain:id>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=MaintainerMock:ConceptSchemeMock(1.0).statisticalUnit3</cdomain:urn>
                 <cdomain:selfLink kind="structuralResources#concept" href="http://data.istac.es/apis/srm/latest/statisticalUnit3"/>
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-statisticalUnit3 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:statisticalUnit>
         <ns3:subjectAreas total="2">
-            <cdomain:resource kind="structuralResources#category">
+            <ns3:resource kind="structuralResources#category">
                 <cdomain:id>category01</cdomain:id>
                 <cdomain:nestedId>category01</cdomain:nestedId>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=MaintainerMock:CategorySchemeMock(1.0).category01</cdomain:urn>
@@ -486,8 +486,8 @@
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-category01 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
-            <cdomain:resource kind="structuralResources#category">
+            </ns3:resource>
+            <ns3:resource kind="structuralResources#category">
                 <cdomain:id>category02</cdomain:id>
                 <cdomain:nestedId>category02</cdomain:nestedId>
                 <cdomain:urn>urn:sdmx:org.sdmx.infomodel.categoryscheme.Category=MaintainerMock:CategorySchemeMock(1.0).category02</cdomain:urn>
@@ -495,7 +495,7 @@
                 <cdomain:name>
                     <cdomain:text xml:lang="es">title-category02 en Espanol</cdomain:text>
                 </cdomain:name>
-            </cdomain:resource>
+            </ns3:resource>
         </ns3:subjectAreas>
         <ns3:relatedDsd kind="structuralResources#dataStructure">
             <cdomain:id>DSD01</cdomain:id>

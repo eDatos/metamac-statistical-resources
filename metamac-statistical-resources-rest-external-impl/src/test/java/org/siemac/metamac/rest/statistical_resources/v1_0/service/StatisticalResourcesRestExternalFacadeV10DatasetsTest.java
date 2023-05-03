@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -44,6 +45,60 @@ public class StatisticalResourcesRestExternalFacadeV10DatasetsTest extends Stati
         String requestUri = getFindDatasetsUri(AGENCY_1, DATASET_1_CODE, null, null, null, "es");
         InputStream responseExpected = StatisticalResourcesRestExternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/findDatasets.xml");
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
+
+    @Test
+    public void testRetrieveDatasetTsv() throws Exception {
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        InputStream responseExpected = StatisticalResourcesRestExternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDatasetTsv.tsv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/tab-separated-values", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testRetrieveDatasetTsvDataCheck() throws Exception {
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        List<String> lines = getResponse(requestUri, "text/tab-separated-values");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals(
+                "GEO_DIM#language01\tGEO_DIM#language02\tGEO_DIM#es\tGEO_DIM_CODE\tTIME_PERIOD#language01\tTIME_PERIOD#language02\tTIME_PERIOD#es\tTIME_PERIOD_CODE\tmeasure01#language01\tmeasure01#language02\tmeasure01#es\tmeasure01_CODE\tdim01#language01\tdim01#language02\tdim01#es\tdim01_CODE\tOBS_VALUE\tat10\tat11",
+                iterator.next());
+        assertTrue(lines.contains(
+                "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept01 en Español\tmeasure01-conceptScheme01-concept01\t\t\tdim01-codelist01-code01 en Español\tdim01-codelist01-code01\t1\tValue 1\tValue 5"));
+        assertTrue(lines.contains(
+                "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept01 en Español\tmeasure01-conceptScheme01-concept01\t\t\tdim01-codelist01-code03 en Español\tdim01-codelist01-code03\t2\tValue 2\t"));
+
+    }
+
+    @Test
+    public void testRetrieveDatasetCsv() throws Exception {
+
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        InputStream responseExpected = StatisticalResourcesRestExternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDatasetCsv.csv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/csv", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testRetrieveDatasetCsvDataCheck() throws Exception {
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        List<String> lines = getResponse(requestUri, "text/csv");
+
+        Iterator<String> iterator = lines.iterator();
+
+        assertEquals(
+                "GEO_DIM#language01,GEO_DIM#language02,GEO_DIM#es,GEO_DIM_CODE,TIME_PERIOD#language01,TIME_PERIOD#language02,TIME_PERIOD#es,TIME_PERIOD_CODE,measure01#language01,measure01#language02,measure01#es,measure01_CODE,dim01#language01,dim01#language02,dim01#es,dim01_CODE,OBS_VALUE,at10,at11",
+                iterator.next());
+        assertTrue(lines.contains(
+                ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept01 en Español,measure01-conceptScheme01-concept01,,,dim01-codelist01-code01 en Español,dim01-codelist01-code01,1,Value 1,Value 5"));
+        assertTrue(lines.contains(
+                ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept01 en Español,measure01-conceptScheme01-concept01,,,dim01-codelist01-code03 en Español,dim01-codelist01-code03,2,Value 2,"));
     }
 
     @Test
