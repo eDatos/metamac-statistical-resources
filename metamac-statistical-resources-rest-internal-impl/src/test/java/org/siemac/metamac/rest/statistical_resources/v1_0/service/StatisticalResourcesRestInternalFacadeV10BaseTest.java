@@ -28,9 +28,7 @@ import static org.siemac.metamac.rest.statistical_resources.constants.RestTestCo
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.VERSION_1;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.VERSION_2;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1129,22 +1127,5 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
                         }
                     };
                 });
-    }
-
-    protected List<String> getResponse(String requestUri, String mediaType) throws Exception {
-        WebClient webClient = WebClient.create(requestUri).accept(mediaType);
-        Response response = webClient.get();
-
-        InputStream responseActual = (InputStream) response.getEntity();
-        BufferedReader br = new BufferedReader(new InputStreamReader(responseActual, "UTF-8"));
-
-        List<String> lines = new ArrayList<String>();
-        String line = null;
-        while ((line = br.readLine()) != null) {
-            System.out.println(line.replaceAll("\t", "\\\\t"));
-            lines.add(line);
-        }
-
-        return lines;
     }
 }

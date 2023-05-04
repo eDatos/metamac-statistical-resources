@@ -137,6 +137,13 @@
 					<scope>test</scope>
 				</dependency>
 				<dependency>
+					<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+					<artifactId>metamac-statistical-resources-rest-common-impl</artifactId>
+					<type>test-jar</type>
+					<version>${metamac-statistical-resources-rest-common-impl.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
 					<groupId>org.siemac.metamac</groupId>
 					<artifactId>metamac-core-common</artifactId>
 					<version>${metamac-core-common.version}</version>
