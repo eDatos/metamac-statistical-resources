@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 			<artifactId>metamac-statistical-resources-rest-common-impl</artifactId>
-			<version>${metamac-statistical-resources-rest-common-impl.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
@@ -140,7 +140,7 @@
 					<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 					<artifactId>metamac-statistical-resources-rest-common-impl</artifactId>
 					<type>test-jar</type>
-					<version>${metamac-statistical-resources-rest-common-impl.version}</version>
+					<version>${project.version}</version>
 					<scope>test</scope>
 				</dependency>
 				<dependency>
