@@ -85,17 +85,19 @@ public class RestMapper {
                 externalItem.setCodeNested(externalAvro.getCodeNested());
 
                 try {
-                    
+
                     if (externalAvro.getUrn() == null) {
-                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn()));
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(),
+                                jaxiDatasetVersionAvro.getUrn()));
                         continue;
                     }
-                    
+
                     VariableElement variableElement = srmRestInternalService.retrieveVariableElement(externalAvro.getUrn());
-                    externalItem.setUri(variableElement.getSelfLink().getHref());
-                    externalItem.setManagementAppUrl(variableElement.getManagementAppLink());
+                    externalItem.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(externalItemType, variableElement.getSelfLink().getHref()));
+                    externalItem.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(externalItemType, variableElement.getManagementAppLink()));
                 } catch (Exception e) {
-                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(), jaxiDatasetVersionAvro.getUrn()));
+                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(),
+                            jaxiDatasetVersionAvro.getUrn()));
                 }
 
                 externalItem.setUrn(externalAvro.getUrn());
@@ -106,7 +108,7 @@ public class RestMapper {
 
         return externalItems;
     }
-    
+
     public ExternalItem buildExternalItemFromResourceInternal(ResourceInternal resource) throws MetamacException {
         ExternalItem externalItem = new ExternalItem();
         TypeExternalArtefactsEnum type = TypeExternalArtefactsEnum.fromValue(resource.getKind());
@@ -141,7 +143,7 @@ public class RestMapper {
         }
         return result;
     }
-    
+
     public InternationalString getInternationalStringFromInternationalStringResource(org.siemac.metamac.rest.common.v1_0.domain.InternationalString intString) {
         InternationalString result = new InternationalString();
         for (org.siemac.metamac.rest.common.v1_0.domain.LocalisedString text : intString.getTexts()) {
@@ -187,7 +189,7 @@ public class RestMapper {
 
         return resourceInternal;
     }
-    
+
     public org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal generateResourceInternal(QueryVersion resource) {
         org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal resourceInternal = new org.siemac.metamac.rest.notices.v1_0.domain.ResourceInternal();
 
