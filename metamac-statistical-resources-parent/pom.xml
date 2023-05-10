@@ -12,7 +12,7 @@
 
 	<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 	<artifactId>metamac-statistical-resources-parent</artifactId>
-	<version>7.0.1-SNAPSHOT</version>
+	<version>7.0.1</version>
 	<packaging>pom</packaging>
 	<name>METAMAC :: STATISTICAL RESOURCES :: PARENT</name>
 	<description>METAMAC :: STATISTICAL RESOURCES :: PARENT</description>
@@ -82,4 +82,8 @@
 			</plugins>
 		</pluginManagement>
 	</build>
+
+  <scm>
+    <tag>20230510-1352-v7.0.1</tag>
+  </scm>
 </project>
