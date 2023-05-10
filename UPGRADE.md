@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 6.0.0 a 7.0.0-SNAPSHOT
+## 6.0.0 a 7.0.0
 * **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
   devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
   la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
