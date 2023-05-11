@@ -17,6 +17,9 @@
   la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
   de aplicaciones de eDatos que consuman la API de statistical-resources a través de JAX-RS.
 
+Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS debido a que se añade un nuevo campo visualizerHtmlLink
+******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+
 La tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
 Se cambiará la tabla. Y luego habrá que lanzar la actualización de toda la caché para cargar todos los datos de nuevo.
 La manera de actualizar la caché es como hasta ahora:
