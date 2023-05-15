@@ -7,7 +7,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=BArHZbxR1j&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=swjyg9VkkY&amp;resourceId=dataset1&amp;version=01.000</cdomain:visualizerHtmlLink>
     </stat:dataset>
     <stat:dataset kind="statisticalResources#dataset">
         <cdomain:id>dataset1</cdomain:id>
@@ -16,7 +16,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=wGVtcLMVFX&amp;resourceId=dataset1&amp;version=02.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=1LPFb9YiaN&amp;resourceId=dataset1&amp;version=02.000</cdomain:visualizerHtmlLink>
     </stat:dataset>
     <stat:dataset kind="statisticalResources#dataset">
         <cdomain:id>dataset1</cdomain:id>
@@ -25,7 +25,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=tH9apXErVj&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=iLoKv5RJRK&amp;resourceId=dataset1&amp;version=01.000</cdomain:visualizerHtmlLink>
     </stat:dataset>
     <stat:dataset kind="statisticalResources#dataset">
         <cdomain:id>dataset2</cdomain:id>
@@ -34,6 +34,6 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset2 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=h092OW1l7D&amp;resourceId=dataset2&amp;version=01.000#</cdomain:visualizerHtmlLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=mYvG2RBcfG&amp;resourceId=dataset2&amp;version=01.000</cdomain:visualizerHtmlLink>
     </stat:dataset>
 </stat:datasets>

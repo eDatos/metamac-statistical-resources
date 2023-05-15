@@ -7,8 +7,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=QSHcycjiHE&amp;resourceId=query1#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=fUzYIitgFE/queries/query;id=agency1:query1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=zndQ3AV0qJ&amp;resourceId=query1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=2srknMPwKF/queries/query;id=agency1:query1(01.000)</ns2:managementAppLink>
     </ns2:query>
     <ns2:query kind="statisticalResources#query">
         <cdomain:id>query1</cdomain:id>
@@ -17,8 +17,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=j2FQIMsf92&amp;resourceId=query1#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=J5U8oaybHf/queries/query;id=agency1:query1(02.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=DuS5fHPNIP&amp;resourceId=query1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=fN2MskUnWh/queries/query;id=agency1:query1(02.000)</ns2:managementAppLink>
     </ns2:query>
     <ns2:query kind="statisticalResources#query">
         <cdomain:id>query1</cdomain:id>
@@ -27,8 +27,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=LdKpY1TU5q&amp;resourceId=query1#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=0MrETGGkII/queries/query;id=agency2:query1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=aBbtV8P7XG&amp;resourceId=query1</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=SwvEUnxT1L/queries/query;id=agency2:query1(01.000)</ns2:managementAppLink>
     </ns2:query>
     <ns2:query kind="statisticalResources#query">
         <cdomain:id>query2</cdomain:id>
@@ -37,7 +37,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-query2 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=4LpojvtTnz&amp;resourceId=query2#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=wXHBsfhRuK/queries/query;id=agency1:query2(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=add4JtisM2&amp;resourceId=query2</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=HEKUzYpt5K/queries/query;id=agency1:query2(01.000)</ns2:managementAppLink>
     </ns2:query>
 </ns2:queries>
