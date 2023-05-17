@@ -7,12 +7,12 @@ import static org.quartz.TriggerBuilder.newTrigger;
 import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnByDots;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForDatabaseImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForDuplicationResource;
-import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationAttributes;
+import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationResource;
+import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationAttributes;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateExternalGeocoverageCache;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeocoverageCache;
-import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationAttributes;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -76,6 +76,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimensi
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
+import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -233,6 +234,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     StreamConsumerServiceFacade                   streamConsumerServiceFacade;
+
+    @Autowired
+    @Qualifier("commonDto2DoMapper")
+    private CommonDto2DoMapper                    dto2DoMapper;
 
     private SchedulerFactory                      schedulerFactory                             = null;
 
@@ -513,19 +518,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return jobBuilder.requestRecovery().build();
     }
 
-    private JobDetail createImportAttributesJob(ServiceContext serviceContext, JobKey jobKey, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats, TaskInfoDataset taskInfoDataset, String taskName) {
-        JobBuilder jobBuilder = 
-                newJob().withIdentity(jobKey)
-                .usingJobData(ImportAttributesJob.FILE_PATHS, filePaths.toString())
-                .usingJobData(ImportAttributesJob.FILE_FORMATS, fileFormats.toString())
-                .usingJobData(ImportAttributesJob.FILE_NAMES, fileNames.toString())
-                .usingJobData(ImportAttributesJob.DATASET_URN, taskInfoDataset.getDatasetUrn())
-                .usingJobData(ImportAttributesJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId())
-                .usingJobData(ImportAttributesJob.TASK_NAME, taskName)
-                .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId())
-                .usingJobData(AbstractImportDatasetJob.DATA_STRUCTURE_URN, taskInfoDataset.getDataStructureUrn());
-        
-                jobBuilder.ofType(ImportAttributesJob.class);
+    private JobDetail createImportAttributesJob(ServiceContext serviceContext, JobKey jobKey, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats,
+            TaskInfoDataset taskInfoDataset, String taskName) {
+        JobBuilder jobBuilder = newJob().withIdentity(jobKey).usingJobData(ImportAttributesJob.FILE_PATHS, filePaths.toString()).usingJobData(ImportAttributesJob.FILE_FORMATS, fileFormats.toString())
+                .usingJobData(ImportAttributesJob.FILE_NAMES, fileNames.toString()).usingJobData(ImportAttributesJob.DATASET_URN, taskInfoDataset.getDatasetUrn())
+                .usingJobData(ImportAttributesJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId()).usingJobData(ImportAttributesJob.TASK_NAME, taskName)
+                .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId()).usingJobData(AbstractImportDatasetJob.DATA_STRUCTURE_URN, taskInfoDataset.getDataStructureUrn());
+
+        jobBuilder.ofType(ImportAttributesJob.class);
 
         return jobBuilder.requestRecovery().build();
     }
@@ -569,7 +569,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public String planifyRecoveryImportAttributes(ServiceContext ctx, TaskInfoDataset taskInfoDataset, Boolean notifyToUser) throws MetamacException {
-     // Validation
+        // Validation
         taskServiceInvocationValidator.checkPlanifyRecoveryImportDataset(ctx, taskInfoDataset, notifyToUser);
 
         String datasetUrn = taskInfoDataset.getDatasetUrn();
@@ -979,7 +979,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
                     DatabaseDatasetImportUtils.setRequiredMetadataForDatabaseDatasetImportation(datasetVersion);
                 } else {
-                    DatasetImportUtils.setRequiredMetadataForDatasetImportation(datasetVersion, taskInfoDataset, srmRestInternalService);
+                    DatasetImportUtils.setRequiredMetadataForDatasetImportation(datasetVersion, taskInfoDataset, srmRestInternalService, dto2DoMapper);
                 }
 
                 // It's necessary to save the new metadata of the dataset before continuing transiting it through the life cycle
@@ -1235,7 +1235,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         markTaskAsFinished(ctx, jobKey);
     }
-    
+
     private void markTaskAsFinishedInTransaction(ServiceContext ctx, String jobKey) {
         logger.debug("Marking  task as finished {}", jobKey);
 

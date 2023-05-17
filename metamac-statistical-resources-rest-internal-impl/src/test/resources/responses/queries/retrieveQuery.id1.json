@@ -1,1294 +1,1294 @@
 {
-    "id": "query1",
-    "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1",
-    "selfLink": {
-        "kind": "statisticalResources#query",
-        "href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1/query1"
-    },
-    "parentLink": {
-        "kind": "statisticalResources#queries",
-        "href": "http://data.istac.es/apis/statistical-resources/v1.0/queries"
-    },
-    "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=YS8LTeh9J0/queries/query;id=agency1:query1(01.000)",
-    "name": {
-        "text": [
-            {
-                "value": "title-query1 en Espanol",
-                "lang": "es"
-            }
-        ]
-    },
-    "description": {
-        "text": [
-            {
-                "value": "description-resource-SqORkUPVmI en Espanol",
-                "lang": "es"
-            }
-        ]
-    },
-    "selectedLanguages": {
-        "language": [
-            "es"
-        ],
-        "total": 1
-    },
-    "visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=aJxtTnCDrI&resourceId=query1#",
-    "metadata": {
-        "relatedDataset": {
-            "id": "dataset01",
-            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-            "selfLink": {
-                "kind": "statisticalResources#dataset",
-                "href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
-            },
-            "name": {
-                "text": [
-                    {
-                        "value": "title-dataset01 en Espanol",
-                        "lang": "es"
-                    }
-                ]
-            },
-            "visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=Dpj7Iacizx&resourceId=dataset01&version=01.000#",
-            "kind": "statisticalResources#dataset",
-            "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=QL0OMKGy6j/datasets/dataset;id=agency1:dataset01(01.000)"
-        },
-        "relatedDsd": {
-            "heading": {
-                "dimensionId": [
-                    "measure01",
-                    "dim01"
-                ],
-                "total": 2
-            },
-            "stub": {
-                "dimensionId": [
-                    "GEO_DIM",
-                    "TIME_PERIOD"
-                ],
-                "total": 2
-            },
-            "autoOpen": true,
-            "showNullValuesByDefault": true,
-            "showZeroValuesByDefault": true,
-            "showDecimals": 2,
-            "id": "DSD01",
-            "urn": "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=MaintainerMock:DSD01(1.0)",
-            "selfLink": {
-                "kind": "structuralResources#dataStructure",
-                "href": "http://data.istac.es/apis/srm/latest/DSD01"
-            },
-            "name": {
-                "text": [
-                    {
-                        "value": "title-DSD01 en Espanol",
-                        "lang": "es"
-                    }
-                ]
-            },
-            "kind": "structuralResources#dataStructure",
-            "managementAppLink": "http://localhost:8080/metamac-srm-web/DSD01"
-        },
-        "dimensions": {
-            "dimension": [
-                {
-                    "id": "GEO_DIM",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "GEO_DIM-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "type": "GEOGRAPHIC_DIMENSION",
-                    "dimensionValues": {
-                        "value": [
-                            {
-                                "variableElement": {
-                                    "id": "variableElement-santa-cruz-tenerife",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-santa-cruz-tenerife",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-santa-cruz-tenerife"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-santa-cruz-tenerife en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": true,
-                                "id": "santa-cruz-tenerife",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz-tenerife",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/santa-cruz-tenerife"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "santa-cruz-tenerife en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description santa-cruz-tenerife en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz-tenerife",
-                                "variableElement": {
-                                    "id": "variableElement-tenerife",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-tenerife",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-tenerife"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-tenerife en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": false,
-                                "id": "tenerife",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).tenerife",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/tenerife"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "tenerife en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description tenerife en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).tenerife",
-                                "variableElement": {
-                                    "id": "variableElement-la-laguna",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-la-laguna",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-la-laguna"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-la-laguna en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": true,
-                                "id": "la-laguna",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-laguna",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/la-laguna"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "la-laguna en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description la-laguna en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).tenerife",
-                                "variableElement": {
-                                    "id": "variableElement-santa-cruz",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-santa-cruz",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-santa-cruz"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-santa-cruz en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": true,
-                                "id": "santa-cruz",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/santa-cruz"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "santa-cruz en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description santa-cruz en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz-tenerife",
-                                "variableElement": {
-                                    "id": "variableElement-la-palma",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-la-palma",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-la-palma"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-la-palma en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": true,
-                                "id": "la-palma",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-palma",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/la-palma"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "la-palma en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description la-palma en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-palma",
-                                "variableElement": {
-                                    "id": "variableElement-los-llanos-de-aridane",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-los-llanos-de-aridane",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-los-llanos-de-aridane"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-los-llanos-de-aridane en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": true,
-                                "id": "los-llanos-de-aridane",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).los-llanos-de-aridane",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/los-llanos-de-aridane"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "los-llanos-de-aridane en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description los-llanos-de-aridane en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "variableElement": {
-                                    "id": "variableElement-las-palmas-gran-canaria",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-las-palmas-gran-canaria",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-las-palmas-gran-canaria"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-las-palmas-gran-canaria en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": false,
-                                "id": "las-palmas-gran-canaria",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).las-palmas-gran-canaria",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/las-palmas-gran-canaria"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "las-palmas-gran-canaria en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description las-palmas-gran-canaria en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).las-palmas-gran-canaria",
-                                "variableElement": {
-                                    "id": "variableElement-fuerteventura",
-                                    "urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-fuerteventura",
-                                    "selfLink": {
-                                        "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-fuerteventura"
-                                    },
-                                    "name": {
-                                        "text": [
-                                            {
-                                                "value": "variableElement-fuerteventura en Español",
-                                                "lang": "es"
-                                            }
-                                        ]
-                                    },
-                                    "kind": "structuralResources#variableElement"
-                                },
-                                "open": true,
-                                "id": "fuerteventura",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).fuerteventura",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/fuerteventura"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "fuerteventura en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description fuerteventura en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            }
-                        ],
-                        "total": 8
-                    }
-                },
-                {
-                    "id": "TIME_PERIOD",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "TIME_PERIOD-conceptTimeDimension01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "type": "TIME_DIMENSION",
-                    "dimensionValues": {
-                        "value": [
-                            {
-                                "id": "2013",
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "2013",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "temporalGranularity": "YEARLY"
-                            },
-                            {
-                                "id": "2011",
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "2011",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "temporalGranularity": "YEARLY"
-                            }
-                        ],
-                        "total": 2
-                    }
-                },
-                {
-                    "id": "measure01",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "measure01-conceptMeasureDimension01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "type": "MEASURE_DIMENSION",
-                    "dimensionValues": {
-                        "value": [
-                            {
-                                "showDecimalsPrecision": 4,
-                                "measureQuantity": {
-                                    "unitCode": {
-                                        "id": "code01",
-                                        "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).code01",
-                                        "selfLink": {
-                                            "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/codelist01/01.000/codes/code01"
-                                        },
-                                        "name": {
-                                            "text": [
-                                                {
-                                                    "value": "code01 en Español",
-                                                    "lang": "es"
-                                                }
-                                            ]
-                                        },
-                                        "kind": "structuralResources#code"
-                                    }
-                                },
-                                "id": "measure01-conceptScheme01-concept01",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept01",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept01"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "measure01-conceptScheme01-concept01 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description measure01-conceptScheme01-concept01 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#concept"
-                            },
-                            {
-                                "visualisationParent": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept01",
-                                "measureQuantity": {
-                                    "unitCode": {
-                                        "id": "code01",
-                                        "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).code01",
-                                        "selfLink": {
-                                            "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/codelist01/01.000/codes/code01"
-                                        },
-                                        "name": {
-                                            "text": [
-                                                {
-                                                    "value": "code01 en Español",
-                                                    "lang": "es"
-                                                }
-                                            ]
-                                        },
-                                        "kind": "structuralResources#code"
-                                    }
-                                },
-                                "id": "measure01-conceptScheme01-concept02",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept02",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept02"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "measure01-conceptScheme01-concept02 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description measure01-conceptScheme01-concept02 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#concept"
-                            },
-                            {
-                                "showDecimalsPrecision": 1,
-                                "measureQuantity": {
-                                    "unitCode": {
-                                        "id": "code01",
-                                        "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).code01",
-                                        "selfLink": {
-                                            "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/codelist01/01.000/codes/code01"
-                                        },
-                                        "name": {
-                                            "text": [
-                                                {
-                                                    "value": "code01 en Español",
-                                                    "lang": "es"
-                                                }
-                                            ]
-                                        },
-                                        "kind": "structuralResources#code"
-                                    }
-                                },
-                                "id": "measure01-conceptScheme01-concept05",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept05",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept05"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "measure01-conceptScheme01-concept05 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description measure01-conceptScheme01-concept05 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#concept"
-                            }
-                        ],
-                        "total": 3
-                    }
-                },
-                {
-                    "id": "dim01",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "dim01-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "type": "DIMENSION",
-                    "dimensionValues": {
-                        "value": [
-                            {
-                                "open": true,
-                                "id": "dim01-codelist01-code01",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:dim01-codelist01(01.000).dim01-codelist01-code01",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/dim01-codelist01/01.000/codes/dim01-codelist01-code01"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "dim01-codelist01-code01 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "description": {
-                                    "text": [
-                                        {
-                                            "value": "Description dim01-codelist01-code01 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            }
-                        ],
-                        "total": 1
-                    }
-                }
-            ],
-            "total": 4
-        },
-        "attributes": {
-            "attribute": [
-                {
-                    "id": "at1",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at1-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DATASET",
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at2",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at2-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DATASET",
-                    "attributeValues": {
-                        "value": [
-                            {
-                                "id": "A",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).A",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/A"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "A en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            },
-                            {
-                                "id": "C",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).C",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/C"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "C en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#code"
-                            }
-                        ],
-                        "total": 2
-                    },
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at3",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at3-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DIMENSION",
-                    "dimensions": {
-                        "dimension": [
-                            {
-                                "dimensionId": "GEO_DIM"
-                            }
-                        ],
-                        "total": 1
-                    },
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at4",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at4-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DIMENSION",
-                    "dimensions": {
-                        "dimension": [
-                            {
-                                "dimensionId": "GEO_DIM"
-                            },
-                            {
-                                "dimensionId": "dim01"
-                            }
-                        ],
-                        "total": 2
-                    },
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at5",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at5-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DIMENSION",
-                    "dimensions": {
-                        "dimension": [
-                            {
-                                "dimensionId": "GEO_DIM"
-                            },
-                            {
-                                "dimensionId": "TIME_PERIOD"
-                            }
-                        ],
-                        "total": 2
-                    },
-                    "attributeValues": {
-                        "value": [
-                            {
-                                "id": "2013Q1",
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "2013 Primer cuatrimestre",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "id": "2013Q2",
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "2013 Segundo cuatrimestre",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                "id": "2013Q3",
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "2013 Tercer cuatrimestre",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                }
-                            }
-                        ],
-                        "total": 3
-                    },
-                    "type": "TEMPORAL"
-                },
-                {
-                    "id": "at6",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at6-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DIMENSION",
-                    "dimensions": {
-                        "dimension": [
-                            {
-                                "dimensionId": "GEO_DIM"
-                            },
-                            {
-                                "dimensionId": "TIME_PERIOD"
-                            },
-                            {
-                                "dimensionId": "measure01"
-                            }
-                        ],
-                        "total": 3
-                    },
-                    "attributeValues": {
-                        "value": [
-                            {
-                                "id": "1",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).1",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/1"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "1 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#concept"
-                            },
-                            {
-                                "id": "2",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).2",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/2"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "2 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#concept"
-                            },
-                            {
-                                "id": "3",
-                                "urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).3",
-                                "selfLink": {
-                                    "href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/3"
-                                },
-                                "name": {
-                                    "text": [
-                                        {
-                                            "value": "3 en Español",
-                                            "lang": "es"
-                                        }
-                                    ]
-                                },
-                                "kind": "structuralResources#concept"
-                            }
-                        ],
-                        "total": 3
-                    },
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at7",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at7-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DIMENSION",
-                    "dimensions": {
-                        "dimension": [
-                            {
-                                "dimensionId": "GEO_DIM"
-                            },
-                            {
-                                "dimensionId": "TIME_PERIOD"
-                            },
-                            {
-                                "dimensionId": "measure01"
-                            },
-                            {
-                                "dimensionId": "dim01"
-                            }
-                        ],
-                        "total": 4
-                    },
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at8",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at8-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DIMENSION",
-                    "dimensions": {
-                        "dimension": [
-                            {
-                                "dimensionId": "GEO_DIM"
-                            },
-                            {
-                                "dimensionId": "TIME_PERIOD"
-                            }
-                        ],
-                        "total": 2
-                    },
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at9",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at9-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "DIMENSION",
-                    "dimensions": {
-                        "dimension": [
-                            {
-                                "dimensionId": "GEO_DIM"
-                            },
-                            {
-                                "dimensionId": "TIME_PERIOD"
-                            },
-                            {
-                                "dimensionId": "dim01"
-                            }
-                        ],
-                        "total": 3
-                    },
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at10",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at10-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "PRIMARY_MEASURE",
-                    "type": "OTHER"
-                },
-                {
-                    "id": "at11",
-                    "name": {
-                        "text": [
-                            {
-                                "value": "at11-concept01 en Español",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "attachmentLevel": "PRIMARY_MEASURE",
-                    "type": "OTHER"
-                }
-            ],
-            "total": 11
-        },
-        "status": "ACTIVE",
-        "type": "FIXED",
-        "requires": {
-            "id": "dataset01",
-            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-            "selfLink": {
-                "kind": "statisticalResources#dataset",
-                "href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
-            },
-            "name": {
-                "text": [
-                    {
-                        "value": "title-dataset01 en Espanol",
-                        "lang": "es"
-                    }
-                ]
-            },
-            "visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=Dpj7Iacizx&resourceId=dataset01&version=01.000#",
-            "kind": "statisticalResources#dataset",
-            "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=QL0OMKGy6j/datasets/dataset;id=agency1:dataset01(01.000)"
-        },
-        "isPartOf": {
-            "resource": [
-                {
-                    "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:isPartOf01(01.000)",
-                    "id": "isPartOf01",
-                    "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf01",
-                    "selfLink": {
-                        "kind": "statisticalResources#collection",
-                        "href": "http://data.istac.es/apis/statistical-resources/v1.0/collections/agency01/isPartOf01"
-                    },
-                    "name": {
-                        "text": [
-                            {
-                                "value": "título isPartOf01",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf01",
-                    "kind": "statisticalResources#collection"
-                },
-                {
-                    "managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:isPartOf02(01.000)",
-                    "id": "isPartOf02",
-                    "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf02",
-                    "selfLink": {
-                        "kind": "statisticalResources#collection",
-                        "href": "http://data.istac.es/apis/statistical-resources/v1.0/collections/agency01/isPartOf02"
-                    },
-                    "name": {
-                        "text": [
-                            {
-                                "value": "título isPartOf02",
-                                "lang": "es"
-                            }
-                        ]
-                    },
-                    "visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf02",
-                    "kind": "statisticalResources#collection"
-                }
-            ],
-            "total": 2
-        },
-        "statisticalOperation": {
-            "managementAppLink": "http://localhost:8080/statistical-operations-internal/YS8LTeh9J0",
-            "id": "YS8LTeh9J0",
-            "urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=YS8LTeh9J0",
-            "selfLink": {
-                "kind": "statisticalOperations#operation",
-                "href": "http://data.istac.es/apis/operations/latest/YS8LTeh9J0"
-            },
-            "name": {
-                "text": [
-                    {
-                        "value": "title-Txej5iXw9K en Espanol",
-                        "lang": "es"
-                    }
-                ]
-            },
-            "kind": "statisticalOperations#operation"
-        },
-        "maintainer": {
-            "managementAppLink": "http://localhost:8080/metamac-srm-web/aJxtTnCDrI",
-            "id": "aJxtTnCDrI",
-            "nestedId": "agency1",
-            "urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).aJxtTnCDrI",
-            "selfLink": {
-                "kind": "structuralResources#agency",
-                "href": "http://data.istac.es/apis/srm/latest/aJxtTnCDrI"
-            },
-            "name": {
-                "text": [
-                    {
-                        "value": "title-aJxtTnCDrI en Espanol",
-                        "lang": "es"
-                    }
-                ]
-            },
-            "kind": "structuralResources#agency"
-        },
-        "validFrom": "2013-01-01T03:04:12Z",
-        "validTo": "2013-02-16T14:04:12Z",
-        "procStatus": "DRAFT",
-        "creationDate": "2013-06-20T20:00:20.021+01:00",
-        "creationUser": "creationUser",
-        "productionValidationDate": "2013-06-20T20:00:20.021+01:00",
-        "publicationDate": "2013-01-01T03:04:13Z"
-    },
-    "data": {
-        "dimensions": {
-            "dimension": [
-                {
-                    "dimensionId": "GEO_DIM",
-                    "representations": {
-                        "representation": [
-                            {
-                                "code": "santa-cruz-tenerife",
-                                "index": 0
-                            },
-                            {
-                                "code": "tenerife",
-                                "index": 1
-                            },
-                            {
-                                "code": "la-laguna",
-                                "index": 2
-                            },
-                            {
-                                "code": "santa-cruz",
-                                "index": 3
-                            },
-                            {
-                                "code": "la-palma",
-                                "index": 4
-                            },
-                            {
-                                "code": "los-llanos-de-aridane",
-                                "index": 5
-                            },
-                            {
-                                "code": "las-palmas-gran-canaria",
-                                "index": 6
-                            },
-                            {
-                                "code": "fuerteventura",
-                                "index": 7
-                            }
-                        ],
-                        "total": 8
-                    }
-                },
-                {
-                    "dimensionId": "TIME_PERIOD",
-                    "representations": {
-                        "representation": [
-                            {
-                                "code": "2013",
-                                "index": 0
-                            },
-                            {
-                                "code": "2011",
-                                "index": 1
-                            }
-                        ],
-                        "total": 2
-                    }
-                },
-                {
-                    "dimensionId": "measure01",
-                    "representations": {
-                        "representation": [
-                            {
-                                "code": "measure01-conceptScheme01-concept01",
-                                "index": 0
-                            },
-                            {
-                                "code": "measure01-conceptScheme01-concept02",
-                                "index": 1
-                            },
-                            {
-                                "code": "measure01-conceptScheme01-concept05",
-                                "index": 2
-                            }
-                        ],
-                        "total": 3
-                    }
-                },
-                {
-                    "dimensionId": "dim01",
-                    "representations": {
-                        "representation": [
-                            {
-                                "code": "dim01-codelist01-code01",
-                                "index": 0
-                            }
-                        ],
-                        "total": 1
-                    }
-                }
-            ],
-            "total": 4
-        },
-        "attributes": {
-            "attribute": [
-                {
-                    "value": "Value at1",
-                    "id": "at1"
-                },
-                {
-                    "value": "Value\\ | \\at2",
-                    "id": "at2"
-                },
-                {
-                    "value": "Value at3-1 |  | Value at3-2 |  |  |  |  | ",
-                    "id": "at3"
-                },
-                {
-                    "value": "Value at4-1 |  | Value at4-2 |  |  |  |  | ",
-                    "id": "at4"
-                },
-                {
-                    "value": "2013Q3 | 2013Q1 |  |  |  |  |  |  |  |  |  |  |  |  | 2013Q3 | 2013Q1",
-                    "id": "at5"
-                },
-                {
-                    "value": " |  |  | Value at6-1 |  |  |  |  |  |  |  |  |  |  |  | Value at6-2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
-                    "id": "at6"
-                },
-                {
-                    "value": " |  |  | Value at7-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
-                    "id": "at7"
-                },
-                {
-                    "value": " | Value at8-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
-                    "id": "at8"
-                },
-                {
-                    "value": " | Value at9-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
-                    "id": "at9"
-                },
-                {
-                    "value": " |  |  | Value 1 |  |  |  |  |  | Value 3 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
-                    "id": "at10"
-                },
-                {
-                    "value": " |  |  | Value 5 |  |  |  |  |  | Value 6 |  |  |  |  |  | Value 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
-                    "id": "at11"
-                }
-            ],
-            "total": 11
-        },
-        "observations": "19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403"
-    },
-    "kind": "statisticalResources#query"
+	"id": "query1",
+	"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1",
+	"selfLink": {
+		"kind": "statisticalResources#query",
+		"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1/query1"
+	},
+	"parentLink": {
+		"kind": "statisticalResources#queries",
+		"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries"
+	},
+	"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=DiBhZWyMTd/queries/query;id=agency1:query1(01.000)",
+	"name": {
+		"text": [
+			{
+				"value": "title-query1 en Espanol",
+				"lang": "es"
+			}
+		]
+	},
+	"description": {
+		"text": [
+			{
+				"value": "description-resource-bw3Wnolv93 en Espanol",
+				"lang": "es"
+			}
+		]
+	},
+	"selectedLanguages": {
+		"language": [
+			"es"
+		],
+		"total": 1
+	},
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=fA9eijSseK&resourceId=query1",
+	"metadata": {
+		"relatedDataset": {
+			"id": "dataset01",
+			"kind": "statisticalResources#dataset",
+			"name": {
+				"text": [
+					{
+						"value": "title-dataset01 en Espanol",
+						"lang": "es"
+					}
+				]
+			},
+			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=DUwUWUrUXZ/datasets/dataset;id=agency1:dataset01(01.000)",
+			"selfLink": {
+				"kind": "statisticalResources#dataset",
+				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
+			},
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=oLtlyNGwTZ&resourceId=dataset01&version=01.000"
+		},
+		"relatedDsd": {
+			"heading": {
+				"dimensionId": [
+					"measure01",
+					"dim01"
+				],
+				"total": 2
+			},
+			"stub": {
+				"dimensionId": [
+					"GEO_DIM",
+					"TIME_PERIOD"
+				],
+				"total": 2
+			},
+			"autoOpen": true,
+			"showNullValuesByDefault": true,
+			"showZeroValuesByDefault": true,
+			"showDecimals": 2,
+			"id": "DSD01",
+			"urn": "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=MaintainerMock:DSD01(1.0)",
+			"selfLink": {
+				"kind": "structuralResources#dataStructure",
+				"href": "http://data.istac.es/apis/srm/latest/DSD01"
+			},
+			"name": {
+				"text": [
+					{
+						"value": "title-DSD01 en Espanol",
+						"lang": "es"
+					}
+				]
+			},
+			"managementAppLink": "http://localhost:8080/metamac-srm-web/DSD01",
+			"kind": "structuralResources#dataStructure"
+		},
+		"dimensions": {
+			"dimension": [
+				{
+					"id": "GEO_DIM",
+					"name": {
+						"text": [
+							{
+								"value": "GEO_DIM-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"type": "GEOGRAPHIC_DIMENSION",
+					"dimensionValues": {
+						"value": [
+							{
+								"variableElement": {
+									"id": "variableElement-santa-cruz-tenerife",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-santa-cruz-tenerife",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-santa-cruz-tenerife"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-santa-cruz-tenerife en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": true,
+								"id": "santa-cruz-tenerife",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz-tenerife",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/santa-cruz-tenerife"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "santa-cruz-tenerife en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description santa-cruz-tenerife en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz-tenerife",
+								"variableElement": {
+									"id": "variableElement-tenerife",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-tenerife",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-tenerife"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-tenerife en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": false,
+								"id": "tenerife",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).tenerife",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/tenerife"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "tenerife en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description tenerife en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).tenerife",
+								"variableElement": {
+									"id": "variableElement-la-laguna",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-la-laguna",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-la-laguna"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-la-laguna en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": true,
+								"id": "la-laguna",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-laguna",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/la-laguna"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "la-laguna en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description la-laguna en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).tenerife",
+								"variableElement": {
+									"id": "variableElement-santa-cruz",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-santa-cruz",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-santa-cruz"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-santa-cruz en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": true,
+								"id": "santa-cruz",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/santa-cruz"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "santa-cruz en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description santa-cruz en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz-tenerife",
+								"variableElement": {
+									"id": "variableElement-la-palma",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-la-palma",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-la-palma"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-la-palma en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": true,
+								"id": "la-palma",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-palma",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/la-palma"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "la-palma en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description la-palma en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-palma",
+								"variableElement": {
+									"id": "variableElement-los-llanos-de-aridane",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-los-llanos-de-aridane",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-los-llanos-de-aridane"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-los-llanos-de-aridane en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": true,
+								"id": "los-llanos-de-aridane",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).los-llanos-de-aridane",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/los-llanos-de-aridane"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "los-llanos-de-aridane en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description los-llanos-de-aridane en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"variableElement": {
+									"id": "variableElement-las-palmas-gran-canaria",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-las-palmas-gran-canaria",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-las-palmas-gran-canaria"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-las-palmas-gran-canaria en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": false,
+								"id": "las-palmas-gran-canaria",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).las-palmas-gran-canaria",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/las-palmas-gran-canaria"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "las-palmas-gran-canaria en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description las-palmas-gran-canaria en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"visualisationParent": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).las-palmas-gran-canaria",
+								"variableElement": {
+									"id": "variableElement-fuerteventura",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.structuralresources.Variable=variable01.variableElement-fuerteventura",
+									"selfLink": {
+										"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/variables/variable01/variableelements/variableElement-fuerteventura"
+									},
+									"name": {
+										"text": [
+											{
+												"value": "variableElement-fuerteventura en Español",
+												"lang": "es"
+											}
+										]
+									},
+									"kind": "structuralResources#variableElement"
+								},
+								"open": true,
+								"id": "fuerteventura",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).fuerteventura",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/fuerteventura"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "fuerteventura en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description fuerteventura en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							}
+						],
+						"total": 8
+					}
+				},
+				{
+					"id": "TIME_PERIOD",
+					"name": {
+						"text": [
+							{
+								"value": "TIME_PERIOD-conceptTimeDimension01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"type": "TIME_DIMENSION",
+					"dimensionValues": {
+						"value": [
+							{
+								"id": "2013",
+								"name": {
+									"text": [
+										{
+											"value": "2013",
+											"lang": "es"
+										}
+									]
+								},
+								"temporalGranularity": "YEARLY"
+							},
+							{
+								"id": "2011",
+								"name": {
+									"text": [
+										{
+											"value": "2011",
+											"lang": "es"
+										}
+									]
+								},
+								"temporalGranularity": "YEARLY"
+							}
+						],
+						"total": 2
+					}
+				},
+				{
+					"id": "measure01",
+					"name": {
+						"text": [
+							{
+								"value": "measure01-conceptMeasureDimension01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"type": "MEASURE_DIMENSION",
+					"dimensionValues": {
+						"value": [
+							{
+								"showDecimalsPrecision": 4,
+								"measureQuantity": {
+									"unitCode": {
+										"id": "code01",
+										"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).code01",
+										"selfLink": {
+											"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/codelist01/01.000/codes/code01"
+										},
+										"name": {
+											"text": [
+												{
+													"value": "code01 en Español",
+													"lang": "es"
+												}
+											]
+										},
+										"kind": "structuralResources#code"
+									}
+								},
+								"id": "measure01-conceptScheme01-concept01",
+								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept01",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept01"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "measure01-conceptScheme01-concept01 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description measure01-conceptScheme01-concept01 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#concept"
+							},
+							{
+								"visualisationParent": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept01",
+								"measureQuantity": {
+									"unitCode": {
+										"id": "code01",
+										"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).code01",
+										"selfLink": {
+											"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/codelist01/01.000/codes/code01"
+										},
+										"name": {
+											"text": [
+												{
+													"value": "code01 en Español",
+													"lang": "es"
+												}
+											]
+										},
+										"kind": "structuralResources#code"
+									}
+								},
+								"id": "measure01-conceptScheme01-concept02",
+								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept02",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept02"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "measure01-conceptScheme01-concept02 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description measure01-conceptScheme01-concept02 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#concept"
+							},
+							{
+								"showDecimalsPrecision": 1,
+								"measureQuantity": {
+									"unitCode": {
+										"id": "code01",
+										"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:codelist01(01.000).code01",
+										"selfLink": {
+											"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/codelist01/01.000/codes/code01"
+										},
+										"name": {
+											"text": [
+												{
+													"value": "code01 en Español",
+													"lang": "es"
+												}
+											]
+										},
+										"kind": "structuralResources#code"
+									}
+								},
+								"id": "measure01-conceptScheme01-concept05",
+								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept05",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept05"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "measure01-conceptScheme01-concept05 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description measure01-conceptScheme01-concept05 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#concept"
+							}
+						],
+						"total": 3
+					}
+				},
+				{
+					"id": "dim01",
+					"name": {
+						"text": [
+							{
+								"value": "dim01-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"type": "DIMENSION",
+					"dimensionValues": {
+						"value": [
+							{
+								"open": true,
+								"id": "dim01-codelist01-code01",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:dim01-codelist01(01.000).dim01-codelist01-code01",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/dim01-codelist01/01.000/codes/dim01-codelist01-code01"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "dim01-codelist01-code01 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"description": {
+									"text": [
+										{
+											"value": "Description dim01-codelist01-code01 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							}
+						],
+						"total": 1
+					}
+				}
+			],
+			"total": 4
+		},
+		"attributes": {
+			"attribute": [
+				{
+					"id": "at1",
+					"name": {
+						"text": [
+							{
+								"value": "at1-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DATASET",
+					"type": "OTHER"
+				},
+				{
+					"id": "at2",
+					"name": {
+						"text": [
+							{
+								"value": "at2-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DATASET",
+					"attributeValues": {
+						"value": [
+							{
+								"id": "A",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).A",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/A"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "A en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							},
+							{
+								"id": "C",
+								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).C",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/C"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "C en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#code"
+							}
+						],
+						"total": 2
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at3",
+					"name": {
+						"text": [
+							{
+								"value": "at3-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							}
+						],
+						"total": 1
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at4",
+					"name": {
+						"text": [
+							{
+								"value": "at4-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							},
+							{
+								"dimensionId": "dim01"
+							}
+						],
+						"total": 2
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at5",
+					"name": {
+						"text": [
+							{
+								"value": "at5-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							},
+							{
+								"dimensionId": "TIME_PERIOD"
+							}
+						],
+						"total": 2
+					},
+					"attributeValues": {
+						"value": [
+							{
+								"id": "2013Q1",
+								"name": {
+									"text": [
+										{
+											"value": "2013 Primer cuatrimestre",
+											"lang": "es"
+										}
+									]
+								}
+							},
+							{
+								"id": "2013Q2",
+								"name": {
+									"text": [
+										{
+											"value": "2013 Segundo cuatrimestre",
+											"lang": "es"
+										}
+									]
+								}
+							},
+							{
+								"id": "2013Q3",
+								"name": {
+									"text": [
+										{
+											"value": "2013 Tercer cuatrimestre",
+											"lang": "es"
+										}
+									]
+								}
+							}
+						],
+						"total": 3
+					},
+					"type": "TEMPORAL"
+				},
+				{
+					"id": "at6",
+					"name": {
+						"text": [
+							{
+								"value": "at6-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							},
+							{
+								"dimensionId": "TIME_PERIOD"
+							},
+							{
+								"dimensionId": "measure01"
+							}
+						],
+						"total": 3
+					},
+					"attributeValues": {
+						"value": [
+							{
+								"id": "1",
+								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).1",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/1"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "1 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#concept"
+							},
+							{
+								"id": "2",
+								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).2",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/2"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "2 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#concept"
+							},
+							{
+								"id": "3",
+								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).3",
+								"selfLink": {
+									"href": "http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/3"
+								},
+								"name": {
+									"text": [
+										{
+											"value": "3 en Español",
+											"lang": "es"
+										}
+									]
+								},
+								"kind": "structuralResources#concept"
+							}
+						],
+						"total": 3
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at7",
+					"name": {
+						"text": [
+							{
+								"value": "at7-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							},
+							{
+								"dimensionId": "TIME_PERIOD"
+							},
+							{
+								"dimensionId": "measure01"
+							},
+							{
+								"dimensionId": "dim01"
+							}
+						],
+						"total": 4
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at8",
+					"name": {
+						"text": [
+							{
+								"value": "at8-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							},
+							{
+								"dimensionId": "TIME_PERIOD"
+							}
+						],
+						"total": 2
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at9",
+					"name": {
+						"text": [
+							{
+								"value": "at9-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							},
+							{
+								"dimensionId": "TIME_PERIOD"
+							},
+							{
+								"dimensionId": "dim01"
+							}
+						],
+						"total": 3
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at10",
+					"name": {
+						"text": [
+							{
+								"value": "at10-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "PRIMARY_MEASURE",
+					"type": "OTHER"
+				},
+				{
+					"id": "at11",
+					"name": {
+						"text": [
+							{
+								"value": "at11-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "PRIMARY_MEASURE",
+					"type": "OTHER"
+				}
+			],
+			"total": 11
+		},
+		"status": "ACTIVE",
+		"type": "FIXED",
+		"requires": {
+			"id": "dataset01",
+			"kind": "statisticalResources#dataset",
+			"name": {
+				"text": [
+					{
+						"value": "title-dataset01 en Espanol",
+						"lang": "es"
+					}
+				]
+			},
+			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=DUwUWUrUXZ/datasets/dataset;id=agency1:dataset01(01.000)",
+			"selfLink": {
+				"kind": "statisticalResources#dataset",
+				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
+			},
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=oLtlyNGwTZ&resourceId=dataset01&version=01.000"
+		},
+		"isPartOf": {
+			"resource": [
+				{
+					"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:isPartOf01(01.000)",
+					"id": "isPartOf01",
+					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf01",
+					"selfLink": {
+						"kind": "statisticalResources#collection",
+						"href": "http://data.istac.es/apis/statistical-resources/v1.0/collections/agency01/isPartOf01"
+					},
+					"name": {
+						"text": [
+							{
+								"value": "título isPartOf01",
+								"lang": "es"
+							}
+						]
+					},
+					"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf01",
+					"kind": "statisticalResources#collection"
+				},
+				{
+					"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:isPartOf02(01.000)",
+					"id": "isPartOf02",
+					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf02",
+					"selfLink": {
+						"kind": "statisticalResources#collection",
+						"href": "http://data.istac.es/apis/statistical-resources/v1.0/collections/agency01/isPartOf02"
+					},
+					"name": {
+						"text": [
+							{
+								"value": "título isPartOf02",
+								"lang": "es"
+							}
+						]
+					},
+					"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf02",
+					"kind": "statisticalResources#collection"
+				}
+			],
+			"total": 2
+		},
+		"statisticalOperation": {
+			"managementAppLink": "http://localhost:8080/statistical-operations-internal/DiBhZWyMTd",
+			"id": "DiBhZWyMTd",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=DiBhZWyMTd",
+			"selfLink": {
+				"kind": "statisticalOperations#operation",
+				"href": "http://data.istac.es/apis/operations/latest/DiBhZWyMTd"
+			},
+			"name": {
+				"text": [
+					{
+						"value": "title-Txej5iXw9K en Espanol",
+						"lang": "es"
+					}
+				]
+			},
+			"kind": "statisticalOperations#operation"
+		},
+		"maintainer": {
+			"managementAppLink": "http://localhost:8080/metamac-srm-web/fA9eijSseK",
+			"id": "fA9eijSseK",
+			"nestedId": "agency1",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).fA9eijSseK",
+			"selfLink": {
+				"kind": "structuralResources#agency",
+				"href": "http://data.istac.es/apis/srm/latest/fA9eijSseK"
+			},
+			"name": {
+				"text": [
+					{
+						"value": "title-fA9eijSseK en Espanol",
+						"lang": "es"
+					}
+				]
+			},
+			"kind": "structuralResources#agency"
+		},
+		"validFrom": "2013-01-01T03:04:12Z",
+		"validTo": "2013-02-16T14:04:12Z",
+		"procStatus": "DRAFT",
+		"creationDate": "2013-06-20T20:00:20.021+01:00",
+		"creationUser": "creationUser",
+		"productionValidationDate": "2013-06-20T20:00:20.021+01:00",
+		"publicationDate": "2013-01-01T03:04:13Z"
+	},
+	"data": {
+		"dimensions": {
+			"dimension": [
+				{
+					"dimensionId": "GEO_DIM",
+					"representations": {
+						"representation": [
+							{
+								"code": "santa-cruz-tenerife",
+								"index": 0
+							},
+							{
+								"code": "tenerife",
+								"index": 1
+							},
+							{
+								"code": "la-laguna",
+								"index": 2
+							},
+							{
+								"code": "santa-cruz",
+								"index": 3
+							},
+							{
+								"code": "la-palma",
+								"index": 4
+							},
+							{
+								"code": "los-llanos-de-aridane",
+								"index": 5
+							},
+							{
+								"code": "las-palmas-gran-canaria",
+								"index": 6
+							},
+							{
+								"code": "fuerteventura",
+								"index": 7
+							}
+						],
+						"total": 8
+					}
+				},
+				{
+					"dimensionId": "TIME_PERIOD",
+					"representations": {
+						"representation": [
+							{
+								"code": "2013",
+								"index": 0
+							},
+							{
+								"code": "2011",
+								"index": 1
+							}
+						],
+						"total": 2
+					}
+				},
+				{
+					"dimensionId": "measure01",
+					"representations": {
+						"representation": [
+							{
+								"code": "measure01-conceptScheme01-concept01",
+								"index": 0
+							},
+							{
+								"code": "measure01-conceptScheme01-concept02",
+								"index": 1
+							},
+							{
+								"code": "measure01-conceptScheme01-concept05",
+								"index": 2
+							}
+						],
+						"total": 3
+					}
+				},
+				{
+					"dimensionId": "dim01",
+					"representations": {
+						"representation": [
+							{
+								"code": "dim01-codelist01-code01",
+								"index": 0
+							}
+						],
+						"total": 1
+					}
+				}
+			],
+			"total": 4
+		},
+		"attributes": {
+			"attribute": [
+				{
+					"value": "Value at1",
+					"id": "at1"
+				},
+				{
+					"value": "Value\\ | \\at2",
+					"id": "at2"
+				},
+				{
+					"value": "Value at3-1 |  | Value at3-2 |  |  |  |  | ",
+					"id": "at3"
+				},
+				{
+					"value": "Value at4-1 |  | Value at4-2 |  |  |  |  | ",
+					"id": "at4"
+				},
+				{
+					"value": "2013Q3 | 2013Q1 |  |  |  |  |  |  |  |  |  |  |  |  | 2013Q3 | 2013Q1",
+					"id": "at5"
+				},
+				{
+					"value": " |  |  | Value at6-1 |  |  |  |  |  |  |  |  |  |  |  | Value at6-2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"id": "at6"
+				},
+				{
+					"value": " |  |  | Value at7-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"id": "at7"
+				},
+				{
+					"value": " | Value at8-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"id": "at8"
+				},
+				{
+					"value": " | Value at9-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"id": "at9"
+				},
+				{
+					"value": " |  |  | Value 1 |  |  |  |  |  | Value 3 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"id": "at10"
+				},
+				{
+					"value": " |  |  | Value 5 |  |  |  |  |  | Value 6 |  |  |  |  |  | Value 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"id": "at11"
+				}
+			],
+			"total": 11
+		},
+		"observations": "19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403"
+	},
+	"kind": "statisticalResources#query"
 }
