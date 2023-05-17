@@ -39,14 +39,6 @@
 	<bean id="entityManagerFactoryDatasetRepository" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="DatasetRepositoryEntityManagerFactory" />
 		<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-statistic-dataset-repository.xml" />
-		<property name="jpaProperties">
-            <props>
-                <prop key="hibernate.dialect">${jpaVendorAdapter.databasePlatform}</prop>
-            </props>
-        </property>
-        <property name="jpaDialect">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
-        </property>
 		<property name="dataSource" ref="dataSourceDatasetRepository" />
 	</bean>
 
