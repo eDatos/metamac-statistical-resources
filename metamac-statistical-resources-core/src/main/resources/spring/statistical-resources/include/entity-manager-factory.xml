@@ -20,7 +20,6 @@
                 <prop key="query.substitutions">true 1, false 0</prop>
                 <prop key="hibernate.cache.use_query_cache">true</prop>
                 <prop key="hibernate.cache.provider_class">net.sf.ehcache.hibernate.EhCacheProvider</prop>
-                <prop key="hibernate.dialect">${metamac.statistical_resources.db.dialect}</prop>
             </props>
         </property>
     </bean>
