@@ -106,7 +106,6 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     @Override
     public String getSelectedLanguage(DatasetVersion source, List<String> selectedLanguages) {
-        // TODO EDATOS-3662 treatment of unavailable selected language? how about an intersection of source.languages and selectedLanguages to discover common languages?
         String selectedLanguage = selectedLanguages.isEmpty() ? null : selectedLanguages.get(0);
 
         String sourceLang = source.getSiemacMetadataStatisticalResource().getLanguage().getCode();

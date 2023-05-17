@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>5.0.2-SNAPSHOT</version>
+        <version>7.0.2-SNAPSHOT</version>
         <relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 
@@ -59,6 +59,15 @@
 			<artifactId>jackson-mapper-asl</artifactId>
             <version>${jackson.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+            <artifactId>metamac-statistical-resources-rest-api-common</artifactId>
+            <version>${metamac-statistical-resources-rest-api-common.version}</version>
+            <classifier>resources</classifier>
+            <type>zip</type>
+            <!-- Does not include in classpath -->
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -103,7 +112,7 @@
                 <version>2.0</version>
                 <executions>
                     <execution>
-                        <id>unpack-shared-resources</id>
+                        <id>unpack-shared-resources-from-metamac-rest-api</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>unpack-dependencies</goal>
@@ -111,10 +120,26 @@
                         <configuration>
                             <outputDirectory>${project.build.directory}/classes/META-INF/rest/internal</outputDirectory>
                             <includeGroupIds>org.siemac.metamac</includeGroupIds>
-                            <includeArtifacIds>metamac-rest-api</includeArtifacIds>
+                            <includeArtifactIds>metamac-rest-api</includeArtifactIds>
                             <includeClassifiers>resources</includeClassifiers>
                             <excludeTransitive>true</excludeTransitive>
                             <includes>**/metamac-rest-common-domain-*.xsd,**/xml.xsd,**/*.dtd</includes>
+                            <includeTypes>zip</includeTypes>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>unpack-shared-resources-from-statistical-resources-rest-api-common</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}/classes/META-INF/rest/internal</outputDirectory>
+                            <includeGroupIds>org.siemac.metamac.metamac-statistical-resources</includeGroupIds>
+                            <includeArtifactIds>metamac-statistical-resources-rest-api-common</includeArtifactIds>
+                            <includeClassifiers>resources</includeClassifiers>
+                            <excludeTransitive>true</excludeTransitive>
+                            <includes>**/metamac-statistical-resources-rest-api-common-domain-*.xsd,**/xml.xsd,**/*.dtd</includes>
                             <includeTypes>zip</includeTypes>
                         </configuration>
                     </execution>
@@ -190,11 +215,16 @@
                             <args>
                                 <arg>-Xbg</arg>
                                 <arg>-npa</arg> <!-- no generate package-info -->
+                                <arg>-Xannotate</arg>
                             </args>
                             <episodes>
 	                           <episode>
                                     <groupId>org.siemac.metamac</groupId>
                                     <artifactId>metamac-rest-api</artifactId>
+                                </episode>
+	                           <episode>
+                                    <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+                                    <artifactId>metamac-statistical-resources-rest-api-common</artifactId>
                                 </episode>
                             </episodes>
                             <bindingFiles>
@@ -215,6 +245,16 @@
                         <groupId>org.apache.cxf.xjcplugins</groupId>
                         <artifactId>cxf-xjc-boolean</artifactId>
                         <version>${cxf-xjc-boolean.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics-annotate</artifactId>
+                        <version>1.0.4</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.codehaus.jackson</groupId>
+                        <artifactId>jackson-core-asl</artifactId>
+                        <version>${jackson.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>            

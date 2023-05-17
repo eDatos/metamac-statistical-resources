@@ -20,7 +20,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-resource-dZ2LVKRCGh en Espanol",
+				"value": "description-resource-bmkC2UKgsY en Espanol",
 				"lang": "es"
 			}
 		]
@@ -31,14 +31,11 @@
 		],
 		"total": 1
 	},
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=HO1iWBYezl&resourceId=query1",
 	"metadata": {
 		"relatedDataset": {
 			"id": "dataset01",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"selfLink": {
-				"kind": "statisticalResources#dataset",
-				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
-			},
+			"kind": "statisticalResources#dataset",
 			"name": {
 				"text": [
 					{
@@ -47,7 +44,12 @@
 					}
 				]
 			},
-			"kind": "statisticalResources#dataset"
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"selfLink": {
+				"kind": "statisticalResources#dataset",
+				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
+			},
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=ZS0CRINaER&resourceId=dataset01&version=01.000"
 		},
 		"relatedDsd": {
 			"heading": {
@@ -1035,11 +1037,7 @@
 		"type": "FIXED",
 		"requires": {
 			"id": "dataset01",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"selfLink": {
-				"kind": "statisticalResources#dataset",
-				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
-			},
+			"kind": "statisticalResources#dataset",
 			"name": {
 				"text": [
 					{
@@ -1048,7 +1046,12 @@
 					}
 				]
 			},
-			"kind": "statisticalResources#dataset"
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"selfLink": {
+				"kind": "statisticalResources#dataset",
+				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
+			},
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=ZS0CRINaER&resourceId=dataset01&version=01.000"
 		},
 		"isPartOf": {
 			"resource": [
@@ -1067,6 +1070,7 @@
 							}
 						]
 					},
+					"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf01",
 					"kind": "statisticalResources#collection"
 				},
 				{
@@ -1084,17 +1088,18 @@
 							}
 						]
 					},
+					"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf02",
 					"kind": "statisticalResources#collection"
 				}
 			],
 			"total": 2
 		},
 		"statisticalOperation": {
-			"id": "LNK9lXBafJ",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=LNK9lXBafJ",
+			"id": "hu1RyfAh5c",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=hu1RyfAh5c",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/LNK9lXBafJ"
+				"href": "http://data.istac.es/apis/operations/latest/hu1RyfAh5c"
 			},
 			"name": {
 				"text": [
@@ -1107,17 +1112,17 @@
 			"kind": "statisticalOperations#operation"
 		},
 		"maintainer": {
-			"id": "O7jgIgdWeD",
+			"id": "HO1iWBYezl",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).O7jgIgdWeD",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).HO1iWBYezl",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/O7jgIgdWeD"
+				"href": "http://data.istac.es/apis/srm/latest/HO1iWBYezl"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-O7jgIgdWeD en Espanol",
+						"value": "title-HO1iWBYezl en Espanol",
 						"lang": "es"
 					}
 				]

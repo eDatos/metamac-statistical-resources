@@ -8,6 +8,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.serviceimpl.utils.ValidationUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.BaseInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
@@ -175,7 +176,9 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
     // ------------------------------------------------------------------------
 
     public static void checkCreateCube(String publicationVersionUrn, Cube cube, List<MetamacExceptionItem> exceptions) {
+        if (cube.getUrl() == null) {
         StatisticalResourcesValidationUtils.checkParameterRequired(publicationVersionUrn, ServiceExceptionParameters.PUBLICATION_VERSION_URN, exceptions);
+        }
         checkNewCube(cube, exceptions);
 
     }
@@ -209,7 +212,7 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         checkNewNameableStatisticalResource(cube.getNameableStatisticalResource(), ServiceExceptionParameters.CUBE, exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getElementLevel().getOrderInLevel(), ServiceExceptionParameters.CUBE__ORDER_IN_LEVEL, exceptions);
     }
-
+    
     private static void checkExistingCube(Cube cube, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(cube, ServiceExceptionParameters.CUBE, exceptions);
 
@@ -236,11 +239,19 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         if (cube.getMultidataset() != null) {
             StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getMultidatasetUrn(), ServiceExceptionParameters.CUBE__MULTIDATASET__URN, exceptions);
         }
+        
+        if (cube.getUrl() != null) {
+            ValidationUtils.validateUrl(cube.getUrl(), ServiceExceptionParameters.CUBE_URL, exceptions);
+        }
 
         StatisticalResourcesValidationUtils.checkMetadataEmpty(cube.getElementLevel().getChildren(), ServiceExceptionParameters.CUBE__CHILDREN, exceptions);
     }
 
     private static void checkOnlyOneRelatedResourceType(Cube cube, List<MetamacExceptionItem> exceptions) {
+        if (cube.getUrl() != null) {
+            return;
+        }
+        
         int numberOfRelatedResourceTypes = 0;
 
         if (cube.getDataset() != null) {

@@ -25,6 +25,7 @@ import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.SearchCustomLinkItem;
@@ -156,7 +157,10 @@ public class PublicationStructureElementPanel extends VLayout {
             }
         });
 
-        form.setFields(title, description, urn, dataset, query, multidataset);
+        ViewTextItem url = new ViewTextItem(ElementLevelDS.URL, getConstants().url());
+        url.setShowIfCondition(getIsNotEmptyFormItemIfFunction());
+        
+        form.setFields(title, description, urn, dataset, query, multidataset, url);
         mainFormLayout.addViewCanvas(form);
     }
 
@@ -248,7 +252,17 @@ public class PublicationStructureElementPanel extends VLayout {
             }
         });
 
-        editionForm.setFields(title, description, urn, resourceTypeToLink, dataset, query, multidataset);
+        CustomTextItem url = new CustomTextItem(ElementLevelDS.URL, getConstants().url());
+        url.setRequired(true);
+        url.setShowIfCondition(new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                return StringUtils.equals(StatisticalResourceTypeEnum.URL.name(), editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK));
+            }
+        });
+        
+        editionForm.setFields(title, description, urn, resourceTypeToLink, dataset, query, multidataset, url);
         mainFormLayout.addEditionCanvas(editionForm);
     }
 
@@ -274,16 +288,18 @@ public class PublicationStructureElementPanel extends VLayout {
         form.setValue(ElementLevelDS.TITLE, element.getTitle());
         form.setValue(ElementLevelDS.DESCRIPTION, element.getDescription());
         form.setValue(ElementLevelDS.URN, element.getUrn());
-
+        
         if (element instanceof CubeDto) {
             CubeDto cubeDto = (CubeDto) element;
             form.setValue(ElementLevelDS.DATASET, cubeDto.getDatasetUrn());
             form.setValue(ElementLevelDS.QUERY, cubeDto.getQueryUrn());
             form.setValue(ElementLevelDS.MULTIDATASET, cubeDto.getMultidatasetUrn());
+            form.setValue(ElementLevelDS.URL, cubeDto.getUrl());
         } else {
             form.setValue(ElementLevelDS.DATASET, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.QUERY, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.MULTIDATASET, StringUtils.EMPTY);
+            form.setValue(ElementLevelDS.URL, StringUtils.EMPTY);
         }
 
         form.markForRedraw();
@@ -294,7 +310,7 @@ public class PublicationStructureElementPanel extends VLayout {
         editionForm.setValue(ElementLevelDS.TITLE, element.getTitle());
         editionForm.setValue(ElementLevelDS.DESCRIPTION, element.getDescription());
         editionForm.setValue(ElementLevelDS.URN, element.getUrn());
-
+       
         if (element instanceof CubeDto) {
             CubeDto cubeDto = (CubeDto) element;
 
@@ -305,16 +321,20 @@ public class PublicationStructureElementPanel extends VLayout {
                 resourceTypeToLink = StatisticalResourceTypeEnum.QUERY.name();
             } else if (!StringUtils.isBlank(cubeDto.getMultidatasetUrn())) {
                 resourceTypeToLink = StatisticalResourceTypeEnum.MULTIDATASET.name();
+            } else if (!StringUtils.isBlank(cubeDto.getUrl())) {
+                resourceTypeToLink = StatisticalResourceTypeEnum.URL.name();
             }
             editionForm.setValue(ElementLevelDS.RESOURCE_TYPE_TO_LINK, resourceTypeToLink);
             setDatasetInEditionForm(cubeDto.getDatasetUrn());
             setQueryInEditionForm(cubeDto.getQueryUrn());
             setMultidatasetInEditionForm(cubeDto.getMultidatasetUrn());
+            setUrlInEditionForm(cubeDto.getUrl());
         } else {
             editionForm.setValue(ElementLevelDS.RESOURCE_TYPE_TO_LINK, StringUtils.EMPTY);
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.DATASET)).clearValue();
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.QUERY)).clearValue();
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.MULTIDATASET)).clearValue();
+            ((CustomTextItem) editionForm.getItem(ElementLevelDS.URL)).clearValue();
         }
 
         editionForm.markForRedraw();
@@ -338,6 +358,10 @@ public class PublicationStructureElementPanel extends VLayout {
         ((CustomLinkItem) editionForm.getItem(ElementLevelDS.MULTIDATASET)).setValue(queryUrn, null);
     }
 
+    private void setUrlInEditionForm(String url) {
+        ((CustomTextItem) editionForm.getItem(ElementLevelDS.URL)).setValue(url);
+    }
+    
     public NameableStatisticalResourceDto getSelectedElement() {
 
         element.setTitle(editionForm.getValueAsInternationalStringDto(ElementLevelDS.TITLE));
@@ -348,14 +372,22 @@ public class PublicationStructureElementPanel extends VLayout {
                 ((CubeDto) element).setDatasetUrn(editionForm.getValueAsString(ElementLevelDS.DATASET));
                 ((CubeDto) element).setQueryUrn(null);
                 ((CubeDto) element).setMultidatasetUrn(null);
+                ((CubeDto) element).setUrl(null);
             } else if (StatisticalResourceTypeEnum.QUERY.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
                 ((CubeDto) element).setQueryUrn(editionForm.getValueAsString(ElementLevelDS.QUERY));
                 ((CubeDto) element).setDatasetUrn(null);
                 ((CubeDto) element).setMultidatasetUrn(null);
+                ((CubeDto) element).setUrl(null);
             } else if (StatisticalResourceTypeEnum.MULTIDATASET.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
                 ((CubeDto) element).setMultidatasetUrn(editionForm.getValueAsString(ElementLevelDS.MULTIDATASET));
                 ((CubeDto) element).setDatasetUrn(null);
                 ((CubeDto) element).setQueryUrn(null);
+                ((CubeDto) element).setUrl(null);
+            } else if (StatisticalResourceTypeEnum.URL.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
+                ((CubeDto) element).setUrl(editionForm.getValueAsString(ElementLevelDS.URL));
+                ((CubeDto) element).setMultidatasetUrn(null);
+                ((CubeDto) element).setDatasetUrn(null);
+                ((CubeDto) element).setQueryUrn(null);   
             }
         }
 

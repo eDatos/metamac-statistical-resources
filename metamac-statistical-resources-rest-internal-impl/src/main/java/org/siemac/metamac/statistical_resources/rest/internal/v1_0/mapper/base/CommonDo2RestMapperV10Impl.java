@@ -124,6 +124,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.Mul
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.internal.invocation.CommonMetadataRestExternalFacade;
@@ -150,60 +151,60 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 @Component
 public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
-    private static final Logger                     logger                 = LoggerFactory.getLogger(CommonDo2RestMapperV10.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommonDo2RestMapperV10.class);
 
-    private static final String                     INCLUDE_SPATIAL_FIELDS = SrmRestConstants.FIELD_INCLUDE_OPENNES + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_ORDER
-            + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT;
+    private static final String INCLUDE_SPATIAL_FIELDS = SrmRestConstants.FIELD_INCLUDE_OPENNES + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_ORDER + RestApiConstants.COMMA
+            + SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT;
 
     @Autowired
-    private StatisticalResourcesConfiguration       configurationService;
+    private StatisticalResourcesConfiguration configurationService;
 
     @Autowired
     private StatisticalOperationsRestInternalFacade statisticalOperationsRestInternalFacade;
 
     @Autowired
-    private DatasetService                          datasetService;
+    private DatasetService datasetService;
 
     @Autowired
-    private QueryService                            queryService;
+    private QueryService queryService;
 
     @Autowired
-    private MultidatasetService                     multidatasetService;
+    private MultidatasetService multidatasetService;
 
     @Autowired
-    private TranslationService                      translationService;
+    private TranslationService translationService;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade        datasetRepositoriesServiceFacade;
+    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
 
     @Autowired
-    private SrmRestInternalFacade                   srmRestExternalFacade;
+    private SrmRestInternalFacade srmRestExternalFacade;
 
     @Autowired
-    private CommonMetadataRestExternalFacade        commonMetadataRestExternalFacade;
+    private CommonMetadataRestExternalFacade commonMetadataRestExternalFacade;
 
     @Autowired
-    private DatasetsDo2RestMapperV10                datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
 
     @Autowired
-    private CollectionsDo2RestMapperV10             collectionsDo2RestMapper;
+    private CollectionsDo2RestMapperV10 collectionsDo2RestMapper;
 
     @Autowired
-    private QueriesDo2RestMapperV10                 queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10 queriesDo2RestMapper;
 
     @Autowired
-    private MultidatasetsDo2RestMapperV10           multidatasetsDo2RestMapper;
+    private MultidatasetsDo2RestMapperV10 multidatasetsDo2RestMapper;
 
-    private String                                  statisticalResourcesApiInternalEndpointV10;
-    private String                                  srmApiInternalEndpoint;
-    private String                                  statisticalOperationsApiInternalEndpoint;
-    private String                                  statisticalResourcesInternalWebApplication;
-    private String                                  srmInternalWebApplication;
-    private String                                  commonMetadataInternalWebApplication;
-    private String                                  statisticalOperationsWebApplication;
-    private String                                  defaultLanguage;
+    private String statisticalResourcesApiInternalEndpointV10;
+    private String srmApiInternalEndpoint;
+    private String statisticalOperationsApiInternalEndpoint;
+    private String statisticalResourcesInternalWebApplication;
+    private String srmInternalWebApplication;
+    private String commonMetadataInternalWebApplication;
+    private String statisticalOperationsWebApplication;
+    private String defaultLanguage;
 
-    private InternalWebApplicationNavigation        internalWebApplicationNavigation;
+    private InternalWebApplicationNavigation internalWebApplicationNavigation;
 
     @PostConstruct
     public void init() throws Exception {
@@ -241,7 +242,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         return null;
     }
-    
+
     @Override
     public InternalWebApplicationNavigation getInternalWebApplicationNavigation() {
         return internalWebApplicationNavigation;
@@ -718,27 +719,50 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public ResourcesInternal toUrlResources(List<String> sources) throws MetamacException {
+        if (CollectionUtils.isEmpty(sources)) {
+            return null;
+        }
+        ResourcesInternal targets = new ResourcesInternal();
+        for (String source : sources) {
+            targets.getResources().add(toUrlResource(source));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
+        return targets;
+    }
+
+    private ResourceInternal toUrlResource(String url) {
+        if (url == null) {
+            return null;
+        }
+        ResourceInternal target = new ResourceInternal();
+        target.setKind(StatisticalResourcesRestConstants.KIND_URL);
+        target.setVisualizerHtmlLink(url);
+        return target;
+    }
+
+    @Override
     public ResourceInternal toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
         switch (source.getType()) {
             case DATASET_VERSION:
-                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages);
+                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages, null);
             case QUERY_VERSION:
-                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages);
+                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages, null);
             case PUBLICATION_VERSION:
-                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages);
+                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages, null);
             case DATASET:
                 DatasetVersion datasetVersion = datasetService.retrieveLatestDatasetVersionByDatasetUrn(SERVICE_CONTEXT, source.getDataset().getIdentifiableStatisticalResource().getUrn());
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getQuery().getIdentifiableStatisticalResource().getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
             case MULTIDATASET:
                 MultidatasetVersion multidatasetVersion = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(SERVICE_CONTEXT,
                         source.getMultidataset().getIdentifiableStatisticalResource().getUrn());
-                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages);
+                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -763,7 +787,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -829,6 +853,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setId(source.getComponentId());
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
+        target.setPluralName(source.getPluralName());
 
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields));
@@ -1531,7 +1556,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private class OrderingStackElement {
 
         private String codeId = null;
-        private int    dimNum = -1;
+        private int dimNum = -1;
 
         public OrderingStackElement(String codeId, int dimNum) {
             super();
@@ -1637,7 +1662,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private class DataProcessorForAttributeWithDimensionAttachmentLevel extends DataProcessor {
 
         private final Map<String, AttributeInstanceDto> attributesByCodeDimensions;
-        private final List<AttributeInstanceDto>        targets;
+        private final List<AttributeInstanceDto> targets;
 
         public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions, int dataSize) {
             this.attributesByCodeDimensions = attributesByCodeDimensions;
@@ -1659,7 +1684,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private class DataProcessorForObservation extends DataProcessor {
 
         private final Map<String, ObservationExtendedDto> sources;
-        private final List<ObservationExtendedDto>        targets;
+        private final List<ObservationExtendedDto> targets;
 
         public DataProcessorForObservation(Map<String, ObservationExtendedDto> observations, int dataSize) {
             sources = observations;
@@ -1689,8 +1714,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private abstract class DataIterator implements Iterator<String> {
 
-        private int       pos = 0;
-        private int       max = -1;
+        private int pos = 0;
+        private int max = -1;
         protected List<?> list;
 
         public DataIterator(List<?> list) {
@@ -1755,7 +1780,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private class DataAttributeObservationIterator extends DataIterator {
 
         private final String attributeId;
-        private boolean      anyObservationHasAttribute = false;
+        private boolean anyObservationHasAttribute = false;
 
         public DataAttributeObservationIterator(List<ObservationExtendedDto> list, String attributeId) {
             super(list);

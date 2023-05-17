@@ -22,7 +22,16 @@
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/apis/*</url-pattern>
     </servlet-mapping>
-    
+
+    <filter>
+        <filter-name>JsonStatFilter</filter-name>
+        <filter-class>org.siemac.metamac.statistical.resources.web.server.filter.jsonstat.JsonStatFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>JsonStatFilter</filter-name>
+        <url-pattern>/apis/*</url-pattern>
+    </filter-mapping>
+
     <!-- Logout filter -->
     <filter>
         <filter-name>logoutFilter</filter-name>

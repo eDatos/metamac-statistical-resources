@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
 import org.mockito.Mockito;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeRelationship;
@@ -119,7 +118,7 @@ public class DataMockUtils {
 
         DataStructure dsd = SrmMockUtils.mockDsdWithGeoTimeAndMeasureDimensions("urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=TFFS:CRED_EXT_DEBT(1.0)", "GEO_DIM", "TIME_PERIOD", "MEAS_DIM",
                 conceptSchemeReference, codelistReference);
-        Mockito.when(apisLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(dsd);
+        Mockito.when(apisLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), (String) Mockito.isNull())).thenReturn(dsd);
     }
 
     public static void mockDsdAndRelatedWithNoAttributes(SrmRestInternalService srmRestInternalService) throws Exception {
@@ -201,8 +200,8 @@ public class DataMockUtils {
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(27L);
 
-        datasetVersion.setDateStart(new DateTime(2010, 1, 1, 0, 0, 0, 0));
-        datasetVersion.setDateEnd(new DateTime(2012, 12, 31, 23, 59, 59, 999));
+        datasetVersion.setDateStart("2010");
+        datasetVersion.setDateEnd("2012");
     }
 
     public static void fillDatasetVersionWithCalculatedMetadataFromDataWithObservationAttributes(DatasetVersion datasetVersion) {

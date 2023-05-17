@@ -17,6 +17,7 @@ public class StatisticalResourcesSharedTokens extends org.siemac.metamac.web.com
 
     public static final String UPLOAD_PARAM_OPERATION_CODE          = "operation-urn";
     public static final String UPLOAD_PARAM_DATASET_VERSION_URN     = "dataset-version-urn";
+    public static final String LOAD_PARAM_ATTRIBUTES                = "load-param-attributes";
     public static final String UPLOAD_PARAM_PUBLICATION_VERSION_URN = "publication-version-urn";
     public static final String UPLOAD_PARAM_LANGUAGE                = "importation-language";
     public static final String UPLOAD_PARAM_DIM_PREFIX              = "dim-";

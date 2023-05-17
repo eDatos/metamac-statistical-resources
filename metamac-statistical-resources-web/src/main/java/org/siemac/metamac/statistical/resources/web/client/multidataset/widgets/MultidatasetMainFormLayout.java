@@ -59,4 +59,8 @@ public class MultidatasetMainFormLayout extends LifecycleMainFormLayout {
         return MultidatasetClientSecurityUtils.canPreviewDataMultidatasetVersion(multidatasetVersionDto);
     }
 
+    @Override
+    protected boolean canShowCopyButton() {
+        return false;
+    }
 }

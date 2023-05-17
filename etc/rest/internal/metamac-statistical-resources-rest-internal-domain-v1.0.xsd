@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" targetNamespace="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain" xmlns:tns="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
-    xmlns:common="http://www.siemac.org/metamac/rest/common/v1.0/domain">
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified"
+           targetNamespace="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
+           xmlns:tns="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
+           xmlns:common="http://www.siemac.org/metamac/rest/common/v1.0/domain"
+           xmlns:common-tns="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain">
 
     <xs:import namespace="http://www.siemac.org/metamac/rest/common/v1.0/domain" schemaLocation="metamac-rest-api:metamac-rest-common-domain-v1.0.xsd" />
+    <xs:import namespace="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain" schemaLocation="metamac-statistical-resources-rest-api-common-domain-v1.0.xsd" />
 
     <xs:complexType name="Dataset">
         <xs:sequence>
@@ -16,6 +22,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:DatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
         </xs:sequence>
@@ -34,6 +41,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />            
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:CollectionMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:CollectionData" minOccurs="0" />
         </xs:sequence>
@@ -52,6 +60,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:QueryMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:Data" minOccurs="0" />
         </xs:sequence>
@@ -70,6 +79,7 @@
             <xs:element name="description" type="common:InternationalString" minOccurs="0" />
             <xs:element name="keywords" type="common:InternationalString" />
             <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
+            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
             <xs:element name="metadata" type="tns:MultidatasetMetadata" minOccurs="0" />
             <xs:element name="data" type="tns:MultidatasetData" minOccurs="0" />
         </xs:sequence>
@@ -88,8 +98,8 @@
                     <xs:element name="measureCoverages" type="tns:ResourcesInternal" />
                     <xs:element name="geographicGranularities" type="tns:ResourcesInternal" />
                     <xs:element name="temporalGranularities" type="tns:ResourcesInternal" />
-                    <xs:element name="dateStart" type="xs:dateTime" />
-                    <xs:element name="dateEnd" type="xs:dateTime" />
+                    <xs:element name="dateStart" type="common:InternationalString" />
+                    <xs:element name="dateEnd" type="common:InternationalString" />
                     <xs:element name="statisticalUnit" type="tns:ResourcesInternal" minOccurs="0" />
                     <xs:element name="subjectAreas" type="tns:ResourcesInternal" minOccurs="0" />
                     <xs:element name="relatedDsd" type="tns:DataStructureDefinition" />
@@ -276,6 +286,7 @@
                         <xs:element name="dataset" type="tns:ResourceInternal" />
                         <xs:element name="query" type="tns:ResourceInternal" />
                         <xs:element name="multidataset" type="tns:ResourceInternal" />
+                        <xs:element name="url" type="tns:ResourceInternal" />
                     </xs:sequence>
                 </xs:choice>
             </xs:extension>
@@ -385,6 +396,7 @@
             <xs:element name="name" type="common:InternationalString" />
             <xs:element name="type" type="tns:DimensionType" />
             <xs:element name="dimensionValues" type="tns:DimensionValues" />
+            <xs:element name="pluralName" type="common:InternationalString" minOccurs="0"/>
         </xs:sequence>
     </xs:complexType>
 
@@ -521,7 +533,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="dataset" type="tns:ResourceInternal" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="dataset" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -531,7 +543,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="collection" type="tns:ResourceInternal" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="collection" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -541,7 +553,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="query" type="tns:ResourceInternal" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="query" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -551,7 +563,7 @@
         <xs:complexContent>
             <xs:extension base="common:ListBase">
                 <xs:sequence>
-                    <xs:element name="multidataset" type="tns:ResourceInternal" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="multidataset" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -669,7 +681,6 @@
             <xs:enumeration value="VALID_TO" />
             <xs:enumeration value="STATISTICAL_OPERATION_URN" />
             <xs:enumeration value="IS_LAST_VERSION" />
-            <xs:enumeration value="GEOCOV_VARELEM_ID" />
         </xs:restriction>
     </xs:simpleType>
 
@@ -752,8 +763,18 @@
         <xs:complexContent>
             <xs:extension base="common:Resource">
                 <xs:sequence>
-                    <xs:element name="urnProvider" type="xs:string" minOccurs="1" />
+                    <xs:element name="urnProvider" type="xs:string" minOccurs="0" />
                     <xs:element name="managementAppLink" type="xs:string" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="ResourceInternalWithStatisticalOperation">
+        <xs:complexContent>
+            <xs:extension base="tns:ResourceInternal">
+                <xs:sequence>
+                    <xs:element name="statisticalOperation" type="tns:ResourceInternal" />
                 </xs:sequence>
             </xs:extension>
         </xs:complexContent>
@@ -798,6 +819,35 @@
             <xs:element name="emails" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
     </xs:complexType>
+   
+     <!-- RESOURCES ENTITY --> 
+    <!-- Lists -->
+    <xs:complexType name="Resources">
+        <xs:complexContent>
+            <xs:extension base="common:ListBase">
+                <xs:sequence>
+                    <xs:element name="resource" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    
+     <xs:simpleType name="ResourcesCriteriaPropertyOrder">
+        <xs:restriction base="xs:token">
+            <xs:enumeration value="ID" />
+            <xs:enumeration value="STATISTICAL_OPERATION_ID" />  
+        </xs:restriction>
+    </xs:simpleType>
+    
+    <!-- Criterias -->
+    <xs:simpleType name="ResourcesCriteriaPropertyRestriction">
+        <xs:restriction base="xs:token">
+        	<xs:enumeration value="URN" />
+            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
+            <xs:enumeration value="GEOCOV_VARELEM_ID" />
+            <xs:enumeration value="IS_LAST_VERSION" />
+        </xs:restriction>
+    </xs:simpleType>
     
     <!-- Elements -->
     <xs:element name="dataset" type="tns:Dataset" />
@@ -808,4 +858,5 @@
     <xs:element name="queries" type="tns:Queries" />
     <xs:element name="multidataset" type="tns:Multidataset" />
     <xs:element name="multidatasets" type="tns:Multidatasets" />
+    <xs:element name="resources" type="tns:Resources" />
 </xs:schema>

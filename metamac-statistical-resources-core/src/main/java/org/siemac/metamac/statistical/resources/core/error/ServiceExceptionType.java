@@ -67,8 +67,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.publication_version.must_have_at_least_one_cube");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_CHAPTER_MUST_HAVE_AT_LEAST_ONE_CUBE                      = create(
             "exception.resources.publication_version.chapter_must_have_at_least_one_cube");
-    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET          = create(
-            "exception.resources.publication_version.cube_must_link_to_dataset_query_or_multidataset");
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET_URL      = create(
+            "exception.resources.publication_version.cube_must_link_to_dataset_query_or_multidataset_url");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_DATASET                          = create(
             "exception.resources.publication_version.linked_to_dataset_with_no_published_version");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_QUERY                            = create(
@@ -200,8 +200,11 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.task.error.database_importation_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_GEOCOVERAGE_CACHE_IN_PROCESS                                = create(
             "exception.resources.task.error.update_geocoverage_cache_in_process");
+    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_IN_PROCESS                       = create(
+            "exception.resources.task.error.update_external_geocoverage_cache_in_process");
+    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_GET_ALL_EXTERNAL_PUBLICATION_MESSAGES_ERROR     = create(
+            "exception.resources.task.error.update_external_geocoverage_cache_get_all_external_publication_messages_error");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                            = create("exception.resources.task.in_progress");
-
     // Dataset Importation
     public static final CommonServiceExceptionType FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION                      = create(
             "exception.resources.dataset.importation.file_not_linked_to_any_dataset_in_statistical_operation");
@@ -225,6 +228,9 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType IMPORTATION_DATASET_VERSION_ERROR                                            = create(
             "exception.resources.dataset.importation.dataset_version_error");
     public static final CommonServiceExceptionType IMPORTATION_CSV_FILE_ERROR                                                   = create("exception.resources.dataset.importation.csv_file_error");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID                               = create("exception.resources.attribute.importation.dimension_value_invalid");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_DIMENSION_ID_INVALID                                  = create("exception.resources.attribute.importation.dimension_id_invalid");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_ATTRIBUTE_ID_INVALID                                  = create("exception.resources.attribute.importation.attribute_id_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_CODE_ENUM_NOT_VALID                                         = create(
             "exception.resources.dataset.importation.attribute_code_enumeration_not_valid");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_NOT_MATCH                                                   = create("exception.resources.dataset.importation.attribute_not_match");
@@ -305,5 +311,21 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.geocoverage.geographical_coverage_code_not_found");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR                                   = create("exception.resources.dataset_version.geocoverage.job_error");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR            = create(
-            "exception.resources.dataset_version.geocoverage.job_error_and_cant_mark_as_error");
-}
+        "exception.resources.dataset_version.geocoverage.job_error_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR_STREAM_NO_VALID            = create(
+            "exception.resources.dataset_version.geocoverage.cache_dataset_from_external_publication_error_stream_no_valid");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR                            = create(
+            "exception.resources.dataset_version.geocoverage.cache_dataset_from_external_publication_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_JOB_ERROR_AND_CANT_MARK_AS_ERROR = create(
+            "exception.resources.dataset_version.geocoverage.cache_external_publication_job_error_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_FROM_EXTERNAL_PUBLICATION_ERROR                        = create(
+            "exception.resources.dataset_version.geocoverage.job_from_external_publication_error");  
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR                        = create(
+            "exception.resources.dataset_version.geocoverage.job_from_external_publication_variable_element_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_ERROR                        = create(
+            "exception.resources.dataset_version.geocoverage.job_from_external_publication_from_kafka_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR                        = create(
+            "exception.resources.dataset_version.geocoverage.job_from_external_publication_with_errors");
+    
+    
+    }

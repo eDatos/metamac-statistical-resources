@@ -10,6 +10,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.Translation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -25,7 +26,10 @@ public abstract class StatisticalResourcesMockFactory<EntityMock> extends MockFa
     public static final String OPERATION_01_CODE               = "C00025A";
     public static final String OPERATION_02_CODE               = "C00025B";
     public static final String OPERATION_03_CODE               = "C00025C";
-
+    public static final String OPERATION_04_CODE               = "C00025D";
+    public static final String OPERATION_05_CODE               = "C00025E";
+    public static final String OPERATION_06_CODE               = "C00025F";
+    
     public static final String INIT_VERSION                    = "1.0";
     public static final String SECOND_VERSION                  = "2.0";
     public static final String THIRD_VERSION                   = "3.0";
@@ -128,6 +132,14 @@ public abstract class StatisticalResourcesMockFactory<EntityMock> extends MockFa
 
     protected static void registerMultidatasetMock(String id, Multidataset multidataset) {
         MultidatasetMockFactory.getInstance().registerMock(id, multidataset);
+    }
+    
+    protected static void registerGeoCovVarElementCacheDatasetVersionMock(String id, GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion) {
+        GeoCovVarElementCacheDatasetVersionFactory.getInstance().registerMock(id, geoCovVarElementCacheDatasetVersion);
+    }
+    
+    protected static GeoCovVarElementCacheDatasetVersion getGeoCovVarElementCacheDatasetVersionMock(String id) {
+        return GeoCovVarElementCacheDatasetVersionFactory.getInstance().getMock(id);
     }
 
 }

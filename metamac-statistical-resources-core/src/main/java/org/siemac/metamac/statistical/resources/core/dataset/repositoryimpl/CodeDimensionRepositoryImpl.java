@@ -16,24 +16,39 @@ import org.springframework.stereotype.Repository;
 public class CodeDimensionRepositoryImpl extends CodeDimensionRepositoryBase {
     public CodeDimensionRepositoryImpl() {
     }
-    
+
     @Override
     public List<CodeDimension> findCodesForDatasetVersionByDimensionId(long datasetVersionId, String dimensionId, String filter) throws MetamacException {
-        Map<String,Object> parameters = new HashMap<String, Object>();
+        Map<String, Object> parameters = new HashMap<String, Object>();
         parameters.put("dimensionId", dimensionId);
         parameters.put("datasetVersionId", datasetVersionId);
-        
+
         String filterSql = StringUtils.EMPTY;
         if (StringUtils.isNotBlank(filter)) {
-            parameters.put("filter", "%"+filter+"%");
-            filterSql =" and (code.title like :filter or code.identifier like :filter)";
+            parameters.put("filter", "%" + filter + "%");
+            filterSql = " and (code.title like :filter or code.identifier like :filter)";
         }
         return findByQuery(
-                "from CodeDimension code "+
-                "where code.dsdComponentId = :dimensionId "+
-                "and code.datasetVersion.id = :datasetVersionId" +
-                filterSql
-                , 
+                "from CodeDimension code " +
+                        "where code.dsdComponentId = :dimensionId " +
+                        "and code.datasetVersion.id = :datasetVersionId" +
+                        filterSql
+                ,
                 parameters);
+    }
+
+    @Override
+    public String findTitleForDatasetVersionByDimensionIdAndIdentifier(long datasetVersionId, String dimensionId, String codeDimIdentifier) throws MetamacException {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("dimensionId", dimensionId);
+        parameters.put("datasetVersionId", datasetVersionId);
+        parameters.put("codeDimIdentifier", codeDimIdentifier);
+
+        return findByQuery(
+                "from CodeDimension code " +
+                        "where code.dsdComponentId = :dimensionId " +
+                        "and code.datasetVersion.id = :datasetVersionId " +
+                        "and code.identifier = :codeDimIdentifier",
+                parameters).get(0).getTitle();
     }
 }

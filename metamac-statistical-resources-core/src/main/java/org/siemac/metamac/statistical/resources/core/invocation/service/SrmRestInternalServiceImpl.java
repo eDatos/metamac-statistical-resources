@@ -38,6 +38,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElement;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -65,7 +66,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = dataStructureComponents[0];
             String dsdId = dataStructureComponents[1];
             String version = dataStructureComponents[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(agencyId, dsdId, version);
+            return restApiLocator.getSrmRestInternalFacadeV10().retrieveDataStructure(agencyId, dsdId, version, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -356,10 +357,10 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
     }
 
     @Override
-    public Codes findCodes(String codelistUrn, int firstResult, int maxResult, String query) throws MetamacException {
+    public Codes findCodes(String codelistUrn, Integer firstResult, Integer maxResult, String query) throws MetamacException {
         try {
-            String limit = String.valueOf(maxResult);
-            String offset = String.valueOf(firstResult);
+            String limit = maxResult != null ? String.valueOf(maxResult) : null;
+            String offset = firstResult != null ? String.valueOf(firstResult) : null;
             String agencyId = null;
             String resourceId = null;
             String version = null;
@@ -425,6 +426,26 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
         }
     }
 
+ // -------------------------------------------------------------------------------------------------
+    // VARIABLE ELEMENTS
+    // -------------------------------------------------------------------------------------------------
+
+    @Override
+    public VariableElement retrieveVariableElement(String variableElementUrn) throws MetamacException {
+        if (StringUtils.isBlank(variableElementUrn)) {
+            throw new MetamacException(ServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionParameters.URN);
+        }
+
+        try {
+            String[] urnSplited = UrnUtils.splitUrnByDots(UrnUtils.splitUrnItem(variableElementUrn)[0]);
+            String variableID = urnSplited[0];
+            String resourceID = urnSplited[1];
+            return restApiLocator.getSrmRestInternalFacadeV10().retrieveVariableElementById(variableID, resourceID);
+        } catch (Exception e) {
+            throw manageSrmInternalRestException(e);
+        }
+    }
+    
     // -------------------------------------------------------------------------------------------------
     // ORGANISATION SCHEMES
     // -------------------------------------------------------------------------------------------------
@@ -486,7 +507,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = params[0];
             String resourceId = params[1];
             String version = params[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().findOrganisations(agencyId, resourceId, version, null, null, null, null);
+            return restApiLocator.getSrmRestInternalFacadeV10().findOrganisations(agencyId, resourceId, version, null, null, null, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -499,7 +520,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String offset = String.valueOf(firstResult);
             String orderBy = null;
             return restApiLocator.getSrmRestInternalFacadeV10().findOrganisations(RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, query, orderBy, limit,
-                    offset);
+                    offset, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -625,7 +646,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = params[0];
             String resourceId = params[1];
             String version = params[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().findCategories(agencyId, resourceId, version, null, null, null, null);
+            return restApiLocator.getSrmRestInternalFacadeV10().findCategories(agencyId, resourceId, version, null, null, null, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -638,7 +659,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String offset = String.valueOf(firstResult);
             String orderBy = null;
             return restApiLocator.getSrmRestInternalFacadeV10().findCategories(RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, RestApiConstants.WILDCARD_ALL, query, orderBy, limit,
-                    offset);
+                    offset, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }

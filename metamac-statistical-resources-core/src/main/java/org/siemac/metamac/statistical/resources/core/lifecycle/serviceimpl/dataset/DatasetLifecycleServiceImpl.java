@@ -163,6 +163,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     @Override
     protected void applySendToPublishedCurrentResource(ServiceContext ctx, DatasetVersion resource, DatasetVersion previousResource) throws MetamacException {
         resource.setBibliographicCitation(buildBibliographicCitation(resource));
+        updateGeographicCoverage(ctx, resource);
         updateGeographicCoverageVariableElementsCache(ctx, resource);
     }
       
@@ -179,6 +180,9 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     }
 
+    private void updateGeographicCoverage(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+        datasetService.updateGeographicCoverageFromSpatialAttribute(ctx, resource);
+    }
     
     private void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         // In automatic life cicle this process is done later when the principal task finished

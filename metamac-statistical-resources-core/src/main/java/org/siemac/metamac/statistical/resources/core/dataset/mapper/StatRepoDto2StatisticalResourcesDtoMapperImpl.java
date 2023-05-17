@@ -13,6 +13,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
@@ -29,21 +31,25 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
     @Autowired
     private SrmRestInternalService srmRestInternalService;
 
+   @Autowired
+   private CodeDimensionRepository codeDimensionRepository;
+
+
     @Override
-    public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
+    public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(Long datasetVersionId, DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
         DsdAttributeInstanceDto target = new DsdAttributeInstanceDto();
         target.setAttributeId(source.getAttributeId());
-        target.setCodeDimensions(attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(source.getCodesByDimension()));
+        target.setCodeDimensions(attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(datasetVersionId, source));
         target.setValue(attributeInstanceValue2AttributeValueDto(dsdAttribute, source));
         target.setUuid(source.getUuid());
         return target;
     }
 
     @Override
-    public List<DsdAttributeInstanceDto> attributeDtosToDsdAttributeInstanceDtos(DsdAttribute attribute, List<AttributeInstanceDto> sources) throws MetamacException {
+    public List<DsdAttributeInstanceDto> attributeDtosToDsdAttributeInstanceDtos(Long datasetVersionId, DsdAttribute attribute, List<AttributeInstanceDto> sources) throws MetamacException {
         List<DsdAttributeInstanceDto> targets = new ArrayList<DsdAttributeInstanceDto>(sources.size());
         for (AttributeInstanceDto source : sources) {
-            targets.add(attributeDtoToDsdAttributeInstanceDto(attribute, source));
+            targets.add(attributeDtoToDsdAttributeInstanceDto(datasetVersionId, attribute, source));
         }
         return targets;
     }
@@ -77,16 +83,16 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
         return externalItemDto;
     }
 
-    private Map<String, List<CodeItemDto>> attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(Map<String, List<String>> codesByDimension) {
-        if (codesByDimension == null) {
+    private Map<String, List<CodeItemDto>> attributeInstanceCodeDimensionsDto2DsdAttributeInstanceCodeDimensionsDto(Long datasetVersionId, AttributeInstanceDto source) throws MetamacException {
+        if (source.getCodesByDimension() == null) {
             return null;
         }
         Map<String, List<CodeItemDto>> target = new HashMap<String, List<CodeItemDto>>();
 
-        for (String dimensionId : codesByDimension.keySet()) {
+        for (String dimensionId : source.getCodesByDimension().keySet()) {
             List<CodeItemDto> codeItems = new ArrayList<CodeItemDto>();
-            for (String codeDimIdentifier : codesByDimension.get(dimensionId)) {
-                codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimIdentifier));
+            for (String codeDimIdentifier : source.getCodesByDimension().get(dimensionId)) {
+                    codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionIdAndIdentifier(datasetVersionId, dimensionId, codeDimIdentifier)));
             }
             target.put(dimensionId, codeItems);
         }

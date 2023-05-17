@@ -246,7 +246,7 @@ public class PublicationPublishingServiceTest extends StatisticalResourcesMockRe
 
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         String cubeUrn = getCubeMockUrn(CUBE_08_EMPTY_IN_PUBLICATION_VERSION_90_NAME);
-        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET, cubeUrn));
+        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET_URL, cubeUrn));
 
         expectedMetamacException(new MetamacException(exceptionItems));
 

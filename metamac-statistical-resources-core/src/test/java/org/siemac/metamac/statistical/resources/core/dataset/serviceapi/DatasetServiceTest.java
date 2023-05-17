@@ -66,6 +66,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_80_NO_PUB_IS_REPLACED_BY_DATASET_79_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_85_LAST_VERSION_NOT_PUBLISHED__IS_PART_OF_PUBLICATIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DimensionRepresentationMappingMockFactory.DIMENSION_REPRESENTATION_MAPPING_01_DATASET_01_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory.GEO_COV_VAR_ELEMENT_CACHE_01;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_43_DRAFT_HAS_PART_DATASET_VERSION_85_FIRST_LEVEL_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_44_DRAFT_HAS_PART_DATASET_VERSION_85_NO_FIRST_LEVEL_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_45_DRAFT_HAS_PART_DATASET_VERSION_85_MULTI_CUBE_NAME;
@@ -81,11 +82,8 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.template
 import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -101,6 +99,7 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Assert;
@@ -108,7 +107,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.omg.CORBA.portable.ApplicationException;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -132,6 +130,8 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMappingRepository;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
@@ -152,6 +152,7 @@ import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImport
 import org.siemac.metamac.statistical.resources.core.utils.TaskMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.BaseAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticalResourcesMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesNotPersistedDoMocks;
@@ -168,6 +169,7 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
         "classpath:spring/statistical-resources/include/rest-services-mockito.xml", "classpath:spring/statistical-resources/applicationContext-test.xml"})
 @TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
 @Transactional
+
 public class DatasetServiceTest extends StatisticalResourcesBaseTest implements DatasetServiceTestBase {
 
     @Autowired
@@ -669,6 +671,22 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
                 datasetVersionPagedResult.getValues().get(0).getSiemacMetadataStatisticalResource().getUrn());
     }
 
+    @Override
+    @Test
+    @MetamacMock(GEO_COV_VAR_ELEMENT_CACHE_01)
+    public void testFindResourcesByCondition() throws Exception {
+        GeoCovVarElementCacheDatasetVersion actual = geoCovVarElementCacheDatasetVersionFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_01);
+        
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.variableElement().code())
+                .eq(GeoCovVarElementCacheDatasetVersionFactory.VARIABLE_ELEMENT_01).orderBy(GeoCovVarElementCacheDatasetVersionProperties.code()).ascending().build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+        PagedResult<GeoCovVarElementCacheDatasetVersion> resourcesPagedResult = datasetService.findResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+        assertEquals(1, resourcesPagedResult.getTotalRows());
+        assertEquals(actual.getUrn(), resourcesPagedResult.getValues().get(0).getUrn());
+       
+    }
+    
     @Override
     @Test
     @MetamacMock({DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME, DATASET_01_BASIC_NAME, DATASET_VERSION_01_BASIC_NAME})
@@ -1901,12 +1919,27 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
         // no test
     }
-
+   
     @Override
     public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
         // no test
     }
 
+    @Override
+    public void testUpdateAllGeographicExternalCoverageVariableElementsCache() throws Exception {
+        // no test
+    }
+    
+    @Override
+    public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
+        // no test
+    }
+    
+    @Override
+    public void testUpdateGeographicCoverageFromSpatialAttribute() throws Exception {
+        // no test
+    }
+    
     @Override
     @Test
     @MetamacMock({CATEGORISATION_01_DATASET_VERSION_01_NAME})
@@ -2078,7 +2111,6 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     
     private BasicVersionableStatisticalResourceDto getMockBasicVersionableStatisticalResourceDto() {
         BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto = new BasicVersionableStatisticalResourceDto();
-        Date date = new Date();
         basicVersionableStatisticalResourceDto.setAutomaticLifeCicle(true);
         List<String> versionRationaleTypes = new ArrayList<>();
         versionRationaleTypes.add(VersionRationaleTypeEnum.MINOR_DATA_UPDATE.getName());
@@ -2090,13 +2122,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         
         return basicVersionableStatisticalResourceDto;
     }
-    
-    private String convertDateToString(String date) {
-        DateFormat df = new SimpleDateFormat(date);
 
-        Date today = Calendar.getInstance().getTime();
-        String dateToString = df.format(today);
-
-        return (dateToString);
+    @Override
+    public void testImportAttributesFromFile() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_118_PUBLISHED_DATABASE_DATASET_NAME);
+        List<URL> urls = Arrays.asList(new File("prueba.px").toURI().toURL());
+        datasetService.importAttributesFromFile(getServiceContextWithoutPrincipal(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), urls);
     }
 }

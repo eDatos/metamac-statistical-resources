@@ -8,8 +8,33 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 7.0.0 a 7.0.1
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/7.0.0/db](etc/changes-from-release/7.0.0/db) 
 
-## 5.0.0 a 5.0.X-SNAPSHOT
+## 6.0.0 a 7.0.0
+* **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
+  devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
+  la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
+  de aplicaciones de eDatos que consuman la API de statistical-resources a través de JAX-RS.
+
+Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS debido a que se añade un nuevo campo visualizerHtmlLink
+******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+
+La tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
+Se cambiará la tabla. Y luego habrá que lanzar la actualización de toda la caché para cargar todos los datos de nuevo.
+La manera de actualizar la caché es como hasta ahora:
+ 1) Ir a la app de statistical-resources, y en la pantalla inicial aparece el botón "Actualizar caché de territorios"
+ 2) Pulsar el botón y ejecutará dos tareas.
+    - Actualización de la caché a partir de los datasets de base de datos.
+    - Actualización de la caché a partir del topic JAXI_PUBLICATIONS. 
+ La ejecución completa se realiza en background y puede tardar horas en función del volumen de datasets a procesar .
+
+* Se añaden script relacionados con la actualización de la caché de elementos de variable de un dataset y se añaden dos nuevas propiedades en el common_metadata en este orden
+[etc/changes-from-release/6.0.0/db](etc/changes-from-release/6.0.0/db).
+
+NOTAS DE LA VERSIÓN: En esta versión se comienza a consumir el topic JAXI_PUBLICATIONS. Por norma general, es la aplicación productora la responsable de contener las clases AVRO que definen los mensajes, así como las propiedades de configuración. Como en este caso el productor es externo al ecosistema eDatos, se ha tomado la decisión de que sea el statistical-resources el "productor" dentro de eDatos y, por tanto, es donde se almacenarán tanto las propiedades como la clase AVRO que recoge los mensajes de ese topic. Por tanto, cualquier consumidor del esquema JAXI_PUBLICATIONS deberá tener como dependencia al statistical-resources para utilizar dicha clase, al igual que ya lo hacen para el resto de clases AVRO del statistical-resources.
+
+## 5.0.1 a 6.0.0
 **BREAKING CHANGE** Para los metadatos "DATE_NEXT_UPDATE" y "NEXT_VERSION_DATE" en la salida de las APIs:
 A partir de esta versión los metadatos "date_next_update" y "next_version_date" dejan de ser fechas en formato "dateTime" para convertirse en un formato abierto que cumpla con las especificaciones de sdmx 2.1. Por este motivo, las APIs van a devolver en estos metadatos un InternationalString con la conversión del valor introducido.
 Ej: si 2022-M12
@@ -21,7 +46,7 @@ ns2:dateNextUpdate
 <cdomain:text xml:lang="ca">12/2022</cdomain:text>
 </ns2:dateNextUpdate>
 
-* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/5.0.0/db](etc/changes-from-release/5.0.0/db).
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/5.0.1/db](etc/changes-from-release/5.0.1/db).
 
 *******************************
 *** La ejecución de esta tarea requiere una serie de pasos en cada entorno que se detallan a continuación:*******

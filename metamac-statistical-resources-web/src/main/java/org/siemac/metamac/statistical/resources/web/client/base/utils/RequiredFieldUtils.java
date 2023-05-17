@@ -12,7 +12,6 @@ import static org.siemac.metamac.statistical.resources.web.client.model.ds.Siema
 import static org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS.LANGUAGE;
 import static org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS.LANGUAGES;
 import static org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS.PUBLISHER;
-import static org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS.DATA_PROVIDER;
 import static org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS.NEXT_VERSION;
 import static org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS.VERSION_RATIONALE_TYPES;
 import static org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds.MultidatasetDS.FILTERING_DIMENSION;
@@ -29,7 +28,7 @@ public class RequiredFieldUtils {
 
     // PUBLICATION VERSION
 
-    private static final String[] publicationFieldsToProductionValidation = new String[]{DESCRIPTION, NEXT_VERSION, VERSION_RATIONALE_TYPES, LANGUAGE, LANGUAGES, CREATOR, PUBLISHER, COMMON_METADATA, DATA_PROVIDER};
+    private static final String[] publicationFieldsToProductionValidation = new String[]{DESCRIPTION, NEXT_VERSION, VERSION_RATIONALE_TYPES, LANGUAGE, LANGUAGES, CREATOR, PUBLISHER, COMMON_METADATA};
     private static final String[] publicationFieldsToDiffusionValidation  = publicationFieldsToProductionValidation;
     private static final String[] publicationFieldsToPublication          = publicationFieldsToDiffusionValidation;
 
@@ -51,7 +50,7 @@ public class RequiredFieldUtils {
     // DATASET VERSION
 
     private static final String[] datasetFieldsToProductionValidation = new String[]{DESCRIPTION, NEXT_VERSION, VERSION_RATIONALE_TYPES, LANGUAGE, LANGUAGES, CREATOR, PUBLISHER, COMMON_METADATA,
-            DATA_PROVIDER, GEOGRAPHIC_COVERAGE, GEOGRAPHIC_GRANULARITY, TEMPORAL_COVERAGE, TEMPORAL_GRANULARITY, UPDATE_FRECUENCY, STATISTIC_OFFICIALITY};
+            GEOGRAPHIC_COVERAGE, GEOGRAPHIC_GRANULARITY, TEMPORAL_COVERAGE, TEMPORAL_GRANULARITY, UPDATE_FRECUENCY, STATISTIC_OFFICIALITY};
     private static final String[] datasetFieldsToDiffusionValidation  = datasetFieldsToProductionValidation;
     private static final String[] datasetFieldsToPublication          = datasetFieldsToDiffusionValidation;
 

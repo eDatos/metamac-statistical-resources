@@ -21,11 +21,17 @@ public class JobsSchedulerListener implements ApplicationListener<ContextRefresh
     public void onApplicationEvent(ContextRefreshedEvent event) {
         logger.debug("Scheduling jobs...");
         schedulingDatabaseDatasetPollingJob();
+        schedulingGeographicCoverageCacheClearJob();
     }
 
     private void schedulingDatabaseDatasetPollingJob() {
         ServiceContext ctx = new ServiceContext("Metamac", "Tasks", "Metamac");
         taskServiceFacade.scheduleDatabaseDatasetPollingJob(ctx);
+    }
+    
+    private void schedulingGeographicCoverageCacheClearJob() {
+        ServiceContext ctx = new ServiceContext("Metamac", "Tasks", "Metamac");
+        taskServiceFacade.scheduleGeographicCoverageCacheClearJob(ctx);
     }
 
 }

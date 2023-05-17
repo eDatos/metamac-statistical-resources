@@ -22,6 +22,8 @@ public class CubeMockFactory extends StatisticalResourcesMockFactory<Cube> {
     public static final String     CUBE_07_QUERY_WITH_PARENT_NAME               = "CUBE_07_QUERY_WITH_PARENT";
 
     public static final String     CUBE_08_EMPTY_IN_PUBLICATION_VERSION_90_NAME = "CUBE_08_EMPTY_IN_PUBLICATION_VERSION_90";
+    
+    public static final String     CUBE_09_URL_NAME                           = "CUBE_05_URL";
 
     private static CubeMockFactory instance                                     = null;
 
@@ -55,6 +57,10 @@ public class CubeMockFactory extends StatisticalResourcesMockFactory<Cube> {
         return createQueryCube();
     }
 
+    private static Cube getCube09Url() {
+        return createUrlCube();
+    }
+    
     private static Cube getCube06DatasetWithParent() {
         return createDatasetCubeWithParent();
     }
@@ -63,6 +69,10 @@ public class CubeMockFactory extends StatisticalResourcesMockFactory<Cube> {
         return createQueryCubeWithParent();
     }
 
+    private static Cube createUrlCube() {
+        return getStatisticalResourcesPersistedDoMocks().mockUrlCube("http://www.pruebas.com");
+    }
+    
     private static Cube createQueryCube() {
         return getStatisticalResourcesPersistedDoMocks().mockQueryCube(getStatisticalResourcesPersistedDoMocks().mockQueryWithGeneratedQueryVersion());
     }

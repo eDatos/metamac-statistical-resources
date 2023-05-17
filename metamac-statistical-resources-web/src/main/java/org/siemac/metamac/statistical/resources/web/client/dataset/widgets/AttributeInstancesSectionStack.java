@@ -22,6 +22,7 @@ import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.events.HasClickHandlers;
+import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.SelectionUpdatedEvent;
 import com.smartgwt.client.widgets.grid.events.SelectionUpdatedHandler;
@@ -82,6 +83,10 @@ public class AttributeInstancesSectionStack extends CustomListGridSectionStack {
         deleteConfirmationWindow.setVisible(false);
     }
 
+    public ListGrid getListGrid() {
+        return listGrid;
+    }
+    
     public void showInstances(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
         setSectionTitle(getMessages().datasetAttributeIntances(dsdAttributeDto.getIdentifier()));
         listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos));
@@ -100,6 +105,18 @@ public class AttributeInstancesSectionStack extends CustomListGridSectionStack {
         return uuids;
     }
 
+    public ListGridRecord getSelectedAttributeInstance(String uuid) {
+        ListGridRecord[] records = listGrid.getRecords();
+        for (ListGridRecord record : records) {
+            if (record instanceof DsdAttributeInstanceRecord) {
+                if (((DsdAttributeInstanceRecord) record).getUuid().equals(uuid)) {
+                    return record;
+                }
+            }
+        }
+        return null;
+    }
+    
     public HasClickHandlers getNewInstanceButton() {
         return newInstanceButton;
     }

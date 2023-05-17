@@ -1,3 +1,4 @@
+[
 {
     "namespace" : "org.siemac.metamac.statistical.resources.core.stream.messages",
     "name" : "DatetimeAvro",
@@ -7,5 +8,5 @@
         {"name" : "timezone", "type" : ["null", "string"], "default": null}
     ]
 }
-
+]
 

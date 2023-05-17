@@ -8,6 +8,7 @@ import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
@@ -25,26 +26,29 @@ public class DatasetImportUtils {
         return Boolean.TRUE.equals(ctx.getProperty(ImportDatasetJob.DATASET_IMPORT_JOB_FLAG));
     }
 
-    public static void setRequiredMetadataForDatasetImportation(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException  {
-        setDatasetVersionDataProviders(datasetVersion, taskInfoDataset, srmRestInternalService);
+    public static void setRequiredMetadataForDatasetImportation(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService,
+            CommonDto2DoMapper dto2DoMapper) throws MetamacException {
+        setDatasetVersionDataProviders(datasetVersion, taskInfoDataset, srmRestInternalService, dto2DoMapper);
         setDatasetVersionVersionRationaleType(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersion(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersionDate(datasetVersion, taskInfoDataset);
         setDatasetVersionNextUpdateDate(datasetVersion, taskInfoDataset);
-        setDatasetVersionUpdateFrequency(datasetVersion, taskInfoDataset, srmRestInternalService);
+        setDatasetVersionUpdateFrequency(datasetVersion, taskInfoDataset, srmRestInternalService, dto2DoMapper);
     }
-    
-    private static void setDatasetVersionDataProviders(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException {
+
+    private static void setDatasetVersionDataProviders(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService, CommonDto2DoMapper dto2DoMapper)
+            throws MetamacException {
+        datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().clear();
         if (taskInfoDataset.getDatasetVersionDataProviderUrn() != null && !taskInfoDataset.getDatasetVersionDataProviderUrn().isEmpty()) {
-            datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().clear();
+
             for (String datasetVersionDataProviderUrn : taskInfoDataset.getDatasetVersionDataProviderUrn()) {
                 ExternalItem dataProvider = StatisticalResourcesExternalItemUtils.buildExternalItemFromItem(srmRestInternalService.retrieveDataProviderByUrn(datasetVersionDataProviderUrn),
-                        TypeExternalArtefactsEnum.DATA_PROVIDER);
+                        TypeExternalArtefactsEnum.DATA_PROVIDER, dto2DoMapper);
                 datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider().add(dataProvider);
             }
         }
     }
-    
+
     private static void setDatasetVersionVersionRationaleType(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
         if (taskInfoDataset.getDatasetVersionRationaleTypes() != null) {
             for (String DatasetVersionRationaleTypes : taskInfoDataset.getDatasetVersionRationaleTypes()) {
@@ -71,26 +75,27 @@ public class DatasetImportUtils {
         }
     }
 
-    private static void setDatasetVersionUpdateFrequency(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService) throws MetamacException {
+    private static void setDatasetVersionUpdateFrequency(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset, SrmRestInternalService srmRestInternalService, CommonDto2DoMapper dto2DoMapper)
+            throws MetamacException {
         boolean isNoUpdatedNextVersion = isBlank(taskInfoDataset.getDatasetNextVersion())
                 || (!isBlank(taskInfoDataset.getDatasetNextVersion()) && NextVersionTypeEnum.NO_UPDATES.equals(NextVersionTypeEnum.valueOf(taskInfoDataset.getDatasetNextVersion())));
-        
+
         if (!isBlank(taskInfoDataset.getDatasetUpdateFrequency()) && !isNoUpdatedNextVersion) {
             ExternalItem temporalCode = StatisticalResourcesExternalItemUtils.buildExternalItemFromItem(srmRestInternalService.retrieveCodeByUrn(taskInfoDataset.getDatasetUpdateFrequency()),
-                    TypeExternalArtefactsEnum.CODE);
+                    TypeExternalArtefactsEnum.CODE, dto2DoMapper);
             datasetVersion.setUpdateFrequency(temporalCode);
         } else {
             datasetVersion.setUpdateFrequency(null);
         }
     }
-    
+
     private static boolean isBlank(String cadena) {
-        return cadena == null || "".equals(cadena);  
+        return cadena == null || "".equals(cadena);
     }
-    
+
     public static DateTime getFormattedDateTime(String date) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
         return formatter.parseDateTime(date);
     }
-    
+
 }

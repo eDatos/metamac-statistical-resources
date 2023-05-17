@@ -244,8 +244,8 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         target.getStatisticalUnit().clear();
         target.getStatisticalUnit().addAll(externalItemDoCollectionToDtoCollection(source.getStatisticalUnit()));
 
-        target.setDateStart(dateDoToDto(source.getDateStart()));
-        target.setDateEnd(dateDoToDto(source.getDateEnd()));
+        target.setDateStart(source.getDateStart());
+        target.setDateEnd(source.getDateEnd());
 
         target.setRelatedDsd(externalItemDoToDto(source.getRelatedDsd()));
 
@@ -261,7 +261,8 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         target.getIsRequiredBy().clear();
         target.getIsRequiredBy().addAll(relatedResourceResultCollectionToDtoCollection(isRequiredBy));
 
-        target.setIsTaskInBackground(taskService.existsTaskForResource(ctx, source.getDataset().getIdentifiableStatisticalResource().getUrn()));
+        target.setIsTaskInBackground(taskService.existsTaskForResource(ctx, source.getDataset().getIdentifiableStatisticalResource().getUrn()) 
+                || taskService.existsTaskImportAttributes(ctx, source.getDataset().getIdentifiableStatisticalResource().getUrn()));
 
         target.setKeepAllData(source.isKeepAllData());
 

@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.utils;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,14 +11,18 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.dto.InternationalStringDto;
 import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Item;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 
 public class StatisticalResourcesExternalItemUtils {
 
@@ -68,20 +73,20 @@ public class StatisticalResourcesExternalItemUtils {
         return externalItemDto;
     }
 
-    public static ExternalItem buildExternalItemFromItem(Item item, TypeExternalArtefactsEnum type) {
+    public static ExternalItem buildExternalItemFromItem(Item item, TypeExternalArtefactsEnum type, CommonDto2DoMapper dto2DoMapper) throws MetamacException {
         ExternalItem externalItem = new ExternalItem();
         externalItem.setCode(item.getId());
         externalItem.setCodeNested(item.getNestedId());
         externalItem.setUrn(item.getUrn());
         externalItem.setUrnProvider(item.getUrnProvider());
         externalItem.setType(type);
-        externalItem.setUri(item.getSelfLink().getHref());
-        externalItem.setManagementAppUrl(item.getManagementAppLink());
+        externalItem.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(type, item.getSelfLink().getHref()));
+        externalItem.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(type, item.getManagementAppLink()));
         externalItem.setTitle(getInternationalStringFromRestInternationalString(item.getName()));
 
         return externalItem;
     }
-    
+
     private static org.siemac.metamac.statistical.resources.core.common.domain.InternationalString getInternationalStringFromRestInternationalString(InternationalString restInternationalString) {
         if (restInternationalString != null) {
             org.siemac.metamac.statistical.resources.core.common.domain.InternationalString internationalString = new org.siemac.metamac.statistical.resources.core.common.domain.InternationalString();
@@ -96,7 +101,7 @@ public class StatisticalResourcesExternalItemUtils {
         }
         return null;
     }
-    
+
     private static InternationalStringDto getInternationalStringDtoFromInternationalString(InternationalString internationalString) {
         if (internationalString != null) {
             InternationalStringDto internationalStringDto = new InternationalStringDto();
@@ -110,5 +115,26 @@ public class StatisticalResourcesExternalItemUtils {
             return internationalStringDto;
         }
         return null;
+    }
+
+    public static List<ExternalItemDto> buildExternalItemDtoFromCodes(Codes codes) {
+        List<ExternalItemDto> externalItemDtos = new ArrayList<>();
+        for (ResourceInternal resource : codes.getCodes()) {
+            externalItemDtos.add(buildExternalItemDtoFromResource(resource, TypeExternalArtefactsEnum.CODE));
+        }
+        return externalItemDtos;
+    }
+
+    private static ExternalItemDto buildExternalItemDtoFromResource(ResourceInternal resource, TypeExternalArtefactsEnum type) {
+        ExternalItemDto externalItemDto = new ExternalItemDto();
+        externalItemDto.setCode(resource.getId());
+        externalItemDto.setCodeNested(resource.getNestedId());
+        externalItemDto.setUri(resource.getSelfLink().getHref());
+        externalItemDto.setUrn(resource.getUrn());
+        externalItemDto.setUrnProvider(resource.getUrnProvider());
+        externalItemDto.setType(type);
+        externalItemDto.setTitle(getInternationalStringDtoFromInternationalString(resource.getName()));
+        externalItemDto.setManagementAppUrl(resource.getManagementAppLink());
+        return externalItemDto;
     }
 }

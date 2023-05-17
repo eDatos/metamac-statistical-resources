@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.utils.mocks.templates;
 
+import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnItem;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -350,8 +352,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
                 List<String> sortedTempCodes = new ArrayList<String>();
                 StatisticalResourcesCollectionUtils.mapCollection(temporalCodes, sortedTempCodes, new CodeDimensionToCodeStringTransformer());
                 sortedTempCodes = SdmxTimeUtils.sortTimeList(sortedTempCodes);
-                datasetVersion.setDateStart(SdmxTimeUtils.calculateDateTimes(sortedTempCodes.get(0))[0]);
-                datasetVersion.setDateEnd(SdmxTimeUtils.calculateDateTimes(sortedTempCodes.get(sortedTempCodes.size() - 1))[0]);
+                datasetVersion.setDateStart(sortedTempCodes.get(0));
+                datasetVersion.setDateEnd(sortedTempCodes.get(sortedTempCodes.size() - 1));
             }
         }
 
@@ -814,5 +816,17 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
     protected void setSpecialCasesStatisticOfficialityMock(StatisticOfficiality officiality) {
         officiality.setVersion(0L);
     }
+    
+    public static String getHtmlLink(String urn) {
+        String htmlLink = "";
+        String[] splitUrnItem = splitUrnItem(urn);
+        String agencyID = splitUrnItem[0];
+        String[] agenciesID = agencyID.contains(".") ? agencyID.split(".") : new String[]{agencyID};
+        String resourceID = splitUrnItem[1];
+        String version = splitUrnItem[2];
+        
+        return StatisticalResourcesPersistedDoMocks.mockPortalDatasetHtmlLink(agencyID, resourceID, version);
+    }
+    
 
 }
