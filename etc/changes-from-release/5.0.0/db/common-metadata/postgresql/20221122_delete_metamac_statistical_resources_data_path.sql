@@ -4,5 +4,5 @@
 -- Se elimina la propiedad con el valor ${metamac.data.path}/%/docs
 -- --------------------------------------------------------------------------------------------------
 
-delete from tb_data_configurations where conf_key ='metamac.data.docs.statistical_resources.path';
+delete from tb_data_configurations where conf_key ='deprecated.metamac.data.docs.statistical_resources.path';
 commit;
