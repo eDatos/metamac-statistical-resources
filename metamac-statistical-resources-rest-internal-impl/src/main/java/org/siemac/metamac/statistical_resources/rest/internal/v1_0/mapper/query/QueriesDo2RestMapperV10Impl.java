@@ -20,6 +20,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -27,7 +28,11 @@ import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCrite
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimension;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionType;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimensions;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValue;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryMetadata;
@@ -285,6 +290,11 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setPublicationDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getPublicationDate()));
         target.setPublicationUser(source.getLifeCycleStatisticalResource().getPublicationUser());
 
+        Dimension temporalDimension = getTemporalDimension(target.getDimensions());
+
+        target.setDateStart(toDateStart(temporalDimension, selectedLanguages));
+        target.setDateEnd(toDateEnd(temporalDimension, selectedLanguages));
+
         return target;
     }
 
@@ -306,6 +316,35 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
         return targets;
+    }
+
+    private InternationalString toDateStart(Dimension temporalDimension, List<String> selectedLanguages) throws MetamacException {
+        if (temporalDimension != null) {
+            List<NonEnumeratedDimensionValue> temporalDimensionValues = ((NonEnumeratedDimensionValues) temporalDimension.getDimensionValues()).getValues();
+            if (temporalDimensionValues != null && temporalDimensionValues.size() > 0) {
+                return commonDo2RestMapper.toSdmxObservationalTimePeriod(temporalDimensionValues.get(temporalDimensionValues.size() - 1).getId(), selectedLanguages);
+            }
+        }
+        return null;
+    }
+
+    private InternationalString toDateEnd(Dimension temporalDimension, List<String> selectedLanguages) throws MetamacException {
+        if (temporalDimension != null) {
+            List<NonEnumeratedDimensionValue> temporalDimensionValues = ((NonEnumeratedDimensionValues) temporalDimension.getDimensionValues()).getValues();
+            if (temporalDimensionValues != null && temporalDimensionValues.size() > 0) {
+                return commonDo2RestMapper.toSdmxObservationalTimePeriod(temporalDimensionValues.get(0).getId(), selectedLanguages);
+            }
+        }
+        return null;
+    }
+
+    private Dimension getTemporalDimension(Dimensions dimensions) {
+        for (Dimension dimension : dimensions.getDimensions()) {
+            if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
+                return dimension;
+            }
+        }
+        return null;
     }
 
     public Data toQueryData(QueryVersion source, DatasetVersion datasetVersion, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages)
