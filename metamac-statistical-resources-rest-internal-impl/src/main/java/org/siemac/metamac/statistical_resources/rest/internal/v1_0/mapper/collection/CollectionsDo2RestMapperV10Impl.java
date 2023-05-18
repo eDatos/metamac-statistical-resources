@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.colle
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -268,6 +269,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         ResourcesInternal urlResources = commonDo2RestMapper.toUrlResources(urls);
         if (urlResources != null && !urlResources.getResources().isEmpty()) {
             resources.getResources().addAll(urlResources.getResources());
+            resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
         }
         return resources;
     }

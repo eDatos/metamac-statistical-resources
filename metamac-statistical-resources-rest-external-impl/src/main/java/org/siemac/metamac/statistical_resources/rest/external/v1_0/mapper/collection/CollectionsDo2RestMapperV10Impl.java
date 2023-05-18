@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.colle
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -60,38 +61,37 @@ import org.springframework.stereotype.Component;
 public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapperV10 {
 
     @Autowired
-    private CommonDo2RestMapperV10        commonDo2RestMapper;
+    private CommonDo2RestMapperV10 commonDo2RestMapper;
 
     @Autowired
-    private DatasetsDo2RestMapperV10      datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
 
     @Autowired
-    private DatasetVersionRepository      datasetVersionRepository;
+    private DatasetVersionRepository datasetVersionRepository;
 
     @Autowired
-    private QueryVersionRepository        queryVersionRepository;
+    private QueryVersionRepository queryVersionRepository;
 
     @Autowired
     private MultidatasetVersionRepository multidatasetVersionRepository;
 
     @Autowired
-    private QueriesDo2RestMapperV10       queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10 queriesDo2RestMapper;
 
     @Autowired
     private MultidatasetsDo2RestMapperV10 multidatasetsDo2RestMapper;
 
     @Autowired
-    private PublicationVersionRepository  publicationVersionRepository;
-    
+    private PublicationVersionRepository publicationVersionRepository;
+
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
 
-
-    private static final Logger           logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
 
     @Override
     public Collections toCollections(PagedResult<PublicationVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
-        Set<String> parsedFields) throws MetamacException {
+            Set<String> parsedFields) throws MetamacException {
 
         Collections targets = new Collections();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_COLLECTIONS);
@@ -178,11 +178,11 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         target.setVisualizerHtmlLink(toVisualizerHtmlLink(source));
         return target;
     }
-    
+
     private String toVisualizerHtmlLink(RelatedResourceResult source) throws MetamacException {
         String agencyID = source.getMaintainerNestedCode();
         String resourceID = source.getCode();
-        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, agencyID, resourceID, null, configurationService, false);  
+        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, agencyID, resourceID, null, configurationService, false);
     }
 
     private CollectionMetadata toCollectionMetadata(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
@@ -218,7 +218,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     private Resources toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResource> hasPart = null;
         List<String> urls = new ArrayList<String>();
-        
+
         if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
             // Is necessary to calculate the has part
             hasPart = PublicationsUtils.computeHasPart(source);
@@ -227,11 +227,12 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             hasPart = source.getHasPart();
         }
         urls = PublicationsUtils.computeUrlsHasPart(source);
-        
+
         Resources resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
         Resources urlResources = commonDo2RestMapper.toUrlResources(urls);
         if (urlResources != null && !urlResources.getResources().isEmpty()) {
-            resources.getResources().addAll(urlResources.getResources());  
+            resources.getResources().addAll(urlResources.getResources());
+            resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
         }
         return resources;
     }
@@ -308,7 +309,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
 
         return target;
     }
-    
+
     @Override
     public Resource toResource(String url, List<String> selectedLanguages) {
         if (url == null) {
@@ -316,10 +317,9 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         }
         Resource target = new Resource();
         target.setVisualizerHtmlLink(url);
-        target.setKind(StatisticalResourcesRestExternalConstants.KIND_URL);    
+        target.setKind(StatisticalResourcesRestExternalConstants.KIND_URL);
         return target;
     }
-    
 
     private CollectionNodes toCollectionNodes(List<ElementLevel> sources, List<String> selectedLanguages) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {

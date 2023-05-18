@@ -4,7 +4,7 @@
 -- ---------------------------------------------------------------------------------------------------
 
  
-DROP TABLE metamac_statistical_resources_bd.tb_geocov_varelem_cache_datasets_versions
+DROP TABLE tb_geocov_varelem_cache_datasets_versions;
 
 CREATE TABLE tb_geocov_varelem_cache_datasets_versions (
 	id int8 NOT NULL,
