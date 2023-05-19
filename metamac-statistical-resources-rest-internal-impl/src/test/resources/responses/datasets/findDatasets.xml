@@ -7,8 +7,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=cJrq4sFTiM&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=MMbbXgzaKG/datasets/dataset;id=agency1:dataset1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=H8qt5wQbT1&amp;resourceId=dataset1&amp;version=01.000</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=UOb6wJrPh5/datasets/dataset;id=agency1:dataset1(01.000)</ns2:managementAppLink>
     </ns2:dataset>
     <ns2:dataset kind="statisticalResources#dataset">
         <cdomain:id>dataset1</cdomain:id>
@@ -17,8 +17,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=Xsi19Bf7Up&amp;resourceId=dataset1&amp;version=02.000#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=dddbK4ymsN/datasets/dataset;id=agency1:dataset1(02.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=k6kcJrliff&amp;resourceId=dataset1&amp;version=02.000</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=Ijz6LPsBix/datasets/dataset;id=agency1:dataset1(02.000)</ns2:managementAppLink>
     </ns2:dataset>
     <ns2:dataset kind="statisticalResources#dataset">
         <cdomain:id>dataset1</cdomain:id>
@@ -27,8 +27,8 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset1 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=9bH9hq9QEV&amp;resourceId=dataset1&amp;version=01.000#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=r8jAKHCamW/datasets/dataset;id=agency2:dataset1(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=LY9aQnsEZp&amp;resourceId=dataset1&amp;version=01.000</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=FSg2nhcmtM/datasets/dataset;id=agency2:dataset1(01.000)</ns2:managementAppLink>
     </ns2:dataset>
     <ns2:dataset kind="statisticalResources#dataset">
         <cdomain:id>dataset2</cdomain:id>
@@ -37,7 +37,7 @@
         <cdomain:name>
             <cdomain:text xml:lang="es">title-dataset2 en Espanol</cdomain:text>
         </cdomain:name>
-        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=DzfimpAw2P&amp;resourceId=dataset2&amp;version=01.000#</cdomain:visualizerHtmlLink>
-        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=lSOh9yHgoP/datasets/dataset;id=agency1:dataset2(01.000)</ns2:managementAppLink>
+        <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=k5npkQoIus&amp;resourceId=dataset2&amp;version=01.000</cdomain:visualizerHtmlLink>
+        <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=deQCL2wnIP/datasets/dataset;id=agency1:dataset2(01.000)</ns2:managementAppLink>
     </ns2:dataset>
 </ns2:datasets>

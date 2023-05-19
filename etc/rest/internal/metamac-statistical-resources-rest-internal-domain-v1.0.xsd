@@ -186,6 +186,8 @@
             <xs:element name="rejectValidationUser" type="xs:string" minOccurs="0"/>
             <xs:element name="publicationDate" type="xs:dateTime" minOccurs="0"/>
             <xs:element name="publicationUser" type="xs:string" minOccurs="0"/>
+            <xs:element name="dateStart" type="common:InternationalString" />
+            <xs:element name="dateEnd" type="common:InternationalString" />
         </xs:sequence>
     </xs:complexType>
 
