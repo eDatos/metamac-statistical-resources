@@ -1130,7 +1130,23 @@
 			"kind": "structuralResources#agency"
 		},
 		"validFrom": "2013-01-01T03:04:12Z",
-		"validTo": "2013-02-16T14:04:12Z"
+		"validTo": "2013-02-16T14:04:12Z",
+		"dateStart": {
+			"text": [
+				{
+					"value": "2011",
+					"lang": "es"
+				}
+			]
+		},
+		"dateEnd": {
+			"text": [
+				{
+					"value": "2013",
+					"lang": "es"
+				}
+			]
+		}
 	},
 	"data": {
 		"dimensions": {

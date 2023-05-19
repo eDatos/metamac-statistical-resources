@@ -622,6 +622,12 @@
         <ns2:creationUser>creationUser</ns2:creationUser>
         <ns2:productionValidationDate>2013-06-20T20:00:20.021+01:00</ns2:productionValidationDate>
         <ns2:publicationDate>2013-01-01T03:04:13Z</ns2:publicationDate>
+        <ns2:dateStart>
+            <cdomain:text xml:lang="es">2011</cdomain:text>
+        </ns2:dateStart>
+        <ns2:dateEnd>
+            <cdomain:text xml:lang="es">2013</cdomain:text>
+        </ns2:dateEnd>
     </ns2:metadata>
     <ns2:data>
         <ns2:dimensions total="4">

@@ -609,6 +609,12 @@
         </stat:maintainer>
         <stat:validFrom>2013-01-01T03:04:12Z</stat:validFrom>
         <stat:validTo>2013-02-16T14:04:12Z</stat:validTo>
+        <stat:dateStart>
+            <cdomain:text xml:lang="es">2011</cdomain:text>
+        </stat:dateStart>
+        <stat:dateEnd>
+            <cdomain:text xml:lang="es">2013</cdomain:text>
+        </stat:dateEnd>
     </stat:metadata>
     <stat:data>
         <stat:dimensions total="4">

@@ -1142,6 +1142,22 @@
 		"procStatus": "DRAFT",
 		"creationDate": "2013-06-20T20:00:20.021+01:00",
 		"creationUser": "creationUser",
+		"dateEnd": {
+			"text": [
+				{
+					"lang": "es",
+					"value": "2013"
+				}
+			]
+		},
+		"dateStart": {
+			"text": [
+				{
+					"lang": "es",
+					"value": "2011"
+				}
+			]
+		},
 		"productionValidationDate": "2013-06-20T20:00:20.021+01:00",
 		"publicationDate": "2013-01-01T03:04:13Z"
 	},
