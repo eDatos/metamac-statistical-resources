@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 7.0.1 a 7.0.2-SNPASHOT
+## 7.0.1 a 7.0.2-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/7.0.1/db](etc/changes-from-release/7.0.1/db) 
 
 ## 7.0.0 a 7.0.1
