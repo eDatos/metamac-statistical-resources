@@ -8,12 +8,12 @@
         <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
     </ns3:name>
     <ns3:description>
-        <cdomain:text xml:lang="es">description-resource-JxxjyfWRYj en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-resource-bVAPbskDtA en Espanol</cdomain:text>
     </ns3:description>
     <ns3:selectedLanguages total="1">
         <ns3:language>es</ns3:language>
     </ns3:selectedLanguages>
-    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=euFyyBqatO&amp;resourceId=query1</ns3:visualizerHtmlLink>
+    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=x2ApxXDNep&amp;resourceId=query1</ns3:visualizerHtmlLink>
     <ns3:metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:QueryMetadata">
         <ns3:relatedDataset xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>dataset01</cdomain:id>
@@ -22,7 +22,7 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=2sVHmxqRJO&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=kpqcuI9gah&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
         </ns3:relatedDataset>
         <ns3:relatedDsd kind="structuralResources#dataStructure">
             <cdomain:id>DSD01</cdomain:id>
@@ -568,7 +568,7 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=2sVHmxqRJO&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=kpqcuI9gah&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
         </ns3:requires>
         <ns3:isPartOf total="2">
             <ns3:resource kind="statisticalResources#collection">
@@ -591,24 +591,30 @@
             </ns3:resource>
         </ns3:isPartOf>
         <ns3:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>8EK6Mybc1Y</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=8EK6Mybc1Y</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/8EK6Mybc1Y"/>
+            <cdomain:id>9jpDJva8hT</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=9jpDJva8hT</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/9jpDJva8hT"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Tn2JaF3RSI en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:statisticalOperation>
         <ns3:maintainer kind="structuralResources#agency">
-            <cdomain:id>euFyyBqatO</cdomain:id>
+            <cdomain:id>x2ApxXDNep</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).euFyyBqatO</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/euFyyBqatO"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).x2ApxXDNep</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/x2ApxXDNep"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-euFyyBqatO en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-x2ApxXDNep en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:maintainer>
         <ns3:validFrom>2013-01-01T03:04:12Z</ns3:validFrom>
         <ns3:validTo>2013-02-16T14:04:12Z</ns3:validTo>
+        <ns3:dateStart>
+            <cdomain:text xml:lang="es">2011</cdomain:text>
+        </ns3:dateStart>
+        <ns3:dateEnd>
+            <cdomain:text xml:lang="es">2013</cdomain:text>
+        </ns3:dateEnd>
     </ns3:metadata>
     <ns3:data>
         <ns3:dimensions total="4">

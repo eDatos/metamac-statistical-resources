@@ -68,7 +68,7 @@ public class SiemacMetadataPublicationDescriptorsEditionForm extends GroupDynami
         dto.getPublisherContributor().addAll(getExternalItemsValue(getItem(SiemacMetadataDS.PUBLISHER_CONTRIBUTOR)));
 
         dto.getMediator().clear();
-        dto.getMediator().addAll(getExternalItemsValue(getItem(SiemacMetadataDS.PUBLISHER_CONTRIBUTOR)));
+        dto.getMediator().addAll(getExternalItemsValue(getItem(SiemacMetadataDS.MEDIATOR)));
 
         dto.setNewnessUntilDate(((CustomDateItem) getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
         return dto;

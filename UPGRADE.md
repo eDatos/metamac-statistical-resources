@@ -8,11 +8,20 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 6.0.0 a 7.0.0-SNAPSHOT
+## 7.0.1 a 7.0.2-SNPASHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/7.0.1/db](etc/changes-from-release/7.0.1/db) 
+
+## 7.0.0 a 7.0.1
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/7.0.0/db](etc/changes-from-release/7.0.0/db) 
+
+## 6.0.0 a 7.0.0
 * **BREAKING CHANGE.** Se incorpora un nuevo parámetro opcional a los endpoints de las APIs internas y externas que
   devuelven listados de recursos (ya sean datasets, queries, multidatasets, etc.) denominado `fields`. Se puede consultar
   la documentación de la API para los valores que se le pueden pasar a este parámetro. Es necesario actualizar el resto
   de aplicaciones de eDatos que consuman la API de statistical-resources a través de JAX-RS.
+
+Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS debido a que se añade un nuevo campo visualizerHtmlLink
+******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
 
 La tabla tb_geocov_varelem_cache_datasets_versions cambia de estructura y ya no estará ligada a un dataset existente. 
 Se cambiará la tabla. Y luego habrá que lanzar la actualización de toda la caché para cargar todos los datos de nuevo.
