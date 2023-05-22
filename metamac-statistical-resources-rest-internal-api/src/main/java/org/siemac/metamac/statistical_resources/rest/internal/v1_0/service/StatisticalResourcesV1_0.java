@@ -7,17 +7,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collection;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collections;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Datasets;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multidataset;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multidatasets;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Resources;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 
 @Path("v1.0")
 // IMPORTANT: If a new version of API is added, remember change latest url y urlrewrite.xml in war
@@ -47,10 +48,34 @@ public interface StatisticalResourcesV1_0 {
     Dataset retrieveDataset(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
             @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
+    @GET
+    @Produces("text/tab-separated-values")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces("text/csv")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetCSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces("application/vnd.ms-excel")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetXLS(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
     @Produces({"application/jsonstat+json"})
     @Path("datasets/{agencyID}/{resourceID}/{version}")
-    JsonStatData retrieveDatasetJsonStat(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
-            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+    JsonStatData retrieveDatasetJsonStat(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version,
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
     @GET
     @Produces({"application/xml", "application/json"})

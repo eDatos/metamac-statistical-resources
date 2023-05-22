@@ -23,12 +23,12 @@
         <url-pattern>/apis/*</url-pattern>
     </servlet-mapping>
 
-    <filter>
-        <filter-name>JsonStatFilter</filter-name>
-        <filter-class>org.siemac.metamac.statistical.resources.web.server.filter.jsonstat.JsonStatFilter</filter-class>
+   <filter>
+        <filter-name>HttpWrapperFilter</filter-name>
+        <filter-class>org.siemac.metamac.rest.request.filter.HttpWrapperFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>JsonStatFilter</filter-name>
+        <filter-name>HttpWrapperFilter</filter-name>
         <url-pattern>/apis/*</url-pattern>
     </filter-mapping>
 

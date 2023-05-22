@@ -20,7 +20,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-resource-bmkC2UKgsY en Espanol",
+				"value": "description-resource-Pe06eyZTfC en Espanol",
 				"lang": "es"
 			}
 		]
@@ -31,7 +31,7 @@
 		],
 		"total": 1
 	},
-	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=HO1iWBYezl&resourceId=query1",
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=CDWn8ZbeCQ&resourceId=query1",
 	"metadata": {
 		"relatedDataset": {
 			"id": "dataset01",
@@ -44,12 +44,12 @@
 					}
 				]
 			},
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
 			"selfLink": {
 				"kind": "statisticalResources#dataset",
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=ZS0CRINaER&resourceId=dataset01&version=01.000"
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=r4x9OQR7QJ&resourceId=dataset01&version=01.000"
 		},
 		"relatedDsd": {
 			"heading": {
@@ -100,7 +100,7 @@
 					},
 					"type": "GEOGRAPHIC_DIMENSION",
 					"dimensionValues": {
-						"value": [
+						"values": [
 							{
 								"variableElement": {
 									"id": "variableElement-santa-cruz-tenerife",
@@ -451,7 +451,7 @@
 					},
 					"type": "TIME_DIMENSION",
 					"dimensionValues": {
-						"value": [
+						"values": [
 							{
 								"id": "2013",
 								"name": {
@@ -492,7 +492,7 @@
 					},
 					"type": "MEASURE_DIMENSION",
 					"dimensionValues": {
-						"value": [
+						"values": [
 							{
 								"showDecimalsPrecision": 4,
 								"measureQuantity": {
@@ -638,7 +638,7 @@
 					},
 					"type": "DIMENSION",
 					"dimensionValues": {
-						"value": [
+						"values": [
 							{
 								"open": true,
 								"id": "dim01-codelist01-code01",
@@ -698,7 +698,7 @@
 					},
 					"attachmentLevel": "DATASET",
 					"attributeValues": {
-						"value": [
+						"values": [
 							{
 								"id": "A",
 								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).A",
@@ -748,7 +748,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							}
@@ -769,7 +769,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -793,7 +793,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -804,7 +804,7 @@
 						"total": 2
 					},
 					"attributeValues": {
-						"value": [
+						"values": [
 							{
 								"id": "2013Q1",
 								"name": {
@@ -855,7 +855,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -869,7 +869,7 @@
 						"total": 3
 					},
 					"attributeValues": {
-						"value": [
+						"values": [
 							{
 								"id": "1",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).1",
@@ -935,7 +935,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -965,7 +965,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -989,7 +989,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -1046,12 +1046,12 @@
 					}
 				]
 			},
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
 			"selfLink": {
 				"kind": "statisticalResources#dataset",
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=ZS0CRINaER&resourceId=dataset01&version=01.000"
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=r4x9OQR7QJ&resourceId=dataset01&version=01.000"
 		},
 		"isPartOf": {
 			"resource": [
@@ -1095,11 +1095,11 @@
 			"total": 2
 		},
 		"statisticalOperation": {
-			"id": "hu1RyfAh5c",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=hu1RyfAh5c",
+			"id": "3aGugiBSs8",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=3aGugiBSs8",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/hu1RyfAh5c"
+				"href": "http://data.istac.es/apis/operations/latest/3aGugiBSs8"
 			},
 			"name": {
 				"text": [
@@ -1112,17 +1112,17 @@
 			"kind": "statisticalOperations#operation"
 		},
 		"maintainer": {
-			"id": "HO1iWBYezl",
+			"id": "CDWn8ZbeCQ",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).HO1iWBYezl",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).CDWn8ZbeCQ",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/HO1iWBYezl"
+				"href": "http://data.istac.es/apis/srm/latest/CDWn8ZbeCQ"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-HO1iWBYezl en Espanol",
+						"value": "title-CDWn8ZbeCQ en Espanol",
 						"lang": "es"
 					}
 				]
@@ -1150,7 +1150,7 @@
 	},
 	"data": {
 		"dimensions": {
-			"dimension": [
+			"dimensions": [
 				{
 					"dimensionId": "GEO_DIM",
 					"representations": {

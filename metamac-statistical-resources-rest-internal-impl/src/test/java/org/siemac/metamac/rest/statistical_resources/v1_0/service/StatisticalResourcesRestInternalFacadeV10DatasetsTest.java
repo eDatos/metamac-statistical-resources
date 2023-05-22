@@ -16,7 +16,8 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Datasets;
+import org.siemac.metamac.statistical_resources.rest.common.impl.test.utils.CommonDatasetUtils;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
 
@@ -35,6 +36,45 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
         String requestUri = getFindDatasetsUri(AGENCY_1, DATASET_1_CODE, null, null, null, "es");
         InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/findDatasets.xml");
         testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
+    }
+
+    @Test
+    public void testRetrieveDatasetTsv() throws Exception {
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDatasetTsv.tsv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/tab-separated-values", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testRetrieveDatasetTsvDataCheck() throws Exception {
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        CommonDatasetUtils.checkTsvDatasetResponse(requestUri);
+    }
+
+    @Test
+    public void testRetrieveDatasetCsv() throws Exception {
+
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDatasetCsv.csv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/csv", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testRetrieveDatasetCsvDataCheck() throws Exception {
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        CommonDatasetUtils.checkCsvDatasetResponse(requestUri);
+    }
+
+    @Test
+    public void testRetrieveDatasetXlsxDataCheck() throws Exception {
+        String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
+        CommonDatasetUtils.checkXlsDatasetResponse(requestUri);
     }
 
     @Test
