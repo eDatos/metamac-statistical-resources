@@ -8,12 +8,12 @@
         <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
     </ns3:name>
     <ns3:description>
-        <cdomain:text xml:lang="es">description-resource-fQql3Q7quS en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-resource-aaUz30vLrH en Espanol</cdomain:text>
     </ns3:description>
     <ns3:selectedLanguages total="1">
         <ns3:language>es</ns3:language>
     </ns3:selectedLanguages>
-    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=79V29eNMlP&amp;resourceId=query1</ns3:visualizerHtmlLink>
+    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=JQMIQdA60q&amp;resourceId=query1</ns3:visualizerHtmlLink>
     <ns3:metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:QueryMetadata">
         <ns3:relatedDataset xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>dataset01</cdomain:id>
@@ -22,7 +22,7 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=yJHZD0cqqd&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=i54GFD9YmA&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
         </ns3:relatedDataset>
         <ns3:relatedDsd kind="structuralResources#dataStructure">
             <cdomain:id>DSD01</cdomain:id>
@@ -356,22 +356,22 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DATASET</ns3:attachmentLevel>
                 <ns3:attributeValues xsi:type="ns3:EnumeratedAttributeValues" total="2">
-                    <ns3:values kind="structuralResources#code">
+                    <ns3:value kind="structuralResources#code">
                         <cdomain:id>A</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).A</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/A"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">A en Español</cdomain:text>
                         </cdomain:name>
-                    </ns3:values>
-                    <ns3:values kind="structuralResources#code">
+                    </ns3:value>
+                    <ns3:value kind="structuralResources#code">
                         <cdomain:id>C</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).C</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/C"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">C en Español</cdomain:text>
                         </cdomain:name>
-                    </ns3:values>
+                    </ns3:value>
                 </ns3:attributeValues>
                 <ns3:type>OTHER</ns3:type>
             </ns3:attribute>
@@ -419,24 +419,24 @@
                     </ns3:dimensions>
                 </ns3:dimensions>
                 <ns3:attributeValues xsi:type="ns3:NonEnumeratedAttributeValues" total="3">
-                    <ns3:values>
+                    <ns3:value>
                         <ns3:id>2013Q1</ns3:id>
                         <ns3:name>
                             <cdomain:text xml:lang="es">2013 Primer cuatrimestre</cdomain:text>
                         </ns3:name>
-                    </ns3:values>
-                    <ns3:values>
+                    </ns3:value>
+                    <ns3:value>
                         <ns3:id>2013Q2</ns3:id>
                         <ns3:name>
                             <cdomain:text xml:lang="es">2013 Segundo cuatrimestre</cdomain:text>
                         </ns3:name>
-                    </ns3:values>
-                    <ns3:values>
+                    </ns3:value>
+                    <ns3:value>
                         <ns3:id>2013Q3</ns3:id>
                         <ns3:name>
                             <cdomain:text xml:lang="es">2013 Tercer cuatrimestre</cdomain:text>
                         </ns3:name>
-                    </ns3:values>
+                    </ns3:value>
                 </ns3:attributeValues>
                 <ns3:type>TEMPORAL</ns3:type>
             </ns3:attribute>
@@ -458,30 +458,30 @@
                     </ns3:dimensions>
                 </ns3:dimensions>
                 <ns3:attributeValues xsi:type="ns3:EnumeratedAttributeValues" total="3">
-                    <ns3:values kind="structuralResources#concept">
+                    <ns3:value kind="structuralResources#concept">
                         <cdomain:id>1</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).1</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/1"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">1 en Español</cdomain:text>
                         </cdomain:name>
-                    </ns3:values>
-                    <ns3:values kind="structuralResources#concept">
+                    </ns3:value>
+                    <ns3:value kind="structuralResources#concept">
                         <cdomain:id>2</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).2</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/2"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">2 en Español</cdomain:text>
                         </cdomain:name>
-                    </ns3:values>
-                    <ns3:values kind="structuralResources#concept">
+                    </ns3:value>
+                    <ns3:value kind="structuralResources#concept">
                         <cdomain:id>3</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).3</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/3"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">3 en Español</cdomain:text>
                         </cdomain:name>
-                    </ns3:values>
+                    </ns3:value>
                 </ns3:attributeValues>
                 <ns3:type>OTHER</ns3:type>
             </ns3:attribute>
@@ -568,7 +568,7 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=yJHZD0cqqd&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=i54GFD9YmA&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
         </ns3:requires>
         <ns3:isPartOf total="2">
             <ns3:resource kind="statisticalResources#collection">
@@ -591,20 +591,20 @@
             </ns3:resource>
         </ns3:isPartOf>
         <ns3:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>RIQBf6FWuI</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=RIQBf6FWuI</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/RIQBf6FWuI"/>
+            <cdomain:id>tA2YJU6FYX</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=tA2YJU6FYX</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/tA2YJU6FYX"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Tn2JaF3RSI en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:statisticalOperation>
         <ns3:maintainer kind="structuralResources#agency">
-            <cdomain:id>79V29eNMlP</cdomain:id>
+            <cdomain:id>JQMIQdA60q</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).79V29eNMlP</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/79V29eNMlP"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).JQMIQdA60q</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/JQMIQdA60q"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-79V29eNMlP en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-JQMIQdA60q en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:maintainer>
         <ns3:validFrom>2013-01-01T03:04:12Z</ns3:validFrom>
@@ -618,7 +618,7 @@
     </ns3:metadata>
     <ns3:data>
         <ns3:dimensions total="4">
-            <ns3:dimensions>
+            <ns3:dimension>
                 <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
                 <ns3:representations total="8">
                     <ns3:representation code="santa-cruz-tenerife" index="0"/>
@@ -630,28 +630,28 @@
                     <ns3:representation code="las-palmas-gran-canaria" index="6"/>
                     <ns3:representation code="fuerteventura" index="7"/>
                 </ns3:representations>
-            </ns3:dimensions>
-            <ns3:dimensions>
+            </ns3:dimension>
+            <ns3:dimension>
                 <ns3:dimensionId>TIME_PERIOD</ns3:dimensionId>
                 <ns3:representations total="2">
                     <ns3:representation code="2013" index="0"/>
                     <ns3:representation code="2011" index="1"/>
                 </ns3:representations>
-            </ns3:dimensions>
-            <ns3:dimensions>
+            </ns3:dimension>
+            <ns3:dimension>
                 <ns3:dimensionId>measure01</ns3:dimensionId>
                 <ns3:representations total="3">
                     <ns3:representation code="measure01-conceptScheme01-concept01" index="0"/>
                     <ns3:representation code="measure01-conceptScheme01-concept02" index="1"/>
                     <ns3:representation code="measure01-conceptScheme01-concept05" index="2"/>
                 </ns3:representations>
-            </ns3:dimensions>
-            <ns3:dimensions>
+            </ns3:dimension>
+            <ns3:dimension>
                 <ns3:dimensionId>dim01</ns3:dimensionId>
                 <ns3:representations total="1">
                     <ns3:representation code="dim01-codelist01-code01" index="0"/>
                 </ns3:representations>
-            </ns3:dimensions>
+            </ns3:dimension>
         </ns3:dimensions>
         <ns3:attributes total="11">
             <ns3:attribute id="at1">Value at1</ns3:attribute>
