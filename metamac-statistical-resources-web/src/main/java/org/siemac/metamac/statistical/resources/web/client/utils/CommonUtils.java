@@ -47,6 +47,7 @@ import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem.DateFormatTypeEnum;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.event.shared.HasHandlers;
@@ -333,6 +334,7 @@ public class CommonUtils {
         statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.DATASET.name(), getCoreMessages().statisticalResourceTypeEnumDATASET());
         statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.QUERY.name(), getCoreMessages().statisticalResourceTypeEnumQUERY());
         statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.MULTIDATASET.name(), getCoreMessages().statisticalResourceTypeEnumMULTIDATASET());
+        statisticalResourceTypeHashMap.put(StatisticalResourceTypeEnum.URL.name(), getCoreMessages().statisticalResourceTypeEnumURL());
         return statisticalResourceTypeHashMap;
     }
 
@@ -665,5 +667,15 @@ public class CommonUtils {
 
     private static String getDataSourceName(DataSourceTypeEnum dataSourceTypeEnum) {
         return dataSourceTypeEnum != null ? getCoreMessages().getString(getCoreMessages().dataSourceTypeEnum() + dataSourceTypeEnum.getName()) : null;
+    }
+    
+    public static LinkedHashMap<String, String> getDateFormatTypeHashMap() {
+        LinkedHashMap<String, String> dateFormatTypeHashMap = new LinkedHashMap<String, String>();
+        for (DateFormatTypeEnum a : DateFormatTypeEnum.values()) {
+            String value = getCoreMessages().getString(getCoreMessages().dateFormatTypeEnum() + a.getName());
+            dateFormatTypeHashMap.put(a.name(), value);
+        }
+
+        return dateFormatTypeHashMap;
     }
 }

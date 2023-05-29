@@ -14,6 +14,7 @@ import org.siemac.metamac.common.test.utils.MetamacMocks;
 import org.siemac.metamac.core.common.constants.CoreCommonConstants;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.enume.utils.TypeExternalArtefactsEnumUtils;
+import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.NameableStatisticalResource;
@@ -227,6 +228,12 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
         return cube;
     }
 
+    public Cube mockUrlCube(String url) {
+        Cube cube = mockCube();
+        cube.setUrl(url);
+        return cube;
+    }
+    
     // ELEMENT LEVEL
     private ElementLevel mockElementLevel() {
         return mockElementLevel(null, null);
@@ -282,7 +289,16 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
     public ElementLevel mockQueryCubeElementLevel(PublicationVersion publicationVersion, Query query) {
         return mockQueryCubeElementLevel(publicationVersion, query, null);
     }
+    
+    public ElementLevel mockUrlCubeElementLevel(PublicationVersion publicationVersion, String url) {
+        return mockUrlCubeElementLevel(publicationVersion, url, null);
+    }
 
+    public ElementLevel mockUrlCubeElementLevel(PublicationVersion publicationVersion, String url, ElementLevel parentElementLevel) {
+        ElementLevel elementLevel = mockCubeElementLevel(publicationVersion, parentElementLevel, mockUrlCube(url));
+        return elementLevel;
+    }
+    
     public ElementLevel mockQueryCubeElementLevel(PublicationVersion publicationVersion, Query query, ElementLevel parentElementLevel) {
         ElementLevel elementLevel = mockCubeElementLevel(publicationVersion, parentElementLevel, mockQueryCube(query));
         return elementLevel;
@@ -684,6 +700,19 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
         return mockExternalItem(code, mockStatisticalOperationUrn(code), TypeExternalArtefactsEnum.STATISTICAL_OPERATION);
     }
 
+
+    public static String mockStatisticalOperationUrn(String code) {
+        return GeneratorUrnUtils.generateSiemacStatisticalOperationUrn(code);
+    }
+    
+    public static String mockPortalDatasetHtmlLink(String agencyId, String resourceId, String version) {
+        return "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=" + agencyId +"&resourceId=" + resourceId + "&version=" + version + "#";
+    }
+    
+    public static ExternalItem mockVariableElementExternalItem(String variableId, String variableElementId) {
+        return mockExternalItem(variableElementId, GeneratorUrnUtils.generateSiemacStructuralResourcesVariableElementUrn(variableId, variableElementId), TypeExternalArtefactsEnum.VARIABLE_ELEMENT);
+    }
+    
     public static ExternalItem mockStatisticalOperationInstanceExternalItem() {
         String code = mockCode();
         return mockStatisticalOperationInstanceExternalItem(code);
@@ -809,7 +838,7 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
         InternationalString title = mockInternationalStringMetadata(code, "title");
         String managementAppUrl = CoreCommonConstants.URL_SEPARATOR + code;
 
-        if (TypeExternalArtefactsEnumUtils.isExternalItemOfCommonMetadataApp(type)) {
+        if (TypeExternalArtefactsEnumUtils.isExternalItemOfCommonMetadataApp(type) || TypeExternalArtefactsEnum.VARIABLE_ELEMENT.equals(type)) {
             urnProvider = null;
         } else if (TypeExternalArtefactsEnumUtils.isExternalItemOfStatisticalOperationsApp(type)) {
             urnProvider = null;

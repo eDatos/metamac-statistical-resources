@@ -7,13 +7,14 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.BaseAsserts.assertEqualsVersioningSiemacMetadata;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.CommonAsserts.assertEqualsExternalItem;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.CommonAsserts.assertEqualsExternalItemCollection;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.CommonAsserts.assertEqualsInternationalString;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_105_MAXIMUM_VERSION_REACHED;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_106_MAXIMUM_MINOR_VERSION_REACHED;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_16_DRAFT_READY_FOR_PRODUCTION_VALIDATION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_21_PRODUCTION_VALIDATION_READY_FOR_VALIDATION_REJECTED_NAME;
@@ -102,9 +103,9 @@ public class DatasetVersioningServiceTest extends StatisticalResourcesBaseTest {
     }
 
     @Test
-    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME)
+    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME)
     public void testVersioningDatasetVersion() throws Exception {
-        String previousDatasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME).getSiemacMetadataStatisticalResource().getUrn();
+        String previousDatasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME).getSiemacMetadataStatisticalResource().getUrn();
 
         DatasetVersion newDatasetVersion = datasetVersionLifecycleService.versioning(getServiceContextWithoutPrincipal(), previousDatasetVersionUrn, VersionTypeEnum.MINOR);
         DatasetVersion previousDatasetVersion = datasetService.retrieveDatasetVersionByUrn(getServiceContextWithoutPrincipal(), previousDatasetVersionUrn);
@@ -118,9 +119,9 @@ public class DatasetVersioningServiceTest extends StatisticalResourcesBaseTest {
     }
 
     @Test
-    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME)
+    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED_NAME)
     public void testVersioningDatasetVersionCheckUrnIsCorrectForMinorChange() throws Exception {
-        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME);
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED_NAME);
 
         // Necessary data for construct URN
         VersionTypeEnum versionType = VersionTypeEnum.MINOR;
@@ -141,9 +142,9 @@ public class DatasetVersioningServiceTest extends StatisticalResourcesBaseTest {
     }
 
     @Test
-    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME)
+    @MetamacMock(DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED_NAME)
     public void testVersioningDatasetVersionCheckUrnIsCorrectForMayorChange() throws Exception {
-        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME);
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED_NAME);
 
         // Necessary data for construct URN
         VersionTypeEnum versionType = VersionTypeEnum.MAJOR;
@@ -320,8 +321,8 @@ public class DatasetVersioningServiceTest extends StatisticalResourcesBaseTest {
         assertEqualsExternalItemCollection(previous.getGeographicGranularities(), next.getGeographicGranularities());
         assertEqualsExternalItemCollection(previous.getTemporalGranularities(), next.getTemporalGranularities());
 
-        assertEqualsDate(previous.getDateStart(), next.getDateStart());
-        assertEqualsDate(previous.getDateEnd(), next.getDateEnd());
+        assertEquals(previous.getDateStart(), next.getDateStart());
+        assertEquals(previous.getDateEnd(), next.getDateEnd());
 
         assertEqualsExternalItemCollection(previous.getStatisticalUnit(), next.getStatisticalUnit());
 

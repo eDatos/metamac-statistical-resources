@@ -3,6 +3,8 @@ package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.colle
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 
+import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -16,22 +18,16 @@ import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Chapter;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collection;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CollectionData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CollectionMetadata;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CollectionNode;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CollectionNodes;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collections;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesInternal;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Table;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -43,8 +39,18 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Publicat
 import org.siemac.metamac.statistical.resources.core.publication.utils.PublicationsUtils;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Chapter;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CollectionData;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CollectionNode;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CollectionNodes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Table;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.internal.service.utils.HtmlLinkUtil;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.multidataset.MultidatasetsDo2RestMapperV10;
@@ -58,33 +64,37 @@ import org.springframework.stereotype.Component;
 public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapperV10 {
 
     @Autowired
-    private CommonDo2RestMapperV10        commonDo2RestMapper;
+    private CommonDo2RestMapperV10            commonDo2RestMapper;
 
     @Autowired
-    private DatasetsDo2RestMapperV10      datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10          datasetsDo2RestMapper;
 
     @Autowired
-    private DatasetVersionRepository      datasetVersionRepository;
+    private DatasetVersionRepository          datasetVersionRepository;
 
     @Autowired
-    private QueryVersionRepository        queryVersionRepository;
+    private QueryVersionRepository            queryVersionRepository;
 
     @Autowired
-    private MultidatasetVersionRepository multidatasetVersionRepository;
+    private MultidatasetVersionRepository     multidatasetVersionRepository;
 
     @Autowired
-    private QueriesDo2RestMapperV10       queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10           queriesDo2RestMapper;
 
     @Autowired
-    private MultidatasetsDo2RestMapperV10 multidatasetsDo2RestMapper;
+    private MultidatasetsDo2RestMapperV10     multidatasetsDo2RestMapper;
 
     @Autowired
-    private PublicationVersionRepository  publicationVersionRepository;
+    private PublicationVersionRepository      publicationVersionRepository;
 
-    private static final Logger           logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
+    @Autowired
+    private StatisticalResourcesConfiguration configurationService;
+
+    private static final Logger               logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
 
     @Override
-    public Collections toCollections(PagedResult<PublicationVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages) {
+    public Collections toCollections(PagedResult<PublicationVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
+            Set<String> parsedFields) throws MetamacException {
 
         Collections targets = new Collections();
         targets.setKind(StatisticalResourcesRestInternalConstants.KIND_COLLECTIONS);
@@ -95,7 +105,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
 
         // Values
         for (PublicationVersion source : sources.getValues()) {
-            ResourceInternal target = toResource(source, selectedLanguages);
+            ResourceWithStatisticalOperation target = toResource(source, selectedLanguages, parsedFields);
             targets.getCollections().add(target);
         }
         return targets;
@@ -117,6 +127,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         target.setParentLink(toCollectionParentLink(source));
         target.setChildLinks(toCollectionChildLinks(source));
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
 
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
@@ -134,23 +145,28 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     }
 
     @Override
-    public ResourceInternal toResource(PublicationVersion source, List<String> selectedLanguages) {
+    public ResourceWithStatisticalOperation toResource(PublicationVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException {
         if (source == null) {
             return null;
         }
-        ResourceInternal target = new ResourceInternal();
+        ResourceWithStatisticalOperation target = new ResourceWithStatisticalOperation();
         target.setId(source.getSiemacMetadataStatisticalResource().getCode());
         target.setUrn(toCollectionUrn(source));
         target.setKind(StatisticalResourcesRestInternalConstants.KIND_COLLECTION);
         target.setSelfLink(toCollectionSelfLink(source));
         target.setName(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguages));
         target.setManagementAppLink(toPublicationVersionManagementApplicationLink(source));
+        boolean includeStatisticalOperation = containsField(parsedFields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+        if (includeStatisticalOperation) {
+            target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
+        }
+        target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
 
         return target;
     }
 
     @Override
-    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -160,15 +176,21 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
 
-        ResourceInternal target = new ResourceInternal();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         target.setId(source.getCode());
         target.setUrn(toCollectionUrn(source.getMaintainerNestedCode(), source.getCode()));
         target.setKind(StatisticalResourcesRestInternalConstants.KIND_COLLECTION);
         target.setSelfLink(toCollectionSelfLink(source));
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
-
+        target.setVisualizerHtmlLink(toVisualizerHtmlLink(source));
         target.setManagementAppLink(toPublicationVersionManagementApplicationLink(source));
         return target;
+    }
+
+    private String toVisualizerHtmlLink(RelatedResourceResult source) throws MetamacException {
+        String agencyID = source.getMaintainerNestedCode();
+        String resourceID = source.getCode();
+        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, agencyID, resourceID, null, configurationService, false);
     }
 
     @Override
@@ -195,10 +217,25 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         target.setIsReplacedBy(toCollectionIsReplacedBy(source, selectedLanguages));
         target.setHasPart(toCollectionHasPart(source, selectedLanguages));
         commonDo2RestMapper.toMetadataStatisticalResource(source.getSiemacMetadataStatisticalResource(), target, selectedLanguages);
+
+        target.setConformsToInternal(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getConformsToInternal(), selectedLanguages));
+        target.setProcStatus(commonDo2RestMapper.toProcStatusType(source.getSiemacMetadataStatisticalResource().getProcStatus(), selectedLanguages));
+        target.setCreationDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getCreationDate()));
+        target.setCreationUser(source.getSiemacMetadataStatisticalResource().getCreationUser());
+        target.setProductionValidationDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getCreationDate()));
+        target.setProductionValidationUser(source.getSiemacMetadataStatisticalResource().getPublicationUser());
+        target.setDiffusionValidationDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getDiffusionValidationDate()));
+        target.setDiffusionValidationUser(source.getSiemacMetadataStatisticalResource().getDiffusionValidationUser());
+        target.setRejectValidationDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getRejectValidationDate()));
+        target.setRejectValidationUser(source.getSiemacMetadataStatisticalResource().getRejectValidationUser());
+        target.setPublicationDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getPublicationDate()));
+        target.setPublicationUser(source.getSiemacMetadataStatisticalResource().getPublicationUser());
+        target.setNextVersionDate(commonDo2RestMapper.toSdmxObservationalTimePeriod(source.getSiemacMetadataStatisticalResource().getNextVersionDate(), selectedLanguages));
+
         return target;
     }
 
-    private ResourceInternal toCollectionReplaces(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toCollectionReplaces(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         RelatedResource replaces = null;
 
         if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
@@ -220,7 +257,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         return commonDo2RestMapper.toResource(replaces, selectedLanguages);
     }
 
-    private ResourceInternal toCollectionIsReplacedBy(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toCollectionIsReplacedBy(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         RelatedResourceResult relatedResourceReplacesBy = null;
 
         if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
@@ -231,15 +268,25 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         return toResource(relatedResourceReplacesBy, selectedLanguages);
     }
 
-    private ResourcesInternal toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourcesStatisticalResourceBase toCollectionHasPart(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResource> hasPart = null;
+        List<String> urls = new ArrayList<String>();
 
         if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
             hasPart = PublicationsUtils.computeHasPart(source); // Is necessary to calculate the has part
         } else {
             hasPart = source.getHasPart(); // All has part resources are already published
         }
-        return commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+
+        urls = PublicationsUtils.computeUrlsHasPart(source);
+
+        ResourcesStatisticalResourceBase resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        ResourcesStatisticalResourceBase urlResources = commonDo2RestMapper.toUrlResources(urls);
+        if (urlResources != null && !urlResources.getResources().isEmpty()) {
+            resources.getResources().addAll(urlResources.getResources());
+            resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
+        }
+        return resources;
     }
 
     private CollectionData toCollectionData(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
@@ -290,10 +337,12 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
                 target.setDataset(datasetsDo2RestMapper.toResourceAsLatest(dataset, selectedLanguages));
             } else if (source.getQuery() != null) {
                 QueryVersion query = queryVersionRepository.retrieveLastVersion(source.getQueryUrn());
-                target.setQuery(queriesDo2RestMapper.toResource(query, selectedLanguages));
+                target.setQuery(queriesDo2RestMapper.toResource(query, selectedLanguages, null));
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastVersion(source.getMultidatasetUrn());
-                target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages));
+                target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null));
+            } else if (source.getUrl() != null) {
+                target.setUrl(toResource(source.getUrl(), selectedLanguages));
             }
         } else {
             if (source.getDataset() != null) {
@@ -301,13 +350,26 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
                 target.setDataset(datasetsDo2RestMapper.toResourceAsLatest(dataset, selectedLanguages));
             } else if (source.getQuery() != null) {
                 QueryVersion query = queryVersionRepository.retrieveLastPublishedVersion(source.getQueryUrn());
-                target.setQuery(queriesDo2RestMapper.toResource(query, selectedLanguages));
+                target.setQuery(queriesDo2RestMapper.toResource(query, selectedLanguages, null));
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastPublishedVersion(source.getMultidatasetUrn());
-                target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages));
+                target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null));
+            } else if (source.getUrl() != null) {
+                target.setUrl(toResource(source.getUrl(), selectedLanguages));
             }
         }
 
+        return target;
+    }
+
+    @Override
+    public ResourceStatisticalResourceBase toResource(String url, List<String> selectedLanguages) {
+        if (url == null) {
+            return null;
+        }
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
+        target.setVisualizerHtmlLink(url);
+        target.setKind(StatisticalResourcesRestInternalConstants.KIND_URL);
         return target;
     }
 

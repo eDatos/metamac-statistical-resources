@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app id="metamac-statistical-resources-external-web" version="2.5"
          xmlns="http://java.sun.com/xml/ns/javaee"
-         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"  
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
 
     <!-- ********************* SPRING INTEGRATION ******************** -->
     <context-param>
@@ -72,6 +72,15 @@
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/apis/*</url-pattern>
     </servlet-mapping>
+
+     <filter>
+        <filter-name>HttpWrapperFilter</filter-name>
+        <filter-class>org.siemac.metamac.rest.request.filter.HttpWrapperFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HttpWrapperFilter</filter-name>
+        <url-pattern>/apis/*</url-pattern>
+    </filter-mapping>
 
 	<filter>
 		<filter-name>SwaggerFilter</filter-name>

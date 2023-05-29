@@ -29,6 +29,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ConceptResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contact;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Contacts;
@@ -42,7 +43,6 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Empty;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Group;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Groups;
-import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.MeasureDimension;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Quantity;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Representation;
@@ -61,6 +61,8 @@ public class SrmRestMocks {
         dataStructure.setId(resourceID);
         dataStructure.setVersion(version);
         dataStructure.setAutoOpen(Boolean.TRUE);
+        dataStructure.setShowNullValuesByDefault(Boolean.TRUE);
+        dataStructure.setShowZeroValuesByDefault(Boolean.TRUE);
 
         dataStructure.setStub(new DimensionReferences());
         dataStructure.getStub().getDimensions().add("GEO_DIM");
@@ -236,7 +238,7 @@ public class SrmRestMocks {
     public static Concepts mockConceptsByConceptScheme(String agencyID, String resourceID, String version, List<String> conceptsId) {
         Concepts concepts = new Concepts();
         for (String conceptId : conceptsId) {
-            ItemResource concept = mockConceptResource(agencyID, resourceID, version, conceptId, null);
+            ConceptResource concept = mockConceptResource(agencyID, resourceID, version, conceptId, null);
             concepts.getConcepts().add(concept);
         }
         return concepts;
@@ -279,8 +281,8 @@ public class SrmRestMocks {
         return code;
     }
 
-    public static ItemResource mockConceptResource(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
-        ItemResource concept = new ItemResource();
+    public static ConceptResource mockConceptResource(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
+        ConceptResource concept = new ConceptResource();
         concept.setUrn("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=" + agencyID + ":" + maintainableParentID + "(" + maintainableVersionID + ")." + resourceID);
         concept.setId(resourceID);
         concept.setName(mockInternationalString(resourceID));
@@ -291,8 +293,8 @@ public class SrmRestMocks {
         return concept;
     }
 
-    public static ItemResource mockConceptResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
-        ItemResource concept = mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn);
+    public static ConceptResource mockConceptResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
+        ConceptResource concept = mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn);
         concept.setDescription(mockInternationalString("Description " + resourceID));
         return concept;
     }

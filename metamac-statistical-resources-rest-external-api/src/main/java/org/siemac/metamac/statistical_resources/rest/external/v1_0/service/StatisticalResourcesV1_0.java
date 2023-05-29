@@ -7,15 +7,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Response;
 
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collections;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidatasets;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 
 @Path("v1.0")
 // IMPORTANT: If a new version of API is added, remember change latest url y urlrewrite.xml in war
@@ -25,19 +28,19 @@ public interface StatisticalResourcesV1_0 {
     @Produces({"application/xml", "application/json"})
     @Path("datasets")
     Datasets findDatasets(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
-            @QueryParam("lang") List<String> lang);
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("datasets/{agencyID}")
     Datasets findDatasets(@PathParam("agencyID") String agencyID, @QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit,
-            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang);
+            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("datasets/{agencyID}/{resourceID}")
     Datasets findDatasets(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("query") String query, @QueryParam("orderBy") String orderBy,
-            @QueryParam("limit") String limit, @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang);
+            @QueryParam("limit") String limit, @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
@@ -46,16 +49,45 @@ public interface StatisticalResourcesV1_0 {
             @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
     @GET
+    @Produces("text/tab-separated-values")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces("text/csv")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetCSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces("application/vnd.ms-excel")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetXLS(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveDatasetXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @Produces({"application/jsonstat+json"})
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    JsonStatData retrieveDatasetJsonStat(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version,
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
+    @GET
     @Produces({"application/xml", "application/json"})
     @Path("collections")
     Collections findCollections(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
-            @QueryParam("lang") List<String> lang);
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("collections/{agencyID}")
     Collections findCollections(@PathParam("agencyID") String agencyID, @QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit,
-            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang);
+            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
@@ -66,13 +98,13 @@ public interface StatisticalResourcesV1_0 {
     @Produces({"application/xml", "application/json"})
     @Path("queries")
     Queries findQueries(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
-            @QueryParam("lang") List<String> lang);
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("queries/{agencyID}")
     Queries findQueries(@PathParam("agencyID") String agencyID, @QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit,
-            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang);
+            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
@@ -80,21 +112,31 @@ public interface StatisticalResourcesV1_0 {
     Query retrieveQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
             @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
+    @Produces({"application/jsonstat+json"})
+    @Path("queries/{agencyID}/{resourceID}")
+    JsonStatData retrieveJsonStatQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("multidatasets")
     Multidatasets findMultidatasets(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
-            @QueryParam("lang") List<String> lang);
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("multidatasets/{agencyID}")
     Multidatasets findMultidatasets(@PathParam("agencyID") String agencyID, @QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit,
-            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang);
+            @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @GET
     @Produces({"application/xml", "application/json"})
     @Path("multidatasets/{agencyID}/{resourceID}")
     Multidataset retrieveMultidataset(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
+    @GET
+    @Produces({"application/xml", "application/json"})
+    @Path("resources")
+    Resources findResources(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
+            @QueryParam("lang") List<String> lang);
 }

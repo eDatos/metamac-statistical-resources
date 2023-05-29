@@ -9,7 +9,7 @@
 		"kind": "statisticalResources#queries",
 		"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries"
 	},
-	"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=XjRFlw8m9C/queries/query;id=agency1:query1(01.000)",
+	"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=2NFBiLihqj/queries/query;id=agency1:query1(01.000)",
 	"name": {
 		"text": [
 			{
@@ -21,7 +21,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-resource-C3WSxpIVDN en Espanol",
+				"value": "description-resource-04gX4GghmZ en Espanol",
 				"lang": "es"
 			}
 		]
@@ -32,15 +32,16 @@
 		],
 		"total": 1
 	},
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=DDI8zWuaFN&resourceId=query1",
 	"metadata": {
+		"procStatus": "DRAFT",
+		"creationDate": "2013-06-20T20:00:20.021+01:00",
+		"creationUser": "creationUser",
+		"productionValidationDate": "2013-06-20T20:00:20.021+01:00",
+		"publicationDate": "2013-01-01T03:04:13Z",
 		"relatedDataset": {
-			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=9ND42DXM2F/datasets/dataset;id=agency1:dataset01(01.000)",
 			"id": "dataset01",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"selfLink": {
-				"kind": "statisticalResources#dataset",
-				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
-			},
+			"kind": "statisticalResources#dataset",
 			"name": {
 				"text": [
 					{
@@ -49,7 +50,13 @@
 					}
 				]
 			},
-			"kind": "statisticalResources#dataset"
+			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=kUvs2X6nn9/datasets/dataset;id=agency1:dataset01(01.000)",
+			"selfLink": {
+				"kind": "statisticalResources#dataset",
+				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
+			},
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=EOvwGMmtJP&resourceId=dataset01&version=01.000"
 		},
 		"relatedDsd": {
 			"heading": {
@@ -67,6 +74,8 @@
 				"total": 2
 			},
 			"autoOpen": true,
+			"showNullValuesByDefault": true,
+			"showZeroValuesByDefault": true,
 			"showDecimals": 2,
 			"id": "DSD01",
 			"urn": "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=MaintainerMock:DSD01(1.0)",
@@ -747,7 +756,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							}
@@ -768,7 +777,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -792,7 +801,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -854,7 +863,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -934,7 +943,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -964,7 +973,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -988,7 +997,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimension": [
+						"dimensions": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -1035,13 +1044,8 @@
 		"status": "ACTIVE",
 		"type": "FIXED",
 		"requires": {
-			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=9ND42DXM2F/datasets/dataset;id=agency1:dataset01(01.000)",
 			"id": "dataset01",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"selfLink": {
-				"kind": "statisticalResources#dataset",
-				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
-			},
+			"kind": "statisticalResources#dataset",
 			"name": {
 				"text": [
 					{
@@ -1050,7 +1054,13 @@
 					}
 				]
 			},
-			"kind": "statisticalResources#dataset"
+			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=kUvs2X6nn9/datasets/dataset;id=agency1:dataset01(01.000)",
+			"selfLink": {
+				"kind": "statisticalResources#dataset",
+				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
+			},
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=EOvwGMmtJP&resourceId=dataset01&version=01.000"
 		},
 		"isPartOf": {
 			"resource": [
@@ -1070,6 +1080,7 @@
 							}
 						]
 					},
+					"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf01",
 					"kind": "statisticalResources#collection"
 				},
 				{
@@ -1088,18 +1099,19 @@
 							}
 						]
 					},
+					"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=isPartOf02",
 					"kind": "statisticalResources#collection"
 				}
 			],
 			"total": 2
 		},
 		"statisticalOperation": {
-			"managementAppLink": "http://localhost:8080/statistical-operations-internal/XjRFlw8m9C",
-			"id": "XjRFlw8m9C",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=XjRFlw8m9C",
+			"managementAppLink": "http://localhost:8080/statistical-operations-internal/2NFBiLihqj",
+			"id": "2NFBiLihqj",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=2NFBiLihqj",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/XjRFlw8m9C"
+				"href": "http://data.istac.es/apis/operations/latest/2NFBiLihqj"
 			},
 			"name": {
 				"text": [
@@ -1112,18 +1124,18 @@
 			"kind": "statisticalOperations#operation"
 		},
 		"maintainer": {
-			"managementAppLink": "http://localhost:8080/metamac-srm-web/YlZZPKyjqT",
-			"id": "YlZZPKyjqT",
+			"managementAppLink": "http://localhost:8080/metamac-srm-web/DDI8zWuaFN",
+			"id": "DDI8zWuaFN",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).YlZZPKyjqT",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).DDI8zWuaFN",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/YlZZPKyjqT"
+				"href": "http://data.istac.es/apis/srm/latest/DDI8zWuaFN"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-YlZZPKyjqT en Espanol",
+						"value": "title-DDI8zWuaFN en Espanol",
 						"lang": "es"
 					}
 				]
@@ -1132,11 +1144,22 @@
 		},
 		"validFrom": "2013-01-01T03:04:12Z",
 		"validTo": "2013-02-16T14:04:12Z",
-		"procStatus": "DRAFT",
-		"creationDate": "2013-06-20T20:00:20.021+01:00",
-		"creationUser": "creationUser",
-		"productionValidationDate": "2013-06-20T20:00:20.021+01:00",
-		"publicationDate": "2013-01-01T03:04:13Z"
+		"dateStart": {
+			"text": [
+				{
+					"value": "2011",
+					"lang": "es"
+				}
+			]
+		},
+		"dateEnd": {
+			"text": [
+				{
+					"value": "2013",
+					"lang": "es"
+				}
+			]
+		}
 	},
 	"data": {
 		"dimensions": {
@@ -1186,11 +1209,11 @@
 					"representations": {
 						"representation": [
 							{
-								"code": "2011",
+								"code": "2013",
 								"index": 0
 							},
 							{
-								"code": "2013",
+								"code": "2011",
 								"index": 1
 							}
 						],
@@ -1251,37 +1274,37 @@
 					"id": "at4"
 				},
 				{
-					"value": "2013Q1 | 2013Q3 |  |  |  |  |  |  |  |  |  |  |  |  | 2013Q1 | 2013Q3",
+					"value": "2013Q3 | 2013Q1 |  |  |  |  |  |  |  |  |  |  |  |  | 2013Q3 | 2013Q1",
 					"id": "at5"
 				},
 				{
-					"value": "Value at6-1 |  |  |  |  |  |  |  |  |  |  |  | Value at6-2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"value": " |  |  | Value at6-1 |  |  |  |  |  |  |  |  |  |  |  | Value at6-2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
 					"id": "at6"
 				},
 				{
-					"value": "Value at7-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"value": " |  |  | Value at7-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
 					"id": "at7"
 				},
 				{
-					"value": "Value at8-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"value": " | Value at8-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
 					"id": "at8"
 				},
 				{
-					"value": "Value at9-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"value": " | Value at9-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
 					"id": "at9"
 				},
 				{
-					"value": "Value 1 |  |  |  |  |  | Value 3 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"value": " |  |  | Value 1 |  |  |  |  |  | Value 3 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
 					"id": "at10"
 				},
 				{
-					"value": "Value 5 |  |  |  |  |  | Value 6 |  |  |  |  |  | Value 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
+					"value": " |  |  | Value 5 |  |  |  |  |  | Value 6 |  |  |  |  |  | Value 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | ",
 					"id": "at11"
 				}
 			],
 			"total": 11
 		},
-		"observations": "1 | 4 | 7 | 19 | 22 | 25 | 37 | 40 | 43 | 55 | 58 | 61 | 73 | 76 | 79 | 91 | 94 | 97 | 109 | 112 | 115 | 127 | 130 | 133 | 145 | 148 | 151 | 163 | 166 | 169 | 217 | 220 | 223 | 235 | 238 | 241 | 325 | 328 | 331 | 343 | 346 | 349 | 397 | 400 | 403 | 415 | 418 | 421"
+		"observations": "19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403"
 	},
 	"kind": "statisticalResources#query"
 }

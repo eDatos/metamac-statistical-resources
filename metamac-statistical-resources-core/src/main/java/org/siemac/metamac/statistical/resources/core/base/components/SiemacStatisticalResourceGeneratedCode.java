@@ -45,7 +45,6 @@ public class SiemacStatisticalResourceGeneratedCode {
 
         }
         String code = statisticalOperation.getCode() + "_" + String.format("%06d", seqCode);
-
         return code;
     }
 

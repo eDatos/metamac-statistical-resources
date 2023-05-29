@@ -2,4 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
     <comment>Configurations</comment>
+    
+      <entry key="metamac.portal.web.internal.visualizer">http://istac.es/portal-web</entry>
+    
 </properties>

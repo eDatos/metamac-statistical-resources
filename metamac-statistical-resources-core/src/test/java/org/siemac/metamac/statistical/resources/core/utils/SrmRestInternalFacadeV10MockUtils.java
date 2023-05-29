@@ -5,16 +5,20 @@ import java.util.List;
 
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categories;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryCriteriaPropertyRestriction;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategoryResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistsResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptCriteriaPropertyRestriction;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructures;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.NormalizationType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationCriteriaPropertyRestriction;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisations;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ProcStatus;
@@ -30,7 +34,7 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
 
     public static Concepts mockConceptsWithOnlyUrns(List<String> urns) {
         Concepts concepts = new Concepts();
-        concepts.getConcepts().addAll(mockItemResourcesInternalWithOnlyUrns(urns));
+        concepts.getConcepts().addAll(mockConceptResourceInternalWithOnlyUrns(urns));
         populateListBaseWithResourcesWithOnlyUrns(concepts, urns);
         return concepts;
     }
@@ -44,7 +48,7 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
 
     public static Codelists mockCodelistWithOnlyUrns(List<String> urns) {
         Codelists codelists = new Codelists();
-        codelists.getCodelists().addAll(mockItemResourcesInternalWithOnlyUrns(urns));
+        codelists.getCodelists().addAll(mockCodelistsResourceInternalWithOnlyUrns(urns));
         populateListBaseWithResourcesWithOnlyUrns(codelists, urns);
         return codelists;
     }
@@ -62,15 +66,46 @@ public class SrmRestInternalFacadeV10MockUtils extends RestMockUtils {
 
     public static Categories mockCategoriesWithOnlyUrns(List<String> urns) {
         Categories categories = new Categories();
-        categories.getCategories().addAll(mockItemResourcesInternalWithOnlyUrns(urns));
+        categories.getCategories().addAll(mockCategoryResourceInternalWithOnlyUrns(urns));
         populateListBaseWithResourcesWithOnlyUrns(categories, urns);
         return categories;
     }
 
+    private static List<CategoryResourceInternal> mockCategoryResourceInternalWithOnlyUrns(List<String> urns) {
+        List<CategoryResourceInternal> resources = new ArrayList<CategoryResourceInternal>();
+        for (String urn : urns) {
+            CategoryResourceInternal resource = new CategoryResourceInternal();
+            resource.setUrn(urn);
+            resources.add(resource);
+        }
+        return resources;
+    }
+
+    private static List<ConceptResourceInternal> mockConceptResourceInternalWithOnlyUrns(List<String> urns) {
+        List<ConceptResourceInternal> resources = new ArrayList<ConceptResourceInternal>();
+        for (String urn : urns) {
+            ConceptResourceInternal resource = new ConceptResourceInternal();
+            resource.setUrn(urn);
+            resources.add(resource);
+        }
+        return resources;
+    }
+    
     private static List<ItemResourceInternal> mockItemResourcesInternalWithOnlyUrns(List<String> urns) {
         List<ItemResourceInternal> resources = new ArrayList<ItemResourceInternal>();
         for (String urn : urns) {
             ItemResourceInternal resource = new ItemResourceInternal();
+            resource.setUrn(urn);
+            resources.add(resource);
+        }
+        return resources;
+    }
+    
+    private static List<CodelistsResourceInternal> mockCodelistsResourceInternalWithOnlyUrns(List<String> urns) {
+        List<CodelistsResourceInternal> resources = new ArrayList<CodelistsResourceInternal>();
+        for (String urn : urns) {
+            CodelistsResourceInternal resource = new CodelistsResourceInternal();
+            resource.setNormalizationType(NormalizationType.STANDARDIZED);
             resource.setUrn(urn);
             resources.add(resource);
         }

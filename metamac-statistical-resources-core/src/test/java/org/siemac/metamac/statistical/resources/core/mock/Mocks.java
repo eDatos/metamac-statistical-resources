@@ -13,13 +13,13 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribu
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureComponents;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Groups;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Measure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Representation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TextFormat;
@@ -195,43 +195,43 @@ public class Mocks {
     // CONCEPTS: RESOURCE INTERNAL (for retrieveConceptsOfConceptScheme)
     // --------------------------------------------------------------------
 
-    public static ItemResourceInternal mock_resource_SDMX_CROSS_DOMAIN_1_0_TITLE() {
+    public static ConceptResourceInternal mock_resource_SDMX_CROSS_DOMAIN_1_0_TITLE() {
         return SrmMockUtils.buildConcept("TITLE", "Title");
     }
 
-    public static ItemResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_OBS_STATUS() {
+    public static ConceptResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_OBS_STATUS() {
         return SrmMockUtils.buildConcept("OBS_STATUS", "Observation value");
     }
 
-    public static ItemResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_CONF_STATUS() {
+    public static ConceptResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_CONF_STATUS() {
         return SrmMockUtils.buildConcept("CONF_STATUS", "Confidentiality - status");
     }
 
-    public static ItemResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_UNIT_MULT() {
+    public static ConceptResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_UNIT_MULT() {
         return SrmMockUtils.buildConcept("UNIT_MULT", "Unit Multiplier");
     }
 
-    public static ItemResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_COLL_METHOD() {
+    public static ConceptResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_COLL_METHOD() {
         return SrmMockUtils.buildConcept("COLL_METHOD", "Data Collection Method");
     }
 
-    public static ItemResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_FREQ() {
+    public static ConceptResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_FREQ() {
         return SrmMockUtils.buildConcept("FREQ", "Frequency");
     }
 
-    public static ItemResourceInternal mock_resource_ECB_CONCEPTS_1_0_EXR_VAR() {
+    public static ConceptResourceInternal mock_resource_ECB_CONCEPTS_1_0_EXR_VAR() {
         return SrmMockUtils.buildConcept("EXR_VAR", "Series variation - EXR context");
     }
 
-    public static ItemResourceInternal mock_resource_ECB_CONCEPTS_1_0_EXR_TYPE() {
+    public static ConceptResourceInternal mock_resource_ECB_CONCEPTS_1_0_EXR_TYPE() {
         return SrmMockUtils.buildConcept("EXR_TYPE", "Exchange rate type");
     }
 
-    public static ItemResourceInternal mock_resource_ECB_CONCEPTS_1_0_CURRENCY_DENOM() {
+    public static ConceptResourceInternal mock_resource_ECB_CONCEPTS_1_0_CURRENCY_DENOM() {
         return SrmMockUtils.buildConcept("CURRENCY_DENOM", "Currency denominator");
     }
 
-    public static ItemResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_DECIMALS() {
+    public static ConceptResourceInternal mock_resource_SDMX_CROSS_DOMAIN_CONCEPTS_1_0_DECIMALS() {
         return SrmMockUtils.buildConcept("DECIMALS", "Decimals");
     }
 

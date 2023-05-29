@@ -53,8 +53,11 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
     }
 
     public static void checkCreateQueryVersion(QueryVersion queryVersion, ExternalItem statisticalOperation, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        StatisticalResourcesValidationUtils.checkParameterRequired(statisticalOperation, ServiceExceptionParameters.STATISTICAL_OPERATION, exceptions);
         checkNewQueryVersion(queryVersion, exceptions);
+    }
+
+    public static void checkStatisticalOperation(ExternalItem statisticalOperation, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(statisticalOperation, ServiceExceptionParameters.STATISTICAL_OPERATION, exceptions);
     }
 
     public static void checkUpdateQueryVersion(QueryVersion queryVersion, List<MetamacExceptionItem> exceptions) throws MetamacException {

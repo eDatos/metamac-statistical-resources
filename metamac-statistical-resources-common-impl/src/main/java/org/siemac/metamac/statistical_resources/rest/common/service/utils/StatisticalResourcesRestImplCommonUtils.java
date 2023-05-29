@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
 
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
@@ -44,7 +44,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
             List<String> intersectedValues = null;
             List<String> selectedValues = selectedDimensions.get(queryDimension.getKey());
             if (selectedValues != null) {
-                intersectedValues = (List<String>) CollectionUtils.intersection(queryDimension.getValue(), selectedValues);
+                intersectedValues = ListUtils.intersection(queryDimension.getValue(), selectedValues);
             } else {
                 intersectedValues = queryDimension.getValue();
             }
@@ -54,6 +54,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
     }
 
     public static List<String> calculateEffectiveTemporalSelectionValues(List<String> temporalCoverageValues, List<String> selectedValues) {
+        List<String> sortedTemporalCoverageValues = sortTimeListFromRecentToOldest(temporalCoverageValues);
 
         ArrayList<String> results = new ArrayList<String>();
         for (String value : selectedValues) {
@@ -61,7 +62,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
             if (matcherAfter.matches()) {
                 String startRange = matcherAfter.group(1);
 
-                results.addAll(extractTemporalRangeValues(temporalCoverageValues, startRange, null));
+                results.addAll(extractTemporalRangeValues(sortedTemporalCoverageValues, startRange, null));
 
                 continue;
             }
@@ -73,11 +74,11 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
                 // return N data
                 int codeLastIndexToReturn = -1;
                 if (temporalCoverageValues.size() < lastN) {
-                    codeLastIndexToReturn = temporalCoverageValues.size(); // there is not N data, so return all
+                    codeLastIndexToReturn = sortedTemporalCoverageValues.size(); // there is not N data, so return all
                 } else {
                     codeLastIndexToReturn = lastN;
                 }
-                results.addAll(temporalCoverageValues.subList(0, codeLastIndexToReturn));
+                results.addAll(sortedTemporalCoverageValues.subList(0, codeLastIndexToReturn));
                 continue;
             }
 
@@ -86,7 +87,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
                 String startRange = matcherRange.group(1);
                 String endRange = matcherRange.group(2);
 
-                results.addAll(extractTemporalRangeValues(temporalCoverageValues, startRange, endRange));
+                results.addAll(extractTemporalRangeValues(sortedTemporalCoverageValues, startRange, endRange));
 
                 continue;
             }
@@ -97,16 +98,23 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         return results;
     }
 
-    private static List<String> extractTemporalRangeValues(List<String> temporalCoverageValues, String startRange, String endRange) {
-        // TemporalCoverages come sorted from newest to oldest (2012, 2011, 2010...)
+    // TODO Check this method when EDATOS-3879 is executed
+    public static List<String> sortTimeListFromRecentToOldest(List<String> temporalValues) {
+        List<String> sortedValues = SdmxTimeUtils.sortTimeList(temporalValues);
+        Collections.reverse(sortedValues);
+        return sortedValues;
+    }
 
-        List<String> partialResults = new ArrayList<String>(temporalCoverageValues);
+    private static List<String> extractTemporalRangeValues(List<String> sortedTemporalCoverageValues, String startRange, String endRange) {
+        // TemporalCoverages come sorted from recent to oldest (2012, 2011, 2010...)
+
+        List<String> partialResults = new ArrayList<String>(sortedTemporalCoverageValues);
 
         if (startRange == null) {
-            startRange = temporalCoverageValues.get(temporalCoverageValues.size() - 1);
+            startRange = sortedTemporalCoverageValues.get(sortedTemporalCoverageValues.size() - 1);
         }
         if (endRange == null) {
-            endRange = temporalCoverageValues.get(0);
+            endRange = sortedTemporalCoverageValues.get(0);
         }
 
         if (!partialResults.contains(startRange)) {
@@ -116,17 +124,17 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
             partialResults.add(endRange);
         }
 
-        // sortTimeList sorts from oldest to newest
+        // sortTimeList sorts from oldest to newest. This sort is inevitable, we have to order the added items
         partialResults = SdmxTimeUtils.sortTimeList(partialResults);
 
         int startIndex = partialResults.indexOf(startRange);
         int endIndex = partialResults.indexOf(endRange) + 1; // sublist toIndex is exclusive
         partialResults = partialResults.subList(startIndex, endIndex);
 
-        if (!temporalCoverageValues.contains(startRange)) {
+        if (!sortedTemporalCoverageValues.contains(startRange)) {
             partialResults.remove(startRange);
         }
-        if (!temporalCoverageValues.contains(endRange)) {
+        if (!sortedTemporalCoverageValues.contains(endRange)) {
             partialResults.remove(endRange);
         }
 
@@ -144,13 +152,21 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
      * Throws response error, logging exception
      */
     public static RestException manageException(Exception e) {
-        logger.error("Error", e);
+        logException(e);
         if (e instanceof RestException) {
             return (RestException) e;
         } else {
             // do not show information details about exception to user
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
             return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private static void logException(Exception e) {
+        if (e instanceof RestException && Status.NOT_FOUND.equals(((RestException) e).getStatus())) {
+            logger.debug("Error", e);
+        } else {
+            logger.error("Error", e);
         }
     }
 

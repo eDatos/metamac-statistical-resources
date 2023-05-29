@@ -19,7 +19,8 @@ Application StatisticalResourcesEnums {
     		DATASET,
     		COLLECTION,
     		QUERY,
-    		MULTIDATASET
+    		MULTIDATASET,
+    		URL
     	}
     	
     	"Type Acronym Enum is used in resources codes"

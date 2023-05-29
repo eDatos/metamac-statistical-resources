@@ -52,6 +52,9 @@ Application PublicationsStatisticalResourcesDto {
 			"Multidataset"
 			String multidatasetUrn;
 			
+			"Url"
+			String url;
+			
             "Order in level"
 			Long orderInLevel;
 			

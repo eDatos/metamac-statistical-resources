@@ -54,12 +54,17 @@ Application DatasetsStatisticalResources {
     		PagedResult<@DatasetVersion> findDatasetVersionsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
+
+			"Finds resource from cache by criteria"
+			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+			
     		
     		"Link a dataset view to the latest version of the indicator"
 	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;
     		
     		proccessDatasetFileImportationResult(String datasetImportationId, List<@FileDescriptorResult> fileDescriptors) throws MetamacException;
     		importDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto ) throws MetamacException;
+    		importAttributesFromFile(String datasetVersionUrn, List<URL> fileUrls) throws MetamacException;
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
     		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException; 
@@ -113,7 +118,13 @@ Application DatasetsStatisticalResources {
     		// Geocoverage variable elements cache
     		void updateGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
+    		void updateAllGeographicExternalCoverageVariableElementsCache() throws MetamacException;
+    		void updateGeographicCoverageExternalPublicationVariableElementsCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
+    		
+    		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
+    		
 		}
+
 
 		// ----------------------------------------------------------------
 		// 							ENTITIES
@@ -189,7 +200,7 @@ Application DatasetsStatisticalResources {
 			Long id key;
 
 			- @SiemacMetadataStatisticalResource siemacMetadataStatisticalResource databaseColumn="SIEMAC_RESOURCE_FK" not nullable cascade="all";
-			
+						
 			- @DataSourceTypeEnum dataSourceType;
 			DateTimeTZ dateLastTimeDataImport nullable;
 			//Content descriptors
@@ -209,9 +220,9 @@ Application DatasetsStatisticalResources {
 			//temporal granularities
 			- Set<@ExternalItem> temporalGranularities cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_DV_TEMP_GRANULARITY" databaseColumn="TEMPORAL_GRANULARITY_FK" databaseJoinColumn="DATASET_VERSION_FK";
 			//First date which data refers to
-			DateTimeTZ dateStart nullable;
+			String dateStart nullable;
 			//Last date which data refers to
-			DateTimeTZ dateEnd nullable;
+			String dateEnd nullable;
 			- Bag<@ExternalItem> statisticalUnit cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_STATISTICAL_UNIT" databaseColumn="STATISTICAL_UNIT_FK" databaseJoinColumn="DATASET_VERSION_FK";
 
 			//Production descriptor
@@ -231,7 +242,8 @@ Application DatasetsStatisticalResources {
 			//Publishing descriptors
 
 			//public date of next update
-			DateTimeTZ dateNextUpdate nullable;
+			String dateNextUpdate nullable;
+			
 			//flag indicating if date next update was modified by user
 			Boolean userModifiedDateNextUpdate nullable databaseColumn="USER_MODIFIED_DATE_NEXT_U02";
 			//Frecuency which the data is updated
@@ -248,10 +260,7 @@ Application DatasetsStatisticalResources {
 			- Bag<@Datasource> datasources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersion;
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
-
-			"Variable elements of geographical coverage of datasets"
-			- Bag<@ExternalItem> geographicCoverageVariableElements cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS" databaseColumn="EXTERNAL_ITEM_FK" databaseJoinColumn="DATASET_VERSION_FK";
-
+			
 			Repository DatasetVersionRepository {
 				save;
 				delete;
@@ -317,7 +326,8 @@ Application DatasetsStatisticalResources {
 
     		Repository CodeDimensionRepository {
     			findByQuery;
-    			List<@CodeDimension> findCodesForDatasetVersionByDimensionId(long datasetVersionId, String dimensionId, String filter) throws MetamacException;	
+    			List<@CodeDimension> findCodesForDatasetVersionByDimensionId(long datasetVersionId, String dimensionId, String filter) throws MetamacException;
+    			String findTitleForDatasetVersionByDimensionIdAndIdentifier(long datasetVersionId, String dimensionId, String codeDimIdentifier) throws MetamacException;
     		}
     	}
 
@@ -420,6 +430,35 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}
+    	}  	
+    	
+		Entity GeoCovVarElementCacheDatasetVersion {
+			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
+			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
+			!auditable
+			!optimisticLocking
+
+			Long id not nullable key;
+			String code databaseColumn="code" not nullable;
+			String urn databaseColumn="urn" not nullable;
+			- @InternationalString title cascade="persist,merge" fetch="eager" databaseColumn="title_fk" nullable;
+			- @ExternalItem variableElement cascade="all-delete-orphan" fetch="lazy" databaseColumn="variable_element_fk" not nullable;
+			String operationCode databaseColumn="operation_code";
+			String operationUrn databaseColumn="operation_urn";
+			- @InternationalString operationTitle cascade="persist,merge" fetch="eager" databaseColumn="operation_title_fk" nullable;
+			String htmlLink databaseColumn="htmlLink";
+			boolean isExternalSource databaseColumn="is_external_source" not nullable;
+			boolean isLastVersion databaseColumn="is_last_version" not nullable;
+			boolean isActivated databaseColumn="is_activated" not nullable;
+			Repository GeoCovVarElementCacheDatasetVersionRepository {
+				save;
+				delete;	
+				deleteAll();
+				findByCondition;
+				findByCondition(PagingParameter pagingParameter);
+				disabledByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
+				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
+			}
+		}
 	}
 }

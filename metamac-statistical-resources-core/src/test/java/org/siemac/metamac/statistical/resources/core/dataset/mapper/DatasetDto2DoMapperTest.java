@@ -35,10 +35,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticOfficialityMockFactory.STATISTIC_OFFICIALITY_02_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDtoMocks.createStatisticOfficialityDtoFromDo;
 
-import java.util.Date;
-
 import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +58,6 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTyp
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
-import org.siemac.metamac.statistical.resources.core.utils.asserts.BaseAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDtoMocks;
 import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesVersionSharedUtils;
@@ -106,13 +102,13 @@ public class DatasetDto2DoMapperTest extends StatisticalResourcesBaseTest {
         // We need to retrieve the datasetVersion because it has special data specified
         DatasetVersionDto dto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), source.getSiemacMetadataStatisticalResource().getUrn());
 
-        DateTime newNextUpdate = new DateTime();
-        dto.setDateNextUpdate(newNextUpdate.toDate());
+        String newNextUpdate = "2022-17-09"; 
+        dto.setDateNextUpdate(newNextUpdate);
 
         DatasetVersion entity = datasetDto2DoMapper.datasetVersionDtoToDo(dto);
 
         Assert.assertTrue(entity.getUserModifiedDateNextUpdate());
-        BaseAsserts.assertEqualsDate(newNextUpdate, entity.getDateNextUpdate());
+        Assert.assertEquals(newNextUpdate, entity.getDateNextUpdate());
     }
 
     @Test
@@ -122,13 +118,13 @@ public class DatasetDto2DoMapperTest extends StatisticalResourcesBaseTest {
         // We need to retrieve the datasetVersion because it has special data specified
         DatasetVersionDto dto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), source.getSiemacMetadataStatisticalResource().getUrn());
 
-        Date newDateNextUpdate = new Date();
+        String newDateNextUpdate = "2022-17-09"; 
         dto.setDateNextUpdate(newDateNextUpdate);
 
         DatasetVersion entity = datasetDto2DoMapper.datasetVersionDtoToDo(dto);
 
         Assert.assertTrue(entity.getUserModifiedDateNextUpdate());
-        BaseAsserts.assertEqualsDate(entity.getDateNextUpdate(), newDateNextUpdate);
+        Assert.assertEquals(entity.getDateNextUpdate(), newDateNextUpdate);
     }
 
     @Test
@@ -136,17 +132,18 @@ public class DatasetDto2DoMapperTest extends StatisticalResourcesBaseTest {
     public void testDatasetDtoToDoNoDateNextUpdateChange() throws MetamacException {
 
         DatasetVersion source = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_49_WITH_DATASOURCE_FROM_PX_WITH_NEXT_UPDATE_IN_ONE_MONTH_NAME);
+                
         // We need to retrieve the datasetVersion because it has special data specified
         DatasetVersionDto dto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), source.getSiemacMetadataStatisticalResource().getUrn());
 
-        DateTime originalDateNextUpdate = source.getDateNextUpdate();
+        String originalDateNextUpdate = source.getDateNextUpdate();
 
-        dto.setDateNextUpdate(originalDateNextUpdate.toDate());
+        dto.setDateNextUpdate(originalDateNextUpdate);
 
         DatasetVersion entity = datasetDto2DoMapper.datasetVersionDtoToDo(dto);
 
         Assert.assertFalse(entity.getUserModifiedDateNextUpdate());
-        BaseAsserts.assertEqualsDate(originalDateNextUpdate, entity.getDateNextUpdate());
+        Assert.assertEquals(originalDateNextUpdate, entity.getDateNextUpdate());
     }
 
     @Test
@@ -156,7 +153,7 @@ public class DatasetDto2DoMapperTest extends StatisticalResourcesBaseTest {
         // We need to retrieve the datasetVersion because it has special data specified
         DatasetVersionDto dto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), source.getSiemacMetadataStatisticalResource().getUrn());
 
-        dto.setDateNextUpdate(new Date());
+        dto.setDateNextUpdate("2022-17-09");
         dto.setNextVersion(NextVersionTypeEnum.NO_UPDATES);
 
         DatasetVersion entity = datasetDto2DoMapper.datasetVersionDtoToDo(dto);

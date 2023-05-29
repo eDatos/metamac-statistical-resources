@@ -8,9 +8,11 @@ import static org.mockito.Mockito.when;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.common.serviceapi.TranslationService;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
@@ -22,10 +24,13 @@ public class DatasetVersionAvroMapperTest {
     private static DatasetVersionRepository datasetVersionRepository;
 
     @Mock
-    private static DatasetRepository        datasetRepository;
+    private static DatasetRepository datasetRepository;
 
     @Mock
-    private static ConfigurationService     configurationService;
+    private static ConfigurationService configurationService;
+
+    @Mock
+    private static TranslationService translationService;
 
     @Before
     public void setUp() throws MetamacException {
@@ -33,8 +38,10 @@ public class DatasetVersionAvroMapperTest {
         AvroMapperUtils.datasetVersionRepository = datasetVersionRepository;
         AvroMapperUtils.datasetRepository = datasetRepository;
         AvroMapperUtils.configurationService = configurationService;
+        AvroMapperUtils.translationService = translationService;
         try {
             when(configurationService.retrieveStatisticalResourcesInternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
+            when(translationService.retrieveTimeTranslation(Mockito.any(), Mockito.anyString())).thenReturn(MappersMockUtils.mockMapTranslateDateSdmx());
         } catch (MetamacException e) {
         }
     }
@@ -44,8 +51,7 @@ public class DatasetVersionAvroMapperTest {
         DatasetVersionAvro expected = MappersMockUtils.mockDatasetVersionAvro();
         DatasetVersion source = MappersMockUtils.mockDatasetVersion();
 
-        DatasetVersionAvro actual = DatasetVersionDo2AvroMapper.do2Avro(source);
-
+        DatasetVersionAvro actual = DatasetVersionDo2AvroMapper.do2Avro(source, configurationService.retrieveStatisticalResourcesInternalApiUrlBase());
         assertEqualDatasetVersionAvro(expected, actual);
     }
 

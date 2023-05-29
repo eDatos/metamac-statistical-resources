@@ -22,7 +22,16 @@
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/apis/*</url-pattern>
     </servlet-mapping>
-    
+
+   <filter>
+        <filter-name>HttpWrapperFilter</filter-name>
+        <filter-class>org.siemac.metamac.rest.request.filter.HttpWrapperFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>HttpWrapperFilter</filter-name>
+        <url-pattern>/apis/*</url-pattern>
+    </filter-mapping>
+
     <!-- Logout filter -->
     <filter>
         <filter-name>logoutFilter</filter-name>

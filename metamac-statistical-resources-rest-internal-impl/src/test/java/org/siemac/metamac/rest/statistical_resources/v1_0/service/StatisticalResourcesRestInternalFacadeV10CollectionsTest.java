@@ -13,7 +13,7 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collection;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collections;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
 
@@ -21,7 +21,7 @@ public class StatisticalResourcesRestInternalFacadeV10CollectionsTest extends St
 
     @Test
     public void testFindCollections() throws Exception {
-        Collections collections = statisticalResourcesRestInternalFacadeClientXml.findCollections(null, null, null, null, null);
+        Collections collections = statisticalResourcesRestInternalFacadeClientXml.findCollections(null, null, null, null, null, null);
 
         assertEquals(4, collections.getCollections().size());
         assertEquals(StatisticalResourcesRestInternalConstants.KIND_COLLECTIONS, collections.getKind());

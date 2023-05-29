@@ -7,6 +7,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.view.handlers.NewStatisticalResourceUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
@@ -36,6 +37,7 @@ public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers 
     // Importation
 
     void datasourcesImportationFailed(String errorMessage);
+    void createNewDatasetFailed(String errorMessage);
     void datasourcesImportationSucceed(String fileName);
 
     // Related resources
@@ -49,4 +51,8 @@ public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers 
     // DATA_PROVIDERS and SCHEMES
     void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, SiemacMetadataExternalField field);
     void retrieveDataProviderUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, SiemacMetadataExternalField field);
+    
+    // Time codes
+    void retrieveTemporalCodesForField(int firstResult, int maxResults, MetamacWebCriteria webCriteria, DatasetMetadataExternalField updateFrequency);
+
 }

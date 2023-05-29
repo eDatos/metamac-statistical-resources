@@ -2,14 +2,17 @@ package org.siemac.metamac.statistical.resources.core.facade.serviceimpl;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.criteria.SculptorCriteria;
@@ -74,6 +77,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -114,6 +118,9 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatas
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -125,6 +132,10 @@ import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 @Service("statisticalResourcesServiceFacade")
 public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesServiceFacadeImplBase {
 
+
+    private static Logger                     logger                              = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
+
+    
     @Autowired
     private CommonDo2DtoMapper                                        commonDo2DtoMapper;
 
@@ -238,7 +249,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
-
+  
     public StatisticalResourcesServiceFacadeImpl() {
     }
 
@@ -1096,6 +1107,12 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
+    public void importAttributesFromFile(ServiceContext ctx, DatasetVersionDto datasetVersionDto, List<URL> fileUrls) throws MetamacException {
+        DatasetsSecurityUtils.canImportDatasourcesInDatasetVersion(ctx, datasetVersionDto.getStatisticalOperation().getCode());
+        getDatasetService().importAttributesFromFile(ctx, datasetVersionDto.getUrn(), fileUrls);
+    }
+
+    @Override
     public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode);
@@ -1119,7 +1136,23 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceCreated.getAttributeId());
 
-        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(dsdAttribute, attributeInstanceCreated);
+        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceCreated);
+    }
+
+    @Override
+    public void checkAttributeInstance(ServiceContext ctx, String datasetVersionUrn, DsdAttributeInstanceDto dsdAttributeInstanceDto, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+        DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
+        TaskInfoDataset taskInfoDataset = new TaskInfoDataset();
+        taskInfoDataset.setDatasetUrn(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+        taskInfoDataset.setDatasetVersionId(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        taskInfoDataset.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
+        ValidateDataVersusDsd validator = new ValidateDataVersusDsd(ctx, dsd, srmRestInternalService, null, taskInfoDataset);
+        AttributeInstanceDto attributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper.dsdAttributeInstanceDtoToAttributeInstanceDto(dsdAttributeInstanceDto);
+
+        List<AttributeInstanceDto> attributesInstances = Arrays.asList(attributeInstanceDto);
+
+        validator.checkAttributesInstancesRepresentation(attributesInstances, exceptions);
     }
 
     @Override
@@ -1139,7 +1172,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         if (attributeInstanceUpdated != null) {
             DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceUpdated.getAttributeId());
 
-            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(dsdAttribute, attributeInstanceUpdated);
+            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceUpdated);
         } else {
             return null;
         }
@@ -1170,7 +1203,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeId);
 
-        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtosToDsdAttributeInstanceDtos(dsdAttribute, instances);
+        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtosToDsdAttributeInstanceDtos(datasetVersionDto.getId(), dsdAttribute, instances);
     }
 
     @Override
@@ -1189,11 +1222,32 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-
+       
+        logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
+        
+        
         // Operate
         getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
-    }
 
+        logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
+        
+        logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+        
+        getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
+        
+        logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+        
+        
+    }
+     
+    @Override
+    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
+
+       getDatasetService().updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+    }
+ 
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
         DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
@@ -2393,5 +2447,16 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Service
         getDatasetService().createDatabaseDatasourceInDatasetVersion(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), tableName);
+    }
+
+    @Override
+    public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto, ExternalItemDto statisticalOperationDto) throws MetamacException {
+        // we set the null id because it will be autogenerated when we create the dataset
+        datasetVersionDto.setId(null);
+        // we set the following null data because they are set when we create the dataset
+        datasetVersionDto.setStatisticalOperation(null);
+        datasetVersionDto.setVersion(null);
+        datasetVersionDto.setPublicationStreamStatus(null);
+        return createDataset(ctx, datasetVersionDto, statisticalOperationDto);
     }
 }

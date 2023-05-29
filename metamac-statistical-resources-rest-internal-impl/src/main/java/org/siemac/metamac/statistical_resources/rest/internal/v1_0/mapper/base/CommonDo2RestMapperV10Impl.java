@@ -1,3 +1,4 @@
+
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base;
 
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
@@ -19,6 +20,7 @@ import java.util.Set;
 import java.util.Stack;
 
 import javax.annotation.PostConstruct;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -32,53 +34,12 @@ import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.api.constants.RestApiConstants;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
-import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.common_metadata.v1_0.domain.Configuration;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.statistical_operations_internal.v1_0.domain.Instance;
 import org.siemac.metamac.rest.statistical_operations_internal.v1_0.domain.Operation;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attribute;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.AttributeAttachmentLevelType;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.AttributeDimension;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.AttributeDimensions;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.AttributeValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attributes;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CodeRepresentation;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CodeRepresentations;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ComponentType;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Contact;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Contacts;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DataAttribute;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DataAttributes;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DataStructureDefinition;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimension;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionRepresentation;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionRepresentations;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionType;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimensions;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionsId;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedAttributeValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedAttributeValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedDimensionValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedDimensionValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.MeasureQuantity;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NextVersionType;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedAttributeValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedAttributeValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Organisation;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ProcStatusType;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourceInternal;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ResourcesInternal;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.SelectedLanguages;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.StatisticalResource;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.StatisticalResourceType;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleTypes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Agency;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
@@ -123,6 +84,47 @@ import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.Mul
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeDimension;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeDimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ComponentType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Contact;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Contacts;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttribute;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataStructureDefinition;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionsId;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedAttributeValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedAttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.MeasureQuantity;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NextVersionType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Organisation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ProcStatusType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleTypes;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.internal.invocation.CommonMetadataRestExternalFacade;
@@ -233,6 +235,15 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException {
+        if (StringUtils.isNotBlank(sdmxValue)) {
+            Map<String, String> internationalStringValue = translationService.retrieveTimeTranslation(SERVICE_CONTEXT, sdmxValue);
+            return toInternationalString(internationalStringValue, selectedLanguages);
+        }
+        return null;
+    }
+
+    @Override
     public InternalWebApplicationNavigation getInternalWebApplicationNavigation() {
         return internalWebApplicationNavigation;
     }
@@ -249,7 +260,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public void toMetadataStatisticalResource(SiemacMetadataStatisticalResource source, StatisticalResource target, List<String> selectedLanguages) throws MetamacException {
+    public void toMetadataStatisticalResource(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return;
         }
@@ -272,7 +283,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setPublisherContributors(toResourcesExternalItemsSrm(source.getPublisherContributor(), selectedLanguages));
         target.setMediators(toResourcesExternalItemsSrm(source.getMediator(), selectedLanguages));
         target.setNewnessUntilDate(toDate(source.getNewnessUntilDate()));
-        target.setConformsToInternal(toInternationalString(source.getConformsToInternal(), selectedLanguages));
+
         // note: hasPart, isPartOf: in concrete mappers
 
         toCommonMetadata(source, target, selectedLanguages);
@@ -283,17 +294,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         // Lifecycle
         // note: replacesVersion and isReplacedByVersion are only valid to datasets. So, they are mapped in Dataset mapper
         target.setMaintainer(toResourceExternalItemSrm(source.getMaintainer(), selectedLanguages));
-        target.setProcStatus(toProcStatusType(source.getProcStatus(), selectedLanguages));
-        target.setCreationDate(toDate(source.getCreationDate()));
-        target.setCreationUser(source.getCreationUser());
-        target.setProductionValidationDate(toDate(source.getCreationDate()));
-        target.setProductionValidationUser(source.getPublicationUser());
-        target.setDiffusionValidationDate(toDate(source.getDiffusionValidationDate()));
-        target.setDiffusionValidationUser(source.getDiffusionValidationUser());
-        target.setRejectValidationDate(toDate(source.getRejectValidationDate()));
-        target.setRejectValidationUser(source.getRejectValidationUser());
-        target.setPublicationDate(toDate(source.getPublicationDate()));
-        target.setPublicationUser(source.getPublicationUser());
 
         // Versionable
         target.setVersion(source.getVersionLogic());
@@ -302,7 +302,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setValidFrom(toDate(source.getValidFrom()));
         target.setValidTo(toDate(isDateAfterNowSetNull(source.getValidTo())));
         target.setNextVersion(toNextVersionType(source.getNextVersion(), selectedLanguages));
-        target.setNextVersionDate(toDate(source.getNextVersionDate()));
+
     }
 
     @Override
@@ -341,6 +341,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setHeading(toDimensionsId(dataStructure.getHeading()));
         target.setStub(toDimensionsId(dataStructure.getStub()));
         target.setAutoOpen(dataStructure.isAutoOpen());
+        target.setShowNullValuesByDefault(dataStructure.isShowNullValuesByDefault());
+        target.setShowZeroValuesByDefault(dataStructure.isShowZeroValuesByDefault());
         target.setShowDecimals(dataStructure.getShowDecimals());
         return target;
     }
@@ -436,17 +438,17 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceInternal toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        ResourceInternal target = new ResourceInternal();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResourceExternalItem(source, statisticalOperationsApiInternalEndpoint, statisticalOperationsWebApplication, target, selectedLanguages);
         updateNameForNonVersionableResource(target, source);
         return target;
     }
 
-    private void updateNameForNonVersionableResource(Resource target, ExternalItem source) {
+    private void updateNameForNonVersionableResource(ResourceStatisticalResourceBase target, ExternalItem source) {
         switch (source.getType()) {
             case STATISTICAL_OPERATION:
                 target.setName(getUpdatedStatisticalOperationName(source.getCode()));
@@ -462,13 +464,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourcesInternal toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages) {
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages) {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
-        ResourcesInternal targets = new ResourcesInternal();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (ExternalItem source : sources) {
-            ResourceInternal target = toResourceExternalItemStatisticalOperations(source, selectedLanguages);
+            ResourceStatisticalResourceBase target = toResourceExternalItemStatisticalOperations(source, selectedLanguages);
             targets.getResources().add(target);
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
@@ -476,17 +478,24 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceInternal toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages) {
+    public RestException buildRestException(String message) {
+        logger.error(message);
+        org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
+        return new RestException(exception, Response.Status.INTERNAL_SERVER_ERROR);
+    }
+
+    @Override
+    public ResourceStatisticalResourceBase toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        ResourceInternal target = new ResourceInternal();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResourceExternalItemSrm(source, target, selectedLanguages);
         return target;
     }
 
     @Override
-    public void toResourceExternalItemSrm(ExternalItem source, ResourceInternal target, List<String> selectedLanguages) {
+    public void toResourceExternalItemSrm(ExternalItem source, ResourceStatisticalResourceBase target, List<String> selectedLanguages) {
         if (source == null) {
             return;
         }
@@ -494,13 +503,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourcesInternal toResourcesExternalItemsSrm(Collection<ExternalItem> sources, List<String> selectedLanguages) {
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsSrm(Collection<ExternalItem> sources, List<String> selectedLanguages) {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
-        ResourcesInternal targets = new ResourcesInternal();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (ExternalItem source : sources) {
-            ResourceInternal target = toResourceExternalItemSrm(source, selectedLanguages);
+            ResourceStatisticalResourceBase target = toResourceExternalItemSrm(source, selectedLanguages);
             targets.getResources().add(target);
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
@@ -582,7 +591,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public void toResource(ResourceInternal source, ResourceInternal target, List<String> selectedLanguages) {
+    public void toResource(ResourceStatisticalResourceBase source, ResourceStatisticalResourceBase target, List<String> selectedLanguages) {
         if (source == null) {
             return;
         }
@@ -595,7 +604,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setSelfLink(source.getSelfLink());
     }
 
-    private void toResource(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal source, ResourceInternal target, List<String> selectedLanguages) {
+    private void toResource(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal source, ResourceStatisticalResourceBase target, List<String> selectedLanguages) {
         if (source == null) {
             return;
         }
@@ -612,7 +621,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setUrnProvider(source.getUrnProvider());
     }
 
-    private void toResource(org.siemac.metamac.rest.common_metadata.v1_0.domain.ResourceInternal source, ResourceInternal target, List<String> selectedLanguages) {
+    private void toResource(org.siemac.metamac.rest.common_metadata.v1_0.domain.ResourceInternal source, ResourceStatisticalResourceBase target, List<String> selectedLanguages) {
         if (source == null) {
             return;
         }
@@ -629,31 +638,21 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceInternal toResource(ResourceInternal source, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResource(ResourceStatisticalResourceBase source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
-        ResourceInternal target = new ResourceInternal();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResource(source, target, selectedLanguages);
         return target;
     }
 
-    private ResourceInternal toResource(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal source, List<String> selectedLanguages) {
+    private ResourceStatisticalResourceBase toResource(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal source, List<String> selectedLanguages) {
         if (source == null) {
             return null;
         }
 
-        ResourceInternal target = new ResourceInternal();
-        toResource(source, target, selectedLanguages);
-        return target;
-    }
-
-    private ResourceInternal toResource(org.siemac.metamac.rest.common_metadata.v1_0.domain.ResourceInternal source, List<String> selectedLanguages) {
-        if (source == null) {
-            return null;
-        }
-
-        ResourceInternal target = new ResourceInternal();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResource(source, target, selectedLanguages);
         return target;
     }
@@ -686,11 +685,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourcesInternal toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException {
+    public ResourcesStatisticalResourceBase toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
-        ResourcesInternal targets = new ResourcesInternal();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (RelatedResource source : sources) {
             targets.getResources().add(toResource(source, selectedLanguages));
         }
@@ -699,27 +698,50 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceInternal toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException {
+    public ResourcesStatisticalResourceBase toUrlResources(List<String> sources) throws MetamacException {
+        if (CollectionUtils.isEmpty(sources)) {
+            return null;
+        }
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
+        for (String source : sources) {
+            targets.getResources().add(toUrlResource(source));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
+        return targets;
+    }
+
+    private ResourceStatisticalResourceBase toUrlResource(String url) {
+        if (url == null) {
+            return null;
+        }
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
+        target.setKind(StatisticalResourcesRestConstants.KIND_URL);
+        target.setVisualizerHtmlLink(url);
+        return target;
+    }
+
+    @Override
+    public ResourceStatisticalResourceBase toResource(RelatedResource source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
         switch (source.getType()) {
             case DATASET_VERSION:
-                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages);
+                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages, null);
             case QUERY_VERSION:
-                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages);
+                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages, null);
             case PUBLICATION_VERSION:
-                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages);
+                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages, null);
             case DATASET:
                 DatasetVersion datasetVersion = datasetService.retrieveLatestDatasetVersionByDatasetUrn(SERVICE_CONTEXT, source.getDataset().getIdentifiableStatisticalResource().getUrn());
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getQuery().getIdentifiableStatisticalResource().getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
             case MULTIDATASET:
                 MultidatasetVersion multidatasetVersion = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(SERVICE_CONTEXT,
                         source.getMultidataset().getIdentifiableStatisticalResource().getUrn());
-                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages);
+                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -728,7 +750,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceInternal toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
+    public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -744,7 +766,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -788,7 +810,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return result;
     }
 
-    private void toResourceExternalItem(ExternalItem source, String apiExternalItemBase, String webApplicationExternalItemBase, ResourceInternal target, List<String> selectedLanguages) {
+    private void toResourceExternalItem(ExternalItem source, String apiExternalItemBase, String webApplicationExternalItemBase, ResourceStatisticalResourceBase target,
+            List<String> selectedLanguages) {
         if (source == null) {
             return;
         }
@@ -810,6 +833,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setId(source.getComponentId());
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
+        target.setPluralName(source.getPluralName());
 
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields));
@@ -1027,9 +1051,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
         MeasureQuantity target = new MeasureQuantity();
 
-        org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ItemResourceInternal targetItemResourceInternal = new org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.ItemResourceInternal();
-        toResource(source.getUnitCode(), targetItemResourceInternal, selectedLanguages);
-        target.setUnitCode(targetItemResourceInternal);
+        org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource targetItemResource = new org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource();
+        toResource(source.getUnitCode(), targetItemResource, selectedLanguages);
+        target.setUnitCode(targetItemResource);
 
         return target;
     }
@@ -1287,31 +1311,31 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
     }
 
-    private org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType toVersionRationaleType(VersionRationaleTypeEnum source) {
+    private org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType toVersionRationaleType(VersionRationaleTypeEnum source) {
         if (source == null) {
             return null;
         }
         switch (source) {
             case MAJOR_NEW_RESOURCE:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MAJOR_NEW_RESOURCE;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MAJOR_NEW_RESOURCE;
             case MAJOR_ESTIMATORS:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MAJOR_ESTIMATORS;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MAJOR_ESTIMATORS;
             case MAJOR_CATEGORIES:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MAJOR_CATEGORIES;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MAJOR_CATEGORIES;
             case MAJOR_VARIABLES:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MAJOR_VARIABLES;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MAJOR_VARIABLES;
             case MAJOR_OTHER:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MAJOR_OTHER;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MAJOR_OTHER;
             case MINOR_ERRATA:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MINOR_ERRATA;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MINOR_ERRATA;
             case MINOR_METADATA:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MINOR_METADATA;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MINOR_METADATA;
             case MINOR_DATA_UPDATE:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MINOR_DATA_UPDATE;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MINOR_DATA_UPDATE;
             case MINOR_SERIES_UPDATE:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MINOR_SERIES_UPDATE;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MINOR_SERIES_UPDATE;
             case MINOR_OTHER:
-                return org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.VersionRationaleType.MINOR_OTHER;
+                return org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleType.MINOR_OTHER;
             default:
                 logger.error("VersionRationaleTypeEnum unsupported: " + source);
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -1327,8 +1351,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         for (String dimension : dimensions) {
             List<String> dimensionValues = dimensionsSelected.get(dimension);
             List<String> dimensionValuesSelected = new ArrayList<String>();
-            if (CollectionUtils.isEmpty(dimensionValues)) {
-                // if dimension is not selected in query, retrieve all codes from coverage
+            if (dimensionValues == null) {
+                // if dimension is not selected in query, retrieve all codes from coverage BUT if the filter returns empty list, we do that
                 List<CodeDimension> codeDimensions = datasetService.retrieveCoverageForDatasetVersionDimension(SERVICE_CONTEXT, source.getSiemacMetadataStatisticalResource().getUrn(), dimension);
                 for (CodeDimension codeDimension : codeDimensions) {
                     dimensionValuesSelected.add(codeDimension.getIdentifier());
@@ -1495,7 +1519,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return targets;
     }
 
-    private void toCommonMetadata(SiemacMetadataStatisticalResource source, StatisticalResource target, List<String> selectedLanguages) {
+    private void toCommonMetadata(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) {
         if (source == null) {
             return;
         }
@@ -1793,11 +1817,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return organisation;
     }
 
-    private void toResource(Agency agency, ResourceInternal resource, List<String> selectedLanguages) {
+    private void toResource(Agency agency, ResourceStatisticalResourceBase resource, List<String> selectedLanguages) {
         toResource(agency, resource, agency.getKind(), selectedLanguages);
     }
 
-    private void toResource(Item source, ResourceInternal target, String kind, List<String> selectedLanguages) {
+    private void toResource(Item source, ResourceStatisticalResourceBase target, String kind, List<String> selectedLanguages) {
         target.setKind(kind);
         target.setId(source.getId());
         target.setNestedId(source.getNestedId());

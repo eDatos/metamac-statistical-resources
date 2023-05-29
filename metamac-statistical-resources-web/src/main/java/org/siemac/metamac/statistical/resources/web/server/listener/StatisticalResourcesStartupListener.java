@@ -13,14 +13,12 @@ public class StatisticalResourcesStartupListener extends InternalApplicationStar
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_URL);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_USERNAME);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_PASSWORD);
-        checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_DIALECT);
 
         // DATASOURCE REPOSITORY
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_DRIVER_NAME);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_URL);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_USERNAME);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_PASSWORD);
-        checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_DIALECT);
 
         // DATASOURCE DB DATA IMPORT
         checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_DRIVER_NAME);
@@ -58,6 +56,7 @@ public class StatisticalResourcesStartupListener extends InternalApplicationStar
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.HELP_URL);
         checkOptionalProperty(StatisticalResourcesConfigurationConstants.FILTER_COLUMN_NAME_FOR_DB_DATA_IMPORT);
         checkOptionalProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_DB_DATA_IMPORT);
+        checkOptionalProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_GEOGRAPHIC_COVERAGE_CACHE_CLEAR);
 
         // Confluent && Kafka
         checkKafkaProperties();

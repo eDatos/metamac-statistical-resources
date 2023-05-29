@@ -14,26 +14,23 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.utils.Dataset
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceVersionEditionForm;
-import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
-
-import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 
 public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionForm {
 
     private DatasetMetadataTabUiHandlers uiHandlers;
     private SearchExternalItemSimpleItem updateFrequency;
     private ProcStatusEnum               procStatus;
-
+    private CustomDatePickerItem dateNextUpdate;
+    
     public DatasetVersionEditionForm() {
         super();
 
-        final CustomDateItem dateNextUpdate = createDateNextUpdateItem();
-
         updateFrequency = createUpdateFrequencyItem();
+        updateFrequency.setShowIfCondition(getUpdateFrecuencyFormItemIfFunction());
         updateFrequency.setValidators(new CustomRequiredValidator() {
 
             @Override
@@ -43,33 +40,35 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
             }
         });
 
+        dateNextUpdate = createFieldDateNextUpdate();
+        
         addFields(dateNextUpdate, updateFrequency);
     }
-
+    
     public void setDatasetVersionDto(DatasetVersionDto dto) {
         super.setLifeCycleStatisticalResourceDto(dto);
 
         this.procStatus = dto.getProcStatus();
 
-        setValue(DatasetDS.DATE_NEXT_UPDATE, dto.getDateNextUpdate());
         setValue(DatasetDS.UPDATE_FRECUENCY, dto.getUpdateFrequency());
+        dateNextUpdate.setValue(dto.getDateNextUpdate());
+
     }
 
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto dto) {
         super.getLifeCycleStatisticalResourceDto(dto);
 
-        dto.setDateNextUpdate(((CustomDateItem) getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsDate());
-        dto.setUpdateFrequency(getValueAsExternalItemDto(DatasetDS.UPDATE_FRECUENCY));
+        dto.setUpdateFrequency(this.isNextVersionScheduledNecessary() ? getValueAsExternalItemDto(DatasetDS.UPDATE_FRECUENCY) : null);
+        dto.setDateNextUpdate(dateNextUpdate.getValue());
 
         return dto;
     }
-    private CustomDateItem createDateNextUpdateItem() {
-        FormItemIcon infoIcon = new FormItemIcon();
-        infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
-        infoIcon.setPrompt(StatisticalResourcesWeb.getMessages().dateNextUpdateInfo());
-        CustomDateItem item = new CustomDateItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate());
-        item.setIcons(infoIcon);
-        return item;
+
+    private CustomDatePickerItem createFieldDateNextUpdate() {
+        CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), false, false, CommonUtils.getDateFormatTypeHashMap());
+        customDatePickerItem.defaultDateType();
+        return customDatePickerItem;
+
     }
 
     private SearchExternalItemSimpleItem createUpdateFrequencyItem() {

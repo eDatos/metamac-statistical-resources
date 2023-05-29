@@ -36,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -46,7 +47,6 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestI
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DataMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.TaskMockUtils;
-import org.siemac.metamac.statistical.resources.core.utils.asserts.BaseAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -216,7 +216,7 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
 
         DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
 
-        BaseAsserts.assertEqualsDate(newNextUpdate, actual.getDateNextUpdate());
+        Assert.assertEquals(CoreCommonUtil.jodaDateTime2IsoDate(newNextUpdate.toDate()), actual.getDateNextUpdate());
     }
 
     @Test
@@ -227,7 +227,7 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
 
         mockDsdAndDataRepositorySimpleDimensionsNoAttributes();
 
-        DateTime oldNextUpdate = expectedDatasetVersion.getDateNextUpdate();
+        String oldNextUpdate = expectedDatasetVersion.getDateNextUpdate();
         DateTime newNextUpdate = new DateTime().plusYears(1);
         Datasource expected = notPersistedDoMocks.mockDatasourceForPersist();
         expected.setDateNextUpdate(newNextUpdate);
@@ -236,7 +236,7 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
 
         DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
 
-        BaseAsserts.assertEqualsDate(oldNextUpdate, actual.getDateNextUpdate());
+        Assert.assertEquals(oldNextUpdate, actual.getDateNextUpdate());
     }
 
     @Test
@@ -247,7 +247,7 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
 
         mockDsdAndDataRepositorySimpleDimensionsNoAttributes();
 
-        DateTime oldNextUpdate = expectedDatasetVersion.getDateNextUpdate();
+        String oldNextUpdate = expectedDatasetVersion.getDateNextUpdate();
         DateTime newNextUpdate = new DateTime().minusMonths(1);
         Datasource expected = notPersistedDoMocks.mockDatasourceForPersist();
         expected.setDateNextUpdate(newNextUpdate);
@@ -256,7 +256,7 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
 
         DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
 
-        BaseAsserts.assertEqualsDate(oldNextUpdate, actual.getDateNextUpdate());
+        Assert.assertEquals(oldNextUpdate, actual.getDateNextUpdate());
     }
 
     @Test
@@ -267,7 +267,7 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
 
         mockDsdAndDataRepositorySimpleDimensionsNoAttributes();
 
-        DateTime oldNextUpdate = expectedDatasetVersion.getDateNextUpdate();
+        String oldNextUpdate = expectedDatasetVersion.getDateNextUpdate();
         DateTime nextUpdate = new DateTime().plusWeeks(1);
         Datasource expected = notPersistedDoMocks.mockDatasourceForPersist();
         expected.setDateNextUpdate(nextUpdate);
@@ -277,7 +277,7 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
         DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
 
         // SET EXPECTED METADATA
-        BaseAsserts.assertEqualsDate(oldNextUpdate, actual.getDateNextUpdate());
+        Assert.assertEquals(oldNextUpdate, actual.getDateNextUpdate());
     }
 
     @Test

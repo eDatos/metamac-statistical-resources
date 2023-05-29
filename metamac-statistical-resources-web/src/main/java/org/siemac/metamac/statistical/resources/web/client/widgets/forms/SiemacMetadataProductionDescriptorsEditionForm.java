@@ -35,7 +35,7 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
     private SearchSrmListItemWithSchemeFilterItem     dataProviderItem;
 
     private SearchSrmItemLinkItemWithSchemeFilterItem creatorItem;
-
+   
     public SiemacMetadataProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
 
@@ -58,17 +58,16 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
         ViewTextItem lastUpdate = new ViewTextItem(SiemacMetadataDS.LAST_UPDATE, getConstants().siemacMetadataStatisticalResourceLastUpdate());
         
         dataProviderItem = createDataProviderItem();
-        setDataProviderValidators();
         
         MultiLanguageRichTextEditorItem dataProviderAnnotations = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS, getConstants().siemacMetadataStatisticalResourceDataProviderAnnotations());
         
         MultiLanguageRichTextEditorItem conformsTo = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO, getConstants().siemacMetadataStatisticalResourceConformsTo());
         MultiLanguageRichTextEditorItem conformsToInternal = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO_INTERNAL, getConstants()
                 .siemacMetadataStatisticalResourceConformsToInternal());
-
+        
         setFields(dateCreated, lastUpdate, maintainer, creatorItem, dataProviderItem, dataProviderAnnotations, contributorItem, conformsTo, conformsToInternal);
     }
-
+    
     public void setSiemacMetadataStatisticalResourceDto(SiemacMetadataStatisticalResourceDto siemacMetadataStatisticalResourceDto) {
         this.procStatus = siemacMetadataStatisticalResourceDto.getProcStatus();
 
@@ -180,18 +179,7 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
             }
         };
     }
-    
-    private void setDataProviderValidators() {
-        dataProviderItem.setValidators(new CustomRequiredValidator() {
-
-            @Override
-            protected boolean condition(Object value) {
-                List<ExternalItemDto> values = getExternalItemsValue(getItem(SiemacMetadataDS.DATA_PROVIDER));
-                return CommonUtils.isResourceInProductionValidationOrGreaterProcStatus(procStatus) ? (values != null && values.size() > 0) : true;
-            }
-        });
-    }
-    
+        
     public void setUiHandlers(StatisticalResourceUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
     }

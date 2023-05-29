@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
@@ -26,6 +27,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeVal
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
@@ -90,15 +92,15 @@ public class RestDoMocks {
         target.addGeographicGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("countries"));
         target.addTemporalGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("yearly"));
         target.addTemporalGranularity(StatisticalResourcesDoMocks.mockCodeExternalItem("monthly"));
-        target.setDateStart(new DateTime(2013, 1, 2, 3, 4, 5, 0));
-        target.setDateEnd(new DateTime(2013, 3, 5, 6, 7, 8, 0));
+        target.setDateStart("2013-01-02");
+        target.setDateEnd("2013-03-05");
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit1"));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit2"));
         target.addStatisticalUnit(StatisticalResourcesDoMocks.mockConceptExternalItem("statisticalUnit3"));
         target.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem("DSD01"));
         target.setFormatExtentObservations(Long.valueOf(3));
         target.setFormatExtentDimensions(Integer.valueOf(5));
-        target.setDateNextUpdate(new DateTime(2013, 12, 2, 3, 4, 5, 0));
+        target.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 12, 2, 3, 4, 5, 0).toDate()));
         target.setUpdateFrequency(StatisticalResourcesDoMocks.mockCodeExternalItem("updateFrequency01"));
         target.setStatisticOfficiality(coreDoMocks.mockStatisticOfficiality("statisticOfficiality01"));
 
@@ -300,7 +302,7 @@ public class RestDoMocks {
     }
 
     private PublicationVersion mockPublicationVersionBasic(String agencyID, String resourceID, String version) {
-        PublicationVersion target = PublicationVersionMockFactory.createComplexStructure();
+        PublicationVersion target = PublicationVersionMockFactory.createComplexStructureWithUrl();
         target.getSiemacMetadataStatisticalResource().setUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=" + agencyID + ":" + resourceID + "(" + version + ")");
         target.getSiemacMetadataStatisticalResource().getMaintainer().setCodeNested(agencyID);
         // This is needed because the file in resources has daylight saving and we need to force summer time
@@ -389,4 +391,22 @@ public class RestDoMocks {
         return internationalStringDto;
     }
 
+    public GeoCovVarElementCacheDatasetVersion mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
+        DatasetVersion dv = mockDatasetVersion(agencyId, resourceId, versionId);
+
+        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
+        geoCovVarElementCacheDatasetVersion.setOperationUrn(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
+        geoCovVarElementCacheDatasetVersion.setOperationCode(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+        geoCovVarElementCacheDatasetVersion.setOperationTitle(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
+        geoCovVarElementCacheDatasetVersion.setCode(dv.getSiemacMetadataStatisticalResource().getCode());
+        geoCovVarElementCacheDatasetVersion.setTitle(dv.getSiemacMetadataStatisticalResource().getTitle());
+        geoCovVarElementCacheDatasetVersion.setIsExternalSource(isLastVersion);
+        geoCovVarElementCacheDatasetVersion.setIsExternalSource(true);
+        geoCovVarElementCacheDatasetVersion.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
+        geoCovVarElementCacheDatasetVersion.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
+        geoCovVarElementCacheDatasetVersion.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variableX", variableElementId));
+        
+        return geoCovVarElementCacheDatasetVersion;
+    }
+    
 }

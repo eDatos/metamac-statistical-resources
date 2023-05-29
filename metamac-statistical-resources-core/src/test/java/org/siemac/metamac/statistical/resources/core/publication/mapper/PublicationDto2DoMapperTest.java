@@ -9,6 +9,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_02_BASIC_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_03_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_41_PUB_NOT_VISIBLE_REPLACES_PUB_VERSION_42_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_42_PUB_IS_REPLACED_BY_PUB_VERSION_41_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.QUERY_01_SIMPLE_NAME;
@@ -104,11 +105,11 @@ public class PublicationDto2DoMapperTest extends StatisticalResourcesBaseTest {
     }
 
     @Test
-    @MetamacMock({PUBLICATION_VERSION_01_BASIC_NAME, PUBLICATION_VERSION_41_PUB_NOT_VISIBLE_REPLACES_PUB_VERSION_42_NAME})
+    @MetamacMock({PUBLICATION_VERSION_03_BASIC_NAME, PUBLICATION_VERSION_41_PUB_NOT_VISIBLE_REPLACES_PUB_VERSION_42_NAME})
     public void testPublicationDtoToDoCanNotReplaceAPublicationVersionThatHasBeenReplacedAlready() throws MetamacException {
         PublicationVersion resourceAlreadyReplaced = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_42_PUB_IS_REPLACED_BY_PUB_VERSION_41_NAME);
 
-        PublicationVersion source = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_01_BASIC_NAME);
+        PublicationVersion source = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_03_BASIC_NAME);
         PublicationVersionDto dto = buildPublicationVersionDtoFromDo(source);
 
         dto.setReplaces(StatisticalResourcesDtoMocks.mockNotPersistedRelatedResourcePublicationVersionDto(resourceAlreadyReplaced));

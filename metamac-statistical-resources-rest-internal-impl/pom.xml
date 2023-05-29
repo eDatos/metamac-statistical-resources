@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
 		<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 		<artifactId>metamac-statistical-resources-parent</artifactId>
-		<version>5.0.2-SNAPSHOT</version>
+		<version>7.0.2-SNAPSHOT</version>
 		<relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
 	</parent>
 
@@ -17,181 +19,193 @@
 	<description>METAMAC :: STATISTICAL RESOURCES :: REST :: INTERNAL IMPL</description>
 
 	<dependencies>
-        <!-- Metamac -->
+		<!-- Metamac -->
 		<dependency>
 			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 			<artifactId>metamac-statistical-resources-rest-internal-api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
-            <artifactId>metamac-statistical-resources-common-impl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
-            <artifactId>metamac-statistical-resources-core</artifactId>
-            <classifier>client</classifier>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.siemac.metamac.metamac-srm</groupId>
-            <artifactId>metamac-srm-rest-internal-api</artifactId>
-            <version>${metamac-srm-rest-internal-api.version}</version>
-        </dependency>
-        <dependency>
+		<dependency>
+			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+			<artifactId>metamac-statistical-resources-rest-common-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+			<artifactId>metamac-statistical-resources-common-impl</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+			<artifactId>metamac-statistical-resources-core</artifactId>
+			<classifier>client</classifier>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.siemac.metamac.metamac-srm</groupId>
+			<artifactId>metamac-srm-rest-internal-api</artifactId>
+			<version>${metamac-srm-rest-internal-api.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.siemac.metamac.metamac-statistical-operations</groupId>
 			<artifactId>metamac-statistical-operations-rest-internal-api</artifactId>
 			<version>${metamac-statistical-operations-rest-internal-api.version}</version>
 		</dependency>
-        <dependency>
-            <groupId>org.siemac.metamac</groupId>
-            <artifactId>metamac-rest-common</artifactId>
-            <version>${metamac-rest-common.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-xc</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>         
+		<dependency>
+			<groupId>org.siemac.metamac</groupId>
+			<artifactId>metamac-rest-common</artifactId>
+			<version>${metamac-rest-common.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
 
-        <!-- FOR JSONP -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-extension-providers</artifactId>
-            <version>${cxf.version}</version>
-        </dependency>   
-        
-        <!-- Spring -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <version>${spring.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aop</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
-    </dependencies>
-    
-    <profiles>
-    	<profile>
-    		<id>include-tests-dependencies</id>
-    		<activation>
-                <property>
-                    <name>maven.test.skip</name>
-                    <value>!true</value>
-                </property>
-            </activation>
-    		<dependencies>
-		    	<!-- Test -->
-		        <dependency>
-		            <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
-		            <artifactId>metamac-statistical-resources-core</artifactId>
-		            <type>test-jar</type>
-		            <version>${project.version}</version>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.siemac.metamac</groupId>
-		            <artifactId>metamac-core-common</artifactId>
-		            <version>${metamac-core-common.version}</version>
-		            <type>test-jar</type>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.siemac.metamac</groupId>
-		            <artifactId>metamac-rest-common</artifactId>
-		            <type>test-jar</type>
-		            <version>${metamac-rest-common.version}</version>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.apache.cxf</groupId>
-		            <artifactId>cxf-testutils</artifactId>
-		            <version>${cxf.version}</version>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>junit</groupId>
-		            <artifactId>junit</artifactId>
-		            <version>${junit.version}</version>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.mockito</groupId>
-		            <artifactId>mockito-core</artifactId>
-		            <version>${mockito-version}</version>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.eclipse.jetty</groupId>
-		            <artifactId>jetty-server</artifactId>
-		            <version>${jetty.version}</version>
-		            <exclusions>
-		                <exclusion>
-		                    <groupId>javax.servlet</groupId>
-		                    <artifactId>servlet-api</artifactId>
-		                </exclusion>
-		            </exclusions>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.eclipse.jetty</groupId>
-		            <artifactId>jetty-webapp</artifactId>
-		            <version>${jetty.version}</version>
-		            <scope>test</scope>
-		        </dependency>
-		        <dependency>
-		            <groupId>org.eclipse.jetty</groupId>
-		            <artifactId>jetty-servlet</artifactId>
-		            <version>${jetty.version}</version>
-		            <scope>test</scope>
-		        </dependency> 
-		        <dependency>
-		            <groupId>org.apache.geronimo.specs</groupId>
-		            <artifactId>geronimo-servlet_2.5_spec</artifactId>
-		            <version>${geronimo-servlet_2.5_spec.version}</version>
-		            <scope>test</scope>
-		        </dependency>
-    		</dependencies>
-    	</profile>
-    </profiles>
+		<!-- FOR JSONP -->
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-rs-extension-providers</artifactId>
+			<version>${cxf.version}</version>
+		</dependency>
+
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>include-tests-dependencies</id>
+			<activation>
+				<property>
+					<name>maven.test.skip</name>
+					<value>!true</value>
+				</property>
+			</activation>
+			<dependencies>
+				<!-- Test -->
+				<dependency>
+					<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+					<artifactId>metamac-statistical-resources-core</artifactId>
+					<type>test-jar</type>
+					<version>${project.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
+					<artifactId>metamac-statistical-resources-rest-common-impl</artifactId>
+					<type>test-jar</type>
+					<version>${project.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.siemac.metamac</groupId>
+					<artifactId>metamac-core-common</artifactId>
+					<version>${metamac-core-common.version}</version>
+					<type>test-jar</type>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.siemac.metamac</groupId>
+					<artifactId>metamac-rest-common</artifactId>
+					<type>test-jar</type>
+					<version>${metamac-rest-common.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.cxf</groupId>
+					<artifactId>cxf-testutils</artifactId>
+					<version>${cxf.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<version>${junit.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.mockito</groupId>
+					<artifactId>mockito-core</artifactId>
+					<version>${mockito-version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-server</artifactId>
+					<version>${jetty.version}</version>
+					<exclusions>
+						<exclusion>
+							<groupId>javax.servlet</groupId>
+							<artifactId>servlet-api</artifactId>
+						</exclusion>
+					</exclusions>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-webapp</artifactId>
+					<version>${jetty.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.eclipse.jetty</groupId>
+					<artifactId>jetty-servlet</artifactId>
+					<version>${jetty.version}</version>
+					<scope>test</scope>
+				</dependency>
+				<dependency>
+					<groupId>org.apache.geronimo.specs</groupId>
+					<artifactId>geronimo-servlet_2.5_spec</artifactId>
+					<version>${geronimo-servlet_2.5_spec.version}</version>
+					<scope>test</scope>
+				</dependency>
+			</dependencies>
+		</profile>
+	</profiles>
 </project>

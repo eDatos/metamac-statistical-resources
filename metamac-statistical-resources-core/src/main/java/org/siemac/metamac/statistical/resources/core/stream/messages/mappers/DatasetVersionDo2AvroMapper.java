@@ -20,13 +20,14 @@ import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetVers
 import org.siemac.metamac.statistical.resources.core.stream.messages.ExternalItemAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.RelatedResourceAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.TemporalCodeAvro;
+import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 
 public class DatasetVersionDo2AvroMapper {
 
     protected DatasetVersionDo2AvroMapper() {
     }
 
-    public static DatasetVersionAvro do2Avro(DatasetVersion source) throws MetamacException {
+    public static DatasetVersionAvro do2Avro(DatasetVersion source, String urlBaseExternalVisualizer) throws MetamacException {
         List<CodeDimensionAvro> dimensions = dimensionsCoverage2Avro(source);
         List<AttributeValueAvro> coverageList = attributesCoverage2Avro(source);
         List<CategorisationAvro> categorisations = categorisations2Avro(source);
@@ -39,16 +40,24 @@ public class DatasetVersionDo2AvroMapper {
 
         DatasetVersionAvro target = DatasetVersionAvro.newBuilder()
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
-                .setDateStart(DateTimeDo2AvroMapper.do2Avro(source.getDateStart())).setDateEnd(DateTimeDo2AvroMapper.do2Avro(source.getDateEnd()))
+                .setDateStart(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart())).setDateEnd(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd()))
                 .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions())
-                .setDateNextUpdate(DateTimeDo2AvroMapper.do2Avro(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
+                .setDateNextUpdate(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
                 .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd()))
                 .setUpdateFrequency(ExternalItemDo2AvroMapper.do2Avro(source.getUpdateFrequency())).setStatisticOfficiality(StatisticOfficialityDo2AvroMapper.do2Avro(source.getStatisticOfficiality()))
                 .setBibliographicCitation(InternationalStringDo2AvroMapper.do2Avro(source.getBibliographicCitation())).setDimensionsCoverage(dimensions).setAttributesCoverage(coverageList)
                 .setCategorisations(categorisations).setGeographicCoverage(geographicCoverageList).setTemporalCoverage(temporalCoverageList).setMeasureCoverage(measureCoverageList)
                 .setGeographicGranularities(geoGranList).setTemporalGranularities(temporalGranList).setStatisticalUnit(statisticalUnitList)
-                .setIsPartOf(relatedResourceList2Avro(AvroMapperUtils.getDatasetVersionRepository().retrieveIsPartOf(source))).build();
+                .setIsPartOf(relatedResourceList2Avro(AvroMapperUtils.getDatasetVersionRepository().retrieveIsPartOf(source)))
+                .setVisualizerHtmlLink(getDatasetVersionVisualizerHtmlLink(source, urlBaseExternalVisualizer)).build();
         return target;
+    }
+
+    private static String getDatasetVersionVisualizerHtmlLink(DatasetVersion source, String urlBaseExternalVisualizer) {
+
+        String htmlLink = MetamacPortalWebUtils.buildDatasetVersionUrl(source.getLifeCycleStatisticalResource().getMaintainer().getCode(), source.getLifeCycleStatisticalResource().getCode(),
+                source.getLifeCycleStatisticalResource().getVersionLogic(), urlBaseExternalVisualizer);
+        return htmlLink;
     }
 
     private static List<RelatedResourceAvro> relatedResourceList2Avro(List<RelatedResourceResult> sourceList) throws MetamacException {
@@ -116,7 +125,7 @@ public class DatasetVersionDo2AvroMapper {
         return dimensions;
     }
 
-    protected static List<CategorisationAvro> categorisations2Avro(DatasetVersion source) {
+    protected static List<CategorisationAvro> categorisations2Avro(DatasetVersion source) throws MetamacException {
         List<CategorisationAvro> categorisations = new ArrayList<CategorisationAvro>();
         for (Categorisation categorisation : source.getCategorisations()) {
             CategorisationAvro categorisationAvro = CategorisationDo2AvroMapper.do2Avro(categorisation);
@@ -124,5 +133,4 @@ public class DatasetVersionDo2AvroMapper {
         }
         return categorisations;
     }
-
 }

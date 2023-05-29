@@ -16,6 +16,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeRes
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptScheme;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
@@ -108,8 +109,8 @@ public class SrmMockUtils {
         return concept;
     }
 
-    public static ItemResourceInternal buildConcept(String id, String name) {
-        ItemResourceInternal concept = new ItemResourceInternal();
+    public static ConceptResourceInternal buildConcept(String id, String name) {
+        ConceptResourceInternal concept = new ConceptResourceInternal();
         concept.setId(id);
         concept.setUrn("urn:uuid:" + id);
         concept.setUrnProvider("urn:uuid:provider:" + id);

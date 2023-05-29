@@ -12,11 +12,11 @@ import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaConjuncti
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaDisjunction;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryCriteriaPropertyOrder;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryCriteriaPropertyOrder;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.BaseRest2DoMapperV10Impl;
 import org.springframework.stereotype.Component;
@@ -81,8 +81,8 @@ public class QueriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implement
                     PropertyTypeEnum.BOOLEAN, propertyLastVersionCriteria);
 
             // URN
-            SculptorPropertyCriteria propertyUrnCriteria = buildSculptorPropertyCriteria(QueryVersionProperties.dataset().versions().siemacMetadataStatisticalResource().urn(),
-                    PropertyTypeEnum.STRING, propertyRestriction);
+            SculptorPropertyCriteria propertyUrnCriteria = buildSculptorPropertyCriteria(QueryVersionProperties.dataset().versions().siemacMetadataStatisticalResource().urn(), PropertyTypeEnum.STRING,
+                    propertyRestriction);
 
             SculptorPropertyCriteriaConjunction sculptorPropertyCriteriaConjunction = new SculptorPropertyCriteriaConjunction(propertyCriteriaDatasetLast, propertyUrnCriteria);
 
@@ -147,7 +147,8 @@ public class QueriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implement
             // DatasetVersion URN
             SculptorPropertyCriteria propertyUrnCriteria;
             {
-                propertyUrnCriteria = buildSculptorPropertyCriteria(QueryVersionProperties.dataset().versions().siemacMetadataStatisticalResource().urn(), PropertyTypeEnum.STRING, propertyRestriction);
+                propertyUrnCriteria = buildSculptorPropertyCriteria(QueryVersionProperties.dataset().versions().siemacMetadataStatisticalResource().urn(), PropertyTypeEnum.STRING,
+                        propertyRestriction);
             }
 
             // Fixed DatasetVersion URN

@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
@@ -169,7 +170,7 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
             when(mockedResource.getLifeCycleStatisticalResource()).thenReturn(new LifeCycleStatisticalResource());
 
             mockedResource.getLifeCycleStatisticalResource().setNextVersion(nextVersion2Test);
-            mockedResource.getLifeCycleStatisticalResource().setNextVersionDate(new DateTime().plusDays(1));
+            mockedResource.getLifeCycleStatisticalResource().setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(1).toDate()));
 
             MetamacException expected = null;
             if (!nextVersion2Test.equals(NextVersionTypeEnum.SCHEDULED_UPDATE)) {
@@ -216,7 +217,6 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
                         new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, addParameter(baseMetadata, ServiceExceptionSingleParameters.LANGUAGES)),
                         new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, addParameter(baseMetadata, ServiceExceptionSingleParameters.TYPE)),
                         new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, addParameter(baseMetadata, ServiceExceptionSingleParameters.CREATOR)),
-                        new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, addParameter(baseMetadata, ServiceExceptionSingleParameters.DATA_PROVIDER)),
                         new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, addParameter(baseMetadata, ServiceExceptionSingleParameters.LAST_UPDATE)),
                         new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, addParameter(baseMetadata, ServiceExceptionSingleParameters.PUBLISHER)),
                         new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, addParameter(baseMetadata, ServiceExceptionSingleParameters.COMMON_METADATA)))));
@@ -237,7 +237,6 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
         expectedMetamacException(new MetamacException(Arrays.asList(new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__RELATED_DSD),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__GEOGRAPHIC_GRANULARITIES),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__TEMPORAL_GRANULARITIES),
-                                                                    new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__UPDATE_FREQUENCY),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__STATISTIC_OFFICIALITY),
                                                                     new MetamacExceptionItem(ServiceExceptionType.DATASET_EMPTY_DATASOURCES, resource.getSiemacMetadataStatisticalResource().getUrn()))));
         //@formatter:on
@@ -305,7 +304,6 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
         expectedMetamacException(new MetamacException(Arrays.asList(new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__RELATED_DSD),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__GEOGRAPHIC_GRANULARITIES),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__TEMPORAL_GRANULARITIES),
-                                                                    new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__UPDATE_FREQUENCY),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__STATISTIC_OFFICIALITY))));
         //@formatter:on
 
@@ -320,7 +318,7 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
         resource.setSiemacMetadataStatisticalResource(new SiemacMetadataStatisticalResource());
         resource.addDatasource(new Datasource());
         resource.setUserModifiedDateNextUpdate(true);
-        resource.setDateNextUpdate(new DateTime());
+        resource.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
 
         String baseMetadata = ServiceExceptionSingleParameters.DATASET_VERSION;
 
@@ -328,8 +326,7 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
         expectedMetamacException(new MetamacException(Arrays.asList(new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__RELATED_DSD),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__GEOGRAPHIC_GRANULARITIES),
                                                                     new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__TEMPORAL_GRANULARITIES),
-                                                                    new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__STATISTIC_OFFICIALITY),
-                                                                    new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__UPDATE_FREQUENCY))));
+                                                                    new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED, PARAMETER_VALUE_DATASET_VERSION__STATISTIC_OFFICIALITY))));
         //@formatter:on
 
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();

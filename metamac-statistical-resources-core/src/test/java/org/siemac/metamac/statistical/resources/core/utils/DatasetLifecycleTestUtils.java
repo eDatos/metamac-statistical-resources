@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -99,7 +100,7 @@ public class DatasetLifecycleTestUtils {
         ExternalItem dsd = StatisticalResourcesPersistedDoMocks.mockDsdExternalItem();
         datasetVersion.setRelatedDsd(dsd);
 
-        datasetVersion.setDateNextUpdate(new DateTime().plusDays(10));
+        datasetVersion.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(10).toDate()));
 
         ExternalItem codeUpdateFreq = StatisticalResourcesPersistedDoMocks.mockCodeExternalItem();
         datasetVersion.setUpdateFrequency(codeUpdateFreq);

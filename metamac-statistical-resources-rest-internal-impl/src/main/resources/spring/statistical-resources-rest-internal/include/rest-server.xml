@@ -2,13 +2,10 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xmlns:cxf="http://cxf.apache.org/core"
-       xmlns:util="http://www.springframework.org/schema/util" 
-       xsi:schemaLocation="
-            http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
             http://www.springframework.org/schema/util   http://www.springframework.org/schema/util/spring-util-3.1.xsd
-            http://cxf.apache.org/jaxrs                  http://cxf.apache.org/schemas/jaxrs.xsd
-            http://cxf.apache.org/core                   http://cxf.apache.org/schemas/core.xsd">
+            http://cxf.apache.org/jaxrs                  http://cxf.apache.org/schemas/jaxrs.xsd">
 
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
@@ -22,18 +19,26 @@
         <jaxrs:serviceBeans>
             <ref bean="statisticalResourcesRestInternalFacadeV10" />
         </jaxrs:serviceBeans>
-        
+
         <jaxrs:extensionMappings>
             <entry key="json" value="application/json" />
             <entry key="xml" value="application/xml" />
+            <entry key="jsonstat" value="application/jsonstat+json" />
+            <entry key="tsv" value="text/tab-separated-values" />
+        	<entry key="csv" value="text/csv" />
+        	<entry key="xlsx" value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+        	<entry key="xls" value="application/vnd.ms-excel" />
         </jaxrs:extensionMappings>
-        
+
         <jaxrs:providers>
             <ref bean="jaxbProvider" />
             <ref bean="jsonProvider" />
+            <ref bean="jsonStatProvider" />
+            <ref bean="xstreamTsvCsvProvider" />
+            <ref bean="xstreamXlsProvider" />
             <ref bean="wadlGenerator" />
         </jaxrs:providers>
-        
+
         <!-- JSONP -->
         <jaxrs:inInterceptors>
             <bean class="org.apache.cxf.jaxrs.provider.jsonp.JsonpInInterceptor">
@@ -52,6 +57,9 @@
     </bean>
     
     <bean id="jsonProvider" class="org.siemac.metamac.rest.json.MetamacJacksonJaxbJsonProvider" />
+    <bean id="jsonStatProvider" class="org.siemac.metamac.statistical_resources.rest.internal.provider.MetamacJacksonJaxbJsonStatProvider" />
+    <bean id="xstreamTsvCsvProvider" class="org.siemac.metamac.rest.common.export.mappers.PlainTextMessageBodyWritter" />
+    <bean id="xstreamXlsProvider" class="org.siemac.metamac.rest.common.export.mappers.ExcelMessageBodyWritter" /> 
 
     <bean id="wadlGenerator" class="org.apache.cxf.jaxrs.model.wadl.WadlGenerator">
         <property name="namespacePrefix" value="ns" />

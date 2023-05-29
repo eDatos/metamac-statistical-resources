@@ -7,6 +7,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecyc
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToPublished;
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToValidationRejected;
 import static org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils.prepareToVersioning;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME;
@@ -27,6 +28,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.template
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockDescriptor;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockProvider;
+import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
@@ -61,8 +63,12 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
 
     public static final String               DATASET_VERSION_03_FOR_DATASET_03_NAME                                                                        = "DATASET_VERSION_03_FOR_DATASET_03";
 
+    public static final String               DATASET_VERSION_03_C1_FOR_DATASET_03_NAME                                                                     = "DATASET_VERSION_03_C1_FOR_DATASET_03";
+    
     public static final String               DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME                                                       = "DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION";
 
+    public static final String               DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME                                                    = "DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION";
+    
     public static final String               DATASET_VERSION_05_FOR_DATASET_04_NAME                                                                        = "DATASET_VERSION_05_FOR_DATASET_04";
 
     public static final String               DATASET_VERSION_06_FOR_QUERIES_NAME                                                                           = "DATASET_VERSION_06_FOR_QUERIES";
@@ -82,7 +88,11 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     public static final String               DATASET_VERSION_13_OPER_0002_CODE_000003_PROD_VAL_NAME                                                        = "DATASET_VERSION_13_OPER_0002_CODE_000003_PROD_VAL";
 
     public static final String               DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME                                                             = "DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED";
+    
+    public static final String               DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED_NAME                                                          = "DATASET_VERSION_14_OPER_03_CODE_01_C1_PUBLISHED";
 
+    public static final String               DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED_NAME                                                          = "DATASET_VERSION_14_OPER_03_CODE_01_C2_PUBLISHED";
+    
     public static final String               DATASET_VERSION_15_DRAFT_NOT_READY_NAME                                                                       = "DATASET_VERSION_15_DRAFT_NOT_READY";
 
     public static final String               DATASET_VERSION_16_DRAFT_READY_FOR_PRODUCTION_VALIDATION_NAME                                                 = "DATASET_VERSION_16_DRAFT_READY_FOR_PRODUCTION_VALIDATION";
@@ -300,11 +310,22 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_03_FOR_DATASET_03_NAME), mock);
     }
 
+    private static MockDescriptor getDatasetVersion03C1ForDataset03() {
+        MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME);
+        return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_03_C1_FOR_DATASET_03_NAME), mock);
+    }
+    
+    
     private static MockDescriptor getDatasetVersion04ForDataset03AndLastVersion() {
         MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME);
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME), mock);
     }
 
+    private static MockDescriptor getDatasetVersion04ForDataset03C1AndLastVersion() {
+        MockDescriptor mock = getDatasetMockDescriptor(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME);
+        return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME), mock);
+    }
+    
     private static MockDescriptor getDatasetVersion05ForDataset04() {
         MockDescriptor mock = getDatasetMockDescriptor(DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME);
         return new MockDescriptor(getDatasetVersionMock(DATASET_VERSION_05_FOR_DATASET_04_NAME), mock);
@@ -349,11 +370,23 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     }
 
     private static DatasetVersion getDatasetVersion14Oper03Code01Published() {
-        DatasetVersion datasetVersion = createDatasetVersionInSpecificOperation(OPERATION_03_CODE, 1);
+        return getDatasetVersion14Oper03Code01PublishedBase(OPERATION_03_CODE);
+    }
+
+    private static DatasetVersion getDatasetVersion14Oper03Code01C1Published() {
+        return getDatasetVersion14Oper03Code01PublishedBase(OPERATION_05_CODE);
+    }
+
+    private static DatasetVersion getDatasetVersion14Oper03Code01C2Published() {
+        return getDatasetVersion14Oper03Code01PublishedBase(OPERATION_06_CODE);
+    }
+    
+    private static DatasetVersion getDatasetVersion14Oper03Code01PublishedBase(String operation) {
+        DatasetVersion datasetVersion = createDatasetVersionInSpecificOperation(operation, 1);
         fillAsPublished(datasetVersion);
         return datasetVersion;
     }
-
+    
     private static DatasetVersion getDatasetVersion15DraftNotReady() {
         DatasetVersion datasetVersion = createDatasetVersionWithSequence(1);
         datasetVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);
@@ -377,7 +410,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         DatasetVersion datasetVersion = createDatasetVersionEmpty();
         prepareToProductionValidation(datasetVersion);
         datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
-        datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(new DateTime().plusDays(10));
+        datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusDays(10).toDate()));
         return datasetVersion;
     }
 
@@ -561,7 +594,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         DatasetVersion datasetVersion = createDatasetVersionEmpty();
         datasetVersion.getSiemacMetadataStatisticalResource().setVersionLogic(StatisticalResourcesMockFactory.INIT_VERSION);
         datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
-        datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(new DateTime(2013, 1, 15, 12, 0, 0, 0));
+        datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 1, 15, 12, 0, 0, 0).toDate()));
         return datasetVersion;
     }
 
@@ -569,7 +602,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         DatasetVersion datasetVersion = createDatasetVersionEmpty();
         datasetVersion.getSiemacMetadataStatisticalResource().setVersionLogic(StatisticalResourcesMockFactory.INIT_VERSION);
         datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
-        datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(new DateTime(2013, 7, 15, 12, 0, 0, 0));
+        datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 7, 15, 12, 0, 0, 0).toDate()));
         return datasetVersion;
     }
 
@@ -624,7 +657,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         datasetVersion.addDatasource(DatasourceMockFactory.generatePxDatasource(new DateTime().plusMonths(1)));
 
         datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
-        datasetVersion.setDateNextUpdate(datasetVersion.getDatasources().get(0).getDateNextUpdate());
+        datasetVersion.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(datasetVersion.getDatasources().get(0).getDateNextUpdate().toDate()));
         datasetVersion.setUserModifiedDateNextUpdate(false);
         return datasetVersion;
     }
@@ -632,7 +665,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     private static DatasetVersion getDatasetVersion50WithDatasourceFromPxWithUserNextUpdateInOneMonth() {
         DatasetVersion datasetVersion = createDatasetVersionWithSequence(1);
 
-        datasetVersion.setDateNextUpdate(new DateTime().plusMonths(1));
+        datasetVersion.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusMonths(1).toDate()));
         datasetVersion.setUserModifiedDateNextUpdate(true);
 
         datasetVersion.addDimensionsCoverage(new CodeDimension("TIME_PERIOD", "2012", "2012"));
@@ -758,8 +791,8 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C02"));
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C03"));
 
-        datasetVersion.setDateStart(new DateTime(2010, 1, 31, 0, 0, 0, 0));
-        datasetVersion.setDateEnd(new DateTime(2012, 12, 31, 23, 59, 59, 999));
+        datasetVersion.setDateStart("2010-01-31");
+        datasetVersion.setDateEnd("2012-12-31");
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(36L);
@@ -769,7 +802,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         datasetVersion.setDatasetRepositoryId(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
 
         datasetVersion.addDatasource(DatasourceMockFactory.generatePxDatasource(new DateTime().plusMonths(1)));
-        datasetVersion.setDateNextUpdate(datasetVersion.getDatasources().get(0).getDateNextUpdate());
+        datasetVersion.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(datasetVersion.getDatasources().get(0).getDateNextUpdate().toDate()));
         datasetVersion.setDateLastTimeDataImport(new DateTime());
         return datasetVersion;
     }
@@ -777,7 +810,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     private static DatasetVersion getDatasetVersion68WithDatasourcesAndComputedFieldsFilledAndUserModifiedDateNextUpdate() {
         DatasetVersion datasetVersion = createDatasetVersionWithSequence(1);
 
-        datasetVersion.setDateNextUpdate(new DateTime().plusMonths(1));
+        datasetVersion.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusMonths(1).toDate()));
         datasetVersion.setUserModifiedDateNextUpdate(true);
 
         datasetVersion.addDimensionsCoverage(new CodeDimension("TIME_PERIOD", "2012", "2012"));
@@ -804,8 +837,8 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C02"));
         datasetVersion.addMeasureCoverage(StatisticalResourcesDoMocks.mockConceptExternalItem("C03"));
 
-        datasetVersion.setDateStart(new DateTime(2010, 1, 31, 0, 0, 0, 0));
-        datasetVersion.setDateEnd(new DateTime(2012, 12, 31, 23, 59, 59, 999));
+        datasetVersion.setDateStart("2010-01-31");
+        datasetVersion.setDateEnd("2012-12-31");
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(36L);

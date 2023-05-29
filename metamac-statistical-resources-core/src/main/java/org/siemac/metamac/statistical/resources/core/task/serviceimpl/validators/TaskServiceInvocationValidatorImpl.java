@@ -4,10 +4,14 @@ import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.siemac.edatos.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.Task;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
@@ -32,6 +36,16 @@ public class TaskServiceInvocationValidatorImpl {
         }
     }
 
+    public static void checkPlanifyImportationAttributes(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDataStructureUrn(), ServiceExceptionParameters.TASK_INFO_DATASET_DSD_URN, exceptions);
+    }
+
+    public static void checkPlanifyRecoveryImportAttributes(TaskInfoDataset taskInfoDataset, Boolean notifyToUser, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDataStructureUrn(), ServiceExceptionParameters.TASK_INFO_DATASET_DSD_URN, exceptions);
+    }
+
     private static void checkImportDataSourcesInStatisticalOperationWithAutomaticLifeCicle(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
         if (Boolean.TRUE.equals(taskInfoDataset.getDatasetAutomaticLifeCicle())) {
             StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionRationaleTypes(), ServiceExceptionParameters.DATASET_VERSION_RATIONALE_TYPES, exceptions);
@@ -43,6 +57,19 @@ public class TaskServiceInvocationValidatorImpl {
             }
             StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetNextProcStatus(), ServiceExceptionParameters.DATASET_NEXT_PROC_STATUS, exceptions);
             
+            if (StringUtils.isNotEmpty(taskInfoDataset.getDatasetNextUpdateDate())) {
+                checkObservationalTimePeriodType(taskInfoDataset.getDatasetNextUpdateDate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
+            }
+            
+            if (StringUtils.isNotEmpty(taskInfoDataset.getDatasetNextVersionDate())) {
+                checkObservationalTimePeriodType(taskInfoDataset.getDatasetNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptions);
+            }
+        }
+    }
+    
+    public static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
+        if (StringUtils.isNotEmpty(parameter) && !SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN, parameter, parameterName));
         }
     }
     
@@ -68,10 +95,19 @@ public class TaskServiceInvocationValidatorImpl {
         checkPlanifyImportationDataset(taskInfoDataset, exceptions);
     }
 
+    public static void checkImportAttributesInDatasetVersion(String dataVersionUrn, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(dataVersionUrn, ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDataStructureUrn(), ServiceExceptionParameters.TASK_INFO_DATASET_DSD_URN, exceptions);
+    }
+
     public static void checkProcessRollbackImportationTask(String recoveryJobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(recoveryJobKey, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset, ServiceExceptionParameters.TASK_INFO_DATASET, exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_INFO_DATASET_DATASET_VERSION_ID, exceptions);
+    }
+
+    public static void checkProcessRollbackImportationAttributesTask(String recoveryJobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        
     }
 
     public static void checkProcessDuplicationTask(String duplicationJobKey, TaskInfoDataset taskInfoDataset, String newDatasetId, List<Mapping> datasourceMappings,
@@ -102,6 +138,10 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
     }
 
+    public static void checkExistUpdateExternalGeocoverageCacheTaskInResource(List<MetamacExceptionItem> exceptions) throws MetamacException {
+        // NOTHING TO DO HERE
+    }
+    
     public static void checkMarkTaskAsFinished(String job, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(job, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
     }
@@ -149,7 +189,15 @@ public class TaskServiceInvocationValidatorImpl {
         // NOTHING TO DO HERE
     }
 
+    public static void checkProcessGeographicCoverageCacheClearTask(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+        
     public static void checkScheduleDatabaseDatasetPollingJob(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+    
+    public static void checkScheduleGeographicCoverageCacheClearJob(List<MetamacExceptionItem> exceptions) {
         // NOTHING TO DO HERE
     }
 
@@ -161,9 +209,21 @@ public class TaskServiceInvocationValidatorImpl {
     public static void checkPlanifyUpdateGeocoverageCache(TaskInfoDataset taskInfoDataset, boolean sendNotification, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
     }
+    
+    public static void checkPlanifyUpdateExternalGeocoverageCache(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+     // NOTHING TO DO HERE
+    }
 
     public static void checkProcessUpdateGeocoverageCacheTask(String jobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
+    }
+    
+    public static void checkProcessUpdateExternalGeocoverageCacheTask(String jobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_DATASET_JOB_KEY, exceptions);
+    }
+
+    public static void checkExistsTaskImportAttributes(String resourceId, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
     }
 }

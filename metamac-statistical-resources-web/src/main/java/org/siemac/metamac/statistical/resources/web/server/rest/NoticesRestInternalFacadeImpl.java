@@ -203,41 +203,6 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
         }
     }
 
-    /**
-     * Creates a notification specifying the receivers
-     *
-     * @param serviceContext
-     * @param actionCode
-     * @param messageCode
-     * @param notification
-     * @param receiversUsernames
-     * @throws MetamacWebException
-     */
-    private void createNotificationWithReceivers(ServiceContext serviceContext, ResourceNotificationDto notification, String[] receiversUsernames) throws MetamacWebException {
-        GroupedNotificationDto groupedNotificationDto = createGroupedNotification(notification);
-        groupedNotificationDto.setReceiversUsernames(receiversUsernames);
-        createNotification(serviceContext, groupedNotificationDto);
-    }
-
-    private void createNotificationWithReceivers(ServiceContext serviceContext, Map<ResourceNotificationBaseDto, String[]> notificationsWithReceivers) throws MetamacWebException {
-        boolean isErrorInNotification = false;
-        Map<String, List<ResourceNotificationBaseDto>> groupedNotificationsByReceiver = groupNotificationsByReceiver(notificationsWithReceivers);
-        for (Map.Entry<String, List<ResourceNotificationBaseDto>> entry : groupedNotificationsByReceiver.entrySet()) {
-            ResourceInternal[] resourceInternals = getResourceInternals(entry.getValue());
-            String receiverUserName = entry.getKey();
-            GroupedNotificationDto groupedNotificationDto = new GroupedNotificationDto.Builder(resourceInternals, getLifeCycleAction(entry.getValue()))
-                    .reasonOfRejection(getReasonOfRejection(entry.getValue())).receiversUsernames(new String[]{receiverUserName}).build();
-            try {
-                createNotification(serviceContext, groupedNotificationDto);
-            } catch (MetamacWebException e) {
-                isErrorInNotification = true;
-            }
-        }
-        if (isErrorInNotification) {
-            throw WebExceptionUtils.createMetamacWebException(CommonServiceExceptionType.REST_API_NOTICES_ERROR_SENDING_NOTIFICATION, getTranslatedNotificationErrorMessage());
-        }
-    }
-
     private void createNotification(ServiceContext ctx, GroupedNotificationDto groupedNotificationDto) throws MetamacWebException {
 
         String actionCode = getActionCode(groupedNotificationDto.getLifeCycleAction());

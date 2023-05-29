@@ -22,14 +22,14 @@ import org.apache.cxf.transport.http.HTTPConduit;
 import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.CodeRepresentations;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimension;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DimensionRepresentation;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValue;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.EnumeratedDimensionValues;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.NonEnumeratedDimensionValues;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Queries;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 
@@ -37,7 +37,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testFindQueries() throws Exception {
-        Queries queries = statisticalResourcesRestExternalFacadeClientXml.findQueries(null, null, null, null, null);
+        Queries queries = statisticalResourcesRestExternalFacadeClientXml.findQueries(null, null, null, null, null, null);
 
         assertEquals(4, queries.getQueries().size());
         assertEquals(StatisticalResourcesRestExternalConstants.KIND_QUERIES, queries.getKind());
@@ -94,7 +94,7 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
         // Ultimo elemento de las observaciones
         assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length, 8 * 2 * 3 * 1);
-        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "421");
+        assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "403");
     }
 
     @Test
@@ -288,6 +288,20 @@ public class StatisticalResourcesRestExternalFacadeV10QueriesTest extends Statis
 
         // Data
         assertEquals(48, StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestExternalConstants.DATA_SEPARATOR).length);
+
+        {
+            DimensionRepresentation dimension = query.getData().getDimensions().getDimensions().get(1);
+            assertEquals("TIME_PERIOD", dimension.getDimensionId());
+            assertTrue(dimension.getRepresentations() instanceof CodeRepresentations);
+            {
+                CodeRepresentations dimensionValues = dimension.getRepresentations();
+                assertEquals(BigInteger.valueOf(2), dimensionValues.getTotal());
+                // Order here must be the same as order of dimensionValues
+                assertEquals("2013", dimensionValues.getRepresentations().get(0).getCode());
+                assertEquals("2011", dimensionValues.getRepresentations().get(1).getCode());
+            }
+        }
+
     }
 
     @Test

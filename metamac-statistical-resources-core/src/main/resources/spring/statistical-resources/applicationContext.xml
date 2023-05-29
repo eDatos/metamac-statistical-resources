@@ -47,14 +47,6 @@
     <bean id="entityManagerFactoryDatasetRepository" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
 		<property name="persistenceUnitName" value="DatasetRepositoryEntityManagerFactory" />
 		<property name="persistenceXmlLocation" value="classpath:META-INF/persistence-statistic-dataset-repository.xml" />
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.dialect">${metamac.statistical_resources.repo.db.dialect}</prop>
-			</props>
-		</property>
-        <property name="jpaDialect">
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
-        </property>
 		<property name="dataSource" ref="dataSourceDatasetRepository" />
 	</bean>
     
@@ -64,5 +56,11 @@
     <import resource="classpath:/spring/statistical-resources/include/interceptor.xml" />
     <import resource="classpath:/spring/statistical-resources/include/more.xml" />
 
+	<!-- Kafka -->
+	<bean id="kafkaTaskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+		<property name="corePoolSize" value="5" />
+		<property name="maxPoolSize" value="10" />
+	</bean>
 
 </beans>

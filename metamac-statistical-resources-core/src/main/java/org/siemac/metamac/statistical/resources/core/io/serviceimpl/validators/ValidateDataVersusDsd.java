@@ -50,6 +50,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestI
 import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
+import org.siemac.metamac.statistical.resources.core.utils.shared.DatasetAttibuteSharedUtils;
 
 import com.arte.statistic.parser.sdmx.v2_1.domain.ComponentInfo;
 import com.arte.statistic.parser.sdmx.v2_1.domain.ComponentInfoTypeEnum;
@@ -58,6 +59,7 @@ import com.arte.statistic.parser.sdmx.v2_1.domain.IdValuePair;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceBasicDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 
 public class ValidateDataVersusDsd {
@@ -326,6 +328,16 @@ public class ValidateDataVersusDsd {
             if (exceptions.size() != previousExceptionSize) {
                 continue;
             }
+
+            // Attibute length
+            for (AttributeInstanceBasicDto attributeBasicDto : overExtendedDto.getAttributes()) {
+                for (LocalisedStringDto localisedStringDto : attributeBasicDto.getValue().getTexts()) {
+                    if (StringUtils.length(localisedStringDto.getLabel()) > DatasetAttibuteSharedUtils.OBSERVATION_ATTRIBUTE_VALUE_MAXIMUM_SIZE) {
+                        exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_OBSERVATION_ATTR_VALUE_SIZE_EXCEEDED, attributeBasicDto.getAttributeId(),
+                                DatasetAttibuteSharedUtils.OBSERVATION_ATTRIBUTE_VALUE_MAXIMUM_SIZE));
+                    }
+                }
+            }
         }
 
         ExceptionUtils.throwIfException(exceptions);
@@ -375,6 +387,26 @@ public class ValidateDataVersusDsd {
         }
 
         ExceptionUtils.throwIfException(exceptions);
+    }
+
+    public void checkAttributesInstancesRepresentation(List<AttributeInstanceDto> attributeInstanceDtos, List<MetamacExceptionItem> exceptions) throws MetamacException {
+
+        for (AttributeInstanceDto attributeInstanceDto : attributeInstanceDtos) {
+
+            // The used attribute if correct
+            if (!attributesCodeSet.contains(attributeInstanceDto.getAttributeId()) || attributeIdsAtObservationLevelSet.contains(attributeInstanceDto.getAttributeId())) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTR_NOT_MATCH, attributeInstanceDto.getAttributeId()));
+                continue;
+            }
+
+            String value = attributeInstanceDto.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
+
+            // Enumerated representation of attributes
+            checkAttributeEnumeratedRepresentation(attributeInstanceDto.getAttributeId(), value, exceptions);
+
+            // Non Enumerated representation
+            checkAttributeNonEnumeratedRepresentation(attributeInstanceDto.getAttributeId(), value, exceptions);
+        }
     }
 
     @SuppressWarnings("unchecked")

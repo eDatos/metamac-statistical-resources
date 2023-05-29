@@ -9,7 +9,7 @@
 
     <!-- Creates a EntityManagerFactory for use with the Hibernate JPA provider -->
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-        <property name="jpaVendorAdapter">
+    	<property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
                 <property name="databasePlatform" value="${jpaVendorAdapter.databasePlatform}" />
             </bean>

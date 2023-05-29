@@ -40,14 +40,12 @@ public class ApplicationStartup extends ApplicationStartupListener {
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_URL);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_USERNAME);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_PASSWORD);
-        checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_DIALECT);
 
         // Datasource repository
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_DRIVER_NAME);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_URL);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_USERNAME);
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_PASSWORD);
-        checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_DIALECT);
 
         // Api
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.ENDPOINT_STATISTICAL_RESOURCES_EXTERNAL_API);

@@ -9,6 +9,7 @@ import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeQualifierType;
@@ -91,6 +92,16 @@ public class DsdProcessor {
         return null;
     }
 
+    public static DsdAttribute getSpatialAttributeFromDsd(DataStructure dsd) throws MetamacException {
+        List<DsdAttribute> attributes = DsdProcessor.getAttributes(dsd);
+        for (DsdAttribute attr : attributes) {
+            if (DsdComponentType.SPATIAL.equals(attr.getType())) {
+                return attr;
+            }
+        }
+        return null;
+    }
+    
     public static List<DsdAttribute> getAttributes(DataStructure dsd) throws MetamacException {
         List<DsdAttribute> attributes = new ArrayList<DsdAttribute>();
         DataStructureComponents components = dsd.getDataStructureComponents();
@@ -225,9 +236,11 @@ public class DsdProcessor {
     public static class DsdDimension extends DsdComponent {
 
         private final String dimensionId;
+        private final InternationalString pluralName;
 
         public DsdDimension(Dimension dim) throws MetamacException {
             dimensionId = dim.getId();
+            pluralName = dim.getPluralName();
             if (BooleanUtils.isTrue(dim.isIsSpatial())) {
                 type = DsdComponentType.SPATIAL;
             } else {
@@ -247,6 +260,7 @@ public class DsdProcessor {
 
         public DsdDimension(MeasureDimension dim) {
             dimensionId = dim.getId();
+            pluralName = dim.getPluralName();
             type = DsdComponentType.MEASURE;
             // note: measure dimension always must have a concept scheme enumerated representation
             if (dim.getLocalRepresentation() != null && dim.getLocalRepresentation().getEnumerationConceptScheme() != null) {
@@ -260,6 +274,7 @@ public class DsdProcessor {
 
         public DsdDimension(TimeDimension dim) {
             dimensionId = dim.getId();
+            pluralName = dim.getPluralName();
             type = DsdComponentType.TEMPORAL;
             // note: time dimension always must have a non enumerated representation
             if (dim.getLocalRepresentation() != null && dim.getLocalRepresentation().getTextFormat() != null) {
@@ -274,6 +289,10 @@ public class DsdProcessor {
         @Override
         public String getComponentId() {
             return dimensionId;
+        }
+
+        public InternationalString getPluralName() {
+            return pluralName;
         }
     }
 

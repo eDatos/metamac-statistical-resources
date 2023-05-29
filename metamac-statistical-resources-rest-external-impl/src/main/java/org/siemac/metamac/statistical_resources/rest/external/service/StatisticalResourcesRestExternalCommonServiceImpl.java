@@ -22,6 +22,8 @@ import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatis
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResourceProperties.SiemacMetadataStatisticalResourceProperty;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -78,12 +80,48 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
     }
 
     @Override
+    public DatasetVersion retrieveDatasetLastPublishedVersionByUrn(String urn) {
+        try {
+            return datasetService.retrieveLatestPublishedDatasetVersionByDatasetUrn(SERVICE_CONTEXT, urn);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
     public PagedResult<DatasetVersion> findDatasetVersions(String agencyID, String resourceID, String version, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
             return findDatasetVersionsCommon(agencyID, resourceID, version, conditionalCriteria, pagingParameter);
         } catch (Exception e) {
             throw manageException(e);
         }
+    }
+    
+    @Override
+    public PagedResult<GeoCovVarElementCacheDatasetVersion> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
+        try {
+            return findResourcesCommon(conditionalCriteria, pagingParameter);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+    
+    private PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery,
+            PagingParameter pagingParameter) throws MetamacException {
+
+        // Criteria to find by criteria
+        List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
+        if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
+            conditionalCriteria.addAll(conditionalCriteriaQuery);
+        } else {
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).distinctRoot().build());
+        }
+     
+        // only activated records are available
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(true).buildSingle());
+        
+        // Find
+        return datasetService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
     }
 
     @Override
@@ -153,7 +191,7 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
             // Retrieve
             PagedResult<MultidatasetVersion> entitiesPagedResult = findMultidatasetVersionsCommon(agencyID, resourceID, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
-                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.COLLECTION_NOT_FOUND, resourceID, agencyID);
+                org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.MULTIDATASET_NOT_FOUND, resourceID, agencyID);
                 throw new RestException(exception, Status.NOT_FOUND);
             }
             return entitiesPagedResult.getValues().get(0);

@@ -15,6 +15,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
@@ -80,8 +81,10 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(lifeCycleStatisticalResource.getNextVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION), exceptionItems);
         if (lifeCycleStatisticalResource.getNextVersion() != null && !NextVersionTypeEnum.SCHEDULED_UPDATE.equals(lifeCycleStatisticalResource.getNextVersion())) {
             checkMetadataEmpty(lifeCycleStatisticalResource.getNextVersionDate(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
+            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
         } else if (lifeCycleStatisticalResource.getNextVersion() != null && NextVersionTypeEnum.SCHEDULED_UPDATE.equals(lifeCycleStatisticalResource.getNextVersion())) {
             checkMetadataRequired(lifeCycleStatisticalResource.getNextVersionDate(), addParameter(metadataName, ServiceExceptionSingleParameters.NEXT_VERSION_DATE), exceptionItems);
+            checkObservationalTimePeriodType(lifeCycleStatisticalResource.getNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptionItems);
         }
 
         // LifeCycleResource
@@ -92,7 +95,13 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(lifeCycleStatisticalResource.getMaintainer(), addParameter(metadataName, ServiceExceptionSingleParameters.MAINTAINER), exceptionItems);
     }
 
-    public void checkSiemacCommonMetadataGeneral(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
+    private static void checkObservationalTimePeriodType(String parameter, String parameterName, List<MetamacExceptionItem> exceptions) {
+        if (StringUtils.isNotEmpty(parameter) && !SdmxTimeUtils.isObservationalTimePeriod(parameter)) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN, parameter, parameterName));
+        }
+    }
+
+    public void checkSiemacCommonMetadata(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
         SiemacMetadataStatisticalResource siemacMetadataStatisticalResource = resource.getSiemacMetadataStatisticalResource();
 
         checkMetadataRequired(siemacMetadataStatisticalResource.getLanguage(), addParameter(metadataName, ServiceExceptionSingleParameters.LANGUAGE), exceptionItems);
@@ -108,19 +117,6 @@ public class LifecycleCommonMetadataChecker {
 
         checkMetadataRequired(siemacMetadataStatisticalResource.getCommonMetadata(), addParameter(metadataName, ServiceExceptionSingleParameters.COMMON_METADATA), exceptionItems);
     }
-
-    public void checkSiemacCommonMetadata(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
-        checkSiemacCommonMetadataGeneral(resource, metadataName, exceptionItems);
-        SiemacMetadataStatisticalResource siemacMetadataStatisticalResource = resource.getSiemacMetadataStatisticalResource();
-        checkMetadataRequired(siemacMetadataStatisticalResource.getDataProvider(), addParameter(metadataName, ServiceExceptionSingleParameters.DATA_PROVIDER), exceptionItems);
-    }
-    
-    /* Since EDATOS-3723. This metadata is required since this task but data adaptation was not carried out on existing data. Because of that, the metadata is required in business logic but not in
-     database. To allow users the 'dataProvider' metadata correction the required validation is not carried out in versioning o rejection processes
-     */
-    public void checkSiemacCommonMetadataVersioningWithoutDataProvider(HasSiemacMetadata resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
-        checkSiemacCommonMetadataGeneral(resource, metadataName, exceptionItems);
-    }
         
     public void checkDatasetVersionCommonMetadata(ServiceContext ctx, DatasetVersion resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
 
@@ -129,7 +125,7 @@ public class LifecycleCommonMetadataChecker {
         checkMetadataRequired(resource.getGeographicGranularities(), addParameter(metadataName, ServiceExceptionSingleParameters.GEOGRAPHIC_GRANULARITIES), exceptionItems);
         checkMetadataRequired(resource.getTemporalGranularities(), addParameter(metadataName, ServiceExceptionSingleParameters.TEMPORAL_GRANULARITIES), exceptionItems);
 
-        checkMetadataRequired(resource.getUpdateFrequency(), addParameter(metadataName, ServiceExceptionSingleParameters.UPDATE_FREQUENCY), exceptionItems);
+        checkUpdateFrequency(resource, metadataName, exceptionItems);
         checkMetadataRequired(resource.getStatisticOfficiality(), addParameter(metadataName, ServiceExceptionSingleParameters.STATISTIC_OFFICIALITY), exceptionItems);
 
         if (resource.getDatasources() == null || resource.getDatasources().isEmpty()) {
@@ -166,6 +162,13 @@ public class LifecycleCommonMetadataChecker {
         }
     }
 
+    private void checkUpdateFrequency(DatasetVersion resource, String metadataName, List<MetamacExceptionItem> exceptionItems) {
+        if (resource.getSiemacMetadataStatisticalResource().getNextVersion() != null && (NextVersionTypeEnum.SCHEDULED_UPDATE.equals(resource.getSiemacMetadataStatisticalResource().getNextVersion())
+                || NextVersionTypeEnum.NON_SCHEDULED_UPDATE.equals(resource.getSiemacMetadataStatisticalResource().getNextVersion()))) {
+            checkMetadataRequired(resource.getUpdateFrequency(), addParameter(metadataName, ServiceExceptionSingleParameters.UPDATE_FREQUENCY), exceptionItems);
+        }
+    }
+    
     private void checkAttributesInstancesMandatoryAtNonObservationLevel(DatasetVersion datasetVersion, ValidateDataVersusDsd validateDataVersusDsd) throws ApplicationException, MetamacException {
         Map<String, List<String>> coverage = datasetRepositoriesServiceFacade.findCodeDimensions(datasetVersion.getDatasetRepositoryId());
         List<MetamacExceptionItem> exceptions = new LinkedList<MetamacExceptionItem>();
