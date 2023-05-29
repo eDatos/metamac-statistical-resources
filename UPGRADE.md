@@ -13,7 +13,7 @@
 
 * En edatos-3744 hay una rotura de compatibilidad ya que las fechas "DATE_NEXT_UPDATE" en tabla "TB_DATASETS_VERSIONS"  y "NEXT_VERSION_DATE" en tabla "TB_STAT_RESOURCES" cambian de timestamp a varchar (en formato sdmx) En esta tarea se guardó un backup de los valores en las tablas "TEMP_TB_DATASETS_VERSIONS" y "TEMP_TB_STAT_RESOURCES" respectivamente. 
 En esta tarea se deben borrar dichas tablas temporales después de verificar que la migración de datos fue correcta.
-Por tanto, pasar script de borrado de ambas tablas que se encuentra en esta ruta:[etc/changes-from-release/5.0.0/db](etc/changes-from-release/7.0.1/db).
+Por tanto, pasar script de borrado de ambas tablas que se encuentra en esta ruta:[etc/changes-from-release/7.0.0/db/statistical-resources/20221024_drop_temp_tables.sql]
 
 ## 7.0.0 a 7.0.1
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/7.0.0/db](etc/changes-from-release/7.0.0/db) 
