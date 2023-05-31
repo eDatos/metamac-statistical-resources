@@ -20,7 +20,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-resource-bOwDBWL1VN en Espanol",
+				"value": "description-resource-11ciPuc6JW en Espanol",
 				"lang": "es"
 			}
 		]
@@ -31,7 +31,7 @@
 		],
 		"total": 1
 	},
-	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=XqnnGPdLcH&resourceId=query1",
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=1NF1KAnVuM&resourceId=query1",
 	"metadata": {
 		"relatedDataset": {
 			"id": "dataset01",
@@ -49,7 +49,7 @@
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=rkshvOCT8E&resourceId=dataset01&version=01.000"
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=Zsbti7Hq7f&resourceId=dataset01&version=01.000"
 		},
 		"relatedDsd": {
 			"heading": {
@@ -748,7 +748,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							}
@@ -769,7 +769,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -793,7 +793,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -855,7 +855,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -935,7 +935,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -965,7 +965,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -989,7 +989,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -1051,7 +1051,7 @@
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=rkshvOCT8E&resourceId=dataset01&version=01.000"
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=Zsbti7Hq7f&resourceId=dataset01&version=01.000"
 		},
 		"isPartOf": {
 			"resource": [
@@ -1095,11 +1095,11 @@
 			"total": 2
 		},
 		"statisticalOperation": {
-			"id": "bplaHDOZGL",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=bplaHDOZGL",
+			"id": "ywixlMV6fZ",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=ywixlMV6fZ",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/bplaHDOZGL"
+				"href": "http://data.istac.es/apis/operations/latest/ywixlMV6fZ"
 			},
 			"name": {
 				"text": [
@@ -1112,17 +1112,17 @@
 			"kind": "statisticalOperations#operation"
 		},
 		"maintainer": {
-			"id": "XqnnGPdLcH",
+			"id": "1NF1KAnVuM",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).XqnnGPdLcH",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).1NF1KAnVuM",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/XqnnGPdLcH"
+				"href": "http://data.istac.es/apis/srm/latest/1NF1KAnVuM"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-XqnnGPdLcH en Espanol",
+						"value": "title-1NF1KAnVuM en Espanol",
 						"lang": "es"
 					}
 				]

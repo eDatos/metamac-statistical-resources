@@ -8,12 +8,12 @@
         <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
     </ns3:name>
     <ns3:description>
-        <cdomain:text xml:lang="es">description-resource-aaUz30vLrH en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-resource-SU08JOuxHn en Espanol</cdomain:text>
     </ns3:description>
     <ns3:selectedLanguages total="1">
         <ns3:language>es</ns3:language>
     </ns3:selectedLanguages>
-    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=JQMIQdA60q&amp;resourceId=query1</ns3:visualizerHtmlLink>
+    <ns3:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=GDry2dlJNA&amp;resourceId=query1</ns3:visualizerHtmlLink>
     <ns3:metadata xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="stat:QueryMetadata">
         <ns3:relatedDataset xsi:type="ns3:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>dataset01</cdomain:id>
@@ -22,7 +22,7 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=i54GFD9YmA&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=31ywiwjIBQ&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
         </ns3:relatedDataset>
         <ns3:relatedDsd kind="structuralResources#dataStructure">
             <cdomain:id>DSD01</cdomain:id>
@@ -382,9 +382,9 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DIMENSION</ns3:attachmentLevel>
                 <ns3:dimensions total="1">
-                    <ns3:dimensions>
+                    <ns3:dimension>
                         <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
-                    </ns3:dimensions>
+                    </ns3:dimension>
                 </ns3:dimensions>
                 <ns3:type>OTHER</ns3:type>
             </ns3:attribute>
@@ -395,12 +395,12 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DIMENSION</ns3:attachmentLevel>
                 <ns3:dimensions total="2">
-                    <ns3:dimensions>
+                    <ns3:dimension>
                         <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>dim01</ns3:dimensionId>
-                    </ns3:dimensions>
+                    </ns3:dimension>
                 </ns3:dimensions>
                 <ns3:type>OTHER</ns3:type>
             </ns3:attribute>
@@ -411,12 +411,12 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DIMENSION</ns3:attachmentLevel>
                 <ns3:dimensions total="2">
-                    <ns3:dimensions>
+                    <ns3:dimension>
                         <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>TIME_PERIOD</ns3:dimensionId>
-                    </ns3:dimensions>
+                    </ns3:dimension>
                 </ns3:dimensions>
                 <ns3:attributeValues xsi:type="ns3:NonEnumeratedAttributeValues" total="3">
                     <ns3:value>
@@ -447,15 +447,15 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DIMENSION</ns3:attachmentLevel>
                 <ns3:dimensions total="3">
-                    <ns3:dimensions>
+                    <ns3:dimension>
                         <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>TIME_PERIOD</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>measure01</ns3:dimensionId>
-                    </ns3:dimensions>
+                    </ns3:dimension>
                 </ns3:dimensions>
                 <ns3:attributeValues xsi:type="ns3:EnumeratedAttributeValues" total="3">
                     <ns3:value kind="structuralResources#concept">
@@ -492,18 +492,18 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DIMENSION</ns3:attachmentLevel>
                 <ns3:dimensions total="4">
-                    <ns3:dimensions>
+                    <ns3:dimension>
                         <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>TIME_PERIOD</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>measure01</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>dim01</ns3:dimensionId>
-                    </ns3:dimensions>
+                    </ns3:dimension>
                 </ns3:dimensions>
                 <ns3:type>OTHER</ns3:type>
             </ns3:attribute>
@@ -514,12 +514,12 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DIMENSION</ns3:attachmentLevel>
                 <ns3:dimensions total="2">
-                    <ns3:dimensions>
+                    <ns3:dimension>
                         <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>TIME_PERIOD</ns3:dimensionId>
-                    </ns3:dimensions>
+                    </ns3:dimension>
                 </ns3:dimensions>
                 <ns3:type>OTHER</ns3:type>
             </ns3:attribute>
@@ -530,15 +530,15 @@
                 </ns3:name>
                 <ns3:attachmentLevel>DIMENSION</ns3:attachmentLevel>
                 <ns3:dimensions total="3">
-                    <ns3:dimensions>
+                    <ns3:dimension>
                         <ns3:dimensionId>GEO_DIM</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>TIME_PERIOD</ns3:dimensionId>
-                    </ns3:dimensions>
-                    <ns3:dimensions>
+                    </ns3:dimension>
+                    <ns3:dimension>
                         <ns3:dimensionId>dim01</ns3:dimensionId>
-                    </ns3:dimensions>
+                    </ns3:dimension>
                 </ns3:dimensions>
                 <ns3:type>OTHER</ns3:type>
             </ns3:attribute>
@@ -568,7 +568,7 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=i54GFD9YmA&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=31ywiwjIBQ&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
         </ns3:requires>
         <ns3:isPartOf total="2">
             <ns3:resource kind="statisticalResources#collection">
@@ -591,20 +591,20 @@
             </ns3:resource>
         </ns3:isPartOf>
         <ns3:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>tA2YJU6FYX</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=tA2YJU6FYX</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/tA2YJU6FYX"/>
+            <cdomain:id>FgUAv5YNZt</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=FgUAv5YNZt</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/FgUAv5YNZt"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Tn2JaF3RSI en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:statisticalOperation>
         <ns3:maintainer kind="structuralResources#agency">
-            <cdomain:id>JQMIQdA60q</cdomain:id>
+            <cdomain:id>GDry2dlJNA</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).JQMIQdA60q</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/JQMIQdA60q"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).GDry2dlJNA</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/GDry2dlJNA"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-JQMIQdA60q en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-GDry2dlJNA en Espanol</cdomain:text>
             </cdomain:name>
         </ns3:maintainer>
         <ns3:validFrom>2013-01-01T03:04:12Z</ns3:validFrom>
