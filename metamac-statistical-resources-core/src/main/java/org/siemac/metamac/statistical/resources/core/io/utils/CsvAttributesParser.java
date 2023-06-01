@@ -12,7 +12,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
@@ -26,14 +26,15 @@ import au.com.bytecode.opencsv.CSVReader;
 
 public class CsvAttributesParser {
 
-    private CSVReader        csvReader               = null;
-    private String[]         headers                 = null;
-    private static final int COLUMN_ID_ATRIBUTTE     = 0;
-    private static final int COLUMN_DIMENSION_NAME   = 1;
-    private static final int COLUMN_DIMENSION_VALUES = 2;
-    private static final int COLUMN_ATTRIBUTE_VALUE  = 3;
-    private List<String>     idsDimensions           = new ArrayList<>();;
-    private List<String>     idsAttributes           = new ArrayList<>();;
+    private CSVReader                  csvReader               = null;
+    private String[]                   headers                 = null;
+    private static final int           COLUMN_ID_ATRIBUTTE     = 0;
+    private static final int           COLUMN_DIMENSION_NAME   = 1;
+    private static final int           COLUMN_DIMENSION_VALUES = 2;
+    private static final int           COLUMN_ATTRIBUTE_VALUE  = 3;
+    private List<String>               idsDimensions           = new ArrayList<>();
+    private List<String>               idsAttributes           = new ArrayList<>();
+    private List<MetamacExceptionItem> exceptions              = new ArrayList<>();
 
     public CsvAttributesParser(InputStream pxStream, String charsetName, char separator, DataStructure dataStructure) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
@@ -86,15 +87,15 @@ public class CsvAttributesParser {
         return idAttribute;
     }
 
-    private void checkIdAttributeInDsd(String idAttribute) throws MetamacException {
+    private void checkIdAttributeInDsd(String idAttribute) {
         if (!idsAttributes.contains(idAttribute)) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_ATTRIBUTE_ID_INVALID).withMessageParameters(idAttribute).build();
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_ATTRIBUTE_ID_INVALID, idAttribute));
         }
     }
 
-    private void checkIdDimensionInDsd(String idDimension) throws MetamacException {
+    private void checkIdDimensionInDsd(String idDimension) {
         if (!StringUtils.isBlank(idDimension) && !idsDimensions.contains(idDimension)) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_ID_INVALID).withMessageParameters(idDimension).build();
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_ID_INVALID, idDimension));
         }
     }
 
@@ -167,8 +168,7 @@ public class CsvAttributesParser {
             CodeItemDto codeItemDto = new CodeItemDto();
             CodeDimension codeDimension = getCodeDimension(dimensionValue, codeDimensions);
             if (codeDimension == null && (codeDimensions != null && !codeDimensions.isEmpty())) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID)
-                        .withMessageParameters(line[COLUMN_DIMENSION_NAME], line[COLUMN_ID_ATRIBUTTE]).build();
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID, line[COLUMN_DIMENSION_NAME], line[COLUMN_ID_ATRIBUTTE]));
             }
             codeItemDto.setCode(codeDimension != null ? codeDimension.getIdentifier() : dimensionValue);
             codeItemDto.setTitle(codeDimension != null ? codeDimension.getTitle() : dimensionValue);
@@ -189,4 +189,13 @@ public class CsvAttributesParser {
         }
         return null;
     }
+
+    public List<MetamacExceptionItem> getExceptions() {
+        return exceptions;
+    }
+
+    public void setExceptions(List<MetamacExceptionItem> exceptions) {
+        this.exceptions = exceptions;
+    }
+
 }

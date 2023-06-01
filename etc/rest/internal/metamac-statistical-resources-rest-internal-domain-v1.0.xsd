@@ -1,862 +1,172 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           elementFormDefault="qualified"
-           targetNamespace="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
-           xmlns:tns="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
-           xmlns:common="http://www.siemac.org/metamac/rest/common/v1.0/domain"
-           xmlns:common-tns="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain">
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
+	xmlns:tns="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
+	xmlns:common="http://www.siemac.org/metamac/rest/common/v1.0/domain"
+	xmlns:common-tns="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain">
 
-    <xs:import namespace="http://www.siemac.org/metamac/rest/common/v1.0/domain" schemaLocation="metamac-rest-api:metamac-rest-common-domain-v1.0.xsd" />
-    <xs:import namespace="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain" schemaLocation="metamac-statistical-resources-rest-api-common-domain-v1.0.xsd" />
+	<xs:import
+		namespace="http://www.siemac.org/metamac/rest/common/v1.0/domain"
+		schemaLocation="metamac-rest-api:metamac-rest-common-domain-v1.0.xsd" />
+	<xs:import
+		namespace="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain"
+		schemaLocation="metamac-statistical-resources-rest-api-common-domain-v1.0.xsd" />
 
-    <xs:complexType name="Dataset">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="urn" type="xs:string" />
-            <xs:element name="selfLink" type="common:ResourceLink" />
-            <xs:element name="parentLink" type="common:ResourceLink" />
-            <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
-            <xs:element name="managementAppLink" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="description" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="keywords" type="common:InternationalString" />
-            <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
-            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
-            <xs:element name="metadata" type="tns:DatasetMetadata" minOccurs="0" />
-            <xs:element name="data" type="tns:Data" minOccurs="0" />
-        </xs:sequence>
-        <xs:attribute name="kind" type="xs:string" use="required" />
-    </xs:complexType>
 
-    <xs:complexType name="Collection">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="urn" type="xs:string" />
-            <xs:element name="selfLink" type="common:ResourceLink" />
-            <xs:element name="parentLink" type="common:ResourceLink" />
-            <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
-            <xs:element name="managementAppLink" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="description" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="keywords" type="common:InternationalString" />            
-            <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
-            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
-            <xs:element name="metadata" type="tns:CollectionMetadata" minOccurs="0" />
-            <xs:element name="data" type="tns:CollectionData" minOccurs="0" />
-        </xs:sequence>
-        <xs:attribute name="kind" type="xs:string" use="required" />
-    </xs:complexType>
+	<xs:complexType name="Dataset">
+		<xs:complexContent>
+			<xs:extension base="common-tns:DatasetBase">
+				<xs:sequence>
+					<xs:element name="managementAppLink" type="xs:string" />
+					<xs:element name="metadata" type="tns:DatasetMetadata" minOccurs="0"/>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="Query">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="urn" type="xs:string" />
-            <xs:element name="selfLink" type="common:ResourceLink" />
-            <xs:element name="parentLink" type="common:ResourceLink" />
-            <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
-            <xs:element name="managementAppLink" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="description" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="keywords" type="common:InternationalString" />
-            <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
-            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
-            <xs:element name="metadata" type="tns:QueryMetadata" minOccurs="0" />
-            <xs:element name="data" type="tns:Data" minOccurs="0" />
-        </xs:sequence>
-        <xs:attribute name="kind" type="xs:string" use="required" />
-    </xs:complexType>
-    
-    <xs:complexType name="Multidataset">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="urn" type="xs:string" />
-            <xs:element name="selfLink" type="common:ResourceLink" />
-            <xs:element name="parentLink" type="common:ResourceLink" />
-            <xs:element name="childLinks" type="common:ChildLinks" minOccurs="1" />
-            <xs:element name="managementAppLink" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="description" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="keywords" type="common:InternationalString" />
-            <xs:element name="selectedLanguages" type="tns:SelectedLanguages" minOccurs="1" />
-            <xs:element name="visualizerHtmlLink" type="xs:string" minOccurs="0"/>
-            <xs:element name="metadata" type="tns:MultidatasetMetadata" minOccurs="0" />
-            <xs:element name="data" type="tns:MultidatasetData" minOccurs="0" />
-        </xs:sequence>
-        <xs:attribute name="kind" type="xs:string" use="required" />
-    </xs:complexType>
+	<xs:complexType name="Collection">
+		<xs:complexContent>
+			<xs:extension base="common-tns:CollectionBase">
+				<xs:sequence>
+					<xs:element name="managementAppLink" type="xs:string" />
+					<xs:element name="metadata" type="tns:CollectionMetadata" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="DatasetMetadata">
-        <xs:complexContent>
-            <xs:extension base="tns:StatisticalResource">
-                <xs:sequence>
-                    <xs:element name="replacesVersion" type="tns:ResourceInternal" minOccurs="0" />
-                    <xs:element name="isReplacedByVersion" type="tns:ResourceInternal" minOccurs="0" />
-                    <xs:element name="isRequiredBy" type="tns:ResourcesInternal" />
-                    <xs:element name="geographicCoverages" type="tns:ResourcesInternal" />
-                    <xs:element name="temporalCoverages" type="common:Items" />
-                    <xs:element name="measureCoverages" type="tns:ResourcesInternal" />
-                    <xs:element name="geographicGranularities" type="tns:ResourcesInternal" />
-                    <xs:element name="temporalGranularities" type="tns:ResourcesInternal" />
-                    <xs:element name="dateStart" type="common:InternationalString" />
-                    <xs:element name="dateEnd" type="common:InternationalString" />
-                    <xs:element name="statisticalUnit" type="tns:ResourcesInternal" minOccurs="0" />
-                    <xs:element name="subjectAreas" type="tns:ResourcesInternal" minOccurs="0" />
-                    <xs:element name="relatedDsd" type="tns:DataStructureDefinition" />
-                    <xs:element name="dimensions" type="tns:Dimensions" />
-                    <xs:element name="attributes" type="tns:Attributes" minOccurs="0" />
-                    <xs:element name="formatExtentObservations" type="xs:long" minOccurs="0" />
-                    <xs:element name="formatExtentDimensions" type="xs:int" minOccurs="0" />
-                    <xs:element name="dateNextUpdate" type="common:InternationalString" />
-                    <xs:element name="updateFrequency" type="tns:ResourceInternal" />
-                    <xs:element name="statisticOfficiality" type="common:Item" />
-                    <xs:element name="bibliographicCitation" type="common:InternationalString" />
-                    <xs:element name="keepAllData" type="xs:boolean"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
+	<xs:complexType name="Query">
+		<xs:complexContent>
+			<xs:extension base="common-tns:QueryBase">
+				<xs:sequence>
+					<xs:element name="managementAppLink" type="xs:string" />
+					<xs:element name="metadata" type="tns:QueryMetadata" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="Data">
-        <xs:sequence>
-            <xs:element name="dimensions" type="tns:DimensionRepresentations" />
-            <xs:element name="attributes" type="tns:DataAttributes" minOccurs="0" />
-            <xs:element name="observations" type="xs:string" minOccurs="1" />
-        </xs:sequence>
-    </xs:complexType>
+	<xs:complexType name="Multidataset">
+		<xs:complexContent>
+			<xs:extension base="common-tns:MultidatasetBase">
+				<xs:sequence>
+					<xs:element name="managementAppLink" type="xs:string" />
+					<xs:element name="metadata" type="tns:MultidatasetMetadata" minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="CollectionMetadata">
-        <xs:complexContent>
-            <xs:extension base="tns:StatisticalResource">
-                <xs:sequence>
-                    <xs:element name="formatExtentResources" type="xs:int" minOccurs="0" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
+	<xs:complexType name="QueryMetadata">
+		<xs:complexContent>
+			<xs:extension base="common-tns:QueryMetadataBase">
+				<xs:sequence>
+					<xs:element name="nextVersion"
+						type="common-tns:NextVersionType" />
+					<xs:element name="nextVersionDate"
+						type="common:InternationalString" minOccurs="0" />
+					<xs:element name="procStatus"
+						type="common-tns:ProcStatusType" />
+					<xs:element name="creationDate" type="xs:dateTime"
+						minOccurs="0" />
+					<xs:element name="creationUser" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="productionValidationDate"
+						type="xs:dateTime" minOccurs="0" />
+					<xs:element name="productionValidationUser"
+						type="xs:string" minOccurs="0" />
+					<xs:element name="diffusionValidationDate"
+						type="xs:dateTime" minOccurs="0" />
+					<xs:element name="diffusionValidationUser"
+						type="xs:string" minOccurs="0" />
+					<xs:element name="rejectValidationDate"
+						type="xs:dateTime" minOccurs="0" />
+					<xs:element name="rejectValidationUser" type="xs:string"
+						minOccurs="0" />
+					<xs:element name="publicationDate" type="xs:dateTime"
+						minOccurs="0" />
+					<xs:element name="publicationUser" type="xs:string"
+						minOccurs="0" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="CollectionData">
-        <xs:sequence>
-            <xs:element name="nodes" type="tns:CollectionNodes" minOccurs="1" />
-        </xs:sequence>
-    </xs:complexType>
+	<xs:group name="StatisticalResourceExtended">
+		<xs:sequence>
+			<xs:element name="nextVersionDate"
+				type="common:InternationalString" minOccurs="0" />
+			<xs:element name="procStatus"
+				type="common-tns:ProcStatusType" />
+			<xs:element name="creationDate" type="xs:dateTime"
+				minOccurs="0" />
+			<xs:element name="creationUser" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="productionValidationDate"
+				type="xs:dateTime" minOccurs="0" />
+			<xs:element name="productionValidationUser"
+				type="xs:string" minOccurs="0" />
+			<xs:element name="diffusionValidationDate"
+				type="xs:dateTime" minOccurs="0" />
+			<xs:element name="diffusionValidationUser"
+				type="xs:string" minOccurs="0" />
+			<xs:element name="rejectValidationDate" type="xs:dateTime"
+				minOccurs="0" />
+			<xs:element name="rejectValidationUser" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="publicationDate" type="xs:dateTime"
+				minOccurs="0" />
+			<xs:element name="publicationUser" type="xs:string"
+				minOccurs="0" />
+			<xs:element name="conformsToInternal"
+				type="common:InternationalString" minOccurs="0" />
+		</xs:sequence>
+	</xs:group>
+	
+	<xs:complexType name="DatasetMetadata">
+		<xs:complexContent>
+			<xs:extension base="common-tns:DatasetMetadataBase">
+			<xs:group ref="tns:StatisticalResourceExtended"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="MultidatasetMetadata">
-        <xs:complexContent>
-            <xs:extension base="tns:StatisticalResource">
-                <xs:sequence>
-                    <xs:element name="formatExtentResources" type="xs:int" minOccurs="0" />
-                    <xs:element name="filteringDimension" type="common:InternationalString" minOccurs="0" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    
-    <xs:complexType name="MultidatasetData">
-        <xs:sequence>
-            <xs:element name="nodes" type="tns:MultidatasetNodes" minOccurs="1" />
-        </xs:sequence>
-    </xs:complexType>
+	<xs:complexType name="CollectionMetadata">
+		<xs:complexContent>
+			<xs:extension base="common-tns:CollectionMetadataBase">
+			<xs:group ref="tns:StatisticalResourceExtended"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="QueryMetadata">
-        <xs:sequence>
-            <xs:element name="relatedDataset" type="tns:ResourceInternal" minOccurs="1" />
-            <xs:element name="relatedDsd" type="tns:DataStructureDefinition" />
-            <xs:element name="dimensions" type="tns:Dimensions" />
-            <xs:element name="attributes" type="tns:Attributes" minOccurs="0" />
-            <xs:element name="status" type="tns:QueryStatus" />
-            <xs:element name="type" type="tns:QueryType" />
-            <xs:element name="latestDataNumber" type="xs:int" minOccurs="0" />
-            <xs:element name="requires" type="tns:ResourceInternal" />
-            <xs:element name="isPartOf" type="tns:ResourcesInternal" />
-            <xs:element name="statisticalOperation" type="tns:ResourceInternal" />
-            <xs:element name="maintainer" type="tns:ResourceInternal" />
-            <xs:element name="validFrom" type="xs:dateTime" />
-            <xs:element name="validTo" type="xs:dateTime" minOccurs="0" />
-            <xs:element name="nextVersion" type="tns:NextVersionType" />
-            <xs:element name="nextVersionDate" type="common:InternationalString"  minOccurs="0" /> 
-            <xs:element name="procStatus" type="tns:ProcStatusType"/>
-            <xs:element name="creationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="creationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="productionValidationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="productionValidationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="diffusionValidationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="diffusionValidationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="rejectValidationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="rejectValidationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="publicationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="publicationUser" type="xs:string" minOccurs="0"/>
-        </xs:sequence>
-    </xs:complexType>
+	<xs:complexType name="MultidatasetMetadata">
+		<xs:complexContent>
+			<xs:extension base="common-tns:MultidatasetMetadataBase">
+			<xs:group ref="tns:StatisticalResourceExtended"/>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
 
-    <xs:complexType name="SelectedLanguages">
-        <xs:sequence>
-            <xs:element name="language" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
+	<xs:simpleType name="QueryCriteriaPropertyRestriction">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="ID" />
+			<xs:enumeration value="NAME" />
+			<xs:enumeration value="DESCRIPTION" />
+			<xs:enumeration value="RELATED_DATASET_URN" />
+			<xs:enumeration value="STATUS" />
+			<xs:enumeration value="TYPE" />
+			<xs:enumeration value="VALID_FROM" />
+			<xs:enumeration value="VALID_TO" />
+			<xs:enumeration value="STATISTICAL_OPERATION_URN" />
+			<xs:enumeration value="PROC_STATUS" />
+		</xs:restriction>
+	</xs:simpleType>
 
-    <xs:complexType name="StatisticalResource" abstract="true">
-        <xs:sequence>
-            <xs:element name="language" type="tns:ResourceInternal" />
-            <xs:element name="languages" type="tns:ResourcesInternal" />
-            <xs:element name="statisticalOperation" type="tns:ResourceInternal" />
-            <xs:element name="statisticalOperationInstances" type="tns:ResourcesInternal" minOccurs="0" />
-            <xs:element name="subtitle" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="titleAlternative" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="abstract" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="type" type="tns:StatisticalResourceType" />
-            <xs:element name="creator" type="tns:ResourceInternal" />
-            <xs:element name="contributors" type="tns:ResourcesInternal" minOccurs="0" />
-            <xs:element name="createdDate" type="xs:dateTime" />
-            <xs:element name="lastUpdate" type="xs:dateTime" />
-            <xs:element name="conformsTo" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="publishers" type="tns:ResourcesInternal" />
-            <xs:element name="publisherContributors" type="tns:ResourcesInternal" minOccurs="0" />
-            <xs:element name="mediators" type="tns:ResourcesInternal" minOccurs="0" />
-            <xs:element name="newnessUntilDate" type="xs:dateTime" minOccurs="0" />
-            <xs:element name="replaces" type="tns:ResourceInternal" />
-            <xs:element name="isReplacedBy" type="tns:ResourceInternal" />
-            <xs:element name="hasPart" type="tns:ResourcesInternal" />
-            <xs:element name="isPartOf" type="tns:ResourcesInternal" />
-            <xs:element name="rightsHolder" type="tns:Organisation" />
-            <xs:element name="copyrightDate" type="xs:int" minOccurs="0" />
-            <xs:element name="license" type="common:InternationalString" />
-            <xs:element name="accessRights" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="maintainer" type="tns:ResourceInternal" />
-            <xs:element name="version" type="xs:string" />
-            <xs:element name="versionRationaleTypes" type="tns:VersionRationaleTypes" />
-            <xs:element name="versionRationale" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="validFrom" type="xs:dateTime" />
-            <xs:element name="validTo" type="xs:dateTime" minOccurs="0" />
-            <xs:element name="nextVersion" type="tns:NextVersionType" />
-            <xs:element name="nextVersionDate" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="procStatus" type="tns:ProcStatusType"/>
-            <xs:element name="creationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="creationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="productionValidationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="productionValidationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="diffusionValidationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="diffusionValidationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="rejectValidationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="rejectValidationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="publicationDate" type="xs:dateTime" minOccurs="0"/>
-            <xs:element name="publicationUser" type="xs:string" minOccurs="0"/>
-            <xs:element name="conformsToInternal" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="dataProviders" type="tns:ResourcesInternal" />
-            <xs:element name="dataProviderAnnotations" type="common:InternationalString" minOccurs="0" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="VersionRationaleTypes">
-        <xs:sequence>
-            <xs:element name="versionRationaleType" type="tns:VersionRationaleType" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="CollectionNodes">
-        <xs:sequence>
-            <xs:element name="node" type="tns:CollectionNode" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="CollectionNode" abstract="true">
-        <xs:sequence>
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="description" type="common:InternationalString" minOccurs="0" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="Chapter">
-        <xs:complexContent>
-            <xs:extension base="tns:CollectionNode">
-                <xs:sequence>
-                    <xs:element name="nodes" type="tns:CollectionNodes" minOccurs="1" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="Table">
-        <xs:complexContent>
-            <xs:extension base="tns:CollectionNode">
-                <xs:choice>
-                    <xs:sequence>
-                        <xs:element name="dataset" type="tns:ResourceInternal" />
-                        <xs:element name="query" type="tns:ResourceInternal" />
-                        <xs:element name="multidataset" type="tns:ResourceInternal" />
-                        <xs:element name="url" type="tns:ResourceInternal" />
-                    </xs:sequence>
-                </xs:choice>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="MultidatasetNodes">
-        <xs:sequence>
-            <xs:element name="node" type="tns:MultidatasetNode" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="MultidatasetNode" abstract="true">
-        <xs:sequence>
-        	<xs:element name="identifier" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="description" type="common:InternationalString" minOccurs="0" />
-        </xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="MultidatasetTable">
-        <xs:complexContent>
-            <xs:extension base="tns:MultidatasetNode">
-                <xs:choice>
-                    <xs:sequence>
-                        <xs:element name="dataset" type="tns:ResourceInternal" />
-                        <xs:element name="query" type="tns:ResourceInternal" />
-                    </xs:sequence>
-                </xs:choice>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="DimensionRepresentations">
-        <xs:sequence>
-            <xs:element name="dimension" type="tns:DimensionRepresentation" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="DimensionRepresentation">
-        <xs:sequence>
-            <xs:element name="dimensionId" type="xs:string" />
-            <xs:element name="representations" type="tns:CodeRepresentations" minOccurs="1" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="CodeRepresentations">
-        <xs:sequence>
-            <xs:element name="representation" type="tns:CodeRepresentation" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="CodeRepresentation">
-        <xs:attribute name="code" type="xs:string" use="required" />
-        <xs:attribute name="index" type="xs:long" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="DataAttributes">
-        <xs:sequence>
-            <xs:element name="attribute" type="tns:DataAttribute" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="DataAttribute">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="id" type="xs:string" use="required" />
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-
-    <xs:complexType name="DataStructureDefinition">
-        <xs:complexContent>
-            <xs:extension base="tns:ResourceInternal">
-                <xs:sequence>
-                    <xs:element name="heading" type="tns:DimensionsId" />
-                    <xs:element name="stub" type="tns:DimensionsId" />
-                    <xs:element name="autoOpen" type="xs:boolean" minOccurs="0" />
-                    <xs:element name="showNullValuesByDefault" type="xs:boolean" minOccurs="0" />
-                    <xs:element name="showZeroValuesByDefault" type="xs:boolean" minOccurs="0" />
-                    <xs:element name="showDecimals" type="xs:int" minOccurs="0" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="DimensionsId">
-        <xs:sequence>
-            <xs:element name="dimensionId" type="xs:string" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="Dimensions">
-        <xs:sequence>
-            <xs:element name="dimension" type="tns:Dimension" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="Dimension">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="type" type="tns:DimensionType" />
-            <xs:element name="dimensionValues" type="tns:DimensionValues" />
-            <xs:element name="pluralName" type="common:InternationalString" minOccurs="0"/>
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="DimensionValues" abstract="true">
-    </xs:complexType>
-
-    <xs:complexType name="EnumeratedDimensionValues">
-        <xs:complexContent>
-            <xs:extension base="tns:DimensionValues">
-                <xs:sequence>
-                    <xs:element name="value" type="tns:EnumeratedDimensionValue" minOccurs="1" maxOccurs="unbounded" />
-                </xs:sequence>
-                <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="NonEnumeratedDimensionValues">
-        <xs:complexContent>
-            <xs:extension base="tns:DimensionValues">
-                <xs:sequence>
-                    <xs:element name="value" type="tns:NonEnumeratedDimensionValue" minOccurs="1" maxOccurs="unbounded" />
-                </xs:sequence>
-                <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="EnumeratedDimensionValue">
-        <xs:complexContent>
-            <xs:extension base="tns:ResourceInternal">
-                <xs:sequence>
-                    <xs:element name="visualisationParent" type="xs:string" minOccurs="0" />
-                    <xs:element name="variableElement" type="tns:ResourceInternal" minOccurs="0" />
-                    <xs:element name="geographicGranularity" type="tns:ResourceInternal" minOccurs="0" />
-                    <xs:element name="showDecimalsPrecision" type="xs:int" minOccurs="0" />
-                    <xs:element name="open" type="xs:boolean" minOccurs="0" />
-                    <xs:element name="measureQuantity" type="tns:MeasureQuantity"  minOccurs="0"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="NonEnumeratedDimensionValue">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="temporalGranularity" type="xs:string" />
-        </xs:sequence>
-    </xs:complexType>
-
-    <xs:complexType name="MeasureQuantity">
-        <xs:sequence>
-            <xs:element name="unitCode" type="tns:ItemResourceInternal" minOccurs="1" />
-        </xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="Attributes">
-        <xs:sequence>
-            <xs:element name="attribute" type="tns:Attribute" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>
-
-    <xs:complexType name="Attribute">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-            <xs:element name="attachmentLevel" type="tns:AttributeAttachmentLevelType" />
-            <xs:element name="dimensions" type="tns:AttributeDimensions" minOccurs="0" />
-            <xs:element name="attributeValues" type="tns:AttributeValues" />
-            <xs:element name="type" type="tns:componentType"/>
-        </xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="AttributeDimensions">
-        <xs:sequence>
-            <xs:element name="dimension" type="tns:AttributeDimension" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>    
-
-    <xs:complexType name="AttributeDimension">
-        <xs:sequence>
-            <xs:element name="dimensionId" type="xs:string" minOccurs="1" />
-            <xs:element name="values" type="tns:AttributeValues" minOccurs="0" />
-        </xs:sequence>
-    </xs:complexType>
-    
-    <xs:complexType name="AttributeValues" abstract="true">
-    </xs:complexType>
-
-    <xs:complexType name="EnumeratedAttributeValues">
-        <xs:complexContent>
-            <xs:extension base="tns:AttributeValues">
-                <xs:sequence>
-                    <xs:element name="value" type="tns:EnumeratedAttributeValue" minOccurs="1" maxOccurs="unbounded" />
-                </xs:sequence>
-                <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="EnumeratedAttributeValue">
-        <xs:complexContent>
-            <xs:extension base="tns:ResourceInternal">
-                <xs:sequence>
-                	<xs:element name="measureQuantity" type="tns:MeasureQuantity"  minOccurs="0"/>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    
-    <xs:complexType name="NonEnumeratedAttributeValues">
-        <xs:complexContent>
-            <xs:extension base="tns:AttributeValues">
-                <xs:sequence>
-                    <xs:element name="value" type="tns:NonEnumeratedAttributeValue" minOccurs="1" maxOccurs="unbounded" />
-                </xs:sequence>
-                <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="NonEnumeratedAttributeValue">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" />
-            <xs:element name="name" type="common:InternationalString" />
-        </xs:sequence>
-    </xs:complexType>    
-
-    <!-- Lists -->
-    <xs:complexType name="Datasets">
-        <xs:complexContent>
-            <xs:extension base="common:ListBase">
-                <xs:sequence>
-                    <xs:element name="dataset" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="Collections">
-        <xs:complexContent>
-            <xs:extension base="common:ListBase">
-                <xs:sequence>
-                    <xs:element name="collection" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="Queries">
-        <xs:complexContent>
-            <xs:extension base="common:ListBase">
-                <xs:sequence>
-                    <xs:element name="query" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    
-    <xs:complexType name="Multidatasets">
-        <xs:complexContent>
-            <xs:extension base="common:ListBase">
-                <xs:sequence>
-                    <xs:element name="multidataset" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <!-- Enums -->
-    <xs:simpleType name="DimensionType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="MEASURE_DIMENSION" />
-            <xs:enumeration value="TIME_DIMENSION" />
-            <xs:enumeration value="GEOGRAPHIC_DIMENSION" />
-            <xs:enumeration value="DIMENSION" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="AttributeAttachmentLevelType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="DATASET" />
-            <xs:enumeration value="DIMENSION" />
-            <xs:enumeration value="PRIMARY_MEASURE" />
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="componentType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="OTHER" />
-            <xs:enumeration value="SPATIAL" />
-            <xs:enumeration value="TEMPORAL" />
-            <xs:enumeration value="MEASURE" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="StatisticalResourceType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="DATASET" />
-            <xs:enumeration value="COLLECTION" />
-            <xs:enumeration value="QUERY" />
-            <xs:enumeration value="MULTIDATASET" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="VersionRationaleType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="MAJOR_NEW_RESOURCE" />
-            <xs:enumeration value="MAJOR_ESTIMATORS" />
-            <xs:enumeration value="MAJOR_CATEGORIES" />
-            <xs:enumeration value="MAJOR_VARIABLES" />
-            <xs:enumeration value="MAJOR_OTHER" />
-            <xs:enumeration value="MINOR_ERRATA" />
-            <xs:enumeration value="MINOR_METADATA" />
-            <xs:enumeration value="MINOR_DATA_UPDATE" />
-            <xs:enumeration value="MINOR_SERIES_UPDATE" />
-            <xs:enumeration value="MINOR_OTHER" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="QueryStatus">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ACTIVE" />
-            <xs:enumeration value="DISCONTINUED" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="QueryType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="AUTOINCREMENTAL" />
-            <xs:enumeration value="LATEST_DATA" />
-            <xs:enumeration value="FIXED" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <!-- Remember to add translations on metamac-portal-web-client -->
-    <xs:simpleType name="NextVersionType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="NO_UPDATES" />
-            <xs:enumeration value="NON_SCHEDULED_UPDATE" />
-            <xs:enumeration value="SCHEDULED_UPDATE" />
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="ProcStatusType">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="DRAFT" />
-            <xs:enumeration value="PRODUCTION_VALIDATION" />
-            <xs:enumeration value="DIFFUSION_VALIDATION" />
-            <xs:enumeration value="VALIDATION_REJECTED" />
-            <xs:enumeration value="PUBLISHED" />
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <!-- Criterias -->
-    <xs:simpleType name="DatasetCriteriaPropertyRestriction">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-            <xs:enumeration value="NAME" />
-            <xs:enumeration value="DESCRIPTION" />
-            <xs:enumeration value="GEOGRAPHIC_COVERAGE_URN" />
-            <xs:enumeration value="GEOGRAPHIC_COVERAGE_TITLE" />
-            <xs:enumeration value="GEOGRAPHIC_COVERAGE_CODE" />
-            <xs:enumeration value="TEMPORAL_COVERAGE" />
-            <xs:enumeration value="GEOGRAPHIC_GRANULARITY_URN" />
-            <xs:enumeration value="TEMPORAL_GRANULARITY_URN" />
-            <xs:enumeration value="DATE_START" />
-            <xs:enumeration value="DATE_END" />
-            <xs:enumeration value="STATISTICAL_UNIT_URN" />
-            <xs:enumeration value="MEASURE_COVERAGE_URN" />
-            <xs:enumeration value="RELATED_DSD_URN" />
-            <xs:enumeration value="DATE_NEXT_UPDATE" />
-            <xs:enumeration value="STATISTIC_OFFICIALITY" />
-            <xs:enumeration value="SUBTITLE" />
-            <xs:enumeration value="TITLE_ALTERNATIVE" />
-            <xs:enumeration value="KEYWORD" />
-            <xs:enumeration value="NEWNESS_UNTIL_DATE" />
-            <xs:enumeration value="VALID_FROM" />
-            <xs:enumeration value="VALID_TO" />
-            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
-            <xs:enumeration value="IS_LAST_VERSION" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="DatasetCriteriaPropertyOrder">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="CollectionCriteriaPropertyRestriction">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-            <xs:enumeration value="NAME" />
-            <xs:enumeration value="DESCRIPTION" />
-            <xs:enumeration value="TITLE_ALTERNATIVE" />
-            <xs:enumeration value="KEYWORD" />
-            <xs:enumeration value="NEWNESS_UNTIL_DATE" />
-            <xs:enumeration value="VALID_FROM" />
-            <xs:enumeration value="VALID_TO" />
-            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="CollectionCriteriaPropertyOrder">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="QueryCriteriaPropertyRestriction">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-            <xs:enumeration value="NAME" />
-            <xs:enumeration value="DESCRIPTION" />
-            <xs:enumeration value="RELATED_DATASET_URN" />
-            <xs:enumeration value="STATUS" />
-            <xs:enumeration value="TYPE" />
-            <xs:enumeration value="VALID_FROM" />
-            <xs:enumeration value="VALID_TO" />
-            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
-            <xs:enumeration value="PROC_STATUS" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="QueryCriteriaPropertyOrder">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <xs:simpleType name="MultidatasetCriteriaPropertyRestriction">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-            <xs:enumeration value="NAME" />
-            <xs:enumeration value="DESCRIPTION" />
-            <xs:enumeration value="TITLE_ALTERNATIVE" />
-            <xs:enumeration value="KEYWORD" />
-            <xs:enumeration value="NEWNESS_UNTIL_DATE" />
-            <xs:enumeration value="VALID_FROM" />
-            <xs:enumeration value="VALID_TO" />
-            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
-        </xs:restriction>
-    </xs:simpleType>
-
-    <xs:simpleType name="MultidatasetCriteriaPropertyOrder">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-        </xs:restriction>
-    </xs:simpleType>
-
-	<!-- Internal resources -->
-    <xs:complexType name="ResourcesInternal">
-        <xs:sequence>
-            <xs:element name="resource" type="tns:ResourceInternal" minOccurs="1" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required"/>
-    </xs:complexType>  
-    
-    <xs:complexType name="ResourceInternal">
-        <xs:complexContent>
-            <xs:extension base="common:Resource">
-                <xs:sequence>
-                    <xs:element name="urnProvider" type="xs:string" minOccurs="0" />
-                    <xs:element name="managementAppLink" type="xs:string" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-
-    <xs:complexType name="ResourceInternalWithStatisticalOperation">
-        <xs:complexContent>
-            <xs:extension base="tns:ResourceInternal">
-                <xs:sequence>
-                    <xs:element name="statisticalOperation" type="tns:ResourceInternal" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    
-    <xs:complexType name="ItemResourceInternal">
-        <xs:complexContent>
-            <xs:extension base="tns:ResourceInternal">
-                <xs:sequence>
-                    <xs:element name="parent" type="xs:string" minOccurs="0" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-           
-    <xs:complexType name="Organisation">
-        <xs:complexContent>
-            <xs:extension base="tns:ResourceInternal">
-                <xs:sequence>
-                    <xs:element name="contacts" type="tns:Contacts" minOccurs="0" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    
-    <xs:complexType name="Contacts">
-        <xs:sequence>
-            <xs:element name="contact" type="tns:Contact" minOccurs="0" maxOccurs="unbounded" />
-        </xs:sequence>
-        <xs:attribute name="total" type="xs:unsignedLong" use="required" />
-    </xs:complexType>   
-
-    <xs:complexType name="Contact">
-        <xs:sequence>
-            <xs:element name="id" type="xs:string" minOccurs="0" />
-            <xs:element name="name" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="organisationUnit" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="responsibility" type="common:InternationalString" minOccurs="0" />
-            <xs:element name="telephones" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="faxes" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="urls" type="xs:anyURI" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="emails" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
-        </xs:sequence>
-    </xs:complexType>
-   
-     <!-- RESOURCES ENTITY --> 
-    <!-- Lists -->
-    <xs:complexType name="Resources">
-        <xs:complexContent>
-            <xs:extension base="common:ListBase">
-                <xs:sequence>
-                    <xs:element name="resource" type="tns:ResourceInternalWithStatisticalOperation" minOccurs="0" maxOccurs="unbounded" />
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    
-     <xs:simpleType name="ResourcesCriteriaPropertyOrder">
-        <xs:restriction base="xs:token">
-            <xs:enumeration value="ID" />
-            <xs:enumeration value="STATISTICAL_OPERATION_ID" />  
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <!-- Criterias -->
-    <xs:simpleType name="ResourcesCriteriaPropertyRestriction">
-        <xs:restriction base="xs:token">
-        	<xs:enumeration value="URN" />
-            <xs:enumeration value="STATISTICAL_OPERATION_URN" />
-            <xs:enumeration value="GEOCOV_VARELEM_ID" />
-            <xs:enumeration value="IS_LAST_VERSION" />
-        </xs:restriction>
-    </xs:simpleType>
-    
-    <!-- Elements -->
+  <!-- Elements -->
     <xs:element name="dataset" type="tns:Dataset" />
-    <xs:element name="datasets" type="tns:Datasets" />
     <xs:element name="collection" type="tns:Collection" />
-    <xs:element name="collections" type="tns:Collections" />
     <xs:element name="query" type="tns:Query" />
-    <xs:element name="queries" type="tns:Queries" />
     <xs:element name="multidataset" type="tns:Multidataset" />
-    <xs:element name="multidatasets" type="tns:Multidatasets" />
-    <xs:element name="resources" type="tns:Resources" />
 </xs:schema>

@@ -21,18 +21,12 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.Item;
 import org.siemac.metamac.rest.common.v1_0.domain.Items;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
-import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
-import org.siemac.metamac.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Attributes;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Data;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.DatasetMetadata;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Datasets;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -46,7 +40,13 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
@@ -62,19 +62,18 @@ import org.springframework.stereotype.Component;
 public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
     @Autowired
-    private CommonDo2RestMapperV10   commonDo2RestMapper;
+    private CommonDo2RestMapperV10            commonDo2RestMapper;
 
     @Autowired
-    private CommonDo2JsonStatRestMapperV10 commonDo2JsonStatRestMapper;
+    private CommonDo2JsonStatRestMapperV10    commonDo2JsonStatRestMapper;
 
     @Autowired
-    private DatasetVersionRepository datasetVersionRepository;
-    
+    private DatasetVersionRepository          datasetVersionRepository;
+
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
 
-
-    private static final Logger      logger = LoggerFactory.getLogger(DatasetsDo2RestMapperV10.class);
+    private static final Logger               logger = LoggerFactory.getLogger(DatasetsDo2RestMapperV10.class);
 
     @Override
     public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
@@ -113,7 +112,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
     @Override
     public Datasets toDatasets(PagedResult<DatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
-        Set<String> parsedFields) throws MetamacException {
+            Set<String> parsedFields) throws MetamacException {
 
         Datasets targets = new Datasets();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_DATASETS);
@@ -197,12 +196,12 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     @Override
-    public Resource toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    public ResourceStatisticalResourceBase toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         return toResource(source, true, selectedLanguages, null);
     }
 
     @Override
-    public Resource toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
+    public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -212,7 +211,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
             throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
 
-        Resource target = new Resource();
+        ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         target.setId(source.getCode());
         target.setUrn(source.getUrn());
         target.setKind(StatisticalResourcesRestExternalConstants.KIND_DATASET);
@@ -226,9 +225,9 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         String agencyID = source.getMaintainerNestedCode();
         String resourceID = source.getCode();
         String version = source.getVersion();
-        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, configurationService, false);  
+        return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, configurationService, false);
     }
-    
+
     private ResourceWithStatisticalOperation toResource(DatasetVersion source, boolean asLatest, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException {
         if (source == null) {
             return null;
@@ -283,7 +282,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-    private Resources toDatasetIsRequiredBy(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourcesStatisticalResourceBase toDatasetIsRequiredBy(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResourceResult> relatedResourceIsRequiredBy = null;
 
         if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
@@ -295,7 +294,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (CollectionUtils.isEmpty(relatedResourceIsRequiredBy)) {
             return null;
         }
-        Resources targets = new Resources();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (RelatedResourceResult relatedResourceResult : relatedResourceIsRequiredBy) {
             targets.getResources().add(commonDo2RestMapper.toResource(relatedResourceResult, selectedLanguages));
         }
@@ -303,12 +302,12 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return targets;
     }
 
-    private Resource toDatasetReplacesVersion(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toDatasetReplacesVersion(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         RelatedResource replacesVersion = source.getSiemacMetadataStatisticalResource().getReplacesVersion();
         return commonDo2RestMapper.toResource(replacesVersion, selectedLanguages);
     }
 
-    private Resource toDatasetIsReplacedByVersion(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toDatasetIsReplacedByVersion(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         RelatedResourceResult relatedResourceReplacesByVersion = null;
 
         if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
@@ -319,13 +318,13 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return toResource(relatedResourceReplacesByVersion, selectedLanguages);
     }
 
-    private Resource toDatasetReplaces(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toDatasetReplaces(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         // Contrary to the internal API, there is no need to check if the replaced resource is published. The "replaces" metadata is always filled with a published dataset.
         RelatedResource replaces = source.getSiemacMetadataStatisticalResource().getReplaces();
         return commonDo2RestMapper.toResource(replaces, selectedLanguages);
     }
 
-    private Resource toDatasetIsReplacedBy(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourceStatisticalResourceBase toDatasetIsReplacedBy(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         RelatedResourceResult relatedResourceReplacesBy = null;
 
         if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
@@ -336,7 +335,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return toResource(relatedResourceReplacesBy, selectedLanguages);
     }
 
-    private Resources toDatasetIsPartOf(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourcesStatisticalResourceBase toDatasetIsPartOf(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         List<RelatedResourceResult> relatedResourceIsPartOf = null;
 
         if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
@@ -348,7 +347,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (CollectionUtils.isEmpty(relatedResourceIsPartOf)) {
             return null;
         }
-        Resources targets = new Resources();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (RelatedResourceResult relatedResourceResult : relatedResourceIsPartOf) {
             targets.getResources().add(commonDo2RestMapper.toResource(relatedResourceResult, selectedLanguages));
         }
@@ -378,11 +377,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-    private Resources toDatasetSubjectAreas(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private ResourcesStatisticalResourceBase toDatasetSubjectAreas(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
         if (CollectionUtils.isEmpty(source.getCategorisations())) {
             return null;
         }
-        Resources targets = new Resources();
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (Categorisation categorisation : source.getCategorisations()) {
             targets.getResources().add(commonDo2RestMapper.toResourceExternalItemSrm(categorisation.getCategory(), selectedLanguages));
         }

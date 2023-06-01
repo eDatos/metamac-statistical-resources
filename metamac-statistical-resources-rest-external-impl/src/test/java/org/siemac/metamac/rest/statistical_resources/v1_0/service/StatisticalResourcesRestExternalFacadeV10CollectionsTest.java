@@ -13,7 +13,7 @@ import org.apache.cxf.jaxrs.client.ServerWebApplicationException;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collections;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 

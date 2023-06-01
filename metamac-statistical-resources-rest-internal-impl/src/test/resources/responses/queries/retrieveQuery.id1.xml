@@ -1,30 +1,82 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<ns2:query xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:ns2="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain" kind="statisticalResources#query">
+<ns3:query xmlns:cdomain="http://www.siemac.org/metamac/rest/common/v1.0/domain" xmlns:ns2="http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain" xmlns:ns3="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain" kind="statisticalResources#query">
     <ns2:id>query1</ns2:id>
     <ns2:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1</ns2:urn>
     <ns2:selfLink kind="statisticalResources#query" href="http://data.istac.es/apis/statistical-resources/v1.0/queries/agency1/query1"/>
     <ns2:parentLink kind="statisticalResources#queries" href="http://data.istac.es/apis/statistical-resources/v1.0/queries"/>
-    <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=7c62JvidRH/queries/query;id=agency1:query1(01.000)</ns2:managementAppLink>
     <ns2:name>
         <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
     </ns2:name>
     <ns2:description>
-        <cdomain:text xml:lang="es">description-resource-9bPThEk6G8 en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-resource-jiqpBzwifZ en Espanol</cdomain:text>
     </ns2:description>
     <ns2:selectedLanguages total="1">
         <ns2:language>es</ns2:language>
     </ns2:selectedLanguages>
-    <ns2:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=6DU0WhZeKb&amp;resourceId=query1#</ns2:visualizerHtmlLink>
-    <ns2:metadata>
-        <ns2:relatedDataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#dataset">
+    <ns2:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=tOvQLumYbB&amp;resourceId=query1</ns2:visualizerHtmlLink>
+    <ns2:data>
+        <ns2:dimensions total="4">
+            <ns2:dimension>
+                <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
+                <ns2:representations total="8">
+                    <ns2:representation code="santa-cruz-tenerife" index="0"/>
+                    <ns2:representation code="tenerife" index="1"/>
+                    <ns2:representation code="la-laguna" index="2"/>
+                    <ns2:representation code="santa-cruz" index="3"/>
+                    <ns2:representation code="la-palma" index="4"/>
+                    <ns2:representation code="los-llanos-de-aridane" index="5"/>
+                    <ns2:representation code="las-palmas-gran-canaria" index="6"/>
+                    <ns2:representation code="fuerteventura" index="7"/>
+                </ns2:representations>
+            </ns2:dimension>
+            <ns2:dimension>
+                <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
+                <ns2:representations total="2">
+                    <ns2:representation code="2013" index="0"/>
+                    <ns2:representation code="2011" index="1"/>
+                </ns2:representations>
+            </ns2:dimension>
+            <ns2:dimension>
+                <ns2:dimensionId>measure01</ns2:dimensionId>
+                <ns2:representations total="3">
+                    <ns2:representation code="measure01-conceptScheme01-concept01" index="0"/>
+                    <ns2:representation code="measure01-conceptScheme01-concept02" index="1"/>
+                    <ns2:representation code="measure01-conceptScheme01-concept05" index="2"/>
+                </ns2:representations>
+            </ns2:dimension>
+            <ns2:dimension>
+                <ns2:dimensionId>dim01</ns2:dimensionId>
+                <ns2:representations total="1">
+                    <ns2:representation code="dim01-codelist01-code01" index="0"/>
+                </ns2:representations>
+            </ns2:dimension>
+        </ns2:dimensions>
+        <ns2:attributes total="11">
+            <ns2:attribute id="at1">Value at1</ns2:attribute>
+            <ns2:attribute id="at2">Value\ | \at2</ns2:attribute>
+            <ns2:attribute id="at3">Value at3-1 |  | Value at3-2 |  |  |  |  | </ns2:attribute>
+            <ns2:attribute id="at4">Value at4-1 |  | Value at4-2 |  |  |  |  | </ns2:attribute>
+            <ns2:attribute id="at5">2013Q3 | 2013Q1 |  |  |  |  |  |  |  |  |  |  |  |  | 2013Q3 | 2013Q1</ns2:attribute>
+            <ns2:attribute id="at6"> |  |  | Value at6-1 |  |  |  |  |  |  |  |  |  |  |  | Value at6-2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
+            <ns2:attribute id="at7"> |  |  | Value at7-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
+            <ns2:attribute id="at8"> | Value at8-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
+            <ns2:attribute id="at9"> | Value at9-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
+            <ns2:attribute id="at10"> |  |  | Value 1 |  |  |  |  |  | Value 3 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
+            <ns2:attribute id="at11"> |  |  | Value 5 |  |  |  |  |  | Value 6 |  |  |  |  |  | Value 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
+        </ns2:attributes>
+        <ns2:observations>19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403</ns2:observations>
+    </ns2:data>
+    <ns3:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=OB970RXFRw/queries/query;id=agency1:query1(01.000)</ns3:managementAppLink>
+    <ns3:metadata>
+        <ns2:relatedDataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>dataset01</cdomain:id>
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)</cdomain:urn>
             <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=i2RLfGyJGf&amp;resourceId=dataset01&amp;version=01.000#</cdomain:visualizerHtmlLink>
-            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=tDid6cxaTS/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MM8jqZKmJ4&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=H5F6bjoV2O/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
         </ns2:relatedDataset>
         <ns2:relatedDsd kind="structuralResources#dataStructure">
             <cdomain:id>DSD01</cdomain:id>
@@ -564,15 +616,15 @@
         </ns2:attributes>
         <ns2:status>ACTIVE</ns2:status>
         <ns2:type>FIXED</ns2:type>
-        <ns2:requires xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:ResourceInternalWithStatisticalOperation" kind="statisticalResources#dataset">
+        <ns2:requires xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>dataset01</cdomain:id>
             <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)</cdomain:urn>
             <cdomain:selfLink kind="statisticalResources#dataset" href="http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=i2RLfGyJGf&amp;resourceId=dataset01&amp;version=01.000#</cdomain:visualizerHtmlLink>
-            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=tDid6cxaTS/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MM8jqZKmJ4&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=H5F6bjoV2O/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
         </ns2:requires>
         <ns2:isPartOf total="2">
             <ns2:resource kind="statisticalResources#collection">
@@ -597,82 +649,36 @@
             </ns2:resource>
         </ns2:isPartOf>
         <ns2:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>7c62JvidRH</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=7c62JvidRH</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/7c62JvidRH"/>
+            <cdomain:id>OB970RXFRw</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=OB970RXFRw</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/OB970RXFRw"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Txej5iXw9K en Espanol</cdomain:text>
             </cdomain:name>
-            <ns2:managementAppLink>http://localhost:8080/statistical-operations-internal/7c62JvidRH</ns2:managementAppLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-operations-internal/OB970RXFRw</ns2:managementAppLink>
         </ns2:statisticalOperation>
         <ns2:maintainer kind="structuralResources#agency">
-            <cdomain:id>6DU0WhZeKb</cdomain:id>
+            <cdomain:id>tOvQLumYbB</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).6DU0WhZeKb</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/6DU0WhZeKb"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).tOvQLumYbB</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/tOvQLumYbB"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-6DU0WhZeKb en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-tOvQLumYbB en Espanol</cdomain:text>
             </cdomain:name>
-            <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/6DU0WhZeKb</ns2:managementAppLink>
+            <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/tOvQLumYbB</ns2:managementAppLink>
         </ns2:maintainer>
         <ns2:validFrom>2013-01-01T03:04:12Z</ns2:validFrom>
         <ns2:validTo>2013-02-16T14:04:12Z</ns2:validTo>
-        <ns2:procStatus>DRAFT</ns2:procStatus>
-        <ns2:creationDate>2013-06-20T20:00:20.021+01:00</ns2:creationDate>
-        <ns2:creationUser>creationUser</ns2:creationUser>
-        <ns2:productionValidationDate>2013-06-20T20:00:20.021+01:00</ns2:productionValidationDate>
-        <ns2:publicationDate>2013-01-01T03:04:13Z</ns2:publicationDate>
-    </ns2:metadata>
-    <ns2:data>
-        <ns2:dimensions total="4">
-            <ns2:dimension>
-                <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                <ns2:representations total="8">
-                    <ns2:representation code="santa-cruz-tenerife" index="0"/>
-                    <ns2:representation code="tenerife" index="1"/>
-                    <ns2:representation code="la-laguna" index="2"/>
-                    <ns2:representation code="santa-cruz" index="3"/>
-                    <ns2:representation code="la-palma" index="4"/>
-                    <ns2:representation code="los-llanos-de-aridane" index="5"/>
-                    <ns2:representation code="las-palmas-gran-canaria" index="6"/>
-                    <ns2:representation code="fuerteventura" index="7"/>
-                </ns2:representations>
-            </ns2:dimension>
-            <ns2:dimension>
-                <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
-                <ns2:representations total="2">
-                    <ns2:representation code="2013" index="0"/>
-                    <ns2:representation code="2011" index="1"/>
-                </ns2:representations>
-            </ns2:dimension>
-            <ns2:dimension>
-                <ns2:dimensionId>measure01</ns2:dimensionId>
-                <ns2:representations total="3">
-                    <ns2:representation code="measure01-conceptScheme01-concept01" index="0"/>
-                    <ns2:representation code="measure01-conceptScheme01-concept02" index="1"/>
-                    <ns2:representation code="measure01-conceptScheme01-concept05" index="2"/>
-                </ns2:representations>
-            </ns2:dimension>
-            <ns2:dimension>
-                <ns2:dimensionId>dim01</ns2:dimensionId>
-                <ns2:representations total="1">
-                    <ns2:representation code="dim01-codelist01-code01" index="0"/>
-                </ns2:representations>
-            </ns2:dimension>
-        </ns2:dimensions>
-        <ns2:attributes total="11">
-            <ns2:attribute id="at1">Value at1</ns2:attribute>
-            <ns2:attribute id="at2">Value\ | \at2</ns2:attribute>
-            <ns2:attribute id="at3">Value at3-1 |  | Value at3-2 |  |  |  |  | </ns2:attribute>
-            <ns2:attribute id="at4">Value at4-1 |  | Value at4-2 |  |  |  |  | </ns2:attribute>
-            <ns2:attribute id="at5">2013Q3 | 2013Q1 |  |  |  |  |  |  |  |  |  |  |  |  | 2013Q3 | 2013Q1</ns2:attribute>
-            <ns2:attribute id="at6"> |  |  | Value at6-1 |  |  |  |  |  |  |  |  |  |  |  | Value at6-2 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
-            <ns2:attribute id="at7"> |  |  | Value at7-1 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
-            <ns2:attribute id="at8"> | Value at8-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
-            <ns2:attribute id="at9"> | Value at9-1 |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
-            <ns2:attribute id="at10"> |  |  | Value 1 |  |  |  |  |  | Value 3 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
-            <ns2:attribute id="at11"> |  |  | Value 5 |  |  |  |  |  | Value 6 |  |  |  |  |  | Value 7 |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | </ns2:attribute>
-        </ns2:attributes>
-        <ns2:observations>19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403</ns2:observations>
-    </ns2:data>
-</ns2:query>
+        <ns2:dateStart>
+            <cdomain:text xml:lang="es">2011</cdomain:text>
+        </ns2:dateStart>
+        <ns2:dateEnd>
+            <cdomain:text xml:lang="es">2013</cdomain:text>
+        </ns2:dateEnd>
+        <ns3:procStatus>DRAFT</ns3:procStatus>
+        <ns3:creationDate>2013-06-20T20:00:20.021+01:00</ns3:creationDate>
+        <ns3:creationUser>creationUser</ns3:creationUser>
+        <ns3:productionValidationDate>2013-06-20T20:00:20.021+01:00</ns3:productionValidationDate>
+        <ns3:publicationDate>2013-01-01T03:04:13Z</ns3:publicationDate>
+    </ns3:metadata>
+</ns3:query>

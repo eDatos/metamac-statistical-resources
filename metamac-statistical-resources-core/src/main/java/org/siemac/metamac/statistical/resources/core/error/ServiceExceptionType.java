@@ -231,6 +231,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_DIMENSION_VALUE_INVALID                               = create("exception.resources.attribute.importation.dimension_value_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_DIMENSION_ID_INVALID                                  = create("exception.resources.attribute.importation.dimension_id_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_ATTRIBUTE_ID_INVALID                                  = create("exception.resources.attribute.importation.attribute_id_invalid");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_FILE_EMPTY                                            = create("exception.resources.attribute.importation.file_empty");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_CODE_ENUM_NOT_VALID                                         = create(
             "exception.resources.dataset.importation.attribute_code_enumeration_not_valid");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_NOT_MATCH                                                   = create("exception.resources.dataset.importation.attribute_not_match");
@@ -293,6 +294,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType IMPORT_DATASET_JOB_ERROR                                                     = create("notice_message.resources.exception.import_dataset_job.fails");
     public static final CommonServiceExceptionType IMPORT_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR                              = create(
             "notice_message.resources.exception.import_dataset_job.fails_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType IMPORT_DATASET_ATTRIBUTE_JOB_ERROR                    = create(
+            "notice_message.resources.exception.import_dataset_attributes_job.fails");
 
     public static final CommonServiceExceptionType DB_IMPORT_DATASET_JOB_ERROR                                                  = create(
             "notice_message.resources.exception.db_import_dataset_job.fails");
