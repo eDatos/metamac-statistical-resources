@@ -978,7 +978,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
 
         List<String> dimensionsIds = getDatasetVersionRepository().retrieveDimensionsIds(datasetVersion);
-        if (dimensionsIds.size() > 0) {
+        if (!dimensionsIds.isEmpty()) {
             return dimensionsIds;
         } else {
             throw new MetamacException(ServiceExceptionType.DATASET_NO_DATA, datasetVersionUrn);
