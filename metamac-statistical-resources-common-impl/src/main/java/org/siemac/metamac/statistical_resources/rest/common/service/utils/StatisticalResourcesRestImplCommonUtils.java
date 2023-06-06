@@ -16,13 +16,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.ListUtils;
 import org.joda.time.DateTime;
-import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
-import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,25 +155,11 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         logException(e);
         if (e instanceof RestException) {
             return (RestException) e;
-        } else if (e instanceof MetamacException) {
-            return new RestException(getException((MetamacException) e), Status.INTERNAL_SERVER_ERROR);
         } else {
             // do not show information details about exception to user
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
             return new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    public static org.siemac.metamac.rest.common.v1_0.domain.Exception getException(MetamacException metamacException) {
-        if (metamacException.getExceptionItems() != null && !metamacException.getExceptionItems().isEmpty()
-                && ServiceExceptionType.DATASET_NO_DATA.getCode().equals(metamacException.getExceptionItems().get(0).getCode())) {
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = new org.siemac.metamac.rest.common.v1_0.domain.Exception();
-            exception.setCode(metamacException.getExceptionItems().get(0).getCode());
-            exception.setMessage(metamacException.getExceptionItems().get(0).getMessage());
-            
-            return exception;
-        }
-        return RestExceptionUtils.getException(RestCommonServiceExceptionType.UNKNOWN);
     }
 
     private static void logException(Exception e) {
