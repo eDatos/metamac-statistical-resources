@@ -85,6 +85,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
+import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeDimension;
@@ -311,22 +312,25 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             return null;
         }
         Data target = new Data();
+        try {
+            // Filter codes
+            List<String> datasetDimensions = datasetService.retrieveDatasetVersionDimensionsIds(SERVICE_CONTEXT, source.getSiemacMetadataStatisticalResource().getUrn());
+            Map<String, List<String>> dimensionsCodesSelectedEffective = buildDimensionsSelectedWithValues(source, dimensionValuesSelected, datasetDimensions);
 
-        // Filter codes
-        List<String> datasetDimensions = datasetService.retrieveDatasetVersionDimensionsIds(SERVICE_CONTEXT, source.getSiemacMetadataStatisticalResource().getUrn());
-        Map<String, List<String>> dimensionsCodesSelectedEffective = buildDimensionsSelectedWithValues(source, dimensionValuesSelected, datasetDimensions);
-
-        // Transform data
-        // Dimensions
-        toDataDimensionRepresentations(datasetDimensions, dimensionsCodesSelectedEffective, target);
-        // Observations and attributes
-        target.setAttributes(new DataAttributes());
-        toDataAttributesWithDatasetAndDimensionAttachmenteLevel(dsdProcessorResult, source.getDatasetRepositoryId(), datasetDimensions, dimensionsCodesSelectedEffective, target.getAttributes());
-        toDataObservationsAndAttributeWithObservationAttachmentLevel(source, dsdProcessorResult, datasetDimensions, dimensionValuesSelected, dimensionsCodesSelectedEffective, target);
-        if (CollectionUtils.isEmpty(target.getAttributes().getAttributes())) {
-            target.setAttributes(null);
-        } else {
-            target.getAttributes().setTotal(BigInteger.valueOf(target.getAttributes().getAttributes().size()));
+            // Transform data
+            // Dimensions
+            toDataDimensionRepresentations(datasetDimensions, dimensionsCodesSelectedEffective, target);
+            // Observations and attributes
+            target.setAttributes(new DataAttributes());
+            toDataAttributesWithDatasetAndDimensionAttachmenteLevel(dsdProcessorResult, source.getDatasetRepositoryId(), datasetDimensions, dimensionsCodesSelectedEffective, target.getAttributes());
+            toDataObservationsAndAttributeWithObservationAttachmentLevel(source, dsdProcessorResult, datasetDimensions, dimensionValuesSelected, dimensionsCodesSelectedEffective, target);
+            if (CollectionUtils.isEmpty(target.getAttributes().getAttributes())) {
+                target.setAttributes(null);
+            } else {
+                target.getAttributes().setTotal(BigInteger.valueOf(target.getAttributes().getAttributes().size()));
+            }
+        } catch (MetamacException e) {
+            StatisticalResourcesRestImplCommonUtils.handleException(e);
         }
         return target;
     }
@@ -402,14 +406,18 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             return null;
         }
 
-        List<String> datasetDimensionsOrdered = datasetService.retrieveDatasetVersionDimensionsIds(SERVICE_CONTEXT, datasetVersionUrn);
-
         Attributes targets = new Attributes();
-        for (DsdAttribute source : sources) {
-            Attribute target = toAttribute(datasetVersionUrn, source, dsdProcessorResult, datasetDimensionsOrdered, selectedLanguages);
-            targets.getAttributes().add(target);
+        try {
+            List<String> datasetDimensionsOrdered = datasetService.retrieveDatasetVersionDimensionsIds(SERVICE_CONTEXT, datasetVersionUrn);
+
+            for (DsdAttribute source : sources) {
+                Attribute target = toAttribute(datasetVersionUrn, source, dsdProcessorResult, datasetDimensionsOrdered, selectedLanguages);
+                targets.getAttributes().add(target);
+            }
+            targets.setTotal(BigInteger.valueOf(targets.getAttributes().size()));
+        } catch (MetamacException e) {
+            StatisticalResourcesRestImplCommonUtils.handleException(e);
         }
-        targets.setTotal(BigInteger.valueOf(targets.getAttributes().size()));
         return targets;
     }
 
@@ -619,22 +627,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             target.setManagementAppLink(RestUtils.createLink(srmInternalWebApplication, source.getManagementAppLink()));
         }
         target.setUrnProvider(source.getUrnProvider());
-    }
-
-    private void toResource(org.siemac.metamac.rest.common_metadata.v1_0.domain.ResourceInternal source, ResourceStatisticalResourceBase target, List<String> selectedLanguages) {
-        if (source == null) {
-            return;
-        }
-        target.setId(source.getId());
-        target.setUrn(source.getUrn());
-        target.setKind(source.getKind());
-        target.setName(toInternationalString(source.getName(), selectedLanguages));
-        target.setDescription(toInternationalString(source.getDescription(), selectedLanguages));
-        target.setNestedId(source.getNestedId());
-        target.setSelfLink(source.getSelfLink());
-        if (source.getManagementAppLink() != null) {
-            target.setManagementAppLink(RestUtils.createLink(commonMetadataInternalWebApplication, source.getManagementAppLink()));
-        }
     }
 
     @Override

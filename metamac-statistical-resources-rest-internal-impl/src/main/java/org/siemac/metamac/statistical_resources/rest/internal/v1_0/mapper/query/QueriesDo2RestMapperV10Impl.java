@@ -42,7 +42,6 @@ import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTyp
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
-import org.siemac.metamac.statistical.resources.core.utils.ExceptionsUtils;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
@@ -111,7 +110,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
 
     @Override
     public Query toQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields) throws Exception {
-        try {
             if (source == null) {
                 return null;
             }
@@ -146,19 +144,11 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                 target.setKeywords(commonDo2RestMapper.toInternationalString(relatedDatasetEffective.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
             }
             return target;
-        } catch (MetamacException e) {
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = new ExceptionsUtils().getException(e);
-            if (exception != null) {
-                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
-            }
-            throw e;
         }
-    }
 
     @Override
     public JsonStatData toJsonStatQuery(QueryVersion source, DatasetVersion datasetVersion, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields)
             throws Exception {
-        try {
             if (source == null) {
                 return null;
             }
@@ -191,13 +181,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(datasetVersion, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
     
             return target;
-        } catch (MetamacException e) {
-            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = new ExceptionsUtils().getException(e);
-            if (exception != null) {
-                throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
-            }
-            throw e;
-        }
     }
 
     public DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
