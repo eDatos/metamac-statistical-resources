@@ -8,15 +8,15 @@
         <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
     </ns2:name>
     <ns2:description>
-        <cdomain:text xml:lang="es">description-resource-AOGp1hF3zZ en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-resource-jiqpBzwifZ en Espanol</cdomain:text>
     </ns2:description>
     <ns2:selectedLanguages total="1">
         <ns2:language>es</ns2:language>
     </ns2:selectedLanguages>
-    <ns2:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=Wbm4Qa4Erq&amp;resourceId=query1</ns2:visualizerHtmlLink>
+    <ns2:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=tOvQLumYbB&amp;resourceId=query1</ns2:visualizerHtmlLink>
     <ns2:data>
         <ns2:dimensions total="4">
-            <ns2:dimensions>
+            <ns2:dimension>
                 <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
                 <ns2:representations total="8">
                     <ns2:representation code="santa-cruz-tenerife" index="0"/>
@@ -28,28 +28,28 @@
                     <ns2:representation code="las-palmas-gran-canaria" index="6"/>
                     <ns2:representation code="fuerteventura" index="7"/>
                 </ns2:representations>
-            </ns2:dimensions>
-            <ns2:dimensions>
+            </ns2:dimension>
+            <ns2:dimension>
                 <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
                 <ns2:representations total="2">
                     <ns2:representation code="2013" index="0"/>
                     <ns2:representation code="2011" index="1"/>
                 </ns2:representations>
-            </ns2:dimensions>
-            <ns2:dimensions>
+            </ns2:dimension>
+            <ns2:dimension>
                 <ns2:dimensionId>measure01</ns2:dimensionId>
                 <ns2:representations total="3">
                     <ns2:representation code="measure01-conceptScheme01-concept01" index="0"/>
                     <ns2:representation code="measure01-conceptScheme01-concept02" index="1"/>
                     <ns2:representation code="measure01-conceptScheme01-concept05" index="2"/>
                 </ns2:representations>
-            </ns2:dimensions>
-            <ns2:dimensions>
+            </ns2:dimension>
+            <ns2:dimension>
                 <ns2:dimensionId>dim01</ns2:dimensionId>
                 <ns2:representations total="1">
                     <ns2:representation code="dim01-codelist01-code01" index="0"/>
                 </ns2:representations>
-            </ns2:dimensions>
+            </ns2:dimension>
         </ns2:dimensions>
         <ns2:attributes total="11">
             <ns2:attribute id="at1">Value at1</ns2:attribute>
@@ -66,7 +66,7 @@
         </ns2:attributes>
         <ns2:observations>19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403</ns2:observations>
     </ns2:data>
-    <ns3:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=iYrZp3uRHj/queries/query;id=agency1:query1(01.000)</ns3:managementAppLink>
+    <ns3:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=OB970RXFRw/queries/query;id=agency1:query1(01.000)</ns3:managementAppLink>
     <ns3:metadata>
         <ns2:relatedDataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>dataset01</cdomain:id>
@@ -75,8 +75,8 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=T2tGQFMd0X&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
-            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=hwy5MOZO3I/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MM8jqZKmJ4&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=H5F6bjoV2O/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
         </ns2:relatedDataset>
         <ns2:relatedDsd kind="structuralResources#dataStructure">
             <cdomain:id>DSD01</cdomain:id>
@@ -107,7 +107,7 @@
                 </ns2:name>
                 <ns2:type>GEOGRAPHIC_DIMENSION</ns2:type>
                 <ns2:dimensionValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:EnumeratedDimensionValues" total="8">
-                    <ns2:values kind="structuralResources#code">
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>santa-cruz-tenerife</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz-tenerife</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/santa-cruz-tenerife"/>
@@ -126,8 +126,8 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>true</ns2:open>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>tenerife</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).tenerife</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/tenerife"/>
@@ -147,8 +147,8 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>false</ns2:open>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>la-laguna</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-laguna</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/la-laguna"/>
@@ -168,8 +168,8 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>true</ns2:open>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>santa-cruz</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).santa-cruz</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/santa-cruz"/>
@@ -189,8 +189,8 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>true</ns2:open>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>la-palma</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).la-palma</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/la-palma"/>
@@ -210,8 +210,8 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>true</ns2:open>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>los-llanos-de-aridane</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).los-llanos-de-aridane</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/los-llanos-de-aridane"/>
@@ -231,8 +231,8 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>true</ns2:open>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>las-palmas-gran-canaria</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).las-palmas-gran-canaria</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/las-palmas-gran-canaria"/>
@@ -251,8 +251,8 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>false</ns2:open>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>fuerteventura</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:GEO_DIM-codelist01(01.000).fuerteventura</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/GEO_DIM-codelist01/01.000/codes/fuerteventura"/>
@@ -272,7 +272,7 @@
                             </cdomain:name>
                         </ns2:variableElement>
                         <ns2:open>true</ns2:open>
-                    </ns2:values>
+                    </ns2:value>
                 </ns2:dimensionValues>
             </ns2:dimension>
             <ns2:dimension>
@@ -282,20 +282,20 @@
                 </ns2:name>
                 <ns2:type>TIME_DIMENSION</ns2:type>
                 <ns2:dimensionValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:NonEnumeratedDimensionValues" total="2">
-                    <ns2:values>
+                    <ns2:value>
                         <ns2:id>2013</ns2:id>
                         <ns2:name>
                             <cdomain:text xml:lang="es">2013</cdomain:text>
                         </ns2:name>
                         <ns2:temporalGranularity>YEARLY</ns2:temporalGranularity>
-                    </ns2:values>
-                    <ns2:values>
+                    </ns2:value>
+                    <ns2:value>
                         <ns2:id>2011</ns2:id>
                         <ns2:name>
                             <cdomain:text xml:lang="es">2011</cdomain:text>
                         </ns2:name>
                         <ns2:temporalGranularity>YEARLY</ns2:temporalGranularity>
-                    </ns2:values>
+                    </ns2:value>
                 </ns2:dimensionValues>
             </ns2:dimension>
             <ns2:dimension>
@@ -305,7 +305,7 @@
                 </ns2:name>
                 <ns2:type>MEASURE_DIMENSION</ns2:type>
                 <ns2:dimensionValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:EnumeratedDimensionValues" total="3">
-                    <ns2:values kind="structuralResources#concept">
+                    <ns2:value kind="structuralResources#concept">
                         <cdomain:id>measure01-conceptScheme01-concept01</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept01</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept01"/>
@@ -326,8 +326,8 @@
 </cdomain:name>
                             </ns2:unitCode>
                         </ns2:measureQuantity>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#concept">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#concept">
                         <cdomain:id>measure01-conceptScheme01-concept02</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept02</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept02"/>
@@ -348,8 +348,8 @@
 </cdomain:name>
                             </ns2:unitCode>
                         </ns2:measureQuantity>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#concept">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#concept">
                         <cdomain:id>measure01-conceptScheme01-concept05</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept05</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/measure01-conceptScheme01/01.000/concepts/measure01-conceptScheme01-concept05"/>
@@ -370,7 +370,7 @@
 </cdomain:name>
                             </ns2:unitCode>
                         </ns2:measureQuantity>
-                    </ns2:values>
+                    </ns2:value>
                 </ns2:dimensionValues>
             </ns2:dimension>
             <ns2:dimension>
@@ -380,7 +380,7 @@
                 </ns2:name>
                 <ns2:type>DIMENSION</ns2:type>
                 <ns2:dimensionValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:EnumeratedDimensionValues" total="1">
-                    <ns2:values kind="structuralResources#code">
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>dim01-codelist01-code01</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:dim01-codelist01(01.000).dim01-codelist01-code01</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/dim01-codelist01/01.000/codes/dim01-codelist01-code01"/>
@@ -391,7 +391,7 @@
                             <cdomain:text xml:lang="es">Description dim01-codelist01-code01 en Español</cdomain:text>
                         </cdomain:description>
                         <ns2:open>true</ns2:open>
-                    </ns2:values>
+                    </ns2:value>
                 </ns2:dimensionValues>
             </ns2:dimension>
         </ns2:dimensions>
@@ -411,22 +411,22 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DATASET</ns2:attachmentLevel>
                 <ns2:attributeValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:EnumeratedAttributeValues" total="2">
-                    <ns2:values kind="structuralResources#code">
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>A</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).A</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/A"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">A en Español</cdomain:text>
                         </cdomain:name>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#code">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#code">
                         <cdomain:id>C</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).C</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/codelists/agency01/abc/01.000/codes/C"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">C en Español</cdomain:text>
                         </cdomain:name>
-                    </ns2:values>
+                    </ns2:value>
                 </ns2:attributeValues>
                 <ns2:type>OTHER</ns2:type>
             </ns2:attribute>
@@ -437,9 +437,9 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DIMENSION</ns2:attachmentLevel>
                 <ns2:dimensions total="1">
-                    <ns2:dimensions>
+                    <ns2:dimension>
                         <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                    </ns2:dimensions>
+                    </ns2:dimension>
                 </ns2:dimensions>
                 <ns2:type>OTHER</ns2:type>
             </ns2:attribute>
@@ -450,12 +450,12 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DIMENSION</ns2:attachmentLevel>
                 <ns2:dimensions total="2">
-                    <ns2:dimensions>
+                    <ns2:dimension>
                         <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>dim01</ns2:dimensionId>
-                    </ns2:dimensions>
+                    </ns2:dimension>
                 </ns2:dimensions>
                 <ns2:type>OTHER</ns2:type>
             </ns2:attribute>
@@ -466,32 +466,32 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DIMENSION</ns2:attachmentLevel>
                 <ns2:dimensions total="2">
-                    <ns2:dimensions>
+                    <ns2:dimension>
                         <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
-                    </ns2:dimensions>
+                    </ns2:dimension>
                 </ns2:dimensions>
                 <ns2:attributeValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:NonEnumeratedAttributeValues" total="3">
-                    <ns2:values>
+                    <ns2:value>
                         <ns2:id>2013Q1</ns2:id>
                         <ns2:name>
                             <cdomain:text xml:lang="es">2013 Primer cuatrimestre</cdomain:text>
                         </ns2:name>
-                    </ns2:values>
-                    <ns2:values>
+                    </ns2:value>
+                    <ns2:value>
                         <ns2:id>2013Q2</ns2:id>
                         <ns2:name>
                             <cdomain:text xml:lang="es">2013 Segundo cuatrimestre</cdomain:text>
                         </ns2:name>
-                    </ns2:values>
-                    <ns2:values>
+                    </ns2:value>
+                    <ns2:value>
                         <ns2:id>2013Q3</ns2:id>
                         <ns2:name>
                             <cdomain:text xml:lang="es">2013 Tercer cuatrimestre</cdomain:text>
                         </ns2:name>
-                    </ns2:values>
+                    </ns2:value>
                 </ns2:attributeValues>
                 <ns2:type>TEMPORAL</ns2:type>
             </ns2:attribute>
@@ -502,41 +502,41 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DIMENSION</ns2:attachmentLevel>
                 <ns2:dimensions total="3">
-                    <ns2:dimensions>
+                    <ns2:dimension>
                         <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>measure01</ns2:dimensionId>
-                    </ns2:dimensions>
+                    </ns2:dimension>
                 </ns2:dimensions>
                 <ns2:attributeValues xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:EnumeratedAttributeValues" total="3">
-                    <ns2:values kind="structuralResources#concept">
+                    <ns2:value kind="structuralResources#concept">
                         <cdomain:id>1</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).1</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/1"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">1 en Español</cdomain:text>
                         </cdomain:name>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#concept">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#concept">
                         <cdomain:id>2</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).2</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/2"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">2 en Español</cdomain:text>
                         </cdomain:name>
-                    </ns2:values>
-                    <ns2:values kind="structuralResources#concept">
+                    </ns2:value>
+                    <ns2:value kind="structuralResources#concept">
                         <cdomain:id>3</cdomain:id>
                         <cdomain:urn>urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).3</cdomain:urn>
                         <cdomain:selfLink href="http://apis.metamac.org/metamac-srm-web/apis/structural-resources-internal/v1.0/conceptschemes/agency01/123/01.000/concepts/3"/>
                         <cdomain:name>
                             <cdomain:text xml:lang="es">3 en Español</cdomain:text>
                         </cdomain:name>
-                    </ns2:values>
+                    </ns2:value>
                 </ns2:attributeValues>
                 <ns2:type>OTHER</ns2:type>
             </ns2:attribute>
@@ -547,18 +547,18 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DIMENSION</ns2:attachmentLevel>
                 <ns2:dimensions total="4">
-                    <ns2:dimensions>
+                    <ns2:dimension>
                         <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>measure01</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>dim01</ns2:dimensionId>
-                    </ns2:dimensions>
+                    </ns2:dimension>
                 </ns2:dimensions>
                 <ns2:type>OTHER</ns2:type>
             </ns2:attribute>
@@ -569,12 +569,12 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DIMENSION</ns2:attachmentLevel>
                 <ns2:dimensions total="2">
-                    <ns2:dimensions>
+                    <ns2:dimension>
                         <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
-                    </ns2:dimensions>
+                    </ns2:dimension>
                 </ns2:dimensions>
                 <ns2:type>OTHER</ns2:type>
             </ns2:attribute>
@@ -585,15 +585,15 @@
                 </ns2:name>
                 <ns2:attachmentLevel>DIMENSION</ns2:attachmentLevel>
                 <ns2:dimensions total="3">
-                    <ns2:dimensions>
+                    <ns2:dimension>
                         <ns2:dimensionId>GEO_DIM</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>TIME_PERIOD</ns2:dimensionId>
-                    </ns2:dimensions>
-                    <ns2:dimensions>
+                    </ns2:dimension>
+                    <ns2:dimension>
                         <ns2:dimensionId>dim01</ns2:dimensionId>
-                    </ns2:dimensions>
+                    </ns2:dimension>
                 </ns2:dimensions>
                 <ns2:type>OTHER</ns2:type>
             </ns2:attribute>
@@ -623,8 +623,8 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=T2tGQFMd0X&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
-            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=hwy5MOZO3I/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MM8jqZKmJ4&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=H5F6bjoV2O/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
         </ns2:requires>
         <ns2:isPartOf total="2">
             <ns2:resource kind="statisticalResources#collection">
@@ -649,23 +649,23 @@
             </ns2:resource>
         </ns2:isPartOf>
         <ns2:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>iYrZp3uRHj</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=iYrZp3uRHj</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/iYrZp3uRHj"/>
+            <cdomain:id>OB970RXFRw</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=OB970RXFRw</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/OB970RXFRw"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Txej5iXw9K en Espanol</cdomain:text>
             </cdomain:name>
-            <ns2:managementAppLink>http://localhost:8080/statistical-operations-internal/iYrZp3uRHj</ns2:managementAppLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-operations-internal/OB970RXFRw</ns2:managementAppLink>
         </ns2:statisticalOperation>
         <ns2:maintainer kind="structuralResources#agency">
-            <cdomain:id>Wbm4Qa4Erq</cdomain:id>
+            <cdomain:id>tOvQLumYbB</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).Wbm4Qa4Erq</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/Wbm4Qa4Erq"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).tOvQLumYbB</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/tOvQLumYbB"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-Wbm4Qa4Erq en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-tOvQLumYbB en Espanol</cdomain:text>
             </cdomain:name>
-            <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/Wbm4Qa4Erq</ns2:managementAppLink>
+            <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/tOvQLumYbB</ns2:managementAppLink>
         </ns2:maintainer>
         <ns2:validFrom>2013-01-01T03:04:12Z</ns2:validFrom>
         <ns2:validTo>2013-02-16T14:04:12Z</ns2:validTo>

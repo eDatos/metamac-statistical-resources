@@ -20,7 +20,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-Vr2C5ZOrQE_000001 en Espanol",
+				"value": "description-DT19hRxDtg_000001 en Espanol",
 				"lang": "es"
 			}
 		]
@@ -28,7 +28,7 @@
 	"keywords": {
 		"text": [
 			{
-				"value": "keyword1 keyword2 keyword3-Vr2C5ZOrQE_000001 en Espanol",
+				"value": "keyword1 keyword2 keyword3-DT19hRxDtg_000001 en Espanol",
 				"lang": "es"
 			}
 		]
@@ -39,7 +39,7 @@
 		],
 		"total": 1
 	},
-	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=VQblG1rYsi&resourceId=dataset1&version=01.000",
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=p13Ff1fBpB&resourceId=dataset1&version=01.000",
 	"metadata": {
 		"language": {
 			"id": "language01",
@@ -98,11 +98,11 @@
 			"total": 2
 		},
 		"statisticalOperation": {
-			"id": "Vr2C5ZOrQE",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=Vr2C5ZOrQE",
+			"id": "DT19hRxDtg",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=DT19hRxDtg",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/Vr2C5ZOrQE"
+				"href": "http://data.istac.es/apis/operations/latest/DT19hRxDtg"
 			},
 			"name": {
 				"text": [
@@ -140,7 +140,7 @@
 		"subtitle": {
 			"text": [
 				{
-					"value": "subtitle-Vr2C5ZOrQE_000001 en Espanol",
+					"value": "subtitle-DT19hRxDtg_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -148,7 +148,7 @@
 		"titleAlternative": {
 			"text": [
 				{
-					"value": "titleAlternative-Vr2C5ZOrQE_000001 en Espanol",
+					"value": "titleAlternative-DT19hRxDtg_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -215,7 +215,7 @@
 		"conformsTo": {
 			"text": [
 				{
-					"value": "conformsTo-Vr2C5ZOrQE_000001 en Espanol",
+					"value": "conformsTo-DT19hRxDtg_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -354,7 +354,7 @@
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/replace01/01.000"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:replace01(01.000)",
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=0EnwfsWvLt&resourceId=replace01&version=01.000"
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=hddhOlhHCb&resourceId=replace01&version=01.000"
 		},
 		"isPartOf": {
 			"resource": [
@@ -455,23 +455,23 @@
 		"accessRights": {
 			"text": [
 				{
-					"value": "accessRights-Vr2C5ZOrQE_000001 en Espanol",
+					"value": "accessRights-DT19hRxDtg_000001 en Espanol",
 					"lang": "es"
 				}
 			]
 		},
 		"maintainer": {
-			"id": "VQblG1rYsi",
+			"id": "p13Ff1fBpB",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).VQblG1rYsi",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).p13Ff1fBpB",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/VQblG1rYsi"
+				"href": "http://data.istac.es/apis/srm/latest/p13Ff1fBpB"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-VQblG1rYsi en Espanol",
+						"value": "title-p13Ff1fBpB en Espanol",
 						"lang": "es"
 					}
 				]
@@ -539,7 +539,7 @@
 		"dataProviderAnnotations": {
 			"text": [
 				{
-					"value": "dataProviderAnnotations-Vr2C5ZOrQE_000001 en Espanol",
+					"value": "dataProviderAnnotations-DT19hRxDtg_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -907,23 +907,6 @@
 		"temporalGranularities": {
 			"resource": [
 				{
-					"id": "monthly",
-					"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).monthly",
-					"selfLink": {
-						"kind": "structuralResources#code",
-						"href": "http://data.istac.es/apis/srm/latest/monthly"
-					},
-					"name": {
-						"text": [
-							{
-								"value": "title-monthly en Espanol",
-								"lang": "es"
-							}
-						]
-					},
-					"kind": "structuralResources#code"
-				},
-				{
 					"id": "yearly",
 					"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).yearly",
 					"selfLink": {
@@ -934,6 +917,23 @@
 						"text": [
 							{
 								"value": "title-yearly en Espanol",
+								"lang": "es"
+							}
+						]
+					},
+					"kind": "structuralResources#code"
+				},
+				{
+					"id": "monthly",
+					"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).monthly",
+					"selfLink": {
+						"kind": "structuralResources#code",
+						"href": "http://data.istac.es/apis/srm/latest/monthly"
+					},
+					"name": {
+						"text": [
+							{
+								"value": "title-monthly en Espanol",
 								"lang": "es"
 							}
 						]
@@ -1105,7 +1105,7 @@
 					},
 					"type": "GEOGRAPHIC_DIMENSION",
 					"dimensionValues": {
-						"values": [
+						"value": [
 							{
 								"variableElement": {
 									"id": "variableElement-santa-cruz-tenerife",
@@ -1666,7 +1666,7 @@
 					},
 					"type": "TIME_DIMENSION",
 					"dimensionValues": {
-						"values": [
+						"value": [
 							{
 								"id": "2014",
 								"name": {
@@ -1731,7 +1731,7 @@
 					},
 					"type": "MEASURE_DIMENSION",
 					"dimensionValues": {
-						"values": [
+						"value": [
 							{
 								"showDecimalsPrecision": 4,
 								"measureQuantity": {
@@ -1877,7 +1877,7 @@
 					},
 					"type": "DIMENSION",
 					"dimensionValues": {
-						"values": [
+						"value": [
 							{
 								"open": true,
 								"id": "dim01-codelist01-code01",
@@ -1987,7 +1987,7 @@
 					},
 					"attachmentLevel": "DATASET",
 					"attributeValues": {
-						"values": [
+						"value": [
 							{
 								"id": "A",
 								"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=agency01:abc(01.000).A",
@@ -2037,7 +2037,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							}
@@ -2058,7 +2058,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -2082,7 +2082,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -2093,7 +2093,7 @@
 						"total": 2
 					},
 					"attributeValues": {
-						"values": [
+						"value": [
 							{
 								"id": "2013Q1",
 								"name": {
@@ -2144,7 +2144,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -2158,7 +2158,7 @@
 						"total": 3
 					},
 					"attributeValues": {
-						"values": [
+						"value": [
 							{
 								"id": "1",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:123(01.000).1",
@@ -2224,7 +2224,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -2254,7 +2254,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -2278,7 +2278,7 @@
 					},
 					"attachmentLevel": "DIMENSION",
 					"dimensions": {
-						"dimensions": [
+						"dimension": [
 							{
 								"dimensionId": "GEO_DIM"
 							},
@@ -2372,7 +2372,7 @@
 		"abstract": {
 			"text": [
 				{
-					"value": "abstract-Vr2C5ZOrQE_000001 en Espanol",
+					"value": "abstract-DT19hRxDtg_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -2380,7 +2380,7 @@
 	},
 	"data": {
 		"dimensions": {
-			"dimensions": [
+			"dimension": [
 				{
 					"dimensionId": "GEO_DIM",
 					"representations": {
