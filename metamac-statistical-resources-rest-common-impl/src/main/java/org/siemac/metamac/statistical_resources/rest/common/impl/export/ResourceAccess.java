@@ -71,8 +71,6 @@ public class ResourceAccess {
     // Data
     private String[]                                      observations;
     private Map<String, String[]>                         attributesValuesByAttributeId;
-    private List<String>                                  dimensionsOrderedForData;
-    private Map<String, List<String>>                     dimensionValuesOrderedForDataByDimensionId;
 
     private DatasetBase                                   dataset;
 
@@ -110,7 +108,6 @@ public class ResourceAccess {
         initializeDimensions(dimensions, datasetSelection);
         initializeAttributes(data, attributes, datasetSelection);
         initializeObservations(data);
-        initializeDimensionsForData(data);
         initializeMultipliers();
         initializeIndex();
     }
@@ -227,14 +224,6 @@ public class ResourceAccess {
         return attributesValuesByAttributeId.get(attributeId);
     }
 
-    public List<String> getDimensionsOrderedForData() {
-        return dimensionsOrderedForData;
-    }
-
-    public List<String> getDimensionValuesOrderedForData(String dimensionId) {
-        return dimensionValuesOrderedForDataByDimensionId.get(dimensionId);
-    }
-
     /**
      * Init dimensions and dimensions values
      */
@@ -289,25 +278,6 @@ public class ResourceAccess {
      */
     private void initializeObservations(Data data) {
         observations = dataToDataArray(data.getObservations());
-    }
-
-    /**
-     * Init dimensions and dimensions values. Builds a map with dimensions values to get order provided in DATA, because observations are retrieved in API with this order
-     */
-    private void initializeDimensionsForData(Data data) throws MetamacException {
-        List<DimensionRepresentation> dimensionRepresentations = data.getDimensions().getDimensions();
-        dimensionsOrderedForData = new ArrayList<String>(dimensionRepresentations.size());
-        dimensionValuesOrderedForDataByDimensionId = new HashMap<String, List<String>>(dimensionRepresentations.size());
-        for (DimensionRepresentation dimensionRepresentation : dimensionRepresentations) {
-            String dimensionId = dimensionRepresentation.getDimensionId();
-            dimensionsOrderedForData.add(dimensionId);
-
-            List<CodeRepresentation> codesRepresentations = dimensionRepresentation.getRepresentations().getRepresentations();
-            dimensionValuesOrderedForDataByDimensionId.put(dimensionId, new ArrayList<String>(codesRepresentations.size()));
-            for (CodeRepresentation codeRepresentation : codesRepresentations) {
-                dimensionValuesOrderedForDataByDimensionId.get(dimensionId).add(codeRepresentation.getCode());
-            }
-        }
     }
 
     /**
