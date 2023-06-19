@@ -15,7 +15,6 @@ import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.LabelVisualisationModeEnum;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 
 public class PlainTextExporter {
 
@@ -60,8 +59,8 @@ public class PlainTextExporter {
                 Map<String, String> permutationAtCell = datasetSelection.permutationAtCell(i, j);
                 // The observation is complete
                 // Dimension values
-                for (Dimension dimension : datasetAccess.getDimensionsMetadata()) {
-                    String dimensionId = dimension.getId();
+                for (String dimensionId : datasetAccess.getDimensionsOrderedForData()) {
+
                     String dimensionValueId = permutationAtCell.get(dimensionId);
                     LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDimensionLabelVisualisationMode(dimensionId);
 
