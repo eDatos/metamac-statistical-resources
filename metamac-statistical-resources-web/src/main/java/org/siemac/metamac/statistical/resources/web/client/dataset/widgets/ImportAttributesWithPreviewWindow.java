@@ -31,8 +31,8 @@ public abstract class ImportAttributesWithPreviewWindow extends UploadResourceWi
 
             @Override
             public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                submitIfValid();
-            }
+                    submitIfValid();
+                }
         });
 
         HiddenItem updateParamDatasetVersionUrn = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_PARAM_DATASET_VERSION_URN);
@@ -100,7 +100,6 @@ public abstract class ImportAttributesWithPreviewWindow extends UploadResourceWi
             uploadItem = new UploadItem("file-name");
             uploadItem.setTitle(getConstants().datasetDatasource());
             uploadItem.setWidth(400);
-            uploadItem.setRequired(true);
             uploadItem.setTitleStyle("requiredFormLabel");
 
             uploadItem.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
@@ -112,6 +111,7 @@ public abstract class ImportAttributesWithPreviewWindow extends UploadResourceWi
                         @Override
                         public void execute() {
                             submitPreviewIfValid();
+                            warningLabel.hide();
                         }
                     });
                 }
