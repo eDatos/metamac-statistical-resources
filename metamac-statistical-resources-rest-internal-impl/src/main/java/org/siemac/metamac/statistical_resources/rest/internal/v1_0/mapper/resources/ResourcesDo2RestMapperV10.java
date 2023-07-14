@@ -3,8 +3,8 @@ package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.resou
 import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Resources;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 
 public interface ResourcesDo2RestMapperV10 {
 

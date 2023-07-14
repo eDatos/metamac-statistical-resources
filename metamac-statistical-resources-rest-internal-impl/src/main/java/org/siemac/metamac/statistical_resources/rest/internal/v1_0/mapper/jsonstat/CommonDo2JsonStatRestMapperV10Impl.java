@@ -14,30 +14,30 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatCategory;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtension;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attribute;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.AttributeValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Attributes;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.CodeRepresentation;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Data;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DataAttribute;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimension;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionRepresentation;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionRepresentations;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DimensionValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimensions;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedAttributeValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedAttributeValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedDimensionValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.EnumeratedDimensionValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedAttributeValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedAttributeValues;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValue;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttribute;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedAttributeValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedAttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     @Override
     public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, String selectedLanguage) throws Exception {
         Map<String, JsonStatDimension> jsonStatDimensionMap = new HashMap<>();
-        for (DimensionRepresentation dimension: dimensionRepresentations.getDimensions()) {
+        for (DimensionRepresentation dimension : dimensionRepresentations.getDimensions()) {
             JsonStatDimension jsonStatDimension = new JsonStatDimension();
             jsonStatDimension.setLabel(toDimensionI18nName(dimensions, dimension.getDimensionId(), selectedLanguage));
             jsonStatDimension.setCategory(new JsonStatCategory());
@@ -147,7 +147,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return null;
     }
 
-    private List<String> getNotesForAttributesAssociatedToCategories(DsdProcessor.DsdAttribute attribute, Dimensions dimensions, Attributes attributes, String selectedLanguage, Data data, DsdProcessorResult dsdProcessorResult) {
+    private List<String> getNotesForAttributesAssociatedToCategories(DsdProcessor.DsdAttribute attribute, Dimensions dimensions, Attributes attributes, String selectedLanguage, Data data,
+            DsdProcessorResult dsdProcessorResult) {
         List<String> notes = new ArrayList<>();
         List<DimensionRepresentation> attributeAssociatedDimensions = getDimensionsAssociatedToAttribute(attribute, data, dsdProcessorResult);
         DataAttribute dataAttribute = getAttributeFromDatasetData(attribute, data);
@@ -214,7 +215,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return notes;
     }
 
-    private void populateNotes(int currentDimension, int size[], int index[], Dimensions dimensions, String selectedLanguage, List<String> notes, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
+    private void populateNotes(int currentDimension, int size[], int index[], Dimensions dimensions, String selectedLanguage, List<String> notes,
+            List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
         if (currentDimension >= size.length) {
             String note = getNoteFromAttributePossition(dimensions, selectedLanguage, attributeAssociatedDimensions, attributeValues, index);
             if (note != null) {
@@ -250,7 +252,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return attributeCode; // some attributes are not declared as i18n
     }
 
-    private String getNoteFromAttributePossition(Dimensions dimensions, String selectedLanguage, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues, int[] index) {
+    private String getNoteFromAttributePossition(Dimensions dimensions, String selectedLanguage, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues,
+            int[] index) {
         String value = getValueFromPosition(attributeAssociatedDimensions, attributeValues, index);
         if (!StringUtils.isBlank(value)) {
             List<String> categories = new ArrayList<>();

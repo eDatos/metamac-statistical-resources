@@ -921,7 +921,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
                 GeoCovVarElementCacheDatasetVersionProperties.isLastVersion());
         return conditionalCriteria != null ? (Boolean) conditionalCriteria.getFirstOperant() : null;
     }
-    
+
     private String getAgencyIdFromConditionalCriteria(List<ConditionalCriteria> conditions) {
         // can use PublicationVersionProperties or DatasetVersionProperties...
         ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Equal,
@@ -1088,41 +1088,44 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
     protected RelatedResourceResult mockPublicationVersionRepositoryRetrieveIsReplacedByAnswer() {
         return restDoMocks.mockPublicationRelatedResourceResult("agency01", "collection99", "01.000");
     }
-    
+
     @SuppressWarnings("unchecked")
     private void mockFindGeoCovVarElementCacheDatasetVersionByCondition() throws MetamacException {
-        when(datasetService.findResourcesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class))).thenAnswer(new Answer<PagedResult<GeoCovVarElementCacheDatasetVersion>>() {
+        when(datasetService.findResourcesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class)))
+                .thenAnswer(new Answer<PagedResult<GeoCovVarElementCacheDatasetVersion>>() {
 
-            @Override
-            public org.fornax.cartridges.sculptor.framework.domain.PagedResult<GeoCovVarElementCacheDatasetVersion> answer(InvocationOnMock invocation) throws Throwable {
-                List<ConditionalCriteria> conditions = (List<ConditionalCriteria>) invocation.getArguments()[1];
+                    @Override
+                    public org.fornax.cartridges.sculptor.framework.domain.PagedResult<GeoCovVarElementCacheDatasetVersion> answer(InvocationOnMock invocation) throws Throwable {
+                        List<ConditionalCriteria> conditions = (List<ConditionalCriteria>) invocation.getArguments()[1];
 
-                String variableElementId = getVariableElementFromConditionalCriteria(conditions);
-                Boolean isLastVersion = getIsLastVersionFromConditionalCriteria(conditions);
+                        String variableElementId = getVariableElementFromConditionalCriteria(conditions);
+                        Boolean isLastVersion = getIsLastVersionFromConditionalCriteria(conditions);
 
-                if (variableElementId != null) {
-                    // Retrieve one
-                    GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = null;
+                        if (variableElementId != null) {
+                            // Retrieve one
+                            GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = null;
 
-                    geoCovVarElementCacheDatasetVersion = restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, variableElementId, isLastVersion);
-                    
-                    List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCovVarElementCacheDatasetVersion>();
-                    if (geoCovVarElementCacheDatasetVersion != null) {
-                        geoCovVarElementCacheDatasetsVersion.add(geoCovVarElementCacheDatasetVersion);
-                    }
-                    return new PagedResult<GeoCovVarElementCacheDatasetVersion>(geoCovVarElementCacheDatasetsVersion, 0, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size());
-                } else {
-                    // any
-                    List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCovVarElementCacheDatasetVersion>();
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, "variableElement01", true));
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_2, "variableElement01", true));
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_2, DATASET_1_CODE, VERSION_1, "variableElement01", true));
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_2_CODE, VERSION_1, "variableElement01", true));
+                            geoCovVarElementCacheDatasetVersion = restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, variableElementId, isLastVersion);
 
-                    return new PagedResult<GeoCovVarElementCacheDatasetVersion>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
+                            List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCovVarElementCacheDatasetVersion>();
+                            if (geoCovVarElementCacheDatasetVersion != null) {
+                                geoCovVarElementCacheDatasetsVersion.add(geoCovVarElementCacheDatasetVersion);
+                            }
+                            return new PagedResult<GeoCovVarElementCacheDatasetVersion>(geoCovVarElementCacheDatasetsVersion, 0, geoCovVarElementCacheDatasetsVersion.size(),
+                                    geoCovVarElementCacheDatasetsVersion.size());
+                        } else {
+                            // any
+                            List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCovVarElementCacheDatasetVersion>();
+                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, "variableElement01", true));
+                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_2, "variableElement01", true));
+                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_2, DATASET_1_CODE, VERSION_1, "variableElement01", true));
+                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_2_CODE, VERSION_1, "variableElement01", true));
 
-                }
-            };
-        });
-    } 
+                            return new PagedResult<GeoCovVarElementCacheDatasetVersion>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(),
+                                    geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
+
+                        }
+                    };
+                });
+    }
 }
