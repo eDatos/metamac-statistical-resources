@@ -64,7 +64,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private static int formWidth = 600;
     private static int formWidthFields = 400;
     protected InformationLabel informationLabel;
-    protected WarningLabel warningLabel;
+    protected WarningLabel warningLabelSdmxPattern;
     
     
     private static final String[] REQUIRED_FIELDS = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
@@ -168,7 +168,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
                 if (isDateInSdmxFormat(dateNextUpdateValue) && isDateInSdmxFormat(dateNextVersion)) {
                     submitIfValid();
                 } else {
-                    warningLabel.show();
+                    warningLabelSdmxPattern.show();
                 }
 
             }
@@ -524,7 +524,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         
         addRequiredFieldsInExtraForm(false, false);
         
-        warningLabel.hide();
+        warningLabelSdmxPattern.hide();
     }   
     
     private class UploadDatasourceForm extends UploadForm {
@@ -532,11 +532,11 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         private UploadItem uploadItem;
 
         private void buildWarningSdmxDatePatternLabel() {
-            warningLabel = new WarningLabel(getMessages().datasetsSdmxPatternFields());
-            warningLabel.setWidth(formWidth);
-            warningLabel.setMargin(5);
-            warningLabel.hide();
-            body.addMember(warningLabel);
+            warningLabelSdmxPattern = new WarningLabel(getMessages().datasetsSdmxPatternFields());
+            warningLabelSdmxPattern.setWidth(formWidth);
+            warningLabelSdmxPattern.setMargin(5);
+            warningLabelSdmxPattern.hide();
+            body.addMember(warningLabelSdmxPattern);
         }
         
         private void buildInformationLabel() {
@@ -555,7 +555,6 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
             uploadItem.setTitle(getConstants().datasetDatasource());
             uploadItem.setTitleColSpan(2);
             uploadItem.setWidth(formWidthFields);
-            uploadItem.setRequired(true);
             buildInformationLabel();
             buildWarningSdmxDatePatternLabel();
 
@@ -568,6 +567,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
                         @Override
                         public void execute() {
                             submitPreviewIfValid();
+                            warningLabel.hide();
                         }
                     });
                 }
