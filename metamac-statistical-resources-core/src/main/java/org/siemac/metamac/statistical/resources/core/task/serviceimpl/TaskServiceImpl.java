@@ -67,6 +67,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
 import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
+import org.siemac.metamac.rest.statistical_operations_internal.v1_0.domain.Operation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
@@ -100,6 +101,7 @@ import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatu
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.AbstractImportDatasetJob;
@@ -191,6 +193,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private SrmRestInternalService                srmRestInternalService;
+
+    @Autowired
+    StatisticalOperationsRestInternalService      statisticalOperationsRestInternalService;
 
     @Autowired
     private DatasetRepositoriesServiceFacade      datasetRepositoriesServiceFacade;
@@ -1206,7 +1211,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
         }
         InternationalString datasetTitle = InternationalStringUtils.copy(datasetVersion.getSiemacMetadataStatisticalResource().getTitle());
-        InternationalString operationTitle = InternationalStringUtils.copy(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
+        InternationalString operationTitle = getOperationTitleFromStatisticalOperationByCode(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
 
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
@@ -1231,9 +1236,19 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         }
 
-        logger.debug("Processing geographic coverage to create the cache correctlyfinished");
+        logger.debug("Processing geographic coverage to create the cache correctly finished");
 
         markTaskAsFinished(ctx, jobKey);
+    }
+
+    private InternationalString getOperationTitleFromStatisticalOperationByCode(String operationCode) throws MetamacException {
+        Operation operation = statisticalOperationsRestInternalService.retrieveOperationById(operationCode);
+        if (operation != null) {
+            return InternationalStringUtils.getCommonInternationalStringFromRestInternationalString(operation.getName());
+        } else {
+            logger.error("Could not find operation from statistical operation api {}", operationCode);
+            throw new MetamacException(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_OPERATION_NOT_FOUND, operationCode);
+        }
     }
 
     private void markTaskAsFinishedInTransaction(ServiceContext ctx, String jobKey) {
