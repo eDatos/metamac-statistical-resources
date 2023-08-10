@@ -325,6 +325,7 @@
     <cdomain:text xml:lang="es">code01 en Español</cdomain:text>
 </cdomain:name>
                             </ns2:unitCode>
+                            <ns2:unitMultiplier/>
                         </ns2:measureQuantity>
                     </ns2:value>
                     <ns2:value kind="structuralResources#concept">
@@ -347,6 +348,7 @@
     <cdomain:text xml:lang="es">code01 en Español</cdomain:text>
 </cdomain:name>
                             </ns2:unitCode>
+                            <ns2:unitMultiplier/>
                         </ns2:measureQuantity>
                     </ns2:value>
                     <ns2:value kind="structuralResources#concept">
@@ -369,6 +371,7 @@
     <cdomain:text xml:lang="es">code01 en Español</cdomain:text>
 </cdomain:name>
                             </ns2:unitCode>
+                            <ns2:unitMultiplier/>
                         </ns2:measureQuantity>
                     </ns2:value>
                 </ns2:dimensionValues>
