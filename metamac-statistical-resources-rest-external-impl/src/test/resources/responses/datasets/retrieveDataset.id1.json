@@ -1750,7 +1750,8 @@
 											]
 										},
 										"kind": "structuralResources#code"
-									}
+									},
+									"unitMultiplier": {}
 								},
 								"id": "measure01-conceptScheme01-concept01",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept01",
@@ -1793,7 +1794,8 @@
 											]
 										},
 										"kind": "structuralResources#code"
-									}
+									},
+									"unitMultiplier": {}
 								},
 								"id": "measure01-conceptScheme01-concept02",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept02",
@@ -1836,7 +1838,8 @@
 											]
 										},
 										"kind": "structuralResources#code"
-									}
+									},
+									"unitMultiplier": {}
 								},
 								"id": "measure01-conceptScheme01-concept05",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept05",
