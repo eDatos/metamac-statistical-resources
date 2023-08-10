@@ -32,24 +32,34 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     public boolean retriveDatabaseDatasetImportJobIsEnabled() {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
-    
+
     @Override
     public String retrieveCronExpressionForGeograficCoverageCacheClear() {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
-    
+
     @Override
     public String retrieveDbDataViewsRole() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
-    
+
     @Override
     public String retrieveKafkaExternalDatasetPublicationMessagesGroup() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
-    
+
     @Override
     public String retrieveKafkaCustomExternalDatasetPublicationMessagesGroup() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
+
+    @Override
+    public String retrieveUnitMeasure() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
+
+    @Override
+    public String retrieveUnitMeasureMultiplier() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
 }
