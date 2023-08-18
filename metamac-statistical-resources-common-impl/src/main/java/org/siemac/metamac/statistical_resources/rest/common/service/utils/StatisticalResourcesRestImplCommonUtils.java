@@ -16,11 +16,13 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.ListUtils;
 import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -178,4 +180,22 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         }
     }
 
+    public static void handleException(MetamacException e) throws MetamacException {
+        org.siemac.metamac.rest.common.v1_0.domain.Exception exception = translateMetamacExceptionIntoRestException(e);
+        if (exception != null) {
+            throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+        }
+        throw e;
+    }
+
+    private static org.siemac.metamac.rest.common.v1_0.domain.Exception translateMetamacExceptionIntoRestException(MetamacException e) {
+        if (e.getExceptionItems() != null && !e.getExceptionItems().isEmpty()
+                && ServiceExceptionType.DATASET_NO_DATA.getCode().equals(e.getExceptionItems().get(0).getCode())) {
+            org.siemac.metamac.rest.common.v1_0.domain.Exception exception = new org.siemac.metamac.rest.common.v1_0.domain.Exception();
+            exception.setCode(e.getExceptionItems().get(0).getCode());
+            exception.setMessage(e.getExceptionItems().get(0).getMessage());
+            return exception;
+        }
+        return null;
+    }
 }

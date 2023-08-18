@@ -116,7 +116,7 @@ public class ImportAttributesJob implements Job {
         try {
             getTaskServiceFacade().markTaskAsFailed(serviceContext, getData().getString(TASK_NAME), getData().getString(DATASET_VERSION_ID), getData().getString(DATASET_URN), metamacException);
             logger.info("{} marked as error at {}", taskName, new Date());
-            metamacException.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORT_DATASET_JOB_ERROR, fileNames));
+            metamacException.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORT_DATASET_ATTRIBUTE_JOB_ERROR, fileNames));
             sendErrorNotification(metamacException);
         } catch (MetamacException e1) {
             logger.error("The importation with key {} has failed and it can't marked as error", taskName, e1);

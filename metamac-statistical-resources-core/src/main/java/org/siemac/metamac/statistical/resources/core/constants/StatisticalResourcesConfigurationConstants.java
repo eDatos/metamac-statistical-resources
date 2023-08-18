@@ -21,13 +21,11 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String DB_URL                                = "metamac.statistical_resources.db.url";
     public static final String DB_USERNAME                           = "metamac.statistical_resources.db.username";
     public static final String DB_PASSWORD                           = "metamac.statistical_resources.db.password";
-    public static final String DB_DIALECT                            = "metamac.statistical_resources.db.dialect";
     public static final String DB_DRIVER_NAME                        = "metamac.statistical_resources.db.driver_name";
 
     public static final String DB_REPOSITORY_URL                     = "metamac.statistical_resources.repo.db.url";
     public static final String DB_REPOSITORY_USERNAME                = "metamac.statistical_resources.repo.db.username";
     public static final String DB_REPOSITORY_PASSWORD                = "metamac.statistical_resources.repo.db.password";
-    public static final String DB_REPOSITORY_DIALECT                 = "metamac.statistical_resources.repo.db.dialect";
     public static final String DB_REPOSITORY_DRIVER_NAME             = "metamac.statistical_resources.repo.db.driver_name";
 
     public static final String DB_DATA_IMPORT_URL                    = "metamac.statistical_resources.data_import.db.url";

@@ -389,6 +389,26 @@ public class ValidateDataVersusDsd {
         ExceptionUtils.throwIfException(exceptions);
     }
 
+    public void checkAttributesInstancesRepresentation(List<AttributeInstanceDto> attributeInstanceDtos, List<MetamacExceptionItem> exceptions) throws MetamacException {
+
+        for (AttributeInstanceDto attributeInstanceDto : attributeInstanceDtos) {
+
+            // The used attribute if correct
+            if (!attributesCodeSet.contains(attributeInstanceDto.getAttributeId()) || attributeIdsAtObservationLevelSet.contains(attributeInstanceDto.getAttributeId())) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTR_NOT_MATCH, attributeInstanceDto.getAttributeId()));
+                continue;
+            }
+
+            String value = attributeInstanceDto.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
+
+            // Enumerated representation of attributes
+            checkAttributeEnumeratedRepresentation(attributeInstanceDto.getAttributeId(), value, exceptions);
+
+            // Non Enumerated representation
+            checkAttributeNonEnumeratedRepresentation(attributeInstanceDto.getAttributeId(), value, exceptions);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public void checkAttributesInstancesAssignmentStatus(String attributeId, List<AttributeInstanceDto> attributeInstanceDenormalizedDtos, Map<String, List<String>> coverage,
             List<MetamacExceptionItem> exceptions) throws Exception {

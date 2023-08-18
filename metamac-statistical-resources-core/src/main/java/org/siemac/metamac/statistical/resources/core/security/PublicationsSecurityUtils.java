@@ -98,7 +98,7 @@ public class PublicationsSecurityUtils extends SecurityUtils {
     }
 
     public static void canImportPublicationVersionStructure(ServiceContext ctx, PublicationVersion publicationVersion) throws MetamacException {
-        String operationCode = publicationVersion.getLifeCycleStatisticalResource().getCode();
+        String operationCode = publicationVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode();
         ProcStatusEnum procStatus = publicationVersion.getLifeCycleStatisticalResource().getProcStatus();
         if (!SharedPublicationsSecurityUtils.canImportPublicationVersionStructure(getMetamacPrincipal(ctx), operationCode, procStatus)) {
             throwExceptionIfOperationNotAllowed(ctx);
