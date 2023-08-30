@@ -18,17 +18,17 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public String retriveFilterColumnNameForDbDataImport() throws MetamacException;
 
     public String retriveCronExpressionForDbDataImport() throws MetamacException;
-    
+
     public String retrieveCronExpressionForGeograficCoverageCacheClear() throws MetamacException;
 
     public boolean retriveDatabaseDatasetImportJobIsEnabled();
 
     public String retrieveDbDataViewsRole() throws MetamacException;
-            
+
     public String retrieveKafkaExternalDatasetPublicationMessagesGroup() throws MetamacException;
-    
+
     public String retrieveKafkaCustomExternalDatasetPublicationMessagesGroup() throws MetamacException;
-    
-    
-    
+
+    public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException;
+
 }

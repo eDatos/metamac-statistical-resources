@@ -113,7 +113,6 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
-    
     public static void checkDeleteDatasetVersion(String datasetVersionUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
     }
@@ -248,7 +247,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         }
 
         checkObservationalTimePeriodType(datasetVersion.getDateNextUpdate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
-                
+
         checkExistingSiemacMetadataStatisticalResource(datasetVersion.getSiemacMetadataStatisticalResource(), TypeRelatedResourceEnum.DATASET_VERSION, metadataName, exceptions);
         checkDatasetVersion(datasetVersion, metadataName, exceptions);
 
@@ -257,7 +256,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getId(), addParameter(metadataName, ServiceExceptionSingleParameters.ID), exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersion.getVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.VERSION), exceptions);
     }
-           
+
     private static void checkDatasetVersion(DatasetVersion datasetVersion, String metadataName, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion.getDataSourceType(), addParameter(metadataName, ServiceExceptionSingleBaseParameters.DATA_SOURCE_TYPE), exceptions);
     }
@@ -278,7 +277,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         if (dimensionRepresentationMapping == null) {
             StatisticalResourcesValidationUtils.checkParameterRequired(dimensionRepresentationMapping, ServiceExceptionParameters.DATASET_DIMENSION_REPRESENTATION_MAPPING, exceptions);
         }
-        
+
         checkImportDataSourcesInStatisticalOperationWithAutomaticLifeCicle(basicVersionableStatisticalResourceDto, exceptions);
     }
 
@@ -312,13 +311,13 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
             if (StringUtils.isNotEmpty(basicVersionableStatisticalResourceDto.getNextUpdateDate())) {
                 checkObservationalTimePeriodType(basicVersionableStatisticalResourceDto.getNextUpdateDate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
             }
-            
+
             if (StringUtils.isNotEmpty(basicVersionableStatisticalResourceDto.getNextVersionDate())) {
                 checkObservationalTimePeriodType(basicVersionableStatisticalResourceDto.getNextVersionDate(), ServiceExceptionSingleParameters.NEXT_VERSION_DATE, exceptions);
             }
         }
     }
-    
+
     public static void checkCheckAttributesInstancesWithDatasetAndDimensionAttachment(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
         checkExistingDatasetVersion(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
     }
@@ -378,19 +377,19 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkUpdateAllGeographicCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
-    
+
     public static void checkUpdateGeographicCoverageExternalPublicationVariableElementsCache(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
-    
+
     public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
-    
+
     public static void checkUpdateGeographicCoverageFromSpatialAttribute(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
     }
-    
+
     public static void checkImportAttributesInDatasetVersion(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
@@ -398,5 +397,9 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkImportAttributesFromFile(String datasetVersionUrn, List<URL> fileUrls, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(fileUrls, ServiceExceptionParameters.FILE_URLS, exceptions);
+    }
+
+    public static void checkRetrievePublishedLastVersionDatasets(List<MetamacExceptionItem> exceptions) throws MetamacException {
+        // NOTHING
     }
 }

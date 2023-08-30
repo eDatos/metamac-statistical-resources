@@ -12,9 +12,9 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 
 public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceImpl implements StatisticalResourcesConfiguration {
 
-    final String STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
+    final String STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP        = "STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
     final String STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
-    
+
     @Override
     public Map<KeyDotEnum, String> retrieveDotCodeMapping() throws MetamacException {
 
@@ -59,7 +59,7 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     public String retrieveCronExpressionForGeograficCoverageCacheClear() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_GEOGRAPHIC_COVERAGE_CACHE_CLEAR);
     }
-    
+
     @Override
     public boolean retriveDatabaseDatasetImportJobIsEnabled() {
         return environmentConfigurationProperties.getBoolean(StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED, Boolean.FALSE);
@@ -69,14 +69,19 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     public String retrieveDbDataViewsRole() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DATA_VIEWS_ROLE);
     }
-        
+
     @Override
     public String retrieveKafkaExternalDatasetPublicationMessagesGroup() throws MetamacException {
-        return STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP; 
+        return STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP;
     }
-    
+
     @Override
     public String retrieveKafkaCustomExternalDatasetPublicationMessagesGroup() throws MetamacException {
-        return STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP; 
+        return STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP;
+    }
+
+    @Override
+    public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException {
+        return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE);
     }
 }
