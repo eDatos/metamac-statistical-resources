@@ -239,4 +239,9 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
         }
     }
 
+    @Override
+    public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
+        // ONLY FOR DATASETS
+    }
+
 }

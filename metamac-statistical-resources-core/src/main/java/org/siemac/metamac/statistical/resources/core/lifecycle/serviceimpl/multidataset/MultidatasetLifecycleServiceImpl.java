@@ -235,4 +235,9 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
         // TODO METAMAC-2715 - Realizar la notificación a Kafka de los recursos Multidataset
     }
 
+    @Override
+    public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
+        // ONLY FOR DATASETS
+    }
+
 }

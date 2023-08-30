@@ -57,6 +57,7 @@ public class StatisticalResourcesStartupListener extends InternalApplicationStar
         checkOptionalProperty(StatisticalResourcesConfigurationConstants.FILTER_COLUMN_NAME_FOR_DB_DATA_IMPORT);
         checkOptionalProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_DB_DATA_IMPORT);
         checkOptionalProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_GEOGRAPHIC_COVERAGE_CACHE_CLEAR);
+        checkOptionalProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE);
 
         // Confluent && Kafka
         checkKafkaProperties();

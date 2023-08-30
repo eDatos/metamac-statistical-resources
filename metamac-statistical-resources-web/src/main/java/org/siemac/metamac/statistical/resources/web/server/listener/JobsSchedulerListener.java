@@ -22,16 +22,22 @@ public class JobsSchedulerListener implements ApplicationListener<ContextRefresh
         logger.debug("Scheduling jobs...");
         schedulingDatabaseDatasetPollingJob();
         schedulingGeographicCoverageCacheClearJob();
+        schedulingResendKafkaDatasetMessageJob();
     }
 
     private void schedulingDatabaseDatasetPollingJob() {
         ServiceContext ctx = new ServiceContext("Metamac", "Tasks", "Metamac");
         taskServiceFacade.scheduleDatabaseDatasetPollingJob(ctx);
     }
-    
+
     private void schedulingGeographicCoverageCacheClearJob() {
         ServiceContext ctx = new ServiceContext("Metamac", "Tasks", "Metamac");
         taskServiceFacade.scheduleGeographicCoverageCacheClearJob(ctx);
+    }
+
+    private void schedulingResendKafkaDatasetMessageJob() {
+        ServiceContext ctx = new ServiceContext("Metamac", "Tasks", "Metamac");
+        taskServiceFacade.scheduleResendKafkaDatasetMessageJob(ctx);
     }
 
 }

@@ -114,6 +114,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulatePx
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateSdmx21DataCallbackImpl;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportAttributesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
@@ -2116,5 +2117,34 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
         }
         return codes;
+    }
+    
+    @Override
+    public void processResendKafkaDatasetMessageTask(ServiceContext ctx) throws MetamacException {
+        
+        taskServiceInvocationValidator.checkProcessResendKafkaDatasetMessageTask(ctx); 
+
+        datasetLifecycleService.resendDatasetStreamMessage(ctx);
+        
+    }
+    
+    @Override
+    public void scheduleResendKafkaDatasetMessageJob(ServiceContext ctx) {
+        try {
+            taskServiceInvocationValidator.checkScheduleResendKafkaDatasetMessageJob(ctx); 
+
+            JobDetail job = newJob(ResendPublishedDatasetsKafkaMessageJob.class).build();
+
+            CronTrigger cronTrigger = TriggerBuilder.newTrigger()
+                    .withSchedule(CronScheduleBuilder.cronSchedule(configurationService.retrieveCronExpressionForResendPublishedDatasetKafkaMessage()).withMisfireHandlingInstructionDoNothing()).build();
+
+            Scheduler sched = schedulerFactory.getScheduler();
+            sched.scheduleJob(job, cronTrigger);
+
+            logger.info("resend all published last version dataset kafka messages at {} ", new Date());
+
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling resend all published last version dataset kafka messages job", e);
+        }
     }
 }

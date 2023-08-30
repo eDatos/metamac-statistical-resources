@@ -90,7 +90,7 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testPlanifyUpdateExternalGeocoverageCache() throws Exception {
         // No test
     }
-    
+
     @Override
     public void testProcessDuplicationTask() throws Exception {
         // See integration test in DataManipulateTest
@@ -105,7 +105,7 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testProcessUpdateExternalGeocoverageCacheTask() throws Exception {
         // No test
     }
-    
+
     @Override
     public void testExistDuplicationTaskInResource() throws Exception {
         // See integration test in DataManipulateTest
@@ -120,7 +120,7 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testExistUpdateExternalGeocoverageCacheTaskInResource() throws Exception {
         // No test
     }
-    
+
     @Override
     public void testMarkTasksAsFailedOnApplicationStartup() throws Exception {
         // See integration test in DataManipulateTest
@@ -145,16 +145,16 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testScheduleDatabaseDatasetPollingJob() throws Exception {
         // No test
     }
-    
+
     @Override
     public void testProcessGeographicCoverageCacheClearTask() throws Exception {
         // Already checked without test
     }
-    
+
     @Override
     public void testScheduleGeographicCoverageCacheClearJob() throws Exception {
         // No test
-    }        
+    }
 
     @Override
     public void testSendDatabaseImportationErrorNotification() throws Exception {
@@ -164,28 +164,38 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     @Override
     public void testImportAttributesInDatasetVersion() throws Exception {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void testPlanifyImportationAttributes() throws Exception {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void testPlanifyRecoveryImportAttributes() throws Exception {
         // TODO Auto-generated method stub
-        
+
     }
 
     @Override
     public void testProcessRollbackImportationAttributesTask() {
-        
+
     }
 
     @Override
     public void testExistsTaskImportAttributes() throws Exception {
         // See integration test in DataManipulateTest
     }
+
+    @Override
+    public void testProcessResendKafkaDatasetMessageTask() throws Exception {
+        // Already checked without test
+    }
+
+    @Override
+    public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
+    }
+
 }

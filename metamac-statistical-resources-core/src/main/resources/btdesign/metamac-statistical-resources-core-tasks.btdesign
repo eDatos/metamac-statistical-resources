@@ -29,6 +29,7 @@ Application DatasetsStatisticalResources {
     		executeUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the update geographical coverage cache task for external publications"
     		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		executeResendPublishedDatasetsKafkaMessageTask() throws MetamacException;
     		
     		"Perform the database dataset pooling task"
     		executeDatabaseDatasetPollingTask()  throws MetamacException;
@@ -41,6 +42,9 @@ Application DatasetsStatisticalResources {
     		executeGeographicCoverageCacheClearTask()  throws MetamacException;
 			"Schedule geographic coverage cache clear"
 			scheduleGeographicCoverageCacheClearJob();
+			
+			"Schedule resend published dataset kafka message job"
+			scheduleResendKafkaDatasetMessageJob();
 			
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
@@ -135,9 +139,14 @@ Application DatasetsStatisticalResources {
 			
 			"Schedule geographic coverage cache clear"
 			scheduleGeographicCoverageCacheClearJob();
+			"Schedule resend published dataset kafka message job"
+			scheduleResendKafkaDatasetMessageJob();
 			
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
+			
+			"Resend kafka published last versión dataset messages"
+			processResendKafkaDatasetMessageTask() throws MetamacException;
 		}
 		
 		// ----------------------------------------------------------------
