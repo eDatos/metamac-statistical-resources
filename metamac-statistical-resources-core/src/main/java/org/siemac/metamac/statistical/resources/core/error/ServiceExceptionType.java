@@ -152,6 +152,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.multidataset_version.is_replaced_by_other_multidataset");
     public static final CommonServiceExceptionType MULTIDATASET_VERSION_CANT_BE_DELETED                                                        = create(
             "exception.resources.multidataset_version.cant_be_deleted");
+    public static final CommonServiceExceptionType MULTIDATASET_VERSION_CANT_BE_DELETED_LINKED_TO_COLLECTION                                   = create(
+            "exception.resources.multidataset_version.cant_be_deleted_linked_to_collection");
     public static final CommonServiceExceptionType MULTIDATASET_VERSION_MUST_HAVE_AT_LEAST_ONE_CUBE                                            = create(
             "exception.resources.multidataset_version.must_have_at_least_one_cube");
     public static final CommonServiceExceptionType MULTIDATASET_VERSION_CUBE_MUST_LINK_TO_DATASET_OR_QUERY                                     = create(

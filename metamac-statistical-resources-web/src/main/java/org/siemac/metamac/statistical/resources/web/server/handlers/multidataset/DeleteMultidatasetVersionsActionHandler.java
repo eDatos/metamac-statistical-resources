@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.multidataset;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetVersionsResult;
@@ -24,13 +25,13 @@ public class DeleteMultidatasetVersionsActionHandler extends SecurityActionHandl
 
     @Override
     public DeleteMultidatasetVersionsResult executeSecurityAction(DeleteMultidatasetVersionsAction action) throws ActionException {
-        try {
-            for (String urn : action.getUrns()) {
+        for (String urn : action.getUrns()) {
+            try {
                 statisticalResourcesServiceFacade.deleteMultidatasetVersion(ServiceContextHolder.getCurrentServiceContext(), urn);
+            } catch (MetamacException e) {
+                throw WebExceptionUtils.createMetamacWebException(new MetamacException(e, ServiceExceptionType.MULTIDATASET_VERSION_CANT_BE_DELETED_LINKED_TO_COLLECTION, urn));
             }
-            return new DeleteMultidatasetVersionsResult();
-        } catch (MetamacException e) {
-            throw WebExceptionUtils.createMetamacWebException(e);
         }
+        return new DeleteMultidatasetVersionsResult();
     }
 }
