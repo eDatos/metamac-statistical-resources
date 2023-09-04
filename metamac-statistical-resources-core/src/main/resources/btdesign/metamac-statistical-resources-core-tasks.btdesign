@@ -145,7 +145,7 @@ Application DatasetsStatisticalResources {
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
 			
-			"Resend kafka published last versión dataset messages"
+			"Resend kafka published last version dataset messages"
 			processResendKafkaDatasetMessageTask() throws MetamacException;
 		}
 		
