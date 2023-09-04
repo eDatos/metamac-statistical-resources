@@ -2143,7 +2143,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             CronExpression cronEx = new CronExpression(cronTrigger.getCronExpression());
 
             if (cronEx.getNextValidTimeAfter(new Date()) == null) {
-                logger.info("ATENTION!! Cron scheduler for resend all published last version dataset kafka messages  is before actual date. For this reason the job has been aborted and it will not never executed ", new Date());
+                logger.info("ATENTION!! Cron scheduler for resend all published last version dataset kafka messages  is before actual date. For this reason the job has been aborted and it will not never executed ");
                 return;
             }
             
