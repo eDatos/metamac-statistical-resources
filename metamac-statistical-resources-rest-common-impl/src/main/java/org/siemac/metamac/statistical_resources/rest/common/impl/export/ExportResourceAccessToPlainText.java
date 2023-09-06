@@ -19,8 +19,8 @@ public class ExportResourceAccessToPlainText {
     }
 
     public List<PlainTextResource> exportResourceToPlainTextWithoutAttributes(ResourceAccess resourceAccess, List<String> selectedLanguages, String format) throws MetamacException {
-        PlainTextExporter exporter = new PlainTextExporter(resourceAccess, selectedLanguages, format);
-        return exporter.writeObservationsAndAttributesWithObservationAttachmentLevel();
+        PlainTextExporter exporter = new PlainTextExporter(resourceAccess, selectedLanguages);
+        return exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(format);
     }
 
     public ResourceAccess buildResourceAccessForDataset(DatasetBase dataset, List<String> selectedLanguages) {
