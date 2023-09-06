@@ -22,36 +22,38 @@ public class PlainTextExporter {
     private final ResourceAccess   datasetAccess;
     private final DatasetSelection datasetSelection;
     private final List<String>     selectedLanguages;
+    private String                 format                                = "";
     private static final String    HEADER_OBSERVATION                    = "OBS_VALUE";
     private static final String    HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE   = "_CODE";
     private static final String    HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
 
-    public PlainTextExporter(ResourceAccess resourceAccess, List<String> selectedLanguages) {
+    public PlainTextExporter(ResourceAccess resourceAccess, List<String> selectedLanguages, String format) {
         datasetAccess = resourceAccess;
         datasetSelection = resourceAccess.getDataSelection();
         this.selectedLanguages = selectedLanguages;
+        this.format = format;
     }
 
-    public List<PlainTextResource> writeObservationsAndAttributesWithObservationAttachmentLevel(String format) throws MetamacException {
+    public List<PlainTextResource> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
         try {
-            return getBodyForPlainTextObservations(format);
+            return getBodyForPlainTextObservations();
         } catch (Exception e) {
             throw new MetamacException(e, UNKNOWN, "Error exporting");
         }
     }
 
-    private String getHeaderName(LabelVisualisationModeEnum labelVisualisation, String name, String format) {
-        return processUnsupportedCharaters(name, format);
+    private String getHeaderName(LabelVisualisationModeEnum labelVisualisation, String name) {
+        return processUnsupportedCharaters(name);
     }
 
-    private String getHeaderNameCode(LabelVisualisationModeEnum labelVisualisation, String name, String format) {
+    private String getHeaderNameCode(LabelVisualisationModeEnum labelVisualisation, String name) {
         if (labelVisualisation.isLabelAndCode()) {
-            return processUnsupportedCharaters(name + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE, format);
+            return processUnsupportedCharaters(name + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE);
         }
         return "";
     }
 
-    private List<PlainTextResource> getBodyForPlainTextObservations(String format) {
+    private List<PlainTextResource> getBodyForPlainTextObservations() {
         List<PlainTextResource> plainTextResourceAccessList = new ArrayList<PlainTextResource>();
 
         for (int i = 0; i < datasetSelection.getRows(); i++) {
@@ -65,26 +67,26 @@ public class PlainTextExporter {
                     String dimensionValueId = permutationAtCell.get(dimensionId);
                     LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDimensionLabelVisualisationMode(dimensionId);
 
-                    String headerName = getHeaderName(labelVisualisation, dimensionId, format);
+                    String headerName = getHeaderName(labelVisualisation, dimensionId);
 
                     if (labelVisualisation.isLabel()) {
                         InternationalString dimensionValueLabel = datasetAccess.getDimensionValueLabelCurrentLocale(dimensionId, dimensionValueId);
-                        plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, dimensionValueLabel, format));
+                        plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, dimensionValueLabel));
                     }
 
                     // if label and code, it needs another column name for code.
                     if (labelVisualisation.isLabelAndCode()) {
-                        headerName = getHeaderNameCode(labelVisualisation, dimensionId, format);
+                        headerName = getHeaderNameCode(labelVisualisation, dimensionId);
                     }
 
                     if (labelVisualisation.isCode()) {
-                        plainTextResourceAccess.getFields().put(headerName, processUnsupportedCharaters(dimensionValueId, format));
+                        plainTextResourceAccess.getFields().put(headerName, processUnsupportedCharaters(dimensionValueId));
                     }
                 }
                 // Observation
                 String observation = datasetAccess.observationAtPermutation(permutationAtCell);
 
-                plainTextResourceAccess.getFields().put(HEADER_OBSERVATION, processUnsupportedCharaters(observation, format));
+                plainTextResourceAccess.getFields().put(HEADER_OBSERVATION, processUnsupportedCharaters(observation));
 
                 // Attributes
                 for (Attribute attribute : datasetAccess.getAttributesMetadata()) {
@@ -94,30 +96,30 @@ public class PlainTextExporter {
 
                     String attributeId = attribute.getId();
                     LabelVisualisationModeEnum labelVisualisation = datasetAccess.getAttributeLabelVisualisationMode(attributeId);
-                    String headerName = getHeaderName(labelVisualisation, attributeId, format);
+                    String headerName = getHeaderName(labelVisualisation, attributeId);
 
                     String attributeValue = datasetAccess.measureAttributeValueAtPermutation(attributeId, permutationAtCell);
                     if (attributeValue == null) {
-                        plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, new InternationalString(), format));
+                        plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, new InternationalString()));
                     } else {
 
                         if (labelVisualisation.isLabel()) {
                             InternationalString attributeValueLabel = datasetAccess.getAttributeValueLabelCurrentLocale(attributeId, attributeValue);
                             if (attributeValueLabel != null) {
-                                plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, attributeValueLabel, format));
+                                plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, attributeValueLabel));
                             } else {
-                                plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, new InternationalString(), format));
+                                plainTextResourceAccess.getFields().putAll(internationalString2MapExport(headerName, new InternationalString()));
                             }
 
                         }
 
                         // if label and code, it needs another column name for code.
                         if (labelVisualisation.isLabelAndCode()) {
-                            headerName = getHeaderNameCode(labelVisualisation, attributeId, format);
+                            headerName = getHeaderNameCode(labelVisualisation, attributeId);
                         }
 
                         if (labelVisualisation.isCode()) {
-                            plainTextResourceAccess.getFields().put(headerName, processUnsupportedCharaters(attributeValue, format));
+                            plainTextResourceAccess.getFields().put(headerName, processUnsupportedCharaters(attributeValue));
                         }
                     }
                 }
@@ -128,7 +130,7 @@ public class PlainTextExporter {
         return plainTextResourceAccessList;
     }
 
-    private Map<String, String> internationalString2MapExport(String nameField, InternationalString source, String format) {
+    private Map<String, String> internationalString2MapExport(String nameField, InternationalString source) {
         Map<String, String> target = new LinkedHashMap<>();
 
         InternationalString copySource = new InternationalString();
@@ -140,23 +142,23 @@ public class PlainTextExporter {
         String header;
         for (String language : getSelectedLanguages()) {
             header = nameField + HEADER_INTERNATIONAL_STRING_SEPARATOR + language;
-            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language, format));
+            target.put(header, getLocalisedStringByLang(copySource.getTexts(), language));
         }
 
         return target;
     }
 
-    private static String getLocalisedStringByLang(List<LocalisedString> source, String language, String format) {
+    private String getLocalisedStringByLang(List<LocalisedString> source, String language) {
         // in the api, lamba functions is not allowed. the search is done with a loop.
         for (LocalisedString loc : source) {
             if (language.equals(loc.getLang())) {
-                return processUnsupportedCharaters(loc.getValue(), format);
+                return processUnsupportedCharaters(loc.getValue());
             }
         }
         return null;
     }
 
-    private static String formattedText(String text, String format) {
+    private String formattedText(String text) {
         if ("csv".equals(format)) {
             text = StringEscapeUtils.escapeCsv(text);
         }
@@ -164,10 +166,10 @@ public class PlainTextExporter {
     }
 
     // remove unsupported characters and if there are excluded characters, to put the value between on quotation marks
-    private static String processUnsupportedCharaters(String string, String format) {
+    private String processUnsupportedCharaters(String string) {
         if (StringUtils.isNotBlank(string)) {
             String value = string.replaceAll("[\n\t\r\b\f]", " ");
-            return formattedText(value, format);
+            return formattedText(value);
         } else {
             return null;
         }
