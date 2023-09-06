@@ -678,4 +678,19 @@ public class CommonUtils {
 
         return dateFormatTypeHashMap;
     }
+
+    public static ExternalItemDto setCodeVersionExternalItem(ExternalItemDto externalItem) {
+        if (externalItem != null) {
+            String[] params = UrnUtils.splitUrnItemScheme(externalItem.getUrn());
+            String code = params[1];
+            String version = "(" + params[2] + ")";
+            if (externalItem.getCodeNested() != null) {
+                externalItem.setCodeNested(code + version);
+            } else {
+                externalItem.setCode(code + version);
+            }
+            return externalItem;
+        }
+        return null;
+    }
 }

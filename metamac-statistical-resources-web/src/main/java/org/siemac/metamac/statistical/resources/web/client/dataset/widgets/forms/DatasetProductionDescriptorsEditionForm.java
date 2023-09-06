@@ -14,6 +14,7 @@ import org.siemac.metamac.statistical.resources.web.client.constants.Statistical
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataProductionDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDsdPaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
@@ -163,7 +164,7 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
                         ExternalItemDto selectedResource = searchDsdWindow.getSelectedResource();
                         searchDsdWindow.markForDestroy();
                         // Set selected resource in form
-                        setRelatedDsd(selectedResource);
+                        setRelatedDsd(CommonUtils.setCodeVersionExternalItem(selectedResource));
                         DatasetProductionDescriptorsEditionForm.this.validate(false);
                     }
                 });
