@@ -85,25 +85,20 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             Map<String, String> labelMap = new HashMap<>();
             Map<String, JsonStatUnit> unitMap = new HashMap<>();
 
-            boolean isMeasureDimension = false;
-            for (Dimension dim : dimensions.getDimensions()) {
-                if (dim.getId().equals(dimension.getDimensionId()) && dim.getType() == DimensionType.MEASURE_DIMENSION) {
-                    isMeasureDimension = true;
-                    break;
-                }
-            }
+            boolean isMeasureDimension = isMeasureDimension(dimensions, dimension);
+            boolean isUnitPresent = isUnitPresent(unitMeasureAttribute, unitMeasureMultiplierAttribute);
 
             for (CodeRepresentation category : dimension.getRepresentations().getRepresentations()) {
                 indexMap.put(category.getCode(), category.getIndex());
                 labelMap.put(category.getCode(), toCategoryI18nName(dimensions, dimension.getDimensionId(), category, selectedLanguage));
-                if (isMeasureDimension) {
+                if (isMeasureDimension && isUnitPresent) {
                     unitMap.put(category.getCode(), toUnit(unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
                 }
             }
 
             jsonStatDimension.getCategory().setIndex(indexMap);
             jsonStatDimension.getCategory().setLabel(labelMap);
-            if (isMeasureDimension) {
+            if (isMeasureDimension && isUnitPresent) {
                 jsonStatDimension.getCategory().setUnit(unitMap);
             }
 
@@ -136,6 +131,22 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
 
         return jsonStatDimensionMap;
+    }
+
+    private static boolean isMeasureDimension(Dimensions dimensions, DimensionRepresentation dimension) {
+        boolean isMeasureDimension = false;
+        for (Dimension dim : dimensions.getDimensions()) {
+            if (dim.getId().equals(dimension.getDimensionId()) && dim.getType() == DimensionType.MEASURE_DIMENSION) {
+                isMeasureDimension = true;
+                break;
+            }
+        }
+        return isMeasureDimension;
+    }
+
+    private boolean isUnitPresent(Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute) {
+        return unitMeasureAttribute != null && unitMeasureMultiplierAttribute != null && unitMeasureAttribute.getAttributeValues() != null
+                && unitMeasureMultiplierAttribute.getAttributeValues() != null;
     }
 
     private JsonStatUnit toUnit(Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
