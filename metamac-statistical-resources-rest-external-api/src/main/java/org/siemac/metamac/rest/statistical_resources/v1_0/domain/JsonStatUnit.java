@@ -2,9 +2,7 @@ package org.siemac.metamac.rest.statistical_resources.v1_0.domain;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
 
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class JsonStatUnit {
 
     String label;

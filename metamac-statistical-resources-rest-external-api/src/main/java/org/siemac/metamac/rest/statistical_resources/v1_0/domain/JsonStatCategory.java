@@ -11,6 +11,8 @@ public class JsonStatCategory {
 
     private Map<String, Long> index;
     private Map<String, String> label;
+
+    @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
     private Map<String, JsonStatUnit> unit;
 
     public Map<String, Long> getIndex() {
