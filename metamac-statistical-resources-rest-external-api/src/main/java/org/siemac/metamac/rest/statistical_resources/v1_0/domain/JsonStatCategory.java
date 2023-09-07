@@ -11,6 +11,7 @@ public class JsonStatCategory {
 
     private Map<String, Long> index;
     private Map<String, String> label;
+    private Map<String, JsonStatUnit> unit;
 
     public Map<String, Long> getIndex() {
         return index;
@@ -34,6 +35,14 @@ public class JsonStatCategory {
 
     public String getLabel(String key) {
         return label.get(key);
+    }
+
+    public Map<String, JsonStatUnit> getUnit() {
+        return unit;
+    }
+
+    public void setUnit(Map<String, JsonStatUnit> unit) {
+        this.unit = unit;
     }
 
     @Override

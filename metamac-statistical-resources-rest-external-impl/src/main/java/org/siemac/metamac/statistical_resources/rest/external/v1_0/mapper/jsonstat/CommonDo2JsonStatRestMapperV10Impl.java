@@ -16,8 +16,10 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatCategory;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtension;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatUnit;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
+import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
@@ -29,6 +31,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttr
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionType;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionValues;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedAttributeValue;
@@ -43,6 +46,7 @@ import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdE
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -53,9 +57,24 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
 
+    @Autowired
+    private StatisticalResourcesConfiguration configurationService;
+
     @Override
-    public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult,
-            Attributes attributes, String selectedLanguage) throws Exception {
+    public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult, Attributes attributes, String selectedLanguage) throws Exception {
+        String unitMeasureId = configurationService.retrieveUnitMeasure();
+        String unitMeasureMultiplierId = configurationService.retrieveUnitMeasureMultiplier();
+
+        Attribute unitMeasureAttribute = null;
+        Attribute unitMeasureMultiplierAttribute = null;
+        for (Attribute attribute : attributes.getAttributes()) {
+            if (attribute.getId().equals(unitMeasureId)) {
+                unitMeasureAttribute = attribute;
+            }
+            if (attribute.getId().equals(unitMeasureMultiplierId)) {
+                unitMeasureMultiplierAttribute = attribute;            }
+        }
+
         Map<String, JsonStatDimension> jsonStatDimensionMap = new HashMap<>();
         for (DimensionRepresentation dimension : dimensionRepresentations.getDimensions()) {
             JsonStatDimension jsonStatDimension = new JsonStatDimension();
@@ -64,14 +83,29 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
             Map<String, Long> indexMap = new HashMap<>();
             Map<String, String> labelMap = new HashMap<>();
+            Map<String, JsonStatUnit> unitMap = new HashMap<>();
+
+            boolean isMeasureDimension = false;
+            for (Dimension dim : dimensions.getDimensions()) {
+                if (dim.getId().equals(dimension.getDimensionId()) && dim.getType() == DimensionType.MEASURE_DIMENSION) {
+                    isMeasureDimension = true;
+                    break;
+                }
+            }
 
             for (CodeRepresentation category : dimension.getRepresentations().getRepresentations()) {
                 indexMap.put(category.getCode(), category.getIndex());
                 labelMap.put(category.getCode(), toCategoryI18nName(dimensions, dimension.getDimensionId(), category, selectedLanguage));
+                if (isMeasureDimension) {
+                    unitMap.put(category.getCode(), toUnit(unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+                }
             }
 
             jsonStatDimension.getCategory().setIndex(indexMap);
             jsonStatDimension.getCategory().setLabel(labelMap);
+            if (isMeasureDimension) {
+                jsonStatDimension.getCategory().setUnit(unitMap);
+            }
 
             jsonStatDimensionMap.put(dimension.getDimensionId(), jsonStatDimension);
         }
@@ -102,6 +136,13 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
 
         return jsonStatDimensionMap;
+    }
+
+    private JsonStatUnit toUnit(Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
+        JsonStatUnit unit = new JsonStatUnit();
+        unit.setLabel(toI18nValue(((EnumeratedAttributeValues) unitMeasureAttribute.getAttributeValues()).getValues().get(0).getName(), selectedLanguage));
+        unit.setMultiplier(Integer.valueOf(((EnumeratedAttributeValues) unitMeasureMultiplierAttribute.getAttributeValues()).getValues().get(0).getId()));
+        return unit;
     }
 
     private static List<EnumeratedAttributeValue> getEnumeratedAttributeValues(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
@@ -161,7 +202,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     @Override
     public List<String> toJsonStatNote(DatasetVersion source, Data data, Dimensions dimensions, Attributes attributes, DsdProcessorResult dsdProcessorResult, String selectedLanguage) {
         List<String> notes = new ArrayList<>();
-        // Discard dsdAttributes that are at observation level, we do not want those to appear on the notes
+        // Discard attributes that are at observation level, we do not want those to appear on the notes
         List<DsdExternalProcessor.DsdAttribute> attributesThatAreNotAtObservationLevel = new ArrayList<>();
         for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
             if (!dsdAttribute.isAttributeAtObservationLevel()) {
@@ -307,7 +348,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 }
             }
         }
-        return attributeCode; // some dsdAttributes are not declared as i18n
+        return attributeCode; // some attributes are not declared as i18n
     }
 
     private String getNoteFromAttributePossition(Dimensions dimensions, String selectedLanguage, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues,

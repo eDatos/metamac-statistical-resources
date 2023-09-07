@@ -77,38 +77,38 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
     @Override
     public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
-            if (source == null) {
-                return null;
-            }
+        if (source == null) {
+            return null;
+        }
+
+        List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
+
+        DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
+        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages);
     
-            List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
-    
-            DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-            Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages);
-    
-            Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields);
-            Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
-    
-            // ********************************************
-            // ***** See https://json-stat.org/full/ ******
-            // ********************************************
-    
-            JsonStatData target = new JsonStatData();
-    
-            target.setVersion(commonDo2JsonStatRestMapper.JSON_STAT_VERSION);
-            target.setClazz(commonDo2JsonStatRestMapper.JSON_STAT_CLASS);
-            target.addAllValues(commonDo2JsonStatRestMapper.toJsonStatDatasetValues(data));
+        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields);
+        Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
+
+        // ********************************************
+        // ***** See https://json-stat.org/full/ ******
+        // ********************************************
+
+        JsonStatData target = new JsonStatData();
+
+        target.setVersion(commonDo2JsonStatRestMapper.JSON_STAT_VERSION);
+        target.setClazz(commonDo2JsonStatRestMapper.JSON_STAT_CLASS);
+        target.addAllValues(commonDo2JsonStatRestMapper.toJsonStatDatasetValues(data));
             target.setDimension(commonDo2JsonStatRestMapper.toJsonStatDatasetDimensions(dimensions, data.getDimensions(), dsdProcessorResult, attributes, selectedLanguage));
-            target.setRole(commonDo2JsonStatRestMapper.toJsonStatRoles(dsdProcessorResult));
+        target.setRole(commonDo2JsonStatRestMapper.toJsonStatRoles(dsdProcessorResult));
             target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data, dsdProcessorResult));
             target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data, dsdProcessorResult, attributes));
-            target.setLabel(commonDo2JsonStatRestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
-            target.setUpdated(source.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
-            target.setExtension(commonDo2JsonStatRestMapper.toJsonStatExtension(source, selectedLanguage));
-            target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(source, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
-    
-            return target;
-        }
+        target.setLabel(commonDo2JsonStatRestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
+        target.setUpdated(source.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
+        target.setExtension(commonDo2JsonStatRestMapper.toJsonStatExtension(source, selectedLanguage));
+        target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(source, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
+
+        return target;
+    }
 
     @Override
     public Datasets toDatasets(PagedResult<DatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
