@@ -62,4 +62,10 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     public String retrieveUnitMeasureMultiplier() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
+
+    @Override
+    public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
+
 }

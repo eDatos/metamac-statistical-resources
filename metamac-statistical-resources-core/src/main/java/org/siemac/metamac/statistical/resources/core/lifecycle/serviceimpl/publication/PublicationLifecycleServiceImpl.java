@@ -277,4 +277,9 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
         }
     }
 
+    @Override
+    public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
+        // ONLY FOR DATASETS
+    }
+
 }
