@@ -88,11 +88,13 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             boolean isMeasureDimension = isMeasureDimension(dimensions, dimension);
             boolean isUnitPresent = isUnitPresent(unitMeasureAttribute, unitMeasureMultiplierAttribute);
 
-            for (CodeRepresentation category : dimension.getRepresentations().getRepresentations()) {
+            List<CodeRepresentation> representations = dimension.getRepresentations().getRepresentations();
+            for (int i = 0, representationsSize = representations.size(); i < representationsSize; i++) {
+                CodeRepresentation category = representations.get(i);
                 indexMap.put(category.getCode(), category.getIndex());
                 labelMap.put(category.getCode(), toCategoryI18nName(dimensions, dimension.getDimensionId(), category, selectedLanguage));
                 if (isMeasureDimension && isUnitPresent) {
-                    unitMap.put(category.getCode(), toUnit(unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+                    unitMap.put(category.getCode(), toUnit(i, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
                 }
             }
 
@@ -149,10 +151,16 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 && unitMeasureMultiplierAttribute.getAttributeValues() != null;
     }
 
-    private JsonStatUnit toUnit(Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
+    private JsonStatUnit toUnit(int index, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
+        EnumeratedAttributeValues unitValues = (EnumeratedAttributeValues) unitMeasureAttribute.getAttributeValues();
+        EnumeratedAttributeValues multiplierValues = (EnumeratedAttributeValues) unitMeasureMultiplierAttribute.getAttributeValues();
+
+        InternationalString label = unitValues.getValues().get(index).getName();
+        String multiplier = multiplierValues.getValues().get(index).getId();
+
         JsonStatUnit unit = new JsonStatUnit();
-        unit.setLabel(toI18nValue(((EnumeratedAttributeValues) unitMeasureAttribute.getAttributeValues()).getValues().get(0).getName(), selectedLanguage));
-        unit.setMultiplier(Integer.valueOf(((EnumeratedAttributeValues) unitMeasureMultiplierAttribute.getAttributeValues()).getValues().get(0).getId()));
+        unit.setLabel(toI18nValue(label, selectedLanguage));
+        unit.setMultiplier(Integer.valueOf(multiplier));
         return unit;
     }
 
