@@ -17,6 +17,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatCategor
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatUnit;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -44,6 +45,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnume
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,9 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
 
+    @Autowired
+    private CommonDo2RestMapperV10 commonDo2RestMapper;
+
     @Override
     public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult, Attributes attributes, String selectedLanguage) throws Exception {
         String unitMeasureId = configurationService.retrieveUnitMeasure();
@@ -74,6 +79,15 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             if (attribute.getId().equals(unitMeasureMultiplierId)) {
                 unitMeasureMultiplierAttribute = attribute;            }
         }
+
+        List<Concept> measureConcepts = new ArrayList<>();
+        for (Dimension dim : dimensions.getDimensions()) {
+            if (dim.getType().equals(DimensionType.MEASURE_DIMENSION)) {
+                Concept measure = commonDo2RestMapper.toConcept(((EnumeratedDimensionValues) dim.getDimensionValues()).getValues().get(0).getUrn());
+                measureConcepts.add(measure);
+            }
+        }
+
 
         Map<String, JsonStatDimension> jsonStatDimensionMap = new HashMap<>();
         for (DimensionRepresentation dimension : dimensionRepresentations.getDimensions()) {
@@ -93,14 +107,23 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 CodeRepresentation category = representations.get(i);
                 indexMap.put(category.getCode(), category.getIndex());
                 labelMap.put(category.getCode(), toCategoryI18nName(dimensions, dimension.getDimensionId(), category, selectedLanguage));
+                Concept concept = null;
+                for (Concept mc : measureConcepts) {
+                    if (mc.getId().equals(category.getCode())) {
+                        concept = mc;
+                        break;
+                    }
+                }
                 if (isMeasureDimension && isUnitPresent) {
                     unitMap.put(category.getCode(), toUnit(i, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+                } else if (!isUnitPresent && concept != null && concept.getQuantity() != null) {
+                    unitMap.put(category.getCode(), toUnit(concept, selectedLanguage));
                 }
             }
 
             jsonStatDimension.getCategory().setIndex(indexMap);
             jsonStatDimension.getCategory().setLabel(labelMap);
-            if (isMeasureDimension && isUnitPresent) {
+            if (!unitMap.isEmpty()) {
                 jsonStatDimension.getCategory().setUnit(unitMap);
             }
 
@@ -149,6 +172,15 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     private boolean isUnitPresent(Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute) {
         return unitMeasureAttribute != null && unitMeasureMultiplierAttribute != null && unitMeasureAttribute.getAttributeValues() != null
                 && unitMeasureMultiplierAttribute.getAttributeValues() != null;
+    }
+
+    private JsonStatUnit toUnit(Concept concept, String selectedLanguage) {
+        JsonStatUnit unit = new JsonStatUnit();
+        unit.setLabel(toI18nValue(concept.getQuantity().getUnitCode().getName(), selectedLanguage));
+        unit.setMultiplier(Integer.valueOf(concept.getQuantity().getUnitMultiplier().getId()));
+        unit.setPosition(concept.getQuantity().getUnitSymbolPosition().value().toLowerCase());
+        unit.setDecimalPlaces(concept.getQuantity().getDecimalPlaces());
+        return unit;
     }
 
     private JsonStatUnit toUnit(int index, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
