@@ -86,17 +86,14 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             Map<String, JsonStatUnit> unitMap = new HashMap<>();
 
             boolean isMeasureDimension = isMeasureDimension(dimensions, dimension);
-            boolean isUnitPresentInAttribute = isUnitPresent(unitMeasureAttribute, unitMeasureMultiplierAttribute);
 
             for (CodeRepresentation category : dimension.getRepresentations().getRepresentations()) {
                 indexMap.put(category.getCode(), category.getIndex());
                 labelMap.put(category.getCode(), toCategoryI18nName(dimensions, dimension.getDimensionId(), category, selectedLanguage));
                 Concept concept = findConceptById(measureConcepts, category);
 
-                if (isMeasureDimension && isUnitPresentInAttribute) {
-                    unitMap.put(category.getCode(), toUnit((int) category.getIndex(), unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
-                } else if (!isUnitPresentInAttribute && concept != null && concept.getQuantity() != null) {
-                    unitMap.put(category.getCode(), toUnit(concept, selectedLanguage));
+                if (isMeasureDimension) {
+                    setUnitIfExists(unitMap, category, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage);
                 }
             }
 
@@ -135,6 +132,17 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
 
         return jsonStatDimensionMap;
+    }
+
+    private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, CodeRepresentation category, Concept concept, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute,
+            String selectedLanguage) {
+
+        if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
+                || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
+            unitMap.put(category.getCode(), toUnit((int) category.getIndex(), unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+        } else if (concept != null && concept.getQuantity() != null) {
+            unitMap.put(category.getCode(), toUnit(concept, selectedLanguage));
+        }
     }
 
     private static Concept findConceptById(List<Concept> measureConcepts, CodeRepresentation category) {
@@ -192,15 +200,17 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private JsonStatUnit toUnit(int index, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
-        EnumeratedAttributeValues unitValues = (EnumeratedAttributeValues) unitMeasureAttribute.getAttributeValues();
-        EnumeratedAttributeValues multiplierValues = (EnumeratedAttributeValues) unitMeasureMultiplierAttribute.getAttributeValues();
-
-        InternationalString label = unitValues.getValues().get(index).getName();
-        String multiplier = multiplierValues.getValues().get(index).getId();
-
         JsonStatUnit unit = new JsonStatUnit();
-        unit.setLabel(toI18nValue(label, selectedLanguage));
-        unit.setMultiplier(Integer.valueOf(multiplier));
+        if (unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null) {
+            EnumeratedAttributeValues unitValues = (EnumeratedAttributeValues) unitMeasureAttribute.getAttributeValues();
+            InternationalString label = unitValues.getValues().get(index).getName();
+            unit.setLabel(toI18nValue(label, selectedLanguage));
+        }
+        if (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null) {
+            EnumeratedAttributeValues multiplierValues = (EnumeratedAttributeValues) unitMeasureMultiplierAttribute.getAttributeValues();
+            String multiplier = multiplierValues.getValues().get(index).getId();
+            unit.setMultiplier(Integer.valueOf(multiplier));
+        }
         return unit;
     }
 
