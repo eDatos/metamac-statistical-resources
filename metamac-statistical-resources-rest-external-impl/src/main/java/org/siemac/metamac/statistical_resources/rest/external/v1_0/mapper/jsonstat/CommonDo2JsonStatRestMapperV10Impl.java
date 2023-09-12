@@ -195,7 +195,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         JsonStatUnit unit = new JsonStatUnit();
         Quantity quantity = concept.getQuantity();
         unit.setLabel(quantity.getUnitCode() != null ? toI18nValue(quantity.getUnitCode().getName(), selectedLanguage) : null);
-        unit.setMultiplier(quantity.getUnitMultiplier() != null ? Integer.valueOf(quantity.getUnitMultiplier().getId()) : null);
+        unit.setMultiplier(quantity.getUnitMultiplier() != null ? toI18nValue(quantity.getUnitMultiplier().getName(), selectedLanguage) : null);
         unit.setPosition(quantity.getUnitSymbolPosition() != null ? quantity.getUnitSymbolPosition().value().toLowerCase() : null);
         unit.setDecimalPlaces(quantity.getDecimalPlaces() != null ? quantity.getDecimalPlaces() : null);
         return unit;
@@ -210,8 +210,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
         if (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null) {
             EnumeratedAttributeValues multiplierValues = (EnumeratedAttributeValues) unitMeasureMultiplierAttribute.getAttributeValues();
-            String multiplier = multiplierValues.getValues().get(index).getId();
-            unit.setMultiplier(Integer.valueOf(multiplier));
+            InternationalString multiplier = multiplierValues.getValues().get(index).getName();
+            unit.setMultiplier(toI18nValue(multiplier, selectedLanguage));
         }
         return unit;
     }

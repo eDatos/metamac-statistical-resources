@@ -8,7 +8,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class JsonStatUnit {
 
     String label;
-    Integer multiplier;
+    String multiplier;
 
     String position;
     Integer decimalPlaces;
@@ -21,11 +21,11 @@ public class JsonStatUnit {
         this.label = label;
     }
 
-    public Integer getMultiplier() {
+    public String getMultiplier() {
         return multiplier;
     }
 
-    public void setMultiplier(Integer multiplier) {
+    public void setMultiplier(String multiplier) {
         this.multiplier = multiplier;
     }
 
