@@ -186,11 +186,6 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return null;
     }
 
-    private boolean isUnitPresent(Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute) {
-        return unitMeasureAttribute != null && unitMeasureMultiplierAttribute != null && unitMeasureAttribute.getAttributeValues() != null
-                && unitMeasureMultiplierAttribute.getAttributeValues() != null;
-    }
-
     private JsonStatUnit toUnit(Concept concept, String selectedLanguage) {
         JsonStatUnit unit = new JsonStatUnit();
         Quantity quantity = concept.getQuantity();
