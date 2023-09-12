@@ -70,24 +70,10 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         String unitMeasureId = configurationService.retrieveUnitMeasure();
         String unitMeasureMultiplierId = configurationService.retrieveUnitMeasureMultiplier();
 
-        Attribute unitMeasureAttribute = null;
-        Attribute unitMeasureMultiplierAttribute = null;
-        for (Attribute attribute : attributes.getAttributes()) {
-            if (attribute.getId().equals(unitMeasureId)) {
-                unitMeasureAttribute = attribute;
-            }
-            if (attribute.getId().equals(unitMeasureMultiplierId)) {
-                unitMeasureMultiplierAttribute = attribute;            }
-        }
+        Attribute unitMeasureAttribute = findAttributeById(attributes, unitMeasureId);
+        Attribute unitMeasureMultiplierAttribute = findAttributeById(attributes, unitMeasureMultiplierId);
 
-        List<Concept> measureConcepts = new ArrayList<>();
-        for (Dimension dim : dimensions.getDimensions()) {
-            if (dim.getType().equals(DimensionType.MEASURE_DIMENSION)) {
-                Concept measure = commonDo2RestMapper.toConcept(((EnumeratedDimensionValues) dim.getDimensionValues()).getValues().get(0).getUrn());
-                measureConcepts.add(measure);
-            }
-        }
-
+        List<Concept> measureConcepts = getConcepts(dimensions);
 
         Map<String, JsonStatDimension> jsonStatDimensionMap = new HashMap<>();
         for (DimensionRepresentation dimension : dimensionRepresentations.getDimensions()) {
@@ -100,23 +86,16 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             Map<String, JsonStatUnit> unitMap = new HashMap<>();
 
             boolean isMeasureDimension = isMeasureDimension(dimensions, dimension);
-            boolean isUnitPresent = isUnitPresent(unitMeasureAttribute, unitMeasureMultiplierAttribute);
+            boolean isUnitPresentInAttribute = isUnitPresent(unitMeasureAttribute, unitMeasureMultiplierAttribute);
 
-            List<CodeRepresentation> representations = dimension.getRepresentations().getRepresentations();
-            for (int i = 0, representationsSize = representations.size(); i < representationsSize; i++) {
-                CodeRepresentation category = representations.get(i);
+            for (CodeRepresentation category : dimension.getRepresentations().getRepresentations()) {
                 indexMap.put(category.getCode(), category.getIndex());
                 labelMap.put(category.getCode(), toCategoryI18nName(dimensions, dimension.getDimensionId(), category, selectedLanguage));
-                Concept concept = null;
-                for (Concept mc : measureConcepts) {
-                    if (mc.getId().equals(category.getCode())) {
-                        concept = mc;
-                        break;
-                    }
-                }
-                if (isMeasureDimension && isUnitPresent) {
-                    unitMap.put(category.getCode(), toUnit(i, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
-                } else if (!isUnitPresent && concept != null && concept.getQuantity() != null) {
+                Concept concept = findConceptById(measureConcepts, category);
+
+                if (isMeasureDimension && isUnitPresentInAttribute) {
+                    unitMap.put(category.getCode(), toUnit((int) category.getIndex(), unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+                } else if (!isUnitPresentInAttribute && concept != null && concept.getQuantity() != null) {
                     unitMap.put(category.getCode(), toUnit(concept, selectedLanguage));
                 }
             }
@@ -158,6 +137,26 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return jsonStatDimensionMap;
     }
 
+    private static Concept findConceptById(List<Concept> measureConcepts, CodeRepresentation category) {
+        for (Concept concept : measureConcepts) {
+            if (concept.getId().equals(category.getCode())) {
+                return concept;
+            }
+        }
+        return null;
+    }
+
+    private List<Concept> getConcepts(Dimensions dimensions) {
+        List<Concept> measureConcepts = new ArrayList<>();
+        for (Dimension dim : dimensions.getDimensions()) {
+            if (dim.getType().equals(DimensionType.MEASURE_DIMENSION)) {
+                Concept measure = commonDo2RestMapper.toConcept(((EnumeratedDimensionValues) dim.getDimensionValues()).getValues().get(0).getUrn()); // TODO: get(0) ????
+                measureConcepts.add(measure);
+            }
+        }
+        return measureConcepts;
+    }
+
     private static boolean isMeasureDimension(Dimensions dimensions, DimensionRepresentation dimension) {
         boolean isMeasureDimension = false;
         for (Dimension dim : dimensions.getDimensions()) {
@@ -167,6 +166,15 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             }
         }
         return isMeasureDimension;
+    }
+
+    private Attribute findAttributeById(Attributes attributes, String id) {
+        for (Attribute attribute : attributes.getAttributes()) {
+            if (attribute.getId().equals(id)) {
+                return attribute;
+            }
+        }
+        return null;
     }
 
     private boolean isUnitPresent(Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute) {
