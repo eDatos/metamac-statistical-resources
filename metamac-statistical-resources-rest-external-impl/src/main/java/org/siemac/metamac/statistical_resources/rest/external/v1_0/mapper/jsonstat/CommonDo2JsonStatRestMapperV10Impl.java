@@ -18,6 +18,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimensi
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatUnit;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Quantity;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -192,10 +193,11 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     private JsonStatUnit toUnit(Concept concept, String selectedLanguage) {
         JsonStatUnit unit = new JsonStatUnit();
-        unit.setLabel(toI18nValue(concept.getQuantity().getUnitCode().getName(), selectedLanguage));
-        unit.setMultiplier(Integer.valueOf(concept.getQuantity().getUnitMultiplier().getId()));
-        unit.setPosition(concept.getQuantity().getUnitSymbolPosition().value().toLowerCase());
-        unit.setDecimalPlaces(concept.getQuantity().getDecimalPlaces());
+        Quantity quantity = concept.getQuantity();
+        unit.setLabel(quantity.getUnitCode() != null ? toI18nValue(quantity.getUnitCode().getName(), selectedLanguage) : null);
+        unit.setMultiplier(quantity.getUnitMultiplier() != null ? Integer.valueOf(quantity.getUnitMultiplier().getId()) : null);
+        unit.setPosition(quantity.getUnitSymbolPosition() != null ? quantity.getUnitSymbolPosition().value().toLowerCase() : null);
+        unit.setDecimalPlaces(quantity.getDecimalPlaces() != null ? quantity.getDecimalPlaces() : null);
         return unit;
     }
 
