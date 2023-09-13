@@ -11,12 +11,12 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLink
 public class DatasetProductionDescriptorsForm extends SiemacMetadataProductionDescriptorsForm {
 
     public DatasetProductionDescriptorsForm() {
-        ExternalItemLinkItem relatedDsd = new ExternalItemLinkItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD());
+        ExternalItemLinkItem relatedDsd = new ExternalItemLinkItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD(), true);
         addFields(relatedDsd);
     }
 
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
         setSiemacMetadataStatisticalResourceDto(datasetDto);
-        setValue(DatasetDS.RELATED_DSD, CommonUtils.setCodeVersionExternalItem(datasetDto.getRelatedDsd()));
+        setValue(DatasetDS.RELATED_DSD, datasetDto.getRelatedDsd());
     }
 }
