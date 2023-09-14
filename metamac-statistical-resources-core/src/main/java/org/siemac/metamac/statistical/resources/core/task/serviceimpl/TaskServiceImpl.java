@@ -42,6 +42,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationExcepti
 import org.fornax.cartridges.sculptor.framework.errorhandling.ExceptionHelper;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
+import org.quartz.CronExpression;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.DateBuilder.IntervalUnit;
@@ -2138,6 +2139,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             CronTrigger cronTrigger = TriggerBuilder.newTrigger()
                     .withSchedule(CronScheduleBuilder.cronSchedule(configurationService.retrieveCronExpressionForResendPublishedDatasetKafkaMessage()).withMisfireHandlingInstructionDoNothing()).build();
 
+            
+            CronExpression cronEx = new CronExpression(cronTrigger.getCronExpression());
+
+            if (cronEx.getNextValidTimeAfter(new Date()) == null) {
+                logger.info("ATENTION!! Cron scheduler for resend all published last version dataset kafka messages  is before actual date. For this reason the job has been aborted and it will not never executed ");
+                return;
+            }
+            
             Scheduler sched = schedulerFactory.getScheduler();
             sched.scheduleJob(job, cronTrigger);
 

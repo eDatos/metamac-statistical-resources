@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
@@ -21,14 +22,16 @@ public class PlainTextExporter {
     private final ResourceAccess   datasetAccess;
     private final DatasetSelection datasetSelection;
     private final List<String>     selectedLanguages;
+    private String                 format                                = "";
     private static final String    HEADER_OBSERVATION                    = "OBS_VALUE";
     private static final String    HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE   = "_CODE";
     private static final String    HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
 
-    public PlainTextExporter(ResourceAccess resourceAccess, List<String> selectedLanguages) {
+    public PlainTextExporter(ResourceAccess resourceAccess, List<String> selectedLanguages, String format) {
         datasetAccess = resourceAccess;
         datasetSelection = resourceAccess.getDataSelection();
         this.selectedLanguages = selectedLanguages;
+        this.format = format;
     }
 
     public List<PlainTextResource> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
@@ -40,12 +43,12 @@ public class PlainTextExporter {
     }
 
     private String getHeaderName(LabelVisualisationModeEnum labelVisualisation, String name) {
-        return removeUnsupportedCharaters(name);
+        return processUnsupportedCharaters(name);
     }
 
     private String getHeaderNameCode(LabelVisualisationModeEnum labelVisualisation, String name) {
         if (labelVisualisation.isLabelAndCode()) {
-            return removeUnsupportedCharaters(name + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE);
+            return processUnsupportedCharaters(name + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE);
         }
         return "";
     }
@@ -77,13 +80,13 @@ public class PlainTextExporter {
                     }
 
                     if (labelVisualisation.isCode()) {
-                        plainTextResourceAccess.getFields().put(headerName, removeUnsupportedCharaters(dimensionValueId));
+                        plainTextResourceAccess.getFields().put(headerName, processUnsupportedCharaters(dimensionValueId));
                     }
                 }
                 // Observation
                 String observation = datasetAccess.observationAtPermutation(permutationAtCell);
 
-                plainTextResourceAccess.getFields().put(HEADER_OBSERVATION, removeUnsupportedCharaters(observation));
+                plainTextResourceAccess.getFields().put(HEADER_OBSERVATION, processUnsupportedCharaters(observation));
 
                 // Attributes
                 for (Attribute attribute : datasetAccess.getAttributesMetadata()) {
@@ -116,7 +119,7 @@ public class PlainTextExporter {
                         }
 
                         if (labelVisualisation.isCode()) {
-                            plainTextResourceAccess.getFields().put(headerName, removeUnsupportedCharaters(attributeValue));
+                            plainTextResourceAccess.getFields().put(headerName, processUnsupportedCharaters(attributeValue));
                         }
                     }
                 }
@@ -145,19 +148,28 @@ public class PlainTextExporter {
         return target;
     }
 
-    private static String getLocalisedStringByLang(List<LocalisedString> source, String language) {
+    private String getLocalisedStringByLang(List<LocalisedString> source, String language) {
         // in the api, lamba functions is not allowed. the search is done with a loop.
         for (LocalisedString loc : source) {
             if (language.equals(loc.getLang())) {
-                return removeUnsupportedCharaters(loc.getValue());
+                return processUnsupportedCharaters(loc.getValue());
             }
         }
         return null;
     }
 
-    public static String removeUnsupportedCharaters(String string) {
+    private String formattedText(String text) {
+        if ("csv".equals(format)) {
+            text = StringEscapeUtils.escapeCsv(text);
+        }
+        return text;
+    }
+
+    // remove unsupported characters and if there are excluded characters, to put the value between on quotation marks
+    private String processUnsupportedCharaters(String string) {
         if (StringUtils.isNotBlank(string)) {
-            return string.replaceAll("[\n\t\r\b\f]", " ");
+            String value = string.replaceAll("[\n\t\r\b\f]", " ");
+            return formattedText(value);
         } else {
             return null;
         }
@@ -166,5 +178,4 @@ public class PlainTextExporter {
     public List<String> getSelectedLanguages() {
         return selectedLanguages;
     }
-
 }
