@@ -1,6 +1,10 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.multidataset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetVersionsAction;
@@ -25,13 +29,18 @@ public class DeleteMultidatasetVersionsActionHandler extends SecurityActionHandl
 
     @Override
     public DeleteMultidatasetVersionsResult executeSecurityAction(DeleteMultidatasetVersionsAction action) throws ActionException {
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         for (String urn : action.getUrns()) {
             try {
                 statisticalResourcesServiceFacade.deleteMultidatasetVersion(ServiceContextHolder.getCurrentServiceContext(), urn);
             } catch (MetamacException e) {
-                throw WebExceptionUtils.createMetamacWebException(new MetamacException(e, ServiceExceptionType.MULTIDATASET_VERSION_CANT_BE_DELETED_LINKED_TO_COLLECTION, urn));
+                exceptionItems.addAll(e.getExceptionItems());
             }
         }
-        return new DeleteMultidatasetVersionsResult();
+        if (exceptionItems.isEmpty()) {
+            return new DeleteMultidatasetVersionsResult();
+        } else {
+            throw WebExceptionUtils.createMetamacWebException(new MetamacException(exceptionItems));
+        }
     }
 }
