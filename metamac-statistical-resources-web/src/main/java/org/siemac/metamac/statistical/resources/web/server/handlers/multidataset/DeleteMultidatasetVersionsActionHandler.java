@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
-import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetVersionsResult;
@@ -37,10 +36,9 @@ public class DeleteMultidatasetVersionsActionHandler extends SecurityActionHandl
                 exceptionItems.addAll(e.getExceptionItems());
             }
         }
-        if (exceptionItems.isEmpty()) {
-            return new DeleteMultidatasetVersionsResult();
-        } else {
+        if (!exceptionItems.isEmpty()) {
             throw WebExceptionUtils.createMetamacWebException(new MetamacException(exceptionItems));
         }
+        return new DeleteMultidatasetVersionsResult();
     }
 }
