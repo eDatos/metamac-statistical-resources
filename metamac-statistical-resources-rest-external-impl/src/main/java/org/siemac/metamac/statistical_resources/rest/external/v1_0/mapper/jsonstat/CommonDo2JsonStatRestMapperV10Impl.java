@@ -87,7 +87,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
                 List<EnumeratedAttributeValue> attributeValues = getEnumeratedAttributeValues(attributes, dsdAttribute);
                 if (attributeValues.isEmpty()) {
-                    continue; // this type of attribute should have at least 1 value
+                    LOGGER.debug("Attribute `{}` has no values, it should at least have 1", dsdAttribute.getComponentId());
+                    continue;
                 }
 
                 indexMap.put(dsdAttribute.getComponentId(), 0L);
