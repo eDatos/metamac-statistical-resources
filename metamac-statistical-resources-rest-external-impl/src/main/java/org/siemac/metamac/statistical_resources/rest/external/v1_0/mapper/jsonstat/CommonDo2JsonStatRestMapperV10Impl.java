@@ -48,7 +48,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRestMapperV10 {
 
-    public static final List<DsdExternalProcessor.DsdComponentType> ATTRIBUTE_TYPES = Arrays.asList(DsdExternalProcessor.DsdComponentType.MEASURE, DsdExternalProcessor.DsdComponentType.TEMPORAL,
+    public static final List<DsdExternalProcessor.DsdComponentType> DIMENSIONLIKE_ATTRIBUTES = Arrays.asList(DsdExternalProcessor.DsdComponentType.MEASURE, DsdExternalProcessor.DsdComponentType.TEMPORAL,
             DsdExternalProcessor.DsdComponentType.SPATIAL);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
@@ -77,7 +77,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
 
         for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
-            if (ATTRIBUTE_TYPES.contains(dsdAttribute.getType())) {
+            if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
                 JsonStatDimension jsonStatDimension = new JsonStatDimension();
                 jsonStatDimension.setLabel(toI18nValue(dsdAttribute.getConceptIdentity().getName(), selectedLanguage));
                 jsonStatDimension.setCategory(new JsonStatCategory());
@@ -179,7 +179,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private List<String> getNotesForDatasetLevelAttribute(DsdExternalProcessor.DsdAttribute attribute, DatasetVersion source) {
-        if (ATTRIBUTE_TYPES.contains(attribute.getType())) {
+        if (DIMENSIONLIKE_ATTRIBUTES.contains(attribute.getType())) {
             return Collections.emptyList(); // don't include in the notes dsdAttributes of spatial, measure or temporal type
         }
 
@@ -347,7 +347,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             id.add(dim.getDimensionId());
         }
         for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdAttributes.getAttributes()) {
-            if (ATTRIBUTE_TYPES.contains(dsdAttribute.getType())) {
+            if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
                 id.add(dsdAttribute.getComponentId());
             }
         }
@@ -362,7 +362,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             dimensionSizes.add(size);
         }
         for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
-            if (ATTRIBUTE_TYPES.contains(dsdAttribute.getType())) {
+            if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
                 List<EnumeratedAttributeValue> enumeratedAttributeValues = getEnumeratedAttributeValues(attributes, dsdAttribute);
                 dimensionSizes.add((long) enumeratedAttributeValues.size());
             }
