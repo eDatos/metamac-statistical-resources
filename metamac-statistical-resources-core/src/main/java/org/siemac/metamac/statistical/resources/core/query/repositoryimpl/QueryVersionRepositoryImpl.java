@@ -149,6 +149,19 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
                 "WHERE stat_query.last_version = 'true' " +
                 "AND query_version.ID = :queryVersionFk " +
 
+                "UNION " +
+
+                // Multidatasets
+                "SELECT mul.siemac_resource_fk " +
+                "FROM tb_multidatasets_versions  mul " +
+                "INNER JOIN tb_md_cubes cubes on cubes.MULTIDATASET_VERSION_FK = mul.id " +
+
+                "INNER JOIN tb_queries query on cubes.query_fk = query.ID  " +
+                "INNER JOIN tb_queries_versions query_version on query_version.query_fk = query.ID " +
+                "INNER JOIN tb_stat_resources stat_query ON query_version.lifecycle_resource_fk = stat_query.ID " +
+                "WHERE stat_query.last_version = 'true' " +
+                "AND query_version.ID = :queryVersionFk " +
+
             ") as resource on resource.siemac_resource_fk = stat.ID " +
 
             "inner join tb_localised_strings loc on  stat.title_fk = loc.international_string_fk " +
