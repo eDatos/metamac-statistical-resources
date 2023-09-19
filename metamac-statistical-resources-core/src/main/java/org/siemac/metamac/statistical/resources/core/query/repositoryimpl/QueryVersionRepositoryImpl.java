@@ -134,27 +134,29 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
             "        stat.version_logic, "+
             "        loc.locale, " +
             "        loc.label " +
-            "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
-            "            on cubes.ID = elem.table_fk, " +
-            "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
-            "            ON pub.siemac_resource_fk = stat.ID, " +
-            "        tb_external_items operation, " +
-            "        tb_external_items maintainer, " +
-            "        tb_queries query, " +
-            "        tb_queries_versions query_version INNER JOIN tb_stat_resources stat_query "+
-            "            ON query_version.lifecycle_resource_fk = stat_query.ID, "+
-            "        tb_localised_strings loc "+
-            "WHERE       cubes.query_fk = query.ID "+
-            "    AND     query_version.query_fk = query.ID " +
-            "    AND     query_version.ID = :queryVersionFk " +
-            "    AND     stat_query.last_version = 'true' " +
-            "    AND     elem.publication_version_all_fk = pub.ID " +
-            "    AND     stat.title_fk = loc.international_string_fk " +
-            "    AND    " + buildLastPublishedVersionConditions(onlyLastPublished) +
-            "    AND     operation.ID = stat.stat_operation_fk " +
-            "    AND     maintainer.id = stat.maintainer_fk");
+            "FROM    tb_stat_resources stat " +
+            "INNER JOIN ( " +
 
+                // Publications
+                "SELECT pub.siemac_resource_fk " +
+                "FROM tb_publications_versions pub " +
+                "INNER JOIN tb_elements_levels elem on elem.publication_version_all_fk = pub.ID " +
+                "INNER JOIN tb_cubes cubes on cubes.ID = elem.table_fk " +
+
+                "INNER JOIN tb_queries query on cubes.query_fk = query.ID  " +
+                "INNER JOIN tb_queries_versions query_version on query_version.query_fk = query.ID " +
+                "INNER JOIN tb_stat_resources stat_query ON query_version.lifecycle_resource_fk = stat_query.ID " +
+                "WHERE stat_query.last_version = 'true' " +
+                "AND query_version.ID = :queryVersionFk " +
+
+            ") as resource on resource.siemac_resource_fk = stat.ID " +
+
+            "inner join tb_localised_strings loc on  stat.title_fk = loc.international_string_fk " +
+            "inner join tb_external_items operation on operation.ID = stat.stat_operation_fk " +
+            "inner join tb_external_items maintainer on maintainer.id = stat.maintainer_fk " +
+            "where " + buildLastPublishedVersionConditions(onlyLastPublished));
         //     @formatter:on
+
         query.setParameter("queryVersionFk", queryVersion.getId());
         query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
         query.setParameter("now", new DateTime().toDate());
