@@ -171,7 +171,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format) {
         try {
 
-            List<PlainTextResource> plainTextResourceAccessList = createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation);
+            List<PlainTextResource> plainTextResourceAccessList = createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format);
             String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
             return Response.status(Status.OK).entity(plainTextResourceAccessList).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
 
@@ -180,8 +180,8 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
     }
 
-    private List<PlainTextResource> createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation)
-            throws Exception {
+    private List<PlainTextResource> createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation,
+            String format) throws Exception {
 
         Set<String> parsedFields = parseFieldsStatisticalResources(fields);
 
@@ -197,7 +197,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
 
         ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
-        return exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages);
+        return exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages, format);
     }
 
     private Map<String, List<String>> parseDimensionExpression(String dim, String representation) {

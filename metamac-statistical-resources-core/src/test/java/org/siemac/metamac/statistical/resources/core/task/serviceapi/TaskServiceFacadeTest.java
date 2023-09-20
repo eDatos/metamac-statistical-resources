@@ -30,7 +30,7 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
 
     @Override
     public void testExecuteRecoveryImportationAttributes() throws Exception {
-        
+
     }
 
     @Override
@@ -42,11 +42,11 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testExecuteUpdateGeocoverageCacheTask() throws Exception {
         // No test
     }
-    
+
     @Override
     public void testExecuteUpdateExternalGeocoverageCacheTask() throws Exception {
         // No test
-    } 
+    }
 
     @Override
     public void testMarkTaskAsFinished() throws Exception {
@@ -72,12 +72,12 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testExecuteGeographicCoverageCacheClearTask() throws Exception {
         // No test
     }
-    
+
     @Override
     public void testScheduleGeographicCoverageCacheClearJob() throws Exception {
         // No test
     }
-    
+
     @Override
     public void testSendDatabaseImportationErrorNotification() throws Exception {
         // No test
@@ -85,6 +85,16 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
 
     @Override
     public void testImportAttributesInDatasetVersion() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testExecuteResendPublishedDatasetsKafkaMessageTask() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
         // No test
     }
 }

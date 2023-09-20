@@ -344,7 +344,6 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
             uploadItem = new UploadItem("file-name");
             uploadItem.setTitle(getConstants().datasetDatasource());
             uploadItem.setWidth(400);
-            uploadItem.setRequired(true);
             uploadItem.setTitleStyle("requiredFormLabel");
 
             uploadItem.addChangeHandler(new com.smartgwt.client.widgets.form.fields.events.ChangeHandler() {
@@ -356,6 +355,7 @@ public abstract class ImportDatasourceWithMappingWindow extends UploadResourceWi
                         @Override
                         public void execute() {
                             submitPreviewIfValid();
+                            warningLabel.hide();
                         }
                     });
                 }

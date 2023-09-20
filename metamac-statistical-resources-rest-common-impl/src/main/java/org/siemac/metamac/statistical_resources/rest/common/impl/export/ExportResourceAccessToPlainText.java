@@ -9,17 +9,17 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DatasetB
 
 public class ExportResourceAccessToPlainText {
 
-    public List<PlainTextResource> exportResourceAccessToPlainText(ResourceAccess resourceAccess, List<String> selectedLanguages) {
+    public List<PlainTextResource> exportResourceAccessToPlainText(ResourceAccess resourceAccess, List<String> selectedLanguages, String format) {
 
         try {
-            return exportResourceToPlainTextWithoutAttributes(resourceAccess, selectedLanguages);
+            return exportResourceToPlainTextWithoutAttributes(resourceAccess, selectedLanguages, format);
         } catch (Exception e) {
             throw ExceptionUtils.manageException(e);
         }
     }
 
-    public List<PlainTextResource> exportResourceToPlainTextWithoutAttributes(ResourceAccess resourceAccess, List<String> selectedLanguages) throws MetamacException {
-        PlainTextExporter exporter = new PlainTextExporter(resourceAccess, selectedLanguages);
+    public List<PlainTextResource> exportResourceToPlainTextWithoutAttributes(ResourceAccess resourceAccess, List<String> selectedLanguages, String format) throws MetamacException {
+        PlainTextExporter exporter = new PlainTextExporter(resourceAccess, selectedLanguages, format);
         return exporter.writeObservationsAndAttributesWithObservationAttachmentLevel();
     }
 

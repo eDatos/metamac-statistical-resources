@@ -2,6 +2,8 @@ package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.data
 
 import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils.addParameter;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +12,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationExcepti
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -36,6 +39,8 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -44,6 +49,8 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 
 @Service("datasetLifecycleService")
 public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<DatasetVersion> {
+
+    private static Logger                     logger = LoggerFactory.getLogger(DatasetLifecycleServiceImpl.class);
 
     @Autowired
     private LifecycleCommonMetadataChecker    lifecycleCommonMetadataChecker;
@@ -166,7 +173,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         updateGeographicCoverage(ctx, resource);
         updateGeographicCoverageVariableElementsCache(ctx, resource);
     }
-      
+
     @Override
     protected void applySendToPublishedPreviousResource(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         try {
@@ -183,14 +190,14 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     private void updateGeographicCoverage(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         datasetService.updateGeographicCoverageFromSpatialAttribute(ctx, resource);
     }
-    
+
     private void updateGeographicCoverageVariableElementsCache(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         // In automatic life cicle this process is done later when the principal task finished
         if (!DatasetImportUtils.isDatasetImportJob(ctx) && !DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
             datasetService.updateGeographicCoverageVariableElementsCache(ctx, resource);
         }
     }
-    
+
     private InternationalString buildBibliographicCitation(DatasetVersion resource) throws MetamacException {
         // Format: Creator.code (date) Title (vXXX.YYY) [dataset]. Publisher.name (api url)
         // Example: ISTAC (2017) Índice censal de ocupación (v002.001) [dataset]. Instituto Canario de Estadística (url)
@@ -347,4 +354,39 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             createStreamMessageSentNotification(ctx, version);
         }
     }
+
+    @Override
+    public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
+
+        List<DatasetVersion> datasets = datasetService.retrievePublishedLastVersionDatasets(ctx);
+        List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
+        int totalCount = 0;
+        int partialCount = 0;
+        logger.info("resend all published last version dataset kafka messages start at {} affected datasets: {} ", new Date(), datasets != null ? datasets.size() : 0);
+
+        for (DatasetVersion datasetVersion : datasets) {
+            try {
+                streamMessagingServiceFacade.sendNewVersionPublished(datasetVersion);
+                totalCount++;
+                partialCount++;
+                if (partialCount >= 100) {
+                    partialCount = 0;
+                    logger.info("processed datasets {} at {}", totalCount, new Date());
+                }
+
+            } catch (MetamacException e) {
+                totalCount++;
+                partialCount++;
+                logger.info("error sending dataset {} ", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_DATASET, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()));
+            }
+        }
+        if (!exceptionsItems.isEmpty()) {
+            MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
+            createStreamMessageResendSentSomeNotifications(exception);
+        }
+
+        logger.info("resend all published last version dataset kafka messages end at {}", new Date());
+    }
+
 }
