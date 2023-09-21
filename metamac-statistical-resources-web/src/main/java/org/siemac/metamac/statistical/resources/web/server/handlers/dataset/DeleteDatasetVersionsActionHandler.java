@@ -28,18 +28,17 @@ public class DeleteDatasetVersionsActionHandler extends SecurityActionHandler<De
 
     @Override
     public DeleteDatasetVersionsResult executeSecurityAction(DeleteDatasetVersionsAction action) throws ActionException {
-        List<MetamacExceptionItem> items = new ArrayList<MetamacExceptionItem>();
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         for (String urn : action.getUrns()) {
             try {
                 statisticalResourcesServiceFacade.deleteDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), urn);
             } catch (MetamacException e) {
-                items.addAll(e.getExceptionItems());
+                exceptionItems.addAll(e.getExceptionItems());
             }
         }
-        if (items.isEmpty()) {
-            return new DeleteDatasetVersionsResult();
-        } else {
-            throw WebExceptionUtils.createMetamacWebException(new MetamacException(items));
+        if (!exceptionItems.isEmpty()) {
+            throw WebExceptionUtils.createMetamacWebException(new MetamacException(exceptionItems));
         }
+        return new DeleteDatasetVersionsResult();
     }
 }

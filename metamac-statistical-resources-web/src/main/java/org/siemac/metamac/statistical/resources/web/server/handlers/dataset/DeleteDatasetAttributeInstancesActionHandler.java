@@ -28,19 +28,17 @@ public class DeleteDatasetAttributeInstancesActionHandler extends SecurityAction
 
     @Override
     public DeleteDatasetAttributeInstancesResult executeSecurityAction(DeleteDatasetAttributeInstancesAction action) throws ActionException {
-        List<MetamacExceptionItem> items = new ArrayList<MetamacExceptionItem>();
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         for (String uuid : action.getUuids()) {
             try {
                 statisticalResourcesServiceFacade.deleteAttributeInstance(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionUrn(), uuid);
             } catch (MetamacException e) {
-                items.addAll(e.getExceptionItems());
+                exceptionItems.addAll(e.getExceptionItems());
             }
         }
-
-        if (items.isEmpty()) {
-            return new DeleteDatasetAttributeInstancesResult();
-        } else {
-            throw WebExceptionUtils.createMetamacWebException(new MetamacException(items));
+        if (!exceptionItems.isEmpty()) {
+            throw WebExceptionUtils.createMetamacWebException(new MetamacException(exceptionItems));
         }
+        return new DeleteDatasetAttributeInstancesResult();
     }
 }
