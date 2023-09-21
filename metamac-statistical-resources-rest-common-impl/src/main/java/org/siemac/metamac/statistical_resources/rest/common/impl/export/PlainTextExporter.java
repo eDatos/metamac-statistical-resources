@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
@@ -18,19 +19,19 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribut
 
 public class PlainTextExporter {
 
-    private final ResourceAccess      datasetAccess;
-    private final DatasetSelection    datasetSelection;
-    private final List<String>        selectedLanguages;
-    private static final List<String> excludeCharacters                     = new ArrayList<String>();
-    private static final String       HEADER_OBSERVATION                    = "OBS_VALUE";
-    private static final String       HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE   = "_CODE";
-    private static final String       HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
+    private final ResourceAccess   datasetAccess;
+    private final DatasetSelection datasetSelection;
+    private final List<String>     selectedLanguages;
+    private String                 format                                = "";
+    private static final String    HEADER_OBSERVATION                    = "OBS_VALUE";
+    private static final String    HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE   = "_CODE";
+    private static final String    HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
 
     public PlainTextExporter(ResourceAccess resourceAccess, List<String> selectedLanguages, String format) {
         datasetAccess = resourceAccess;
         datasetSelection = resourceAccess.getDataSelection();
         this.selectedLanguages = selectedLanguages;
-        getQuotedCharacters(format);
+        this.format = format;
     }
 
     public List<PlainTextResource> writeObservationsAndAttributesWithObservationAttachmentLevel() throws MetamacException {
@@ -147,7 +148,7 @@ public class PlainTextExporter {
         return target;
     }
 
-    private static String getLocalisedStringByLang(List<LocalisedString> source, String language) {
+    private String getLocalisedStringByLang(List<LocalisedString> source, String language) {
         // in the api, lamba functions is not allowed. the search is done with a loop.
         for (LocalisedString loc : source) {
             if (language.equals(loc.getLang())) {
@@ -157,34 +158,24 @@ public class PlainTextExporter {
         return null;
     }
 
+    private String formattedText(String text) {
+        if ("csv".equals(format)) {
+            text = StringEscapeUtils.escapeCsv(text);
+        }
+        return text;
+    }
+
     // remove unsupported characters and if there are excluded characters, to put the value between on quotation marks
-    private static String processUnsupportedCharaters(String string) {
+    private String processUnsupportedCharaters(String string) {
         if (StringUtils.isNotBlank(string)) {
             String value = string.replaceAll("[\n\t\r\b\f]", " ");
-            return quotedFields(value);
+            return formattedText(value);
         } else {
             return null;
         }
     }
 
-    private static String quotedFields(String value) {
-        for (String character : excludeCharacters) {
-            if (value.contains(character)) {
-                return "\"" + value + "\"";
-            }
-        }
-        return value;
-    }
-
-    private static List<String> getQuotedCharacters(String format) {
-        if ("csv".equals(format)) {
-            excludeCharacters.add(",");
-        }
-        return excludeCharacters;
-    }
-
     public List<String> getSelectedLanguages() {
         return selectedLanguages;
     }
-
 }
