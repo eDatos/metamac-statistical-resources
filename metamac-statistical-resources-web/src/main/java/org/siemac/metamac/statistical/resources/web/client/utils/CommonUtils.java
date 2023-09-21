@@ -668,7 +668,7 @@ public class CommonUtils {
     private static String getDataSourceName(DataSourceTypeEnum dataSourceTypeEnum) {
         return dataSourceTypeEnum != null ? getCoreMessages().getString(getCoreMessages().dataSourceTypeEnum() + dataSourceTypeEnum.getName()) : null;
     }
-    
+
     public static LinkedHashMap<String, String> getDateFormatTypeHashMap() {
         LinkedHashMap<String, String> dateFormatTypeHashMap = new LinkedHashMap<String, String>();
         for (DateFormatTypeEnum a : DateFormatTypeEnum.values()) {
@@ -678,4 +678,5 @@ public class CommonUtils {
 
         return dateFormatTypeHashMap;
     }
+
 }
