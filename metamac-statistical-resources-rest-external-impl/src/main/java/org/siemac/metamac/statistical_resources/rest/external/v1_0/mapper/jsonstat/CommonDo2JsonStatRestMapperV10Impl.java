@@ -1,6 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +48,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRestMapperV10 {
 
+    public static final List<DsdExternalProcessor.DsdComponentType> DIMENSIONLIKE_ATTRIBUTES = Arrays.asList(DsdExternalProcessor.DsdComponentType.MEASURE, DsdExternalProcessor.DsdComponentType.TEMPORAL,
+            DsdExternalProcessor.DsdComponentType.SPATIAL);
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
 
     @Override
-    public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, String selectedLanguage) throws Exception {
+    public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult,
+            Attributes attributes, String selectedLanguage) throws Exception {
         Map<String, JsonStatDimension> jsonStatDimensionMap = new HashMap<>();
         for (DimensionRepresentation dimension : dimensionRepresentations.getDimensions()) {
             JsonStatDimension jsonStatDimension = new JsonStatDimension();
@@ -70,7 +76,43 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             jsonStatDimensionMap.put(dimension.getDimensionId(), jsonStatDimension);
         }
 
+        for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
+            if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
+                JsonStatDimension jsonStatDimension = new JsonStatDimension();
+                jsonStatDimension.setLabel(toI18nValue(dsdAttribute.getConceptIdentity().getName(), selectedLanguage));
+                jsonStatDimension.setCategory(new JsonStatCategory());
+
+                Map<String, Long> indexMap = new HashMap<>();
+                Map<String, String> labelMap = new HashMap<>();
+
+                List<EnumeratedAttributeValue> attributeValues = getEnumeratedAttributeValues(attributes, dsdAttribute);
+                if (attributeValues.isEmpty()) {
+                    LOGGER.debug("Attribute `{}` has no values, it should at least have 1", dsdAttribute.getComponentId());
+                    continue;
+                }
+
+                indexMap.put(dsdAttribute.getComponentId(), 0L);
+                labelMap.put(dsdAttribute.getComponentId(), toI18nValue(attributeValues.get(0).getName(), selectedLanguage));
+
+                jsonStatDimension.getCategory().setIndex(indexMap);
+                jsonStatDimension.getCategory().setLabel(labelMap);
+
+                jsonStatDimensionMap.put(dsdAttribute.getComponentId(), jsonStatDimension);
+            }
+        }
+
         return jsonStatDimensionMap;
+    }
+
+    private static List<EnumeratedAttributeValue> getEnumeratedAttributeValues(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
+        List<EnumeratedAttributeValue> attributeValues = new ArrayList<>();
+        for (Attribute attribute : attributes.getAttributes()) {
+            if (attribute.getId().equals(dsdAttribute.getComponentId())) {
+                attributeValues = ((EnumeratedAttributeValues) attribute.getAttributeValues()).getValues();
+                break;
+            }
+        }
+        return attributeValues;
     }
 
     private String toCategoryI18nName(Dimensions dimensions, String dimensionId, CodeRepresentation category, String selectedLanguage) {
@@ -119,7 +161,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     @Override
     public List<String> toJsonStatNote(DatasetVersion source, Data data, Dimensions dimensions, Attributes attributes, DsdProcessorResult dsdProcessorResult, String selectedLanguage) {
         List<String> notes = new ArrayList<>();
-        // Discard attributes that are at observation level, we do not want those to appear on the notes
+        // Discard dsdAttributes that are at observation level, we do not want those to appear on the notes
         List<DsdExternalProcessor.DsdAttribute> attributesThatAreNotAtObservationLevel = new ArrayList<>();
         for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
             if (!dsdAttribute.isAttributeAtObservationLevel()) {
@@ -137,6 +179,10 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private List<String> getNotesForDatasetLevelAttribute(DsdExternalProcessor.DsdAttribute attribute, DatasetVersion source) {
+        if (DIMENSIONLIKE_ATTRIBUTES.contains(attribute.getType())) {
+            return Collections.emptyList(); // don't include in the notes dsdAttributes of spatial, measure or temporal type
+        }
+
         List<String> notes = new ArrayList<>();
         // To find the value of the attribute we need to look up the dataset attribute coverage.
         AttributeValue attributeCoverage = getAttributeCoverageByComponentId(source.getAttributesCoverage(), attribute.getComponentId());
@@ -261,7 +307,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 }
             }
         }
-        return attributeCode; // some attributes are not declared as i18n
+        return attributeCode; // some dsdAttributes are not declared as i18n
     }
 
     private String getNoteFromAttributePossition(Dimensions dimensions, String selectedLanguage, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues,
@@ -295,20 +341,31 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     @Override
-    public List<String> getJsonStatId(Data data) {
+    public List<String> getJsonStatId(Data data, DsdProcessorResult dsdAttributes) {
         List<String> id = new ArrayList<>();
         for (DimensionRepresentation dim : data.getDimensions().getDimensions()) {
             id.add(dim.getDimensionId());
+        }
+        for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdAttributes.getAttributes()) {
+            if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
+                id.add(dsdAttribute.getComponentId());
+            }
         }
         return id;
     }
 
     @Override
-    public List<Long> toJsonStatSize(Data data) {
+    public List<Long> toJsonStatSize(Data data, DsdProcessorResult dsdProcessorResult, Attributes attributes) {
         List<Long> dimensionSizes = new ArrayList<>();
         for (DimensionRepresentation dimension : data.getDimensions().getDimensions()) {
             long size = dimension.getRepresentations().getTotal().longValue();
             dimensionSizes.add(size);
+        }
+        for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
+            if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
+                List<EnumeratedAttributeValue> enumeratedAttributeValues = getEnumeratedAttributeValues(attributes, dsdAttribute);
+                dimensionSizes.add((long) enumeratedAttributeValues.size());
+            }
         }
         return dimensionSizes;
     }
@@ -355,21 +412,28 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     @Override
     public Map<String, List<String>> toJsonStatRoles(DsdProcessorResult dsdProcessorResult) throws MetamacException {
         Map<String, List<String>> roles = new HashMap<>();
-
         for (DsdExternalProcessor.DsdDimension dimension : dsdProcessorResult.getDimensions()) {
-            if (dimension.getType() == DsdExternalProcessor.DsdComponentType.MEASURE) {
-                initializeDimensionRole(roles, METRIC_ROLE);
-                roles.get(METRIC_ROLE).add(dimension.getComponentId());
-            } else if (dimension.getType() == DsdExternalProcessor.DsdComponentType.SPATIAL) {
-                initializeDimensionRole(roles, GEO_ROLE);
-                roles.get(GEO_ROLE).add(dimension.getComponentId());
-            } else if (dimension.getType() == DsdExternalProcessor.DsdComponentType.TEMPORAL) {
-                initializeDimensionRole(roles, TIME_ROLE);
-                roles.get(TIME_ROLE).add(dimension.getComponentId());
-            }
+            setRoles(roles, dimension);
         }
-
+        for (DsdExternalProcessor.DsdAttribute attribute : dsdProcessorResult.getAttributes()) {
+            setRoles(roles, attribute);
+        }
         return roles;
+    }
+
+    private void setRoles(Map<String, List<String>> roles, DsdExternalProcessor.DsdComponent dsdComponent) {
+        DsdExternalProcessor.DsdComponentType type = dsdComponent.getType();
+        String componentId = dsdComponent.getComponentId();
+        if (type == DsdExternalProcessor.DsdComponentType.MEASURE) {
+            initializeDimensionRole(roles, METRIC_ROLE);
+            roles.get(METRIC_ROLE).add(componentId);
+        } else if (type == DsdExternalProcessor.DsdComponentType.SPATIAL) {
+            initializeDimensionRole(roles, GEO_ROLE);
+            roles.get(GEO_ROLE).add(componentId);
+        } else if (type == DsdExternalProcessor.DsdComponentType.TEMPORAL) {
+            initializeDimensionRole(roles, TIME_ROLE);
+            roles.get(TIME_ROLE).add(componentId);
+        }
     }
 
     private void initializeDimensionRole(Map<String, List<String>> roles, String key) {
