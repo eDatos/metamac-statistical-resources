@@ -86,7 +86,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             Map<String, String> labelMap = new HashMap<>();
             Map<String, JsonStatUnit> unitMap = new HashMap<>();
 
-            boolean isMeasureDimension = isMeasureDimension(dimensions, dimension);
+            boolean isMeasureDimension = isMeasure(dimensions, dimension);
 
             for (CodeRepresentation category : dimension.getRepresentations().getRepresentations()) {
                 indexMap.put(category.getCode(), category.getIndex());
@@ -115,24 +115,55 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
                 Map<String, Long> indexMap = new HashMap<>();
                 Map<String, String> labelMap = new HashMap<>();
+                Map<String, JsonStatUnit> unitMap = new HashMap<>();
 
-                List<EnumeratedAttributeValue> attributeValues = getEnumeratedAttributeValues(attributes, dsdAttribute);
-                if (attributeValues.isEmpty()) {
+                List<InternationalString> attributeNames = getAttributeNames(attributes, dsdAttribute);
+                if (attributeNames.isEmpty()) {
                     LOGGER.debug("Attribute `{}` has no values, it should at least have 1", dsdAttribute.getComponentId());
                     continue;
                 }
 
                 indexMap.put(dsdAttribute.getComponentId(), 0L);
-                labelMap.put(dsdAttribute.getComponentId(), toI18nValue(attributeValues.get(0).getName(), selectedLanguage));
+                labelMap.put(dsdAttribute.getComponentId(), toI18nValue(attributeNames.get(0), selectedLanguage));
+                Concept concept = findConceptById(measureConcepts, dsdAttribute);
+                if (isMeasure(dsdAttribute)) {
+                    setUnitIfExists(unitMap, dsdAttribute, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage);
+                }
 
                 jsonStatDimension.getCategory().setIndex(indexMap);
                 jsonStatDimension.getCategory().setLabel(labelMap);
+                if (!unitMap.isEmpty()) {
+                    jsonStatDimension.getCategory().setUnit(unitMap);
+                }
 
                 jsonStatDimensionMap.put(dsdAttribute.getComponentId(), jsonStatDimension);
             }
         }
 
         return jsonStatDimensionMap;
+    }
+
+    private Concept findConceptById(List<Concept> measureConcepts, DsdExternalProcessor.DsdAttribute dsdAttribute) {
+        for (Concept concept : measureConcepts) {
+            if (concept.getId().equals(dsdAttribute.getComponentId())) {
+                return concept;
+            }
+        }
+        return null;
+    }
+
+    private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, DsdExternalProcessor.DsdAttribute dsdAttribute, Concept concept, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute,
+                                 String selectedLanguage) {
+        if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
+                || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
+            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+        } else if (concept != null && concept.getQuantity() != null) {
+            unitMap.put(dsdAttribute.getComponentId(), toUnit(concept, selectedLanguage));
+        }
+    }
+
+    private boolean isMeasure(DsdExternalProcessor.DsdAttribute dsdAttribute) {
+        return dsdAttribute.getType().equals(DsdExternalProcessor.DsdComponentType.MEASURE);
     }
 
     private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, CodeRepresentation category, Concept concept, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute,
@@ -166,7 +197,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return measureConcepts;
     }
 
-    private static boolean isMeasureDimension(Dimensions dimensions, DimensionRepresentation dimension) {
+    private static boolean isMeasure(Dimensions dimensions, DimensionRepresentation dimension) {
         boolean isMeasureDimension = false;
         for (Dimension dim : dimensions.getDimensions()) {
             if (dim.getId().equals(dimension.getDimensionId()) && dim.getType() == DimensionType.MEASURE_DIMENSION) {
@@ -211,15 +242,31 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return unit;
     }
 
-    private static List<EnumeratedAttributeValue> getEnumeratedAttributeValues(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
-        List<EnumeratedAttributeValue> attributeValues = new ArrayList<>();
+    private static List<InternationalString> getAttributeNames(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
+        List<InternationalString> attributeValues = new ArrayList<>();
         for (Attribute attribute : attributes.getAttributes()) {
             if (attribute.getId().equals(dsdAttribute.getComponentId())) {
-                attributeValues = ((EnumeratedAttributeValues) attribute.getAttributeValues()).getValues();
+                attributeValues = getValuesNames(attribute);
                 break;
             }
         }
         return attributeValues;
+    }
+
+    private static List<InternationalString> getValuesNames(Attribute attribute) {
+        List<InternationalString> names = new ArrayList<>();
+        if (attribute.getAttributeValues() instanceof EnumeratedAttributeValues) {
+            for (EnumeratedAttributeValue attributeValue : ((EnumeratedAttributeValues) attribute.getAttributeValues()).getValues()) {
+                InternationalString name = attributeValue.getName();
+                names.add(name);
+            }
+        } else if (attribute.getAttributeValues() instanceof NonEnumeratedAttributeValues) {
+            for (NonEnumeratedAttributeValue attributeValue : ((NonEnumeratedAttributeValues) attribute.getAttributeValues()).getValues()) {
+                InternationalString name = attributeValue.getName();
+                names.add(name);
+            }
+        }
+        return names;
     }
 
     private String toCategoryI18nName(Dimensions dimensions, String dimensionId, CodeRepresentation category, String selectedLanguage) {
@@ -470,8 +517,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
         for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
             if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
-                List<EnumeratedAttributeValue> enumeratedAttributeValues = getEnumeratedAttributeValues(attributes, dsdAttribute);
-                dimensionSizes.add((long) enumeratedAttributeValues.size());
+                List<InternationalString> attributeValues = getAttributeNames(attributes, dsdAttribute);
+                dimensionSizes.add((long) attributeValues.size());
             }
         }
         return dimensionSizes;
