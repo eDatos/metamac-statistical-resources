@@ -7,6 +7,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_24_SIMPLE_WITH_TWO_VERSIONS_WITH_QUERY_LINKED_TO_DATASET_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_03_FOR_DATASET_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_06_FOR_QUERIES_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_61_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_10_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_62_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_63_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_11_NAME;
@@ -47,9 +48,12 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_26_V3_PUBLISHED_FOR_QUERY_05_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.joda.time.DateTime;
@@ -64,9 +68,11 @@ import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResour
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
@@ -401,16 +407,35 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @MetamacMock(QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS_NAME)
     // Query DRAFT only version
     public void testRetrieveIsPartOf() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS_NAME);
 
-        PublicationVersion pubVersionDraftMultiVersion = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_61_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_10_NAME);
-        PublicationVersion pubVersionDraftSingleVersion = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_62_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME);
+        PublicationVersion pubVersionDraftMultiVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_61_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_10_NAME);
+        PublicationVersion pubVersionDraftSingleVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_62_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME);
+        MultidatasetVersion mulVersionDraftSingleVersion = multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME);
 
         QueryVersion draftQuery = query.getVersions().get(0);
 
-        List<RelatedResourceResult> pubs = this.queryVersionRepository.retrieveIsPartOf(draftQuery);
-        Assert.assertEquals(2, pubs.size());
-        CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(Arrays.asList(pubVersionDraftMultiVersion, pubVersionDraftSingleVersion), pubs);
+        List<RelatedResourceResult> relatedResources = queryVersionRepository.retrieveIsPartOf(draftQuery);
+        Assert.assertEquals(3, relatedResources.size());
+        List<RelatedResourceResult> publications = new ArrayList<>(relatedResources);
+        CollectionUtils.filter(publications, new Predicate<RelatedResourceResult>() {
+
+            @Override
+            public boolean evaluate(RelatedResourceResult relatedResource) {
+                return TypeRelatedResourceEnum.PUBLICATION_VERSION.equals(relatedResource.getType());
+            }
+        });
+        List<RelatedResourceResult> multidatasets = new ArrayList<>(relatedResources);
+        CollectionUtils.filter(multidatasets, new Predicate<RelatedResourceResult>() {
+
+            @Override
+            public boolean evaluate(RelatedResourceResult relatedResource) {
+                return TypeRelatedResourceEnum.MULTIDATASET_VERSION.equals(relatedResource.getType());
+            }
+        });
+
+        CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(Arrays.asList(pubVersionDraftMultiVersion, pubVersionDraftSingleVersion), publications);
+        CommonAsserts.assertEqualsRelatedResourceResultCollectionToMultidatasetVersionCollection(Arrays.asList(mulVersionDraftSingleVersion), multidatasets);
     }
 
     @Test
