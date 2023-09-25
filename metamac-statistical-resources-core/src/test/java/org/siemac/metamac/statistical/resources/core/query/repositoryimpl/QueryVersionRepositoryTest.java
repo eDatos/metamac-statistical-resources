@@ -99,15 +99,15 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Test
     @MetamacMock(QUERY_VERSION_01_WITH_SELECTION_NAME)
     public void testRetrieveByUrn() throws MetamacException {
-        QueryVersion actual = this.queryVersionRepository.retrieveByUrn(this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME).getLifeCycleStatisticalResource().getUrn());
-        assertEqualsQueryVersion(this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME), actual);
+        QueryVersion actual = queryVersionRepository.retrieveByUrn(queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME).getLifeCycleStatisticalResource().getUrn());
+        assertEqualsQueryVersion(queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME), actual);
     }
 
     @Test
     public void testRetrieveByUrnNotFound() throws MetamacException {
-        this.expectedMetamacException(new MetamacException(ServiceExceptionType.QUERY_NOT_FOUND, URN_NOT_EXISTS));
+        expectedMetamacException(new MetamacException(ServiceExceptionType.QUERY_NOT_FOUND, URN_NOT_EXISTS));
 
-        this.queryVersionRepository.retrieveByUrn(URN_NOT_EXISTS);
+        queryVersionRepository.retrieveByUrn(URN_NOT_EXISTS);
     }
 
     // It's necessary mark test with rollback = false because the expected error is a database constraint so, if we make don't make commit the error doesn't appear
@@ -115,10 +115,10 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Rollback(false)
     @MetamacMock({DATASET_VERSION_06_FOR_QUERIES_NAME, QUERY_01_SIMPLE_NAME})
     public void testCreateQueryErrorQuerySelectionMustHaveDimensionUnique() throws Exception {
-        this.thrown.expect(HibernateSystemException.class);
+        thrown.expect(HibernateSystemException.class);
 
-        Query query = this.queryMockFactory.retrieveMock(QUERY_01_SIMPLE_NAME);
-        QueryVersion queryVersion = this.notPersistedDoMocks.mockQueryVersionWithDatasetVersion(this.datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME), true);
+        Query query = queryMockFactory.retrieveMock(QUERY_01_SIMPLE_NAME);
+        QueryVersion queryVersion = notPersistedDoMocks.mockQueryVersionWithDatasetVersion(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME), true);
 
         // Set attributes that normally sets THE service and can not be null in database
         queryVersion.setStatus(QueryStatusEnum.ACTIVE);
@@ -171,7 +171,7 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
         queryVersion.addSelection(querySelectionItem02);
 
         // Save
-        this.queryVersionRepository.save(queryVersion);
+        queryVersionRepository.save(queryVersion);
     }
 
     // It's necessary mark test with rollback = false because the expected error is a database constraint so, if we make don't make commit the error doesn't appear
@@ -179,10 +179,10 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Rollback(false)
     @MetamacMock({DATASET_VERSION_06_FOR_QUERIES_NAME, QUERY_01_SIMPLE_NAME})
     public void testCreateQueryErrorQuerySelectionItemMustHaveDimensionCodeUnique() throws Exception {
-        this.thrown.expect(HibernateSystemException.class);
+        thrown.expect(HibernateSystemException.class);
 
-        Query query = this.queryMockFactory.retrieveMock(QUERY_01_SIMPLE_NAME);
-        QueryVersion queryVersion = this.notPersistedDoMocks.mockQueryVersionWithDatasetVersion(this.datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME), true);
+        Query query = queryMockFactory.retrieveMock(QUERY_01_SIMPLE_NAME);
+        QueryVersion queryVersion = notPersistedDoMocks.mockQueryVersionWithDatasetVersion(datasetVersionMockFactory.retrieveMock(DATASET_VERSION_06_FOR_QUERIES_NAME), true);
 
         // Set attributes that normally sets de service and can not be null in database
         queryVersion.setStatus(QueryStatusEnum.ACTIVE);
@@ -235,25 +235,25 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
         queryVersion.addSelection(querySelectionItem02);
 
         // Save
-        this.queryVersionRepository.save(queryVersion);
+        queryVersionRepository.save(queryVersion);
     }
 
     @Override
     @Test
     @MetamacMock({QUERY_02_BASIC_WITH_GENERATED_VERSION_NAME, QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME})
     public void testRetrieveLastVersion() throws Exception {
-        String queryUrn = this.queryMockFactory.retrieveMock(QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
-        QueryVersion expected = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_22_FOR_QUERY_03_AND_LAST_VERSION_NAME);
-        QueryVersion actual = this.queryVersionRepository.retrieveLastVersion(queryUrn);
+        String queryUrn = queryMockFactory.retrieveMock(QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
+        QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_22_FOR_QUERY_03_AND_LAST_VERSION_NAME);
+        QueryVersion actual = queryVersionRepository.retrieveLastVersion(queryUrn);
         assertEqualsQueryVersion(expected, actual);
     }
 
     @Test
     @MetamacMock({QUERY_02_BASIC_WITH_GENERATED_VERSION_NAME, QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME, QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME})
     public void testRetrieveLastVersionWithAllVersionsPublished() throws Exception {
-        String queryUrn = this.queryMockFactory.retrieveMock(QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
-        QueryVersion expected = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_26_V3_PUBLISHED_FOR_QUERY_05_NAME);
-        QueryVersion actual = this.queryVersionRepository.retrieveLastVersion(queryUrn);
+        String queryUrn = queryMockFactory.retrieveMock(QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
+        QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_26_V3_PUBLISHED_FOR_QUERY_05_NAME);
+        QueryVersion actual = queryVersionRepository.retrieveLastVersion(queryUrn);
         assertEqualsQueryVersion(expected, actual);
     }
 
@@ -261,9 +261,9 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @MetamacMock({QUERY_02_BASIC_WITH_GENERATED_VERSION_NAME, QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME, QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME,
             QUERY_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME})
     public void testRetrieveLastVersionWithLatestVersionNoVisible() throws Exception {
-        String queryUrn = this.queryMockFactory.retrieveMock(QUERY_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME).getIdentifiableStatisticalResource().getUrn();
-        QueryVersion expected = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME);
-        QueryVersion actual = this.queryVersionRepository.retrieveLastVersion(queryUrn);
+        String queryUrn = queryMockFactory.retrieveMock(QUERY_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME).getIdentifiableStatisticalResource().getUrn();
+        QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME);
+        QueryVersion actual = queryVersionRepository.retrieveLastVersion(queryUrn);
         assertEqualsQueryVersion(expected, actual);
     }
 
@@ -271,16 +271,16 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Test
     @MetamacMock({QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME, QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME})
     public void testRetrieveLastPublishedVersion() throws Exception {
-        String queryUrn = this.queryMockFactory.retrieveMock(QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
-        QueryVersion expected = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_21_FOR_QUERY_03_NAME);
-        QueryVersion actual = this.queryVersionRepository.retrieveLastPublishedVersion(queryUrn);
+        String queryUrn = queryMockFactory.retrieveMock(QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
+        QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_21_FOR_QUERY_03_NAME);
+        QueryVersion actual = queryVersionRepository.retrieveLastPublishedVersion(queryUrn);
         assertEqualsQueryVersion(expected, actual);
     }
 
     @Test
     @MetamacMock({QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME})
     public void testRetrieveLastPublishedVersionQueryForExternalAPI() throws Exception {
-        QueryVersion expected = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_21_FOR_QUERY_03_NAME);
+        QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_21_FOR_QUERY_03_NAME);
 
         // @formatter:off
         DateTime now = new DateTime();
@@ -297,7 +297,7 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
             .distinctRoot().build();
         // @formatter:on
 
-        List<QueryVersion> result = this.queryVersionRepository.findByCondition(conditions);
+        List<QueryVersion> result = queryVersionRepository.findByCondition(conditions);
         assertTrue(result.size() == 1);
         assertEquals(result.iterator().next().getLifeCycleStatisticalResource().getUrn(), expected.getLifeCycleStatisticalResource().getUrn());
     }
@@ -305,7 +305,7 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Test
     @MetamacMock({QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME})
     public void testRetrieveRelatedUrnQueryForExternalAPI() throws Exception {
-        QueryVersion expected = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_21_FOR_QUERY_03_NAME);
+        QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_21_FOR_QUERY_03_NAME);
 
         // @formatter:off
         String expectedDatasetVersionUrn = expected.getDataset().getVersions().get(0).getSiemacMetadataStatisticalResource().getUrn();
@@ -334,7 +334,7 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
           .distinctRoot().build();
         // @formatter:on
 
-        List<QueryVersion> result = this.queryVersionRepository.findByCondition(conditions);
+        List<QueryVersion> result = queryVersionRepository.findByCondition(conditions);
         assertTrue(result.size() == 1);
         assertEquals(result.iterator().next().getLifeCycleStatisticalResource().getUrn(), expected.getLifeCycleStatisticalResource().getUrn());
     }
@@ -342,31 +342,30 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Test
     @MetamacMock({QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME, QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME})
     public void testRetrieveLastPublishedVersionWithAllVersionsPublished() throws Exception {
-        String queryUrn = this.queryMockFactory.retrieveMock(QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
-        QueryVersion expected = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_26_V3_PUBLISHED_FOR_QUERY_05_NAME);
-        QueryVersion actual = this.queryVersionRepository.retrieveLastPublishedVersion(queryUrn);
+        String queryUrn = queryMockFactory.retrieveMock(QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME).getIdentifiableStatisticalResource().getUrn();
+        QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_26_V3_PUBLISHED_FOR_QUERY_05_NAME);
+        QueryVersion actual = queryVersionRepository.retrieveLastPublishedVersion(queryUrn);
         assertEqualsQueryVersion(expected, actual);
     }
 
     @Test
     @MetamacMock({QUERY_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME, QUERY_03_BASIC_WITH_2_QUERY_VERSIONS_NAME, QUERY_VERSION_11_DRAFT_NAME})
     public void testRetrieveLastPublishedVersionWithoutVersionsPublished() throws Exception {
-        String queryUrn = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_11_DRAFT_NAME).getQuery().getIdentifiableStatisticalResource().getUrn();
+        String queryUrn = queryVersionMockFactory.retrieveMock(QUERY_VERSION_11_DRAFT_NAME).getQuery().getIdentifiableStatisticalResource().getUrn();
         QueryVersion expected = null;
-        QueryVersion actual = this.queryVersionRepository.retrieveLastPublishedVersion(queryUrn);
+        QueryVersion actual = queryVersionRepository.retrieveLastPublishedVersion(queryUrn);
         assertEqualsQueryVersion(expected, actual);
     }
-
 
     @Test
     @Override
     @MetamacMock({QUERY_VERSION_08_BASIC_DISCONTINUED_NAME, DATASET_VERSION_03_FOR_DATASET_03_NAME, QUERY_VERSION_02_BASIC_ORDERED_01_NAME, QUERY_VERSION_03_BASIC_ORDERED_02_NAME})
     public void testFindLinkedToFixedDatasetVersion() throws Exception {
-        DatasetVersion datasetVersion = this.datasetVersionMockFactory.retrieveMock(DATASET_VERSION_03_FOR_DATASET_03_NAME);
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_03_FOR_DATASET_03_NAME);
 
-        QueryVersion query01 = this.queryVersionMockFactory.retrieveMock(QUERY_VERSION_08_BASIC_DISCONTINUED_NAME);
+        QueryVersion query01 = queryVersionMockFactory.retrieveMock(QUERY_VERSION_08_BASIC_DISCONTINUED_NAME);
 
-        List<QueryVersion> queryVersions = this.queryVersionRepository.findLinkedToFixedDatasetVersion(datasetVersion.getId());
+        List<QueryVersion> queryVersions = queryVersionRepository.findLinkedToFixedDatasetVersion(datasetVersion.getId());
 
         QueryAsserts.assertEqualsQueryVersionCollection(Arrays.asList(query01), queryVersions);
     }
@@ -376,11 +375,11 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @MetamacMock({DATASET_24_SIMPLE_WITH_TWO_VERSIONS_WITH_QUERY_LINKED_TO_DATASET_NAME, QUERY_VERSION_08_BASIC_DISCONTINUED_NAME, DATASET_VERSION_03_FOR_DATASET_03_NAME,
             QUERY_VERSION_02_BASIC_ORDERED_01_NAME, QUERY_VERSION_03_BASIC_ORDERED_02_NAME})
     public void testFindLinkedToDataset() throws Exception {
-        Dataset dataset = this.datasetMockFactory.retrieveMock(DATASET_24_SIMPLE_WITH_TWO_VERSIONS_WITH_QUERY_LINKED_TO_DATASET_NAME);
+        Dataset dataset = datasetMockFactory.retrieveMock(DATASET_24_SIMPLE_WITH_TWO_VERSIONS_WITH_QUERY_LINKED_TO_DATASET_NAME);
 
-        QueryVersion query01 = this.queryVersionMockFactory.retrieveMock(QueryVersionMockFactory.QUERY_VERSION_36_LINKED_TO_DATASET_NAME);
+        QueryVersion query01 = queryVersionMockFactory.retrieveMock(QueryVersionMockFactory.QUERY_VERSION_36_LINKED_TO_DATASET_NAME);
 
-        List<QueryVersion> queryVersions = this.queryVersionRepository.findLinkedToDataset(dataset.getId());
+        List<QueryVersion> queryVersions = queryVersionRepository.findLinkedToDataset(dataset.getId());
 
         QueryAsserts.assertEqualsQueryVersionCollection(Arrays.asList(query01), queryVersions);
     }
@@ -389,14 +388,14 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Override
     @MetamacMock({DATASET_16_WITH_PUBLISHED_AND_DRAFT_VERSIONS_WITH_THREE_QUERIES_DRAFT_NOT_VISIBLE_AND_PUBLISHED_LINKED_TO_DATASET_AND_ONE_QUERY_DRAFT_LINKED_TO_VERSION_NAME})
     public void testFindQueriesPublishedLinkedToDataset() throws Exception {
-        Dataset dataset = this.datasetMockFactory
+        Dataset dataset = datasetMockFactory
                 .retrieveMock(DATASET_16_WITH_PUBLISHED_AND_DRAFT_VERSIONS_WITH_THREE_QUERIES_DRAFT_NOT_VISIBLE_AND_PUBLISHED_LINKED_TO_DATASET_AND_ONE_QUERY_DRAFT_LINKED_TO_VERSION_NAME);
 
-        List<QueryVersion> queryVersions = this.queryVersionRepository.findQueriesPublishedLinkedToDataset(dataset.getId());
+        List<QueryVersion> queryVersions = queryVersionRepository.findQueriesPublishedLinkedToDataset(dataset.getId());
 
         Assert.assertTrue(queryVersions.size() == 2);
     }
- 
+
     @Test
     @Override
     @MetamacMock(QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS_NAME)
@@ -417,18 +416,18 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Test
     @MetamacMock(QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS_NAME)
     public void testRetrieveIsPartOfSingleVersionQueryPublishedNotVisible() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS_NAME);
 
-        PublicationVersion pubVersionDraftMultiVersion = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_63_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_11_NAME);
-        PublicationVersion pubVersionDraftSingleVersion = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_64_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_11_NAME);
-        PublicationVersion pubVersionNotVisibleSingleVersion = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_65_PUBLISHED_NOT_VISIBLE_SINGLE_VERSION__LINKED_TO_QUERY_11_NAME);
-        PublicationVersion pubVersionNotVisibleMultiVersion = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_66_PUBLISHED_MULTI_VERSION_V01__LINKED_TO_QUERY_11_NAME);
+        PublicationVersion pubVersionDraftMultiVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_63_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_11_NAME);
+        PublicationVersion pubVersionDraftSingleVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_64_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_11_NAME);
+        PublicationVersion pubVersionNotVisibleSingleVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_65_PUBLISHED_NOT_VISIBLE_SINGLE_VERSION__LINKED_TO_QUERY_11_NAME);
+        PublicationVersion pubVersionNotVisibleMultiVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_66_PUBLISHED_MULTI_VERSION_V01__LINKED_TO_QUERY_11_NAME);
 
         QueryVersion draftQuery = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersionDraftMultiVersion, pubVersionDraftSingleVersion, pubVersionNotVisibleSingleVersion, pubVersionNotVisibleMultiVersion);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOf(draftQuery);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOf(draftQuery);
         Assert.assertEquals(4, ispartOf.size());
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
@@ -436,71 +435,71 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     @Test
     @MetamacMock(QUERY_12_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_WITH_SINGLE_VERSIONS_NAME)
     public void testRetrieveIsPartOfSingleVersionQueryPublishedLinkedInSingleVersionPublications() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_12_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_WITH_SINGLE_VERSIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_12_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_WITH_SINGLE_VERSIONS_NAME);
 
-        PublicationVersion pubVersionDraft = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_68_DRAFT_SINGLE_VERSION_LINKED_TO_QUERY_12_NAME);
-        PublicationVersion pubVersionNotVisible = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_69_PUBLISHED_NOT_VISIBLE_SINGLE_VERSION_LINKED_TO_QUERY_12_NAME);
-        PublicationVersion pubVersionPublished = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_70_PUBLISHED_SINGLE_VERSION_LINKED_TO_QUERY_12_NAME);
+        PublicationVersion pubVersionDraft = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_68_DRAFT_SINGLE_VERSION_LINKED_TO_QUERY_12_NAME);
+        PublicationVersion pubVersionNotVisible = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_69_PUBLISHED_NOT_VISIBLE_SINGLE_VERSION_LINKED_TO_QUERY_12_NAME);
+        PublicationVersion pubVersionPublished = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_70_PUBLISHED_SINGLE_VERSION_LINKED_TO_QUERY_12_NAME);
 
         QueryVersion publishedQuery = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersionDraft, pubVersionNotVisible, pubVersionPublished);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOf(publishedQuery);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOf(publishedQuery);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
 
     @Test
     @MetamacMock(QUERY_13_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_LAST_VERSIONS_NAME)
     public void testRetrieveIsPartOfSingleVersionQueryPublishedLinkedInPublicationsToLastVersions() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_13_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_LAST_VERSIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_13_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_LAST_VERSIONS_NAME);
 
-        PublicationVersion pubVersionDraft = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_71_DRAFT_V02_IN_PUB_WITH_PUBLISHED_AND_DRAFT__ONLY_DRAFT_LINKED_TO_QUERY_13_NAME);
-        PublicationVersion pubVersionNotVisible = this.publicationVersionMockFactory
+        PublicationVersion pubVersionDraft = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_71_DRAFT_V02_IN_PUB_WITH_PUBLISHED_AND_DRAFT__ONLY_DRAFT_LINKED_TO_QUERY_13_NAME);
+        PublicationVersion pubVersionNotVisible = publicationVersionMockFactory
                 .retrieveMock(PUBLICATION_VERSION_75_NOT_VISIBLE_V02_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__ONLY_LAST_LINKED_TO_QUERY_13_NAME);
-        PublicationVersion pubVersionPublished = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_79_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__ONLY_LAST_LINKED_TO_QUERY_13_NAME);
+        PublicationVersion pubVersionPublished = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_79_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__ONLY_LAST_LINKED_TO_QUERY_13_NAME);
 
         QueryVersion draftQuery = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersionDraft, pubVersionNotVisible, pubVersionPublished);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOf(draftQuery);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOf(draftQuery);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
 
     @Test
     @MetamacMock(QUERY_14_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_PREVIOUS_VERSIONS_NAME)
     public void testRetrieveIsPartOfSingleVersionQueryPublishedLinkedInPublicationsToPreviousVersions() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_14_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_PREVIOUS_VERSIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_14_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_PREVIOUS_VERSIONS_NAME);
 
-        PublicationVersion pubVersion01 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_72_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__ONLY_PUBLISHED_LINKED_TO_QUERY_14_NAME);
-        PublicationVersion pubVersion02 = this.publicationVersionMockFactory
+        PublicationVersion pubVersion01 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_72_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__ONLY_PUBLISHED_LINKED_TO_QUERY_14_NAME);
+        PublicationVersion pubVersion02 = publicationVersionMockFactory
                 .retrieveMock(PUBLICATION_VERSION_76_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__ONLY_PUBLISHED_LINKED_TO_QUERY_14_NAME);
 
         QueryVersion queryVersion = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersion01, pubVersion02);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOf(queryVersion);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOf(queryVersion);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
 
     @Test
     @MetamacMock(QUERY_15_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_BOTH_VERSIONS_NAME)
     public void testRetrieveIsPartOfSingleVersionQueryPublishedLinkedInPublicationsToBoth() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_15_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_BOTH_VERSIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_15_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_BOTH_VERSIONS_NAME);
 
-        PublicationVersion pubVersion01 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_73_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__BOTH_LINKED_TO_QUERY_15_NAME);
-        PublicationVersion pubVersion02 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_74_DRAFT_V02_IN_PUB_WITH_PUBLISHED_AND_DRAFT__BOTH_LINKED_TO_QUERY_15_NAME);
-        PublicationVersion pubVersion03 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_77_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__BOTH_LINKED_TO_QUERY_15_NAME);
-        PublicationVersion pubVersion04 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_78_NOT_VISIBLE_V02_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__BOTH_LINKED_TO_QUERY_15_NAME);
-        PublicationVersion pubVersion06 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_82_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion01 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_73_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion02 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_74_DRAFT_V02_IN_PUB_WITH_PUBLISHED_AND_DRAFT__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion03 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_77_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion04 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_78_NOT_VISIBLE_V02_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion06 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_82_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__BOTH_LINKED_TO_QUERY_15_NAME);
 
         QueryVersion queryVersion = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersion01, pubVersion02, pubVersion03, pubVersion04, pubVersion06);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOf(queryVersion);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOf(queryVersion);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
 
@@ -509,49 +508,49 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
     // Query published
     @MetamacMock(QUERY_15_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_BOTH_VERSIONS_NAME)
     public void testRetrieveIsPartOfOnlyLastPublished() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_15_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_BOTH_VERSIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_15_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_BOTH_VERSIONS_NAME);
 
-        PublicationVersion pubVersion01 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_73_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__BOTH_LINKED_TO_QUERY_15_NAME);
-        PublicationVersion pubVersion02 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_77_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__BOTH_LINKED_TO_QUERY_15_NAME);
-        PublicationVersion pubVersion03 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_82_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion01 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_73_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion02 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_77_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__BOTH_LINKED_TO_QUERY_15_NAME);
+        PublicationVersion pubVersion03 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_82_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__BOTH_LINKED_TO_QUERY_15_NAME);
 
         QueryVersion queryVersion = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersion01, pubVersion02, pubVersion03);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOfOnlyLastPublished(queryVersion);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOfOnlyLastPublished(queryVersion);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
 
     @Test
     @MetamacMock(QUERY_13_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_LAST_VERSIONS_NAME)
     public void testRetrieveIsPartOfOnlyLastPublishedQueryLinkedToLatestVersions() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_13_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_LAST_VERSIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_13_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_LAST_VERSIONS_NAME);
 
-        PublicationVersion pubVersion01 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_79_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__ONLY_LAST_LINKED_TO_QUERY_13_NAME);
+        PublicationVersion pubVersion01 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_79_LAST_VERSION_V02_IN_PUB_WITH_TWO_PUBLISHED__ONLY_LAST_LINKED_TO_QUERY_13_NAME);
 
         QueryVersion queryVersion = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersion01);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOfOnlyLastPublished(queryVersion);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOfOnlyLastPublished(queryVersion);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
 
     @Test
     @MetamacMock(QUERY_14_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_PREVIOUS_VERSIONS_NAME)
     public void testRetrieveIsPartOfOnlyLastPublishedQueryLinkedToPreviousVersions() throws Exception {
-        Query query = this.queryMockFactory.retrieveMock(QUERY_14_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_PREVIOUS_VERSIONS_NAME);
+        Query query = queryMockFactory.retrieveMock(QUERY_14_SINGLE_VERSION_PUBLISHED_USED_IN_PUBLICATIONS_LINK_ONLY_PREVIOUS_VERSIONS_NAME);
 
-        PublicationVersion pubVersion01 = this.publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_72_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__ONLY_PUBLISHED_LINKED_TO_QUERY_14_NAME);
-        PublicationVersion pubVersion02 = this.publicationVersionMockFactory
+        PublicationVersion pubVersion01 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_72_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_DRAFT__ONLY_PUBLISHED_LINKED_TO_QUERY_14_NAME);
+        PublicationVersion pubVersion02 = publicationVersionMockFactory
                 .retrieveMock(PUBLICATION_VERSION_76_PUBLISHED_V01_IN_PUB_WITH_PUBLISHED_AND_NOT_VISIBLE__ONLY_PUBLISHED_LINKED_TO_QUERY_14_NAME);
 
         QueryVersion queryVersion = query.getVersions().get(0);
 
         List<PublicationVersion> expectedIsPartOf = Arrays.asList(pubVersion01, pubVersion02);
 
-        List<RelatedResourceResult> ispartOf = this.queryVersionRepository.retrieveIsPartOfOnlyLastPublished(queryVersion);
+        List<RelatedResourceResult> ispartOf = queryVersionRepository.retrieveIsPartOfOnlyLastPublished(queryVersion);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(expectedIsPartOf, ispartOf);
     }
 

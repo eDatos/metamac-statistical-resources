@@ -10,10 +10,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import javassist.ClassPool;
-import javassist.CtMethod;
-import javassist.NotFoundException;
-
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
 import org.siemac.metamac.common.test.constants.ConfigurationMockConstants;
@@ -42,6 +38,10 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedRes
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
+
+import javassist.ClassPool;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 
 public class CommonAsserts extends MetamacAsserts {
 
