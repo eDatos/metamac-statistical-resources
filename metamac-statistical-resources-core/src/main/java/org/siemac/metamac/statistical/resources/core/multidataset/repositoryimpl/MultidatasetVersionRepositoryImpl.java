@@ -198,6 +198,7 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
 
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<RelatedResourceResult> retrieveIsPartOf(MultidatasetVersion multidatasetVersion) throws MetamacException {
         //     @formatter:off
@@ -209,7 +210,8 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
                 "        maintainer.code_nested AS code_nested, " +
                 "        stat.version_logic, "+
                 "        loc.locale, " +
-                "        loc.label " +
+                "        loc.label, " +
+                "        stat.type " +
                 "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
                 "            on cubes.ID = elem.table_fk, " +
                 "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
@@ -229,14 +231,14 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
                 "    AND     (stat.last_version = " + getBooleanValueForDatabase(true) +
                 "           OR "+isLastPublishedVersionConditions+") " +
                 "    AND     operation.ID = stat.stat_operation_fk " +
-                "    AND     maintainer.id = stat.maintainer_fk"); 
+                "    AND     maintainer.id = stat.maintainer_fk");
         //     @formatter:on
         query.setParameter("multidatasetVersionFk", multidatasetVersion.getId());
         query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
         return resources;
     }
 
