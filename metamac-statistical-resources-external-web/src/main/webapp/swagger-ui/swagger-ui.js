@@ -25734,80 +25734,10 @@ SwaggerUi.Views.OperationView = Backbone.View.extend({
     parent.showStatus(data);
   },
 
-  // Adapted from http://stackoverflow.com/a/2893259/454004
-  // Note: directly ported from CoffeeScript
-  // TODO: Cleanup CoffeeScript artifacts
   formatXml: function(xml) {
-    var contexp, fn, formatted, indent, l, lastType, len, lines, ln, pad, reg, transitions, wsexp;
-    reg = /(>)(<)(\/*)/g;
-    wsexp = /[ ]*(.*)[ ]+\n/g;
-    contexp = /(<.+>)(.+\n)/g;
-    xml = xml.replace(reg, '$1\n$2$3').replace(wsexp, '$1\n').replace(contexp, '$1\n$2');
-    pad = 0;
-    formatted = '';
-    lines = xml.split('\n');
-    indent = 0;
-    lastType = 'other';
-    transitions = {
-      'single->single': 0,
-      'single->closing': -1,
-      'single->opening': 0,
-      'single->other': 0,
-      'closing->single': 0,
-      'closing->closing': -1,
-      'closing->opening': 0,
-      'closing->other': 0,
-      'opening->single': 1,
-      'opening->closing': 0,
-      'opening->opening': 1,
-      'opening->other': 1,
-      'other->single': 0,
-      'other->closing': -1,
-      'other->opening': 0,
-      'other->other': 0
-    };
-    fn = function(ln) {
-      var fromTo, j, key, padding, type, types, value;
-      types = {
-        single: Boolean(ln.match(/<.+\/>/)),
-        closing: Boolean(ln.match(/<\/.+>/)),
-        opening: Boolean(ln.match(/<[^!?].*>/))
-      };
-      type = ((function() {
-        var results;
-        results = [];
-        for (key in types) {
-          value = types[key];
-          if (value) {
-            results.push(key);
-          }
-        }
-        return results;
-      })())[0];
-      type = type === void 0 ? 'other' : type;
-      fromTo = lastType + '->' + type;
-      lastType = type;
-      padding = '';
-      indent += transitions[fromTo];
-      padding = ((function() {
-        var m, ref1, results;
-        results = [];
-        for (j = m = 0, ref1 = indent; 0 <= ref1 ? m < ref1 : m > ref1; j = 0 <= ref1 ? ++m : --m) {
-          results.push('  ');
-        }
-        return results;
-      })()).join('');
-      if (fromTo === 'opening->closing') {
-        formatted = formatted.substr(0, formatted.length - 1) + ln + '\n';
-      } else {
-        formatted += padding + ln + '\n';
-      }
-    };
-    for (l = 0, len = lines.length; l < len; l++) {
-      ln = lines[l];
-      fn(ln);
-    }
-    return formatted;
+    // The xml is returned as it to avoid performance issues when the size of the xml is too large
+	  // See https://github.com/swagger-api/swagger-ui/pull/3862/files
+	  return xml;
   },
 
   // puts the response data in UI
