@@ -17,7 +17,6 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
@@ -133,7 +132,8 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
             "        maintainer.code_nested AS code_nested, " +
             "        stat.version_logic, "+
             "        loc.locale, " +
-            "        loc.label " +
+            "        loc.label, " +
+            "        stat.type " +
             "FROM    tb_stat_resources stat " +
             "INNER JOIN ( " +
 
@@ -175,7 +175,7 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
         return resources;
     }
 

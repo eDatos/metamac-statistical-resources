@@ -32,6 +32,9 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
@@ -68,7 +71,7 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
     public static final String      QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                  = "QUERY_09_C1_SINGLE_VERSION_USED_IN_PUB_17";
 
     public static final String      QUERY_09_SINGLE_VERSION_USED_IN_PUB_VERSION_17_NAME                                     = "QUERY_09_SINGLE_VERSION_USED_IN_PUB_17";
-    
+
     public static final String      QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS_NAME                                 = "QUERY_10_SINGLE_VERSION_DRAFT_USED_IN_PUBLICATIONS";
 
     public static final String      QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS_NAME                           = "QUERY_11_SINGLE_VERSION_NOT_VISIBLE_USED_IN_PUBLICATIONS";
@@ -308,7 +311,10 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
         Publication publication02 = createPublicationWithSingleVersionDraftLinkedToQuery(1, query);
         registerPublicationVersionMock(PublicationVersionMockFactory.PUBLICATION_VERSION_62_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME, publication02.getVersions().get(0));
 
-        return new MockDescriptor(query, publication01, publication02);
+        Multidataset multidataset01 = createMultidatasetWithSingleVersionDraftLinkedToQuery(1, query);
+        registerMultidatasetVersionMock(MultidatasetVersionMockFactory.MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME, multidataset01.getVersions().get(0));
+
+        return new MockDescriptor(query, publication01, publication02, multidataset01);
     }
 
     public static MockDescriptor getQuery11SingleVersionNotVisibleUsedInPublications() {
@@ -481,6 +487,14 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
         return pub;
     }
 
+    private static Multidataset createMultidatasetWithSingleVersionDraftLinkedToQuery(int sequentialId, Query query) {
+        Multidataset mul = MultidatasetMockFactory.createMultidatasetWithSingleVersionDraft(sequentialId);
+        if (query != null) {
+            linkQueryInMultidatasetVersion(query, mul.getVersions().get(0));
+        }
+        return mul;
+    }
+
     private static Publication createPublicationWithSingleVersionPublishedNotVisibleLinkedToQuery(int sequentialId, Query query) {
         Publication pub = PublicationMockFactory.createPublicationWithSingleVersionPublishedNotVisible(sequentialId);
         if (query != null) {
@@ -500,6 +514,11 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
     private static void linkQueryInPublicationVersionFirstLevel(Query query, PublicationVersion publicationVersion) {
         ElementLevel elementLevelV01 = PublicationVersionMockFactory.createQueryCubeElementLevel(publicationVersion, query);
         elementLevelV01.setOrderInLevel(Long.valueOf(publicationVersion.getChildrenFirstLevel().size() + 1));
+    }
+
+    private static void linkQueryInMultidatasetVersion(Query query, MultidatasetVersion multidatasetVersion) {
+        MultidatasetCube cube = MultidatasetVersionMockFactory.createQueryMultidatasetCube(multidatasetVersion, query);
+        cube.setOrderInMultidataset(Long.valueOf(multidatasetVersion.getCubes().size() + 1));
     }
 
     private static DatasetVersion generateDatasetVersionWithCoverages() {
@@ -545,7 +564,7 @@ public class QueryMockFactory extends StatisticalResourcesMockFactory<Query> {
         }
         return isHttps ? "https://www." + url : "http://www." + url;
     }
-    
+
     public static Query generateQueryWithGeneratedVersion() {
         return getStatisticalResourcesPersistedDoMocks().mockQueryWithGeneratedQueryVersion();
     }
