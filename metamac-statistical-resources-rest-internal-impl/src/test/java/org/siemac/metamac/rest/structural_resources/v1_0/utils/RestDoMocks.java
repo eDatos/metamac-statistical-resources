@@ -170,7 +170,7 @@ public class RestDoMocks {
         return query;
     }
 
-    // This probably exists already somewhere
+    // See org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_MULTIDATASET_PREFIX
     private String calculateResourceType(TypeRelatedResourceEnum type) {
         switch (type) {
             case CATEGORISATION:

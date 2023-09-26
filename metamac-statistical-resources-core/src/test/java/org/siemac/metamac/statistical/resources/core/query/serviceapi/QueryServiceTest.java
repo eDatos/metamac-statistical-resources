@@ -16,6 +16,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_22_V1_PUBLISHED_FOR_DATASET_05_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_86_WITH_TEMPORAL_DIMENSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_87_WITH_NO_TEMPORAL_DIMENSION_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_61_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_10_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_62_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.QUERY_01_SIMPLE_NAME;
@@ -990,12 +991,13 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
 
         String pubVersion01Urn = getResourceUrn(publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_61_DRAFT_WITH_PREVIOUS_VERSION__LINKED_TO_QUERY_10_NAME));
         String pubVersion02Urn = getResourceUrn(publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_62_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME));
+        String mulVersion01Urn = getResourceUrn(multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME));
 
-        List<String> pubUrns = Arrays.asList(pubVersion01Urn, pubVersion02Urn);
-        Collections.sort(pubUrns);
+        List<String> resourceUrns = Arrays.asList(pubVersion01Urn, pubVersion02Urn, mulVersion01Urn);
+        Collections.sort(resourceUrns);
 
         MetamacExceptionItem itemRoot = new MetamacExceptionItem(ServiceExceptionType.QUERY_VERSION_CANT_BE_DELETED, urn);
-        MetamacExceptionItem item = new MetamacExceptionItem(ServiceExceptionType.QUERY_VERSION_IS_PART_OF_OTHER_RESOURCES, StringUtils.join(pubUrns, ", "));
+        MetamacExceptionItem item = new MetamacExceptionItem(ServiceExceptionType.QUERY_VERSION_IS_PART_OF_OTHER_RESOURCES, StringUtils.join(resourceUrns, ", "));
         itemRoot.setExceptionItems(Arrays.asList(item));
 
         expectedMetamacException(new MetamacException(Arrays.asList(itemRoot)));
