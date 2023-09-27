@@ -21,13 +21,11 @@ import org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedRe
 import org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
-import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -35,9 +33,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("datasetVersionRepository")
 public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
-
-    @Autowired
-    private StatisticalResourcesConfiguration configuration;
 
     public DatasetVersionRepositoryImpl() {
     }
