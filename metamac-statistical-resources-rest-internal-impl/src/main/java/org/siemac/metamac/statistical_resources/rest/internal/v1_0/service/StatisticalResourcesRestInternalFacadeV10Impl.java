@@ -197,6 +197,8 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
 
         ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
+        exportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows(), dataset.getUrn());
+
         return exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages, format);
     }
 
