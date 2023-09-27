@@ -11,6 +11,9 @@
 ## 8.1.0 a 8.1.1-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.1.0/db](etc/changes-from-release/8.1.0/db) 
 
+* Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS debido a que se añade un nuevo campo formatExtentObservations
+******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+
 ## 8.0.0 a 8.1.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.0.0/db](etc/changes-from-release/8.0.0/db) 
 
