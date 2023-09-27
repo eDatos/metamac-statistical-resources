@@ -1,7 +1,8 @@
 package org.siemac.metamac.statistical.resources.core.dataset.repositoryimpl;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
-import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromRows;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromLifeCycleResourceRows;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils.isLastPublishedVersionConditions;
 
 import java.util.Date;
@@ -205,7 +206,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "       stat.version_logic, " +
                 "       loc.locale, " +
                 "       loc.label, " +
-                "       stat.type " +
+                "       stat.type " + // will be null, lifecycle don't have type
                 " from  Tb_External_Items operItems, " +
                 "       Tb_External_Items maintainerItems, " +
                 "       Tb_Queries_Versions query Inner Join Tb_Stat_Resources stat On query.lifecycle_resource_fk = stat.Id, " +
@@ -229,7 +230,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromLifeCycleResourceRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
         return resources;
     }
 
@@ -257,7 +258,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "       stat.version_logic, " +
                 "       loc.locale, " +
                 "       loc.label, " +
-                "       stat.type " +
+                "       stat.type " + // will be null, lifecycle don't have type
                 "from   Tb_External_Items operItems, " +
                 "       Tb_External_Items maintainerItems, " +
                 "       Tb_Queries_Versions query Inner Join Tb_Stat_Resources stat " +
@@ -283,7 +284,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("datasetVersionFk", datasetVersion.getId());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromLifeCycleResourceRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
         return resources;
     }
 
@@ -328,7 +329,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
         return resources;
     }
 
@@ -376,7 +377,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
         return resources;
     }
 

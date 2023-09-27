@@ -1,7 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.query.repositoryimpl;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
-import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromRows;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
 
 import java.util.List;
 
@@ -175,7 +175,7 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
         return resources;
     }
 

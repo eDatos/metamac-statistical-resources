@@ -21,7 +21,16 @@ public class RelatedResourceResultUtils {
         typeMap.put(StatisticalResourceTypeEnum.MULTIDATASET, TypeRelatedResourceEnum.MULTIDATASET_VERSION);
     }
 
-    public static List<RelatedResourceResult> getRelatedResourceResultsFromRows(List<Object> rows) {
+    // We´ll take type from col[8]
+    public static List<RelatedResourceResult> getRelatedResourceResultsFromSiemacResourceRows(List<Object> rows) {
+        return getRelatedResourceResultsFromRows(rows, null);
+    }
+
+    public static List<RelatedResourceResult> getRelatedResourceResultsFromLifeCycleResourceRows(List<Object> rows, TypeRelatedResourceEnum type) {
+        return getRelatedResourceResultsFromRows(rows, type);
+    }
+
+    private static List<RelatedResourceResult> getRelatedResourceResultsFromRows(List<Object> rows, TypeRelatedResourceEnum type) {
         Map<String, RelatedResourceResult> resourcesByUrn = new HashMap<String, RelatedResourceResult>();
         for (Object row : rows) {
             Object[] cols = (Object[]) row;
@@ -31,7 +40,10 @@ public class RelatedResourceResultUtils {
                 resource = new RelatedResourceResult();
                 resourcesByUrn.put(queryUrn, resource);
             }
-            populateResultWithRow(resource, cols);
+            if (type == null) {
+                type = typeMap.get(StatisticalResourceTypeEnum.valueOf((String) cols[8]));
+            }
+            populateResultWithRow(resource, cols, type);
         }
         List<RelatedResourceResult> resources = new ArrayList<RelatedResourceResult>(resourcesByUrn.values());
         return resources;
@@ -45,7 +57,7 @@ public class RelatedResourceResultUtils {
         return urns;
     }
 
-    private static void populateResultWithRow(RelatedResourceResult resource, Object[] cols) {
+    private static void populateResultWithRow(RelatedResourceResult resource, Object[] cols, TypeRelatedResourceEnum type) {
         resource.setCode((String) cols[0]);
         resource.setUrn((String) cols[1]);
         resource.setStatisticalOperationCode((String) cols[2]);
@@ -56,7 +68,6 @@ public class RelatedResourceResultUtils {
             resource.setTitle(new HashMap<String, String>());
         }
         resource.getTitle().put((String) cols[6], (String) cols[7]);
-        TypeRelatedResourceEnum type = typeMap.get(StatisticalResourceTypeEnum.valueOf((String) cols[8]));
         resource.setType(type);
     }
 
