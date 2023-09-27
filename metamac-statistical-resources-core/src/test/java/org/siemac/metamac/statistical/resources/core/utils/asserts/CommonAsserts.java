@@ -3,16 +3,12 @@ package org.siemac.metamac.statistical.resources.core.utils.asserts;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.siemac.metamac.core.common.constants.CoreCommonConstants.API_LATEST;
+import static org.siemac.edatos.core.common.constants.CoreCommonConstants.API_LATEST;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
-import javassist.ClassPool;
-import javassist.CtMethod;
-import javassist.NotFoundException;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Assert;
@@ -39,9 +35,14 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.TemporalCodeDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
+
+import javassist.ClassPool;
+import javassist.CtMethod;
+import javassist.NotFoundException;
 
 public class CommonAsserts extends MetamacAsserts {
 
@@ -188,6 +189,11 @@ public class CommonAsserts extends MetamacAsserts {
     public static void assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(Collection<PublicationVersion> expected, Collection<RelatedResourceResult> actual)
             throws MetamacException {
         assertEqualsRelatedResourceCollectionResultLifecycleResource(expected, actual, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+    }
+
+    public static void assertEqualsRelatedResourceResultCollectionToMultidatasetVersionCollection(Collection<MultidatasetVersion> expected, Collection<RelatedResourceResult> actual)
+            throws MetamacException {
+        assertEqualsRelatedResourceCollectionResultLifecycleResource(expected, actual, TypeRelatedResourceEnum.MULTIDATASET_VERSION);
     }
 
     // RELATED RESOURCE: DO & DO

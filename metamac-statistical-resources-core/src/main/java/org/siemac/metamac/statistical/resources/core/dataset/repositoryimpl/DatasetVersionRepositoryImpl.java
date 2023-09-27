@@ -204,7 +204,8 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "       maintainerItems.code_nested, " +
                 "       stat.version_logic, " +
                 "       loc.locale, " +
-                "       loc.label " +
+                "       loc.label, " +
+                "       stat.type " +
                 " from  Tb_External_Items operItems, " +
                 "       Tb_External_Items maintainerItems, " +
                 "       Tb_Queries_Versions query Inner Join Tb_Stat_Resources stat On query.lifecycle_resource_fk = stat.Id, " +
@@ -228,7 +229,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
         return resources;
     }
 
@@ -255,7 +256,8 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "       maintainerItems.code_nested, " +
                 "       stat.version_logic, " +
                 "       loc.locale, " +
-                "       loc.label  " +
+                "       loc.label, " +
+                "       stat.type " +
                 "from   Tb_External_Items operItems, " +
                 "       Tb_External_Items maintainerItems, " +
                 "       Tb_Queries_Versions query Inner Join Tb_Stat_Resources stat " +
@@ -281,7 +283,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("datasetVersionFk", datasetVersion.getId());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
         return resources;
     }
 
@@ -297,7 +299,8 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
             "        maintainer.code_nested AS code_nested, " +
             "        stat.version_logic, "+
             "        loc.locale, " +
-            "        loc.label " +
+            "        loc.label, " +
+            "        stat.type " +
             "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
             "            on cubes.ID = elem.table_fk, " +
             "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
@@ -325,7 +328,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
         return resources;
     }
 
@@ -341,7 +344,9 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "           maintainer.code_nested AS code_nested,  " +
                 "           stat.version_logic, " +
                 "           loc.locale, " +
-                "           loc.label, stat_dataset.valid_to, pub.id " +
+                "           loc.label, " +
+                "           stat.type, " +
+                "           stat_dataset.valid_to, pub.id " +
                 "FROM       tb_elements_levels elem INNER JOIN tb_cubes cubes " +
                 "              on cubes.ID = elem.table_fk,  " +
                 "           tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
@@ -371,7 +376,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows);
         return resources;
     }
 
@@ -452,6 +457,6 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
     }
 
     private String getBooleanValueForDatabase(boolean value) throws MetamacException {
-            return value ? "true" : "false";
+        return value ? "true" : "false";
     }
 }

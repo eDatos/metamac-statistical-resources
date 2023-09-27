@@ -62,11 +62,11 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
     public static final String                    MULTIDATASET_VERSION_03_FOR_MULTIDATASET_03_NAME                                                                    = "MULTIDATASET_VERSION_03_FOR_MULTIDATASET_03";
 
     public static final String                    MULTIDATASET_VERSION_03_C1_FOR_MULTIDATASET_03_NAME                                                                 = "MULTIDATASET_VERSION_03_C1_FOR_MULTIDATASET_03";
-    
+
     public static final String                    MULTIDATASET_VERSION_04_FOR_MULTIDATASET_03_AND_LAST_VERSION_NAME                                                   = "MULTIDATASET_VERSION_04_FOR_MULTIDATASET_03_AND_LAST_VERSION";
 
     public static final String                    MULTIDATASET_VERSION_04_C1_FOR_MULTIDATASET_03_AND_LAST_VERSION_NAME                                                = "MULTIDATASET_VERSION_04_C1_FOR_MULTIDATASET_03_AND_LAST_VERSION";
-    
+
     public static final String                    MULTIDATASET_VERSION_05_OPERATION_0001_CODE_000001_NAME                                                             = "MULTIDATASET_VERSION_05_OPERATION_0001_CODE_000001";
 
     public static final String                    MULTIDATASET_VERSION_06_OPERATION_0001_CODE_000002_NAME                                                             = "MULTIDATASET_VERSION_06_OPERATION_0001_CODE_000002";
@@ -114,23 +114,23 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
     public static final String                    MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05_NAME                                                       = "MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05";
 
     public static final String                    MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05_C1_NAME                                                    = "MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05_NAME                                                       = "MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05";
-    
+
     public static final String                    MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05_C1_NAME                                                    = "MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05_C1";
 
     public static final String                    MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_NAME                                                       = "MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05";
 
     public static final String                    MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_C1_NAME                                                    = "MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_NAME                                                       = "MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06";
 
     public static final String                    MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_C1_NAME                                                    = "MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_NAME                                            = "MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06";
 
     public static final String                    MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1_NAME                                         = "MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_32_DRAFT_NOT_READY_NAME                                                                        = "MULTIDATASET_VERSION_32_DRAFT_NOT_READY";
 
     public static final String                    MULTIDATASET_VERSION_33_DRAFT_READY_FOR_PRODUCTION_VALIDATION_NAME                                                  = "MULTIDATASET_VERSION_33_DRAFT_READY_FOR_PRODUCTION_VALIDATION";
@@ -244,6 +244,8 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
     public static final String                    MULTIDATASET_VERSION_97_NOT_VISIBLE_HAS_PART_NOT_VISIBLE_QUERY_NAME                                                 = "MULTIDATASET_VERSION_97_NOT_VISIBLE_HAS_PART_NOT_VISIBLE_QUERY";
 
     public static final String                    MULTIDATASET_VERSION_98_TO_DELETE_WITH_PREVIOUS_VERSION_NAME                                                        = "MULTIDATASET_VERSION_98_TO_DELETE_WITH_PREVIOUS_VERSION";
+
+    public static final String                    MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME                                               = "MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10";
 
     private static MultidatasetVersionMockFactory instance                                                                                                            = null;
 
@@ -441,7 +443,7 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
         MockDescriptor multidataset = getMultidatasetMockDescriptor(MULTIDATASET_06_C1_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME);
         return new MockDescriptor(getMultidatasetVersionMock(MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1_NAME), multidataset);
     }
-    
+
     private static MultidatasetVersion getMultidatasetVersion32DraftNotReady() {
         MultidatasetVersion multidatasetVersion = createMultidatasetVersion();
         multidatasetVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);

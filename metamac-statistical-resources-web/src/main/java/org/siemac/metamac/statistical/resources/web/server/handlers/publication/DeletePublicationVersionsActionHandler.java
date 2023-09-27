@@ -1,6 +1,10 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.publication;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.publication.DeletePublicationVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.DeletePublicationVersionsResult;
@@ -24,13 +28,17 @@ public class DeletePublicationVersionsActionHandler extends SecurityActionHandle
 
     @Override
     public DeletePublicationVersionsResult executeSecurityAction(DeletePublicationVersionsAction action) throws ActionException {
-        try {
-            for (String urn : action.getUrns()) {
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+        for (String urn : action.getUrns()) {
+            try {
                 statisticalResourcesServiceFacade.deletePublicationVersion(ServiceContextHolder.getCurrentServiceContext(), urn);
+            } catch (MetamacException e) {
+                exceptionItems.addAll(e.getExceptionItems());
             }
-            return new DeletePublicationVersionsResult();
-        } catch (MetamacException e) {
-            throw WebExceptionUtils.createMetamacWebException(e);
         }
+        if (!exceptionItems.isEmpty()) {
+            throw WebExceptionUtils.createMetamacWebException(new MetamacException(exceptionItems));
+        }
+        return new DeletePublicationVersionsResult();
     }
 }

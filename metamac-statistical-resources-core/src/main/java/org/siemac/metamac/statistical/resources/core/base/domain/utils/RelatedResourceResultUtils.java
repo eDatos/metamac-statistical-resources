@@ -1,17 +1,27 @@
 package org.siemac.metamac.statistical.resources.core.base.domain.utils;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 
 public class RelatedResourceResultUtils {
 
-    public static List<RelatedResourceResult> getRelatedResourceResultsFromRows(List<Object> rows, TypeRelatedResourceEnum type) {
+    static final EnumMap<StatisticalResourceTypeEnum, TypeRelatedResourceEnum> typeMap = new EnumMap<>(StatisticalResourceTypeEnum.class);
+    static {
+        typeMap.put(StatisticalResourceTypeEnum.DATASET, TypeRelatedResourceEnum.DATASET_VERSION);
+        typeMap.put(StatisticalResourceTypeEnum.COLLECTION, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        typeMap.put(StatisticalResourceTypeEnum.QUERY, TypeRelatedResourceEnum.QUERY_VERSION);
+        typeMap.put(StatisticalResourceTypeEnum.MULTIDATASET, TypeRelatedResourceEnum.MULTIDATASET_VERSION);
+    }
+
+    public static List<RelatedResourceResult> getRelatedResourceResultsFromRows(List<Object> rows) {
         Map<String, RelatedResourceResult> resourcesByUrn = new HashMap<String, RelatedResourceResult>();
         for (Object row : rows) {
             Object[] cols = (Object[]) row;
@@ -21,7 +31,7 @@ public class RelatedResourceResultUtils {
                 resource = new RelatedResourceResult();
                 resourcesByUrn.put(queryUrn, resource);
             }
-            populateResultWithRow(resource, cols, type);
+            populateResultWithRow(resource, cols);
         }
         List<RelatedResourceResult> resources = new ArrayList<RelatedResourceResult>(resourcesByUrn.values());
         return resources;
@@ -35,7 +45,7 @@ public class RelatedResourceResultUtils {
         return urns;
     }
 
-    private static void populateResultWithRow(RelatedResourceResult resource, Object[] cols, TypeRelatedResourceEnum type) {
+    private static void populateResultWithRow(RelatedResourceResult resource, Object[] cols) {
         resource.setCode((String) cols[0]);
         resource.setUrn((String) cols[1]);
         resource.setStatisticalOperationCode((String) cols[2]);
@@ -46,6 +56,7 @@ public class RelatedResourceResultUtils {
             resource.setTitle(new HashMap<String, String>());
         }
         resource.getTitle().put((String) cols[6], (String) cols[7]);
+        TypeRelatedResourceEnum type = typeMap.get(StatisticalResourceTypeEnum.valueOf((String) cols[8]));
         resource.setType(type);
     }
 

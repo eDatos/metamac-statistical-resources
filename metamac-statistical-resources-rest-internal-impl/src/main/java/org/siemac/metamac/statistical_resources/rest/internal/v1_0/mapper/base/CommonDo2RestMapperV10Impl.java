@@ -753,6 +753,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 return queriesDo2RestMapper.toResource(source, selectedLanguages);
             case PUBLICATION_VERSION:
                 return collectionsDo2RestMapper.toResource(source, selectedLanguages);
+            case MULTIDATASET_VERSION:
+                return multidatasetsDo2RestMapper.toResource(source, selectedLanguages);
             case DATASET:
                 DatasetVersion datasetVersion = datasetService.retrieveLatestDatasetVersionByDatasetUrn(SERVICE_CONTEXT, source.getUrn());
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
