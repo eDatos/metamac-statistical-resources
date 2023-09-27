@@ -32,6 +32,7 @@ public class RelatedResourceResultUtils {
 
     private static List<RelatedResourceResult> getRelatedResourceResultsFromRows(List<Object> rows, TypeRelatedResourceEnum type) {
         Map<String, RelatedResourceResult> resourcesByUrn = new HashMap<String, RelatedResourceResult>();
+
         for (Object row : rows) {
             Object[] cols = (Object[]) row;
             String queryUrn = (String) cols[1];
@@ -40,10 +41,8 @@ public class RelatedResourceResultUtils {
                 resource = new RelatedResourceResult();
                 resourcesByUrn.put(queryUrn, resource);
             }
-            if (type == null) {
-                type = typeMap.get(StatisticalResourceTypeEnum.valueOf((String) cols[8]));
-            }
-            populateResultWithRow(resource, cols, type);
+            TypeRelatedResourceEnum rowType = type != null ? type : typeMap.get(StatisticalResourceTypeEnum.valueOf((String) cols[8]));
+            populateResultWithRow(resource, cols, rowType);
         }
         List<RelatedResourceResult> resources = new ArrayList<RelatedResourceResult>(resourcesByUrn.values());
         return resources;
