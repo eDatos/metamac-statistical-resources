@@ -79,7 +79,7 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
 
     private void setRelatedDsd(ExternalItemDto relatedDsdDto) {
         setValue(DatasetDS.RELATED_DSD, relatedDsdDto);
-        setValue(DatasetDS.RELATED_DSD_VIEW, ExternalItemUtils.getExternalItemName(relatedDsdDto));
+        setValue(DatasetDS.RELATED_DSD_VIEW, relatedDsdDto);
     }
 
     public void setExternalItemsForRelatedDsd(List<ExternalItemDto> externalItemsDtos, int firstResult, int totalResults) {
