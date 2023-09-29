@@ -8,12 +8,12 @@
         <cdomain:text xml:lang="es">title-query1 en Espanol</cdomain:text>
     </ns2:name>
     <ns2:description>
-        <cdomain:text xml:lang="es">description-resource-jiqpBzwifZ en Espanol</cdomain:text>
+        <cdomain:text xml:lang="es">description-resource-82Jk08NWLh en Espanol</cdomain:text>
     </ns2:description>
     <ns2:selectedLanguages total="1">
         <ns2:language>es</ns2:language>
     </ns2:selectedLanguages>
-    <ns2:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=tOvQLumYbB&amp;resourceId=query1</ns2:visualizerHtmlLink>
+    <ns2:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=query&amp;agencyId=5USH8K4RDR&amp;resourceId=query1</ns2:visualizerHtmlLink>
     <ns2:data>
         <ns2:dimensions total="4">
             <ns2:dimension>
@@ -66,7 +66,7 @@
         </ns2:attributes>
         <ns2:observations>19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403</ns2:observations>
     </ns2:data>
-    <ns3:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=OB970RXFRw/queries/query;id=agency1:query1(01.000)</ns3:managementAppLink>
+    <ns3:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=0G9E1gevbI/queries/query;id=agency1:query1(01.000)</ns3:managementAppLink>
     <ns3:metadata>
         <ns2:relatedDataset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:ResourceWithStatisticalOperation" kind="statisticalResources#dataset">
             <cdomain:id>dataset01</cdomain:id>
@@ -75,8 +75,8 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MM8jqZKmJ4&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
-            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=H5F6bjoV2O/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MrRYdcq3N5&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=6ZOoholJlN/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
         </ns2:relatedDataset>
         <ns2:relatedDsd kind="structuralResources#dataStructure">
             <cdomain:id>DSD01</cdomain:id>
@@ -626,10 +626,10 @@
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-dataset01 en Espanol</cdomain:text>
             </cdomain:name>
-            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MM8jqZKmJ4&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
-            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=H5F6bjoV2O/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
+            <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=MrRYdcq3N5&amp;resourceId=dataset01&amp;version=01.000</cdomain:visualizerHtmlLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=6ZOoholJlN/datasets/dataset;id=agency1:dataset01(01.000)</ns2:managementAppLink>
         </ns2:requires>
-        <ns2:isPartOf total="2">
+        <ns2:isPartOf total="3">
             <ns2:resource kind="statisticalResources#collection">
                 <cdomain:id>isPartOf01</cdomain:id>
                 <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf01</cdomain:urn>
@@ -650,25 +650,35 @@
                 <cdomain:visualizerHtmlLink>http://istac.es/portal-web/collection.html?resourceType=collection&amp;agencyId=agency01&amp;resourceId=isPartOf02</cdomain:visualizerHtmlLink>
                 <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:isPartOf02(01.000)</ns2:managementAppLink>
             </ns2:resource>
+            <ns2:resource kind="statisticalResources#multidataset">
+                <cdomain:id>isPartOf03</cdomain:id>
+                <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Multidataset=agency01:isPartOf03</cdomain:urn>
+                <cdomain:selfLink kind="statisticalResources#multidataset" href="http://data.istac.es/apis/statistical-resources/v1.0/multidatasets/agency01/isPartOf03"/>
+                <cdomain:name>
+                    <cdomain:text xml:lang="es">título isPartOf03</cdomain:text>
+                </cdomain:name>
+                <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?multidatasetId=agency01:isPartOf03</cdomain:visualizerHtmlLink>
+                <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=/multidatasets/multidataset;id=agency01:isPartOf03(01.000)</ns2:managementAppLink>
+            </ns2:resource>
         </ns2:isPartOf>
         <ns2:statisticalOperation kind="statisticalOperations#operation">
-            <cdomain:id>OB970RXFRw</cdomain:id>
-            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=OB970RXFRw</cdomain:urn>
-            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/OB970RXFRw"/>
+            <cdomain:id>0G9E1gevbI</cdomain:id>
+            <cdomain:urn>urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=0G9E1gevbI</cdomain:urn>
+            <cdomain:selfLink kind="statisticalOperations#operation" href="http://data.istac.es/apis/operations/latest/0G9E1gevbI"/>
             <cdomain:name>
                 <cdomain:text xml:lang="es">title-Txej5iXw9K en Espanol</cdomain:text>
             </cdomain:name>
-            <ns2:managementAppLink>http://localhost:8080/statistical-operations-internal/OB970RXFRw</ns2:managementAppLink>
+            <ns2:managementAppLink>http://localhost:8080/statistical-operations-internal/0G9E1gevbI</ns2:managementAppLink>
         </ns2:statisticalOperation>
         <ns2:maintainer kind="structuralResources#agency">
-            <cdomain:id>tOvQLumYbB</cdomain:id>
+            <cdomain:id>5USH8K4RDR</cdomain:id>
             <cdomain:nestedId>agency1</cdomain:nestedId>
-            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).tOvQLumYbB</cdomain:urn>
-            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/tOvQLumYbB"/>
+            <cdomain:urn>urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).5USH8K4RDR</cdomain:urn>
+            <cdomain:selfLink kind="structuralResources#agency" href="http://data.istac.es/apis/srm/latest/5USH8K4RDR"/>
             <cdomain:name>
-                <cdomain:text xml:lang="es">title-tOvQLumYbB en Espanol</cdomain:text>
+                <cdomain:text xml:lang="es">title-5USH8K4RDR en Espanol</cdomain:text>
             </cdomain:name>
-            <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/tOvQLumYbB</ns2:managementAppLink>
+            <ns2:managementAppLink>http://localhost:8080/metamac-srm-web/5USH8K4RDR</ns2:managementAppLink>
         </ns2:maintainer>
         <ns2:validFrom>2013-01-01T03:04:12Z</ns2:validFrom>
         <ns2:validTo>2013-02-16T14:04:12Z</ns2:validTo>
