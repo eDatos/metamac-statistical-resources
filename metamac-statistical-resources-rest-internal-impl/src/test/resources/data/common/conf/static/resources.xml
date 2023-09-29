@@ -16,5 +16,6 @@
     <entry key="metamac.srm.web.internal">http://localhost:8080/metamac-srm-web</entry>
     <entry key="metamac.common_metadata.web.internal">http://localhost:8080/common-metadata-internal</entry>
     <entry key="metamac.statistical_operations.web.internal">http://localhost:8080/statistical-operations-internal</entry>
-
+	
+	<entry key="edatos.rest.export.max_xlsx_rows">1048576</entry>
 </properties>
