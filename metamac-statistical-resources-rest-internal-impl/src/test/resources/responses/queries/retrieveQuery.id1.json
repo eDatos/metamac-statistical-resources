@@ -9,7 +9,6 @@
 		"kind": "statisticalResources#queries",
 		"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries"
 	},
-	"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=mzyF05rZq8/queries/query;id=agency1:query1(01.000)",
 	"name": {
 		"text": [
 			{
@@ -21,7 +20,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-resource-8ObN3zGKkV en Espanol",
+				"value": "description-resource-T8E7r7uB32 en Espanol",
 				"lang": "es"
 			}
 		]
@@ -32,13 +31,8 @@
 		],
 		"total": 1
 	},
-	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=FAS2Jp5cvZ&resourceId=query1",
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=aLOZTjWB90&resourceId=query1",
 	"metadata": {
-		"procStatus": "DRAFT",
-		"creationDate": "2013-06-20T20:00:20.021+01:00",
-		"creationUser": "creationUser",
-		"productionValidationDate": "2013-06-20T20:00:20.021+01:00",
-		"publicationDate": "2013-01-01T03:04:13Z",
 		"relatedDataset": {
 			"id": "dataset01",
 			"kind": "statisticalResources#dataset",
@@ -50,13 +44,12 @@
 					}
 				]
 			},
-			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=v7wAWGgjxn/datasets/dataset;id=agency1:dataset01(01.000)",
 			"selfLink": {
 				"kind": "statisticalResources#dataset",
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=8guFVCuGBE&resourceId=dataset01&version=01.000"
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=LUs72Nxd1A&resourceId=dataset01&version=01.000"
 		},
 		"relatedDsd": {
 			"heading": {
@@ -91,8 +84,7 @@
 					}
 				]
 			},
-			"kind": "structuralResources#dataStructure",
-			"managementAppLink": "http://localhost:8080/metamac-srm-web/DSD01"
+			"kind": "structuralResources#dataStructure"
 		},
 		"dimensions": {
 			"dimension": [
@@ -520,7 +512,9 @@
 										},
 										"kind": "structuralResources#code"
 									},
-									"unitMultiplier": {}
+									"unitMultiplier": {
+										
+									}
 								},
 								"id": "measure01-conceptScheme01-concept01",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept01",
@@ -564,7 +558,9 @@
 										},
 										"kind": "structuralResources#code"
 									},
-									"unitMultiplier": {}
+									"unitMultiplier": {
+										
+									}
 								},
 								"id": "measure01-conceptScheme01-concept02",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept02",
@@ -608,7 +604,9 @@
 										},
 										"kind": "structuralResources#code"
 									},
-									"unitMultiplier": {}
+									"unitMultiplier": {
+										
+									}
 								},
 								"id": "measure01-conceptScheme01-concept05",
 								"urn": "urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=agency01:measure01-conceptScheme01(01.000).measure01-conceptScheme01-concept05",
@@ -1057,18 +1055,16 @@
 					}
 				]
 			},
-			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=v7wAWGgjxn/datasets/dataset;id=agency1:dataset01(01.000)",
 			"selfLink": {
 				"kind": "statisticalResources#dataset",
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=8guFVCuGBE&resourceId=dataset01&version=01.000"
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=LUs72Nxd1A&resourceId=dataset01&version=01.000"
 		},
 		"isPartOf": {
 			"resource": [
 				{
-					"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:isPartOf01(01.000)",
 					"id": "isPartOf01",
 					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf01",
 					"selfLink": {
@@ -1087,7 +1083,6 @@
 					"kind": "statisticalResources#collection"
 				},
 				{
-					"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:isPartOf02(01.000)",
 					"id": "isPartOf02",
 					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:isPartOf02",
 					"selfLink": {
@@ -1109,17 +1104,16 @@
 			"total": 2
 		},
 		"statisticalOperation": {
-			"managementAppLink": "http://localhost:8080/statistical-operations-internal/mzyF05rZq8",
-			"id": "mzyF05rZq8",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=mzyF05rZq8",
+			"id": "F9XiVWHeIx",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=F9XiVWHeIx",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/mzyF05rZq8"
+				"href": "http://data.istac.es/apis/operations/latest/F9XiVWHeIx"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-Txej5iXw9K en Espanol",
+						"value": "title-Tn2JaF3RSI en Espanol",
 						"lang": "es"
 					}
 				]
@@ -1127,18 +1121,17 @@
 			"kind": "statisticalOperations#operation"
 		},
 		"maintainer": {
-			"managementAppLink": "http://localhost:8080/metamac-srm-web/FAS2Jp5cvZ",
-			"id": "FAS2Jp5cvZ",
+			"id": "aLOZTjWB90",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).FAS2Jp5cvZ",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).aLOZTjWB90",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/FAS2Jp5cvZ"
+				"href": "http://data.istac.es/apis/srm/latest/aLOZTjWB90"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-FAS2Jp5cvZ en Espanol",
+						"value": "title-aLOZTjWB90 en Espanol",
 						"lang": "es"
 					}
 				]
