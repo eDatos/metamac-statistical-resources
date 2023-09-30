@@ -29,18 +29,17 @@ public class DeleteDatasourcesActionHandler extends SecurityActionHandler<Delete
     @Override
     public DeleteDatasourcesResult executeSecurityAction(DeleteDatasourcesAction action) throws ActionException {
         int observationsDeleted = 0;
-        List<MetamacExceptionItem> items = new ArrayList<MetamacExceptionItem>();
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         for (String urn : action.getUrns()) {
             try {
                 observationsDeleted += statisticalResourcesServiceFacade.deleteDatasource(ServiceContextHolder.getCurrentServiceContext(), urn, action.isDeleteAttributes());
             } catch (MetamacException e) {
-                items.addAll(e.getExceptionItems());
+                exceptionItems.addAll(e.getExceptionItems());
             }
         }
-        if (items.isEmpty()) {
-            return new DeleteDatasourcesResult(observationsDeleted);
-        } else {
-            throw WebExceptionUtils.createMetamacWebException(new MetamacException(items));
+        if (!exceptionItems.isEmpty()) {
+            throw WebExceptionUtils.createMetamacWebException(new MetamacException(exceptionItems));
         }
+        return new DeleteDatasourcesResult(observationsDeleted);
     }
 }

@@ -152,6 +152,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.multidataset_version.is_replaced_by_other_multidataset");
     public static final CommonServiceExceptionType MULTIDATASET_VERSION_CANT_BE_DELETED                                                        = create(
             "exception.resources.multidataset_version.cant_be_deleted");
+    public static final CommonServiceExceptionType MULTIDATASET_VERSION_IS_PART_OF_OTHER_RESOURCES                                             = create(
+            "exception.resources.multidataset_version.is_part_of_publications");
     public static final CommonServiceExceptionType MULTIDATASET_VERSION_MUST_HAVE_AT_LEAST_ONE_CUBE                                            = create(
             "exception.resources.multidataset_version.must_have_at_least_one_cube");
     public static final CommonServiceExceptionType MULTIDATASET_VERSION_CUBE_MUST_LINK_TO_DATASET_OR_QUERY                                     = create(
@@ -354,7 +356,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "stream_message.resources.exception.topic.invalid");
     public static final CommonServiceExceptionType STREAM_MESSAGING_MISSING_MANDATORY_SETTINGS                                                 = create(
             "stream_message.resources.exception.config.missing_settings");
-
+    public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_DATASET                                                     = create(
+            "stream_message.resources.exception.send_dataset_message.fails");
     public static final CommonServiceExceptionType FILE_ENCODING_ERROR                                                                         = create(
             "exception.resources.dataset.importation.file_encoding_error");
 

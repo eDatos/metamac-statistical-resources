@@ -25,7 +25,8 @@
         {"name" : "temporalGranularities", "type" : ["null", {"type": "array", "items" : "ExternalItemAvro"}]},
         {"name" : "statisticalUnit", "type" : ["null", {"type": "array", "items" : "ExternalItemAvro"}]},
         {"name" : "isPartOf", "type" : ["null", {"type" : "array", "items": "RelatedResourceAvro"}]},
-        {"name" : "visualizerHtmlLink", "type" : ["null", "string"]}
+        {"name" : "visualizerHtmlLink", "type" : ["null", "string"]},
+        {"name" : "formatExtentObservations", "type" : ["null", "long"]}
         
     ]
 }

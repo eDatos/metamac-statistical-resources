@@ -1163,6 +1163,10 @@
             "unitCode":{
                "description":"",
                "$ref":"#/definitions/ItemResource"
+            },
+            "unitMultiplier":{
+               "description":"",
+               "$ref":"#/definitions/ItemResource"
             }
          },
          "description":""
@@ -3179,6 +3183,13 @@
             {
                "properties":{
                   "unitCode":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/ItemResource"
+                  },
+                  "unitMultiplier":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },

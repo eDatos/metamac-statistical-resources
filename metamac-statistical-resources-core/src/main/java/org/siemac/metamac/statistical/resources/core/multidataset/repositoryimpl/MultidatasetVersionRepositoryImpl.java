@@ -1,9 +1,13 @@
 package org.siemac.metamac.statistical.resources.core.multidataset.repositoryimpl;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils.isLastPublishedVersionConditions;
 
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Query;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -192,5 +196,53 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
 
         return replacing;
 
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<RelatedResourceResult> retrieveIsPartOf(MultidatasetVersion multidatasetVersion) throws MetamacException {
+        //     @formatter:off
+        Query query = getEntityManager().createNativeQuery(
+                "SELECT  distinct stat.code, " +
+                "        stat.urn, " +
+                "        operation.code AS operCode, " +
+                "        operation.urn AS operUrn, " +
+                "        maintainer.code_nested AS code_nested, " +
+                "        stat.version_logic, "+
+                "        loc.locale, " +
+                "        loc.label, " +
+                "        stat.type " +
+                "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
+                "            on cubes.ID = elem.table_fk, " +
+                "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
+                "            ON pub.siemac_resource_fk = stat.ID, " +
+                "        tb_external_items operation, " +
+                "        tb_external_items maintainer, " +
+                "        tb_multidatasets multidataset," +
+                "        tb_multidatasets_versions multidataset_version INNER JOIN tb_stat_resources stat_multidataset "+
+                "            ON multidataset_version.siemac_resource_fk = stat_multidataset.ID, "+
+                "        tb_localised_strings loc "+
+                "WHERE       cubes.multidataset_fk = multidataset.ID "+
+                "    AND     multidataset_version.multidataset_fk = multidataset.ID " +
+                "    AND     multidataset_version.ID = :multidatasetVersionFk " +
+                "    AND     stat_multidataset.last_version = " + getBooleanValueForDatabase(true) +
+                "    AND     elem.publication_version_all_fk = pub.ID " +
+                "    AND     stat.title_fk = loc.international_string_fk " +
+                "    AND     (stat.last_version = " + getBooleanValueForDatabase(true) +
+                "           OR "+isLastPublishedVersionConditions+") " +
+                "    AND     operation.ID = stat.stat_operation_fk " +
+                "    AND     maintainer.id = stat.maintainer_fk");
+        //     @formatter:on
+        query.setParameter("multidatasetVersionFk", multidatasetVersion.getId());
+        query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
+        query.setParameter("now", new DateTime().toDate());
+
+        List<Object> rows = query.getResultList();
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
+        return resources;
+    }
+
+    private String getBooleanValueForDatabase(boolean value) throws MetamacException {
+        return value ? "true" : "false";
     }
 }

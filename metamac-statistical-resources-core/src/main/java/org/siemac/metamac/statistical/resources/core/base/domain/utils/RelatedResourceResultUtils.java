@@ -1,18 +1,38 @@
 package org.siemac.metamac.statistical.resources.core.base.domain.utils;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 
 public class RelatedResourceResultUtils {
 
-    public static List<RelatedResourceResult> getRelatedResourceResultsFromRows(List<Object> rows, TypeRelatedResourceEnum type) {
+    static final EnumMap<StatisticalResourceTypeEnum, TypeRelatedResourceEnum> typeMap = new EnumMap<>(StatisticalResourceTypeEnum.class);
+    static {
+        typeMap.put(StatisticalResourceTypeEnum.DATASET, TypeRelatedResourceEnum.DATASET_VERSION);
+        typeMap.put(StatisticalResourceTypeEnum.COLLECTION, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        typeMap.put(StatisticalResourceTypeEnum.QUERY, TypeRelatedResourceEnum.QUERY_VERSION);
+        typeMap.put(StatisticalResourceTypeEnum.MULTIDATASET, TypeRelatedResourceEnum.MULTIDATASET_VERSION);
+    }
+
+    // We´ll take type from col[8]
+    public static List<RelatedResourceResult> getRelatedResourceResultsFromSiemacResourceRows(List<Object> rows) {
+        return getRelatedResourceResultsFromRows(rows, null);
+    }
+
+    public static List<RelatedResourceResult> getRelatedResourceResultsFromLifeCycleResourceRows(List<Object> rows, TypeRelatedResourceEnum type) {
+        return getRelatedResourceResultsFromRows(rows, type);
+    }
+
+    private static List<RelatedResourceResult> getRelatedResourceResultsFromRows(List<Object> rows, TypeRelatedResourceEnum type) {
         Map<String, RelatedResourceResult> resourcesByUrn = new HashMap<String, RelatedResourceResult>();
+
         for (Object row : rows) {
             Object[] cols = (Object[]) row;
             String queryUrn = (String) cols[1];
@@ -21,7 +41,8 @@ public class RelatedResourceResultUtils {
                 resource = new RelatedResourceResult();
                 resourcesByUrn.put(queryUrn, resource);
             }
-            populateResultWithRow(resource, cols, type);
+            TypeRelatedResourceEnum rowType = type != null ? type : typeMap.get(StatisticalResourceTypeEnum.valueOf((String) cols[8]));
+            populateResultWithRow(resource, cols, rowType);
         }
         List<RelatedResourceResult> resources = new ArrayList<RelatedResourceResult>(resourcesByUrn.values());
         return resources;

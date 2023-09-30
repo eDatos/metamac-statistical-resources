@@ -122,7 +122,7 @@ Application DatasetsStatisticalResources {
     		void updateGeographicCoverageExternalPublicationVariableElementsCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
     		
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
-    		
+    		List<@DatasetVersion> retrievePublishedLastVersionDatasets() throws MetamacException;
 		}
 
 

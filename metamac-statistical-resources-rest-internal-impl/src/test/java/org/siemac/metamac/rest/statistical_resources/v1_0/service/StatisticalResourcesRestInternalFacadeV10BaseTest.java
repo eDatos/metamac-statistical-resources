@@ -1043,6 +1043,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         List<RelatedResourceResult> queries = new ArrayList<RelatedResourceResult>();
         queries.add(restDoMocks.mockPublicationRelatedResourceResult("agency01", "isPartOf01", "01.000"));
         queries.add(restDoMocks.mockPublicationRelatedResourceResult("agency01", "isPartOf02", "01.000"));
+        queries.add(restDoMocks.mockMultidatasetRelatedResourceResult("agency01", "isPartOf03", "01.000"));
         return queries;
     }
 
@@ -1073,6 +1074,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         List<RelatedResourceResult> queries = new ArrayList<RelatedResourceResult>();
         queries.add(restDoMocks.mockPublicationRelatedResourceResult("agency01", "isPartOf01", "01.000"));
         queries.add(restDoMocks.mockPublicationRelatedResourceResult("agency01", "isPartOf02", "01.000"));
+        queries.add(restDoMocks.mockMultidatasetRelatedResourceResult("agency01", "isPartOf03", "01.000"));
         return queries;
     }
 

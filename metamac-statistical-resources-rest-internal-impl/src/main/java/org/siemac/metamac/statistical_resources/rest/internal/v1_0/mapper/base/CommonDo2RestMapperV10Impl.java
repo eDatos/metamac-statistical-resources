@@ -753,6 +753,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 return queriesDo2RestMapper.toResource(source, selectedLanguages);
             case PUBLICATION_VERSION:
                 return collectionsDo2RestMapper.toResource(source, selectedLanguages);
+            case MULTIDATASET_VERSION:
+                return multidatasetsDo2RestMapper.toResource(source, selectedLanguages);
             case DATASET:
                 DatasetVersion datasetVersion = datasetService.retrieveLatestDatasetVersionByDatasetUrn(SERVICE_CONTEXT, source.getUrn());
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
@@ -1043,10 +1045,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
         MeasureQuantity target = new MeasureQuantity();
 
-        org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource targetItemResource = new org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource();
-        toResource(source.getUnitCode(), targetItemResource, selectedLanguages);
-        target.setUnitCode(targetItemResource);
-
+        org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource unitCodeItemResource = new org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource();
+        toResource(source.getUnitCode(), unitCodeItemResource, selectedLanguages);
+        target.setUnitCode(unitCodeItemResource);
+        org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource unitMultiplierItemResource = new org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ItemResource();
+        toResource(source.getUnitMultiplier(), unitMultiplierItemResource, selectedLanguages);
+        target.setUnitMultiplier(unitMultiplierItemResource);
         return target;
     }
 

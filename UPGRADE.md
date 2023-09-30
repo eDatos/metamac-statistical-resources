@@ -8,7 +8,16 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 7.0.1 a 7.0.2-SNAPSHOT
+## 8.1.0 a 8.1.1-SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.1.0/db](etc/changes-from-release/8.1.0/db) 
+
+* Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS debido a que se añade un nuevo campo formatExtentObservations
+******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+
+## 8.0.0 a 8.1.0
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.0.0/db](etc/changes-from-release/8.0.0/db) 
+
+## 7.0.1 a 8.0.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/7.0.1/db](etc/changes-from-release/7.0.1/db) 
 
 * En edatos-3744 hay una rotura de compatibilidad ya que las fechas "DATE_NEXT_UPDATE" en tabla "TB_DATASETS_VERSIONS"  y "NEXT_VERSION_DATE" en tabla "TB_STAT_RESOURCES" cambian de timestamp a varchar (en formato sdmx) En esta tarea se guardó un backup de los valores en las tablas "TEMP_TB_DATASETS_VERSIONS" y "TEMP_TB_STAT_RESOURCES" respectivamente. 
