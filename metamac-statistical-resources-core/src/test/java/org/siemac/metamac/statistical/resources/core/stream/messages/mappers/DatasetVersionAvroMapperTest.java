@@ -24,13 +24,13 @@ public class DatasetVersionAvroMapperTest {
     private static DatasetVersionRepository datasetVersionRepository;
 
     @Mock
-    private static DatasetRepository datasetRepository;
+    private static DatasetRepository        datasetRepository;
 
     @Mock
-    private static ConfigurationService configurationService;
+    private static ConfigurationService     configurationService;
 
     @Mock
-    private static TranslationService translationService;
+    private static TranslationService       translationService;
 
     @Before
     public void setUp() throws MetamacException {
@@ -76,6 +76,7 @@ public class DatasetVersionAvroMapperTest {
         assertThat(actual.getCategorisations(), is(equalTo(expected.getCategorisations())));
         assertThat(actual.getAttributesCoverage(), is(equalTo(expected.getAttributesCoverage())));
         assertThat(actual.getDimensionsCoverage(), is(equalTo(expected.getDimensionsCoverage())));
+        assertThat(actual.getFormatExtentObservations(), is(equalTo(expected.getFormatExtentObservations())));
     }
 
 }
