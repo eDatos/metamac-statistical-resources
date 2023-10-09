@@ -13,11 +13,13 @@ public class RepositoryUtils {
 
     public static String buildLastPublishedVersionCondition(String statisticalResourceName) {
         // @formatter:off
-        return "( " +
-        " "+statisticalResourceName+".proc_status = :publishedProcStatus " +
-        "AND "+statisticalResourceName+".Valid_From <= :now " +
-        "AND ("+statisticalResourceName+".Valid_To > :now or "+statisticalResourceName+".Valid_To is null)" +
-        ")";
+        return " ( " +
+            statisticalResourceName + ".proc_status = :publishedProcStatus " +
+        " AND " +
+            statisticalResourceName + ".Valid_From <= :now " +
+        " AND " +
+            " ( " + statisticalResourceName + ".Valid_To > :now or " + statisticalResourceName + ".Valid_To is null ) " +
+        ") ";
         //@formatter:on
 
     }

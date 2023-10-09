@@ -356,9 +356,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "WHERE      cubes.dataset_fk = dataset.ID " +
                 "   AND     dataset_version.dataset_fk = dataset.ID " +
                 "   AND     dataset_version.ID = :datasetVersionFk " +
-                "   AND     stat_dataset.proc_status = :publishedProcStatus " +
-                "   AND     stat_dataset.valid_from <= :now " +
-                "   AND     (stat_dataset.valid_to > :now or stat_dataset.valid_to is null) " +
+                RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset") +
                 "   AND     elem.publication_version_all_fk = pub.ID  "  +
                 "   AND     stat.title_fk = loc.international_string_fk  " +
                 "   AND     stat.proc_status = :publishedProcStatus " +
