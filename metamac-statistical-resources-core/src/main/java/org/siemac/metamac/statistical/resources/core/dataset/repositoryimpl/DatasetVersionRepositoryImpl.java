@@ -238,7 +238,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
 
         String queryLinkedToDatasetAndDatasetVersionIsLastVersion =
             "         (query.dataset_fk = dataset_version.dataset_fk" +
-            "           And stat_dataset.Last_Version = " + getBooleanValueForDatabase(true) + ") ";
+            "           And stat_dataset.Last_Version = true ) ";
 
         String queryLinkedToDatasetAndDatasetVersionLastPublishedVersion =
             "         (query.dataset_fk = dataset_version.dataset_fk" +
@@ -310,10 +310,10 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
             "WHERE       cubes.dataset_fk = dataset.ID "+
             "    AND     dataset_version.dataset_fk = dataset.ID " +
             "    AND     dataset_version.ID = :datasetVersionFk " +
-            "    AND     stat_dataset.last_version = " + getBooleanValueForDatabase(true) +
+            "    AND     stat_dataset.last_version = true " +
             "    AND     elem.publication_version_all_fk = pub.ID " +
             "    AND     stat.title_fk = loc.international_string_fk " +
-            "    AND     (stat.last_version = " + getBooleanValueForDatabase(true) +
+            "    AND     (stat.last_version = true " +
             "           OR "+isLastPublishedVersionConditions+") " +
             "    AND     operation.ID = stat.stat_operation_fk " +
             "    AND     maintainer.id = stat.maintainer_fk");
@@ -452,7 +452,4 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         return replacing;
     }
 
-    private String getBooleanValueForDatabase(boolean value) throws MetamacException {
-        return value ? "true" : "false";
-    }
 }
