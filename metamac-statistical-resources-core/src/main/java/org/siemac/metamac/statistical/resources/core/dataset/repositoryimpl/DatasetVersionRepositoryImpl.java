@@ -359,7 +359,6 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "   AND " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset") +
                 "   AND     elem.publication_version_all_fk = pub.ID  "  +
                 "   AND     stat.title_fk = loc.international_string_fk  " +
-                "   AND     stat.proc_status = :publishedProcStatus " +
                 "   AND     "+ isLastPublishedVersionConditions +
                 "   AND     operation.ID = stat.stat_operation_fk " +
                 "   AND     maintainer.id = stat.maintainer_fk ");
