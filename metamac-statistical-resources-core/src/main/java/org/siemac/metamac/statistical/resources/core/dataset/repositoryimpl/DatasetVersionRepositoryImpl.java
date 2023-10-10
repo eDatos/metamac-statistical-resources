@@ -319,8 +319,6 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
 
         //     @formatter:on
         query.setParameter("datasetVersionFk", datasetVersion.getId());
-        query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
-        query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
         List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
