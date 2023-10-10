@@ -313,8 +313,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
             "    AND     stat_dataset.last_version = true " +
             "    AND     elem.publication_version_all_fk = pub.ID " +
             "    AND     stat.title_fk = loc.international_string_fk " +
-            "    AND     (stat.last_version = true " +
-            "           OR "+isLastPublishedVersionConditions+") " +
+            "    AND     stat.last_version = true " +
             "    AND     operation.ID = stat.stat_operation_fk " +
             "    AND     maintainer.id = stat.maintainer_fk");
 
