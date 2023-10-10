@@ -24,4 +24,11 @@ public class RepositoryUtils {
 
     }
 
+    public static String buildLastPublishedVersionCondition(String statisticalResourceName, boolean onlyLastPublished) {
+        if (onlyLastPublished) {
+            return buildLastPublishedVersionCondition(statisticalResourceName);
+        } else {
+            return " " + statisticalResourceName + ".last_version = true ";
+        }
+    }
 }

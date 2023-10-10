@@ -283,51 +283,18 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         return resources;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<RelatedResourceResult> retrieveIsPartOf(DatasetVersion datasetVersion) throws MetamacException {
-        //     @formatter:off
-        Query query = getEntityManager().createNativeQuery(
-            "SELECT  distinct stat.code, " +
-            "        stat.urn, " +
-            "        operation.code AS operCode, " +
-            "        operation.urn AS operUrn, " +
-            "        maintainer.code_nested AS code_nested, " +
-            "        stat.version_logic, "+
-            "        loc.locale, " +
-            "        loc.label, " +
-            "        stat.type " +
-            "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
-            "            on cubes.ID = elem.table_fk, " +
-            "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
-            "            ON pub.siemac_resource_fk = stat.ID, " +
-            "        tb_external_items operation, " +
-            "        tb_external_items maintainer, " +
-            "        tb_datasets dataset, " +
-            "        tb_datasets_versions dataset_version INNER JOIN tb_stat_resources stat_dataset "+
-            "            ON dataset_version.siemac_resource_fk = stat_dataset.ID, "+
-            "        tb_localised_strings loc "+
-            "WHERE       cubes.dataset_fk = dataset.ID "+
-            "    AND     dataset_version.dataset_fk = dataset.ID " +
-            "    AND     dataset_version.ID = :datasetVersionFk " +
-            "    AND     stat_dataset.last_version = true " +
-            "    AND     elem.publication_version_all_fk = pub.ID " +
-            "    AND     stat.title_fk = loc.international_string_fk " +
-            "    AND     stat.last_version = true " +
-            "    AND     operation.ID = stat.stat_operation_fk " +
-            "    AND     maintainer.id = stat.maintainer_fk");
+        return retrieveIsPartOfOnlyLastPublished(datasetVersion, false);
+    }
 
-        //     @formatter:on
-        query.setParameter("datasetVersionFk", datasetVersion.getId());
-
-        List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
-        return resources;
+    @Override
+    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion) throws MetamacException {
+        return retrieveIsPartOfOnlyLastPublished(datasetVersion, true);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion) throws MetamacException {
+    private List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion, boolean onlyLastPublished) throws MetamacException {
         //     @formatter:off
         Query query = getEntityManager().createNativeQuery(
                 "SELECT     distinct stat.code, " +
@@ -338,8 +305,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "           stat.version_logic, " +
                 "           loc.locale, " +
                 "           loc.label, " +
-                "           stat.type, " +
-                "           stat_dataset.valid_to, pub.id " +
+                "           stat.type " +
                 "FROM       tb_elements_levels elem INNER JOIN tb_cubes cubes " +
                 "              on cubes.ID = elem.table_fk,  " +
                 "           tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
@@ -353,17 +319,19 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "WHERE      cubes.dataset_fk = dataset.ID " +
                 "   AND     dataset_version.dataset_fk = dataset.ID " +
                 "   AND     dataset_version.ID = :datasetVersionFk " +
-                "   AND " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset") +
+                "   AND " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
                 "   AND     elem.publication_version_all_fk = pub.ID  "  +
                 "   AND     stat.title_fk = loc.international_string_fk  " +
-                "   AND     "+ isLastPublishedVersionConditions +
+                "   AND " + RepositoryUtils.buildLastPublishedVersionCondition("stat", onlyLastPublished) +
                 "   AND     operation.ID = stat.stat_operation_fk " +
                 "   AND     maintainer.id = stat.maintainer_fk ");
 
         //     @formatter:on
         query.setParameter("datasetVersionFk", datasetVersion.getId());
-        query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
-        query.setParameter("now", new DateTime().toDate());
+        if (onlyLastPublished) {
+            query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
+            query.setParameter("now", new DateTime().toDate());
+        }
 
         List<Object> rows = query.getResultList();
         List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
