@@ -12,5 +12,4 @@
 
     <entry key="metamac.edition.languages">es,en</entry>
     <entry key="edatos.rest.export.max_xlsx_rows">1048576</entry>
-
 </properties>
