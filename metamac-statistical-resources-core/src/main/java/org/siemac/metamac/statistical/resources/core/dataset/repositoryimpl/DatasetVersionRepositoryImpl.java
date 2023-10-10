@@ -338,8 +338,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "           stat.version_logic, " +
                 "           loc.locale, " +
                 "           loc.label, " +
-                "           stat.type, " +
-                "           stat_dataset.valid_to, pub.id " +
+                "           stat.type " +
                 "FROM       tb_elements_levels elem INNER JOIN tb_cubes cubes " +
                 "              on cubes.ID = elem.table_fk,  " +
                 "           tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
