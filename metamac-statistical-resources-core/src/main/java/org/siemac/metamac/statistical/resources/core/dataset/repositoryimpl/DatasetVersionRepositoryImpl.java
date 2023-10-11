@@ -306,27 +306,29 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "           loc.locale, " +
                 "           loc.label, " +
                 "           stat.type " +
-                "FROM       tb_elements_levels elem INNER JOIN tb_cubes cubes " +
-                "              on cubes.ID = elem.table_fk,  " +
-                "           tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
-                "               ON pub.siemac_resource_fk = stat.ID, " +
-                "           tb_external_items operation, " +
-                "           tb_external_items maintainer, " +
-                "           tb_datasets dataset, " +
-                "           tb_datasets_versions dataset_version INNER JOIN tb_stat_resources stat_dataset " +
-                "               ON dataset_version.siemac_resource_fk = stat_dataset.ID, " +
-                "           tb_localised_strings loc  " +
-                "WHERE      cubes.dataset_fk = dataset.ID " +
-                "   AND     dataset_version.dataset_fk = dataset.ID " +
-                "   AND     dataset_version.ID = :datasetVersionFk " +
-                "   AND " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
-                "   AND     elem.publication_version_all_fk = pub.ID  "  +
-                "   AND     stat.title_fk = loc.international_string_fk  " +
-                "   AND " + RepositoryUtils.buildLastPublishedVersionCondition("stat", onlyLastPublished) +
-                "   AND     operation.ID = stat.stat_operation_fk " +
-                "   AND     maintainer.id = stat.maintainer_fk ");
+                "FROM       tb_stat_resources stat " +
+                "INNER JOIN ( " +
 
-        //     @formatter:on
+                    // Publications
+                    "SELECT pub.siemac_resource_fk " +
+                    "FROM tb_publications_versions pub " +
+                    "INNER JOIN tb_elements_levels elem on elem.publication_version_all_fk = pub.ID " +
+                    "INNER JOIN tb_cubes cubes on cubes.ID = elem.table_fk " +
+
+                    // - Datasets
+                    "INNER JOIN tb_datasets dataset on cubes.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_datasets_versions dataset_version on dataset_version.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_stat_resources stat_dataset  ON dataset_version.siemac_resource_fk = stat_dataset.ID " +
+                    "WHERE " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
+                    "AND     dataset_version.ID = :datasetVersionFk " +
+
+                ") as resource on resource.siemac_resource_fk = stat.ID " +
+
+                "inner join tb_localised_strings loc on  stat.title_fk = loc.international_string_fk " +
+                "inner join tb_external_items operation on operation.ID = stat.stat_operation_fk " +
+                "inner join tb_external_items maintainer on maintainer.id = stat.maintainer_fk " +
+                "where " + RepositoryUtils.buildLastPublishedVersionCondition("stat", onlyLastPublished));
+            //     @formatter:on
         query.setParameter("datasetVersionFk", datasetVersion.getId());
         if (onlyLastPublished) {
             query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());

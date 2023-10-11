@@ -143,6 +143,7 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
                 "INNER JOIN tb_elements_levels elem on elem.publication_version_all_fk = pub.ID " +
                 "INNER JOIN tb_cubes cubes on cubes.ID = elem.table_fk " +
 
+                // - Queries
                 "INNER JOIN tb_queries query on cubes.query_fk = query.ID  " +
                 "INNER JOIN tb_queries_versions query_version on query_version.query_fk = query.ID " +
                 "INNER JOIN tb_stat_resources stat_query ON query_version.lifecycle_resource_fk = stat_query.ID " +
@@ -156,6 +157,7 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
                 "FROM tb_multidatasets_versions  mul " +
                 "INNER JOIN tb_md_cubes cubes on cubes.MULTIDATASET_VERSION_FK = mul.id " +
 
+                // - Queries
                 "INNER JOIN tb_queries query on cubes.query_fk = query.ID  " +
                 "INNER JOIN tb_queries_versions query_version on query_version.query_fk = query.ID " +
                 "INNER JOIN tb_stat_resources stat_query ON query_version.lifecycle_resource_fk = stat_query.ID " +
