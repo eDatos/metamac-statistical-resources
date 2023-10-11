@@ -285,16 +285,16 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
 
     @Override
     public List<RelatedResourceResult> retrieveIsPartOf(DatasetVersion datasetVersion) throws MetamacException {
-        return retrieveIsPartOfOnlyLastPublished(datasetVersion, false);
+        return retrieveIsPartOf(datasetVersion, false);
     }
 
     @Override
     public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion) throws MetamacException {
-        return retrieveIsPartOfOnlyLastPublished(datasetVersion, true);
+        return retrieveIsPartOf(datasetVersion, true);
     }
 
     @SuppressWarnings("unchecked")
-    private List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion, boolean onlyLastPublished) throws MetamacException {
+    private List<RelatedResourceResult> retrieveIsPartOf(DatasetVersion datasetVersion, boolean onlyLastPublished) throws MetamacException {
         //     @formatter:off
         Query query = getEntityManager().createNativeQuery(
                 "SELECT     distinct stat.code, " +
