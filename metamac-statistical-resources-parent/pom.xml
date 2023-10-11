@@ -42,7 +42,7 @@
 		<metamac-statistical-operations-rest-internal-api.version>2.5.0</metamac-statistical-operations-rest-internal-api.version>
 		<metamac-statistical-operations-rest-external-api.version>3.5.0</metamac-statistical-operations-rest-external-api.version>
 		<metamac-sdmx-data-rest-external-api.version>2.0.0</metamac-sdmx-data-rest-external-api.version>
-		<metamac-web-common.version>5.4.1</metamac-web-common.version>
+		<metamac-web-common.version>5.4.2-SNAPSHOT</metamac-web-common.version>
 		<metamac-notifications-rest-internal-api.version>3.6.0</metamac-notifications-rest-internal-api.version>
 
 		<metamac-statistical-resources.baseDir>${basedir}/..</metamac-statistical-resources.baseDir>
