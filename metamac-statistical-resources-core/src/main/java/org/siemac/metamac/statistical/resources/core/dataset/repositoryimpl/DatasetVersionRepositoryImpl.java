@@ -322,6 +322,20 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                     "WHERE " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
                     "AND     dataset_version.ID = :datasetVersionFk " +
 
+                    "UNION " +
+
+                    // Multidatasets
+                    "SELECT mul.siemac_resource_fk " +
+                    "FROM tb_multidatasets_versions  mul " +
+                    "INNER JOIN tb_md_cubes cubes on cubes.MULTIDATASET_VERSION_FK = mul.id " +
+
+                    // - Datasets
+                    "INNER JOIN tb_datasets dataset on cubes.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_datasets_versions dataset_version on dataset_version.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_stat_resources stat_dataset  ON dataset_version.siemac_resource_fk = stat_dataset.ID " +
+                    "WHERE " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
+                    "AND     dataset_version.ID = :datasetVersionFk " +
+
                 ") as resource on resource.siemac_resource_fk = stat.ID " +
 
                 "inner join tb_localised_strings loc on  stat.title_fk = loc.international_string_fk " +
