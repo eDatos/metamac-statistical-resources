@@ -247,6 +247,8 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
 
     public static final String                    MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME                                               = "MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10";
 
+    public static final String                    MULTIDATASET_VERSION_100_DRAFT_SINGLE_VERSION__LINKED_TO_DATASET_85_NAME                                            = "MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10";
+
     private static MultidatasetVersionMockFactory instance                                                                                                            = null;
 
     private MultidatasetVersionMockFactory() {
