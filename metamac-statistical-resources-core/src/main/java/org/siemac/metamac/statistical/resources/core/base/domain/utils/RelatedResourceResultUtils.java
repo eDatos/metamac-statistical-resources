@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.Predicate;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
@@ -97,6 +99,18 @@ public class RelatedResourceResultUtils {
             result.setType(type);
         }
         return result;
+    }
+
+    public static List<RelatedResourceResult> filterRelatedResourcesByType(List<RelatedResourceResult> relatedResources, TypeRelatedResourceEnum relatedResourceType) {
+        List<RelatedResourceResult> typedRelatedResources = new ArrayList<>(relatedResources);
+        CollectionUtils.filter(typedRelatedResources, new Predicate<RelatedResourceResult>() {
+    
+            @Override
+            public boolean evaluate(RelatedResourceResult relatedResource) {
+                return relatedResourceType.equals(relatedResource.getType());
+            }
+        });
+        return typedRelatedResources;
     }
 
 }

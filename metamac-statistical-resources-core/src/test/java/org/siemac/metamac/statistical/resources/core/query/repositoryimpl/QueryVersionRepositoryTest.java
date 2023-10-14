@@ -48,12 +48,9 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_26_V3_PUBLISHED_FOR_QUERY_05_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.Predicate;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.joda.time.DateTime;
@@ -64,6 +61,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
+import org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -417,22 +415,8 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
 
         List<RelatedResourceResult> relatedResources = queryVersionRepository.retrieveIsPartOf(draftQuery);
         Assert.assertEquals(3, relatedResources.size());
-        List<RelatedResourceResult> publications = new ArrayList<>(relatedResources);
-        CollectionUtils.filter(publications, new Predicate<RelatedResourceResult>() {
-
-            @Override
-            public boolean evaluate(RelatedResourceResult relatedResource) {
-                return TypeRelatedResourceEnum.PUBLICATION_VERSION.equals(relatedResource.getType());
-            }
-        });
-        List<RelatedResourceResult> multidatasets = new ArrayList<>(relatedResources);
-        CollectionUtils.filter(multidatasets, new Predicate<RelatedResourceResult>() {
-
-            @Override
-            public boolean evaluate(RelatedResourceResult relatedResource) {
-                return TypeRelatedResourceEnum.MULTIDATASET_VERSION.equals(relatedResource.getType());
-            }
-        });
+        List<RelatedResourceResult> publications = RelatedResourceResultUtils.filterRelatedResourcesByType(relatedResources, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        List<RelatedResourceResult> multidatasets = RelatedResourceResultUtils.filterRelatedResourcesByType(relatedResources, TypeRelatedResourceEnum.MULTIDATASET_VERSION);
 
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(Arrays.asList(pubVersionDraftMultiVersion, pubVersionDraftSingleVersion), publications);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToMultidatasetVersionCollection(Arrays.asList(mulVersionDraftSingleVersion), multidatasets);
