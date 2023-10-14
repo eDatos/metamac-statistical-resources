@@ -285,16 +285,16 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
 
     @Override
     public List<RelatedResourceResult> retrieveIsPartOf(DatasetVersion datasetVersion) throws MetamacException {
-        return retrieveIsPartOfOnlyLastPublished(datasetVersion, false);
+        return retrieveIsPartOf(datasetVersion, false);
     }
 
     @Override
     public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion) throws MetamacException {
-        return retrieveIsPartOfOnlyLastPublished(datasetVersion, true);
+        return retrieveIsPartOf(datasetVersion, true);
     }
 
     @SuppressWarnings("unchecked")
-    private List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion, boolean onlyLastPublished) throws MetamacException {
+    private List<RelatedResourceResult> retrieveIsPartOf(DatasetVersion datasetVersion, boolean onlyLastPublished) throws MetamacException {
         //     @formatter:off
         Query query = getEntityManager().createNativeQuery(
                 "SELECT     distinct stat.code, " +
@@ -314,6 +314,20 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                     "FROM tb_publications_versions pub " +
                     "INNER JOIN tb_elements_levels elem on elem.publication_version_all_fk = pub.ID " +
                     "INNER JOIN tb_cubes cubes on cubes.ID = elem.table_fk " +
+
+                    // - Datasets
+                    "INNER JOIN tb_datasets dataset on cubes.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_datasets_versions dataset_version on dataset_version.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_stat_resources stat_dataset  ON dataset_version.siemac_resource_fk = stat_dataset.ID " +
+                    "WHERE " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
+                    "AND     dataset_version.ID = :datasetVersionFk " +
+
+                    "UNION " +
+
+                    // Multidatasets
+                    "SELECT mul.siemac_resource_fk " +
+                    "FROM tb_multidatasets_versions  mul " +
+                    "INNER JOIN tb_md_cubes cubes on cubes.MULTIDATASET_VERSION_FK = mul.id " +
 
                     // - Datasets
                     "INNER JOIN tb_datasets dataset on cubes.dataset_fk = dataset.ID " +
