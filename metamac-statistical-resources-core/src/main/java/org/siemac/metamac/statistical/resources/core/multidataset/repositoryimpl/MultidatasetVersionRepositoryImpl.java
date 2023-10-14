@@ -225,10 +225,10 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
                 "WHERE       cubes.multidataset_fk = multidataset.ID "+
                 "    AND     multidataset_version.multidataset_fk = multidataset.ID " +
                 "    AND     multidataset_version.ID = :multidatasetVersionFk " +
-                "    AND     stat_multidataset.last_version = " + getBooleanValueForDatabase(true) +
+                "    AND     stat_multidataset.last_version = true " +
                 "    AND     elem.publication_version_all_fk = pub.ID " +
                 "    AND     stat.title_fk = loc.international_string_fk " +
-                "    AND     (stat.last_version = " + getBooleanValueForDatabase(true) +
+                "    AND     (stat.last_version = true " +
                 "           OR "+isLastPublishedVersionConditions+") " +
                 "    AND     operation.ID = stat.stat_operation_fk " +
                 "    AND     maintainer.id = stat.maintainer_fk");
@@ -242,7 +242,4 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
         return resources;
     }
 
-    private String getBooleanValueForDatabase(boolean value) throws MetamacException {
-        return value ? "true" : "false";
-    }
 }
