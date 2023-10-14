@@ -129,7 +129,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMappingRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
@@ -173,22 +172,19 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 public class DatasetServiceTest extends StatisticalResourcesBaseTest implements DatasetServiceTestBase {
 
     @Autowired
-    private DatasetService                           datasetService;
+    private DatasetService                   datasetService;
 
     @Autowired
-    private DatasetVersionRepository                 datasetVersionRepository;
+    private DatasetVersionRepository         datasetVersionRepository;
 
     @Autowired
-    private DimensionRepresentationMappingRepository dimensionRepresentationMappingRepository;
+    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade         datasetRepositoriesServiceFacade;
+    private SrmRestInternalService           srmRestInternalService;
 
     @Autowired
-    private SrmRestInternalService                   srmRestInternalService;
-
-    @Autowired
-    private TaskService                              taskService;
+    private TaskService                      taskService;
 
     @Before
     public void setUp() throws Exception {
