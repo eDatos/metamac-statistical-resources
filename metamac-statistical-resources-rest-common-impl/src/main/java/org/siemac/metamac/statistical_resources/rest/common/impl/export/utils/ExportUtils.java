@@ -221,4 +221,8 @@ public class ExportUtils {
         return labelVisualisationsMode;
     }
 
+    public static String escapeNulls(String value) {
+        return StringUtils.isEmpty(value) ? StringUtils.EMPTY : value;
+    }
+
 }

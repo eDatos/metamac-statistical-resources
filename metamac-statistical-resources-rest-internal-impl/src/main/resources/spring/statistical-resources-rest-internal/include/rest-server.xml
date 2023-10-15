@@ -34,8 +34,7 @@
             <ref bean="jaxbProvider" />
             <ref bean="jsonProvider" />
             <ref bean="jsonStatProvider" />
-            <ref bean="xstreamTsvCsvProvider" />
-            <ref bean="xstreamXlsProvider" />
+            <ref bean="xstreamPlainTextProvider" />
             <ref bean="wadlGenerator" />
         </jaxrs:providers>
 
@@ -58,9 +57,7 @@
     
     <bean id="jsonProvider" class="org.siemac.metamac.rest.json.MetamacJacksonJaxbJsonProvider" />
     <bean id="jsonStatProvider" class="org.siemac.metamac.statistical_resources.rest.internal.provider.MetamacJacksonJaxbJsonStatProvider" />
-    <bean id="xstreamTsvCsvProvider" class="org.siemac.metamac.rest.common.export.mappers.PlainTextMessageBodyWritter" />
-    <bean id="xstreamXlsProvider" class="org.siemac.metamac.rest.common.export.mappers.ExcelMessageBodyWritter" /> 
-
+    <bean id="xstreamPlainTextProvider" class="org.siemac.metamac.statistical_resources.rest.common.impl.export.mappers.PlainTextMessageBodyWritter" />
     <bean id="wadlGenerator" class="org.apache.cxf.jaxrs.model.wadl.WadlGenerator">
         <property name="namespacePrefix" value="ns" />
     </bean>
