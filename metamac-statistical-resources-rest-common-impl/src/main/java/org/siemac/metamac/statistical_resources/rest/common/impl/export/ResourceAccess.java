@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.common.impl.export;
 
 import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.buildMapDimensionsValuesLabels;
-import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.buildMapDimensionsValuesLocalisedLabels;
 import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.dataToDataArray;
 
 import java.util.ArrayList;
@@ -105,17 +104,12 @@ public class ResourceAccess {
     private void initializeDimensions(Dimensions dimensions, DatasetSelection datasetSelection) throws MetamacException {
         List<Dimension> dimensionsMetadata = dimensions.getDimensions();
 
-        Map<String, Dimension> metadataMap = new HashMap<String, Dimension>(dimensionsMetadata.size());
-        Map<String, Map<String, InternationalString>> valuesCurrentLocaleLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
-        Map<String, Map<String, InternationalString>> valuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
+        Map<String, Map<String, InternationalString>> valuesCurrentLocaleLabels = new HashMap<String, Map<String, InternationalString>>();
 
         for (Dimension dimension : dimensionsMetadata) {
-            String dimensionId = dimension.getId();
-
-            metadataMap.put(dimensionId, dimension);
-            valuesCurrentLocaleLabels.put(dimension.getId(), buildMapDimensionsValuesLabels(dimension));
-            valuesLabels.put(dimension.getId(), buildMapDimensionsValuesLocalisedLabels(dimension));
-
+            if (datasetSelection.getDimensionLabelVisualisationModel(dimension.getId()).isLabel()) {
+                valuesCurrentLocaleLabels.put(dimension.getId(), buildMapDimensionsValuesLabels(dimension));
+            }
         }
 
         this.dimensionsValuesCurrentLocaleLabels = valuesCurrentLocaleLabels;
@@ -239,7 +233,10 @@ public class ResourceAccess {
         }
 
         attributesLabelVisualisationMode = ExportUtils.buildMapAttributesLabelVisualisationMode(datasetSelection, attributesMetadata);
-        attributesValuesCurrentLocaleLabels = ExportUtils.buildMapAttributesValuesLabels(attributesMetadata);
+        attributesValuesCurrentLocaleLabels = new HashMap<String, Map<String, InternationalString>>();
+        for (Attribute attribute : attributesMetadata) {
+            attributesValuesCurrentLocaleLabels.put(attribute.getId(), ExportUtils.buildMapAttributesValuesLabels(attribute));
+        }
     }
 
     public List<String> getSelectedLanguages() {
