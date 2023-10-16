@@ -108,8 +108,6 @@ public class ResourceAccess {
         Map<String, Dimension> metadataMap = new HashMap<String, Dimension>(dimensionsMetadata.size());
         Map<String, Map<String, InternationalString>> valuesCurrentLocaleLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
         Map<String, Map<String, InternationalString>> valuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
-        Map<String, InternationalString> dimensionsLabelsCurrentLocale = new HashMap<String, InternationalString>(dimensionsMetadata.size());
-        Map<String, InternationalString> dimensionsLabelsDefaultLocale = new HashMap<String, InternationalString>(dimensionsMetadata.size());
 
         for (Dimension dimension : dimensionsMetadata) {
             String dimensionId = dimension.getId();
@@ -117,8 +115,6 @@ public class ResourceAccess {
             metadataMap.put(dimensionId, dimension);
             valuesCurrentLocaleLabels.put(dimension.getId(), buildMapDimensionsValuesLabels(dimension));
             valuesLabels.put(dimension.getId(), buildMapDimensionsValuesLocalisedLabels(dimension));
-            dimensionsLabelsCurrentLocale.put(dimensionId, dimension.getName());
-            dimensionsLabelsDefaultLocale.put(dimensionId, dimension.getName());
 
         }
 
