@@ -253,6 +253,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     public static final String                   PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION                                                 = "PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION";
 
     public static final String                   PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL_NAME                                   = "PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL";
+    public static final String                   PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME                               = "PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL";
 
     private static PublicationVersionMockFactory instance                                                                                                           = null;
 

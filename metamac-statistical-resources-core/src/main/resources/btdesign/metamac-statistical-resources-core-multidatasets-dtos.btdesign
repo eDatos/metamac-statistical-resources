@@ -16,9 +16,10 @@ Application MultidatasetsStatisticalResourcesDto {
 			Integer formatExtentResources;
 			- List<@MultidatasetCubeDto> cubes;
 			- @InternationalStringDto filteringDimension;
+			- Bag<@RelatedResourceDto> isPartOf;
 		}
 		
-		"Dto for indicator instance"
+		"Dto for multidataset cube"
         DataTransferObject MultidatasetCubeDto extends @NameableStatisticalResourceDto {
         	"Identifier"
         	String identifier;

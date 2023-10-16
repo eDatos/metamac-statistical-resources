@@ -50,6 +50,8 @@ import org.siemac.metamac.statistical.resources.core.utils.LifecycleTestUtils;
 import org.siemac.metamac.statistical.resources.core.utils.MultidatasetLifecycleTestUtils;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.MultidatasetMock;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.MultidatasetVersionMock;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.PublicationMock;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.PublicationVersionMock;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
 
@@ -252,6 +254,8 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
     public static final String                    MULTIDATASET_VERSION_100_DRAFT_SINGLE_VERSION__LINKED_TO_DATASET_85_NAME                                            = "MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10";
 
     public static final String                    MULTIDATASET_VERSION_101_LAST_VERSION_NOT_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME                                    = "MULTIDATASET_VERSION_101_LAST_VERSION_NOT_PUBLISHED_IS_PART_OF_PUBLICATIONS";
+
+    public static final String                    MULTIDATASET_VERSION_102_LAST_VERSION_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME                                        = "MULTIDATASET_VERSION_102_LAST_VERSION_PUBLISHED_IS_PART_OF_PUBLICATIONS";
 
     private static MultidatasetVersionMockFactory instance                                                                                                            = null;
 
@@ -721,6 +725,21 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
         registerPublicationVersionMock(PublicationVersionMockFactory.PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL_NAME, pub01);
 
         return new MockDescriptor(multidatasetVersion, pub01);
+    }
+
+    private static MockDescriptor getMultidatasetVersion102LastVersionPublishedIsPartOfPublications() {
+        MultidatasetVersionMock template = new MultidatasetVersionMock();
+        template.setSequentialId(1);
+        template.getSiemacMetadataStatisticalResource().setValidFrom(new DateTime().minusDays(2));
+        MultidatasetVersion multidatasetVersion = createMultidatasetVersionInStatus(template, ProcStatusEnum.PUBLISHED);
+
+        PublicationVersionMock publicationVersion = PublicationVersionMockFactory.buildPublishedReadyPublicationVersion(new PublicationMock(), StatisticalResourcesMockFactory.INIT_VERSION,
+                new DateTime().minusDays(1), null, true);
+        PublicationVersionMockFactory.createMultidatasetCubeElementLevel(publicationVersion, multidatasetVersion.getMultidataset());
+        PublicationVersionMockFactory.createPublicationVersionInStatus(publicationVersion, ProcStatusEnum.PUBLISHED);
+        registerPublicationVersionMock(PublicationVersionMockFactory.PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME, publicationVersion);
+
+        return new MockDescriptor(multidatasetVersion, publicationVersion);
     }
 
     // -----------------------------------------------------------------

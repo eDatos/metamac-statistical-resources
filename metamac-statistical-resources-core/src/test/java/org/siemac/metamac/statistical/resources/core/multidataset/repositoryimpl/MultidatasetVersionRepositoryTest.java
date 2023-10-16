@@ -18,6 +18,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_03_FOR_MULTIDATASET_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_04_FOR_MULTIDATASET_03_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_101_LAST_VERSION_NOT_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_102_LAST_VERSION_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_12_DRAFT_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_NAME;
@@ -25,6 +26,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_41_PUB_NOT_VISIBLE_REPLACES_PUB_VERSION_42_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_42_PUB_IS_REPLACED_BY_PUB_VERSION_41_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME;
 
 import java.util.Arrays;
 import java.util.List;
@@ -201,6 +203,16 @@ public class MultidatasetVersionRepositoryTest extends StatisticalResourcesBaseT
         MultidatasetVersion multidatasetVersion = multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_101_LAST_VERSION_NOT_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME);
         PublicationVersion publication = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL_NAME);
         List<RelatedResourceResult> resources = multidatasetVersionRepository.retrieveIsPartOf(multidatasetVersion);
+        CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(Arrays.asList(publication), resources);
+    }
+
+    @Override
+    @Test
+    @MetamacMock({MULTIDATASET_VERSION_102_LAST_VERSION_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME, PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME})
+    public void testRetrieveIsPartOfOnlyLastPublished() throws Exception {
+        MultidatasetVersion multidatasetVersion = multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_102_LAST_VERSION_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME);
+        PublicationVersion publication = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME);
+        List<RelatedResourceResult> resources = multidatasetVersionRepository.retrieveIsPartOfOnlyLastPublished(multidatasetVersion);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(Arrays.asList(publication), resources);
     }
 }

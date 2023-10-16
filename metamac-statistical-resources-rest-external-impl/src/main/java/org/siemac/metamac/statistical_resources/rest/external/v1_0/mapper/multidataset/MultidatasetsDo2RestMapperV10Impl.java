@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multi
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceMultidatasetUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
 
@@ -36,6 +37,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidat
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
@@ -179,6 +181,7 @@ public class MultidatasetsDo2RestMapperV10Impl implements MultidatasetsDo2RestMa
         target.setFilteringDimension(commonDo2RestMapper.toInternationalString(source.getFilteringDimension(), selectedLanguages));
         target.setReplaces(toMultidatasetReplaces(source, selectedLanguages));
         target.setIsReplacedBy(toMultidatasetIsReplacedBy(source, selectedLanguages));
+        target.setIsPartOf(toMultidatasetIsPartOf(source, selectedLanguages));
         commonDo2RestMapper.toMetadataStatisticalResource(source.getSiemacMetadataStatisticalResource(), target, selectedLanguages);
         return target;
     }
@@ -198,6 +201,25 @@ public class MultidatasetsDo2RestMapperV10Impl implements MultidatasetsDo2RestMa
             relatedResourceReplacesBy = multidatasetVersionRepository.retrieveIsReplacedByOnlyIfPublished(source);
         }
         return toResource(relatedResourceReplacesBy, selectedLanguages);
+    }
+
+    private ResourcesStatisticalResourceBase toMultidatasetIsPartOf(MultidatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+        List<RelatedResourceResult> relatedResourceIsPartOf = null;
+
+        if (StatisticalResourcesRestExternalConstants.IS_INTERNAL_API) {
+            relatedResourceIsPartOf = multidatasetVersionRepository.retrieveIsPartOf(source);
+        } else {
+            relatedResourceIsPartOf = multidatasetVersionRepository.retrieveIsPartOfOnlyLastPublished(source);
+        }
+        if (CollectionUtils.isEmpty(relatedResourceIsPartOf)) {
+            return null;
+        }
+        ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
+        for (RelatedResourceResult relatedResourceResult : relatedResourceIsPartOf) {
+            targets.getResources().add(commonDo2RestMapper.toResource(relatedResourceResult, selectedLanguages));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
+        return targets;
     }
 
     private MultidatasetData toMultidatasetData(MultidatasetVersion source, List<String> selectedLanguages) throws MetamacException {
