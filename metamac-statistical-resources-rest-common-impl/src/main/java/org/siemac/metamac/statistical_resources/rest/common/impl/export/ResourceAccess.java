@@ -1,6 +1,5 @@
 package org.siemac.metamac.statistical_resources.rest.common.impl.export;
 
-import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.buildMapDimensionToMapDimensionsLabelVisualisationMode;
 import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.buildMapDimensionsValuesLabels;
 import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.buildMapDimensionsValuesLocalisedLabels;
 import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.dataToDataArray;
@@ -37,7 +36,6 @@ public class ResourceAccess {
     // Metadata
 
     private Map<String, Map<String, InternationalString>> dimensionsValuesCurrentLocaleLabels;
-    private Map<String, LabelVisualisationModeEnum>       dimensionsLabelVisualisationMode;
 
     private Map<String, Map<String, InternationalString>> attributesValuesCurrentLocaleLabels;
     private Map<String, LabelVisualisationModeEnum>       attributesLabelVisualisationMode;
@@ -85,10 +83,6 @@ public class ResourceAccess {
         return attributesValuesCurrentLocaleLabels.get(attributeId).get(attributeValue);
     }
 
-    public LabelVisualisationModeEnum getDimensionLabelVisualisationMode(String dimensionId) {
-        return dimensionsLabelVisualisationMode.get(dimensionId);
-    }
-
     public LabelVisualisationModeEnum getAttributeLabelVisualisationMode(String attributeId) {
         return attributesLabelVisualisationMode.get(attributeId);
     }
@@ -112,7 +106,6 @@ public class ResourceAccess {
         List<Dimension> dimensionsMetadata = dimensions.getDimensions();
 
         Map<String, Dimension> metadataMap = new HashMap<String, Dimension>(dimensionsMetadata.size());
-        Map<String, LabelVisualisationModeEnum> labelVisualisationsMode = new HashMap<String, LabelVisualisationModeEnum>(dimensionsMetadata.size());
         Map<String, Map<String, InternationalString>> valuesCurrentLocaleLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
         Map<String, Map<String, InternationalString>> valuesLabels = new HashMap<String, Map<String, InternationalString>>(dimensionsMetadata.size());
         Map<String, InternationalString> dimensionsLabelsCurrentLocale = new HashMap<String, InternationalString>(dimensionsMetadata.size());
@@ -122,7 +115,6 @@ public class ResourceAccess {
             String dimensionId = dimension.getId();
 
             metadataMap.put(dimensionId, dimension);
-            labelVisualisationsMode.put(dimensionId, buildMapDimensionToMapDimensionsLabelVisualisationMode(datasetSelection, dimension));
             valuesCurrentLocaleLabels.put(dimension.getId(), buildMapDimensionsValuesLabels(dimension));
             valuesLabels.put(dimension.getId(), buildMapDimensionsValuesLocalisedLabels(dimension));
             dimensionsLabelsCurrentLocale.put(dimensionId, dimension.getName());
@@ -130,7 +122,6 @@ public class ResourceAccess {
 
         }
 
-        dimensionsLabelVisualisationMode = labelVisualisationsMode;
         this.dimensionsValuesCurrentLocaleLabels = valuesCurrentLocaleLabels;
     }
 
@@ -234,8 +225,6 @@ public class ResourceAccess {
             attributesMetadata = attributes.getAttributes();
         }
 
-        Map<String, Attribute> attrMetadataMap = new HashMap<String, Attribute>(attributesMetadata.size());
-
         // Attribute Instances
         attributesValuesByAttributeId = new HashMap<String, String[]>(attributesMetadata.size());
         for (Attribute attribute : attributesMetadata) {
@@ -251,9 +240,6 @@ public class ResourceAccess {
                     }
                 }
             }
-
-            // Attributes Metadata Map
-            attrMetadataMap.put(attribute.getId(), attribute);
         }
 
         attributesLabelVisualisationMode = ExportUtils.buildMapAttributesLabelVisualisationMode(datasetSelection, attributesMetadata);

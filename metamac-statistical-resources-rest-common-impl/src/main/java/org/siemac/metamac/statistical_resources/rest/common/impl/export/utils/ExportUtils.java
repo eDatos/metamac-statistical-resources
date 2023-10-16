@@ -174,24 +174,6 @@ public class ExportUtils {
         return attributesValuesLocalisedLabels;
     }
 
-    /**
-     * Calculate the effective label visualisation mode for a dimension.
-     * If configuration does not exist for component, returns default configuration
-     *
-     * @param labelVisualisationsMode map
-     * @param datasetSelection
-     * @param dimension
-     */
-    public static LabelVisualisationModeEnum buildMapDimensionToMapDimensionsLabelVisualisationMode(DatasetSelection datasetSelection, Dimension dimension) {
-        String dimensionId = dimension.getId();
-        LabelVisualisationModeEnum labelVisualisationMode = datasetSelection != null ? datasetSelection.getDimensionLabelVisualisationModel(dimensionId) : null;
-        if (labelVisualisationMode == null) {
-            // default value
-            labelVisualisationMode = LabelVisualisationModeEnum.CODE_AND_LABEL;
-        }
-        return labelVisualisationMode;
-    }
-
     public static String[] dataToDataArray(String data) {
         return StringUtils.splitByWholeSeparatorPreserveAllTokens(data, StatisticalResourcesRestConstants.DATA_SEPARATOR);
     }

@@ -101,8 +101,10 @@ public class PlainTextExporter {
                     for (String dimensionId : datasetAccess.getDimensionsOrderedForData()) {
 
                         String dimensionValueId = permutationAtCell.get(dimensionId);
-                        LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDimensionLabelVisualisationMode(dimensionId);
-
+                        // LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDimensionLabelVisualisationMode(dimensionId);
+                        LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDataSelection() != null
+                                ? datasetAccess.getDataSelection().getDimensionLabelVisualisationModel(dimensionId)
+                                : LabelVisualisationModeEnum.CODE_AND_LABEL;
                         String headerName = getHeaderName(dimensionId);
                         if (labelVisualisation.isLabel()) {
                             InternationalString dimensionValueLabel = datasetAccess.getDimensionValueLabelCurrentLocale(dimensionId, dimensionValueId);
