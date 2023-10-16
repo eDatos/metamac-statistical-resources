@@ -198,10 +198,18 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
 
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<RelatedResourceResult> retrieveIsPartOf(MultidatasetVersion multidatasetVersion) throws MetamacException {
-        boolean onlyLastPublished = false;
+        return retrieveIsPartOf(multidatasetVersion, false);
+    }
+
+    @Override
+    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(MultidatasetVersion multidatasetVersion) throws MetamacException {
+        return retrieveIsPartOf(multidatasetVersion, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<RelatedResourceResult> retrieveIsPartOf(MultidatasetVersion multidatasetVersion, boolean onlyLastPublished) throws MetamacException {
         //     @formatter:off
         Query query = getEntityManager().createNativeQuery(
                 "SELECT  distinct stat.code, " +
@@ -246,5 +254,4 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
         List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
         return resources;
     }
-
 }
