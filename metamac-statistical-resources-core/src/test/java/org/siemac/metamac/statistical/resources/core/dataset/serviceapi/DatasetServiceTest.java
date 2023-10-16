@@ -67,6 +67,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_85_LAST_VERSION_NOT_PUBLISHED__IS_PART_OF_PUBLICATIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DimensionRepresentationMappingMockFactory.DIMENSION_REPRESENTATION_MAPPING_01_DATASET_01_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory.GEO_COV_VAR_ELEMENT_CACHE_01;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory.MULTIDATASET_VERSION_100_DRAFT_SINGLE_VERSION__LINKED_TO_DATASET_85_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_43_DRAFT_HAS_PART_DATASET_VERSION_85_FIRST_LEVEL_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_44_DRAFT_HAS_PART_DATASET_VERSION_85_NO_FIRST_LEVEL_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_45_DRAFT_HAS_PART_DATASET_VERSION_85_MULTI_CUBE_NAME;
@@ -129,7 +130,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMappingRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
@@ -143,6 +143,7 @@ import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFi
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
@@ -173,22 +174,19 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 public class DatasetServiceTest extends StatisticalResourcesBaseTest implements DatasetServiceTestBase {
 
     @Autowired
-    private DatasetService                           datasetService;
+    private DatasetService                   datasetService;
 
     @Autowired
-    private DatasetVersionRepository                 datasetVersionRepository;
+    private DatasetVersionRepository         datasetVersionRepository;
 
     @Autowired
-    private DimensionRepresentationMappingRepository dimensionRepresentationMappingRepository;
+    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade         datasetRepositoriesServiceFacade;
+    private SrmRestInternalService           srmRestInternalService;
 
     @Autowired
-    private SrmRestInternalService                   srmRestInternalService;
-
-    @Autowired
-    private TaskService                              taskService;
+    private TaskService                      taskService;
 
     @Before
     public void setUp() throws Exception {
@@ -825,9 +823,10 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         PublicationVersion publicationVersion01 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_43_DRAFT_HAS_PART_DATASET_VERSION_85_FIRST_LEVEL_NAME);
         PublicationVersion publicationVersion02 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_44_DRAFT_HAS_PART_DATASET_VERSION_85_NO_FIRST_LEVEL_NAME);
         PublicationVersion publicationVersion03 = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_45_DRAFT_HAS_PART_DATASET_VERSION_85_MULTI_CUBE_NAME);
+        MultidatasetVersion multidatasetVersion01 = multidatasetVersionMockFactory.retrieveMock(MULTIDATASET_VERSION_100_DRAFT_SINGLE_VERSION__LINKED_TO_DATASET_85_NAME);
 
         List<String> publicationsUrn = Arrays.asList(publicationVersion01.getSiemacMetadataStatisticalResource().getUrn(), publicationVersion02.getSiemacMetadataStatisticalResource().getUrn(),
-                publicationVersion03.getSiemacMetadataStatisticalResource().getUrn());
+                publicationVersion03.getSiemacMetadataStatisticalResource().getUrn(), multidatasetVersion01.getSiemacMetadataStatisticalResource().getUrn());
         Collections.sort(publicationsUrn);
 
         String urn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_85_LAST_VERSION_NOT_PUBLISHED__IS_PART_OF_PUBLICATIONS_NAME).getSiemacMetadataStatisticalResource().getUrn();
