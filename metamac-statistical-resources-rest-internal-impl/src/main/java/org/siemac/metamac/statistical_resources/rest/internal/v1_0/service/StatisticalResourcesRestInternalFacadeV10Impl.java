@@ -209,8 +209,8 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
             exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
 
-            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format)).header("Content-Disposition", getContentDisposition(fileNamePrefix, format))
-                    .build();
+            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
+                    .header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
         } finally {
             IOUtils.closeQuietly(outputStreamObservations);
         }
