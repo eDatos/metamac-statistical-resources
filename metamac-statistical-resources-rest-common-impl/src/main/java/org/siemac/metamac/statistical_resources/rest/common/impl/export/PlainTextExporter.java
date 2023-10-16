@@ -101,7 +101,6 @@ public class PlainTextExporter {
                     for (String dimensionId : datasetAccess.getDimensionsOrderedForData()) {
 
                         String dimensionValueId = permutationAtCell.get(dimensionId);
-                        // LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDimensionLabelVisualisationMode(dimensionId);
                         LabelVisualisationModeEnum labelVisualisation = datasetAccess.getDataSelection() != null
                                 ? datasetAccess.getDataSelection().getDimensionLabelVisualisationModel(dimensionId)
                                 : LabelVisualisationModeEnum.CODE_AND_LABEL;
@@ -207,9 +206,13 @@ public class PlainTextExporter {
 
     private void createObservationPlainText(Map<String, String> line) {
         StringBuilder observationLine = new StringBuilder();
+        boolean isFirstColumn = true;
         for (Map.Entry<String, String> columnObservation : line.entrySet()) {
             String value = ExportUtils.escapeNulls(columnObservation.getValue());
-            observationLine.append(observationLine.length() == 0 ? value : (separator + value));
+            observationLine.append(isFirstColumn ? value : (separator + value));
+            if (isFirstColumn) {
+                isFirstColumn = false;
+            }
         }
         printWriter.println(observationLine);
     }
