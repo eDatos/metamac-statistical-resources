@@ -44,6 +44,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
+import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
@@ -213,7 +214,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
             exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
-            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), "text/csv").header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format)).header("Content-Disposition", getContentDisposition(fileNamePrefix, format))
+                    .build();
         } finally {
             IOUtils.closeQuietly(outputStreamObservations);
         }
