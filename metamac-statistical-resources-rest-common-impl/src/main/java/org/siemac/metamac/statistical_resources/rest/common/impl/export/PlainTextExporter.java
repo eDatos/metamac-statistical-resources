@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -34,7 +33,6 @@ public class PlainTextExporter {
     PrintWriter                              printWriter;
     private boolean                          isExcelFormat                         = false;
     private static final Map<String, String> separatorsByFormat                    = initMapSeparators();
-    Pattern                                  unsupportedCharaters                  = Pattern.compile("[\n\t\r\b\f]");
 
     private static Map<String, String> initMapSeparators() {
         Map<String, String> map = new HashMap<>();
@@ -54,12 +52,12 @@ public class PlainTextExporter {
     }
 
     private String getHeaderName(String name) {
-        return processUnsupportedCharaters(name);
+        return name;
     }
 
     private String getHeaderNameCode(LabelVisualisationModeEnum labelVisualisation, String name) {
         if (labelVisualisation.isLabelAndCode()) {
-            return processUnsupportedCharaters(name + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE);
+            return formattedText(name + HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE);
         }
         return "";
     }
@@ -255,8 +253,7 @@ public class PlainTextExporter {
     // remove unsupported characters and if there are excluded characters, to put the value between on quotation marks
     private String processUnsupportedCharaters(String string) {
         if (StringUtils.isNotBlank(string)) {
-            String value = unsupportedCharaters.matcher(string).replaceAll(" ");
-            return formattedText(value);
+            return formattedText(string);
         } else {
             return null;
         }
