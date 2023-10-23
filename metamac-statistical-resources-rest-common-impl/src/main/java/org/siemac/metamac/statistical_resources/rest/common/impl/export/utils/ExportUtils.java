@@ -113,83 +113,29 @@ public class ExportUtils {
     /**
      * Builds a map indexed by attributeId with a map indexed by attributeValueId and value as title of the attribute value
      */
-    public static Map<String, Map<String, InternationalString>> buildMapAttributesValuesLabels(List<Attribute> attributes) throws MetamacException {
-        Map<String, Map<String, InternationalString>> attributesValuesLabels = new HashMap<String, Map<String, InternationalString>>(attributes.size());
-        for (Attribute attribute : attributes) {
-            String attributeId = attribute.getId();
-            Map<String, InternationalString> attributeValuesLabels = null;
-            if (attribute.getAttributeValues() == null) {
-                attributeValuesLabels = new HashMap<String, InternationalString>();
-            } else if (attribute.getAttributeValues() instanceof EnumeratedAttributeValues) {
-                EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
-                attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
-                for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
-                    String attributeValueId = attributeValue.getId();
-                    attributeValuesLabels.put(attributeValueId, attributeValue.getName());
-                }
-            } else if (attribute.getAttributeValues() instanceof NonEnumeratedAttributeValues) {
-                NonEnumeratedAttributeValues attributeValues = (NonEnumeratedAttributeValues) attribute.getAttributeValues();
-                attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
-                for (NonEnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
-                    String attributeValueId = attributeValue.getId();
-                    attributeValuesLabels.put(attributeValueId, attributeValue.getName());
-                }
-            } else {
-                throw new MetamacException(CommonServiceExceptionType.UNKNOWN, "Attribute values unexpected: " + attribute.getAttributeValues().getClass().getCanonicalName());
-            }
-            attributesValuesLabels.put(attributeId, attributeValuesLabels);
-        }
-        return attributesValuesLabels;
-    }
 
-    /**
-     * Builds a map indexed by attributeId with a map indexed by attributeValueId and localised value as title of the attribute value
-     */
-    public static Map<String, Map<String, InternationalString>> buildMapAttributesValuesLocalisedLabels(List<Attribute> attributes) throws MetamacException {
-        Map<String, Map<String, InternationalString>> attributesValuesLocalisedLabels = new HashMap<String, Map<String, InternationalString>>(attributes.size());
-        for (Attribute attribute : attributes) {
-            String attributeId = attribute.getId();
-            Map<String, InternationalString> attributeValuesLabels = null;
-            if (attribute.getAttributeValues() == null) {
-                attributeValuesLabels = new HashMap<String, InternationalString>();
-            } else if (attribute.getAttributeValues() instanceof EnumeratedAttributeValues) {
-                EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
-                attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
-                for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
-                    String attributeValueId = attributeValue.getId();
-                    attributeValuesLabels.put(attributeValueId, attributeValue.getName());
-                }
-            } else if (attribute.getAttributeValues() instanceof NonEnumeratedAttributeValues) {
-                NonEnumeratedAttributeValues attributeValues = (NonEnumeratedAttributeValues) attribute.getAttributeValues();
-                attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
-                for (NonEnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
-                    String attributeValueId = attributeValue.getId();
-                    attributeValuesLabels.put(attributeValueId, attributeValue.getName());
-                }
-            } else {
-                throw new MetamacException(CommonServiceExceptionType.UNKNOWN, "Attribute values unexpected: " + attribute.getAttributeValues().getClass().getCanonicalName());
+    public static Map<String, InternationalString> buildMapAttributesValuesLabels(Attribute attribute) throws MetamacException {
+        Map<String, InternationalString> attributeValuesLabels = null;
+        if (attribute.getAttributeValues() == null) {
+            attributeValuesLabels = new HashMap<String, InternationalString>();
+        } else if (attribute.getAttributeValues() instanceof EnumeratedAttributeValues) {
+            EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
+            attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
+            for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
+                String attributeValueId = attributeValue.getId();
+                attributeValuesLabels.put(attributeValueId, attributeValue.getName());
             }
-            attributesValuesLocalisedLabels.put(attributeId, attributeValuesLabels);
+        } else if (attribute.getAttributeValues() instanceof NonEnumeratedAttributeValues) {
+            NonEnumeratedAttributeValues attributeValues = (NonEnumeratedAttributeValues) attribute.getAttributeValues();
+            attributeValuesLabels = new HashMap<String, InternationalString>(attributeValues.getValues().size());
+            for (NonEnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
+                String attributeValueId = attributeValue.getId();
+                attributeValuesLabels.put(attributeValueId, attributeValue.getName());
+            }
+        } else {
+            throw new MetamacException(CommonServiceExceptionType.UNKNOWN, "Attribute values unexpected: " + attribute.getAttributeValues().getClass().getCanonicalName());
         }
-        return attributesValuesLocalisedLabels;
-    }
-
-    /**
-     * Calculate the effective label visualisation mode for a dimension.
-     * If configuration does not exist for component, returns default configuration
-     *
-     * @param labelVisualisationsMode map
-     * @param datasetSelection
-     * @param dimension
-     */
-    public static LabelVisualisationModeEnum buildMapDimensionToMapDimensionsLabelVisualisationMode(DatasetSelection datasetSelection, Dimension dimension) {
-        String dimensionId = dimension.getId();
-        LabelVisualisationModeEnum labelVisualisationMode = datasetSelection != null ? datasetSelection.getDimensionLabelVisualisationModel(dimensionId) : null;
-        if (labelVisualisationMode == null) {
-            // default value
-            labelVisualisationMode = LabelVisualisationModeEnum.CODE_AND_LABEL;
-        }
-        return labelVisualisationMode;
+        return attributeValuesLabels;
     }
 
     public static String[] dataToDataArray(String data) {
@@ -219,6 +165,10 @@ public class ExportUtils {
             labelVisualisationsMode.put(attributeId, labelVisualisationMode);
         }
         return labelVisualisationsMode;
+    }
+
+    public static String escapeNulls(String value) {
+        return StringUtils.isEmpty(value) ? StringUtils.EMPTY : value;
     }
 
 }

@@ -5,6 +5,8 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResourcesListEndpoints;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,10 +20,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.rest.api.export.mapper.PlainTextResource;
+import org.siemac.metamac.core.common.io.DeleteOnCloseFileInputStream;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -41,6 +44,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
+import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
@@ -176,18 +180,14 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format) {
         try {
-
-            List<PlainTextResource> plainTextResourceAccessList = createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format);
-            String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
-            return Response.status(Status.OK).entity(plainTextResourceAccessList).header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
-
+            return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format);
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
     }
 
-    private List<PlainTextResource> createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation,
-            String format) throws Exception {
+    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format)
+            throws Exception {
 
         Set<String> parsedFields = parseFieldsStatisticalResources(fields);
 
@@ -198,14 +198,29 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
 
         List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion, lang);
+
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
 
         ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
 
         ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
+
         exportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows(), dataset.getUrn());
 
-        return exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, selectedLanguages, format);
+        FileOutputStream outputStreamObservations = null;
+        try {
+            String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
+
+            final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
+            outputStreamObservations = new FileOutputStream(tmpFileObservations);
+            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
+
+            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
+                    .header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
+        } finally {
+            IOUtils.closeQuietly(outputStreamObservations);
+        }
+
     }
 
     @Override
