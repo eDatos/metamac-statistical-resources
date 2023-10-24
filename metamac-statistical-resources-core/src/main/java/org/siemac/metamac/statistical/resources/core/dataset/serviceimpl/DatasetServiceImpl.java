@@ -80,6 +80,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarEle
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
+import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
@@ -192,6 +193,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private PlatformTransactionManager                platformTransactionManager;
 
     @Autowired
+    private DatasetService                            datasetService;
+
+    @Autowired
     GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
 
     // ------------------------------------------------------------------------
@@ -219,17 +223,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Update dataset version (add datasource)
         datasetVersion = addDatasourceForDatasetVersion(datasource, datasetVersion);
 
-        computeDataRelatedMetadata(datasetVersion);
+        computeDataRelatedMetadata(ctx, datasetVersion);
 
         getDatasetVersionRepository().save(datasetVersion);
 
         return datasource;
     }
 
-    protected void updateAutomaticDatasource(DatasetVersion datasetVersion) throws MetamacException {
+    protected void updateAutomaticDatasource(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
         datasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime());
 
-        computeDataRelatedMetadata(datasetVersion);
+        computeDataRelatedMetadata(ctx, datasetVersion);
 
         getDatasetVersionRepository().save(datasetVersion);
     }
@@ -296,7 +300,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             deleteAttributeInstancesLowerThanDatasetLevel(datasetVersion);
         }
 
-        computeDataRelatedMetadata(datasetVersion);
+        computeDataRelatedMetadata(ctx, datasetVersion);
 
         getDatasetVersionRepository().save(datasetVersion);
 
@@ -543,6 +547,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Format extent
         resource.setFormatExtentDimensions(null);
         resource.setFormatExtentObservations(null);
+        resource.setFormatExtentTableSize(null);
 
         // Date next update
         if (BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
@@ -966,7 +971,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 createDatasource(ctx, datasetImportationId, datasource);
             }
         } else {
-            updateAutomaticDatasource(datasetVersion);
+            updateAutomaticDatasource(ctx, datasetVersion);
         }
     }
 
@@ -1588,7 +1593,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    protected void computeDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
+    protected void computeDataRelatedMetadata(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         ExternalItem externalDsd = resource.getRelatedDsd();
         DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(externalDsd.getUrn());
 
@@ -1596,7 +1601,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         processObservationAttributeCoverages(resource, dataStructure);
 
-        processDataRelatedMetadata(resource);
+        processDataRelatedMetadata(ctx, resource);
 
         processStartEndDates(resource);
 
@@ -1646,8 +1651,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return false;
     }
 
-    private void processDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
+    private void processDataRelatedMetadata(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         try {
+            int tableSize = calculateTableSize(ctx, resource);
+            resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
             resource.setFormatExtentDimensions(datasetRepository.getDimensions().size());
             long num = statisticsDatasetRepositoriesServiceFacade.countObservations(resource.getDatasetRepositoryId());
@@ -1655,6 +1662,29 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error retrieving datasetRepository " + resource.getDatasetRepositoryId() + ". Details: " + e.getMessage());
         }
+    }
+
+    private int calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+        List<String> dimensions = datasetService.retrieveDatasetVersionDimensionsIds(ctx, resource.getSiemacMetadataStatisticalResource().getUrn());
+        Map<String, List<String>> dimensionsCodesEffective = buildDimensionsWithValues(ctx, resource, dimensions);
+        int dataSize = 1;
+        for (String dimension : dimensions) {
+            dataSize = dataSize * dimensionsCodesEffective.get(dimension).size();
+        }
+        return dataSize;
+    }
+
+    private Map<String, List<String>> buildDimensionsWithValues(ServiceContext ctx, DatasetVersion source, List<String> dimensions) throws MetamacException {
+        Map<String, List<String>> dimensionsCodes = new HashMap<String, List<String>>();
+        for (String dimension : dimensions) {
+            List<String> dimensionValues = new ArrayList<String>();
+            List<CodeDimension> codeDimensions = datasetService.retrieveCoverageForDatasetVersionDimension(ctx, source.getSiemacMetadataStatisticalResource().getUrn(), dimension);
+            for (CodeDimension codeDimension : codeDimensions) {
+                dimensionValues.add(codeDimension.getIdentifier());
+            }
+            dimensionsCodes.put(dimension, dimensionValues);
+        }
+        return dimensionsCodes;
     }
 
     // COVERAGE UTILS

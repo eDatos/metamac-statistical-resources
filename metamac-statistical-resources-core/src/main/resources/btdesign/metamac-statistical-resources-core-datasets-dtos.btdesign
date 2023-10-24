@@ -43,8 +43,10 @@ Application DatasetsStatisticalResourcesDto {
 
 			//Number of observations contained in the dataset
 			Long formatExtentObservations;
-			//Number of diemnsions defined in the DSD
+			//Number of dimensions defined in the DSD
 			Integer formatExtentDimensions;
+			//Number of cells defined in the DSD
+			Integer formatExtentTableSize nullable;
 
 			//Publishing descriptors
 			
