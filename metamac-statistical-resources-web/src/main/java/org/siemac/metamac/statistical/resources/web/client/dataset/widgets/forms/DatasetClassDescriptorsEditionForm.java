@@ -23,7 +23,7 @@ public class DatasetClassDescriptorsEditionForm extends SiemacMetadataClassDescr
         setSiemacMetadataStatisticalResourceDto(datasetDto);
         setValue(DatasetDS.FORMAT_EXTENT_OBSERVATIONS, datasetDto.getFormatExtentObservations() != null ? datasetDto.getFormatExtentObservations().toString() : StringUtils.EMPTY);
         setValue(DatasetDS.FORMAT_EXTENT_DIMENSIONS, datasetDto.getFormatExtentDimensions() != null ? datasetDto.getFormatExtentDimensions().toString() : StringUtils.EMPTY);
-        setValue(DatasetDS.FORMAT_EXTENT_TABLE_SIZE, datasetDto.getFormatExtentDimensions() != null ? datasetDto.getFormatExtentTableSize().toString() : StringUtils.EMPTY);
+        setValue(DatasetDS.FORMAT_EXTENT_TABLE_SIZE, datasetDto.getFormatExtentTableSize() != null ? datasetDto.getFormatExtentTableSize().toString() : StringUtils.EMPTY);
     }
 
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto datasetDto) {

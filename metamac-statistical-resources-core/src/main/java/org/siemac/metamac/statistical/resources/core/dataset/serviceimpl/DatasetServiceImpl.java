@@ -80,7 +80,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarEle
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
-import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
@@ -191,9 +190,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     @Autowired
     @Qualifier("txManager")
     private PlatformTransactionManager                platformTransactionManager;
-
-    @Autowired
-    private DatasetService                            datasetService;
 
     @Autowired
     GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
@@ -1653,6 +1649,12 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void processDataRelatedMetadata(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         try {
+            ExternalItem externalDsd = resource.getRelatedDsd();
+            DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(externalDsd.getUrn());
+            List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
+            for (DsdDimension dimension : dimensions) {
+                List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
+            }
             int tableSize = calculateTableSize(ctx, resource);
             resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
@@ -1665,7 +1667,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     private int calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
-        List<String> dimensions = datasetService.retrieveDatasetVersionDimensionsIds(ctx, resource.getSiemacMetadataStatisticalResource().getUrn());
+        List<String> dimensions = getDatasetVersionRepository().retrieveDimensionsIds(resource);
         Map<String, List<String>> dimensionsCodesEffective = buildDimensionsWithValues(ctx, resource, dimensions);
         int dataSize = 1;
         for (String dimension : dimensions) {
@@ -1678,7 +1680,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         Map<String, List<String>> dimensionsCodes = new HashMap<String, List<String>>();
         for (String dimension : dimensions) {
             List<String> dimensionValues = new ArrayList<String>();
-            List<CodeDimension> codeDimensions = datasetService.retrieveCoverageForDatasetVersionDimension(ctx, source.getSiemacMetadataStatisticalResource().getUrn(), dimension);
+            List<CodeDimension> codeDimensions = getCodeDimensionRepository().findCodesForDatasetVersionByDimensionId(source.getId(), dimension, null);
             for (CodeDimension codeDimension : codeDimensions) {
                 dimensionValues.add(codeDimension.getIdentifier());
             }
