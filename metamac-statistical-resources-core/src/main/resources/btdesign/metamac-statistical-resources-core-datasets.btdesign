@@ -239,7 +239,7 @@ Application DatasetsStatisticalResources {
 			//Number of dimensions defined in the DSD
 			Integer formatExtentDimensions nullable;
 			//Number of cells defined in the DSD
-			Integer formatExtentTableSize nullable;
+			Long formatExtentTableSize nullable;
 
 			//Publishing descriptors
 

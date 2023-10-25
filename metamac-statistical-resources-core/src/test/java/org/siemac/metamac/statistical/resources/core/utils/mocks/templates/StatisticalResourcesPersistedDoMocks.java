@@ -379,12 +379,12 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
         if (codesMap.size() > 0) {
             datasetVersion.setFormatExtentDimensions(codesMap.size());
 
-            int observations = 1;
+            long observations = 1;
             for (String dimension : codesMap.keySet()) {
                 observations *= codesMap.get(dimension).size();
             }
 
-            datasetVersion.setFormatExtentObservations(Long.valueOf(observations));
+            datasetVersion.setFormatExtentObservations(observations);
             datasetVersion.setFormatExtentTableSize(observations);
         }
     }

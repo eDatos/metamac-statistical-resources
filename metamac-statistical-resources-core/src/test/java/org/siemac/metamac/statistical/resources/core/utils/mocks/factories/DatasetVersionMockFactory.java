@@ -797,7 +797,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(36L);
-        datasetVersion.setFormatExtentTableSize(5);
+        datasetVersion.setFormatExtentTableSize(36L);
 
         datasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime().minusDays(1));
 
@@ -844,7 +844,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(36L);
-        datasetVersion.setFormatExtentTableSize(5);
+        datasetVersion.setFormatExtentTableSize(36L);
 
         datasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime().minusDays(1));
 

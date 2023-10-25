@@ -540,7 +540,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNotNull(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate());
         assertFalse(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate().isAfter(oldLastUpdate));
         assertEquals(Integer.valueOf(3), updatedDataset.getFormatExtentDimensions());
-        // TODO: assertNull(updatedDataset.getFormatExtentTableSize());
+        assertEquals(Long.valueOf(36L), updatedDataset.getFormatExtentTableSize());
         assertEquals(Long.valueOf(36L), updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isNotTrue(updatedDataset.getUserModifiedDateNextUpdate()));
         assertNotNull(updatedDataset.getDateNextUpdate());

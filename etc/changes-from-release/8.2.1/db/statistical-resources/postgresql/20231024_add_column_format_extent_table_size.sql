@@ -5,6 +5,6 @@
 -- --------------------------------------------------------------------------------------------------
 
 ALTER TABLE TB_DATASETS_VERSIONS
-ADD COLUMN FORMAT_EXTENT_TABLE_SIZE INTEGER;
+ADD COLUMN FORMAT_EXTENT_TABLE_SIZE BIGINT;
 
 COMMIT;

@@ -1649,7 +1649,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void processDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
         try {
-            int tableSize = calculateTableSize(resource);
+            Long tableSize = calculateTableSize(resource);
             resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
             resource.setFormatExtentDimensions(datasetRepository.getDimensions().size());
@@ -1660,8 +1660,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private int calculateTableSize(DatasetVersion resource) throws MetamacException {
-        int tableSize = 1;
+    private Long calculateTableSize(DatasetVersion resource) throws MetamacException {
+        Long tableSize = Long.valueOf(1);
         DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
         List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
         for (DsdDimension dimension : dimensions) {

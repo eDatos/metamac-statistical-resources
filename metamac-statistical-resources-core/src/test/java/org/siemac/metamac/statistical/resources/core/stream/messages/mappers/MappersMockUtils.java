@@ -352,7 +352,7 @@ public class MappersMockUtils {
         d.setDatasetRepositoryId(EXPECTED_IDENTIFIER);
         d.setFormatExtentDimensions(EXPECTED_COPYRIGHT);
         d.setFormatExtentObservations(EXPECTED_FORMAT_EXTENT_OBSERVATIONS);
-        d.setFormatExtentTableSize(EXPECTED_COPYRIGHT);
+        d.setFormatExtentTableSize(EXPECTED_FORMAT_EXTENT_OBSERVATIONS);
         d.setDateNextUpdate(EXPECTED_FUTURE_DATE_SDMX);
         d.setUserModifiedDateNextUpdate(EXPECTED_TRUE);
         d.setVersion(EXPECTED_VERSION);
@@ -698,7 +698,7 @@ public class MappersMockUtils {
                 .setDatasetRepositoryId(EXPECTED_IDENTIFIER)
                 .setFormatExtentObservations(EXPECTED_FORMAT_EXTENT_OBSERVATIONS)
                 .setFormatExtentDimensions(EXPECTED_COPYRIGHT)
-                .setFormatExtentTableSize(EXPECTED_COPYRIGHT)
+                .setFormatExtentTableSize(EXPECTED_FORMAT_EXTENT_OBSERVATIONS)
                 .setDateNextUpdate(mockInternationalStringAvroFutureDate())
                 .setUserModifiedDateNextUpdate(EXPECTED_TRUE)
                 .setDataset(mockDatasetAvro()).setRelatedDsd(mockExternalItemAvro())

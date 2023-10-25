@@ -209,7 +209,7 @@ public class DatasetMockFactory extends StatisticalResourcesMockFactory<Dataset>
 
         template.setFormatExtentDimensions(3);
         template.setFormatExtentObservations(1354L);
-        template.setFormatExtentTableSize(5);
+        template.setFormatExtentTableSize(1354L);
         template.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().plusMonths(1).toDate()));
         template.setBibliographicCitation(StatisticalResourcesDoMocks.mockInternationalString("es", "biblio"));
 

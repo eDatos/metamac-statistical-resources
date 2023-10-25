@@ -9,7 +9,7 @@
         {"name" : "datasetRepositoryId", "type" : ["null", "string"]},
         {"name" : "formatExtentObservations", "type" : ["null", "long"]},
         {"name" : "formatExtentDimensions" , "type" : ["null", "int"]},
-        {"name" : "formatExtentTableSize" , "type" : ["null", "int"]},
+        {"name" : "formatExtentTableSize" , "type" : ["null", "long"]},
         {"name" : "dateNextUpdate", "type" : ["null", "InternationalStringAvro"]},
         {"name" : "userModifiedDateNextUpdate", "type" : ["null", "boolean"]},
         {"name" : "dataset", "type" : ["null", "DatasetAvro"]},
