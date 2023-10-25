@@ -379,12 +379,13 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
         if (codesMap.size() > 0) {
             datasetVersion.setFormatExtentDimensions(codesMap.size());
 
-            long observations = 1;
+            int observations = 1;
             for (String dimension : codesMap.keySet()) {
                 observations *= codesMap.get(dimension).size();
             }
 
-            datasetVersion.setFormatExtentObservations(observations);
+            datasetVersion.setFormatExtentObservations(Long.valueOf(observations));
+            datasetVersion.setFormatExtentTableSize(observations);
         }
     }
 
@@ -816,7 +817,7 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
     protected void setSpecialCasesStatisticOfficialityMock(StatisticOfficiality officiality) {
         officiality.setVersion(0L);
     }
-    
+
     public static String getHtmlLink(String urn) {
         String htmlLink = "";
         String[] splitUrnItem = splitUrnItem(urn);
@@ -824,9 +825,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
         String[] agenciesID = agencyID.contains(".") ? agencyID.split(".") : new String[]{agencyID};
         String resourceID = splitUrnItem[1];
         String version = splitUrnItem[2];
-        
+
         return StatisticalResourcesPersistedDoMocks.mockPortalDatasetHtmlLink(agencyID, resourceID, version);
     }
-    
 
 }

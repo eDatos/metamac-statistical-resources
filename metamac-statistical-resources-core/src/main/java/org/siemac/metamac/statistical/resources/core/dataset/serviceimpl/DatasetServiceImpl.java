@@ -219,17 +219,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Update dataset version (add datasource)
         datasetVersion = addDatasourceForDatasetVersion(datasource, datasetVersion);
 
-        computeDataRelatedMetadata(ctx, datasetVersion);
+        computeDataRelatedMetadata(datasetVersion);
 
         getDatasetVersionRepository().save(datasetVersion);
 
         return datasource;
     }
 
-    protected void updateAutomaticDatasource(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+    protected void updateAutomaticDatasource(DatasetVersion datasetVersion) throws MetamacException {
         datasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime());
 
-        computeDataRelatedMetadata(ctx, datasetVersion);
+        computeDataRelatedMetadata(datasetVersion);
 
         getDatasetVersionRepository().save(datasetVersion);
     }
@@ -296,7 +296,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             deleteAttributeInstancesLowerThanDatasetLevel(datasetVersion);
         }
 
-        computeDataRelatedMetadata(ctx, datasetVersion);
+        computeDataRelatedMetadata(datasetVersion);
 
         getDatasetVersionRepository().save(datasetVersion);
 
@@ -967,7 +967,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 createDatasource(ctx, datasetImportationId, datasource);
             }
         } else {
-            updateAutomaticDatasource(ctx, datasetVersion);
+            updateAutomaticDatasource(datasetVersion);
         }
     }
 
@@ -1589,7 +1589,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    protected void computeDataRelatedMetadata(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+    protected void computeDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
         ExternalItem externalDsd = resource.getRelatedDsd();
         DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(externalDsd.getUrn());
 
@@ -1597,7 +1597,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         processObservationAttributeCoverages(resource, dataStructure);
 
-        processDataRelatedMetadata(ctx, resource);
+        processDataRelatedMetadata(resource);
 
         processStartEndDates(resource);
 
@@ -1647,15 +1647,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return false;
     }
 
-    private void processDataRelatedMetadata(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+    private void processDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
         try {
-            ExternalItem externalDsd = resource.getRelatedDsd();
-            DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(externalDsd.getUrn());
-            List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
-            for (DsdDimension dimension : dimensions) {
-                List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
-            }
-            int tableSize = calculateTableSize(ctx, resource);
+            int tableSize = calculateTableSize(resource);
             resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
             resource.setFormatExtentDimensions(datasetRepository.getDimensions().size());
@@ -1666,27 +1660,15 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private int calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
-        List<String> dimensions = getDatasetVersionRepository().retrieveDimensionsIds(resource);
-        Map<String, List<String>> dimensionsCodesEffective = buildDimensionsWithValues(ctx, resource, dimensions);
-        int dataSize = 1;
-        for (String dimension : dimensions) {
-            dataSize = dataSize * dimensionsCodesEffective.get(dimension).size();
+    private int calculateTableSize(DatasetVersion resource) throws MetamacException {
+        int tableSize = 1;
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
+        List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
+        for (DsdDimension dimension : dimensions) {
+            List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
+            tableSize *= codes.size();
         }
-        return dataSize;
-    }
-
-    private Map<String, List<String>> buildDimensionsWithValues(ServiceContext ctx, DatasetVersion source, List<String> dimensions) throws MetamacException {
-        Map<String, List<String>> dimensionsCodes = new HashMap<String, List<String>>();
-        for (String dimension : dimensions) {
-            List<String> dimensionValues = new ArrayList<String>();
-            List<CodeDimension> codeDimensions = getCodeDimensionRepository().findCodesForDatasetVersionByDimensionId(source.getId(), dimension, null);
-            for (CodeDimension codeDimension : codeDimensions) {
-                dimensionValues.add(codeDimension.getIdentifier());
-            }
-            dimensionsCodes.put(dimension, dimensionValues);
-        }
-        return dimensionsCodes;
+        return tableSize;
     }
 
     // COVERAGE UTILS
