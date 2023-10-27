@@ -1769,6 +1769,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         // Callback
         getDatasetService().proccessDatasetFileImportationResult(ctx, taskInfoDataset.getDatasetVersionId(), filesResult);
+        publishConstraints(ctx, taskInfoDataset.getDatasetVersionId(), calculateConstraints);
     }
 
     private String generateDataSourceId(ServiceContext serviceContext, String fileName, DateTime dateTime) {
@@ -1797,15 +1798,29 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             // This means, you can come Draft, but in our business, the validation against constraints involves that are at least as marked as final
             ContentConstraint contentConstraint = constraintsService.retrieveContentConstraintByUrn(ctx, resourceInternal.getUrn(), Boolean.TRUE);
             result.add(contentConstraint);
-
-            if (!contentConstraint.isIsFinal()) {
-                constraintsService.publishContentConstraint(ctx, datasetVersionUrn, Boolean.FALSE); // mark as final logic, no mark as public
-            }
         }
 
         return result;
     }
 
+    /**
+     * Mark as final Dataset's content constraints
+     *
+     * @param ctx
+     * @param datasetVersionUrn
+     * @param constraintToPublish
+     * @return
+     * @throws MetamacException
+     */
+    private void publishConstraints(ServiceContext ctx, String datasetVersionUrn, List<ContentConstraint> constraintToPublish) throws MetamacException {
+
+        for (ContentConstraint contentConstraint : constraintToPublish) {
+            if (!contentConstraint.isIsFinal()) {
+                constraintsService.publishContentConstraint(ctx, datasetVersionUrn, Boolean.FALSE); // mark as final logic, no mark as public
+            }
+        }
+    }
+    
     private void saveAlternativeEnumeratedRepresetation(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, taskInfoDataset.getDatasetVersionId());
         for (FileDescriptor fileDescriptor : taskInfoDataset.getFiles()) {
