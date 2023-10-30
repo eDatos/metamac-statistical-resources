@@ -122,6 +122,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
     public void selectItems(Map<String, KeyPartDto> keyParts, boolean deselectOtherKeys) {
         if (deselectOtherKeys) {
             resetFilterAndSelection();
+            getData().openAll();
         }
         ListGridRecord[] records = getRecords();
         for (ListGridRecord record : records) {

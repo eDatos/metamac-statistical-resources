@@ -19,7 +19,7 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ItemsSelectionTreeItem;
 import org.siemac.metamac.statistical.resources.web.client.enums.DatasetConstraintInclusionTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectAndActionItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 
 import com.smartgwt.client.types.Alignment;
@@ -29,27 +29,16 @@ import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 public class ConstraintEnumeratedValuesSelectionEditionForm extends ConstraintEnumeratedValuesSelectionBaseForm {
 
     private CustomSelectItem                inclusionTypeField;
-    private CustomSelectItem                srmResourceRestriction;
     protected List<ExternalItemDto>         restrictions;
     private DatasetConstraintsTabUiHandlers uiHandlers;
     private List<ItemDto>                   srmRestrictionCodes;
-    private CustomButtonItem                srmRestrictionButton;
+    private CustomSelectAndActionItem       customSelectAndActionItem;
+    public static final String              WIDTH_CUSTOM_SRM_RESTRICTION = "350";
 
     public ConstraintEnumeratedValuesSelectionEditionForm(String groupTitle) {
         super(groupTitle);
-        srmResourceRestriction = new CustomSelectItem(DimensionConstraintsDS.SRM_RESOURCE_RESTRICTION, getConstants().srmResourceRestriction());
-        srmResourceRestriction.setAlign(Alignment.LEFT);
-        srmResourceRestriction.addChangedHandler(new ChangedHandler() {
 
-            @Override
-            public void onChanged(ChangedEvent event) {
-                String codeSrmRestriction = getValueAsString(DimensionConstraintsDS.SRM_RESOURCE_RESTRICTION);
-                if (!StringUtils.isEmpty(codeSrmRestriction)) {
-                    srmRestrictionButton.disable();
-                    getUiHandlers().retrieveCodes(getSelectedDimension(), codeSrmRestriction);
-                }
-            }
-        });
+        createCustomSelectAndActionItem();
 
         inclusionTypeField = new CustomSelectItem(DimensionConstraintsDS.INCLUSION_TYPE, getConstants().datasetConstraintInclusionType());
         inclusionTypeField.setRequired(true);
@@ -57,14 +46,12 @@ public class ConstraintEnumeratedValuesSelectionEditionForm extends ConstraintEn
         inclusionTypeField.setAlign(Alignment.LEFT);
         inclusionTypeField.setWidth(100);
 
-        createSrmRestrictionButton();
-
         treeItem = new ItemsSelectionTreeItem(DimensionConstraintsDS.VALUES, "tree-values-selection", true);
         treeItem.setShowTitle(false);
         treeItem.setStartRow(true);
         treeItem.setColSpan(4);
 
-        setFields(srmResourceRestriction, inclusionTypeField, srmRestrictionButton, treeItem);
+        setFields(customSelectAndActionItem, inclusionTypeField, treeItem);
     }
 
     /**
@@ -125,24 +112,19 @@ public class ConstraintEnumeratedValuesSelectionEditionForm extends ConstraintEn
         return restrictions;
     }
 
-    public CustomSelectItem getSrmResourceRestriction() {
-        return srmResourceRestriction;
-    }
-
     public void setRestrictions(List<ExternalItemDto> restrictions) {
         this.restrictions = restrictions;
-        srmResourceRestriction.setValueMap(CommonUtils.getRestrictionsHashMap(restrictions));
+        customSelectAndActionItem.enabledAction(restrictions != null && !restrictions.isEmpty());
+        customSelectAndActionItem.populateSelectionItem(CommonUtils.getRestrictionsHashMap(restrictions));
     }
 
     public void showRestrictions(Boolean isIncluded) {
-        if (Boolean.TRUE.equals(isIncluded)) {
-            srmResourceRestriction.show();
-            srmRestrictionButton.show();
+        if (isIncluded) {
+            customSelectAndActionItem.show();
         } else {
-            srmResourceRestriction.clearValue();
-            srmResourceRestriction.hide();
-            srmRestrictionButton.hide();
+            customSelectAndActionItem.hide();
         }
+        customSelectAndActionItem.showRestrictions(isIncluded);
     }
 
     public void setUiHandlers(DatasetConstraintsTabUiHandlers uiHandlers) {
@@ -155,19 +137,36 @@ public class ConstraintEnumeratedValuesSelectionEditionForm extends ConstraintEn
 
     public void setSrmRestrictionCodes(List<ItemDto> itemDtos) {
         this.srmRestrictionCodes = itemDtos;
-        srmRestrictionButton.enable();
+        if (srmRestrictionCodes != null && !srmRestrictionCodes.isEmpty()) {
+            customSelectAndActionItem.enabledAction(true);
+        }
     }
 
-    private CustomButtonItem createSrmRestrictionButton() {
-        srmRestrictionButton = new CustomButtonItem(DimensionConstraintsDS.ACTION_APPLY_SRM_RESTRICTION, getConstants().actionApplySrmRestriction());
-        srmRestrictionButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+    private void createCustomSelectAndActionItem() {
+        customSelectAndActionItem = new CustomSelectAndActionItem(DimensionConstraintsDS.SRM_RESOURCE_RESTRICTION, getConstants().srmResourceRestriction(), WIDTH_CUSTOM_SRM_RESTRICTION,
+                DimensionConstraintsDS.ACTION_APPLY_SRM_RESTRICTION, getConstants().actionApplySrmRestriction(), false);
+        customSelectAndActionItem.setAlign(Alignment.LEFT);
+        customSelectAndActionItem.setColSpan(2);
+        customSelectAndActionItem.getSelectionItem().addChangedHandler(new ChangedHandler() {
+
+            @Override
+            public void onChanged(ChangedEvent event) {
+                String codeSrmRestriction = customSelectAndActionItem.getValueSelectionItem();
+                if (!StringUtils.isEmpty(codeSrmRestriction)) {
+                    customSelectAndActionItem.enabledAction(false);
+                    getUiHandlers().retrieveCodes(getSelectedDimension(), codeSrmRestriction);
+                }
+            }
+        });
+
+        customSelectAndActionItem.getAction().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
             @Override
             public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                setTreeFromSrmRestriction();
+                if (srmRestrictionCodes != null && !srmRestrictionCodes.isEmpty()) {
+                    setTreeFromSrmRestriction();
+                }
             }
         });
-        srmRestrictionButton.setVisible(false);
-        return srmRestrictionButton;
     }
 }
