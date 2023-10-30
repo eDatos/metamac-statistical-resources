@@ -29,7 +29,7 @@ public class GetItemsActionHandler extends SecurityActionHandler<GetItemsAction,
         List<ItemDto> items = new ArrayList<ItemDto>();
         if (TypeExternalArtefactsEnum.CODELIST.equals(action.getItemSchemeType())) {
             itemScheme = srmRestInternalFacade.retrieveCodelist(action.getItemSchemeUrn());
-            items = srmRestInternalFacade.retrieveCodes(action.getItemSchemeUrn());
+            items = srmRestInternalFacade.retrieveCodes(action.getItemSchemeUrn(), action.getCodeSrmRestriction());
         } else if (TypeExternalArtefactsEnum.CONCEPT_SCHEME.equals(action.getItemSchemeType())) {
             itemScheme = srmRestInternalFacade.retrieveConceptScheme(action.getItemSchemeUrn());
             items = srmRestInternalFacade.retrieveConcepts(action.getItemSchemeUrn());

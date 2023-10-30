@@ -19,6 +19,9 @@ public class GetItems {
     @In(2)
     TypeExternalArtefactsEnum itemSchemeType;
 
+    @In(3)
+    String                    codeSrmRestriction;
+
     @Out(1)
     ExternalItemDto           itemScheme;
 

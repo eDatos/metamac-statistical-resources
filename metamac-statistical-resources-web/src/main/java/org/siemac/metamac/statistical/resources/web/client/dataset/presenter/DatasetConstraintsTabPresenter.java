@@ -36,10 +36,13 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetItemsActio
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetItemsResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveRegionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveRegionResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetSrmResourceRestrictionsListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetSrmResourceRestrictionsListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
 import org.siemac.metamac.web.common.client.utils.CommonErrorUtils;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
@@ -72,9 +75,11 @@ public class DatasetConstraintsTabPresenter extends Presenter<DatasetConstraints
         void setConstraint(DatasetVersionDto datasetVersionDto, ContentConstraintDto contentConstraintDto, RegionValueDto regionValueDto);
         void showDimensionConstraints(DsdDimensionDto dsdDimensionDto);
         void setRelatedDsdDimensions(List<DsdDimensionDto> dimensions);
-        void setCodes(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos);
+        void setSrmResourceRestrictions(List<ExternalItemDto> restrictions, TypeExternalArtefactsEnum typeExternalItem);
+        void setCodes(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos, String codeSrmRestriction);
         void setConcepts(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos);
         void updateDimensionsList(RegionValueDto regionValueDto);
+        void setCodesWithSrmRestrictions(List<ItemDto> srmRestrictionCodes);
     }
 
     @ProxyCodeSplit
@@ -219,22 +224,44 @@ public class DatasetConstraintsTabPresenter extends Presenter<DatasetConstraints
     }
 
     @Override
-    public void retrieveCodes(DsdDimensionDto dsdDimensionDto) {
-        retrieveItems(dsdDimensionDto, dsdDimensionDto.getCodelistRepresentationUrn(), TypeExternalArtefactsEnum.CODELIST);
+    public void retrieveCodes(DsdDimensionDto dsdDimensionDto, String codeSrmRestriction) {
+        retrieveItems(dsdDimensionDto, dsdDimensionDto.getCodelistRepresentationUrn(), TypeExternalArtefactsEnum.CODELIST, codeSrmRestriction);
+    }
+
+    @Override
+    public void retrieveRestrictions(final DsdDimensionDto dsdDimensionDto, final TypeExternalArtefactsEnum type) {
+        SrmItemRestCriteria conditions = new SrmItemRestCriteria();
+        conditions.setUrn(dsdDimensionDto.getCodelistRepresentationUrn());
+        conditions.setExternalArtifactType(type);
+        dispatcher.execute(new GetSrmResourceRestrictionsListAction(conditions), new WaitingAsyncCallbackHandlingError<GetSrmResourceRestrictionsListResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                if (CommonErrorUtils.isOperationNotAllowedException(caught)) {
+                    ShowUnauthorizedDatasetWarningMessageEvent.fire(DatasetConstraintsTabPresenter.this, dsdDimensionDto.getCodelistRepresentationUrn());
+                } else {
+                    super.onWaitFailure(caught);
+                }
+            }
+            @Override
+            public void onWaitSuccess(GetSrmResourceRestrictionsListResult result) {
+                getView().setSrmResourceRestrictions(result.getSrmResourceRestrictions(), type);
+            }
+        });
     }
 
     @Override
     public void retrieveConcepts(DsdDimensionDto dsdDimensionDto) {
-        retrieveItems(dsdDimensionDto, dsdDimensionDto.getConceptSchemeRepresentationUrn(), TypeExternalArtefactsEnum.CONCEPT_SCHEME);
+        retrieveItems(dsdDimensionDto, dsdDimensionDto.getConceptSchemeRepresentationUrn(), TypeExternalArtefactsEnum.CONCEPT_SCHEME, null);
     }
 
-    private void retrieveItems(final DsdDimensionDto dsdDimensionDto, String itemSchemeUrn, final TypeExternalArtefactsEnum itemSchemeType) {
-        dispatcher.execute(new GetItemsAction(itemSchemeUrn, itemSchemeType), new WaitingAsyncCallbackHandlingError<GetItemsResult>(this) {
+    private void retrieveItems(final DsdDimensionDto dsdDimensionDto, String itemSchemeUrn, final TypeExternalArtefactsEnum itemSchemeType, final String codeSrmRestriction) {
+        dispatcher.execute(new GetItemsAction(itemSchemeUrn, itemSchemeType, codeSrmRestriction), new WaitingAsyncCallbackHandlingError<GetItemsResult>(this) {
 
             @Override
             public void onWaitSuccess(GetItemsResult result) {
                 if (TypeExternalArtefactsEnum.CODELIST.equals(itemSchemeType)) {
-                    getView().setCodes(dsdDimensionDto, result.getItemScheme(), result.getItems());
+                    getView().setCodes(dsdDimensionDto, result.getItemScheme(), result.getItems(), codeSrmRestriction);
                 } else if (TypeExternalArtefactsEnum.CONCEPT_SCHEME.equals(itemSchemeType)) {
                     getView().setConcepts(dsdDimensionDto, result.getItemScheme(), result.getItems());
                 }
@@ -254,5 +281,10 @@ public class DatasetConstraintsTabPresenter extends Presenter<DatasetConstraints
                 getView().showDimensionConstraints(selectedDimension);
             }
         });
+    }
+
+    @Override
+    public void applySrmRestrictions(List<ItemDto> srmRestrictionCodes) {
+
     }
 }

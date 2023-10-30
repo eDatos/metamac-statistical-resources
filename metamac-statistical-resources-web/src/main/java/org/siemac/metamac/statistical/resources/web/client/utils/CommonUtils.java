@@ -47,6 +47,7 @@ import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
+import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePickerItem.DateFormatTypeEnum;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
@@ -677,6 +678,24 @@ public class CommonUtils {
         }
 
         return dateFormatTypeHashMap;
+    }
+
+    /**
+     * Returns {@link LinkedHashMap} of {@link AnnotationTypeDto}
+     * 
+     * @return
+     */
+    public static LinkedHashMap<String, String> getRestrictionsHashMap(List<ExternalItemDto> restrictions) {
+        LinkedHashMap<String, String> hashMap = new LinkedHashMap<String, String>();
+        for (ExternalItemDto type : restrictions) {
+            String description = InternationalStringUtils.getLocalisedString(type.getTitle());
+            if (description == null) {
+                description = type.getCode();
+            }
+            hashMap.put(type.getCode(), description);
+        }
+
+        return hashMap;
     }
 
 }

@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
 import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.ContentConstraintDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.KeyValueDto;
@@ -109,18 +110,39 @@ public class DimensionConstraintMainFormLayout extends MainFormLayout {
     public void showDimensionConstraints(DsdDimensionDto dimension) {
         hideAllForms();
         if (!StringUtils.isBlank(dimension.getCodelistRepresentationUrn())) {
-            getUiHandlers().retrieveCodes(dimension);
+            showRestrictions(true);
+            getUiHandlers().retrieveCodes(dimension, null);
+            getUiHandlers().retrieveRestrictions(dimension, TypeExternalArtefactsEnum.CODELIST_RESTRICTION);
         } else if (!StringUtils.isBlank(dimension.getConceptSchemeRepresentationUrn())) {
+            showRestrictions(false);
             getUiHandlers().retrieveConcepts(dimension);
         } else if (DimensionTypeEnum.TEMPORAL.equals(dimension.getType())) {
+            showRestrictions(false);
             setNonEnumeratedValues(dimension);
         }
         setViewMode();
         updateButtonsVisibility(dimension);
     }
 
+    public void showRestrictions(boolean isIncluded) {
+        enumeratedValuesSelectionForm.showRestrictions(isIncluded);
+        enumeratedValuesSelectionEditionForm.showRestrictions(isIncluded);
+    }
+
     public void setCodes(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos) {
         setEnumeratedValues(dsdDimensionDto, itemScheme, itemDtos);
+    }
+
+    public void setSrmRestrictionCodes(List<ItemDto> itemDtos) {
+        enumeratedValuesSelectionEditionForm.setSrmRestrictionCodes(itemDtos);
+    }
+
+    public void setEnumeratedValuesWithSrmRestrictions(List<ItemDto> itemDtos) {
+        enumeratedValuesSelectionEditionForm.setSrmRestrictionCodes(itemDtos);
+    }
+
+    public void setRestrictions(List<ExternalItemDto> restrictions) {
+        enumeratedValuesSelectionEditionForm.setRestrictions(restrictions);
     }
 
     public void setConcepts(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos) {
@@ -178,6 +200,7 @@ public class DimensionConstraintMainFormLayout extends MainFormLayout {
 
     public void setUiHandlers(DatasetConstraintsTabUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
+        this.enumeratedValuesSelectionEditionForm.setUiHandlers(uiHandlers);
     }
 
     public DatasetConstraintsTabUiHandlers getUiHandlers() {

@@ -28,11 +28,15 @@ public class ItemsSelectionTreeItem extends CustomCanvasItem {
         itemsTreeGrid.setItems(itemScheme, items);
     }
 
-    public void selectItems(Map<String, KeyPartDto> keyParts) {
-        itemsTreeGrid.selectItems(keyParts);
+    public void selectItems(Map<String, KeyPartDto> keyParts, boolean resetSelectedNodes) {
+        itemsTreeGrid.selectItems(keyParts, resetSelectedNodes);
     }
 
     public Map<String, Boolean> getSelectedItems() {
         return itemsTreeGrid.getSelectedItems();
+    }
+
+    public void clearSelectedNodes() {
+        itemsTreeGrid.resetFilterAndSelection();
     }
 }

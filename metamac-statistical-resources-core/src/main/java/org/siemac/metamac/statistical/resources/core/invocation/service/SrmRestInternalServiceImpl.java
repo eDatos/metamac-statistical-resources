@@ -23,6 +23,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categor
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
@@ -287,6 +288,19 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
     }
 
     @Override
+    public CodelistRestrictions findCodelistRestrictions(String urn) throws MetamacException {
+        try {
+            String[] params = UrnUtils.splitUrnItemScheme(urn);
+            String agencyID = params[0];
+            String resourceID = params[1];
+            String version = params[2];
+            return restApiLocator.getSrmRestInternalFacadeV10().findCodelistRestrictions(agencyID, resourceID, version);
+        } catch (Exception e) {
+            throw manageSrmInternalRestException(e);
+        }
+    }
+
+    @Override
     public List<ResourceInternal> findCodelists(String query) throws MetamacException {
         try {
             Integer offset = RestApiConstants.DEFAULT_OFFSET;
@@ -335,7 +349,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
     // -------------------------------------------------------------------------------------------------
 
     @Override
-    public Codes retrieveCodesOfCodelistEfficiently(String codelistUrn) throws MetamacException {
+    public Codes retrieveCodesOfCodelistEfficiently(String codelistUrn, String codeRestriction) throws MetamacException {
         if (StringUtils.isBlank(codelistUrn)) {
             throw new MetamacException(ServiceExceptionType.PARAMETER_REQUIRED, ServiceExceptionParameters.CODELIST_URN);
         }
@@ -345,10 +359,15 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = params[0];
             String resourceId = params[1];
             String version = params[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().findCodes(agencyId, resourceId, version, null, null, null, null, null, null, null, null, INCLUDE_ALL_FIELDS);
+            return restApiLocator.getSrmRestInternalFacadeV10().findCodes(agencyId, resourceId, version, null, null, null, null, null, null, codeRestriction, null, INCLUDE_ALL_FIELDS);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
+    }
+
+    @Override
+    public Codes retrieveCodesOfCodelistEfficiently(String codelistUrn) throws MetamacException {
+        return retrieveCodesOfCodelistEfficiently(codelistUrn, null);
     }
 
     @Override
@@ -426,7 +445,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
         }
     }
 
- // -------------------------------------------------------------------------------------------------
+    // -------------------------------------------------------------------------------------------------
     // VARIABLE ELEMENTS
     // -------------------------------------------------------------------------------------------------
 
@@ -445,7 +464,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             throw manageSrmInternalRestException(e);
         }
     }
-    
+
     // -------------------------------------------------------------------------------------------------
     // ORGANISATION SCHEMES
     // -------------------------------------------------------------------------------------------------
@@ -584,7 +603,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             throw manageSrmInternalRestException(e);
         }
     }
-    
+
     // -------------------------------------------------------------------------------------------------
     // CATEGORY SCHEMES
     // -------------------------------------------------------------------------------------------------

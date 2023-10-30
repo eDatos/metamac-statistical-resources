@@ -119,7 +119,10 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         getData().openAll();
     }
 
-    public void selectItems(Map<String, KeyPartDto> keyParts) {
+    public void selectItems(Map<String, KeyPartDto> keyParts, boolean deselectOtherKeys) {
+        if (deselectOtherKeys) {
+            resetFilterAndSelection();
+        }
         ListGridRecord[] records = getRecords();
         for (ListGridRecord record : records) {
             String code = record.getAttribute(ItemDS.CODE);
@@ -127,9 +130,15 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
                 record.setAttribute(ItemDS.CASCADE, BooleanUtils.isTrue(keyParts.get(code).getCascadeValues()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
                 updateData(record);
                 selectRecord(record);
+            } else if (deselectOtherKeys) {
+                deselectRecord(record);
             }
         }
         selectedTreeNodes = ItemsTreeGrid.this.getSelectedRecords();
+
+        if (deselectOtherKeys) {
+            this.refreshFields();
+        }
     }
 
     /**
@@ -155,7 +164,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         selectedTreeNodes = null;
     }
 
-    private void resetFilterAndSelection() {
+    public void resetFilterAndSelection() {
         clearFilterEditor();
         clearSelectedTreeNodes();
         isFilteringActive = false;

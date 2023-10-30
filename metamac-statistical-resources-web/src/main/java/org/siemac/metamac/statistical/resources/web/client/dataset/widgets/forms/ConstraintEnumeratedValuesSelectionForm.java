@@ -12,6 +12,8 @@ import com.smartgwt.client.types.Alignment;
 
 public class ConstraintEnumeratedValuesSelectionForm extends ConstraintEnumeratedValuesSelectionBaseForm {
 
+    ViewTextItem srmResourceRestriction;
+
     public ConstraintEnumeratedValuesSelectionForm(String groupTitle) {
         super(groupTitle);
 
@@ -29,7 +31,17 @@ public class ConstraintEnumeratedValuesSelectionForm extends ConstraintEnumerate
 
     @Override
     protected void setInclusionTypeValue(Boolean isIncluded) {
-        setValue(DimensionConstraintsDS.INCLUSION_TYPE, BooleanUtils.isTrue(isIncluded) ? getCoreMessages().datasetConstraintInclusionTypeEnumINCLUSION() : getCoreMessages()
-                .datasetConstraintInclusionTypeEnumEXCLUSION());
+        setValue(DimensionConstraintsDS.INCLUSION_TYPE,
+                BooleanUtils.isTrue(isIncluded) ? getCoreMessages().datasetConstraintInclusionTypeEnumINCLUSION() : getCoreMessages().datasetConstraintInclusionTypeEnumEXCLUSION());
+    }
+
+    @Override
+    public void showRestrictions(Boolean isIncluded) {
+        if (Boolean.TRUE.equals(isIncluded)) {
+            srmResourceRestriction.show();
+        } else {
+            srmResourceRestriction.clearValue();
+            srmResourceRestriction.hide();
+        }
     }
 }

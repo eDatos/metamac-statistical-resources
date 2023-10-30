@@ -42,8 +42,12 @@ public abstract class ConstraintEnumeratedValuesSelectionBaseForm extends GroupD
             setValue(DimensionConstraintsDS.INCLUSION_TYPE, StringUtils.EMPTY);
         } else {
             setInclusionTypeValue(selectedDimensionKeyValue.getIncluded());
-            treeItem.selectItems(buildMap(selectedDimensionKeyValue.getParts()));
+            treeItem.selectItems(buildMap(selectedDimensionKeyValue.getParts()), false);
         }
+    }
+
+    public void setSavedRegionValues(List<KeyPartDto> regionKeyParts) {
+        treeItem.selectItems(buildMap(regionKeyParts), true);
     }
 
     public DsdDimensionDto getSelectedDimension() {
@@ -59,4 +63,5 @@ public abstract class ConstraintEnumeratedValuesSelectionBaseForm extends GroupD
     }
 
     protected abstract void setInclusionTypeValue(Boolean isIncluded);
+    public abstract void showRestrictions(Boolean isIncluded);
 }
