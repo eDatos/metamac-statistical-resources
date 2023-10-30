@@ -134,7 +134,6 @@ public class ConstraintEnumeratedValuesSelectionEditionForm extends ConstraintEn
         srmResourceRestriction.setValueMap(CommonUtils.getRestrictionsHashMap(restrictions));
     }
 
-    @Override
     public void showRestrictions(Boolean isIncluded) {
         if (Boolean.TRUE.equals(isIncluded)) {
             srmResourceRestriction.show();
@@ -161,6 +160,7 @@ public class ConstraintEnumeratedValuesSelectionEditionForm extends ConstraintEn
 
     private CustomButtonItem createSrmRestrictionButton() {
         srmRestrictionButton = new CustomButtonItem(DimensionConstraintsDS.ACTION_APPLY_SRM_RESTRICTION, getConstants().actionApplySrmRestriction());
+        srmRestrictionButton.setAlign(Alignment.LEFT);
         srmRestrictionButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
             @Override

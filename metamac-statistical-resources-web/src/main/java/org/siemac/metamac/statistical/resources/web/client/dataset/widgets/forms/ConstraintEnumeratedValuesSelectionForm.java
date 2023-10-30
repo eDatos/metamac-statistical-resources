@@ -34,14 +34,4 @@ public class ConstraintEnumeratedValuesSelectionForm extends ConstraintEnumerate
         setValue(DimensionConstraintsDS.INCLUSION_TYPE,
                 BooleanUtils.isTrue(isIncluded) ? getCoreMessages().datasetConstraintInclusionTypeEnumINCLUSION() : getCoreMessages().datasetConstraintInclusionTypeEnumEXCLUSION());
     }
-
-    @Override
-    public void showRestrictions(Boolean isIncluded) {
-        if (Boolean.TRUE.equals(isIncluded)) {
-            srmResourceRestriction.show();
-        } else {
-            srmResourceRestriction.clearValue();
-            srmResourceRestriction.hide();
-        }
-    }
 }

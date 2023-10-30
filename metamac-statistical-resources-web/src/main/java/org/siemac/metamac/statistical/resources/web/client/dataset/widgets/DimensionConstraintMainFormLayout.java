@@ -125,7 +125,6 @@ public class DimensionConstraintMainFormLayout extends MainFormLayout {
     }
 
     public void showRestrictions(boolean isIncluded) {
-        enumeratedValuesSelectionForm.showRestrictions(isIncluded);
         enumeratedValuesSelectionEditionForm.showRestrictions(isIncluded);
     }
 

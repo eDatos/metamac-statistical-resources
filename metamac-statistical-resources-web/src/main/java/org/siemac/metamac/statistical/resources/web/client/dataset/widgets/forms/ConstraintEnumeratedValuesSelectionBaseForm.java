@@ -63,5 +63,4 @@ public abstract class ConstraintEnumeratedValuesSelectionBaseForm extends GroupD
     }
 
     protected abstract void setInclusionTypeValue(Boolean isIncluded);
-    public abstract void showRestrictions(Boolean isIncluded);
 }
