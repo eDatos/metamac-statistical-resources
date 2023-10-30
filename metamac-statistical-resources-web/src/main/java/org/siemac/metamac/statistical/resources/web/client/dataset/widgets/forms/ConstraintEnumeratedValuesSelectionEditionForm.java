@@ -160,7 +160,6 @@ public class ConstraintEnumeratedValuesSelectionEditionForm extends ConstraintEn
 
     private CustomButtonItem createSrmRestrictionButton() {
         srmRestrictionButton = new CustomButtonItem(DimensionConstraintsDS.ACTION_APPLY_SRM_RESTRICTION, getConstants().actionApplySrmRestriction());
-        srmRestrictionButton.setAlign(Alignment.LEFT);
         srmRestrictionButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
             @Override
