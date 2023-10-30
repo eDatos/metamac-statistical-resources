@@ -199,6 +199,7 @@ public class DataMockUtils {
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(27L);
+        datasetVersion.setFormatExtentTableSize(27L);
 
         datasetVersion.setDateStart("2010");
         datasetVersion.setDateEnd("2012");
@@ -228,6 +229,7 @@ public class DataMockUtils {
 
         datasetVersion.setFormatExtentDimensions(3);
         datasetVersion.setFormatExtentObservations(0L);
+        datasetVersion.setFormatExtentTableSize(0L);
 
         datasetVersion.setDateStart(null);
         datasetVersion.setDateEnd(null);

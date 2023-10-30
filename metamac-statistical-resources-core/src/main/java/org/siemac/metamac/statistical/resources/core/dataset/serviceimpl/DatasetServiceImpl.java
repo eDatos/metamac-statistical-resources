@@ -543,6 +543,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Format extent
         resource.setFormatExtentDimensions(null);
         resource.setFormatExtentObservations(null);
+        resource.setFormatExtentTableSize(null);
 
         // Date next update
         if (BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
@@ -1648,6 +1649,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void processDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
         try {
+            Long tableSize = calculateTableSize(resource);
+            resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
             resource.setFormatExtentDimensions(datasetRepository.getDimensions().size());
             long num = statisticsDatasetRepositoriesServiceFacade.countObservations(resource.getDatasetRepositoryId());
@@ -1655,6 +1658,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error retrieving datasetRepository " + resource.getDatasetRepositoryId() + ". Details: " + e.getMessage());
         }
+    }
+
+    private Long calculateTableSize(DatasetVersion resource) throws MetamacException {
+        Long tableSize = Long.valueOf(1);
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
+        List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
+        for (DsdDimension dimension : dimensions) {
+            List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
+            tableSize *= codes.size();
+        }
+        return tableSize;
     }
 
     // COVERAGE UTILS
