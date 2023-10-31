@@ -282,9 +282,4 @@ public class DatasetConstraintsTabPresenter extends Presenter<DatasetConstraints
             }
         });
     }
-
-    @Override
-    public void applySrmRestrictions(List<ItemDto> srmRestrictionCodes) {
-
-    }
 }
