@@ -34,7 +34,8 @@
             "VARIABLE_FAMILY",
             "VARIABLE",
             "VARIABLE_ELEMENT",
-            "CATEGORY_ELEMENT"
+            "CATEGORY_ELEMENT",
+            "CODELIST_RESTRICTION"
         ]
     }
     
