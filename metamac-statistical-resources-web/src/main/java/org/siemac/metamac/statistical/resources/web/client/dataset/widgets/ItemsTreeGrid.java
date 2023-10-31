@@ -46,6 +46,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
     protected TreeGridField       codeField;
     protected TreeGridField       nameField;
     protected TreeGridField       cascadeField;
+    protected TreeGridField       selectedField;
 
     protected boolean             editionMode;
 
@@ -129,11 +130,16 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
             String code = record.getAttribute(ItemDS.CODE);
             if (keyParts.containsKey(code)) {
                 record.setAttribute(ItemDS.CASCADE, BooleanUtils.isTrue(keyParts.get(code).getCascadeValues()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+                if (!editionMode) {
+                    record.setAttribute(ItemDS.SELECTED, ItemDS.SELECTED_VALUE);
+                }
                 updateData(record);
                 selectRecord(record);
+
             } else if (deselectOtherKeys) {
                 deselectRecord(record);
             }
+
         }
         selectedTreeNodes = ItemsTreeGrid.this.getSelectedRecords();
 
@@ -198,7 +204,15 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         cascadeField.setAlign(Alignment.CENTER);
         cascadeField.setShowHover(false);
 
-        setFields(codeField, nameField, cascadeField);
+        if (editionMode) {
+            setFields(codeField, nameField, cascadeField);
+        } else {
+            selectedField = new TreeGridField(ItemDS.SELECTED, getConstants().datasetConstraintCodeSelected());
+            selectedField.setCanFilter(true);
+            selectedField.setCanEdit(false);
+            setFields(codeField, nameField, selectedField, cascadeField);
+        }
+
     }
 
     private void createFilterEditionHandlers() {
@@ -214,8 +228,10 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
 
                 String codeCriteria = event.getCriteria().getAttribute(ItemDS.MANAGEMENT_APP_URL);
                 String nameCriteria = event.getCriteria().getAttribute(ItemDS.NAME);
+                String selectedCriteria = event.getCriteria().getAttribute(ItemDS.SELECTED);
 
-                if (StringUtils.isBlank(codeCriteria) && StringUtils.isBlank(nameCriteria)) {
+                if (StringUtils.isBlank(codeCriteria) && StringUtils.isBlank(nameCriteria)
+                        && (StringUtils.isBlank(selectedCriteria) || (selectedCriteria != null && !ItemDS.SELECTED_VALUE.equals(selectedCriteria)))) {
                     setData(tree);
                 } else {
                     List<TreeNode> matchingNodes = new ArrayList<TreeNode>();
@@ -223,6 +239,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
                         if (!SCHEME_NODE_NAME.equals(treeNode.getName())) {
                             String code = treeNode.getAttributeAsString(ItemDS.CODE);
                             String name = treeNode.getAttributeAsString(ItemDS.NAME);
+                            String selected = treeNode.getAttributeAsString(ItemDS.SELECTED);
 
                             boolean matches = true;
                             if (codeCriteria != null && !StringUtils.containsIgnoreCase(code, codeCriteria)) {
@@ -231,6 +248,11 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
                             if (nameCriteria != null && !StringUtils.containsIgnoreCase(name, nameCriteria)) {
                                 matches = false;
                             }
+
+                            if (matches && ItemDS.SELECTED_VALUE.equals(selectedCriteria) && (selected == null || (selected != null && !ItemDS.SELECTED_VALUE.equals(selected)))) {
+                                matches = false;
+                            }
+
                             if (matches) {
                                 matchingNodes.add(treeNode);
                             }
@@ -283,6 +305,9 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         public static final String NAME               = "item-name";
         public static final String URN                = "item-urn";
         public static final String CASCADE            = "item-cascade";
+        public static final String SELECTED           = "item-selected";
+
+        public static final String SELECTED_VALUE     = "X";
     }
 
     /**
