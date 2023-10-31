@@ -11,6 +11,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categor
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
@@ -61,6 +62,7 @@ public interface SrmRestInternalService {
     public List<String> findCodelistsAsUrnsList(String query) throws MetamacException;
 
     public Codelist retrieveCodelistByUrn(String urn) throws MetamacException;
+    public CodelistRestrictions findCodelistRestrictions(String urn) throws MetamacException;
 
     // CODES
     public List<ResourceInternal> findCodes(String query) throws MetamacException;
@@ -69,11 +71,12 @@ public interface SrmRestInternalService {
     public List<String> findCodesAsUrnsList(String query) throws MetamacException;
 
     public Codes retrieveCodesOfCodelistEfficiently(String codelistUrn) throws MetamacException;
+    public Codes retrieveCodesOfCodelistEfficiently(String codelistUrn, String restriction) throws MetamacException;
     public Code retrieveCodeByUrn(String urn) throws MetamacException;
 
     // VARIABLE ELEMENT
     public VariableElement retrieveVariableElement(String codelistUrn) throws MetamacException;
-    
+
     // ORGANISATION SCHEMES
     public List<ResourceInternal> findOrganisationSchemes(String query) throws MetamacException;
     public OrganisationSchemes findOrganisationSchemes(int firstResult, int maxResult, String query) throws MetamacException;

@@ -22,6 +22,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Categor
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CategorySchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodelistRestrictions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelists;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ConceptScheme;
@@ -34,6 +35,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimensi
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimensions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Group;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Groups;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.MeasureDimension;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.OrganisationSchemes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Organisations;
@@ -217,6 +219,37 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
     }
 
     @Override
+    public List<ExternalItemDto> retrieveSrmResourceRestrictions(SrmItemRestCriteria condition) throws MetamacWebException {
+
+        try {
+            String codelistUrn = null;
+            List<ItemResourceInternal> resourcesInternal = new ArrayList<ItemResourceInternal>();
+            TypeExternalArtefactsEnum typeExternalArtefactsEnum = null;
+            if (condition != null) {
+                codelistUrn = condition.getUrn();
+                typeExternalArtefactsEnum = condition.getExternalArtifactType();
+            }
+
+            if (TypeExternalArtefactsEnum.CODELIST_RESTRICTION.equals(typeExternalArtefactsEnum)) {
+                CodelistRestrictions codelistRestrictions = srmRestInternalService.findCodelistRestrictions(codelistUrn);
+                resourcesInternal = codelistRestrictions.getRestrictions();
+            } else {
+                // here put other restrictions like concept schema restriction if they are developed.
+                return new ArrayList<ExternalItemDto>();
+            }
+
+            List<ExternalItemDto> items = new ArrayList<ExternalItemDto>();
+            for (ResourceInternal resource : resourcesInternal) {
+                items.add(ExternalItemWebUtils.buildExternalItemDtoFromResource(resource, typeExternalArtefactsEnum));
+            }
+            return items;
+
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
+
+    @Override
     public Map<String, String> findMappeableDimensionsInDsdWithVariables(String dsdUrn) throws MetamacWebException {
         try {
             DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(dsdUrn);
@@ -320,9 +353,9 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
     }
 
     @Override
-    public List<ItemDto> retrieveCodes(String codelistUrn) throws MetamacWebException {
+    public List<ItemDto> retrieveCodes(String codelistUrn, String codeRestriction) throws MetamacWebException {
         try {
-            Codes codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(codelistUrn);
+            Codes codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(codelistUrn, codeRestriction);
             return restMapper.buildItemDtosFromCodes(codes);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);

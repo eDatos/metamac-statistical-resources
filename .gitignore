@@ -140,3 +140,4 @@ Desktop.ini
 ######################
 **/bower_components/**
 /target/
+/bin/
