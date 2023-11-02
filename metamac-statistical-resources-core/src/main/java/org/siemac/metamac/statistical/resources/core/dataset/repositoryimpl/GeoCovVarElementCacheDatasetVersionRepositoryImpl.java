@@ -96,6 +96,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVar
 
             internationalStrings.add(getStringFromBigInteger((BigInteger) cols[2]));
 
+            // Only it is necessary the title when the dataset comes from jaxi publication. In other cases title is retrieved from statistical operation ad-hoc to have the last updated title.
             if (cols[3] != null) {
                 internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
             }
