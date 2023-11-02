@@ -5,8 +5,10 @@ import static org.siemac.metamac.rest.api.constants.RestApiConstants.MAXIMUM_LIM
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -23,6 +25,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.International
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionUtils;
+import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -81,6 +84,16 @@ public class StatisticalOperationsRestInternalServiceImpl implements Statistical
         } catch (Exception e) {
             throw manageStatisticalOperationsInternalRestException(e);
         }
+    }
+
+    @Override
+    public Map<String, InternationalString> getOperationTitles(String query) throws MetamacException {
+        List<ResourceInternal> operations = findOperations(query);
+        Map<String, InternationalString> operationTitles = new HashMap<String, InternationalString>();
+        for (ResourceInternal resource : operations) {
+            operationTitles.put(resource.getId(), InternationalStringUtils.getCommonInternationalStringFromRestInternationalString(resource.getName()));
+        }
+        return operationTitles;
     }
 
     @Override

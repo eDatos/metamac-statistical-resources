@@ -2134,4 +2134,10 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     public void testRetrievePublishedLastVersionDatasets() throws Exception {
         // NOTHING TO DO
     }
+
+    @Override
+    @Test
+    public void testGetDatasetLastVersionPublishedByDatasetUrn() throws Exception {
+        // NOTHING TO DO
+    }
 }
