@@ -1179,6 +1179,7 @@
             </ns3:attribute>
         </ns3:attributes>
         <ns3:formatExtentObservations>3</ns3:formatExtentObservations>
+        <ns3:formatExtentTableSize>3</ns3:formatExtentTableSize>
         <ns3:formatExtentDimensions>5</ns3:formatExtentDimensions>
         <ns3:dateNextUpdate>
             <cdomain:text xml:lang="es">2013-12-02</cdomain:text>

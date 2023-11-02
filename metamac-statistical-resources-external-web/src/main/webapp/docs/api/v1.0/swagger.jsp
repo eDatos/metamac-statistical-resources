@@ -729,6 +729,10 @@
                      "description":"",
                      "type":"number"
                   },
+                  "formatExtentTableSize":{
+                     "description":"",
+                     "type":"number"
+                  },
                   "geographicCoverages":{
                      "description":"",
                      "$ref":"#/definitions/Resources"
@@ -2798,6 +2802,13 @@
                      "type":"number"
                   },
                   "formatExtentObservations":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "type":"number"
+                  },
+                  "formatExtentTableSize":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },

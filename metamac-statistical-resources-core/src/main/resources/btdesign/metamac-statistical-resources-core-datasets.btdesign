@@ -237,8 +237,10 @@ Application DatasetsStatisticalResources {
 
 			//Number of observations contained in the dataset
 			Long formatExtentObservations nullable;
-			//Number of diemnsions defined in the DSD
+			//Number of dimensions defined in the DSD
 			Integer formatExtentDimensions nullable;
+			//Number of cells defined in the DSD
+			Long formatExtentTableSize nullable;
 
 			//Publishing descriptors
 

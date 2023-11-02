@@ -14,13 +14,15 @@ public class DatasetClassDescriptorsForm extends SiemacMetadataClassDescriptorsF
 
         ViewTextItem formatExtentObservations = new ViewTextItem(DatasetDS.FORMAT_EXTENT_OBSERVATIONS, getConstants().datasetFormatExtentObservations());
         ViewTextItem formatExtentDimensions = new ViewTextItem(DatasetDS.FORMAT_EXTENT_DIMENSIONS, getConstants().datasetFormatExtentDimensions());
+        ViewTextItem formatExtentTableSize = new ViewTextItem(DatasetDS.FORMAT_EXTENT_TABLE_SIZE, getConstants().datasetFormatExtentTabSize());
 
-        addFields(formatExtentObservations, formatExtentDimensions);
+        addFields(formatExtentObservations, formatExtentDimensions, formatExtentTableSize);
     }
 
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
         setSiemacMetadataStatisticalResourceDto(datasetDto);
         setValue(DatasetDS.FORMAT_EXTENT_OBSERVATIONS, datasetDto.getFormatExtentObservations() != null ? datasetDto.getFormatExtentObservations().toString() : StringUtils.EMPTY);
         setValue(DatasetDS.FORMAT_EXTENT_DIMENSIONS, datasetDto.getFormatExtentDimensions() != null ? datasetDto.getFormatExtentDimensions().toString() : StringUtils.EMPTY);
+        setValue(DatasetDS.FORMAT_EXTENT_TABLE_SIZE, datasetDto.getFormatExtentTableSize() != null ? datasetDto.getFormatExtentTableSize().toString() : StringUtils.EMPTY);
     }
 }

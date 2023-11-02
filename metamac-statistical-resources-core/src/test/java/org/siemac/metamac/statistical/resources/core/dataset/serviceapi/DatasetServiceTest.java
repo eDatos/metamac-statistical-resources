@@ -509,6 +509,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNotNull(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate());
         assertTrue(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate().isAfter(oldLastUpdate));
         assertNull(updatedDataset.getFormatExtentDimensions());
+        assertNull(updatedDataset.getFormatExtentTableSize());
         assertNull(updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isNotTrue(updatedDataset.getUserModifiedDateNextUpdate()));
         assertNull(updatedDataset.getDateNextUpdate());
@@ -539,6 +540,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNotNull(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate());
         assertFalse(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate().isAfter(oldLastUpdate));
         assertEquals(Integer.valueOf(3), updatedDataset.getFormatExtentDimensions());
+        assertEquals(Long.valueOf(36L), updatedDataset.getFormatExtentTableSize());
         assertEquals(Long.valueOf(36L), updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isNotTrue(updatedDataset.getUserModifiedDateNextUpdate()));
         assertNotNull(updatedDataset.getDateNextUpdate());
@@ -572,6 +574,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNotNull(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate());
         assertTrue(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate().isAfter(oldLastUpdate));
         assertNull(updatedDataset.getFormatExtentDimensions());
+        assertNull(updatedDataset.getFormatExtentTableSize());
         assertNull(updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isTrue(updatedDataset.getUserModifiedDateNextUpdate()));
         Assert.assertEquals(oldNextDateUpdate, updatedDataset.getDateNextUpdate());

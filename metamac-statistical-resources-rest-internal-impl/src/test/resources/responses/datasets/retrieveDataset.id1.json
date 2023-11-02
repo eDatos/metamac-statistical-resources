@@ -2451,6 +2451,7 @@
 		},
 		"formatExtentObservations": 3,
 		"formatExtentDimensions": 5,
+		"formatExtentTableSize": 5,
 		"dateNextUpdate": {
 			"text": [
 				{

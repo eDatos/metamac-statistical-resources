@@ -77,6 +77,7 @@ public class DatasetVersionAvroMapperTest {
         assertThat(actual.getAttributesCoverage(), is(equalTo(expected.getAttributesCoverage())));
         assertThat(actual.getDimensionsCoverage(), is(equalTo(expected.getDimensionsCoverage())));
         assertThat(actual.getFormatExtentObservations(), is(equalTo(expected.getFormatExtentObservations())));
+        assertThat(actual.getFormatExtentTableSize(), is(equalTo(expected.getFormatExtentTableSize())));
     }
 
 }
