@@ -2195,8 +2195,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         PagingParameter paging = PagingParameter.rowAccess(0, 1, 1);
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
                 .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().maintainer().code()).eq(agencyId).and()
-                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().code()).eq(resourceId).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo())
-                .isNull().distinctRoot().build();
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().code()).eq(resourceId).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
 
         // @formatter:off
 
