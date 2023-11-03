@@ -2146,4 +2146,8 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         Long tableSize = datasetService.calculateTableSize(getServiceContextAdministrador(), datasetVersion);
         assertEquals(Long.valueOf(1), tableSize);
     }
+
+    public void testGetDatasetLastVersionPublishedByDatasetUrn() throws Exception {
+        // NOTHING TO DO
+    }
 }

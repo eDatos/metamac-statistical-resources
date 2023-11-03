@@ -1,4 +1,5 @@
 package org.siemac.metamac.statistical.resources.core.dataset.repositoryimpl;
+
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 import java.math.BigInteger;
@@ -26,11 +27,10 @@ import org.springframework.stereotype.Repository;
  * Repository implementation for GeoCovVarElementCacheDatasetVersion
  */
 @Repository("geoCovVarElementCacheDatasetVersionRepository")
-public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
-    extends GeoCovVarElementCacheDatasetVersionRepositoryBase {
-    
-    private static Logger                     logger                              = LoggerFactory.getLogger(GeoCovVarElementCacheDatasetVersionRepositoryImpl.class);
-    
+public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVarElementCacheDatasetVersionRepositoryBase {
+
+    private static Logger   logger             = LoggerFactory.getLogger(GeoCovVarElementCacheDatasetVersionRepositoryImpl.class);
+
     public static final int MAX_SIZE_IN_CLAUSE = 5000;
 
     public GeoCovVarElementCacheDatasetVersionRepositoryImpl() {
@@ -46,7 +46,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         return findByCondition(condition);
 
     }
-  
+
     public void disabledByDatasetVersionUrn(String datasetVersionUrn) {
         Session session = (Session) getEntityManager().getDelegate();
         try {
@@ -58,10 +58,10 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
                 }
             });
         } catch (Exception e) {
-            logger.error("Error disabling entries by urn from geographic coverage cache -> urn {} ", datasetVersionUrn,  e);
+            logger.error("Error disabling entries by urn from geographic coverage cache -> urn {} ", datasetVersionUrn, e);
         }
     }
-    
+
     public List<Object> findNoActivatedElements() {
 
         //@formatter:off
@@ -71,9 +71,9 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
                 + "INNER JOIN tb_external_items b ON a.variable_element_fk = b.id "
                 + "WHERE  a.IS_ACTIVATED = false");
           //@formatter:on
-          return query.getResultList();
-      }
-    
+        return query.getResultList();
+    }
+
     private String getStringFromBigInteger(BigInteger id) {
         return id.toString();
     }
@@ -95,7 +95,12 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
             variableElementId.add(getStringFromBigInteger((BigInteger) cols[1]));
 
             internationalStrings.add(getStringFromBigInteger((BigInteger) cols[2]));
-            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
+
+            // Only it is necessary the title when the dataset comes from jaxi publication. In other cases title is retrieved from statistical operation ad-hoc to have the last updated title.
+            if (cols[3] != null) {
+                internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
+            }
+
             internationalStrings.add(getStringFromBigInteger((BigInteger) cols[4]));
         }
 
@@ -120,13 +125,12 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
         }
 
     }
-    
 
     private void executeSqlSentenceWithIn(Connection connection, String sqlSentence, Set<String> parametersIn, String tableAudit) throws SQLException {
         logger.info("Execution start - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
-        
+
         Set<String> partialParametersIn = new HashSet<>();
-        
+
         for (String parameterIn : parametersIn) {
             partialParametersIn.add(parameterIn);
             if (partialParametersIn.size() > MAX_SIZE_IN_CLAUSE) {
@@ -134,15 +138,15 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
                 partialParametersIn.clear();
             }
         }
-        
+
         if (!partialParametersIn.isEmpty()) {
             executeSqlStatement(connection, fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
         }
-        
+
         logger.info("Execution end - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
-        
+
     }
-    
+
     private void executeSqlStatement(Connection connection, String sb) throws SQLException {
         Statement statement = null;
         try {
@@ -154,8 +158,8 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl
             }
         }
     }
-    
+
     private String fillSqlSentenceWithIn(String sqlSentence, Set<String> partialParametersIn) {
-        return sqlSentence + "(" +  String.join(", ", partialParametersIn) + ")";
+        return sqlSentence + "(" + String.join(", ", partialParametersIn) + ")";
     }
 }

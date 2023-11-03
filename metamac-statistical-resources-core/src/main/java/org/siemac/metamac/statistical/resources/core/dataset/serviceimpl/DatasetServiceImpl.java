@@ -93,6 +93,7 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParam
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetFromDatabaseJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
@@ -153,6 +154,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private SrmRestInternalService                    srmRestInternalService;
+
+    @Autowired
+    StatisticalOperationsRestInternalService          statisticalOperationsRestInternalService;
 
     @Autowired
     private QueryVersionRepository                    queryVersionRepository;
@@ -626,7 +630,22 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
 
-        return geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
+        PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements = geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
+
+        updateOperationTitleTerritoriesCache(cacheElements);
+
+        return cacheElements;
+    }
+
+    private void updateOperationTitleTerritoriesCache(PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements) throws MetamacException {
+        Map<String, InternationalString> operationTitles = statisticalOperationsRestInternalService.getOperationTitles(null);
+
+        for (GeoCovVarElementCacheDatasetVersion cacheElement : cacheElements.getValues()) {
+            InternationalString operationTitle = operationTitles.get(cacheElement.getOperationCode());
+            if (operationTitle != null) {
+                cacheElement.setOperationTitle(operationTitle);
+            }
+        }
     }
 
     @Override
@@ -2169,6 +2188,24 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             tableSize *= codes.size();
         }
         return tableSize;
+    }
+
+    @Override
+    public DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(ServiceContext ctx, String agencyId, String resourceId) throws MetamacException {
+        PagingParameter paging = PagingParameter.rowAccess(0, 1, 1);
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().maintainer().code()).eq(agencyId).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().code()).eq(resourceId).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
+
+        // @formatter:off
+
+        PagedResult<DatasetVersion> datasetResult =  datasetVersionRepository.findByCondition(conditions, paging);
+        
+        if ( datasetResult.getValues() != null && !datasetResult.getValues().isEmpty() && datasetResult.getValues().size() == 1) {
+            return datasetResult.getValues().get(0);
+        }
+        return null;
     }
 
 }
