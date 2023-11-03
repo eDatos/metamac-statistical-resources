@@ -64,7 +64,9 @@ public class DatasetVersionDo2AvroMapper {
         List<RelatedResourceAvro> targetList = new ArrayList<RelatedResourceAvro>();
         for (RelatedResourceResult item : sourceList) {
             RelatedResource relatedResource = AvroMapperUtils.createRelatedResourceFromRelatedResourceResult(item);
-            targetList.add(RelatedResourceDo2AvroMapper.do2Avro(relatedResource));
+            if (relatedResource != null) {
+                targetList.add(RelatedResourceDo2AvroMapper.do2Avro(relatedResource));
+            }
         }
         return targetList;
     }
