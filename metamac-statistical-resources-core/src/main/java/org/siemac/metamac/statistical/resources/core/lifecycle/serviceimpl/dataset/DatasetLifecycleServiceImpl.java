@@ -248,6 +248,10 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         for (Categorisation categorisation : newVersion.getCategorisations()) {
             datasetService.initializeCategorisationMetadataForCreation(ctx, categorisation);
         }
+
+        if (newVersion.getFormatExtentTableSize() == null) {
+            newVersion.setFormatExtentTableSize(datasetService.calculateTableSize(ctx, previousResource));
+        }
         return newVersion;
     }
 

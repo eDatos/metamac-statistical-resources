@@ -403,6 +403,10 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
+    public static void checkCalculateTableSize(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
+    }
+
     public static void checkGetDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(agencyId, ServiceExceptionParameters.DATASET_VERSION__MAINTAINER__ID, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.DATASET_VERSION__CODE, exceptions);

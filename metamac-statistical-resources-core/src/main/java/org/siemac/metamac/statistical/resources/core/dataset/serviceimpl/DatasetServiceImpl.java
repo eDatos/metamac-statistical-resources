@@ -1668,7 +1668,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void processDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
         try {
-            Long tableSize = calculateTableSize(resource);
+            Long tableSize = calculateTableSize(null, resource);
             resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
             resource.setFormatExtentDimensions(datasetRepository.getDimensions().size());
@@ -1677,17 +1677,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error retrieving datasetRepository " + resource.getDatasetRepositoryId() + ". Details: " + e.getMessage());
         }
-    }
-
-    private Long calculateTableSize(DatasetVersion resource) throws MetamacException {
-        Long tableSize = Long.valueOf(1);
-        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
-        List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
-        for (DsdDimension dimension : dimensions) {
-            List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
-            tableSize *= codes.size();
-        }
-        return tableSize;
     }
 
     // COVERAGE UTILS
@@ -2190,6 +2179,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     }
 
+    public Long calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+        Long tableSize = Long.valueOf(1);
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
+        List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
+        for (DsdDimension dimension : dimensions) {
+            List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
+            tableSize *= codes.size();
+        }
+        return tableSize;
+    }
+
     @Override
     public DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(ServiceContext ctx, String agencyId, String resourceId) throws MetamacException {
         PagingParameter paging = PagingParameter.rowAccess(0, 1, 1);
@@ -2206,7 +2206,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             return datasetResult.getValues().get(0);
         }
         return null;
-
     }
 
 }
