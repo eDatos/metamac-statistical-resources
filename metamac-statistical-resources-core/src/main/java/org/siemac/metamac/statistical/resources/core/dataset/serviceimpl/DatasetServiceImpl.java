@@ -2185,7 +2185,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     public List<DatasetVersion> retrievePublishedLastVersionDatasets(ServiceContext ctx) throws MetamacException {
 
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
-                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion()).eq(Boolean.TRUE).distinctRoot().build();
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
         return datasetVersionRepository.findByCondition(criteria);
 
     }
