@@ -402,4 +402,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkRetrievePublishedLastVersionDatasets(List<MetamacExceptionItem> exceptions) throws MetamacException {
         // NOTHING
     }
+
+    public static void checkCalculateTableSize(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
+    }
 }

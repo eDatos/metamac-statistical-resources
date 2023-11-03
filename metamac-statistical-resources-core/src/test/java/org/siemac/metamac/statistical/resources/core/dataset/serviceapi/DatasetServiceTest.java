@@ -2137,4 +2137,13 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     public void testRetrievePublishedLastVersionDatasets() throws Exception {
         // NOTHING TO DO
     }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME)
+    public void testCalculateTableSize() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME);
+        Long tableSize = datasetService.calculateTableSize(getServiceContextAdministrador(), datasetVersion);
+        assertEquals(Long.valueOf(1), tableSize);
+    }
 }
