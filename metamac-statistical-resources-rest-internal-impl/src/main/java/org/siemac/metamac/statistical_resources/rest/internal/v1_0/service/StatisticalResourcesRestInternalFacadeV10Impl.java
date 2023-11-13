@@ -321,6 +321,14 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         return findResourcesCommon(query, orderBy, limit, offset, lang);
     }
 
+    @Override
+    public Response retrieveDatasetHead (String agencyID, String resourceID, String version) {
+    	if (!commonService.checkDatasetVersion(agencyID, resourceID, version)) {
+    		return Response.status(Response.Status.NOT_FOUND).build();
+    	}
+    	return Response.ok().build();
+    }
+
     private Resources findResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
         try {
             SculptorCriteria sculptorCriteria = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);

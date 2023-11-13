@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical_resources.rest.internal.v1_0.service;
 import java.util.List;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -139,4 +140,8 @@ public interface StatisticalResourcesV1_0 {
     @Path("resources")
     Resources findResources(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
             @QueryParam("lang") List<String> lang);
+    
+    @HEAD
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    public Response retrieveDatasetHead (@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version);
 }
