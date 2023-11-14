@@ -385,6 +385,7 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
             }
 
             datasetVersion.setFormatExtentObservations(observations);
+            datasetVersion.setFormatExtentTableSize(observations);
         }
     }
 
@@ -816,7 +817,7 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
     protected void setSpecialCasesStatisticOfficialityMock(StatisticOfficiality officiality) {
         officiality.setVersion(0L);
     }
-    
+
     public static String getHtmlLink(String urn) {
         String htmlLink = "";
         String[] splitUrnItem = splitUrnItem(urn);
@@ -824,9 +825,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
         String[] agenciesID = agencyID.contains(".") ? agencyID.split(".") : new String[]{agencyID};
         String resourceID = splitUrnItem[1];
         String version = splitUrnItem[2];
-        
+
         return StatisticalResourcesPersistedDoMocks.mockPortalDatasetHtmlLink(agencyID, resourceID, version);
     }
-    
 
 }

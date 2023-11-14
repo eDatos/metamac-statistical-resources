@@ -547,6 +547,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Format extent
         resource.setFormatExtentDimensions(null);
         resource.setFormatExtentObservations(null);
+        resource.setFormatExtentTableSize(null);
 
         // Date next update
         if (BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
@@ -1667,6 +1668,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void processDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
         try {
+            Long tableSize = calculateTableSize(null, resource);
+            resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
             resource.setFormatExtentDimensions(datasetRepository.getDimensions().size());
             long num = statisticsDatasetRepositoriesServiceFacade.countObservations(resource.getDatasetRepositoryId());
@@ -2171,9 +2174,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     public List<DatasetVersion> retrievePublishedLastVersionDatasets(ServiceContext ctx) throws MetamacException {
 
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
-                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion()).eq(Boolean.TRUE).distinctRoot().build();
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
         return datasetVersionRepository.findByCondition(criteria);
 
+    }
+
+    public Long calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+        Long tableSize = Long.valueOf(1);
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
+        List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
+        for (DsdDimension dimension : dimensions) {
+            List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
+            tableSize *= codes.size();
+        }
+        return tableSize;
     }
 
     @Override
@@ -2181,8 +2195,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         PagingParameter paging = PagingParameter.rowAccess(0, 1, 1);
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
                 .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().maintainer().code()).eq(agencyId).and()
-                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().code()).eq(resourceId).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo())
-                .isNull().distinctRoot().build();
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().code()).eq(resourceId).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
 
         // @formatter:off
 
@@ -2192,7 +2206,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             return datasetResult.getValues().get(0);
         }
         return null;
-
     }
 
 }

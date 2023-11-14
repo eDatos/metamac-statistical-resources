@@ -41,7 +41,7 @@ public class DatasetVersionDo2AvroMapper {
         DatasetVersionAvro target = DatasetVersionAvro.newBuilder()
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
                 .setDateStart(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart())).setDateEnd(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd()))
-                .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions())
+                .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions()).setFormatExtentTableSize(source.getFormatExtentTableSize())
                 .setDateNextUpdate(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
                 .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd()))
                 .setUpdateFrequency(ExternalItemDo2AvroMapper.do2Avro(source.getUpdateFrequency())).setStatisticOfficiality(StatisticOfficialityDo2AvroMapper.do2Avro(source.getStatisticOfficiality()))
@@ -64,7 +64,9 @@ public class DatasetVersionDo2AvroMapper {
         List<RelatedResourceAvro> targetList = new ArrayList<RelatedResourceAvro>();
         for (RelatedResourceResult item : sourceList) {
             RelatedResource relatedResource = AvroMapperUtils.createRelatedResourceFromRelatedResourceResult(item);
-            targetList.add(RelatedResourceDo2AvroMapper.do2Avro(relatedResource));
+            if (relatedResource != null) {
+                targetList.add(RelatedResourceDo2AvroMapper.do2Avro(relatedResource));
+            }
         }
         return targetList;
     }

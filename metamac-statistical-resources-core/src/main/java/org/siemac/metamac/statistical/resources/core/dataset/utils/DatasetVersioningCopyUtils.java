@@ -129,8 +129,8 @@ public class DatasetVersioningCopyUtils extends CommonVersioningCopyUtils {
         target.setRelatedDsd(copyExternalItem(source.getRelatedDsd()));
 
         target.setFormatExtentObservations(source.getFormatExtentObservations());
-
         target.setFormatExtentDimensions(source.getFormatExtentDimensions());
+        target.setFormatExtentTableSize(source.getFormatExtentTableSize());
 
         target.setUpdateFrequency(copyExternalItem(source.getUpdateFrequency()));
 

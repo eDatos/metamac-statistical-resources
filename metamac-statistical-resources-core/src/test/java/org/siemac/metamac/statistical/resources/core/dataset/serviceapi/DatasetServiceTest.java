@@ -101,25 +101,34 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBui
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
+import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
+import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CategorisationProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
@@ -150,6 +159,7 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorR
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DataMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
+import org.siemac.metamac.statistical.resources.core.utils.SrmMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.TaskMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.BaseAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
@@ -509,6 +519,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNotNull(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate());
         assertTrue(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate().isAfter(oldLastUpdate));
         assertNull(updatedDataset.getFormatExtentDimensions());
+        assertNull(updatedDataset.getFormatExtentTableSize());
         assertNull(updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isNotTrue(updatedDataset.getUserModifiedDateNextUpdate()));
         assertNull(updatedDataset.getDateNextUpdate());
@@ -539,6 +550,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNotNull(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate());
         assertFalse(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate().isAfter(oldLastUpdate));
         assertEquals(Integer.valueOf(3), updatedDataset.getFormatExtentDimensions());
+        assertEquals(Long.valueOf(36L), updatedDataset.getFormatExtentTableSize());
         assertEquals(Long.valueOf(36L), updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isNotTrue(updatedDataset.getUserModifiedDateNextUpdate()));
         assertNotNull(updatedDataset.getDateNextUpdate());
@@ -572,6 +584,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertNotNull(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate());
         assertTrue(updatedDataset.getSiemacMetadataStatisticalResource().getLastUpdate().isAfter(oldLastUpdate));
         assertNull(updatedDataset.getFormatExtentDimensions());
+        assertNull(updatedDataset.getFormatExtentTableSize());
         assertNull(updatedDataset.getFormatExtentObservations());
         assertTrue(BooleanUtils.isTrue(updatedDataset.getUserModifiedDateNextUpdate()));
         Assert.assertEquals(oldNextDateUpdate, updatedDataset.getDateNextUpdate());
@@ -2135,8 +2148,29 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         // NOTHING TO DO
     }
 
+    private static final String GEOCODELIST_TEST_URN = "urn:sdmx:org.sdmx.infomodel.codelist.Codelist=TEST:codelist-01(1.0)";
+
     @Override
     @Test
+    @MetamacMock(DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME)
+    public void testCalculateTableSize() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME);
+        ExternalItem statisticalOperation = StatisticalResourcesNotPersistedDoMocks.mockStatisticalOperationExternalItem();
+
+        String urn = buildDatasetUrn(datasetVersion.getSiemacMetadataStatisticalResource().getMaintainer().getCodeNested(), statisticalOperation.getCode(), 1,
+                StatisticalResourcesMockFactory.INIT_VERSION);
+        DataMockUtils.mockDsdAndCreateDatasetRepository(datasetRepositoriesServiceFacade, srmRestInternalService, urn);
+
+        Map<String, List<String>> coverageMap = new HashMap<String, List<String>>();
+        coverageMap.put("GEO_DIM", Arrays.asList("code-01", "code-02", "code-03"));
+        coverageMap.put("TIME_PERIOD", Arrays.asList("2010", "2011", "2012"));
+        coverageMap.put("MEAS_DIM", Arrays.asList("concept-01", "concept-02", "concept-03"));
+        Mockito.when(datasetRepositoriesServiceFacade.findCodeDimensions(Mockito.anyString())).thenReturn(coverageMap);
+
+        Long tableSize = datasetService.calculateTableSize(getServiceContextAdministrador(), datasetVersion);
+        assertEquals(Long.valueOf(27), tableSize);
+    }
+
     public void testGetDatasetLastVersionPublishedByDatasetUrn() throws Exception {
         // NOTHING TO DO
     }

@@ -26,8 +26,12 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Publicat
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AvroMapperUtils {
+
+    private static final Logger                    log = LoggerFactory.getLogger(AvroMapperUtils.class);
 
     protected static ConfigurationService          configurationService;
 
@@ -42,8 +46,8 @@ public class AvroMapperUtils {
 
     protected static MultidatasetRepository        multidatasetRepository;
     protected static MultidatasetVersionRepository multidatasetVersionRepository;
-    
-    protected static TranslationService              translationService;
+
+    protected static TranslationService            translationService;
 
     public static TranslationService getTranslationService() {
         if (translationService == null) {
@@ -51,7 +55,7 @@ public class AvroMapperUtils {
         }
         return translationService;
     }
-    
+
     public static DatasetRepository getDatasetRepository() {
         if (datasetRepository == null) {
             datasetRepository = ApplicationContextProvider.getApplicationContext().getBean(DatasetRepository.class);
@@ -188,11 +192,12 @@ public class AvroMapperUtils {
             // target.setType(TypeRelatedResourceEnum.MULTIDATASET_VERSION);
             // break;
             default:
-                break;
+                log.info("type not supported in avro dataset publication {} urn resource: {}", source.getType() != null ? source.getType() : "-", source.getUrn());
+                return null;
         }
         return target;
     }
-    
+
     public static InternationalStringAvro toSdmxObservationalTimePeriod(String sdmxValue) throws MetamacException {
         if (StringUtils.isNotBlank(sdmxValue)) {
             ServiceContext serviceContext = new ServiceContext("restInternal", "restInternal", "restInternal");

@@ -1319,6 +1319,7 @@
         </ns2:attributes>
         <ns2:formatExtentObservations>3</ns2:formatExtentObservations>
         <ns2:formatExtentDimensions>5</ns2:formatExtentDimensions>
+        <ns2:formatExtentTableSize>3</ns2:formatExtentTableSize>
         <ns2:dateNextUpdate>
             <cdomain:text xml:lang="es">2013-12-02</cdomain:text>
         </ns2:dateNextUpdate>

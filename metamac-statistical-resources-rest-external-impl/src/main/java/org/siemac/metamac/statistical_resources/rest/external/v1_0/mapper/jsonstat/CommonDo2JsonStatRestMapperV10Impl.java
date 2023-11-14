@@ -55,19 +55,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRestMapperV10 {
 
-    public static final List<DsdExternalProcessor.DsdComponentType> DIMENSIONLIKE_ATTRIBUTES = Arrays.asList(DsdExternalProcessor.DsdComponentType.MEASURE, DsdExternalProcessor.DsdComponentType.TEMPORAL,
-            DsdExternalProcessor.DsdComponentType.SPATIAL);
+    public static final List<DsdExternalProcessor.DsdComponentType> DIMENSIONLIKE_ATTRIBUTES = Arrays.asList(DsdExternalProcessor.DsdComponentType.MEASURE,
+            DsdExternalProcessor.DsdComponentType.TEMPORAL, DsdExternalProcessor.DsdComponentType.SPATIAL);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
-
-    @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private static final Logger                                     LOGGER                   = LoggerFactory.getLogger(CommonDo2JsonStatRestMapperV10Impl.class);
 
     @Autowired
-    private CommonDo2RestMapperV10 commonDo2RestMapper;
+    private StatisticalResourcesConfiguration                       configurationService;
+
+    @Autowired
+    private CommonDo2RestMapperV10                                  commonDo2RestMapper;
 
     @Override
-    public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult, Attributes attributes, String selectedLanguage) throws Exception {
+    public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult,
+            Attributes attributes, String selectedLanguage) throws Exception {
         String unitMeasureId = configurationService.retrieveUnitMeasure();
         String unitMeasureMultiplierId = configurationService.retrieveUnitMeasureMultiplier();
 
@@ -152,8 +153,8 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return null;
     }
 
-    private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, DsdExternalProcessor.DsdAttribute dsdAttribute, Concept concept, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute,
-                                 String selectedLanguage) {
+    private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, DsdExternalProcessor.DsdAttribute dsdAttribute, Concept concept, Attribute unitMeasureAttribute,
+            Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
         if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
                 || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
             unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
@@ -209,9 +210,11 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private Attribute findAttributeById(Attributes attributes, String id) {
-        for (Attribute attribute : attributes.getAttributes()) {
-            if (attribute.getId().equals(id)) {
-                return attribute;
+        if (attributes != null && attributes.getAttributes() != null) {
+            for (Attribute attribute : attributes.getAttributes()) {
+                if (attribute.getId().equals(id)) {
+                    return attribute;
+                }
             }
         }
         return null;
@@ -244,10 +247,12 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     private static List<InternationalString> getAttributeNames(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
         List<InternationalString> attributeValues = new ArrayList<>();
-        for (Attribute attribute : attributes.getAttributes()) {
-            if (attribute.getId().equals(dsdAttribute.getComponentId())) {
-                attributeValues = getValuesNames(attribute);
-                break;
+        if (attributes != null && attributes.getAttributes() != null) {
+            for (Attribute attribute : attributes.getAttributes()) {
+                if (attribute.getId().equals(dsdAttribute.getComponentId())) {
+                    attributeValues = getValuesNames(attribute);
+                    break;
+                }
             }
         }
         return attributeValues;
@@ -397,10 +402,12 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     private DataAttribute getAttributeFromDatasetData(DsdExternalProcessor.DsdAttribute attribute, Data data) {
         DataAttribute dataAttribute = null;
-        for (DataAttribute da : data.getAttributes().getAttributes()) {
-            if (Objects.equals(da.getId(), attribute.getComponentId())) {
-                dataAttribute = da;
-                break;
+        if (data.getAttributes() != null) {
+            for (DataAttribute da : data.getAttributes().getAttributes()) {
+                if (Objects.equals(da.getId(), attribute.getComponentId())) {
+                    dataAttribute = da;
+                    break;
+                }
             }
         }
         return dataAttribute;
@@ -443,19 +450,21 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private String toAttributeI18nName(Attributes attributes, String attributeId, String attributeCode, String selectedLanguage) {
-        for (Attribute att : attributes.getAttributes()) {
-            if (Objects.equals(att.getId(), attributeId)) {
-                AttributeValues attributeValues = att.getAttributeValues();
-                if (attributeValues instanceof EnumeratedAttributeValues) {
-                    for (EnumeratedAttributeValue value : ((EnumeratedAttributeValues) attributeValues).getValues()) {
-                        if (Objects.equals(value.getId(), attributeCode)) {
-                            return toI18nValue(value.getName(), selectedLanguage);
+        if (attributes != null && attributes.getAttributes() != null) {
+            for (Attribute att : attributes.getAttributes()) {
+                if (Objects.equals(att.getId(), attributeId)) {
+                    AttributeValues attributeValues = att.getAttributeValues();
+                    if (attributeValues instanceof EnumeratedAttributeValues) {
+                        for (EnumeratedAttributeValue value : ((EnumeratedAttributeValues) attributeValues).getValues()) {
+                            if (Objects.equals(value.getId(), attributeCode)) {
+                                return toI18nValue(value.getName(), selectedLanguage);
+                            }
                         }
-                    }
-                } else if (attributeValues instanceof NonEnumeratedAttributeValues) {
-                    for (NonEnumeratedAttributeValue value : ((NonEnumeratedAttributeValues) attributeValues).getValues()) {
-                        if (Objects.equals(value.getId(), attributeCode)) {
-                            return toI18nValue(value.getName(), selectedLanguage);
+                    } else if (attributeValues instanceof NonEnumeratedAttributeValues) {
+                        for (NonEnumeratedAttributeValue value : ((NonEnumeratedAttributeValues) attributeValues).getValues()) {
+                            if (Objects.equals(value.getId(), attributeCode)) {
+                                return toI18nValue(value.getName(), selectedLanguage);
+                            }
                         }
                     }
                 }

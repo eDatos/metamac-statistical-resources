@@ -221,6 +221,7 @@ public class DatasetsAsserts extends BaseAsserts {
 
         assertEquals(expected.getFormatExtentDimensions(), actual.getFormatExtentDimensions());
         assertEquals(expected.getFormatExtentObservations(), actual.getFormatExtentObservations());
+        assertEquals(expected.getFormatExtentTableSize(), actual.getFormatExtentTableSize());
 
         assertEqualsCodeDimensionsCollection(expected.getDimensionsCoverage(), actual.getDimensionsCoverage());
 
@@ -289,6 +290,7 @@ public class DatasetsAsserts extends BaseAsserts {
                 assertEqualsExternalItem(entity.getUpdateFrequency(), dto.getUpdateFrequency(), mapperEnum);
                 assertEquals(entity.getFormatExtentDimensions(), dto.getFormatExtentDimensions());
                 assertEquals(entity.getFormatExtentObservations(), dto.getFormatExtentObservations());
+                assertEquals(entity.getFormatExtentTableSize(), dto.getFormatExtentTableSize());
 
                 assertEqualsInternationalString(entity.getBibliographicCitation(), dto.getBibliographicCitation());
                 assertEquals(entity.isKeepAllData(), dto.isKeepAllData());
