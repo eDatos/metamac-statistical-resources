@@ -154,6 +154,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
      * @return
      */
     public Map<String, Boolean> getSelectedItems() {
+        getData().openAll();
         Map<String, Boolean> selectedItems = new HashMap<String, Boolean>();
         if (selectedTreeNodes != null) {
             for (ListGridRecord record : selectedTreeNodes) {
@@ -319,7 +320,17 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
      * @return
      */
     private ListGridRecord[] modifyRecordList(ListGridRecord[] records, ListGridRecord record, boolean state) {
+
+        if (records == null) {
+            ListGridRecord[] result = new ListGridRecord[1];
+            if (state) {
+                result[0] = record;
+            }
+            return result;
+        }
+
         int length = state ? records.length + 1 : records.length - 1;
+
         ListGridRecord[] result = new ListGridRecord[length];
         int j = 0;
         for (int i = 0; i < records.length; i++) {
