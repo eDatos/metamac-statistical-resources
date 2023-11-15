@@ -116,7 +116,7 @@ public class ConstraintsValidator {
     }
 
     private static boolean checkCodeInCascadeHirarchy(CodeHierarchy codeHierarchy, CodeDimensionDto codeDimensionDto, Map<String, CodeHierarchy> codeHierarchyMap) {
-        if (codeHierarchy == null) {
+        if (codeHierarchy == null || codeHierarchy.getCode() == null) {
             return false;
         }
 
