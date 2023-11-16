@@ -19,6 +19,7 @@ import org.siemac.metamac.web.common.client.resources.StyleUtils;
 
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Autofit;
 import com.smartgwt.client.types.ListGridEditEvent;
@@ -95,12 +96,22 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
                     if (ItemsTreeGrid.this.getFilterEditorCriteria().getValues().isEmpty()) {
                         selectedTreeNodes = ItemsTreeGrid.this.getSelectedRecords();
                     } else {
-                        ListGridRecord selectedRecord = ((ListGridRecord) event.getRecord());
+                        ListGridRecord selectedRecord = getSelectedRecordInFilteringEditor(event.getRecord());
                         selectedTreeNodes = modifyRecordList(selectedTreeNodes, selectedRecord, event.getState());
                     }
                 }
             }
         });
+    }
+
+    private ListGridRecord getSelectedRecordInFilteringEditor(Record selectedRecord) {
+
+        for (ListGridRecord recordItem : getRecords()) {
+            if (recordItem.getAttribute(ItemDS.URN).equals(selectedRecord.getAttribute(ItemDS.URN))) {
+                return recordItem;
+            }
+        }
+        return null;
     }
 
     public void setItems(ExternalItemDto itemScheme, List<ItemDto> items) {
