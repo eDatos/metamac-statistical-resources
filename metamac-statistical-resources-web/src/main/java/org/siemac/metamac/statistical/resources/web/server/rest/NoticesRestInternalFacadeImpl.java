@@ -210,8 +210,9 @@ public class NoticesRestInternalFacadeImpl implements NoticesRestInternalFacade 
 
         String subject = buildSubject(ctx, actionCode);
         Message message = buildMessage(ctx, messageCode, groupedNotificationDto.getResources(), groupedNotificationDto.getReasonOfRejection(), groupedNotificationDto.getLifeCycleAction());
-
-        NoticeBuilder noticeBuilder = NoticeBuilder.notification().withMessages(message).withSendingApplication(getSendingApp()).withSendingUser(ctx.getUserId()).withSubject(subject);
+        MetamacApplicationsEnum[] applications = {MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS};
+        NoticeBuilder noticeBuilder = NoticeBuilder.notification().withMessages(message).withSendingApplication(getSendingApp()).withSendingUser(ctx.getUserId()).withSubject(subject)
+        		.withApplications(applications);
         if (groupedNotificationDto.getRoles() != null) {
             noticeBuilder = noticeBuilder.withRoles(groupedNotificationDto.getRoles());
         }
