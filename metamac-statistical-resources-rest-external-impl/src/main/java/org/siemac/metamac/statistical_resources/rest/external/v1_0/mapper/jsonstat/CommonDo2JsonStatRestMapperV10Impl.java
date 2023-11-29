@@ -30,6 +30,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribut
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttribute;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
@@ -68,7 +69,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     @Override
     public Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult,
-            Attributes attributes, String selectedLanguage) throws Exception {
+                                                                      Attributes attributes, DataAttributes dataAttributes, String selectedLanguage) throws Exception {
         String unitMeasureId = configurationService.retrieveUnitMeasure();
         String unitMeasureMultiplierId = configurationService.retrieveUnitMeasureMultiplier();
 
@@ -95,7 +96,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 Concept concept = findConceptById(measureConcepts, category);
 
                 if (isMeasureDimension) {
-                    setUnitIfExists(unitMap, category, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage);
+                    setUnitIfExists(unitMap, category, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, dataAttributes, selectedLanguage);
                 }
             }
 
@@ -157,7 +158,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
         if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
                 || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
-            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, null));
         } else if (concept != null && concept.getQuantity() != null) {
             unitMap.put(dsdAttribute.getComponentId(), toUnit(concept, selectedLanguage));
         }
@@ -168,11 +169,11 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, CodeRepresentation category, Concept concept, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute,
-            String selectedLanguage) {
+                                 DataAttributes dataAttributes, String selectedLanguage) {
 
         if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
                 || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
-            unitMap.put(category.getCode(), toUnit((int) category.getIndex(), unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage));
+            unitMap.put(category.getCode(), toUnit((int) category.getIndex(), unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, dataAttributes));
         } else if (concept != null && concept.getQuantity() != null) {
             unitMap.put(category.getCode(), toUnit(concept, selectedLanguage));
         }
@@ -229,21 +230,55 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         unit.setDecimalPlaces(quantity.getDecimalPlaces() != null ? quantity.getDecimalPlaces() : null);
         return unit;
     }
-
-    private JsonStatUnit toUnit(int index, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
+    
+    private JsonStatUnit toUnit(int index, Attribute unitMeasureAttribute, Attribute unitMeasureMultiplierAttribute, String selectedLanguage, DataAttributes dataAttributes) {
         JsonStatUnit unit = new JsonStatUnit();
-        if (unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null) {
-            EnumeratedAttributeValues unitValues = (EnumeratedAttributeValues) unitMeasureAttribute.getAttributeValues();
-            InternationalString label = unitValues.getValues().get(index).getName();
-            unit.setLabel(toI18nValue(label, selectedLanguage));
+
+        String unitLabel = processAttribute(index, unitMeasureAttribute, selectedLanguage, dataAttributes);
+        if (unitLabel != null) {
+            unit.setLabel(unitLabel);
         }
-        if (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null) {
-            EnumeratedAttributeValues multiplierValues = (EnumeratedAttributeValues) unitMeasureMultiplierAttribute.getAttributeValues();
-            InternationalString multiplier = multiplierValues.getValues().get(index).getName();
-            unit.setMultiplier(toI18nValue(multiplier, selectedLanguage));
+        String unitMultiplier = processAttribute(index, unitMeasureMultiplierAttribute, selectedLanguage, dataAttributes);
+        if (unitMultiplier != null) {
+            unit.setMultiplier(unitMultiplier);
         }
+
         return unit;
     }
+
+    private String processAttribute(int index, Attribute attribute, String selectedLanguage, DataAttributes dataAttributes) {
+        // On the matter about why we need Attribute and DataAttributes:
+        // Attributes contain the actual value information needed for Json-STAT. However, they are not
+        // sorted. To know the order in which they are associated to value dimensions, DataAttributes are needed.
+        // They are adequately sorted but do not provide more information than the ID, which for Json-STAT is
+        // not enough.
+        // So we obtain the info from the Attribute class, and adequately associate the attributes to their respective
+        // dimension values though the order in DataAttributes class.
+
+        if (attribute != null && attribute.getAttributeValues() != null) {
+            String[] dataAttributeValues = null;
+            for (DataAttribute dataAtt : dataAttributes.getAttributes()) {
+                if (dataAtt.getId().equals(attribute.getId())) {
+                    dataAttributeValues = dataAtt.getValue().split(" \\| ");
+                    break;
+                }
+            }
+
+            if (dataAttributeValues != null && dataAttributeValues.length > index) {
+                EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
+                String attributeValueId = dataAttributeValues[index];
+                for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
+                    if (attributeValue.getId().equals(attributeValueId)) {
+                        InternationalString label = attributeValue.getName();
+                        return toI18nValue(label, selectedLanguage);
+                    }
+                }
+
+            }
+        }
+        return null;
+    }
+
 
     private static List<InternationalString> getAttributeNames(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
         List<InternationalString> attributeValues = new ArrayList<>();

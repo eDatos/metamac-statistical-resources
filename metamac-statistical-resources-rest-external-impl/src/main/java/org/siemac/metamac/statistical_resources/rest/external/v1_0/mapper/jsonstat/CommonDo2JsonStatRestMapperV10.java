@@ -10,6 +10,7 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtensi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
@@ -23,7 +24,7 @@ public interface CommonDo2JsonStatRestMapperV10 {
     String JSON_STAT_VERSION = "2.0";
     String JSON_STAT_CLASS   = "dataset";
 
-    Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult, Attributes attributes, String selectedLanguage) throws Exception;
+    Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult, Attributes attributes, DataAttributes dataAttributes, String selectedLanguage) throws Exception;
     String getSelectedLanguage(DatasetVersion source, List<String> selectedLanguages);
     List<String> toJsonStatNote(DatasetVersion source, Data data, Dimensions dimensions, Attributes attributes, DsdProcessorResult dsdProcessorResult, String selectedLanguage);
     String getValueFromPosition(List<DimensionRepresentation> dimensions, List<String> values, int... position);
