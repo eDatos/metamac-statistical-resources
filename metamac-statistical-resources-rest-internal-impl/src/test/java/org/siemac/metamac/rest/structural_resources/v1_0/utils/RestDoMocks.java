@@ -101,6 +101,7 @@ public class RestDoMocks {
         target.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem("DSD01"));
         target.setFormatExtentObservations(Long.valueOf(3));
         target.setFormatExtentDimensions(Integer.valueOf(5));
+        target.setFormatExtentTableSize(Long.valueOf(3));
         target.setDateNextUpdate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 12, 2, 3, 4, 5, 0).toDate()));
         target.setUpdateFrequency(StatisticalResourcesDoMocks.mockCodeExternalItem("updateFrequency01"));
         target.setStatisticOfficiality(coreDoMocks.mockStatisticOfficiality("statisticOfficiality01"));
@@ -151,14 +152,58 @@ public class RestDoMocks {
     }
 
     public RelatedResourceResult mockPublicationRelatedResourceResult(String agencyID, String resourceID, String version) {
+        return mockRelatedResourceResult(agencyID, resourceID, version, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+    }
+
+    public RelatedResourceResult mockMultidatasetRelatedResourceResult(String agencyID, String resourceID, String version) {
+        return mockRelatedResourceResult(agencyID, resourceID, version, TypeRelatedResourceEnum.MULTIDATASET_VERSION);
+    }
+
+    private RelatedResourceResult mockRelatedResourceResult(String agencyID, String resourceID, String version, TypeRelatedResourceEnum type) {
         RelatedResourceResult query = new RelatedResourceResult();
         query.setMaintainerNestedCode(agencyID);
         query.setCode(resourceID);
         query.setVersion(version);
-        query.setType(TypeRelatedResourceEnum.PUBLICATION_VERSION);
-        query.setUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=" + agencyID + ":" + resourceID + "(" + version + ")");
+        query.setType(type);
+        String resourceType = calculateResourceType(type);
+        query.setUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources." + resourceType + "=" + agencyID + ":" + resourceID + "(" + version + ")");
         query.setTitle(StatisticalResourcesDoMocks.mockInternationalStringAsMap("es", "título " + resourceID, "en", "title " + resourceID));
         return query;
+    }
+
+    // See org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_MULTIDATASET_PREFIX
+    private String calculateResourceType(TypeRelatedResourceEnum type) {
+        switch (type) {
+            case CATEGORISATION:
+                break;
+            case CHAPTER:
+                break;
+            case CUBE:
+                break;
+            case DATASET:
+                break;
+            case DATASET_VERSION:
+                break;
+            case DATASOURCE:
+                break;
+            case MULTIDATASET:
+                break;
+            case MULTIDATASET_CUBE:
+                break;
+            case MULTIDATASET_VERSION:
+                return "Multidataset";
+            case PUBLICATION:
+                break;
+            case PUBLICATION_VERSION:
+                return "Collection";
+            case QUERY:
+                break;
+            case QUERY_VERSION:
+                break;
+            default:
+                break;
+        }
+        return null;
     }
 
     public QueryVersion mockQueryVersion(String agencyID, String resourceID, String version) {
@@ -291,7 +336,7 @@ public class RestDoMocks {
         attributeDto.setValue(mockInternationalStringAttributeDto(value));
         return attributeDto;
     }
-    
+
     public GeoCovVarElementCacheDatasetVersion mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
         DatasetVersion dv = mockDatasetVersion(agencyId, resourceId, versionId);
 
@@ -306,7 +351,7 @@ public class RestDoMocks {
         geoCovVarElementCacheDatasetVersion.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
         geoCovVarElementCacheDatasetVersion.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
         geoCovVarElementCacheDatasetVersion.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variableX", variableElementId));
-        
+
         return geoCovVarElementCacheDatasetVersion;
     }
 

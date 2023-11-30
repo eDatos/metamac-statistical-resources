@@ -77,6 +77,22 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
             throw manageException(e);
         }
     }
+    
+    @Override
+    public Boolean checkDatasetVersion(String agencyID, String resourceID, String version) {
+        try {
+            // Validations
+            checkParameterNotWildcardAll(StatisticalResourcesRestInternalConstants.PARAMETER_AGENCY_ID, agencyID);
+            checkParameterNotWildcardAll(StatisticalResourcesRestInternalConstants.PARAMETER_RESOURCE_ID, resourceID);
+            checkParameterNotWildcardAll(StatisticalResourcesRestInternalConstants.PARAMETER_VERSION, version);
+
+            // Retrieve
+            PagedResult<DatasetVersion> entitiesPagedResult = findDatasetVersionsCommon(agencyID, resourceID, version, null, pagingParameterOneResult);
+            return entitiesPagedResult.getValues().size() == 1;
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
 
     @Override
     public DatasetVersion retrieveDatasetLastVersionByUrn(String urn) {

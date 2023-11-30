@@ -93,6 +93,7 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParam
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetFromDatabaseJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
@@ -153,6 +154,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private SrmRestInternalService                    srmRestInternalService;
+
+    @Autowired
+    StatisticalOperationsRestInternalService          statisticalOperationsRestInternalService;
 
     @Autowired
     private QueryVersionRepository                    queryVersionRepository;
@@ -543,6 +547,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Format extent
         resource.setFormatExtentDimensions(null);
         resource.setFormatExtentObservations(null);
+        resource.setFormatExtentTableSize(null);
 
         // Date next update
         if (BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate())) {
@@ -625,7 +630,22 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
 
-        return geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
+        PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements = geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
+
+        updateOperationTitleTerritoriesCache(cacheElements);
+
+        return cacheElements;
+    }
+
+    private void updateOperationTitleTerritoriesCache(PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements) throws MetamacException {
+        Map<String, InternationalString> operationTitles = statisticalOperationsRestInternalService.getOperationTitles(null);
+
+        for (GeoCovVarElementCacheDatasetVersion cacheElement : cacheElements.getValues()) {
+            InternationalString operationTitle = operationTitles.get(cacheElement.getOperationCode());
+            if (operationTitle != null) {
+                cacheElement.setOperationTitle(operationTitle);
+            }
+        }
     }
 
     @Override
@@ -1648,6 +1668,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void processDataRelatedMetadata(DatasetVersion resource) throws MetamacException {
         try {
+            Long tableSize = calculateTableSize(null, resource);
+            resource.setFormatExtentTableSize(tableSize);
             DatasetRepositoryDto datasetRepository = statisticsDatasetRepositoriesServiceFacade.retrieveDatasetRepository(resource.getDatasetRepositoryId());
             resource.setFormatExtentDimensions(datasetRepository.getDimensions().size());
             long num = statisticsDatasetRepositoriesServiceFacade.countObservations(resource.getDatasetRepositoryId());
@@ -2152,9 +2174,38 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     public List<DatasetVersion> retrievePublishedLastVersionDatasets(ServiceContext ctx) throws MetamacException {
 
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
-                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion()).eq(Boolean.TRUE).distinctRoot().build();
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
         return datasetVersionRepository.findByCondition(criteria);
 
+    }
+
+    public Long calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+        Long tableSize = Long.valueOf(1);
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
+        List<DsdDimension> dimensions = DsdProcessor.getDimensions(dataStructure);
+        for (DsdDimension dimension : dimensions) {
+            List<CodeDimension> codes = getCodesFromDsdComponent(resource, dimension);
+            tableSize *= codes.size();
+        }
+        return tableSize;
+    }
+
+    @Override
+    public DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(ServiceContext ctx, String agencyId, String resourceId) throws MetamacException {
+        PagingParameter paging = PagingParameter.rowAccess(0, 1, 1);
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus())
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().maintainer().code()).eq(agencyId).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().code()).eq(resourceId).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
+
+        // @formatter:off
+
+        PagedResult<DatasetVersion> datasetResult =  datasetVersionRepository.findByCondition(conditions, paging);
+        
+        if ( datasetResult.getValues() != null && !datasetResult.getValues().isEmpty() && datasetResult.getValues().size() == 1) {
+            return datasetResult.getValues().get(0);
+        }
+        return null;
     }
 
 }

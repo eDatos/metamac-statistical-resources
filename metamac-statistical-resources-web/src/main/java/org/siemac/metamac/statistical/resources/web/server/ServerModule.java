@@ -54,6 +54,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.external.Get
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetLanguagesCodesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetOrganisationUnitSchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetOrganisationUnitsPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetSrmResourceRestrictionsListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationInstancesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationsPaginatedListActionHandler;
@@ -141,6 +142,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographi
 import org.siemac.metamac.statistical.resources.web.shared.external.GetLanguagesCodesAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitsPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetSrmResourceRestrictionsListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationInstancesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
@@ -229,7 +231,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetItemsAction.class, GetItemsActionHandler.class);
         bindHandler(GetDataProviderSchemesPaginatedListAction.class, GetDataProviderSchemesPaginatedListActionHandler.class);
         bindHandler(GetDataProviderPaginatedListAction.class, GetDataProviderPaginatedListActionHandler.class);
-        
+        bindHandler(GetSrmResourceRestrictionsListAction.class, GetSrmResourceRestrictionsListActionHandler.class);
 
         // DATASETS
         bindHandler(GetDatasetVersionAction.class, GetDatasetVersionActionHandler.class);

@@ -64,11 +64,11 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.Stati
 public class PublicationVersionMockFactory extends StatisticalResourcesMockFactory<PublicationVersion> {
 
     public static final String                   PUBLICATION_VERSION_01_BASIC_NAME                                                                                  = "PUBLICATION_VERSION_01_BASIC";
- 
+
     public static final String                   PUBLICATION_VERSION_02_BASIC_NAME                                                                                  = "PUBLICATION_VERSION_02_BASIC";
 
     public static final String                   PUBLICATION_VERSION_03_BASIC_NAME                                                                                  = "PUBLICATION_VERSION_03_BASIC";
-    
+
     public static final String                   PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME                                                                     = "PUBLICATION_VERSION_03_FOR_PUBLICATION_03";
 
     public static final String                   PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME                                                    = "PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION";
@@ -100,11 +100,11 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     public static final String                   PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME                                              = "PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04";
 
     public static final String                   PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME                                           = "PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04";
-    
+
     public static final String                   PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME                             = "PUBLICATION_VERSION_18_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION";
 
-    public static final String                   PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME                         = "PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION";
-    
+    public static final String                   PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME                          = "PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION";
+
     public static final String                   PUBLICATION_VERSION_19_WITH_STRUCTURE_PRODUCTION_VALIDATION_NAME                                                   = "PUBLICATION_VERSION_19_WITH_STRUCTURE_PRODUCTION_VALIDATION";
 
     public static final String                   PUBLICATION_VERSION_20_WITH_STRUCTURE_DIFFUSION_VALIDATION_NAME                                                    = "PUBLICATION_VERSION_20_WITH_STRUCTURE_DIFFUSION_VALIDATION";
@@ -249,9 +249,11 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     public static final String                   PUBLICATION_VERSION_100_MAXIMUM_VERSION_REACHED                                                                    = "PUBLICATION_VERSION_100_MAXIMUM_VERSION_REACHED";
 
     public static final String                   PUBLICATION_VERSION_101_MAXIMUM_MINOR_VERSION_REACHED                                                              = "PUBLICATION_VERSION_101_MAXIMUM_MINOR_VERSION_REACHED";
-    
+
     public static final String                   PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION                                                 = "PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION";
 
+    public static final String                   PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL_NAME                                   = "PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL";
+    public static final String                   PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME                               = "PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL";
 
     private static PublicationVersionMockFactory instance                                                                                                           = null;
 
@@ -276,7 +278,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     private static PublicationVersion getPublicationVersion03Basic() {
         return createPublicationVersion();
     }
-    
+
     private static MockDescriptor getPublicationVersion03ForPublication03() {
         MockDescriptor pubMockDesc = getPublicationMockDescriptor(PublicationMockFactory.PUBLICATION_03_BASIC_WITH_2_PUBLICATION_VERSIONS_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME), pubMockDesc);
@@ -351,7 +353,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         MockDescriptor publication = getPublicationMockDescriptor(PUBLICATION_04_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME), publication);
     }
-    
+
     private static MockDescriptor getPublicationVersion17C1WithStructureForPublicationVersion04() {
         MockDescriptor publication = getPublicationMockDescriptor(PUBLICATION_04_C1_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME), publication);
@@ -365,7 +367,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     private static MockDescriptor getPublicationVersion18C1WithStructureForPublicationVersion04AndLastVersion() {
         MockDescriptor publication = getPublicationMockDescriptor(PUBLICATION_04_C1_STRUCTURED_WITH_2_PUBLICATION_VERSIONS_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME), publication);
-    }    
+    }
     private static PublicationVersion getPublicationVersion19WithStructureProductionValidation() {
         // General metadata
         PublicationVersion publicationVersion = createPublicationVersion();
@@ -440,7 +442,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         publicationVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);
         return publicationVersion;
     }
-    
+
     private static PublicationVersion getPublicationVersion23WithComplexStructureProductionValidation() {
         PublicationVersion publicationVersion = createComplexStructure();
         publicationVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.PRODUCTION_VALIDATION);
@@ -937,7 +939,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     protected static ElementLevel createUrlCubeElementLevel(PublicationVersion publicationVersion, String url, ElementLevel parentElementLevel) {
         return getStatisticalResourcesPersistedDoMocks().mockUrlCubeElementLevel(publicationVersion, url, parentElementLevel);
     }
-    
+
     public static ElementLevel createQueryCubeElementLevel(PublicationVersion publicationVersion, Query query) {
         return getStatisticalResourcesPersistedDoMocks().mockQueryCubeElementLevel(publicationVersion, query);
     }
@@ -962,11 +964,11 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         return getStatisticalResourcesPersistedDoMocks().mockChapterElementLevel(publicationVersion);
     }
 
-    private static ElementLevel createMultidatasetCuveElementLevel(PublicationVersion publicationVersion, Multidataset multidataset) {
+    public static ElementLevel createMultidatasetCubeElementLevel(PublicationVersion publicationVersion, Multidataset multidataset) {
         return getStatisticalResourcesPersistedDoMocks().mockMultidatasetCuveElementLevel(publicationVersion, multidataset);
     }
 
-    private static ElementLevel createMultidatasetCuveElementLevel(PublicationVersion publicationVersion, Multidataset multidataset, ElementLevel elementLevel) {
+    private static ElementLevel createMultidatasetCubeElementLevel(PublicationVersion publicationVersion, Multidataset multidataset, ElementLevel elementLevel) {
         return getStatisticalResourcesPersistedDoMocks().mockMultidatasetCuveElementLevel(publicationVersion, multidataset, elementLevel);
     }
 
@@ -984,7 +986,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         }
 
         for (Multidataset multidataset : multidatasets) {
-            ElementLevel elementLevel = createMultidatasetCuveElementLevel(publicationVersion, multidataset);
+            ElementLevel elementLevel = createMultidatasetCubeElementLevel(publicationVersion, multidataset);
             elementLevel.setOrderInLevel(Long.valueOf(publicationVersion.getChildrenFirstLevel().size() + 1));
         }
 
@@ -1036,7 +1038,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
 
         return publicationVersion;
     }
-    
+
     public static PublicationVersion createComplexStructure() {
         PublicationVersion publicationVersion = createPublicationVersion();
         publicationVersion.getSiemacMetadataStatisticalResource().setVersionLogic(INIT_VERSION);
@@ -1097,7 +1099,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         // ----> Cube 01.02.01
         ElementLevel elementLevel01_02_01 = createQueryCubeElementLevel(publicationVersion, generateQueryWithGeneratedVersion(), elementLevel01_02);
         elementLevel01_02_01.setOrderInLevel(Long.valueOf(1));
-     // ----> Cube 01.02.02
+        // ----> Cube 01.02.02
         ElementLevel elementLevel01_02_02 = createUrlCubeElementLevel(publicationVersion, generateUrl(false, "elementLevel01_02_02"), elementLevel01_02);
         elementLevel01_02_02.setOrderInLevel(Long.valueOf(2));
         // --> Cube 01.03
@@ -1115,12 +1117,12 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         // Cube 04
         ElementLevel elementLevel04 = createQueryCubeElementLevel(publicationVersion, generateQueryWithGeneratedVersion());
         elementLevel04.setOrderInLevel(Long.valueOf(4));
-     // Cube 04
+        // Cube 04
         ElementLevel elementLevel05 = createUrlCubeElementLevel(publicationVersion, generateUrl(false, "elementLevel05"));
         elementLevel05.setOrderInLevel(Long.valueOf(5));
         return publicationVersion;
     }
-    
+
     public static PublicationVersion createStructureWithPublishedMultidataset() {
         PublicationVersion publicationVersion = createPublicationVersion();
         publicationVersion.getSiemacMetadataStatisticalResource().setVersionLogic(INIT_VERSION);
@@ -1129,7 +1131,7 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
         ElementLevel elementLevel = createChapterElementLevel(publicationVersion);
         elementLevel.setOrderInLevel(Long.valueOf(1));
 
-        ElementLevel elementLevelMultidataset = createMultidatasetCuveElementLevel(publicationVersion, MultidatasetVersionMockFactory
+        ElementLevel elementLevelMultidataset = createMultidatasetCubeElementLevel(publicationVersion, MultidatasetVersionMockFactory
                 .createMultidatasetVersionPublishedLastVersion(MultidatasetMockFactory.createMultidatasetToAddVersions(1), INIT_VERSION, new DateTime()).getMultidataset(), elementLevel);
         elementLevelMultidataset.setOrderInLevel(Long.valueOf(1));
 

@@ -122,6 +122,8 @@ public class MultidatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
         // Siemac metadata that needs to be filled
         target.setIsReplacedByVersion(relatedResourceDoToDto(source.getLifeCycleStatisticalResource().getIsReplacedByVersion()));
         target.setIsReplacedBy(relatedResourceDoToDto(source.getSiemacMetadataStatisticalResource().getIsReplacedBy()));
+        target.getIsPartOf().clear();
+        target.getIsPartOf().addAll(relatedResourceResultCollectionToDtoCollection(multidatasetVersionRepository.retrieveIsPartOf(source)));
 
         target.getCubes().clear();
         target.getCubes().addAll(multidatasetCubeDoListToDtoList(source.getCubes()));

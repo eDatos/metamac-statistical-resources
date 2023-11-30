@@ -185,10 +185,12 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
 
     private DataAttribute getAttributeFromDatasetData(DsdProcessor.DsdAttribute attribute, Data data) {
         DataAttribute dataAttribute = null;
-        for (DataAttribute da : data.getAttributes().getAttributes()) {
-            if (Objects.equals(da.getId(), attribute.getComponentId())) {
-                dataAttribute = da;
-                break;
+        if (data.getAttributes() != null) {
+            for (DataAttribute da : data.getAttributes().getAttributes()) {
+                if (Objects.equals(da.getId(), attribute.getComponentId())) {
+                    dataAttribute = da;
+                    break;
+                }
             }
         }
         return dataAttribute;
@@ -231,19 +233,21 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private String toAttributeI18nName(Attributes attributes, String attributeId, String attributeCode, String selectedLanguage) {
-        for (Attribute att : attributes.getAttributes()) {
-            if (Objects.equals(att.getId(), attributeId)) {
-                AttributeValues attributeValues = att.getAttributeValues();
-                if (attributeValues instanceof EnumeratedAttributeValues) {
-                    for (EnumeratedAttributeValue value : ((EnumeratedAttributeValues) attributeValues).getValues()) {
-                        if (Objects.equals(value.getId(), attributeCode)) {
-                            return toI18nValue(value.getName(), selectedLanguage);
+        if (attributes != null && attributes.getAttributes() != null) {
+            for (Attribute att : attributes.getAttributes()) {
+                if (Objects.equals(att.getId(), attributeId)) {
+                    AttributeValues attributeValues = att.getAttributeValues();
+                    if (attributeValues instanceof EnumeratedAttributeValues) {
+                        for (EnumeratedAttributeValue value : ((EnumeratedAttributeValues) attributeValues).getValues()) {
+                            if (Objects.equals(value.getId(), attributeCode)) {
+                                return toI18nValue(value.getName(), selectedLanguage);
+                            }
                         }
-                    }
-                } else if (attributeValues instanceof NonEnumeratedAttributeValues) {
-                    for (NonEnumeratedAttributeValue value : ((NonEnumeratedAttributeValues) attributeValues).getValues()) {
-                        if (Objects.equals(value.getId(), attributeCode)) {
-                            return toI18nValue(value.getName(), selectedLanguage);
+                    } else if (attributeValues instanceof NonEnumeratedAttributeValues) {
+                        for (NonEnumeratedAttributeValue value : ((NonEnumeratedAttributeValues) attributeValues).getValues()) {
+                            if (Objects.equals(value.getId(), attributeCode)) {
+                                return toI18nValue(value.getName(), selectedLanguage);
+                            }
                         }
                     }
                 }

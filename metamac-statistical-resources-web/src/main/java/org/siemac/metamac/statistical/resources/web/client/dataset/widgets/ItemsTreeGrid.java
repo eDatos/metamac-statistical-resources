@@ -19,6 +19,7 @@ import org.siemac.metamac.web.common.client.resources.StyleUtils;
 
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.smartgwt.client.data.DataSource;
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Autofit;
 import com.smartgwt.client.types.ListGridEditEvent;
@@ -46,6 +47,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
     protected TreeGridField       codeField;
     protected TreeGridField       nameField;
     protected TreeGridField       cascadeField;
+    protected TreeGridField       selectedField;
 
     protected boolean             editionMode;
 
@@ -94,12 +96,22 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
                     if (ItemsTreeGrid.this.getFilterEditorCriteria().getValues().isEmpty()) {
                         selectedTreeNodes = ItemsTreeGrid.this.getSelectedRecords();
                     } else {
-                        ListGridRecord selectedRecord = ((ListGridRecord) event.getRecord());
+                        ListGridRecord selectedRecord = getSelectedRecordInFilteringEditor(event.getRecord());
                         selectedTreeNodes = modifyRecordList(selectedTreeNodes, selectedRecord, event.getState());
                     }
                 }
             }
         });
+    }
+
+    private ListGridRecord getSelectedRecordInFilteringEditor(Record selectedRecord) {
+
+        for (ListGridRecord recordItem : getRecords()) {
+            if (recordItem.getAttribute(ItemDS.URN).equals(selectedRecord.getAttribute(ItemDS.URN))) {
+                return recordItem;
+            }
+        }
+        return null;
     }
 
     public void setItems(ExternalItemDto itemScheme, List<ItemDto> items) {
@@ -119,17 +131,32 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         getData().openAll();
     }
 
-    public void selectItems(Map<String, KeyPartDto> keyParts) {
+    public void selectItems(Map<String, KeyPartDto> keyParts, boolean deselectOtherKeys) {
+        if (deselectOtherKeys) {
+            resetFilterAndSelection();
+            getData().openAll();
+        }
         ListGridRecord[] records = getRecords();
         for (ListGridRecord record : records) {
             String code = record.getAttribute(ItemDS.CODE);
             if (keyParts.containsKey(code)) {
                 record.setAttribute(ItemDS.CASCADE, BooleanUtils.isTrue(keyParts.get(code).getCascadeValues()) ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+                if (!editionMode) {
+                    record.setAttribute(ItemDS.SELECTED, ItemDS.SELECTED_VALUE);
+                }
                 updateData(record);
                 selectRecord(record);
+
+            } else if (deselectOtherKeys) {
+                deselectRecord(record);
             }
+
         }
         selectedTreeNodes = ItemsTreeGrid.this.getSelectedRecords();
+
+        if (deselectOtherKeys) {
+            this.refreshFields();
+        }
     }
 
     /**
@@ -138,6 +165,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
      * @return
      */
     public Map<String, Boolean> getSelectedItems() {
+        getData().openAll();
         Map<String, Boolean> selectedItems = new HashMap<String, Boolean>();
         if (selectedTreeNodes != null) {
             for (ListGridRecord record : selectedTreeNodes) {
@@ -155,7 +183,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         selectedTreeNodes = null;
     }
 
-    private void resetFilterAndSelection() {
+    public void resetFilterAndSelection() {
         clearFilterEditor();
         clearSelectedTreeNodes();
         isFilteringActive = false;
@@ -188,7 +216,15 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         cascadeField.setAlign(Alignment.CENTER);
         cascadeField.setShowHover(false);
 
-        setFields(codeField, nameField, cascadeField);
+        if (editionMode) {
+            setFields(codeField, nameField, cascadeField);
+        } else {
+            selectedField = new TreeGridField(ItemDS.SELECTED, getConstants().datasetConstraintCodeSelected());
+            selectedField.setCanFilter(true);
+            selectedField.setCanEdit(false);
+            setFields(codeField, nameField, selectedField, cascadeField);
+        }
+
     }
 
     private void createFilterEditionHandlers() {
@@ -204,8 +240,10 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
 
                 String codeCriteria = event.getCriteria().getAttribute(ItemDS.MANAGEMENT_APP_URL);
                 String nameCriteria = event.getCriteria().getAttribute(ItemDS.NAME);
+                String selectedCriteria = event.getCriteria().getAttribute(ItemDS.SELECTED);
 
-                if (StringUtils.isBlank(codeCriteria) && StringUtils.isBlank(nameCriteria)) {
+                if (StringUtils.isBlank(codeCriteria) && StringUtils.isBlank(nameCriteria)
+                        && (StringUtils.isBlank(selectedCriteria) || (selectedCriteria != null && !ItemDS.SELECTED_VALUE.equals(selectedCriteria)))) {
                     setData(tree);
                 } else {
                     List<TreeNode> matchingNodes = new ArrayList<TreeNode>();
@@ -213,6 +251,7 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
                         if (!SCHEME_NODE_NAME.equals(treeNode.getName())) {
                             String code = treeNode.getAttributeAsString(ItemDS.CODE);
                             String name = treeNode.getAttributeAsString(ItemDS.NAME);
+                            String selected = treeNode.getAttributeAsString(ItemDS.SELECTED);
 
                             boolean matches = true;
                             if (codeCriteria != null && !StringUtils.containsIgnoreCase(code, codeCriteria)) {
@@ -221,6 +260,11 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
                             if (nameCriteria != null && !StringUtils.containsIgnoreCase(name, nameCriteria)) {
                                 matches = false;
                             }
+
+                            if (matches && ItemDS.SELECTED_VALUE.equals(selectedCriteria) && (selected == null || (selected != null && !ItemDS.SELECTED_VALUE.equals(selected)))) {
+                                matches = false;
+                            }
+
                             if (matches) {
                                 matchingNodes.add(treeNode);
                             }
@@ -273,6 +317,9 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
         public static final String NAME               = "item-name";
         public static final String URN                = "item-urn";
         public static final String CASCADE            = "item-cascade";
+        public static final String SELECTED           = "item-selected";
+
+        public static final String SELECTED_VALUE     = "X";
     }
 
     /**
@@ -284,7 +331,17 @@ public class ItemsTreeGrid extends NavigableExternalItemTreeGrid {
      * @return
      */
     private ListGridRecord[] modifyRecordList(ListGridRecord[] records, ListGridRecord record, boolean state) {
+
+        if (records == null) {
+            ListGridRecord[] result = new ListGridRecord[1];
+            if (state) {
+                result[0] = record;
+            }
+            return result;
+        }
+
         int length = state ? records.length + 1 : records.length - 1;
+
         ListGridRecord[] result = new ListGridRecord[length];
         int j = 0;
         for (int i = 0; i < records.length; i++) {

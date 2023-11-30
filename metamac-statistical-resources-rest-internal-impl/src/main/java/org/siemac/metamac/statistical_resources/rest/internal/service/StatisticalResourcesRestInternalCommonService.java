@@ -15,6 +15,7 @@ public interface StatisticalResourcesRestInternalCommonService {
 
     public PagedResult<DatasetVersion> findDatasetVersions(String agencyID, String resourceID, String version, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
     public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version);
+    public Boolean checkDatasetVersion(String agencyID, String resourceID, String version);
     public DatasetVersion retrieveDatasetLastVersionByUrn(String urn);
 
     public PagedResult<PublicationVersion> findPublicationVersions(String agencyID, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);

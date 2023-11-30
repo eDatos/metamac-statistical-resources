@@ -14,12 +14,13 @@ import org.siemac.metamac.statistical.resources.web.client.constants.Statistical
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataProductionDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDsdPaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
 import org.siemac.metamac.web.common.client.utils.ExternalItemUtils;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
-import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
 
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -38,16 +39,12 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
     private ExternalItemDto                statisticalOperation;
 
     // components
-    private ViewTextItem                   relatedDsdView;
     private SearchExternalItemLinkItem     relatedDsd;
 
     public DatasetProductionDescriptorsEditionForm() {
-
-        relatedDsdView = new ViewTextItem(DatasetDS.RELATED_DSD_VIEW, getConstants().datasetRelatedDSD());
         relatedDsd = createDsdsItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD());
         relatedDsd.setRequired(true);
-
-        addFields(relatedDsdView, relatedDsd);
+        addFields(relatedDsd);
     }
 
     public void setUiHandlers(DatasetMetadataTabUiHandlers uiHandlers) {
@@ -59,7 +56,6 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
         setSiemacMetadataStatisticalResourceDto(datasetDto);
         setRelatedDsd(datasetDto.getRelatedDsd());
         relatedDsd.setShowIfCondition(getRelatedDsdFormItemIfFunction(datasetDto));
-        relatedDsdView.setShowIfCondition(getStaticRelatedDsdFormItemIfFunction(datasetDto));
 
         if (!DatasetMetadataEditionChecks.canDsdBeReplacedByAnyOtherDsd(datasetDto.getId(), datasetDto.getVersionLogic(), datasetDto.getProcStatus())) {
             fixedDsdCode = datasetDto.getRelatedDsd().getCode();
@@ -77,7 +73,6 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
 
     private void setRelatedDsd(ExternalItemDto relatedDsdDto) {
         setValue(DatasetDS.RELATED_DSD, relatedDsdDto);
-        setValue(DatasetDS.RELATED_DSD_VIEW, ExternalItemUtils.getExternalItemName(relatedDsdDto));
     }
 
     public void setExternalItemsForRelatedDsd(List<ExternalItemDto> externalItemsDtos, int firstResult, int totalResults) {
@@ -135,7 +130,7 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
 
     private SearchExternalItemLinkItem createDsdsItem(String name, String title) {
 
-        final SearchExternalItemLinkItem dsdItem = new SearchExternalItemLinkItem(name, title) {
+        final SearchExternalItemLinkItem dsdItem = new SearchExternalItemLinkItem(name, title, true) {
 
             @Override
             public void onSearch() {

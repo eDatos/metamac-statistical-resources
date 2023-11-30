@@ -351,10 +351,11 @@ public class MappersMockUtils {
         d.setRelatedDsdChanged(EXPECTED_TRUE);
         d.setDatasetRepositoryId(EXPECTED_IDENTIFIER);
         d.setFormatExtentDimensions(EXPECTED_COPYRIGHT);
+        d.setFormatExtentObservations(EXPECTED_FORMAT_EXTENT_OBSERVATIONS);
+        d.setFormatExtentTableSize(EXPECTED_FORMAT_EXTENT_OBSERVATIONS);
         d.setDateNextUpdate(EXPECTED_FUTURE_DATE_SDMX);
         d.setUserModifiedDateNextUpdate(EXPECTED_TRUE);
         d.setVersion(EXPECTED_VERSION);
-        d.setFormatExtentObservations(EXPECTED_FORMAT_EXTENT_OBSERVATIONS);
         d.setDataset(mockDataset(d));
         d.setRelatedDsd(mockExternalItem());
         d.setUpdateFrequency(mockExternalItem());
@@ -695,7 +696,9 @@ public class MappersMockUtils {
                 .setDateStart(mockInternationalStringAvroFutureDate())
                 .setDateEnd(mockInternationalStringAvroFutureDate())
                 .setDatasetRepositoryId(EXPECTED_IDENTIFIER)
+                .setFormatExtentObservations(EXPECTED_FORMAT_EXTENT_OBSERVATIONS)
                 .setFormatExtentDimensions(EXPECTED_COPYRIGHT)
+                .setFormatExtentTableSize(EXPECTED_FORMAT_EXTENT_OBSERVATIONS)
                 .setDateNextUpdate(mockInternationalStringAvroFutureDate())
                 .setUserModifiedDateNextUpdate(EXPECTED_TRUE)
                 .setDataset(mockDatasetAvro()).setRelatedDsd(mockExternalItemAvro())
@@ -713,7 +716,6 @@ public class MappersMockUtils {
                 .setStatisticalUnit(mockExternalItemAvroList())
                 .setIsPartOf(new ArrayList<RelatedResourceAvro>())
                 .setVisualizerHtmlLink(mockDatasetVisualizerHtmlLink())
-                .setFormatExtentObservations(EXPECTED_FORMAT_EXTENT_OBSERVATIONS)
                 .build();
         // @formatter:on
         return target;

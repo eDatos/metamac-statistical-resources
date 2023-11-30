@@ -1,7 +1,10 @@
 package org.siemac.metamac.statistical.resources.core.multidataset.serviceimpl;
 
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,6 +31,7 @@ import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusV
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceRepository;
+import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -213,6 +217,11 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
     private void checkCanMultidatasetVersionBeDeleted(MultidatasetVersion multidatasetVersion) throws MetamacException {
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
 
+        boolean isOnlyVersion = StatisticalResourcesVersionUtils.isInitialVersion(multidatasetVersion.getSiemacMetadataStatisticalResource().getVersionLogic());
+        if (isOnlyVersion) {
+            checkMultiDatasetVersionIsPartOfSomePublication(multidatasetVersion, exceptionItems);
+        }
+
         RelatedResource resourcesIsReplacedBy = multidatasetVersion.getSiemacMetadataStatisticalResource().getIsReplacedBy();
         if (resourcesIsReplacedBy != null) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.MULTIDATASET_VERSION_IS_REPLACED_BY_OTHER_RESOURCE,
@@ -223,6 +232,16 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
             MetamacExceptionItem item = new MetamacExceptionItem(ServiceExceptionType.MULTIDATASET_VERSION_CANT_BE_DELETED, multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
             item.setExceptionItems(exceptionItems);
             throw new MetamacException(Arrays.asList(item));
+        }
+    }
+
+    private void checkMultiDatasetVersionIsPartOfSomePublication(MultidatasetVersion multidatasetVersion, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+        List<RelatedResourceResult> resourcesIsPartOf = getMultidatasetVersionRepository().retrieveIsPartOf(multidatasetVersion);
+        if (!resourcesIsPartOf.isEmpty()) {
+            List<String> urns = getUrnsFromRelatedResourceResults(resourcesIsPartOf);
+            Collections.sort(urns);
+            String parameter = StringUtils.join(urns, ", ");
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.MULTIDATASET_VERSION_IS_PART_OF_OTHER_RESOURCES, parameter));
         }
     }
 

@@ -330,6 +330,7 @@ public class DatasetVersioningServiceTest extends StatisticalResourcesBaseTest {
 
         assertEquals(previous.getFormatExtentObservations(), next.getFormatExtentObservations());
         assertEquals(previous.getFormatExtentDimensions(), next.getFormatExtentDimensions());
+        assertEquals(previous.getFormatExtentTableSize(), next.getFormatExtentTableSize());
 
         assertEqualsExternalItem(previous.getUpdateFrequency(), next.getUpdateFrequency());
         DatasetsAsserts.assertEqualsStatisticOfficiality(previous.getStatisticOfficiality(), next.getStatisticOfficiality());

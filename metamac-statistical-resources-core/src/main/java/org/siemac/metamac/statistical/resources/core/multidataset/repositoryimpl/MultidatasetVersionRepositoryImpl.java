@@ -1,9 +1,12 @@
 package org.siemac.metamac.statistical.resources.core.multidataset.repositoryimpl;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
 
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Query;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -13,6 +16,7 @@ import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils;
+import org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
@@ -192,5 +196,62 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
 
         return replacing;
 
+    }
+
+    @Override
+    public List<RelatedResourceResult> retrieveIsPartOf(MultidatasetVersion multidatasetVersion) throws MetamacException {
+        return retrieveIsPartOf(multidatasetVersion, false);
+    }
+
+    @Override
+    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(MultidatasetVersion multidatasetVersion) throws MetamacException {
+        return retrieveIsPartOf(multidatasetVersion, true);
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<RelatedResourceResult> retrieveIsPartOf(MultidatasetVersion multidatasetVersion, boolean onlyLastPublished) throws MetamacException {
+        //     @formatter:off
+        Query query = getEntityManager().createNativeQuery(
+                "SELECT  distinct stat.code, " +
+                "        stat.urn, " +
+                "        operation.code AS operCode, " +
+                "        operation.urn AS operUrn, " +
+                "        maintainer.code_nested AS code_nested, " +
+                "        stat.version_logic, "+
+                "        loc.locale, " +
+                "        loc.label, " +
+                "        stat.type " +
+                "FROM    tb_stat_resources stat " +
+                "INNER JOIN ( " +
+
+                    // Publications
+                    "SELECT pub.siemac_resource_fk " +
+                    "FROM tb_publications_versions pub " +
+                    "INNER JOIN tb_elements_levels elem on elem.publication_version_all_fk = pub.ID " +
+                    "INNER JOIN tb_cubes cubes on cubes.ID = elem.table_fk " +
+
+                    // - Multidatasets
+                    "INNER JOIN tb_multidatasets multidataset on cubes.multidataset_fk = multidataset.ID " +
+                    "INNER JOIN tb_multidatasets_versions multidataset_version on multidataset_version.multidataset_fk = multidataset.ID " +
+                    "INNER JOIN tb_stat_resources stat_multidataset  ON multidataset_version.siemac_resource_fk = stat_multidataset.ID " +
+                    "WHERE " + RepositoryUtils.buildLastPublishedVersionCondition("stat_multidataset", onlyLastPublished) +
+                    "AND     multidataset_version.ID = :multidatasetVersionFk " +
+
+                ") as resource on resource.siemac_resource_fk = stat.ID " +
+
+                "inner join tb_localised_strings loc on  stat.title_fk = loc.international_string_fk " +
+                "inner join tb_external_items operation on operation.ID = stat.stat_operation_fk " +
+                "inner join tb_external_items maintainer on maintainer.id = stat.maintainer_fk " +
+                "where " + RepositoryUtils.buildLastPublishedVersionCondition("stat", onlyLastPublished));
+        //     @formatter:on
+        query.setParameter("multidatasetVersionFk", multidatasetVersion.getId());
+        if (onlyLastPublished) {
+            query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
+            query.setParameter("now", new DateTime().toDate());
+        }
+
+        List<Object> rows = query.getResultList();
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
+        return resources;
     }
 }

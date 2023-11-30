@@ -31,13 +31,14 @@ public interface SrmRestInternalFacade {
     public Map<String, String> findMappeableDimensionsInDsdWithVariables(String dsdUrn) throws MetamacWebException;
     public ExternalItemsResult findCodelistsWithVariable(String variableUrn, int firstResult, int maxResult, SrmExternalResourceRestCriteria srmExternalResourceRestCriteria)
             throws MetamacWebException;
+    public List<ExternalItemDto> retrieveSrmResourceRestrictions(SrmItemRestCriteria condition) throws MetamacWebException;
 
     // CODES
 
     public ExternalItemsResult findCodesInCodelist(String codelistUrn, int firstResult, int maxResult, MetamacWebCriteria condition) throws MetamacWebException;
     public ExternalItemsResult findCodes(int firstResult, int maxResult, SrmItemRestCriteria condition) throws MetamacWebException;
     public ExternalItemDto retrieveCodeByUrn(String urn) throws MetamacWebException;
-    public List<ItemDto> retrieveCodes(String codelistUrn) throws MetamacWebException;
+    public List<ItemDto> retrieveCodes(String codelistUrn, String codeRestriction) throws MetamacWebException;
 
     // CONCEPTS
 

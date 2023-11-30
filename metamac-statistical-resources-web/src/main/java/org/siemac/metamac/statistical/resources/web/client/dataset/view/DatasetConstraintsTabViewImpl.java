@@ -6,6 +6,8 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.ContentConstraintDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
@@ -75,8 +77,22 @@ public class DatasetConstraintsTabViewImpl extends ViewWithUiHandlers<DatasetCon
     }
 
     @Override
-    public void setCodes(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos) {
-        constraintsPanel.setCodes(dsdDimensionDto, itemScheme, itemDtos);
+    public void setSrmResourceRestrictions(List<ExternalItemDto> restrictions, TypeExternalArtefactsEnum type) {
+        constraintsPanel.setRestrictions(restrictions);
+    }
+
+    @Override
+    public void setCodes(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos, String codeSrmRestriction) {
+        if (StringUtils.isEmpty(codeSrmRestriction)) {
+            constraintsPanel.setCodes(dsdDimensionDto, itemScheme, itemDtos);
+        } else {
+            constraintsPanel.setSrmRestrictionCodes(itemDtos);
+        }
+    }
+
+    @Override
+    public void setCodesWithSrmRestrictions(List<ItemDto> srmRestrictionCodes) {
+        constraintsPanel.setCodesWithSrmRestriction(srmRestrictionCodes);
     }
 
     @Override
@@ -198,6 +214,18 @@ public class DatasetConstraintsTabViewImpl extends ViewWithUiHandlers<DatasetCon
             mainFormLayout.setCodes(dsdDimensionDto, itemScheme, itemDtos);
         }
 
+        public void setSrmRestrictionCodes(List<ItemDto> itemDtos) {
+            mainFormLayout.setSrmRestrictionCodes(itemDtos);
+        }
+
+        public void setCodesWithSrmRestriction(List<ItemDto> itemDtos) {
+            mainFormLayout.setEnumeratedValuesWithSrmRestrictions(itemDtos);
+        }
+
+        public void setRestrictions(List<ExternalItemDto> restrictions) {
+            mainFormLayout.setRestrictions(restrictions);
+        }
+
         public void setConcepts(DsdDimensionDto dsdDimensionDto, ExternalItemDto itemScheme, List<ItemDto> itemDtos) {
             mainFormLayout.setConcepts(dsdDimensionDto, itemScheme, itemDtos);
         }
@@ -220,8 +248,8 @@ public class DatasetConstraintsTabViewImpl extends ViewWithUiHandlers<DatasetCon
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    DeleteConfirmationWindow deleteConfirmationWindow = new DeleteConfirmationWindow(getMessages().datasetConstraintDisableConfirmationTitle(), getMessages()
-                            .datasetConstraintDisableConfirmation());
+                    DeleteConfirmationWindow deleteConfirmationWindow = new DeleteConfirmationWindow(getMessages().datasetConstraintDisableConfirmationTitle(),
+                            getMessages().datasetConstraintDisableConfirmation());
                     deleteConfirmationWindow.show();
                     deleteConfirmationWindow.getYesButton().addClickHandler(new com.smartgwt.client.widgets.events.ClickHandler() {
 

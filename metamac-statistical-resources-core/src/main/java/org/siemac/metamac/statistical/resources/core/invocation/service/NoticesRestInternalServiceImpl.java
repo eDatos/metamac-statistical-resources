@@ -427,7 +427,9 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         String subject = buildSubject(ctx, actionCode);
         Message message = buildMessage(ctx, messageCode, resourcesInternal);
 
-        NoticeBuilder noticeBuilder = NoticeBuilder.notification().withMessages(message).withSendingApplication(getSendingApp()).withSendingUser(ctx.getUserId()).withSubject(subject);
+        MetamacApplicationsEnum[] applications = {MetamacApplicationsEnum.GESTOR_RECURSOS_ESTRUCTURALES};
+        NoticeBuilder noticeBuilder = NoticeBuilder.notification().withMessages(message).withSendingApplication(getSendingApp()).withSendingUser(ctx.getUserId()).withSubject(subject)
+        		.withApplications(applications);
         if (notificationRoles != null) {
             noticeBuilder = noticeBuilder.withRoles(notificationRoles);
         }

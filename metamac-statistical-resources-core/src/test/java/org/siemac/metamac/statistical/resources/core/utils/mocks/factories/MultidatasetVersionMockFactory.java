@@ -43,11 +43,15 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationa
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
+import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 import org.siemac.metamac.statistical.resources.core.utils.LifecycleTestUtils;
 import org.siemac.metamac.statistical.resources.core.utils.MultidatasetLifecycleTestUtils;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.MultidatasetMock;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.MultidatasetVersionMock;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.PublicationMock;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.PublicationVersionMock;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
 
@@ -62,11 +66,11 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
     public static final String                    MULTIDATASET_VERSION_03_FOR_MULTIDATASET_03_NAME                                                                    = "MULTIDATASET_VERSION_03_FOR_MULTIDATASET_03";
 
     public static final String                    MULTIDATASET_VERSION_03_C1_FOR_MULTIDATASET_03_NAME                                                                 = "MULTIDATASET_VERSION_03_C1_FOR_MULTIDATASET_03";
-    
+
     public static final String                    MULTIDATASET_VERSION_04_FOR_MULTIDATASET_03_AND_LAST_VERSION_NAME                                                   = "MULTIDATASET_VERSION_04_FOR_MULTIDATASET_03_AND_LAST_VERSION";
 
     public static final String                    MULTIDATASET_VERSION_04_C1_FOR_MULTIDATASET_03_AND_LAST_VERSION_NAME                                                = "MULTIDATASET_VERSION_04_C1_FOR_MULTIDATASET_03_AND_LAST_VERSION";
-    
+
     public static final String                    MULTIDATASET_VERSION_05_OPERATION_0001_CODE_000001_NAME                                                             = "MULTIDATASET_VERSION_05_OPERATION_0001_CODE_000001";
 
     public static final String                    MULTIDATASET_VERSION_06_OPERATION_0001_CODE_000002_NAME                                                             = "MULTIDATASET_VERSION_06_OPERATION_0001_CODE_000002";
@@ -114,23 +118,23 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
     public static final String                    MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05_NAME                                                       = "MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05";
 
     public static final String                    MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05_C1_NAME                                                    = "MULTIDATASET_VERSION_27_V1_PUBLISHED_FOR_MULTIDATASET_05_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05_NAME                                                       = "MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05";
-    
+
     public static final String                    MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05_C1_NAME                                                    = "MULTIDATASET_VERSION_28_V2_PUBLISHED_FOR_MULTIDATASET_05_C1";
 
     public static final String                    MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_NAME                                                       = "MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05";
 
     public static final String                    MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_C1_NAME                                                    = "MULTIDATASET_VERSION_29_V3_PUBLISHED_FOR_MULTIDATASET_05_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_NAME                                                       = "MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06";
 
     public static final String                    MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_C1_NAME                                                    = "MULTIDATASET_VERSION_30_V1_PUBLISHED_FOR_MULTIDATASET_06_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_NAME                                            = "MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06";
 
     public static final String                    MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1_NAME                                         = "MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1";
-    
+
     public static final String                    MULTIDATASET_VERSION_32_DRAFT_NOT_READY_NAME                                                                        = "MULTIDATASET_VERSION_32_DRAFT_NOT_READY";
 
     public static final String                    MULTIDATASET_VERSION_33_DRAFT_READY_FOR_PRODUCTION_VALIDATION_NAME                                                  = "MULTIDATASET_VERSION_33_DRAFT_READY_FOR_PRODUCTION_VALIDATION";
@@ -244,6 +248,14 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
     public static final String                    MULTIDATASET_VERSION_97_NOT_VISIBLE_HAS_PART_NOT_VISIBLE_QUERY_NAME                                                 = "MULTIDATASET_VERSION_97_NOT_VISIBLE_HAS_PART_NOT_VISIBLE_QUERY";
 
     public static final String                    MULTIDATASET_VERSION_98_TO_DELETE_WITH_PREVIOUS_VERSION_NAME                                                        = "MULTIDATASET_VERSION_98_TO_DELETE_WITH_PREVIOUS_VERSION";
+
+    public static final String                    MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10_NAME                                               = "MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10";
+
+    public static final String                    MULTIDATASET_VERSION_100_DRAFT_SINGLE_VERSION__LINKED_TO_DATASET_85_NAME                                            = "MULTIDATASET_VERSION_99_DRAFT_SINGLE_VERSION__LINKED_TO_QUERY_10";
+
+    public static final String                    MULTIDATASET_VERSION_101_LAST_VERSION_NOT_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME                                    = "MULTIDATASET_VERSION_101_LAST_VERSION_NOT_PUBLISHED_IS_PART_OF_PUBLICATIONS";
+
+    public static final String                    MULTIDATASET_VERSION_102_LAST_VERSION_PUBLISHED_IS_PART_OF_PUBLICATIONS_NAME                                        = "MULTIDATASET_VERSION_102_LAST_VERSION_PUBLISHED_IS_PART_OF_PUBLICATIONS";
 
     private static MultidatasetVersionMockFactory instance                                                                                                            = null;
 
@@ -441,7 +453,7 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
         MockDescriptor multidataset = getMultidatasetMockDescriptor(MULTIDATASET_06_C1_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME);
         return new MockDescriptor(getMultidatasetVersionMock(MULTIDATASET_VERSION_31_V2_PUBLISHED_NO_VISIBLE_FOR_MULTIDATASET_06_C1_NAME), multidataset);
     }
-    
+
     private static MultidatasetVersion getMultidatasetVersion32DraftNotReady() {
         MultidatasetVersion multidatasetVersion = createMultidatasetVersion();
         multidatasetVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);
@@ -704,6 +716,32 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
         return multidatasetVersion;
     }
 
+    private static MockDescriptor getMultidatasetVersion101LastVersionNotPublishedIsPartOfPublications() {
+        MultidatasetVersion multidatasetVersion = createMultidatasetVersionWithSequenceAndVersion(1, INIT_VERSION);
+        multidatasetVersion.getSiemacMetadataStatisticalResource().setLastVersion(true);
+
+        // Publication created in PublicationVersionMockFactory
+        PublicationVersion pub01 = buildDraftPublicationWithMultidatasetInFirstLevel(1, multidatasetVersion.getMultidataset());
+        registerPublicationVersionMock(PublicationVersionMockFactory.PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL_NAME, pub01);
+
+        return new MockDescriptor(multidatasetVersion, pub01);
+    }
+
+    private static MockDescriptor getMultidatasetVersion102LastVersionPublishedIsPartOfPublications() {
+        MultidatasetVersionMock template = new MultidatasetVersionMock();
+        template.setSequentialId(1);
+        template.getSiemacMetadataStatisticalResource().setValidFrom(new DateTime().minusDays(2));
+        MultidatasetVersion multidatasetVersion = createMultidatasetVersionInStatus(template, ProcStatusEnum.PUBLISHED);
+
+        PublicationVersionMock publicationVersion = PublicationVersionMockFactory.buildPublishedReadyPublicationVersion(new PublicationMock(), StatisticalResourcesMockFactory.INIT_VERSION,
+                new DateTime().minusDays(1), null, true);
+        PublicationVersionMockFactory.createMultidatasetCubeElementLevel(publicationVersion, multidatasetVersion.getMultidataset());
+        PublicationVersionMockFactory.createPublicationVersionInStatus(publicationVersion, ProcStatusEnum.PUBLISHED);
+        registerPublicationVersionMock(PublicationVersionMockFactory.PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME, publicationVersion);
+
+        return new MockDescriptor(multidatasetVersion, publicationVersion);
+    }
+
     // -----------------------------------------------------------------
     // BUILDERS
     // -----------------------------------------------------------------
@@ -810,6 +848,15 @@ public class MultidatasetVersionMockFactory extends StatisticalResourcesMockFact
         MultidatasetVersionMock multidatasetVersion = buildMultidatasetVersionSimple(multidataset, version, isLastVersion);
         getStatisticalResourcesPersistedDoMocks().mockMultidatasetVersion(multidatasetVersion);
         return multidatasetVersion;
+    }
+
+    private static PublicationVersion buildDraftPublicationWithMultidatasetInFirstLevel(Integer sequentialId, Multidataset multidataset) {
+        PublicationVersion publicationVersion = PublicationVersionMockFactory.buildPublicationVersionDraft(sequentialId);
+
+        ElementLevel elementLevel01 = PublicationVersionMockFactory.createMultidatasetCubeElementLevel(publicationVersion, multidataset);
+        elementLevel01.setOrderInLevel(Long.valueOf(1));
+
+        return publicationVersion;
     }
 
     // -----------------------------------------------------------------

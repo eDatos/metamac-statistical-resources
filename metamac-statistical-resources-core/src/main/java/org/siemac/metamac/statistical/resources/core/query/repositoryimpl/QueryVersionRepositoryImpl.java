@@ -1,8 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.query.repositoryimpl;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
-import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromRows;
-import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils.isLastPublishedVersionConditions;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
 
 import java.util.List;
 
@@ -17,13 +16,10 @@ import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
-import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -31,9 +27,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("queryVersionRepository")
 public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
-
-    @Autowired
-    private StatisticalResourcesConfiguration configuration;
 
     public QueryVersionRepositoryImpl() {
     }
@@ -118,53 +111,18 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
         return findByCondition(conditions);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<RelatedResourceResult> retrieveIsPartOf(QueryVersion queryVersion) throws MetamacException {
-        //     @formatter:off
-        Query query = getEntityManager().createNativeQuery(
-            "SELECT  distinct stat.code, " +
-            "        stat.urn, " +
-            "        operation.code AS operCode, " +
-            "        operation.urn AS operUrn, " +
-            "        maintainer.code_nested AS code_nested, " +
-            "        stat.version_logic, "+
-            "        loc.locale, " +
-            "        loc.label " +
-            "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
-            "            on cubes.ID = elem.table_fk, " +
-            "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
-            "            ON pub.siemac_resource_fk = stat.ID, " +
-            "        tb_external_items operation, " +
-            "        tb_external_items maintainer, " +
-            "        tb_queries query, " +
-            "        tb_queries_versions query_version INNER JOIN tb_stat_resources stat_query "+
-            "            ON query_version.lifecycle_resource_fk = stat_query.ID, "+
-            "        tb_localised_strings loc "+
-            "WHERE       cubes.query_fk = query.ID "+
-            "    AND     query_version.query_fk = query.ID " +
-            "    AND     query_version.ID = :queryVersionFk " +
-            "    AND     stat_query.last_version = " + getBooleanValueForDatabase(true) +
-            "    AND     elem.publication_version_all_fk = pub.ID " +
-            "    AND     stat.title_fk = loc.international_string_fk " +
-            "    AND     (stat.last_version = " + getBooleanValueForDatabase(true) +
-            "       OR "+ RepositoryUtils.isLastPublishedVersionConditions+" ) "+
-            "    AND     operation.ID = stat.stat_operation_fk " +
-            "    AND     maintainer.id = stat.maintainer_fk");
+        return retrieveIsPartOf(queryVersion, false);
+    }
 
-        //     @formatter:on
-        query.setParameter("queryVersionFk", queryVersion.getId());
-        query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
-        query.setParameter("now", new DateTime().toDate());
-
-        List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
-        return resources;
+    @Override
+    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(QueryVersion queryVersion) throws MetamacException {
+        return retrieveIsPartOf(queryVersion, true);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(QueryVersion queryVersion) throws MetamacException {
+    private List<RelatedResourceResult> retrieveIsPartOf(QueryVersion queryVersion, boolean onlyLastPublished) throws MetamacException {
         //     @formatter:off
         Query query = getEntityManager().createNativeQuery(
             "SELECT  distinct stat.code, " +
@@ -174,38 +132,62 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
             "        maintainer.code_nested AS code_nested, " +
             "        stat.version_logic, "+
             "        loc.locale, " +
-            "        loc.label " +
-            "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
-            "            on cubes.ID = elem.table_fk, " +
-            "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
-            "            ON pub.siemac_resource_fk = stat.ID, " +
-            "        tb_external_items operation, " +
-            "        tb_external_items maintainer, " +
-            "        tb_queries query, " +
-            "        tb_queries_versions query_version INNER JOIN tb_stat_resources stat_query "+
-            "            ON query_version.lifecycle_resource_fk = stat_query.ID, "+
-            "        tb_localised_strings loc "+
-            "WHERE       cubes.query_fk = query.ID "+
-            "    AND     query_version.query_fk = query.ID " +
-            "    AND     query_version.ID = :queryVersionFk " +
-            "    AND     stat_query.last_version = " + getBooleanValueForDatabase(true) +
-            "    AND     elem.publication_version_all_fk = pub.ID " +
-            "    AND     stat.title_fk = loc.international_string_fk " +
-            "    AND     "+isLastPublishedVersionConditions+"  "+
-            "    AND     operation.ID = stat.stat_operation_fk " +
-            "    AND     maintainer.id = stat.maintainer_fk");
+            "        loc.label, " +
+            "        stat.type " +
+            "FROM    tb_stat_resources stat " +
+            "INNER JOIN ( " +
 
+                // Publications
+                "SELECT pub.siemac_resource_fk " +
+                "FROM tb_publications_versions pub " +
+                "INNER JOIN tb_elements_levels elem on elem.publication_version_all_fk = pub.ID " +
+                "INNER JOIN tb_cubes cubes on cubes.ID = elem.table_fk " +
+
+                // - Queries
+                "INNER JOIN tb_queries query on cubes.query_fk = query.ID  " +
+                "INNER JOIN tb_queries_versions query_version on query_version.query_fk = query.ID " +
+                "INNER JOIN tb_stat_resources stat_query ON query_version.lifecycle_resource_fk = stat_query.ID " +
+                "WHERE stat_query.last_version = 'true' " +
+                "AND query_version.ID = :queryVersionFk " +
+
+                "UNION " +
+
+                // Multidatasets
+                "SELECT mul.siemac_resource_fk " +
+                "FROM tb_multidatasets_versions  mul " +
+                "INNER JOIN tb_md_cubes cubes on cubes.MULTIDATASET_VERSION_FK = mul.id " +
+
+                // - Queries
+                "INNER JOIN tb_queries query on cubes.query_fk = query.ID  " +
+                "INNER JOIN tb_queries_versions query_version on query_version.query_fk = query.ID " +
+                "INNER JOIN tb_stat_resources stat_query ON query_version.lifecycle_resource_fk = stat_query.ID " +
+                "WHERE stat_query.last_version = 'true' " +
+                "AND query_version.ID = :queryVersionFk " +
+
+            ") as resource on resource.siemac_resource_fk = stat.ID " +
+
+            "inner join tb_localised_strings loc on  stat.title_fk = loc.international_string_fk " +
+            "inner join tb_external_items operation on operation.ID = stat.stat_operation_fk " +
+            "inner join tb_external_items maintainer on maintainer.id = stat.maintainer_fk " +
+            "where " + buildLastPublishedVersionConditions(onlyLastPublished));
         //     @formatter:on
+
         query.setParameter("queryVersionFk", queryVersion.getId());
         query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
         return resources;
     }
 
-    private String getBooleanValueForDatabase(boolean value) throws MetamacException {
-            return value ? "true" : "false";
+    private String buildLastPublishedVersionConditions(boolean onlyLastPublished) {
+        StringBuilder lastVersionCondition = new StringBuilder(" ( ");
+        if (!onlyLastPublished) {
+            lastVersionCondition.append(" stat.last_version = 'true' ").append(" OR ");
+        }
+        lastVersionCondition.append(RepositoryUtils.isLastPublishedVersionConditions).append(" ) ");
+        return lastVersionCondition.toString();
     }
+
 }

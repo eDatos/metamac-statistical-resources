@@ -1,7 +1,8 @@
 package org.siemac.metamac.statistical.resources.core.dataset.repositoryimpl;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
-import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromRows;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromLifeCycleResourceRows;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils.isLastPublishedVersionConditions;
 
 import java.util.Date;
@@ -20,13 +21,11 @@ import org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedRe
 import org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
-import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -34,9 +33,6 @@ import org.springframework.stereotype.Repository;
  */
 @Repository("datasetVersionRepository")
 public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
-
-    @Autowired
-    private StatisticalResourcesConfiguration configuration;
 
     public DatasetVersionRepositoryImpl() {
     }
@@ -204,7 +200,8 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "       maintainerItems.code_nested, " +
                 "       stat.version_logic, " +
                 "       loc.locale, " +
-                "       loc.label " +
+                "       loc.label, " +
+                "       stat.type " + // will be null, lifecycle don't have type
                 " from  Tb_External_Items operItems, " +
                 "       Tb_External_Items maintainerItems, " +
                 "       Tb_Queries_Versions query Inner Join Tb_Stat_Resources stat On query.lifecycle_resource_fk = stat.Id, " +
@@ -228,7 +225,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("now", new DateTime().toDate());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromLifeCycleResourceRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
         return resources;
     }
 
@@ -241,7 +238,7 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
 
         String queryLinkedToDatasetAndDatasetVersionIsLastVersion =
             "         (query.dataset_fk = dataset_version.dataset_fk" +
-            "           And stat_dataset.Last_Version = " + getBooleanValueForDatabase(true) + ") ";
+            "           And stat_dataset.Last_Version = true ) ";
 
         String queryLinkedToDatasetAndDatasetVersionLastPublishedVersion =
             "         (query.dataset_fk = dataset_version.dataset_fk" +
@@ -255,7 +252,8 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "       maintainerItems.code_nested, " +
                 "       stat.version_logic, " +
                 "       loc.locale, " +
-                "       loc.label  " +
+                "       loc.label, " +
+                "       stat.type " + // will be null, lifecycle don't have type
                 "from   Tb_External_Items operItems, " +
                 "       Tb_External_Items maintainerItems, " +
                 "       Tb_Queries_Versions query Inner Join Tb_Stat_Resources stat " +
@@ -281,57 +279,22 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         query.setParameter("datasetVersionFk", datasetVersion.getId());
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromLifeCycleResourceRows(rows, TypeRelatedResourceEnum.QUERY_VERSION);
         return resources;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<RelatedResourceResult> retrieveIsPartOf(DatasetVersion datasetVersion) throws MetamacException {
-        //     @formatter:off
-        Query query = getEntityManager().createNativeQuery(
-            "SELECT  distinct stat.code, " +
-            "        stat.urn, " +
-            "        operation.code AS operCode, " +
-            "        operation.urn AS operUrn, " +
-            "        maintainer.code_nested AS code_nested, " +
-            "        stat.version_logic, "+
-            "        loc.locale, " +
-            "        loc.label " +
-            "FROM    tb_elements_levels elem INNER JOIN tb_cubes cubes " +
-            "            on cubes.ID = elem.table_fk, " +
-            "        tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
-            "            ON pub.siemac_resource_fk = stat.ID, " +
-            "        tb_external_items operation, " +
-            "        tb_external_items maintainer, " +
-            "        tb_datasets dataset, " +
-            "        tb_datasets_versions dataset_version INNER JOIN tb_stat_resources stat_dataset "+
-            "            ON dataset_version.siemac_resource_fk = stat_dataset.ID, "+
-            "        tb_localised_strings loc "+
-            "WHERE       cubes.dataset_fk = dataset.ID "+
-            "    AND     dataset_version.dataset_fk = dataset.ID " +
-            "    AND     dataset_version.ID = :datasetVersionFk " +
-            "    AND     stat_dataset.last_version = " + getBooleanValueForDatabase(true) +
-            "    AND     elem.publication_version_all_fk = pub.ID " +
-            "    AND     stat.title_fk = loc.international_string_fk " +
-            "    AND     (stat.last_version = " + getBooleanValueForDatabase(true) +
-            "           OR "+isLastPublishedVersionConditions+") " +
-            "    AND     operation.ID = stat.stat_operation_fk " +
-            "    AND     maintainer.id = stat.maintainer_fk");
+        return retrieveIsPartOf(datasetVersion, false);
+    }
 
-        //     @formatter:on
-        query.setParameter("datasetVersionFk", datasetVersion.getId());
-        query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
-        query.setParameter("now", new DateTime().toDate());
-
-        List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
-        return resources;
+    @Override
+    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion) throws MetamacException {
+        return retrieveIsPartOf(datasetVersion, true);
     }
 
     @SuppressWarnings("unchecked")
-    @Override
-    public List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(DatasetVersion datasetVersion) throws MetamacException {
+    private List<RelatedResourceResult> retrieveIsPartOf(DatasetVersion datasetVersion, boolean onlyLastPublished) throws MetamacException {
         //     @formatter:off
         Query query = getEntityManager().createNativeQuery(
                 "SELECT     distinct stat.code, " +
@@ -341,37 +304,53 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "           maintainer.code_nested AS code_nested,  " +
                 "           stat.version_logic, " +
                 "           loc.locale, " +
-                "           loc.label, stat_dataset.valid_to, pub.id " +
-                "FROM       tb_elements_levels elem INNER JOIN tb_cubes cubes " +
-                "              on cubes.ID = elem.table_fk,  " +
-                "           tb_publications_versions pub INNER JOIN tb_stat_resources stat " +
-                "               ON pub.siemac_resource_fk = stat.ID, " +
-                "           tb_external_items operation, " +
-                "           tb_external_items maintainer, " +
-                "           tb_datasets dataset, " +
-                "           tb_datasets_versions dataset_version INNER JOIN tb_stat_resources stat_dataset " +
-                "               ON dataset_version.siemac_resource_fk = stat_dataset.ID, " +
-                "           tb_localised_strings loc  " +
-                "WHERE      cubes.dataset_fk = dataset.ID " +
-                "   AND     dataset_version.dataset_fk = dataset.ID " +
-                "   AND     dataset_version.ID = :datasetVersionFk " +
-                "   AND     stat_dataset.proc_status = :publishedProcStatus " +
-                "   AND     stat_dataset.valid_from <= :now " +
-                "   AND     (stat_dataset.valid_to > :now or stat_dataset.valid_to is null) " +
-                "   AND     elem.publication_version_all_fk = pub.ID  "  +
-                "   AND     stat.title_fk = loc.international_string_fk  " +
-                "   AND     stat.proc_status = :publishedProcStatus " +
-                "   AND     "+ isLastPublishedVersionConditions +
-                "   AND     operation.ID = stat.stat_operation_fk " +
-                "   AND     maintainer.id = stat.maintainer_fk ");
+                "           loc.label, " +
+                "           stat.type " +
+                "FROM       tb_stat_resources stat " +
+                "INNER JOIN ( " +
 
-        //     @formatter:on
+                    // Publications
+                    "SELECT pub.siemac_resource_fk " +
+                    "FROM tb_publications_versions pub " +
+                    "INNER JOIN tb_elements_levels elem on elem.publication_version_all_fk = pub.ID " +
+                    "INNER JOIN tb_cubes cubes on cubes.ID = elem.table_fk " +
+
+                    // - Datasets
+                    "INNER JOIN tb_datasets dataset on cubes.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_datasets_versions dataset_version on dataset_version.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_stat_resources stat_dataset  ON dataset_version.siemac_resource_fk = stat_dataset.ID " +
+                    "WHERE " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
+                    "AND     dataset_version.ID = :datasetVersionFk " +
+
+                    "UNION " +
+
+                    // Multidatasets
+                    "SELECT mul.siemac_resource_fk " +
+                    "FROM tb_multidatasets_versions  mul " +
+                    "INNER JOIN tb_md_cubes cubes on cubes.MULTIDATASET_VERSION_FK = mul.id " +
+
+                    // - Datasets
+                    "INNER JOIN tb_datasets dataset on cubes.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_datasets_versions dataset_version on dataset_version.dataset_fk = dataset.ID " +
+                    "INNER JOIN tb_stat_resources stat_dataset  ON dataset_version.siemac_resource_fk = stat_dataset.ID " +
+                    "WHERE " + RepositoryUtils.buildLastPublishedVersionCondition("stat_dataset", onlyLastPublished) +
+                    "AND     dataset_version.ID = :datasetVersionFk " +
+
+                ") as resource on resource.siemac_resource_fk = stat.ID " +
+
+                "inner join tb_localised_strings loc on  stat.title_fk = loc.international_string_fk " +
+                "inner join tb_external_items operation on operation.ID = stat.stat_operation_fk " +
+                "inner join tb_external_items maintainer on maintainer.id = stat.maintainer_fk " +
+                "where " + RepositoryUtils.buildLastPublishedVersionCondition("stat", onlyLastPublished));
+            //     @formatter:on
         query.setParameter("datasetVersionFk", datasetVersion.getId());
-        query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
-        query.setParameter("now", new DateTime().toDate());
+        if (onlyLastPublished) {
+            query.setParameter("publishedProcStatus", ProcStatusEnum.PUBLISHED.name());
+            query.setParameter("now", new DateTime().toDate());
+        }
 
         List<Object> rows = query.getResultList();
-        List<RelatedResourceResult> resources = getRelatedResourceResultsFromRows(rows, TypeRelatedResourceEnum.PUBLICATION_VERSION);
+        List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
         return resources;
     }
 
@@ -451,7 +430,4 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         return replacing;
     }
 
-    private String getBooleanValueForDatabase(boolean value) throws MetamacException {
-            return value ? "true" : "false";
-    }
 }

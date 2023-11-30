@@ -54,7 +54,8 @@ Application DatasetsStatisticalResources {
     		PagedResult<@DatasetVersion> findDatasetVersionsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
-
+			"Calculate table size"
+			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
 			"Finds resource from cache by criteria"
 			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			
@@ -72,7 +73,7 @@ Application DatasetsStatisticalResources {
     		// Datasets
     		"Finds datasets by criteria"
     		PagedResult<@Dataset> findDatasetsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
-
+			
     		//Data related actions
     		"Retrieve Dataset version dimensions ids"
     		List<String> retrieveDatasetVersionDimensionsIds(String datasetVersionUrn) throws MetamacException;
@@ -123,6 +124,7 @@ Application DatasetsStatisticalResources {
     		
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
     		List<@DatasetVersion> retrievePublishedLastVersionDatasets() throws MetamacException;
+    		@DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId) throws MetamacException;
 		}
 
 
@@ -236,8 +238,10 @@ Application DatasetsStatisticalResources {
 
 			//Number of observations contained in the dataset
 			Long formatExtentObservations nullable;
-			//Number of diemnsions defined in the DSD
+			//Number of dimensions defined in the DSD
 			Integer formatExtentDimensions nullable;
+			//Number of cells defined in the DSD
+			Long formatExtentTableSize nullable;
 
 			//Publishing descriptors
 

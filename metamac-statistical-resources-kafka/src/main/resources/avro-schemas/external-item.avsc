@@ -33,7 +33,9 @@
             "MULTIDATASET",
             "VARIABLE_FAMILY",
             "VARIABLE",
-            "VARIABLE_ELEMENT"
+            "VARIABLE_ELEMENT",
+            "CATEGORY_ELEMENT",
+            "CODELIST_RESTRICTION"
         ]
     }
     

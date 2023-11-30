@@ -68,6 +68,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
 import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
@@ -101,6 +102,7 @@ import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatu
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.AbstractImportDatasetJob;
@@ -193,6 +195,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private SrmRestInternalService                srmRestInternalService;
+
+    @Autowired
+    StatisticalOperationsRestInternalService      statisticalOperationsRestInternalService;
 
     @Autowired
     private DatasetRepositoriesServiceFacade      datasetRepositoriesServiceFacade;
@@ -1180,6 +1185,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(taskInfoDataset.getDatasetVersionId());
 
+        boolean isLastVersionPublished = datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion();
+
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         logger.debug("Updating geocoverage cache for dataset {}", datasetVersionUrn);
@@ -1200,7 +1207,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         // discard all variable elements present in the array to avoid duplicated or outdated data
         geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(datasetVersionUrn);
 
-        if (Boolean.TRUE.equals(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion())) {
+        if (!isLastVersionPublished) {
+            isLastVersionPublished = isLastVersionPublished(ctx, datasetVersionUrn);
+        }
+
+        if (isLastVersionPublished) {
+            // disable old last version published version dataset.
             updateAllGeographicCoverageVariableElementsCache(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), datasetVersionUrn);
         }
 
@@ -1208,7 +1220,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
         }
         InternationalString datasetTitle = InternationalStringUtils.copy(datasetVersion.getSiemacMetadataStatisticalResource().getTitle());
-        InternationalString operationTitle = InternationalStringUtils.copy(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
 
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
@@ -1225,17 +1236,28 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
 
             ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
-            GeoCovVarElementCacheDatasetVersion result = updateGeographicCoverageVariableElementsCache(datasetVersion, datasetTitle, operationTitle, territoryVariableElement);
+            GeoCovVarElementCacheDatasetVersion result = updateGeographicCoverageVariableElementsCache(datasetVersion, datasetTitle, territoryVariableElement, isLastVersionPublished);
             if (datasetTitle.getId() == null) {
                 datasetTitle = result.getTitle();
-                operationTitle = result.getOperationTitle();
             }
 
         }
 
-        logger.debug("Processing geographic coverage to create the cache correctlyfinished");
+        logger.debug("Processing geographic coverage to create the cache correctly finished");
 
         markTaskAsFinished(ctx, jobKey);
+    }
+
+    /*
+     * if cache is manually updated, dataset can be in draft and this version is lastversion. For this case, it is necessary to calculate if this dataset is last published version
+     */
+    private boolean isLastVersionPublished(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+        //
+        String[] params = UrnUtils.splitUrnItemScheme(datasetVersionUrn);
+        String agencyId = params[0];
+        String resourceId = params[1];
+        DatasetVersion lastVersionDataset = datasetService.getDatasetLastVersionPublishedByDatasetUrn(ctx, agencyId, resourceId);
+        return lastVersionDataset != null && lastVersionDataset.getSiemacMetadataStatisticalResource().getUrn().equals(datasetVersionUrn);
     }
 
     private void markTaskAsFinishedInTransaction(ServiceContext ctx, String jobKey) {
@@ -1252,7 +1274,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void updateAllGeographicCoverageVariableElementsCache(String datasetUrn, String datasetVersionUrn) {
-        List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasets = findDatasetsByDatasetUrn(datasetUrn);
+        List<GeoCovVarElementCacheDatasetVersion> geoCovVarElementCacheDatasets = findDatasetsLastVersionByDatasetUrn(datasetUrn);
 
         for (GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion : geoCovVarElementCacheDatasets) {
             if (!geoCovVarElementCacheDatasetVersion.getUrn().equals(datasetVersionUrn)) {
@@ -1262,7 +1284,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
-    private List<GeoCovVarElementCacheDatasetVersion> findDatasetsByDatasetUrn(String datasetUrn) {
+    private List<GeoCovVarElementCacheDatasetVersion> findDatasetsLastVersionByDatasetUrn(String datasetUrn) {
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.urn())
                 .like(datasetUrn + "%").and().withProperty(GeoCovVarElementCacheDatasetVersionProperties.isLastVersion()).eq(Boolean.TRUE).distinctRoot().build();
         // @formatter:off
@@ -1301,19 +1323,18 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     
-    private GeoCovVarElementCacheDatasetVersion updateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, InternationalString datasetTitle, InternationalString operationTitle, ExternalItem variableElement) throws MetamacException {
+    private GeoCovVarElementCacheDatasetVersion updateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, InternationalString datasetTitle, ExternalItem variableElement, boolean isLastVersionPublished) throws MetamacException {
         GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
         geoCovVarElementCacheDatasetVersion.setCode(datasetVersion.getSiemacMetadataStatisticalResource().getCode());
         geoCovVarElementCacheDatasetVersion.setUrn(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         geoCovVarElementCacheDatasetVersion.setTitle(datasetTitle);        
         geoCovVarElementCacheDatasetVersion.setOperationCode(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
         geoCovVarElementCacheDatasetVersion.setOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-        geoCovVarElementCacheDatasetVersion.setOperationTitle(operationTitle);
         geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.FALSE);
         String maintainer = datasetVersion.getLifeCycleStatisticalResource().getMaintainer() != null ? datasetVersion.getLifeCycleStatisticalResource().getMaintainer().getCode() : null;
         geoCovVarElementCacheDatasetVersion.setHtmlLink(MetamacPortalWebUtils.buildDatasetVersionUrl(maintainer, datasetVersion.getLifeCycleStatisticalResource().getCode(), datasetVersion.getLifeCycleStatisticalResource().getVersionLogic(), configurationService.retrievePortalExternalWebApplicationUrlVisualizer()));
-        geoCovVarElementCacheDatasetVersion.setIsLastVersion(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion());
+        geoCovVarElementCacheDatasetVersion.setIsLastVersion(isLastVersionPublished);
         geoCovVarElementCacheDatasetVersion.setIsActivated(true);
         return geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
@@ -1754,6 +1775,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         // Callback
         getDatasetService().proccessDatasetFileImportationResult(ctx, taskInfoDataset.getDatasetVersionId(), filesResult);
+        publishConstraints(ctx, taskInfoDataset.getDatasetVersionId(), calculateConstraints);
     }
 
     private String generateDataSourceId(ServiceContext serviceContext, String fileName, DateTime dateTime) {
@@ -1782,15 +1804,29 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             // This means, you can come Draft, but in our business, the validation against constraints involves that are at least as marked as final
             ContentConstraint contentConstraint = constraintsService.retrieveContentConstraintByUrn(ctx, resourceInternal.getUrn(), Boolean.TRUE);
             result.add(contentConstraint);
-
-            if (!contentConstraint.isIsFinal()) {
-                constraintsService.publishContentConstraint(ctx, datasetVersionUrn, Boolean.FALSE); // mark as final logic, no mark as public
-            }
         }
 
         return result;
     }
 
+    /**
+     * Mark as final Dataset's content constraints
+     *
+     * @param ctx
+     * @param datasetVersionUrn
+     * @param constraintToPublish
+     * @return
+     * @throws MetamacException
+     */
+    private void publishConstraints(ServiceContext ctx, String datasetVersionUrn, List<ContentConstraint> constraintToPublish) throws MetamacException {
+
+        for (ContentConstraint contentConstraint : constraintToPublish) {
+            if (!contentConstraint.isIsFinal()) {
+                constraintsService.publishContentConstraint(ctx, datasetVersionUrn, Boolean.FALSE); // mark as final logic, no mark as public
+            }
+        }
+    }
+    
     private void saveAlternativeEnumeratedRepresetation(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, taskInfoDataset.getDatasetVersionId());
         for (FileDescriptor fileDescriptor : taskInfoDataset.getFiles()) {

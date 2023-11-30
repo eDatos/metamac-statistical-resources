@@ -50,8 +50,8 @@ public class ConstraintNonEnumeratedValuesSelectionForm extends GroupDynamicForm
         KeyValueDto keyValueDto = CommonUtils.getKeyValueOfDimension(dsdDimensionDto, regionValueDto);
         if (keyValueDto != null) {
             KeyPartTypeEnum keyPartType = CommonUtils.getKeyPartTypeOfKeyValue(keyValueDto);
-            setValue(DimensionConstraintsDS.INCLUSION_TYPE, BooleanUtils.isTrue(keyValueDto.getIncluded()) ? getCoreMessages().datasetConstraintInclusionTypeEnumINCLUSION() : getCoreMessages()
-                    .datasetConstraintInclusionTypeEnumEXCLUSION());
+            setValue(DimensionConstraintsDS.INCLUSION_TYPE,
+                    BooleanUtils.isTrue(keyValueDto.getIncluded()) ? getCoreMessages().datasetConstraintInclusionTypeEnumINCLUSION() : getCoreMessages().datasetConstraintInclusionTypeEnumEXCLUSION());
             setValue(DimensionConstraintsDS.KEY_PART_TYPE, keyPartType == null ? StringUtils.EMPTY : getCoreMessages().getString(getCoreMessages().keyPartTypeEnum() + keyPartType.name()));
             if (KeyPartTypeEnum.NORMAL.equals(keyPartType)) {
                 List<String> values = CommonUtils.getValuesOfKeyValue(keyValueDto);
