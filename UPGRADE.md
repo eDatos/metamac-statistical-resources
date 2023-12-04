@@ -11,7 +11,7 @@
 ## 8.2.1 a 8.2.2-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/8.2.1/db](etc/changes-from-release/8.2.1/db) 
 * Para EDATOS-4271 se proporciona un script que obtiene las observaciones reales de un dataset (incluyendo nulos) y las pone en el campo FORMAT_EXTENT_TABLE_SIZE. Los pasos del script se deberán ejecutar en la bd statistical-resources-data para obtener la información. Y ya el resultado final se hará sobre la bd statistical-resources.
-* Para la tarea anterior, con el fin de que el ckan actualice los enlaces de xlsx que superen el tamaño máximo permitido para este formato habrá que ejecutar el job de estatistical-resources "20231129_update_date_job_resend_dataset_to_publisher_ckan.sql" Ver hora de ejecución en release anterior ya que tarda bastante. 
+* Para la tarea anterior, con el fin de que el ckan actualice los enlaces de xlsx que superen el tamaño máximo permitido para este formato habrá que ejecutar el job de statistical-resources "20231129_update_date_job_resend_dataset_to_publisher_ckan.sql" Ver hora de ejecución en release anterior ya que tarda bastante. 
 * Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS debido a que se añade un nuevo campo FORMAT_EXTENT_TABLE_SIZE
 ******** curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
 
