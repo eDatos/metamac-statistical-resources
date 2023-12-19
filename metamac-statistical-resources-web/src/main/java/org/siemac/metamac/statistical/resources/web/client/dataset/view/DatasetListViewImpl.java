@@ -44,22 +44,19 @@ import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<DatasetListUiHandlers> implements DatasetListPresenter.DatasetListView {
-   
-    private DatasetVersionSearchSectionStack searchSectionStack;
 
-    private CustomToolStripButton            importDatasourcesButton;
+    private DatasetVersionSearchSectionStack     searchSectionStack;
 
-    private ImportZipDatasourceWithMappingWindow  importZipDatasourceWithMappingWindow;
-    private NewDatasetWindow                 newDatasetWindow;
+    private CustomToolStripButton                importDatasourcesButton;
+
+    private ImportZipDatasourceWithMappingWindow importZipDatasourceWithMappingWindow;
+    private NewDatasetWindow                     newDatasetWindow;
 
     @Inject
     public DatasetListViewImpl() {
         super();
 
         // ToolStrip
-
-        toolStrip.addSeparator();
-
         importDatasourcesButton = createImportDatasourcesButton();
         toolStrip.addButton(importDatasourcesButton);
 
@@ -103,7 +100,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
             }
         };
     }
-     
+
     @Override
     public void setUiHandlers(DatasetListUiHandlers uiHandlers) {
         super.setUiHandlers(uiHandlers);
@@ -171,10 +168,10 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
             @Override
             public void onClick(ClickEvent event) {
-            	if (StatisticalResourcesDefaults.defaultLanguage == null) { 
-            		getUiHandlers().createNewDatasetFailed(StatisticalResourcesWeb.getMessages().defaultLanguageIsNull());
-            		return; 
-            	}
+                if (StatisticalResourcesDefaults.defaultLanguage == null) {
+                    getUiHandlers().createNewDatasetFailed(StatisticalResourcesWeb.getMessages().defaultLanguageIsNull());
+                    return;
+                }
                 newDatasetWindow = new NewDatasetWindow(getConstants().datasetCreate());
                 newDatasetWindow.setUiHandlers(getUiHandlers());
                 newDatasetWindow.getSave().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
@@ -281,7 +278,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
                 importZipDatasourceWithMappingWindow.show();
             }
         });
-        
+
         return importDatasourcesButton;
     }
 
@@ -368,7 +365,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
         DatasetRecord datasetRecord = (DatasetRecord) record;
         return datasetRecord.getDatasetVersionBaseDto();
     }
-    
+
     @Override
     public void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field) {
         importZipDatasourceWithMappingWindow.setDataProviderSchemes(result.getDataProviderSchemes(), result.getFirstResultOut(), result.getTotalResults());
@@ -379,10 +376,10 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
         importZipDatasourceWithMappingWindow.setDataProvider(result.getDataProviders(), result.getFirstResultOut(), result.getTotalResults());
 
     }
-    
+
     @Override
     public void setTemporalCodesForField(GetTemporalGranularitiesListResult result, DatasetMetadataExternalField field) {
         importZipDatasourceWithMappingWindow.setCodesForUpdateFrequency(result.getTemporalGranularities(), result.getFirstResultOut(), result.getTotalResults());
     }
-    
+
 }
