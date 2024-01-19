@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.stream.messages.mappers;
 
-import static org.siemac.metamac.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
+import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
-import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
@@ -52,7 +50,7 @@ public class QueryVersionDo2AvroMapper {
                 .setRelatedDatasetVersion(relatedDatasetVersionAvro)
                 .setStatus(queryStatusEnumDoToAvro(source.getStatus()))
                 .setType(queryTypeEnumDoToAvro(source.getType()))
-                .setIsPartOf(isPartOfAvro(source))
+                .setIsPartOf(AvroMapperUtils.relatedResourceList2Avro(queryVersionRepository.retrieveIsPartOf(source)))
                 .build();
         // @formatter:on
 
@@ -94,17 +92,6 @@ public class QueryVersionDo2AvroMapper {
             return datasetVersionRepository.retrieveLastVersion(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
         }
         return null;
-    }
-
-    private List<RelatedResourceAvro> isPartOfAvro(QueryVersion source) throws MetamacException {
-        List<RelatedResourceResult> isPartOfList = queryVersionRepository.retrieveIsPartOf(source);
-
-        List<RelatedResourceAvro> targetList = new ArrayList<RelatedResourceAvro>();
-        for (RelatedResourceResult item : isPartOfList) {
-            RelatedResource relatedResource = AvroMapperUtils.createRelatedResourceFromRelatedResourceResult(item);
-            targetList.add(RelatedResourceDo2AvroMapper.do2Avro(relatedResource));
-        }
-        return targetList;
     }
 
     private Map<String, List<CodeItemAvro>> selectionToAvro(List<QuerySelectionItem> source) {
