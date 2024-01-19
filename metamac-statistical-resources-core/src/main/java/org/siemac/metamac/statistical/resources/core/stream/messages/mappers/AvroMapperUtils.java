@@ -195,7 +195,8 @@ public class AvroMapperUtils {
             // target.setType(TypeRelatedResourceEnum.MULTIDATASET_VERSION);
             // break;
             default:
-                log.info("type not supported in avro dataset publication {} urn resource: {}", source.getType() != null ? source.getType() : "-", source.getUrn());
+                log.debug("Dataset/Query related resource type not supported in avro publication {} urn resource: {}. Anyway, the resource will be sent to kafka.",
+                        source.getType() != null ? source.getType() : "-", source.getUrn());
                 return null;
         }
         return target;
