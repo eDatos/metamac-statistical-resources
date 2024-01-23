@@ -21,7 +21,7 @@ insert into temp_dataset_observations select dataset_id from tb_datasets;
 select 'update temp_dataset_observations set observations = observations*(select count(distinct(' || column_name || ')) from ' || table_name || ') where urn = ''' || td.dataset_id || ''';' 
 FROM tb_datasets td, tb_dataset_dimensions tdd 
 where td.id = tdd.dataset_fk 
-order by td.dataset_id; 
+order by td.dataset_id;
 
 --4) ejecutar updates generados en paso anterior tiempo ejecución en local: 2minutos
 
