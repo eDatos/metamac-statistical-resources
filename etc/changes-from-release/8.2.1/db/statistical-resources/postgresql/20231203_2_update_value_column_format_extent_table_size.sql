@@ -15,13 +15,13 @@ create table temp_dataset_observations
 CREATE INDEX IX_temp_dataset_observations ON temp_dataset_observations(urn);
 
 -- 2) inicializar tabla temporal con todos los datasets existentes
-insert into temp_dataset_observations select dataset_id from tb_datasets 
+insert into temp_dataset_observations select dataset_id from tb_datasets; 
 
 -- 3) generar updates a tabla temporal
 select 'update temp_dataset_observations set observations = observations*(select count(distinct(' || column_name || ')) from ' || table_name || ') where urn = ''' || td.dataset_id || ''';' 
 FROM tb_datasets td, tb_dataset_dimensions tdd 
 where td.id = tdd.dataset_fk 
-order by td.dataset_id 
+order by td.dataset_id;
 
 --4) ejecutar updates generados en paso anterior tiempo ejecución en local: 2minutos
 
@@ -33,7 +33,7 @@ update temp_dataset_observations set observations = observations*(select count(d
 
 --5) Obtener updates para statistical-resources
 select 'update tb_datasets_versions tdv set format_extent_table_size = ' || t.observations || ' from tb_stat_resources tsr where  tdv.siemac_resource_fk = tsr.id and tsr.urn = ''' || t.urn || ''';'
-from temp_dataset_observations t where observations is not null and observations > 0
+from temp_dataset_observations t where observations is not null and observations > 0;
 
 -----------------FIN SCRIPTS A EJECUTAR SOBRE LA BASE DE DATOS STATISTICAL-RESOURCES-DATA
 
