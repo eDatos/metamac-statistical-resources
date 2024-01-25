@@ -45,10 +45,13 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionVisualisation;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Item;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ItemResource;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.Key;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.KeyPart;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Quantity;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.ShowDecimalPrecision;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.TextFormat;
@@ -80,7 +83,49 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.*;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeDimension;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeDimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ComponentType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintCodeRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintCodeRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Contact;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Contacts;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttribute;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataStructureDefinition;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionsId;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedAttributeValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedAttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.MeasureQuantity;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NextVersionType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Organisation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceType;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.VersionRationaleTypes;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.CommonMetadataRestExternalFacade;
@@ -203,6 +248,63 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         dsdProcessorResult.setAttributes(DsdExternalProcessor.getAttributes(dataStructure));
         dsdProcessorResult.setGroups(DsdExternalProcessor.getGroups(dataStructure));
         return dsdProcessorResult;
+    }
+
+    @Override
+    public ConstraintDimensionRepresentations processDatasetConstraint(String datasetUrn) throws MetamacException {
+
+        ContentConstraint contentConstraint = srmRestExternalFacade.retrieveDatasetContentConstraint(datasetUrn);
+
+        if (contentConstraint != null) {
+
+            ConstraintDimensionRepresentations constraintDimensionRepresentations = new ConstraintDimensionRepresentations();
+
+            constraintDimensionRepresentations.setId(contentConstraint.getId());
+            constraintDimensionRepresentations.setUrn(contentConstraint.getUrn());
+
+            if (contentConstraint.getRegions().getRegions().isEmpty()) {
+                constraintDimensionRepresentations.setTotal(BigInteger.valueOf(0));
+            } else {
+                constraintDimensionRepresentations.setTotal(contentConstraint.getRegions().getRegions().get(0).getKeys().getTotal());
+                constraintDimensionRepresentations.getDimensions().addAll(toConstraintDimensionRepresentations(contentConstraint));
+            }
+
+            return constraintDimensionRepresentations;
+        }
+        return null;
+    }
+
+    private List<ConstraintDimensionRepresentation> toConstraintDimensionRepresentations(ContentConstraint contentConstraint) throws MetamacException {
+        List<ConstraintDimensionRepresentation> constraintDimensionRepresentations = new ArrayList<ConstraintDimensionRepresentation>();
+
+        for (Key key : contentConstraint.getRegions().getRegions().get(0).getKeys().getKeies()) {
+            ConstraintDimensionRepresentation constraintDimensionRepresentation = new ConstraintDimensionRepresentation();
+            constraintDimensionRepresentation.setIncluded(key.isIncluded());
+
+            constraintDimensionRepresentation.setRepresentations(toConstraintCodeRepresentation(key.getKeyParts().getKeyParts()));
+
+            if (!constraintDimensionRepresentation.getRepresentations().getRepresentations().isEmpty()) {
+                constraintDimensionRepresentation.setPosition(key.getKeyParts().getKeyParts().get(0).getPosition());
+                constraintDimensionRepresentation.setDimensionId(key.getKeyParts().getKeyParts().get(0).getIdentifier());
+            }
+
+            constraintDimensionRepresentations.add(constraintDimensionRepresentation);
+        }
+
+        return constraintDimensionRepresentations;
+
+    }
+
+    private ConstraintCodeRepresentations toConstraintCodeRepresentation(List<KeyPart> keyParts) {
+        ConstraintCodeRepresentations codeRepresentations = new ConstraintCodeRepresentations();
+        codeRepresentations.setTotal(BigInteger.valueOf(keyParts.size()));
+        for (KeyPart keyPart : keyParts) {
+            ConstraintCodeRepresentation codeRepresentation = new ConstraintCodeRepresentation();
+            codeRepresentation.setCode(keyPart.getValue());
+            codeRepresentations.getRepresentations().add(codeRepresentation);
+        }
+
+        return codeRepresentations;
     }
 
     @Override
