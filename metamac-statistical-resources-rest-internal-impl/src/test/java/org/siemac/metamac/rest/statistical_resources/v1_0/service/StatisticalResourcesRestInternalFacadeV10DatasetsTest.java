@@ -298,7 +298,7 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
         String[] requestUris = new String[]{requestBase + "?lang=es", requestBase + ".json?lang=es", requestBase + "?_type=json&lang=es"};
         for (int i = 0; i < requestUris.length; i++) {
             String requestUri = requestUris[i] + "&fields=+constraints";
-            InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDataset.id1.json");
+            InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDataset.id2.json");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_JSON, Status.OK, responseExpected);
         }
     }
