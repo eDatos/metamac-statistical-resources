@@ -69,6 +69,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources.v1_0.utils.CommonMetadataRestMocks;
 import org.siemac.metamac.rest.structural_resources.v1_0.utils.RestDoMocks;
@@ -1024,6 +1025,7 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
 
         mockRetrieveStatisticalOperationById();
         mockFindGeoCovVarElementCacheDatasetVersionByCondition();
+        mockConstraintDataset();
     }
 
     protected QueryVersion mockQueryVersionRepositoryRetrieveLastVersionAnswer(InvocationOnMock invocation) {
@@ -1132,4 +1134,19 @@ public abstract class StatisticalResourcesRestExternalFacadeV10BaseTest extends 
                     };
                 });
     }
+
+    private void mockConstraintDataset() throws MetamacException {
+
+        when(srmRestExternalFacade.retrieveDatasetContentConstraint(any(String.class))).thenAnswer(new Answer<ContentConstraint>() {
+
+            @Override
+            public ContentConstraint answer(InvocationOnMock invocation) throws Throwable {
+                String urn = (String) invocation.getArguments()[0];
+                String[] urnSplited = UrnUtils.splitUrnItemScheme(urn);
+                return SrmRestMocks.mockConstraint(urnSplited[0], urnSplited[1], urnSplited[2]);
+            };
+        });
+
+    }
+
 }
