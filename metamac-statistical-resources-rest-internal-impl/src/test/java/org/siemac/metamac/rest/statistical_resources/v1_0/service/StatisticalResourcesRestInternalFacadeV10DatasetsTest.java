@@ -297,7 +297,7 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
         String requestBase = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
         String[] requestUris = new String[]{requestBase + "?lang=es", requestBase + ".json?lang=es", requestBase + "?_type=json&lang=es"};
         for (int i = 0; i < requestUris.length; i++) {
-            String requestUri = requestUris[i] + "&fields=+constraint";
+            String requestUri = requestUris[i] + "&fields=+constraints";
             InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDataset.id1.json");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_JSON, Status.OK, responseExpected);
         }
@@ -308,7 +308,7 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
         String requestBase = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
         String[] requestUris = new String[]{requestBase + "?lang=es", requestBase + ".xml?lang=es", requestBase + "?_type=xml&lang=es"};
         for (int i = 0; i < requestUris.length; i++) {
-            String requestUri = requestUris[i] + "&fields=+constraint";
+            String requestUri = requestUris[i] + "&fields=+constraints";
             InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/datasets/retrieveDataset.id2.xml");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_XML, Status.OK, responseExpected);
         }
