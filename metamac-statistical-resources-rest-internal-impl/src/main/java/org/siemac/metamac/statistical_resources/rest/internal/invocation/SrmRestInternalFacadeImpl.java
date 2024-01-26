@@ -1,7 +1,11 @@
 package org.siemac.metamac.statistical_resources.rest.internal.invocation;
 
 import org.apache.cxf.jaxrs.client.WebClient;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.rest.common.v1_0.domain.ComparisonOperator;
+import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Agency;
@@ -9,9 +13,13 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelis
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraintCriteriaPropertyRestriction;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraints;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElementsGeoInfo;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.statistical_resources.rest.common.impl.utils.CommonConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +121,40 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
         String variableID = urnSplited[0];
         String resourceID = urnSplited[1];
         return restApiLocator.getSrmRestExternalFacadeV10().findVariableElementsGeoInfoXml(variableID, resourceID, null, null, null, null, null);
+    }
+
+    @Override
+    public ContentConstraint retrieveDatasetContentConstraint(String datasetUrn) {
+        try {
+
+            String urnConstraint = findContentConstraints(datasetUrn);
+            if (urnConstraint != null) {
+                String[] contentConstraintComponents = GeneratorUrnUtils.extractVersionableArtefactParts(urnConstraint);
+                String agencyId = contentConstraintComponents[0];
+                String resourceId = contentConstraintComponents[1];
+                String version = contentConstraintComponents[2];
+                return restApiLocator.getSrmRestExternalFacadeV10().retrieveContentConstraint(agencyId, resourceId, version, null);
+            }
+            return null;
+        } catch (Exception e) {
+            throw toRestException(e);
+        }
+    }
+
+    private String findContentConstraints(String datasetUrn) throws MetamacException {
+
+        StringBuilder queryBuilder = new StringBuilder(ContentConstraintCriteriaPropertyRestriction.ARTEFACT_URN.value());
+        queryBuilder.append(CommonConstants.SPACE).append(ComparisonOperator.EQ).append(CommonConstants.SPACE).append(CommonConstants.DOUBLE_QUOTE).append(datasetUrn)
+                .append(CommonConstants.DOUBLE_QUOTE);
+
+        ContentConstraints contentConstraint = restApiLocator.getSrmRestExternalFacadeV10().findContentConstraints(queryBuilder.toString(), null, null, null, null);
+
+        if (contentConstraint != null && !contentConstraint.getContentConstraints().isEmpty()) {
+            Resource datasetConstraint = contentConstraint.getContentConstraints().get(0);
+            return datasetConstraint.getUrn();
+        }
+
+        return null;
     }
 
     private RestException toRestException(Exception e) {

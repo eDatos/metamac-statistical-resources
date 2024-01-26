@@ -127,11 +127,11 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     @Override
     public Dataset retrieveDataset(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
         try {
-	            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-	            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
-	            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-	            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-	            return datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            return datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -158,10 +158,10 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
     }
 
-	@Override
+    @Override
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
         return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv");
-	}
+    }
 
     @Override
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
@@ -492,10 +492,10 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetHead (String agencyID, String resourceID, String version) {
-    	if (!commonService.checkDatasetVersion(agencyID, resourceID, version)) {
-    		return Response.status(Response.Status.NOT_FOUND).build();
-    	}
-    	return Response.ok().build();
+    public Response retrieveDatasetHead(String agencyID, String resourceID, String version) {
+        if (!commonService.checkDatasetVersion(agencyID, resourceID, version)) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok().build();
     }
 }

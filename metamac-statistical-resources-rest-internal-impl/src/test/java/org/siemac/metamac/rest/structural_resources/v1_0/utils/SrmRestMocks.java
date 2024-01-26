@@ -32,6 +32,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contact;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Contacts;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureComponents;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
@@ -43,8 +44,15 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Empty;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Group;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Groups;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.KeyPart;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.KeyParts;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Keys;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.MeasureDimension;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Quantity;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Region;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionValueType;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Regions;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Representation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ShowDecimalPrecision;
@@ -276,8 +284,9 @@ public class SrmRestMocks {
         code.setOpen(open);
         return code;
     }
-    
-    public static CodeResourceInternal mockCodeResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn, Integer order, Boolean open) {
+
+    public static CodeResourceInternal mockCodeResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn, Integer order,
+            Boolean open) {
         CodeResourceInternal code = mockCodeResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn, order, open);
         code.setDescription(mockInternationalString("Description " + resourceID));
         return code;
@@ -294,7 +303,7 @@ public class SrmRestMocks {
                 + maintainableVersionID + "/concepts/" + resourceID));
         return concept;
     }
-    
+
     public static ConceptResourceInternal mockConceptResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
         ConceptResourceInternal concept = mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn);
         concept.setDescription(mockInternationalString("Description " + resourceID));
@@ -378,7 +387,8 @@ public class SrmRestMocks {
         return attribute;
     }
 
-    private static AttributeBase mockAttributeDimension(String id, AttributeQualifierType type, List<String> dimensions, ResourceInternal enumeratedCodelist, ResourceInternal enumeratedConceptScheme) {
+    private static AttributeBase mockAttributeDimension(String id, AttributeQualifierType type, List<String> dimensions, ResourceInternal enumeratedCodelist,
+            ResourceInternal enumeratedConceptScheme) {
         Attribute attribute = new Attribute();
         mockAttributeBase(id, attribute, enumeratedCodelist, enumeratedConceptScheme);
         attribute.setAttributeRelationship(new AttributeRelationship());
@@ -492,5 +502,78 @@ public class SrmRestMocks {
         Contact contact = new Contact();
         contact.setName(mockInternationalString(contactId));
         return contact;
+    }
+
+    public static ContentConstraint mockConstraint(String agencyID, String resourceID, String version) {
+        String constraintResourceId = resourceID + "_constraint";
+        ContentConstraint contentConstraint = new ContentConstraint();
+        contentConstraint.setUrn("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=" + agencyID + ":" + resourceID + "(" + version + ")");
+        contentConstraint.setId(resourceID);
+
+        ResourceInternal resource = new ResourceInternal();
+        resource.setUrn("urn:sdmx:org.sdmx.infomodel.registry.ContentConstraint=" + agencyID + ":" + constraintResourceId + "(" + version + ")");
+        resource.setId(resourceID);
+
+        contentConstraint.setConstraintAttachment(resource);
+
+        contentConstraint.setRegions(mockConstraintRegions(2, 3));
+
+        return contentConstraint;
+    }
+
+    private static Regions mockConstraintRegions(int numDimensions, int numValuesxRegion) {
+        Regions regions = new Regions();
+
+        regions.getRegions().add(mockConstraintRegion(numDimensions, numValuesxRegion));
+
+        regions.setTotal(BigInteger.valueOf(1));
+        return regions;
+    }
+
+    private static Region mockConstraintRegion(int numRegions, int numValues) {
+        Region region = new Region();
+
+        region.setRegionValueType(RegionValueType.CUBE);
+        region.setKeys(mockConstraintKeys(numRegions, numValues));
+
+        return region;
+
+    }
+
+    private static Keys mockConstraintKeys(int numRegions, int numValues) {
+        Keys keys = new Keys();
+
+        for (int i = 0; i < numRegions; i++) {
+            keys.getKeies().add(mockConstraintKey("dimension_" + i, numValues, i));
+        }
+        keys.setTotal(BigInteger.valueOf(numRegions));
+
+        return keys;
+    }
+
+    private static Key mockConstraintKey(String regionsName, int numValues, int position) {
+        Key key = new Key();
+
+        key.setIncluded(true);
+        key.setKeyParts(mockConstraintKeyParts(regionsName, numValues, position));
+
+        return key;
+    }
+
+    private static KeyParts mockConstraintKeyParts(String regionsName, int numValues, int position) {
+        KeyParts keyParts = new KeyParts();
+        String valueName = "_value_";
+        for (int i = 0; i < numValues; i++) {
+            KeyPart keyPart = new KeyPart();
+            keyPart.setIdentifier(regionsName);
+            keyPart.setPosition(position);
+            keyPart.setValue(regionsName + valueName + i);
+            keyPart.setCascadeValues(false);
+            keyParts.getKeyParts().add(keyPart);
+        }
+
+        keyParts.setTotal(BigInteger.valueOf(numValues));
+
+        return keyParts;
     }
 }

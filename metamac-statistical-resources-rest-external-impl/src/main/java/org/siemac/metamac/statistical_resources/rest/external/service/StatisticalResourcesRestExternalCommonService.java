@@ -5,6 +5,7 @@ import java.util.List;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -15,6 +16,7 @@ public interface StatisticalResourcesRestExternalCommonService {
 
     public PagedResult<DatasetVersion> findDatasetVersions(String agencyID, String resourceID, String version, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
     public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version);
+    public ContentConstraint retrieveDatasetConstraintVersion(String datasetUrn);
     public Boolean checkDatasetVersion(String agencyID, String resourceID, String version);
     public DatasetVersion retrieveDatasetLastPublishedVersionByUrn(String urn);
 
@@ -26,7 +28,7 @@ public interface StatisticalResourcesRestExternalCommonService {
 
     public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
     public MultidatasetVersion retrieveMultidatasetVersion(String agencyID, String resourceID);
-    
+
     public PagedResult<GeoCovVarElementCacheDatasetVersion> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
 
 }
