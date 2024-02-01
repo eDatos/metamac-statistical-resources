@@ -4488,7 +4488,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\",  \"+keywords\", \"+dimension.description\" y \"+constraint\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description\r\n- fields=+keywords\r\n- fields=+constraint (limitaciones de datasets)"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\",  \"+keywords\", \"+dimension.description\" y \"+constraints\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description\r\n- fields=+keywords\r\n- fields=+constraints (limitaciones de datasets)"
                },
                {
                   "name":"lang",
