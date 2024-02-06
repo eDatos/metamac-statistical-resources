@@ -38,6 +38,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
+import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
@@ -52,6 +53,8 @@ import com.smartgwt.client.widgets.form.fields.events.HasClickHandlers;
 public class NewQueryWindow extends CustomWindow {
 
     private static final int                                         FORM_ITEM_CUSTOM_WIDTH = 300;
+    private static final int                                         MAX_HEIGHT             = 800;
+    private static final int                                         MAX_NUM_OF_ELEMENTS    = 7;
     private static final String                                      FIELD_SAVE             = "save-query";
 
     protected CustomDynamicForm                                      form;
@@ -214,6 +217,10 @@ public class NewQueryWindow extends CustomWindow {
         });
         fields.add(saveItem);
         form.setFields(fields.toArray(new FormItem[fields.size()]));
+        if (fields.size() > MAX_NUM_OF_ELEMENTS) {
+            form.setHeight(MAX_HEIGHT);
+            form.setOverflow(Overflow.AUTO);
+        }
         form.redraw();
     }
 
