@@ -788,6 +788,10 @@
                   "updateFrequency":{
                      "description":"",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "constraints":{
+                     "description":"",
+                     "$ref":"#/definitions/ConstraintDimensionRepresentations"
                   }
                }
             }
@@ -2912,6 +2916,13 @@
                      },
                      "description":"",
                      "$ref":"#/definitions/Resource"
+                  },
+                   "constraints":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"",
+                     "$ref":"#/definitions/ConstraintDimensionRepresentations"
                   }
                }
             }
@@ -3909,6 +3920,76 @@
          ],
          "description":""
       },
+      "ConstraintCodeRepresentation":{
+         "type":"object",
+         "title":"ConstraintCodeRepresentation",
+         "properties":{
+            "code":{
+               "description":"",
+               "type":"string"
+            }
+         },
+         "description":""
+      },
+      "ConstraintCodeRepresentations":{
+         "type":"object",
+         "title":"ConstraintCodeRepresentations",
+         "properties":{
+            "representation":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/ConstraintCodeRepresentation"
+               }
+            },
+            "total":{
+               "description":"",
+               "type":"number"
+            }
+         },
+         "description":""
+      },
+      "ConstraintDimensionRepresentation":{
+         "type":"object",
+         "title":"ConstraintDimensionRepresentation",
+         "properties":{
+            "dimensionId":{
+               "description":"",
+               "type":"string"
+            },
+            "representations":{
+               "description":"",
+               "$ref":"#/definitions/ConstraintCodeRepresentations"
+            }
+         },
+         "description":""
+      },
+      "ConstraintDimensionRepresentations":{
+         "type":"object",
+         "title":"ConstraintDimensionRepresentations",
+         "properties":{
+         	"id":{
+               "description":"",
+               "type":"string"
+            },
+            "urn":{
+               "description":"",
+               "type":"string"
+            },
+            "dimensions":{
+               "description":"",
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/ConstraintDimensionRepresentation"
+               }
+            },
+            "total":{
+               "description":"",
+               "type":"number"
+            }
+         },
+         "description":""
+      },
    },
    "paths":{
       "/v1.0/collections":{
@@ -4407,7 +4488,7 @@
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\",  \"+keywords\" y \"+dimension.description\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description\r\n- fields=+keywords"
+                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\",  \"+keywords\", \"+dimension.description\" y \"+constraints\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description\r\n- fields=+keywords\r\n- fields=+constraints (limitaciones de datasets)"
                },
                {
                   "name":"lang",

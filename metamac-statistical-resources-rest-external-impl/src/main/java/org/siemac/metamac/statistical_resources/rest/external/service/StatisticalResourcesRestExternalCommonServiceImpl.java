@@ -17,6 +17,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceProperties.LifeCycleStatisticalResourceProperty;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResourceProperties.SiemacMetadataStatisticalResourceProperty;
@@ -38,6 +39,7 @@ import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryServi
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCriteriaUtils;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,6 +59,9 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
 
     @Autowired
     private MultidatasetService   multidatasetService;
+
+    @Autowired
+    private SrmRestExternalFacade srmRestExternalFacade;
 
     @Override
     public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version) {
@@ -78,7 +83,18 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
             throw manageException(e);
         }
     }
-    
+
+    @Override
+    public ContentConstraint retrieveDatasetConstraintVersion(String datasetUrn) {
+        try {
+            // Retrieve
+            return srmRestExternalFacade.retrieveDatasetContentConstraint(datasetUrn);
+
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
     @Override
     public Boolean checkDatasetVersion(String agencyID, String resourceID, String version) {
         try {
@@ -111,7 +127,7 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
             throw manageException(e);
         }
     }
-    
+
     @Override
     public PagedResult<GeoCovVarElementCacheDatasetVersion> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
@@ -120,9 +136,8 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
             throw manageException(e);
         }
     }
-    
-    private PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery,
-            PagingParameter pagingParameter) throws MetamacException {
+
+    private PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
 
         // Criteria to find by criteria
         List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
@@ -131,10 +146,11 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
         } else {
             conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).distinctRoot().build());
         }
-     
+
         // only activated records are available
-        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(true).buildSingle());
-        
+        conditionalCriteria.add(
+                ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(true).buildSingle());
+
         // Find
         return datasetService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
     }

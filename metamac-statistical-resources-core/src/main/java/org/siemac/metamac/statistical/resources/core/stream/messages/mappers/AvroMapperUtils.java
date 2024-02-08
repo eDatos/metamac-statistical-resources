@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.stream.messages.mappers;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +28,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Publicat
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.stream.messages.InternationalStringAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.RelatedResourceAvro;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -192,7 +195,8 @@ public class AvroMapperUtils {
             // target.setType(TypeRelatedResourceEnum.MULTIDATASET_VERSION);
             // break;
             default:
-                log.info("type not supported in avro dataset publication {} urn resource: {}", source.getType() != null ? source.getType() : "-", source.getUrn());
+                log.debug("Dataset/Query related resource type not supported in avro publication {} urn resource: {}. Anyway, the resource will be sent to kafka.",
+                        source.getType() != null ? source.getType() : "-", source.getUrn());
                 return null;
         }
         return target;
@@ -205,5 +209,16 @@ public class AvroMapperUtils {
             return InternationalStringDo2AvroMapper.mapDo2Avro(internationalStringValue);
         }
         return null;
+    }
+
+    public static List<RelatedResourceAvro> relatedResourceList2Avro(List<RelatedResourceResult> sourceList) throws MetamacException {
+        List<RelatedResourceAvro> targetList = new ArrayList<RelatedResourceAvro>();
+        for (RelatedResourceResult item : sourceList) {
+            RelatedResource relatedResource = AvroMapperUtils.createRelatedResourceFromRelatedResourceResult(item);
+            if (relatedResource != null) {
+                targetList.add(RelatedResourceDo2AvroMapper.do2Avro(relatedResource));
+            }
+        }
+        return targetList;
     }
 }

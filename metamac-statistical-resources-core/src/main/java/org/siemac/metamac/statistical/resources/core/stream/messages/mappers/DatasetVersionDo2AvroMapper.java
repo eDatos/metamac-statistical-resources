@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
-import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
-import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
@@ -18,7 +16,6 @@ import org.siemac.metamac.statistical.resources.core.stream.messages.Categorisat
 import org.siemac.metamac.statistical.resources.core.stream.messages.CodeDimensionAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetVersionAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.ExternalItemAvro;
-import org.siemac.metamac.statistical.resources.core.stream.messages.RelatedResourceAvro;
 import org.siemac.metamac.statistical.resources.core.stream.messages.TemporalCodeAvro;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 
@@ -48,7 +45,7 @@ public class DatasetVersionDo2AvroMapper {
                 .setBibliographicCitation(InternationalStringDo2AvroMapper.do2Avro(source.getBibliographicCitation())).setDimensionsCoverage(dimensions).setAttributesCoverage(coverageList)
                 .setCategorisations(categorisations).setGeographicCoverage(geographicCoverageList).setTemporalCoverage(temporalCoverageList).setMeasureCoverage(measureCoverageList)
                 .setGeographicGranularities(geoGranList).setTemporalGranularities(temporalGranList).setStatisticalUnit(statisticalUnitList)
-                .setIsPartOf(relatedResourceList2Avro(AvroMapperUtils.getDatasetVersionRepository().retrieveIsPartOf(source)))
+                .setIsPartOf(AvroMapperUtils.relatedResourceList2Avro(AvroMapperUtils.getDatasetVersionRepository().retrieveIsPartOf(source)))
                 .setVisualizerHtmlLink(getDatasetVersionVisualizerHtmlLink(source, urlBaseExternalVisualizer)).setFormatExtentObservations(source.getFormatExtentObservations()).build();
         return target;
     }
@@ -58,17 +55,6 @@ public class DatasetVersionDo2AvroMapper {
         String htmlLink = MetamacPortalWebUtils.buildDatasetVersionUrl(source.getLifeCycleStatisticalResource().getMaintainer().getCode(), source.getLifeCycleStatisticalResource().getCode(),
                 source.getLifeCycleStatisticalResource().getVersionLogic(), urlBaseExternalVisualizer);
         return htmlLink;
-    }
-
-    private static List<RelatedResourceAvro> relatedResourceList2Avro(List<RelatedResourceResult> sourceList) throws MetamacException {
-        List<RelatedResourceAvro> targetList = new ArrayList<RelatedResourceAvro>();
-        for (RelatedResourceResult item : sourceList) {
-            RelatedResource relatedResource = AvroMapperUtils.createRelatedResourceFromRelatedResourceResult(item);
-            if (relatedResource != null) {
-                targetList.add(RelatedResourceDo2AvroMapper.do2Avro(relatedResource));
-            }
-        }
-        return targetList;
     }
 
     protected static List<ExternalItemAvro> genericExternalItemList2Avro(Collection<ExternalItem> source) {

@@ -5,6 +5,7 @@ import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElementsGeoInfo;
 
@@ -21,4 +22,6 @@ public interface SrmRestExternalFacade {
     public VariableElementsGeoInfo findVariableElementsGeoInfo(String urn);
 
     public Agency retrieveAgency(String urn);
+
+    public ContentConstraint retrieveDatasetContentConstraint(String datasetUrn);
 }
