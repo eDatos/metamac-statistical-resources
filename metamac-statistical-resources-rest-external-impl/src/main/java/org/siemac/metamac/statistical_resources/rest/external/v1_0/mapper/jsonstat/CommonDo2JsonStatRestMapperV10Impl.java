@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -256,24 +257,28 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         // dimension values though the order in DataAttributes class.
 
         if (attribute != null && attribute.getAttributeValues() != null) {
-            String[] dataAttributeValues = null;
-            for (DataAttribute dataAtt : dataAttributes.getAttributes()) {
-                if (dataAtt.getId().equals(attribute.getId())) {
-                    dataAttributeValues = dataAtt.getValue().split(" \\| ");
-                    break;
-                }
-            }
+            EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
 
-            if (dataAttributeValues != null && dataAttributeValues.length > index) {
-                EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
-                String attributeValueId = dataAttributeValues[index];
-                for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
-                    if (attributeValue.getId().equals(attributeValueId)) {
-                        InternationalString label = attributeValue.getName();
-                        return toI18nValue(label, selectedLanguage);
+            if (attributeValues.getTotal().compareTo(BigInteger.valueOf(1)) == 0 && dataAttributes == null) {
+                InternationalString label = attributeValues.getValues().get(0).getName();
+                return toI18nValue(label, selectedLanguage);
+            } else if (dataAttributes != null) {
+                String[] dataAttributeValues = null;
+                for (DataAttribute dataAtt : dataAttributes.getAttributes()) {
+                    if (dataAtt.getId().equals(attribute.getId())) {
+                        dataAttributeValues = dataAtt.getValue().split(" \\| ");
+                        break;
                     }
                 }
-
+                if (dataAttributeValues != null && dataAttributeValues.length > index) {
+                    String attributeValueId = dataAttributeValues[index];
+                    for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
+                        if (attributeValue.getId().equals(attributeValueId)) {
+                            InternationalString label = attributeValue.getName();
+                            return toI18nValue(label, selectedLanguage);
+                        }
+                    }
+                }
             }
         }
         return null;
