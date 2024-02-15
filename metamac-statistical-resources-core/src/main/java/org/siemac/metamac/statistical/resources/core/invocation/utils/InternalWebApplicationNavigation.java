@@ -29,6 +29,7 @@ public class InternalWebApplicationNavigation {
     private final UriTemplate datasetVersionTemplate;
     private final UriTemplate queryTemplate;
     private final UriTemplate multidatasetVersionTemplate;
+    private final UriTemplate updateDatasetsInGroupTemplate;
 
     public InternalWebApplicationNavigation(String webApplicationPath) {
         // Publication
@@ -51,6 +52,11 @@ public class InternalWebApplicationNavigation {
         multidatasetVersionTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STATISTICAL_RESOURCES
                 + SEPARATOR + NameTokens.operationPage + ";" + PlaceRequestParams.operationParam + "=" + "{" + OPERATION_ID_PARAMETER + "}"
                 + SEPARATOR + NameTokens.multidatasetsListPage + SEPARATOR + NameTokens.multidatasetPage + ";" + PlaceRequestParams.multidatasetParam + "=" + "{" + MULTIDATASET_ID_PARAMETER + "}"
+                );
+        // TODO EDATOS-4385 Ver si necesario
+        updateDatasetsInGroupTemplate = new UriTemplate(webApplicationPath + SEPARATOR + PATH_STATISTICAL_RESOURCES
+                + SEPARATOR + NameTokens.operationPage + ";" + PlaceRequestParams.operationParam + "=" + "{" + OPERATION_ID_PARAMETER + "}"
+                + SEPARATOR + NameTokens.datasetsListPage + SEPARATOR + NameTokens.datasetsGroupPage + ";" + PlaceRequestParams.datasetParam + "=" + "{" + DATASET_ID_PARAMETER + "}"
                 );
         // @formatter:on
     }

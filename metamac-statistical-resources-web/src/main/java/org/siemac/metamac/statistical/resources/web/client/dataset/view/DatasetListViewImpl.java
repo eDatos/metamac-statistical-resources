@@ -2,10 +2,13 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.view;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
@@ -219,6 +222,31 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     }
 
     // Reject validation
+
+    @Override
+    protected ClickHandler getUpdateDatasetsInGroupValidationClickHandler() {
+        return new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                List<DatasetVersionBaseDto> datasetVersionDtos = StatisticalResourcesRecordUtils.getDatasetVersionBaseDtosFromListGridRecords(listGrid.getListGrid().getSelectedRecords());
+                if (!datasetVersionDtos.isEmpty()) {
+                    getUiHandlers().goToDatasetsInGroup(getUrnsFromSelectedDatasetVersion(datasetVersionDtos));
+                } else {
+                    // TODO EDATOS-4385 PONER MENSAJE QUE DEBE SELECCIONAR AL MENOS UN ELEMENTO.
+                }
+            }
+        };
+    }
+
+    private String getUrnsFromSelectedDatasetVersion(List<DatasetVersionBaseDto> datasetVersionDtos) {
+        List<String> selectedDatasetIdentifiers = new ArrayList<String>();
+        for (DatasetVersionBaseDto datasetVersion : datasetVersionDtos) {
+            selectedDatasetIdentifiers.add(UrnUtils.removePrefix(datasetVersion.getUrn()));
+        }
+
+        return StringUtils.join(selectedDatasetIdentifiers.toArray(), ';');
+    }
 
     @Override
     protected ClickHandler getRejectValidationClickHandler() {

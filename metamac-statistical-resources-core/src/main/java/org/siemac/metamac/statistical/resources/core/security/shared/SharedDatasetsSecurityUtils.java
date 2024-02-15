@@ -129,6 +129,10 @@ public class SharedDatasetsSecurityUtils extends SharedSecurityUtils {
         return isOperationAllowed(metamacPrincipal, operationCode, PRODUCTION_ROLES);
     }
 
+    public static boolean canUpdateDatasetsInGroupInStatisticalOperation(MetamacPrincipal metamacPrincipal, String operationCode) {
+        return isOperationAllowed(metamacPrincipal, operationCode, PRODUCTION_ROLES);
+    }
+
     public static boolean canRetrieveDatasetVersionMainCoverages(MetamacPrincipal metamacPrincipal) {
         return isAnyStatisticalResourceRole(metamacPrincipal);
     }

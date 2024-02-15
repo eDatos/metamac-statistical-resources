@@ -293,7 +293,7 @@ public class MultidatasetMetadataTabViewImpl extends StatisticalResourceMetadata
         mainFormLayout.addViewCanvas(thematicContentClassifiersForm);
 
         // Languages
-        languageForm = new SiemacMetadataLanguageForm();
+        languageForm = new SiemacMetadataLanguageForm(false);
         mainFormLayout.addViewCanvas(languageForm);
 
         // Production descriptors

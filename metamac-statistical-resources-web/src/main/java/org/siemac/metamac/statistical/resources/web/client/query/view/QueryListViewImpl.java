@@ -39,7 +39,7 @@ import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHandlers> implements QueryListPresenter.QueryListView {
 
     private QueryVersionSearchSectionStack searchSectionStack;
-    private NewQueryWindow newQueryWindow;
+    private NewQueryWindow                 newQueryWindow;
 
     @Inject
     public QueryListViewImpl() {
@@ -141,8 +141,8 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
 
             @Override
             public void onClick(ClickEvent event) {
-                if (StatisticalResourcesDefaults.defaultLanguage == null) { 
-                    return; 
+                if (StatisticalResourcesDefaults.defaultLanguage == null) {
+                    return;
                 }
                 newQueryWindow = new NewQueryWindow(getConstants().queryCreate());
                 newQueryWindow.setUiHandlers(getUiHandlers());
@@ -296,5 +296,11 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
     private QueryVersionBaseDto getDtoFromRecord(ListGridRecord record) {
         QueryRecord queryRecord = (QueryRecord) record;
         return queryRecord.getQueryVersionBaseDto();
+    }
+
+    @Override
+    protected ClickHandler getUpdateDatasetsInGroupValidationClickHandler() {
+        // TODO Auto-generated method stub
+        return null;
     }
 }

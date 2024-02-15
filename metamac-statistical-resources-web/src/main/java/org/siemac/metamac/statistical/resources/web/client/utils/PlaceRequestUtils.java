@@ -3,12 +3,14 @@ package org.siemac.metamac.statistical.resources.web.client.utils;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesUrnParserUtils;
+import org.siemac.metamac.statistical.resources.navigation.shared.ConstantsPlaceRequest;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.navigation.shared.PlaceRequestParams;
 import org.siemac.metamac.web.common.client.utils.CommonPlaceRequestUtils;
@@ -68,8 +70,43 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
         return null;
     }
 
+    public static String getOriginDatasetDetailParamFromUrl(PlaceManager placeManager) {
+        for (PlaceRequest request : placeManager.getCurrentPlaceHierarchy()) {
+            if (NameTokens.datasetsGroupPage.equals(request.getNameToken())) {
+                return getRequestParameter(request, PlaceRequestParams.originDatasetDetailParam);
+            }
+        }
+        return null;
+    }
+
+    public static List<String> getDatasetsInGroupParamFromUrl(PlaceManager placeManager) {
+        for (PlaceRequest request : placeManager.getCurrentPlaceHierarchy()) {
+            if (NameTokens.datasetsGroupPage.equals(request.getNameToken())) {
+                return getListDatasetIdentifiers(getRequestParameter(request, PlaceRequestParams.datasetParam));
+            }
+        }
+        return new ArrayList<String>();
+    }
+
+    private static List<String> getListDatasetIdentifiers(String datasetIdentifiers) {
+        return Arrays.asList(datasetIdentifiers.split(";"));
+    }
+
     public static PlaceRequest buildRelativeDatasetPlaceRequest(String urn) {
         return new PlaceRequest(NameTokens.datasetPage).with(PlaceRequestParams.datasetParam, UrnUtils.removePrefix(urn));
+    }
+
+    public static PlaceRequest buildRelativeDatasetInGroupUpdatePlaceRequest(String selectedDatasetIdentifiers) {
+
+        return new PlaceRequest(NameTokens.datasetsGroupPage).with(PlaceRequestParams.originDatasetDetailParam, ConstantsPlaceRequest.updateDatasetsInGroup).with(PlaceRequestParams.datasetParam,
+                selectedDatasetIdentifiers);
+    }
+
+    // TODO EDATOS-4385 ver si se utiliza
+    public static List<PlaceRequest> buildAbsoluteUpdateDatasetsInGroupPlaceRequest(String operationUrn, String selectedUrns) {
+        List<PlaceRequest> placeRequests = buildAbsoluteDatasetsPlaceRequest(operationUrn);
+        placeRequests.add(buildRelativeDatasetInGroupUpdatePlaceRequest(selectedUrns));
+        return placeRequests;
     }
 
     public static PlaceRequest buildRelativeDatasetsPlaceRequest() {

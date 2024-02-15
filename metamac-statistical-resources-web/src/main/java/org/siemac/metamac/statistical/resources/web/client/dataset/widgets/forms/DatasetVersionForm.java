@@ -10,10 +10,20 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePicker
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 
 public class DatasetVersionForm extends LifeCycleResourceVersionForm {
+
     CustomDatePickerItem dateNextUpdate;
-    
+
     public DatasetVersionForm() {
         super();
+        initDatasetVersionForm();
+    }
+
+    public DatasetVersionForm(boolean isMultipleUpdate) {
+        super(isMultipleUpdate);
+        initDatasetVersionForm();
+    }
+
+    private void initDatasetVersionForm() {
 
         ExternalItemLinkItem updateFrequency = new ExternalItemLinkItem(DatasetDS.UPDATE_FRECUENCY, getConstants().datasetUpdateFrequency());
         dateNextUpdate = createFieldDateNextUpdate();
@@ -22,11 +32,11 @@ public class DatasetVersionForm extends LifeCycleResourceVersionForm {
 
     private CustomDatePickerItem createFieldDateNextUpdate() {
         return new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), true, false, CommonUtils.getDateFormatTypeHashMap());
-    }    
-    
+    }
+
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
         setLifeCycleStatisticalResourceDto(datasetDto);
-        setValue(DatasetDS.UPDATE_FRECUENCY, datasetDto.getUpdateFrequency()); 
-        dateNextUpdate.setValue(datasetDto.getDateNextUpdate());      
+        setValue(DatasetDS.UPDATE_FRECUENCY, datasetDto.getUpdateFrequency());
+        dateNextUpdate.setValue(datasetDto.getDateNextUpdate());
     }
 }

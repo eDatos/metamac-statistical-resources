@@ -273,4 +273,10 @@ public class PublicationListViewImpl extends StatisticalResourceBaseListViewImpl
         PublicationRecord pubRecord = (PublicationRecord) record;
         return pubRecord.getPublicationVersionBaseDto();
     }
+
+    @Override
+    protected ClickHandler getUpdateDatasetsInGroupValidationClickHandler() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

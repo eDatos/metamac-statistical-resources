@@ -276,4 +276,10 @@ public class MultidatasetListViewImpl extends StatisticalResourceBaseListViewImp
         MultidatasetRecord pubRecord = (MultidatasetRecord) record;
         return pubRecord.getMultidatasetVersionBaseDto();
     }
+
+    @Override
+    protected ClickHandler getUpdateDatasetsInGroupValidationClickHandler() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

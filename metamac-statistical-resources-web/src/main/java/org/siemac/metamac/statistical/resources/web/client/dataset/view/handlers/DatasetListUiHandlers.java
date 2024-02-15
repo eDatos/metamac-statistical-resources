@@ -16,6 +16,7 @@ import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers {
 
     void goToDataset(String code);
+    void goToDatasetsInGroup(String selectedDatasetIdentifiers);
     void createDataset(DatasetVersionDto datasetDto);
     void deleteDatasets(List<String> urnsFromSelected);
     void retrieveDatasets(int firstResult, int maxResults, DatasetVersionWebCriteria criteria);
@@ -47,11 +48,11 @@ public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers 
     void retrieveTemporalGranularitiesForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria);
     void retrieveStatisticalOperationsForDsdSelectionInSearchSection();
     void retrieveDsdsForSearchSection(int firstResult, int maxResults, DsdWebCriteria criteria);
-    
+
     // DATA_PROVIDERS and SCHEMES
     void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, SiemacMetadataExternalField field);
     void retrieveDataProviderUnits(int firstResult, int maxResults, SrmItemRestCriteria webCriteria, SiemacMetadataExternalField field);
-    
+
     // Time codes
     void retrieveTemporalCodesForField(int firstResult, int maxResults, MetamacWebCriteria webCriteria, DatasetMetadataExternalField updateFrequency);
 

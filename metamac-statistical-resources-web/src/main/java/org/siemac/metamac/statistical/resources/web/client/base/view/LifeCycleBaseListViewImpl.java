@@ -40,6 +40,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     protected CustomToolStripButton                   rejectValidationButton;
     protected CustomToolStripButton                   publishButton;
     protected CustomToolStripButton                   versionButton;
+    protected CustomToolStripButton                   updateDatasetsGroupButton;
 
     protected DeleteConfirmationWindow                deleteConfirmationWindow;
 
@@ -73,6 +74,9 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
 
         versionButton = createVersionButton();
         toolStrip.addButton(versionButton);
+
+        updateDatasetsGroupButton = this.createUpdateDatasetsInGroupButton();
+        toolStrip.addButton(updateDatasetsGroupButton);
 
         // ListGrid
 
@@ -168,6 +172,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showSendToProductionValidationButton(ListGridRecord[] records) {
+        boolean canSendToProductionValidation = canSendToProductionValidation(records);
+        if (canSendToProductionValidation) {
+            sendToProductionValidationButton.show();
+        }
+    }
+
+    private boolean canSendToProductionValidation(ListGridRecord[] records) {
         boolean canSendToProductionValidation = true;
         for (ListGridRecord record : records) {
             if (!canSendToProductionValidation(record)) {
@@ -175,9 +186,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canSendToProductionValidation) {
-            sendToProductionValidationButton.show();
-        }
+        return canSendToProductionValidation;
     }
 
     // Send to diffusion validation
@@ -190,6 +199,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showSendtoDiffusionValidationButton(ListGridRecord[] records) {
+        boolean canSendToDiffusionValidation = canSendToDiffusionValidation(records);
+        if (canSendToDiffusionValidation) {
+            sendToDiffusionValidationButton.show();
+        }
+    }
+
+    private boolean canSendToDiffusionValidation(ListGridRecord[] records) {
         boolean canSendToDiffusionValidation = true;
         for (ListGridRecord record : records) {
             if (!canSendToDiffusionValidation(record)) {
@@ -197,9 +213,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canSendToDiffusionValidation) {
-            sendToDiffusionValidationButton.show();
-        }
+        return canSendToDiffusionValidation;
     }
 
     // Reject validation
@@ -212,6 +226,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showRejectValidationButton(ListGridRecord[] records) {
+        boolean canRejectValidation = canRejectValidation(records);
+        if (canRejectValidation) {
+            rejectValidationButton.show();
+        }
+    }
+
+    private boolean canRejectValidation(ListGridRecord[] records) {
         boolean canRejectValidation = true;
         for (ListGridRecord record : records) {
             if (!canRejectValidation(record)) {
@@ -219,9 +240,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canRejectValidation) {
-            rejectValidationButton.show();
-        }
+        return canRejectValidation;
     }
 
     // Publish
@@ -234,6 +253,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showPublishButton(ListGridRecord[] records) {
+        boolean canPublish = canPublish(records);
+        if (canPublish) {
+            publishButton.show();
+        }
+    }
+
+    private boolean canPublish(ListGridRecord[] records) {
         boolean canPublish = true;
         for (ListGridRecord record : records) {
             if (!canPublish(record)) {
@@ -241,9 +267,8 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canPublish) {
-            publishButton.show();
-        }
+
+        return canPublish;
     }
 
     // Version
@@ -284,6 +309,66 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
         }
     }
 
+    private CustomToolStripButton createUpdateDatasetsInGroupButton() {
+        CustomToolStripButton button = new CustomToolStripButton(getConstants().actionLoadUpdateDatasetInGroup(),
+                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.editListGrid().getURL()); // EDATOS-4385 Poner icono de edición
+        button.setVisible(false);
+        button.addClickHandler(getUpdateDatasetsInGroupValidationClickHandler());
+        return button;
+    }
+
+    private void showUpdateDatasetsInGroupValidationButton(ListGridRecord[] records) {
+        boolean isAllDatasetsInSameLifeCycle = true;
+        boolean canSendToProductionValidation = false;
+        boolean canRejectValidation = false;
+        boolean canSendToDifussionValidation = false;
+        boolean canPublish = false;
+        for (ListGridRecord record : records) {
+            if (canSendToProductionValidation(record)) {
+                canSendToProductionValidation = true;
+            }
+            if (canRejectValidation(record)) {
+                canRejectValidation = true;
+            }
+            if (canRejectValidation(record)) {
+                canRejectValidation = true;
+            }
+            if (canSendToDiffusionValidation(record)) {
+                canSendToDifussionValidation = true;
+            }
+            if (canPublish(record)) {
+                canPublish = true;
+            }
+
+            if (!checkDatasetsInSameLifeCycle(canSendToProductionValidation, canRejectValidation, canSendToDifussionValidation, canPublish)) {
+                isAllDatasetsInSameLifeCycle = false;
+                break;
+            }
+        }
+
+        if (isAllDatasetsInSameLifeCycle) {
+            updateDatasetsGroupButton.show();
+        }
+    }
+
+    private boolean checkDatasetsInSameLifeCycle(boolean canSendToProductionValidation, boolean canRejectValidation, boolean canSendToDifussionValidation, boolean canPublish) {
+        int i = 0;
+        if (canSendToProductionValidation) {
+            i++;
+        }
+        if (canRejectValidation) {
+            i++;
+        }
+        if (canSendToDifussionValidation) {
+            i++;
+        }
+        if (canPublish) {
+            i++;
+        }
+
+        return i <= 1;
+
+    }
     // Visibility methods
 
     protected void updateListGridButtonsVisibility() {
@@ -300,6 +385,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
         showRejectValidationButton(records);
         showPublishButton(records);
         showVersionButton(records);
+        showUpdateDatasetsInGroupValidationButton(records);
     }
 
     protected void hideSelectionDependentButtons() {
@@ -309,6 +395,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
         rejectValidationButton.hide();
         publishButton.hide();
         versionButton.hide();
+        updateDatasetsGroupButton.hide();
     }
 
     //
@@ -324,6 +411,8 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     protected abstract ClickHandler getSendToDiffusionValidationClickHandler();
     protected abstract ClickHandler getRejectValidationClickHandler();
     protected abstract ClickHandler getPublishClickHandler();
+
+    protected abstract ClickHandler getUpdateDatasetsInGroupValidationClickHandler();
 
     protected abstract boolean canCreate();
     protected abstract boolean canDelete(ListGridRecord record);

@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.dataset.criteria.mapper;
 
+import java.util.ArrayList;
+
 import org.apache.commons.lang.BooleanUtils;
 import org.fornax.cartridges.sculptor.framework.domain.LeafProperty;
 import org.fornax.cartridges.sculptor.framework.domain.Property;
@@ -61,8 +63,7 @@ public class DatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl implements
                     return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().code(), propertyRestriction.getStringValue(),
                             propertyRestriction.getOperationType());
                 case URN:
-                    return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().urn(), propertyRestriction.getStringValue(),
-                            propertyRestriction.getOperationType());
+                    return buildUrnCriteria(propertyRestriction);
                 case TITLE:
                     return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().title().texts().label(), propertyRestriction.getStringValue(),
                             propertyRestriction.getOperationType());
@@ -131,6 +132,16 @@ public class DatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl implements
                 default:
                     throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
             }
+        }
+
+        private SculptorPropertyCriteriaBase buildUrnCriteria(MetamacCriteriaPropertyRestriction propertyRestriction) throws MetamacException {
+            if (propertyRestriction.getStringValue() != null) {
+                return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().urn(), propertyRestriction.getStringValue(), propertyRestriction.getOperationType());
+            } else if (propertyRestriction.getListStringValue() != null && !propertyRestriction.getListStringValue().isEmpty()) {
+                return new SculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().urn(), new ArrayList<>(propertyRestriction.getListStringValue()),
+                        propertyRestriction.getOperationType());
+            }
+            throw new MetamacException(ServiceExceptionType.PARAMETER_INCORRECT, propertyRestriction.getPropertyName());
         }
 
         private SculptorPropertyCriteriaBase buildDataCriteria(MetamacCriteriaPropertyRestriction propertyRestriction) throws MetamacException {

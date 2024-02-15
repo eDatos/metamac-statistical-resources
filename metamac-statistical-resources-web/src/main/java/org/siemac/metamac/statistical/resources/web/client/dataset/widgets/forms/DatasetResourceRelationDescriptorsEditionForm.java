@@ -5,7 +5,8 @@ import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.
 
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataCommonTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataResourceRelationDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceListItem;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
@@ -15,15 +16,26 @@ import com.gwtplatform.mvp.client.UiHandlers;
 
 public class DatasetResourceRelationDescriptorsEditionForm extends SiemacMetadataResourceRelationDescriptorsEditionForm {
 
-    private DatasetMetadataTabUiHandlers uiHandlers;
+    private DatasetMetadataCommonTabUiHandlers uiHandlers;
 
     public DatasetResourceRelationDescriptorsEditionForm() {
         super();
+        initDatasetResourceRelationDescriptorsEditionForm(false);
+    }
+
+    public DatasetResourceRelationDescriptorsEditionForm(boolean isMultipleUpdate) {
+        super(isMultipleUpdate);
+        initDatasetResourceRelationDescriptorsEditionForm(isMultipleUpdate);
+    }
+
+    private void initDatasetResourceRelationDescriptorsEditionForm(boolean isMultipleUpdate) {
 
         RelatedResourceListItem isRequiredBy = new RelatedResourceListItem(DatasetDS.IS_REQUIRED_BY, getConstants().siemacMetadataStatisticalResourceIsRequiredBy(), false,
                 getRecordNavigationHandler());
+        isRequiredBy.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         RelatedResourceListItem isPartOf = new RelatedResourceListItem(DatasetDS.IS_PART_OF, getConstants().siemacMetadataStatisticalResourceIsPartOf(), false, getRecordNavigationHandler());
+        isPartOf.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         addFields(isPartOf, isRequiredBy);
     }
@@ -37,7 +49,7 @@ public class DatasetResourceRelationDescriptorsEditionForm extends SiemacMetadat
 
     @Override
     public void setUiHandlers(UiHandlers uiHandlers) {
-        this.uiHandlers = (DatasetMetadataTabUiHandlers) uiHandlers;
+        this.uiHandlers = (DatasetMetadataCommonTabUiHandlers) uiHandlers;
     }
 
     @Override

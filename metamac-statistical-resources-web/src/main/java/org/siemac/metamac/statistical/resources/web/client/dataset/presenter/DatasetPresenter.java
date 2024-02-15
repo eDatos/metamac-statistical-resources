@@ -7,6 +7,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.navigation.shared.ConstantsPlaceRequest;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
@@ -130,6 +131,7 @@ public class DatasetPresenter extends Presenter<DatasetPresenter.DatasetView, Da
         if (PlaceRequestUtils.isExpectedCurrentPlaceRequestNameToken(placeManager, DatasetPresenter.DATASET_EXPECTED_NAME_TOKENS)) {
             String operationCode = PlaceRequestUtils.getOperationParamFromUrl(placeManager);
             String datasetCode = PlaceRequestUtils.getDatasetParamFromUrl(placeManager);
+            String origin = PlaceRequestUtils.getOriginDatasetDetailParamFromUrl(placeManager);
             if (!StringUtils.isBlank(operationCode) && !StringUtils.isBlank(datasetCode)) {
                 String operationUrn = CommonUtils.generateStatisticalOperationUrn(operationCode);
 
@@ -139,6 +141,8 @@ public class DatasetPresenter extends Presenter<DatasetPresenter.DatasetView, Da
                     loadInitialData();
                 }
 
+            } else if (origin != null && ConstantsPlaceRequest.updateDatasetsInGroup.equals(origin)) {
+                return;
             } else {
                 StatisticalResourcesWeb.showErrorPage();
             }
