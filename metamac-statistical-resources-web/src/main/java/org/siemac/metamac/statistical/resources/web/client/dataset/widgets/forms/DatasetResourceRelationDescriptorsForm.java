@@ -5,7 +5,6 @@ import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.
 
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataResourceRelationDescriptorsForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceListItem;
 
@@ -13,22 +12,15 @@ public class DatasetResourceRelationDescriptorsForm extends SiemacMetadataResour
 
     public DatasetResourceRelationDescriptorsForm() {
         super();
-        initDatasetResourceRelationDescriptorsForm(false);
+        initDatasetResourceRelationDescriptorsForm();
     }
 
-    public DatasetResourceRelationDescriptorsForm(boolean isMultipleUpdate) {
-        super(isMultipleUpdate);
-        initDatasetResourceRelationDescriptorsForm(isMultipleUpdate);
-    }
-
-    private void initDatasetResourceRelationDescriptorsForm(boolean isMultipleUpdate) {
+    private void initDatasetResourceRelationDescriptorsForm() {
 
         RelatedResourceListItem isRequiredBy = new RelatedResourceListItem(DatasetDS.IS_REQUIRED_BY, getConstants().siemacMetadataStatisticalResourceIsRequiredBy(), false,
                 getRecordNavigationHandler());
-        isRequiredBy.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         RelatedResourceListItem isPartOf = new RelatedResourceListItem(DatasetDS.IS_PART_OF, getConstants().siemacMetadataStatisticalResourceIsPartOf(), false, getRecordNavigationHandler());
-        isPartOf.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         addFields(isPartOf, isRequiredBy);
     }

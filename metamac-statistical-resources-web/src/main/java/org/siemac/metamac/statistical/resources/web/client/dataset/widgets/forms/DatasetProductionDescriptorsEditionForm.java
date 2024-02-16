@@ -13,6 +13,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataProductionDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDsdPaginatedWindow;
@@ -39,16 +40,17 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
     private SearchExternalItemLinkItem     relatedDsd;
 
     public DatasetProductionDescriptorsEditionForm() {
-        initDatasetProductionDescriptorsEditionForm();
+        initDatasetProductionDescriptorsEditionForm(false);
     }
 
     public DatasetProductionDescriptorsEditionForm(boolean isMultipleUpdate) {
         super(isMultipleUpdate);
-        initDatasetProductionDescriptorsEditionForm();
+        initDatasetProductionDescriptorsEditionForm(isMultipleUpdate);
     }
 
-    private void initDatasetProductionDescriptorsEditionForm() {
+    private void initDatasetProductionDescriptorsEditionForm(boolean isMultipleUpdate) {
         relatedDsd = createDsdsItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD());
+        relatedDsd.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
         relatedDsd.setRequired(true);
         addFields(relatedDsd);
     }
@@ -69,6 +71,10 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
         } else {
             fixedDsdCode = null;
         }
+    }
+
+    public void setDatasetVersionDto() {
+        fixedDsdCode = null;
     }
 
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto datasetDto) {

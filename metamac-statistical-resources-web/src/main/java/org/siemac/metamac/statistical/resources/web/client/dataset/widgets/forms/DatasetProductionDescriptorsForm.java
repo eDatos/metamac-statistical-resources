@@ -14,11 +14,6 @@ public class DatasetProductionDescriptorsForm extends SiemacMetadataProductionDe
         initDatasetProductionDescriptorsForm();
     }
 
-    public DatasetProductionDescriptorsForm(boolean isMultipleUpdate) {
-        super(isMultipleUpdate);
-        initDatasetProductionDescriptorsForm();
-    }
-
     public void initDatasetProductionDescriptorsForm() {
         ExternalItemLinkItem relatedDsd = new ExternalItemLinkItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD(), true);
         addFields(relatedDsd);

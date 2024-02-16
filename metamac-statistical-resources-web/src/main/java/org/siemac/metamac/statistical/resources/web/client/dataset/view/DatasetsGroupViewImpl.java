@@ -11,7 +11,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.CustomTabSet;
-import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetCategorisationsTabPresenter.DatasetCategorisationsTabView;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupCategorisationsTabPresenter.DatasetInGroupCategorisationsTabView;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupMetadataTabPresenter.DatasetInGroupMetadataTabView;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetsGroupPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetsGroupUiHandlers;
@@ -44,10 +44,10 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
     private CustomTabSet                tabSet;
     private Tab                         datasetInGroupMetadataTab;
-    private Tab                         datasetCategorisationsTab;
+    private Tab                         datasetInGroupCategorisationsTab;
 
     @Inject
-    public DatasetsGroupViewImpl(DatasetInGroupMetadataTabView datasetInGroupMetadataTabView, DatasetCategorisationsTabView datasetCategorisationsTabView) {
+    public DatasetsGroupViewImpl(DatasetInGroupMetadataTabView datasetInGroupMetadataTabView, DatasetInGroupCategorisationsTabView datasetInGroupCategorisationsTabView) {
         panel = new VLayout();
 
         titleLabel = new TitleLabel(new String());
@@ -66,7 +66,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         // DATASET VERSIONS
         //
 
-        versionsSectionStack = new DatasetVersionsSectionStack(getConstants().datasetVersions());
+        versionsSectionStack = new DatasetVersionsSectionStack(getConstants().datasetVersionsSelected());
 
         // TABS
 
@@ -75,10 +75,10 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         datasetInGroupMetadataTab = new Tab(getConstants().datasetMetadata());
         datasetInGroupMetadataTab.setPane((Canvas) datasetInGroupMetadataTabView.asWidget());
 
-        datasetCategorisationsTab = new Tab(getConstants().datasetCategorisations());
-        datasetCategorisationsTab.setPane((Canvas) datasetCategorisationsTabView.asWidget());
+        datasetInGroupCategorisationsTab = new Tab(getConstants().datasetCategorisations());
+        datasetInGroupCategorisationsTab.setPane((Canvas) datasetInGroupCategorisationsTabView.asWidget());
 
-        tabSet.setTabs(datasetInGroupMetadataTab, datasetCategorisationsTab);
+        tabSet.setTabs(datasetInGroupMetadataTab, datasetInGroupCategorisationsTab);
 
         //
         // PANEL LAYOUT
@@ -111,7 +111,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
             }
         });
 
-        datasetCategorisationsTab.addTabSelectedHandler(new TabSelectedHandler() {
+        datasetInGroupCategorisationsTab.addTabSelectedHandler(new TabSelectedHandler() {
 
             @Override
             public void onTabSelected(TabSelectedEvent event) {
@@ -183,7 +183,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
     @Override
     public void selectCategorisationsTab() {
-        tabSet.selectTab(datasetCategorisationsTab);
+        tabSet.selectTab(datasetInGroupCategorisationsTab);
     }
 
     @Override

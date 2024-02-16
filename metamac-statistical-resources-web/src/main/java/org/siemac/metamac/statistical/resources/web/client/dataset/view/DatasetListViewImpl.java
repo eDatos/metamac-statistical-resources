@@ -232,8 +232,6 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
                 List<DatasetVersionBaseDto> datasetVersionDtos = StatisticalResourcesRecordUtils.getDatasetVersionBaseDtosFromListGridRecords(listGrid.getListGrid().getSelectedRecords());
                 if (!datasetVersionDtos.isEmpty()) {
                     getUiHandlers().goToDatasetsInGroup(getUrnsFromSelectedDatasetVersion(datasetVersionDtos));
-                } else {
-                    // TODO EDATOS-4385 PONER MENSAJE QUE DEBE SELECCIONAR AL MENOS UN ELEMENTO.
                 }
             }
         };

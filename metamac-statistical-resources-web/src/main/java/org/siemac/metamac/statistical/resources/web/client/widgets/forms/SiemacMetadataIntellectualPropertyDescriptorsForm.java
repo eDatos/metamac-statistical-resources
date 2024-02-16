@@ -12,15 +12,10 @@ public class SiemacMetadataIntellectualPropertyDescriptorsForm extends GroupDyna
 
     public SiemacMetadataIntellectualPropertyDescriptorsForm() {
         super(getConstants().formIntellectualPropertyDescriptors());
-        init(false);
+        init();
     }
 
-    public SiemacMetadataIntellectualPropertyDescriptorsForm(boolean isMultipleUpdate) {
-        super(getConstants().formIntellectualPropertyDescriptors());
-        init(isMultipleUpdate);
-    }
-
-    private void init(boolean isMultipleUpdate) {
+    private void init() {
         ViewMultiLanguageTextItem accessRights = new ViewMultiLanguageTextItem(SiemacMetadataDS.ACCESS_RIGHTS, getConstants().siemacMetadataStatisticalResourceAccessRights());
         ViewTextItem copyrightDate = new ViewTextItem(SiemacMetadataDS.COPYRIGHT_DATE, getConstants().siemacMetadataStatisticalResourceCopyrightedDate());
 

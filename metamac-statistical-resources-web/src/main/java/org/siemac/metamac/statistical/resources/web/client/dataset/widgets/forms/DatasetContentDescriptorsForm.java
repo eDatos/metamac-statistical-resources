@@ -9,7 +9,6 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.TemporalCodeDto;
 import org.siemac.metamac.statistical.resources.web.client.base.checks.DatasetMetadataShowChecks;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataContentDescriptorsForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.TemporalCodeListItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
@@ -23,15 +22,10 @@ public class DatasetContentDescriptorsForm extends SiemacMetadataContentDescript
 
     public DatasetContentDescriptorsForm() {
         super();
-        init(false);
+        init();
     }
 
-    public DatasetContentDescriptorsForm(boolean isMultipleUpdate) {
-        super();
-        init(isMultipleUpdate);
-    }
-
-    private void init(boolean isMultipleUpdate) {
+    private void init() {
 
         ExternalItemListItem geographicCoverage = new ExternalItemListItem(DatasetDS.GEOGRAPHIC_COVERAGE, getConstants().datasetGeographicCoverage(), false);
         geographicCoverage.setShowIfCondition(getCanShowCoveragesFunction());
@@ -49,9 +43,6 @@ public class DatasetContentDescriptorsForm extends SiemacMetadataContentDescript
 
         ViewTextItem dateStart = new ViewTextItem(DatasetDS.DATE_START, getConstants().datasetDateStart());
         ViewTextItem dateEnd = new ViewTextItem(DatasetDS.DATE_END, getConstants().datasetDateEnd());
-
-        dateStart.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
-        dateEnd.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         addFields(dateStart, dateEnd, statisticalUnit, geographicCoverage, temporalCoverage, measures, geographicGranularities, temporalGranularities);
     }

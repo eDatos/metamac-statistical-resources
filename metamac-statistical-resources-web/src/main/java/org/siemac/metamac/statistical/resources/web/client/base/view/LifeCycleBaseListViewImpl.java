@@ -297,6 +297,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     protected void showVersionButton(ListGridRecord[] records) {
+        boolean canVersion = canVersionValidation(records);
+        if (canVersion) {
+            versionButton.show();
+        }
+    }
+
+    protected boolean canVersionValidation(ListGridRecord[] records) {
         boolean canVersion = true;
         for (ListGridRecord record : records) {
             if (!canVersion(record)) {
@@ -304,9 +311,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canVersion) {
-            versionButton.show();
-        }
+        return canVersion;
     }
 
     private CustomToolStripButton createUpdateDatasetsInGroupButton() {
@@ -319,28 +324,25 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
 
     private void showUpdateDatasetsInGroupValidationButton(ListGridRecord[] records) {
         boolean isAllDatasetsInSameLifeCycle = true;
-        boolean canSendToProductionValidation = false;
-        boolean canRejectValidation = false;
-        boolean canSendToDifussionValidation = false;
+        boolean canVersion = false;
+        boolean canSendToProduction = false;
+        boolean canSendToDifussion = false;
         boolean canPublish = false;
-        for (ListGridRecord record : records) {
-            if (canSendToProductionValidation(record)) {
-                canSendToProductionValidation = true;
+        for (ListGridRecord datasetRecord : records) {
+            if (canSendToProductionValidation(datasetRecord)) {
+                canSendToProduction = true;
             }
-            if (canRejectValidation(record)) {
-                canRejectValidation = true;
+            if (canVersion(datasetRecord)) {
+                canVersion = true;
             }
-            if (canRejectValidation(record)) {
-                canRejectValidation = true;
+            if (canSendToDiffusionValidation(datasetRecord)) {
+                canSendToDifussion = true;
             }
-            if (canSendToDiffusionValidation(record)) {
-                canSendToDifussionValidation = true;
-            }
-            if (canPublish(record)) {
+            if (canPublish(datasetRecord)) {
                 canPublish = true;
             }
 
-            if (!checkDatasetsInSameLifeCycle(canSendToProductionValidation, canRejectValidation, canSendToDifussionValidation, canPublish)) {
+            if (!checkDatasetsCanUpdateInGroup(canSendToProduction, canSendToDifussion, canPublish, canVersion)) {
                 isAllDatasetsInSameLifeCycle = false;
                 break;
             }
@@ -351,12 +353,14 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
         }
     }
 
-    private boolean checkDatasetsInSameLifeCycle(boolean canSendToProductionValidation, boolean canRejectValidation, boolean canSendToDifussionValidation, boolean canPublish) {
+    private boolean checkDatasetsCanUpdateInGroup(boolean canSendToProductionValidation, boolean canSendToDifussionValidation, boolean canPublish, boolean canVersion) {
+
+        if (canVersion) {
+            return false;
+        }
+
         int i = 0;
         if (canSendToProductionValidation) {
-            i++;
-        }
-        if (canRejectValidation) {
             i++;
         }
         if (canSendToDifussionValidation) {

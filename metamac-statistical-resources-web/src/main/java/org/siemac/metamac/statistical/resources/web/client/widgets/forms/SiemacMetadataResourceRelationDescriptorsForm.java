@@ -4,7 +4,6 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.setRelatedResourceValue;
 
 import org.siemac.metamac.statistical.resources.core.dto.SiemacMetadataStatisticalResourceDto;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceLinkItem;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
@@ -15,21 +14,15 @@ public class SiemacMetadataResourceRelationDescriptorsForm extends NavigationEna
 
     public SiemacMetadataResourceRelationDescriptorsForm() {
         super(getConstants().formResourceRelationDescriptors());
-        init(false);
+        init();
     }
 
-    public SiemacMetadataResourceRelationDescriptorsForm(boolean isMultipleUpdate) {
-        super(getConstants().formResourceRelationDescriptors());
-        init(isMultipleUpdate);
-    }
-
-    private void init(boolean isMultipleUpdate) {
+    private void init() {
 
         RelatedResourceLinkItem replaces = new RelatedResourceLinkItem(SiemacMetadataDS.REPLACES, getConstants().siemacMetadataStatisticalResourceReplaces(),
                 getCustomLinkItemNavigationClickHandler());
         RelatedResourceLinkItem isReplacedBy = new RelatedResourceLinkItem(SiemacMetadataDS.IS_REPLACED_BY, getConstants().siemacMetadataStatisticalResourceIsReplacedBy(),
                 getCustomLinkItemNavigationClickHandler());
-        isReplacedBy.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         setFields(replaces, isReplacedBy);
     }

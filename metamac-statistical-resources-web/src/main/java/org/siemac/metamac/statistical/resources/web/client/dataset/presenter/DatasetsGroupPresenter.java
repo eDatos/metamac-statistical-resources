@@ -10,7 +10,6 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
-import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetsGroupUiHandlers;
@@ -25,8 +24,6 @@ import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUti
 import org.siemac.metamac.statistical.resources.web.shared.criteria.MultipleDatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDatasetVersionsResult;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -105,9 +102,6 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
 
-        List<String> selectedDatasetIdentifiers = PlaceRequestUtils.getDatasetsInGroupParamFromUrl(placeManager);
-
-        // Redirect to metadata tab
         getView().selectMetadataTab();
         if (NameTokens.datasetsGroupPage.equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
             goToDatasetInGroupMetadata();
@@ -118,12 +112,8 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
     protected void onReveal() {
         super.onReveal();
 
-        // This check is a workaround to solve the issue described in METAMAC-2920. Probably isn't the best way, and the correct way should be resolving the refresh problem that consists in don't show
-        // the previous page before going to a new page.
-
         String operationCode = PlaceRequestUtils.getOperationParamFromUrl(placeManager);
 
-        // TODO EDATOS-4385
         if (PlaceRequestUtils.isExpectedCurrentPlaceRequestNameToken(placeManager, DatasetsGroupPresenter.DATASET_GROUP_EXPECTED_NAME_TOKENS)) {
             if (!StringUtils.isBlank(operationCode)) {
                 loadInitialData();
@@ -147,20 +137,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
     @ProxyEvent
     @Override
     public void onShowUnauthorizedDatasetWarningMessage(ShowUnauthorizedDatasetWarningMessageEvent event) {
-        // retrieveDatasetVersions(event.getUrn());
         getView().showUnauthorizedResourceWarningMessage();
-    }
-
-    // TODO EDATOS-4385
-    private void retrieveOperation(String urn) {
-        dispatcher.execute(new GetStatisticalOperationAction(urn), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationResult>(this) {
-
-            @Override
-            public void onWaitSuccess(GetStatisticalOperationResult result) {
-                StatisticalResourcesDefaults.setSelectedStatisticalOperation(result.getOperation());
-                loadInitialData();
-            }
-        });
     }
 
     private void loadInitialData() {
@@ -203,7 +180,6 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         goToTab(NameTokens.datasetInGroupCategorisationsPage);
     }
 
-    // EDATOS-4385
     private void goToTab(String tabNameToken) {
         List<PlaceRequest> hierarchy = PlaceRequestUtils.getHierarchyUntilNameToken(placeManager, NameTokens.datasetsGroupPage);
         hierarchy.add(new PlaceRequest(tabNameToken));

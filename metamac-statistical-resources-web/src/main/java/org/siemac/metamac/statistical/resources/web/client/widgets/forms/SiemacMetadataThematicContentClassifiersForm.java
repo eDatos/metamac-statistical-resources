@@ -14,11 +14,6 @@ public class SiemacMetadataThematicContentClassifiersForm extends StatisticalRes
         initSiemacMetadataThematicContentClassifiersForm();
     }
 
-    public SiemacMetadataThematicContentClassifiersForm(boolean isMultipleUpdate) {
-        super(isMultipleUpdate);
-        initSiemacMetadataThematicContentClassifiersForm();
-    }
-
     private void initSiemacMetadataThematicContentClassifiersForm() {
         ExternalItemListItem instances = new ExternalItemListItem(SiemacMetadataDS.STATISTICAL_OPERATION_INSTANCE, getConstants().siemacMetadataStatisticalResourceStatisticalOperationInstance(),
                 false);

@@ -18,11 +18,6 @@ public class DatasetVersionForm extends LifeCycleResourceVersionForm {
         initDatasetVersionForm();
     }
 
-    public DatasetVersionForm(boolean isMultipleUpdate) {
-        super(isMultipleUpdate);
-        initDatasetVersionForm();
-    }
-
     private void initDatasetVersionForm() {
 
         ExternalItemLinkItem updateFrequency = new ExternalItemLinkItem(DatasetDS.UPDATE_FRECUENCY, getConstants().datasetUpdateFrequency());
