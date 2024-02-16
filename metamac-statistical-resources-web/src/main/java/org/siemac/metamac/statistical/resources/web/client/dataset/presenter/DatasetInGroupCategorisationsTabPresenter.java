@@ -5,7 +5,6 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
-import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.ConstantsPlaceRequest;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -46,8 +45,6 @@ public class DatasetInGroupCategorisationsTabPresenter
 
     private DispatchAsync dispatcher;
     private PlaceManager  placeManager;
-
-    private String        datasetVersionUrn;
 
     public interface DatasetInGroupCategorisationsTabView extends View, HasUiHandlers<DatasetInGroupCategorisationsTabUiHandlers> {
 
@@ -92,19 +89,11 @@ public class DatasetInGroupCategorisationsTabPresenter
     public void prepareFromRequest(PlaceRequest request) {
         super.prepareFromRequest(request);
 
-        String operationCode = PlaceRequestUtils.getOperationParamFromUrl(placeManager);
         String origin = PlaceRequestUtils.getOriginDatasetDetailParamFromUrl(placeManager);
-        if (!StringUtils.isBlank(operationCode) && origin != null && ConstantsPlaceRequest.updateDatasetsInGroup.equals(origin)) {
-            loadInitialData();
-        } else {
+        if (origin != null && !ConstantsPlaceRequest.updateDatasetsInGroup.equals(origin)) {
             StatisticalResourcesWeb.showErrorPage();
         }
 
-    }
-
-    private void loadInitialData() {
-        String datasetCode = PlaceRequestUtils.getDatasetParamFromUrl(placeManager);
-        // TODO EDATOS-4385 ¿Hace falta algo?
     }
 
     @Override
