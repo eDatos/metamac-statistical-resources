@@ -1,6 +1,5 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -130,7 +129,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 labelMap.put(dsdAttribute.getComponentId(), toI18nValue(attributeNames.get(0), selectedLanguage));
                 Concept concept = findConceptById(measureConcepts, dsdAttribute);
                 if (isMeasure(dsdAttribute)) {
-                    setUnitIfExists(unitMap, dsdAttribute, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage);
+                    setUnitIfExists(unitMap, dsdAttribute, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, dataAttributes, selectedLanguage);
                 }
 
                 jsonStatDimension.getCategory().setIndex(indexMap);
@@ -156,10 +155,10 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, DsdExternalProcessor.DsdAttribute dsdAttribute, Concept concept, Attribute unitMeasureAttribute,
-            Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
+            Attribute unitMeasureMultiplierAttribute, DataAttributes dataAttributes, String selectedLanguage) {
         if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
                 || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
-            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, null));
+            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, dataAttributes));
         } else if (concept != null && concept.getQuantity() != null) {
             unitMap.put(dsdAttribute.getComponentId(), toUnit(concept, selectedLanguage));
         }
@@ -257,28 +256,24 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         // dimension values though the order in DataAttributes class.
 
         if (attribute != null && attribute.getAttributeValues() != null) {
-            EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
+            String[] dataAttributeValues = null;
+            for (DataAttribute dataAtt : dataAttributes.getAttributes()) {
+                if (dataAtt.getId().equals(attribute.getId())) {
+                    dataAttributeValues = dataAtt.getValue().split(" \\| ");
+                    break;
+                }
+            }
 
-            if (attributeValues.getTotal().compareTo(BigInteger.valueOf(1)) == 0 && dataAttributes == null) {
-                InternationalString label = attributeValues.getValues().get(0).getName();
-                return toI18nValue(label, selectedLanguage);
-            } else if (dataAttributes != null) {
-                String[] dataAttributeValues = null;
-                for (DataAttribute dataAtt : dataAttributes.getAttributes()) {
-                    if (dataAtt.getId().equals(attribute.getId())) {
-                        dataAttributeValues = dataAtt.getValue().split(" \\| ");
-                        break;
+            if (dataAttributeValues != null && dataAttributeValues.length > index) {
+                EnumeratedAttributeValues attributeValues = (EnumeratedAttributeValues) attribute.getAttributeValues();
+                String attributeValueId = dataAttributeValues[index];
+                for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
+                    if (attributeValue.getId().equals(attributeValueId)) {
+                        InternationalString label = attributeValue.getName();
+                        return toI18nValue(label, selectedLanguage);
                     }
                 }
-                if (dataAttributeValues != null && dataAttributeValues.length > index) {
-                    String attributeValueId = dataAttributeValues[index];
-                    for (EnumeratedAttributeValue attributeValue : attributeValues.getValues()) {
-                        if (attributeValue.getId().equals(attributeValueId)) {
-                            InternationalString label = attributeValue.getName();
-                            return toI18nValue(label, selectedLanguage);
-                        }
-                    }
-                }
+
             }
         }
         return null;
