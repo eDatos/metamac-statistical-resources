@@ -13,7 +13,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
-import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceBaseListViewImpl;
+import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceUpdateMultipleResourcesListViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NewStatisticalResourceWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
@@ -46,7 +46,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
-public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<DatasetListUiHandlers> implements DatasetListPresenter.DatasetListView {
+public class DatasetListViewImpl extends StatisticalResourceUpdateMultipleResourcesListViewImpl<DatasetListUiHandlers> implements DatasetListPresenter.DatasetListView {
 
     private DatasetVersionSearchSectionStack     searchSectionStack;
 

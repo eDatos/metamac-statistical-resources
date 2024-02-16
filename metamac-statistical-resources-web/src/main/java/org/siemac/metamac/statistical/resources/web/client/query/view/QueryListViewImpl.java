@@ -298,9 +298,12 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
         return queryRecord.getQueryVersionBaseDto();
     }
 
-    @Override
-    protected ClickHandler getUpdateDatasetsInGroupValidationClickHandler() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    /*
+     * EDATOS-4385 QUITAR
+     * @Override
+     * protected ClickHandler getUpdateDatasetsInGroupValidationClickHandler() {
+     * // TODO Auto-generated method stub
+     * return null;
+     * }
+     */
 }

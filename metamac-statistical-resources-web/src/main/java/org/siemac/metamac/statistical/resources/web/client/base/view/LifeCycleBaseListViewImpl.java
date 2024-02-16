@@ -40,7 +40,6 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     protected CustomToolStripButton                   rejectValidationButton;
     protected CustomToolStripButton                   publishButton;
     protected CustomToolStripButton                   versionButton;
-    protected CustomToolStripButton                   updateDatasetsGroupButton;
 
     protected DeleteConfirmationWindow                deleteConfirmationWindow;
 
@@ -74,9 +73,6 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
 
         versionButton = createVersionButton();
         toolStrip.addButton(versionButton);
-
-        updateDatasetsGroupButton = this.createUpdateDatasetsInGroupButton();
-        toolStrip.addButton(updateDatasetsGroupButton);
 
         // ListGrid
 
@@ -305,8 +301,8 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
 
     protected boolean canVersionValidation(ListGridRecord[] records) {
         boolean canVersion = true;
-        for (ListGridRecord record : records) {
-            if (!canVersion(record)) {
+        for (ListGridRecord resourceRecord : records) {
+            if (!canVersion(resourceRecord)) {
                 canVersion = false;
                 break;
             }
@@ -314,65 +310,6 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
         return canVersion;
     }
 
-    private CustomToolStripButton createUpdateDatasetsInGroupButton() {
-        CustomToolStripButton button = new CustomToolStripButton(getConstants().actionLoadUpdateDatasetInGroup(),
-                org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.editListGrid().getURL()); // EDATOS-4385 Poner icono de edición
-        button.setVisible(false);
-        button.addClickHandler(getUpdateDatasetsInGroupValidationClickHandler());
-        return button;
-    }
-
-    private void showUpdateDatasetsInGroupValidationButton(ListGridRecord[] records) {
-        boolean isAllDatasetsInSameLifeCycle = true;
-        boolean canVersion = false;
-        boolean canSendToProduction = false;
-        boolean canSendToDifussion = false;
-        boolean canPublish = false;
-        for (ListGridRecord datasetRecord : records) {
-            if (canSendToProductionValidation(datasetRecord)) {
-                canSendToProduction = true;
-            }
-            if (canVersion(datasetRecord)) {
-                canVersion = true;
-            }
-            if (canSendToDiffusionValidation(datasetRecord)) {
-                canSendToDifussion = true;
-            }
-            if (canPublish(datasetRecord)) {
-                canPublish = true;
-            }
-
-            if (!checkDatasetsCanUpdateInGroup(canSendToProduction, canSendToDifussion, canPublish, canVersion)) {
-                isAllDatasetsInSameLifeCycle = false;
-                break;
-            }
-        }
-
-        if (isAllDatasetsInSameLifeCycle) {
-            updateDatasetsGroupButton.show();
-        }
-    }
-
-    private boolean checkDatasetsCanUpdateInGroup(boolean canSendToProductionValidation, boolean canSendToDifussionValidation, boolean canPublish, boolean canVersion) {
-
-        if (canVersion) {
-            return false;
-        }
-
-        int i = 0;
-        if (canSendToProductionValidation) {
-            i++;
-        }
-        if (canSendToDifussionValidation) {
-            i++;
-        }
-        if (canPublish) {
-            i++;
-        }
-
-        return i <= 1;
-
-    }
     // Visibility methods
 
     protected void updateListGridButtonsVisibility() {
@@ -389,7 +326,6 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
         showRejectValidationButton(records);
         showPublishButton(records);
         showVersionButton(records);
-        showUpdateDatasetsInGroupValidationButton(records);
     }
 
     protected void hideSelectionDependentButtons() {
@@ -399,7 +335,6 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
         rejectValidationButton.hide();
         publishButton.hide();
         versionButton.hide();
-        updateDatasetsGroupButton.hide();
     }
 
     //
@@ -415,8 +350,6 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     protected abstract ClickHandler getSendToDiffusionValidationClickHandler();
     protected abstract ClickHandler getRejectValidationClickHandler();
     protected abstract ClickHandler getPublishClickHandler();
-
-    protected abstract ClickHandler getUpdateDatasetsInGroupValidationClickHandler();
 
     protected abstract boolean canCreate();
     protected abstract boolean canDelete(ListGridRecord record);
