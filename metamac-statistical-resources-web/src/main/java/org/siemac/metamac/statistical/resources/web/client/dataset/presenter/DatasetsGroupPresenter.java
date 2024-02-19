@@ -37,7 +37,6 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.NameToken;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
-import com.gwtplatform.mvp.client.annotations.TitleFunction;
 import com.gwtplatform.mvp.client.annotations.UseGatekeeper;
 import com.gwtplatform.mvp.client.proxy.Place;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
@@ -86,11 +85,6 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         this.placeManager = placeManager;
         this.dispatcher = dispatcher;
         getView().setUiHandlers(this);
-    }
-
-    @TitleFunction
-    public String getTitle(PlaceRequest placeRequest) {
-        return PlaceRequestUtils.getDatasetBreadCrumbTitle(placeRequest);
     }
 
     @Override
@@ -155,7 +149,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
 
         MultipleDatasetVersionWebCriteria criteria = new MultipleDatasetVersionWebCriteria();
         criteria.setDatasetVersionUrns(datasetUrns);
-        dispatcher.execute(new GetMultipleDatasetVersionsAction(0, StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, criteria),
+        dispatcher.execute(new GetMultipleDatasetVersionsAction(0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS, criteria),
                 new WaitingAsyncCallbackHandlingError<GetMultipleDatasetVersionsResult>(this) {
 
                     @Override

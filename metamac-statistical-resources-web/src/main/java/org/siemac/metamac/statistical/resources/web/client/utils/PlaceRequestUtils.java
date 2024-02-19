@@ -20,6 +20,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 
 public class PlaceRequestUtils extends CommonPlaceRequestUtils {
 
+    private static final char HTML_DATASET_SEPARATOR = '-';
+
     // ---------------------------------------------------------------------------
     // OPERATIONS
     // ---------------------------------------------------------------------------
@@ -89,7 +91,11 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
     }
 
     private static List<String> getListDatasetIdentifiers(String datasetIdentifiers) {
-        return Arrays.asList(datasetIdentifiers.split(";"));
+        return Arrays.asList(datasetIdentifiers.split(String.valueOf(HTML_DATASET_SEPARATOR)));
+    }
+
+    public static String setListDatasetIdentifiers(List<String> selectedDatasetIdentifiers) {
+        return StringUtils.join(selectedDatasetIdentifiers.toArray(), HTML_DATASET_SEPARATOR);
     }
 
     public static PlaceRequest buildRelativeDatasetPlaceRequest(String urn) {
@@ -100,13 +106,6 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
 
         return new PlaceRequest(NameTokens.datasetsGroupPage).with(PlaceRequestParams.originDatasetDetailParam, ConstantsPlaceRequest.updateDatasetsInGroup).with(PlaceRequestParams.datasetParam,
                 selectedDatasetIdentifiers);
-    }
-
-    // TODO EDATOS-4385 ver si se utiliza
-    public static List<PlaceRequest> buildAbsoluteUpdateDatasetsInGroupPlaceRequest(String operationUrn, String selectedUrns) {
-        List<PlaceRequest> placeRequests = buildAbsoluteDatasetsPlaceRequest(operationUrn);
-        placeRequests.add(buildRelativeDatasetInGroupUpdatePlaceRequest(selectedUrns));
-        return placeRequests;
     }
 
     public static PlaceRequest buildRelativeDatasetsPlaceRequest() {
