@@ -48,6 +48,12 @@ public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers
         categorisationsPanel.setCategoriesForCategorisations(categories, firstResultOut, totalResults);
     }
 
+    @Override
+    public List<CategorisationDto> getCategorisations() {
+        return categorisationsPanel.getCategorisations();
+
+    }
+
     private class DatasetInGroupCategorisationsPanel extends CategorisationsInGroupPanel {
 
         @Override
@@ -58,6 +64,18 @@ public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers
         @Override
         protected void retrieveCategorySchemesForCategorisations(int firstResult, int maxResults, SrmExternalResourceRestCriteria categorySchemeWebCriteria) {
             getUiHandlers().retrieveCategorySchemesForCategorisations(firstResult, maxResults, categorySchemeWebCriteria);
+        }
+
+        public List<CategorisationDto> getCategorisations() {
+            List<CategorisationDto> categorisations = new ArrayList<CategorisationDto>();
+
+            for (ListGridRecord rawRecord : categorisationListGrid.getRecords()) {
+                CategorisationRecord categorisationRecord = (CategorisationRecord) rawRecord;
+                categorisations.add(categorisationRecord.getCategorisationDto());
+            }
+
+            return categorisations;
+
         }
 
         @Override

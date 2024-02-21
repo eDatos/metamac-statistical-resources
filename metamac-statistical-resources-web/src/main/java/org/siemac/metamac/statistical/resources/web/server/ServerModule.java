@@ -37,6 +37,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Save
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasetVersionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasourceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveRegionActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionMetadataInGroupActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionsProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateGeographicCoverageVariableElementsCacheActionHandler;
@@ -126,6 +127,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetAt
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveRegionAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
@@ -267,6 +269,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(SaveRegionAction.class, SaveRegionActionHandler.class);
         bindHandler(CreateDatabaseDatasourceAction.class, CreateDatabaseDatasourceActionHandler.class);
         bindHandler(GetMultipleDatasetVersionsAction.class, GetMultipleDatasetVersionsActionHandler.class);
+        bindHandler(UpdateDatasetVersionMetadataInGroupAction.class, UpdateDatasetVersionMetadataInGroupActionHandler.class);
 
         // PUBLICATIONS
         bindHandler(GetPublicationVersionsAction.class, GetPublicationVersionsActionHandler.class);

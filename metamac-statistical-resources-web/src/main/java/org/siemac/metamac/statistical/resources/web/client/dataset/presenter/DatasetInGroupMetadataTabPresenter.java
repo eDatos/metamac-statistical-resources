@@ -69,6 +69,8 @@ public class DatasetInGroupMetadataTabPresenter
 
         void setDataset(DatasetVersionDto datasetDto);
 
+        DatasetVersionDto getDatasetVersionMetadata();
+
         void initDatasetForUpdateInGroup(DatasetVersionDto datasetDto);
 
         // metadata fill methods

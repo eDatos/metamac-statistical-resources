@@ -81,6 +81,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarEle
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUpdateUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
@@ -103,6 +104,8 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.security.DatasetsSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.ProcStatusEnumAvro;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
@@ -132,8 +135,6 @@ import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
-import es.ibestat.jaxi.stream.messages.DatasetAvro;
-import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
 
 /**
  * Implementation of DatasetService.
@@ -2207,5 +2208,59 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
         return null;
     }
+
+    @Override
+    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, List<String> datasetUrnsToChange) throws MetamacException {
+        
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+        
+        if (datasetUrnsToChange.size() == 1) {
+            DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnsToChange.get(0));             
+            updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange);
+        } else {
+            for(String datasetVersionUrn : datasetUrnsToChange) {
+                try {
+                DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);             
+                updateDatasetVersionInGroupInJob(ctx, datasetVersion, datasetVersionMetadataToChange);
+                } catch (MetamacException e) {
+                    // TODO EDATOS-4385
+                    MetamacExceptionItem item = new MetamacExceptionItem(ServiceExceptionType.DATASET_NO_DATA, datasetVersionUrn);
+                    exceptionItems.add(item);
+                    
+                }
+            }            
+            
+            if (!exceptionItems.isEmpty()) {
+                throw new MetamacException(exceptionItems);
+                }
+        }   
+        
+
+    }
+    
+    private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
+                    DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
+                    updateDatasetVersion(ctx, datasetVersion);    
+        }
+    
+    
+    
+    // TODO EDATOS-4385 PENDIENTE JOB
+    private void updateDatasetVersionInGroupInJob(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
+        
+            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
+
+                @Override
+                protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                    TaskInfoDataset taskInfo = new TaskInfoDataset();
+                    taskInfo.setDatasetVersionId(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                    taskInfo.setDatasetUrn(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+                    taskService.planifyUpdateDatasetVersion(ctx, taskInfo, true);
+                    
+                    return null;
+                }
+            });
+        } 
+   
 
 }

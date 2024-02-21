@@ -6,8 +6,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
@@ -24,6 +26,9 @@ import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUti
 import org.siemac.metamac.statistical.resources.web.shared.criteria.MultipleDatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDatasetVersionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupResult;
+import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -70,6 +75,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         void setDatasetVersionsSelected(List<DatasetVersionBaseDto> datasetVersionBaseDtos);
         void selectMetadataTab();
         void selectCategorisationsTab();
+        void refreshStatusUpdateDatasetVersionInProgress(String urn, StreamMessageStatusEnum status);
         void showUnauthorizedResourceWarningMessage();
     }
 
@@ -158,6 +164,45 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
                     }
                 });
 
+    }
+
+    @Override
+    public void updateDatasets(List<String> datasetsUrnsUpdate, DatasetVersionDto datasetChangedMetadataDto, List<CategorisationDto> categorisations) {
+        List<String> urns = new ArrayList<String>();
+        for (final String urn : datasetsUrnsUpdate) {
+            try {
+                urns.clear();
+                urns.add(urn);
+                dispatcher.execute(new UpdateDatasetVersionMetadataInGroupAction(urns, datasetChangedMetadataDto, categorisations),
+                        new WaitingAsyncCallbackHandlingError<UpdateDatasetVersionMetadataInGroupResult>(this) {
+
+                            @Override
+                            public void onWaitFailure(Throwable caught) {
+                                hideWaitPopup();
+                                super.onWaitFailure(caught);
+                                getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.FAILED);
+                            }
+
+                            @Override
+                            public void onWaitSuccess(UpdateDatasetVersionMetadataInGroupResult result) {
+                                getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.SENT);
+                                // TODO EDATOS-4385 HACER ALGO
+                            }
+                        });
+            } catch (Exception e) {
+                hideWaitPopup();
+            }
+        }
+    }
+
+    @Override
+    public void showWaitPopup() {
+        ChangeWaitPopupVisibilityEvent.fire(this, true);
+    }
+
+    @Override
+    public void hideWaitPopup() {
+        ChangeWaitPopupVisibilityEvent.fire(this, false);
     }
 
     //

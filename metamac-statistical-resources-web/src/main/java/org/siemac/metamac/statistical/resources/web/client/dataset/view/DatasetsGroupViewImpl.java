@@ -2,13 +2,16 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.view;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
+import static org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE;
 
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.BooleanUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.CustomTabSet;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupCategorisationsTabPresenter.DatasetInGroupCategorisationsTabView;
@@ -17,6 +20,7 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.Dat
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetsGroupUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionsSectionStack;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
+import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.TitleLabel;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
@@ -27,28 +31,40 @@ import com.gwtplatform.mvp.client.ViewWithUiHandlers;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
 import com.smartgwt.client.widgets.Canvas;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.layout.VLayout;
 import com.smartgwt.client.widgets.tab.Tab;
 import com.smartgwt.client.widgets.tab.events.TabSelectedEvent;
 import com.smartgwt.client.widgets.tab.events.TabSelectedHandler;
+import com.smartgwt.client.widgets.toolbar.ToolStrip;
 
 public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHandlers> implements DatasetsGroupPresenter.DatasetsGroupView {
 
-    private VLayout                     panel;
+    private VLayout                              panel;
 
-    private TitleLabel                  titleLabel;
-    private InformationLabel            informationLabel;
-    private WarningLabel                warningLabel;
+    private TitleLabel                           titleLabel;
+    private InformationLabel                     informationLabel;
+    private WarningLabel                         warningLabel;
 
-    private DatasetVersionsSectionStack versionsSectionStack;
+    private DatasetVersionsSectionStack          versionsSectionStack;
 
-    private CustomTabSet                tabSet;
-    private Tab                         datasetInGroupMetadataTab;
-    private Tab                         datasetInGroupCategorisationsTab;
+    private CustomTabSet                         tabSet;
+    private Tab                                  datasetInGroupMetadataTab;
+    private Tab                                  datasetInGroupCategorisationsTab;
+
+    protected ToolStrip                          toolStrip;
+
+    // button
+    protected CustomToolStripButton              saveButton;
+    private DatasetInGroupMetadataTabView        datasetInGroupMetadataTabView;
+    private DatasetInGroupCategorisationsTabView datasetInGroupCategorisationsTabView;
 
     @Inject
     public DatasetsGroupViewImpl(DatasetInGroupMetadataTabView datasetInGroupMetadataTabView, DatasetInGroupCategorisationsTabView datasetInGroupCategorisationsTabView) {
         panel = new VLayout();
+        this.datasetInGroupMetadataTabView = datasetInGroupMetadataTabView;
+        this.datasetInGroupCategorisationsTabView = datasetInGroupCategorisationsTabView;
 
         titleLabel = new TitleLabel(new String());
         titleLabel.setVisible(false);
@@ -90,9 +106,9 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         subPanel.addMember(versionsSectionStack);
 
         VLayout tabSubPanel = new VLayout();
-        tabSubPanel.addMember(titleLabel);
-        tabSubPanel.addMember(informationLabel);
-        tabSubPanel.addMember(warningLabel);
+        createToolTrip();
+        tabSubPanel.addMember(toolStrip);
+
         tabSubPanel.addMember(tabSet);
         tabSubPanel.setMargin(15);
         subPanel.addMember(tabSubPanel);
@@ -100,6 +116,36 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         panel.addMember(subPanel);
 
         bindEvents();
+    }
+
+    private void createToolTrip() {
+        toolStrip = new ToolStrip();
+        toolStrip.setWidth100();
+
+        saveButton = createSaveButton();
+        toolStrip.addButton(saveButton);
+    }
+
+    private CustomToolStripButton createSaveButton() {
+        CustomToolStripButton button = new CustomToolStripButton(getConstants().actionSave(), RESOURCE.saveListGrid().getURL());
+        button.addClickHandler(getSaveButtonClickHandler());
+        return button;
+    }
+
+    private ClickHandler getSaveButtonClickHandler() {
+        return new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                List<String> datasetsUrnsUpdate = versionsSectionStack.getAllDatasetUrns();
+                DatasetVersionDto datasetDto = datasetInGroupMetadataTabView.getDatasetVersionMetadata();
+                if (datasetDto != null) {
+                    List<CategorisationDto> categorisations = datasetInGroupCategorisationsTabView.getCategorisations();
+                    getUiHandlers().updateDatasets(datasetsUrnsUpdate, datasetDto, categorisations);
+                }
+            }
+        };
+
     }
 
     private void bindEvents() {
@@ -189,5 +235,11 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
     @Override
     public Widget asWidget() {
         return panel;
+    }
+
+    @Override
+    public void refreshStatusUpdateDatasetVersionInProgress(String datasetUrn, StreamMessageStatusEnum status) {
+        versionsSectionStack.refreshStatusDatasetVersion(datasetUrn, status);
+
     }
 }

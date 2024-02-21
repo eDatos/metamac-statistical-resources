@@ -159,7 +159,6 @@ public class DatasetInGroupMetadataTabViewImpl extends StatisticalResourceMetada
 
         mainFormLayout.setDatasetVersion();
         mainFormLayout.setEditionMode();
-        mainFormLayout.getCancelToolStripButton().hide();
 
         setDatasetEditionMode(datasetVersionDto);
 
@@ -334,5 +333,16 @@ public class DatasetInGroupMetadataTabViewImpl extends StatisticalResourceMetada
     public void setDataset(DatasetVersionDto datasetDto) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public DatasetVersionDto getDatasetVersionMetadata() {
+        if (contentDescriptorsEditionForm.validate(false) && commonMetadataEditionForm.validate(false) && productionDescriptorsEditionForm.validate(false) && versionEditionForm.validate(false)
+                && resourceRelationDescriptorsEditionForm.validate(false) && publicationDescriptorsEditionForm.validate(false) && thematicContentClassifiersEditionForm.validate(false)
+                && languageEditionForm.validate(false) && intellectualPropertyDescriptorsEditionForm.validate(false)) {
+            return getDatasetVersionDto();
+        }
+
+        return null;
     }
 }

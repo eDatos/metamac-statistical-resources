@@ -9,8 +9,18 @@ public class DatasetInGroupMainFormLayout extends InternationalMainFormLayout {
     }
 
     public void setDatasetVersion() {
-        setCanEdit(true);
+        setCanEdit(false);
         setCanDelete(false);
+    }
+
+    @Override
+    public void setEditionMode() {
+        viewFormLayout.hide();
+        editionFormLayout.show();
+        editToolStripButton.hide();
+        deleteToolStringButton.hide();
+        saveToolStripButton.hide();
+        cancelToolStripButton.hide();
     }
 
 }

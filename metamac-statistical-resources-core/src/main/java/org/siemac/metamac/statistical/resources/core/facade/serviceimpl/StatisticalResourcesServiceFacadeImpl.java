@@ -132,10 +132,8 @@ import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 @Service("statisticalResourcesServiceFacade")
 public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesServiceFacadeImplBase {
 
+    private static Logger                                             logger = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
 
-    private static Logger                     logger                              = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
-
-    
     @Autowired
     private CommonDo2DtoMapper                                        commonDo2DtoMapper;
 
@@ -249,7 +247,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
-  
+
     public StatisticalResourcesServiceFacadeImpl() {
     }
 
@@ -1113,7 +1111,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+    public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls,
+            BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode);
 
@@ -1136,7 +1135,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceCreated.getAttributeId());
 
-        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceCreated);
+        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId(), dsdAttribute, attributeInstanceCreated);
     }
 
     @Override
@@ -1172,7 +1171,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         if (attributeInstanceUpdated != null) {
             DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceUpdated.getAttributeId());
 
-            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceUpdated);
+            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId(), dsdAttribute, attributeInstanceUpdated);
         } else {
             return null;
         }
@@ -1222,32 +1221,30 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-       
+
         logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
-        
-        
+
         // Operate
         getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
 
         logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
-        
+
         logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
-        
+
         getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
-        
+
         logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
-        
-        
+
     }
-     
+
     @Override
     public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
-       getDatasetService().updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+        getDatasetService().updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
     }
- 
+
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
         DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
@@ -2458,5 +2455,18 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         datasetVersionDto.setVersion(null);
         datasetVersionDto.setPublicationStreamStatus(null);
         return createDataset(ctx, datasetVersionDto, statisticalOperationDto);
+    }
+
+    @Override
+    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersionDto datasetVersionMetadataToChangeDto, List<String> datasetUrnsToChange, List<CategorisationDto> categorisationsDto)
+            throws MetamacException {
+        DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionMetadataToChangeDto);
+
+        for (CategorisationDto categorisationDto : categorisationsDto) {
+            datasetVersion.addCategorisation(datasetDto2DoMapper.categorisationDtoToDo(categorisationDto));
+        }
+
+        getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnsToChange);
+
     }
 }

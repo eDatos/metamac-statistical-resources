@@ -2174,4 +2174,10 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     public void testGetDatasetLastVersionPublishedByDatasetUrn() throws Exception {
         // NOTHING TO DO
     }
+
+    @Override
+    public void testUpdateDatasetVersionInGroup() throws Exception {
+        // TODO EDATOS-4385
+
+    }
 }

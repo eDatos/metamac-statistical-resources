@@ -503,7 +503,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         queryVersionDto.getSelection().put("DIM_02", Arrays.asList(new CodeItemDto("CODE_11", "code 11")));
         QueryVersionDto queryVersionGenerated = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryVersionDto, statisticalOperation);
         String persistedQueryUrn = queryVersionGenerated.getUrn();
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=SIEMAC:" + statisticalOperation.getCode() +"_000001(1.0)", persistedQueryUrn);
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=SIEMAC:" + statisticalOperation.getCode() + "_000001(1.0)", persistedQueryUrn);
     }
 
     @Test
@@ -1795,7 +1795,8 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         {
             MetamacCriteria metamacCriteria = new MetamacCriteria();
             setCriteriaPaginator(metamacCriteria, 0, Integer.MAX_VALUE, Boolean.TRUE);
-            setCriteriaStringPropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.EQ, CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 1, 15, 0, 0, 0, 0).toDate()));
+            setCriteriaStringPropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.EQ,
+                    CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2013, 1, 15, 0, 0, 0, 0).toDate()));
 
             MetamacCriteriaResult<DatasetVersionBaseDto> pagedResults = statisticalResourcesServiceFacade.findDatasetsVersionsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(1, pagedResults.getPaginatorResult().getTotalResults().intValue());
@@ -1806,7 +1807,8 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         {
             MetamacCriteria metamacCriteria = new MetamacCriteria();
             setCriteriaPaginator(metamacCriteria, 0, Integer.MAX_VALUE, Boolean.TRUE);
-            setCriteriaStringPropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.GT, CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2012, 12, 1, 0, 0, 0, 0).toDate()));
+            setCriteriaStringPropertyRestriction(metamacCriteria, StatisticalResourcesCriteriaPropertyEnum.NEXT_VERSION_DATE, OperationType.GT,
+                    CoreCommonUtil.jodaDateTime2IsoDate(new DateTime(2012, 12, 1, 0, 0, 0, 0).toDate()));
 
             MetamacCriteriaResult<DatasetVersionBaseDto> pagedResults = statisticalResourcesServiceFacade.findDatasetsVersionsByCondition(getServiceContextAdministrador(), metamacCriteria);
             assertEquals(2, pagedResults.getPaginatorResult().getTotalResults().intValue());
@@ -2249,7 +2251,8 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         URL url = new URL("file", null, "myfile.px");
 
         HashMap<String, String> mappings = new HashMap<String, String>();
-        statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url), mappings, false, new BasicVersionableStatisticalResourceDto());
+        statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDto, Arrays.asList(url), mappings, false,
+                new BasicVersionableStatisticalResourceDto());
     }
 
     @Override
@@ -2298,7 +2301,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
         // no test
     }
-    
+
     // ------------------------------------------------------------------------
     // CATEGORISATIONS
     // ------------------------------------------------------------------------
@@ -3283,7 +3286,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         CubeDto actual = statisticalResourcesServiceFacade.updateCube(getServiceContextAdministrador(), expected);
         assertEquals(expected.getUrl(), actual.getUrl());
     }
-    
+
     @Override
     @Test
     @MetamacMock({CUBE_01_BASIC_NAME, CUBE_02_BASIC_NAME})
@@ -4270,7 +4273,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         assertEquals(DatasetVersionUtils.generateViewCode(newDatasetVersionDto.getCode()), newDatasetVersionDto.getViewCode());
 
     }
-    
+
     @Test
     @MetamacMock({DATASET_VERSION_06_FOR_QUERIES_NAME})
     public void testGenerateDifferentUrn() throws Exception {
@@ -4283,7 +4286,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
         QueryVersionDto persistedQuery = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryToPersist, statisticalOperation);
         QueryVersionDto persistedQueryCopy = statisticalResourcesServiceFacade.createQuery(getServiceContextAdministrador(), queryToPersist, statisticalOperation);
-        
+
         assertNotSame(persistedQuery, persistedQueryCopy);
     }
 
@@ -4300,6 +4303,12 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     @Override
     public void testCheckAttributeInstance() throws Exception {
         // TODO Auto-generated method stub
-        
+
+    }
+
+    @Override
+    public void testUpdateDatasetVersionInGroup() throws Exception {
+        // TODO EDATOS-4385
+
     }
 }

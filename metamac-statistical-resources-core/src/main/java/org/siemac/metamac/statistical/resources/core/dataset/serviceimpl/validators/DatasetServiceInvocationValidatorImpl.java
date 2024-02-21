@@ -370,6 +370,12 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
 
     }
 
+    public static void checkUpdateDatasetVersionInGroup(DatasetVersion datasetVersionMetadataToChange, List<String> datasetUrnsToChange, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionMetadataToChange, ServiceExceptionParameters.DATASET_VERSION, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetUrnsToChange, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
+
+    }
+
     public static void checkUpdateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
     }
