@@ -104,8 +104,6 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.security.DatasetsSecurityUtils;
-import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetAvro;
-import org.siemac.metamac.statistical.resources.core.stream.messages.ProcStatusEnumAvro;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
@@ -135,6 +133,8 @@ import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
+import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
 
 /**
  * Implementation of DatasetService.
