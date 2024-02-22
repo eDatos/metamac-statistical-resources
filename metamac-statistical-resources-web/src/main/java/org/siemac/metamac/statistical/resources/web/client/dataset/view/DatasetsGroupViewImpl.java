@@ -82,7 +82,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         // DATASET VERSIONS
         //
 
-        versionsSectionStack = new DatasetVersionsSectionStack(getConstants().datasetVersionsSelected());
+        versionsSectionStack = new DatasetVersionsSectionStack(getConstants().datasetVersionsSelected(), getConstants().updateDatasetVersionsInGroupStatus());
 
         // TABS
 

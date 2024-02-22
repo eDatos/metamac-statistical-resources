@@ -2211,6 +2211,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, List<String> datasetUrnsToChange) throws MetamacException {
+      
         
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         
@@ -2239,28 +2240,47 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
     
     private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
-                    DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
-                    updateDatasetVersion(ctx, datasetVersion);    
+        datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
+        DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
+        updateDatasetVersion(ctx, datasetVersion);   
+        updateDatasetVersionCategorisations(ctx, datasetVersion, datasetVersionMetadataToChange.getCategorisations());
+
+
+    }
+    
+    private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {
+        if (!categorisations.isEmpty()) {
+            
+            // TODO EDATOS-4385 PENDIENTE SI TIENE SENTIDO BORRAR LAS QUE TENGAN. 
+      //      for (Categorisation categorisation : datasetVersion.getCategorisations() ) {
+      //          getCategorisationRepository().delete(categorisation);
+      //      }
+
+            for (Categorisation categorisation : categorisations ) {
+                categorisation.setDatasetVersion(datasetVersion);
+                fillMetadataForCreateCategorisation(ctx, categorisation);
+
+                getCategorisationRepository().save(categorisation);
+            }
         }
-    
-    
-    
+    }
+
     // TODO EDATOS-4385 PENDIENTE JOB
     private void updateDatasetVersionInGroupInJob(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
-        
-            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
+        datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
+        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
 
-                @Override
-                protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                    TaskInfoDataset taskInfo = new TaskInfoDataset();
-                    taskInfo.setDatasetVersionId(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-                    taskInfo.setDatasetUrn(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
-                    taskService.planifyUpdateDatasetVersion(ctx, taskInfo, true);
-                    
-                    return null;
-                }
-            });
-        } 
-   
+            @Override
+            protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                TaskInfoDataset taskInfo = new TaskInfoDataset();
+                taskInfo.setDatasetVersionId(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                taskInfo.setDatasetUrn(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+                taskService.planifyUpdateDatasetVersion(ctx, taskInfo, true);
+
+                return null;
+            }
+        });
+    } 
+
 
 }

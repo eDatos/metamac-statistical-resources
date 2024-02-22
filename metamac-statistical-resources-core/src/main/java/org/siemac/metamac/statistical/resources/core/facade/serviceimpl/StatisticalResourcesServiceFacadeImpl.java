@@ -2463,6 +2463,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionMetadataToChangeDto);
 
         for (CategorisationDto categorisationDto : categorisationsDto) {
+            categorisationDto.setUrn(null); // necessary for mapping
             datasetVersion.addCategorisation(datasetDto2DoMapper.categorisationDtoToDo(categorisationDto));
         }
 

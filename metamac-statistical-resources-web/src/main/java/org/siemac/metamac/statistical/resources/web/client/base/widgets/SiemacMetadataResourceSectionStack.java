@@ -13,8 +13,15 @@ import com.smartgwt.client.widgets.grid.ListGridField;
 
 public class SiemacMetadataResourceSectionStack extends VersionableResourceSectionStack {
 
+    private String statusTitle = getConstants().publicationStreamStatus();
+
     public SiemacMetadataResourceSectionStack(String title) {
         super(title);
+    }
+
+    public SiemacMetadataResourceSectionStack(String title, String statusTitle) {
+        super(title);
+        this.statusTitle = statusTitle;
     }
 
     @Override
@@ -26,7 +33,7 @@ public class SiemacMetadataResourceSectionStack extends VersionableResourceSecti
     }
 
     protected void addPublicationStreamStatusToGrid(List<ListGridField> fieldList) {
-        ListGridField publicationStreamStatus = new ListGridField(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS, getConstants().publicationStreamStatus());
+        ListGridField publicationStreamStatus = new ListGridField(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS, statusTitle);
         publicationStreamStatus.setType(ListGridFieldType.IMAGE);
         publicationStreamStatus.setAlign(Alignment.CENTER);
         fieldList.add(publicationStreamStatus);

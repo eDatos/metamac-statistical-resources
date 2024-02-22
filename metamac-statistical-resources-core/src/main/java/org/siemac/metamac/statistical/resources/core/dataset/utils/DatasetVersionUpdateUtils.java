@@ -5,11 +5,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.base.domain.NameableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.utils.CommonVersioningCopyUtils;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 
@@ -20,18 +20,6 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
      */
     public static void updateDatasetVersion(DatasetVersion source, DatasetVersion target) {
         copyMetadata(source, target);
-        copyCategorisations(source, target);
-    }
-
-    private static void copyCategorisations(DatasetVersion source, DatasetVersion target) {
-        if (!source.getCategorisations().isEmpty()) {
-            target.getCategorisations().clear();
-            for (Categorisation categorisation : source.getCategorisations()) {
-                Categorisation newCategorisation = new Categorisation();
-                copyCategorisation(categorisation, newCategorisation);
-                target.addCategorisation(newCategorisation);
-            }
-        }
     }
 
     private static void copyMetadata(DatasetVersion source, DatasetVersion target) {
@@ -80,24 +68,36 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
     // SIEMAC METADATA STATISTICAL RESOURCE
     // --------------------------------------------------------------------------
 
-    public static SiemacMetadataStatisticalResource copySiemacMetadataStatisticalResource(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
+    private static SiemacMetadataStatisticalResource copySiemacMetadataStatisticalResource(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
 
         copyLifeCycleStatisticalResource(source, target);
 
-        // Languages
+        copyLanguageMetadata(source, target);
+        copyContentClassifiersMetadata(source, target);
+        copyContentDescriptorsMetadata(source, target);
+        copyProductionDescriptorsMetadata(source, target);
+        copyPublishingDescriptorsMetadata(source, target);
+        copyResourcesRelationDescriptorsMetadata(source, target);
+
+        return target;
+    }
+
+    private static void copyLanguageMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         if (!source.getLanguages().isEmpty()) {
             target.setLanguage(copyExternalItem(source.getLanguage()));
             target.getLanguages().clear();
             target.getLanguages().addAll(copyCollectionExternalItem(source.getLanguages()));
         }
+    }
 
-        // Theme content classifiers
+    private static void copyContentClassifiersMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         if (!source.getStatisticalOperationInstances().isEmpty()) {
             target.getStatisticalOperationInstances().clear();
             target.getStatisticalOperationInstances().addAll(copyCollectionExternalItem(source.getStatisticalOperationInstances()));
         }
+    }
 
-        // Content descriptors
+    private static void copyContentDescriptorsMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         if (source.getSubtitle() != null && !source.getSubtitle().getTexts().isEmpty()) {
             target.setSubtitle(copyInternationalString(source.getSubtitle()));
         }
@@ -117,9 +117,9 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
         if (source.getCommonMetadata() != null && source.getCommonMetadata().getId() != null) {
             target.setCommonMetadata(copyExternalItem(source.getCommonMetadata()));
         }
+    }
 
-        // Production descriptors
-
+    private static void copyProductionDescriptorsMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         if (source.getCreator() != null && source.getCreator().getId() != null) {
             target.setCreator(copyExternalItem(source.getCreator()));
         }
@@ -136,8 +136,9 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
         if (source.getDataProviderAnnotations() != null && !source.getDataProviderAnnotations().getTexts().isEmpty()) {
             target.setDataProviderAnnotations(copyInternationalString(source.getDataProviderAnnotations()));
         }
+    }
 
-        // Publishing descriptors
+    private static void copyPublishingDescriptorsMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         if (!source.getPublisher().isEmpty()) {
             target.getPublisher().clear();
             target.getPublisher().addAll(copyCollectionExternalItem(source.getPublisher()));
@@ -151,21 +152,22 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
             target.getMediator().addAll(copyCollectionExternalItem(source.getMediator()));
         }
 
-        // Resources relation descriptors
+    }
 
+    private static void copyResourcesRelationDescriptorsMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         // Intellectual ownership descriptors
         if (source.getAccessRights() != null && !source.getAccessRights().getTexts().isEmpty()) {
             target.setAccessRights(copyInternationalString(source.getAccessRights()));
         }
-
-        return target;
     }
 
     // --------------------------------------------------------------------------
     // LIFE CYCLE STATISTICAL RESOURCE
     // --------------------------------------------------------------------------
 
-    public static LifeCycleStatisticalResource copyLifeCycleStatisticalResource(LifeCycleStatisticalResource source, LifeCycleStatisticalResource target) {
+    private static LifeCycleStatisticalResource copyLifeCycleStatisticalResource(LifeCycleStatisticalResource source, LifeCycleStatisticalResource target) {
+
+        copyVersionableStatisticalResource(source, target);
 
         if (!source.getVersionRationaleTypes().isEmpty()) {
             target.getVersionRationaleTypes().clear();
@@ -187,6 +189,24 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
         return target;
     }
 
+    // --------------------------------------------------------------------------
+    // VERSIONABLE STATISTICAL RESOURCE
+    // --------------------------------------------------------------------------
+
+    private static void copyVersionableStatisticalResource(VersionableStatisticalResource source, VersionableStatisticalResource target) {
+        copyNameableStatisticalResource(source, target);
+    }
+
+    // --------------------------------------------------------------------------
+    // NAMEABLE STATISTICAL RESOURCE
+    // --------------------------------------------------------------------------
+
+    private static void copyNameableStatisticalResource(NameableStatisticalResource source, NameableStatisticalResource target) {
+        if (source.getDescription() != null && !source.getDescription().getTexts().isEmpty()) {
+            target.setDescription(copyInternationalString(source.getDescription()));
+        }
+    }
+
     private static Collection<VersionRationaleType> copyListVersionRationaleType(List<VersionRationaleType> source) {
 
         List<VersionRationaleType> target = new ArrayList<VersionRationaleType>();
@@ -196,7 +216,7 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
         return target;
     }
 
-    public static VersionRationaleType copyVersionRationaleType(VersionRationaleType source) {
+    private static VersionRationaleType copyVersionRationaleType(VersionRationaleType source) {
         if (source == null) {
             return null;
         }
@@ -217,7 +237,7 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
         return target;
     }
 
-    public static TemporalCode copyTemporalCode(TemporalCode source) {
+    private static TemporalCode copyTemporalCode(TemporalCode source) {
         if (source == null) {
             return null;
         }
@@ -226,11 +246,4 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
         target.setTitle(source.getTitle());
         return target;
     }
-
-    private static void copyCategorisation(Categorisation source, Categorisation target) {
-        target.setCategory(copyExternalItem(source.getCategory()));
-        target.setMaintainer(copyExternalItem(source.getMaintainer()));
-        target.setVersionableStatisticalResource(new VersionableStatisticalResource()); // all metadata will be autogenerated (code, title...)
-    }
-
 }

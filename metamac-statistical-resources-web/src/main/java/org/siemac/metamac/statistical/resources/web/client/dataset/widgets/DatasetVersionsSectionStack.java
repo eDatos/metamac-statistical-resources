@@ -7,16 +7,27 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageS
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SiemacMetadataResourceSectionStack;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 
 import com.smartgwt.client.types.SortDirection;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class DatasetVersionsSectionStack extends SiemacMetadataResourceSectionStack {
 
     public DatasetVersionsSectionStack(String title) {
         super(title);
+        initDatasetVersionsSectionStack();
+    }
+
+    public DatasetVersionsSectionStack(String title, String statusTitle) {
+        super(title, statusTitle);
+        initDatasetVersionsSectionStack();
+    }
+
+    private void initDatasetVersionsSectionStack() {
         setListGridFields();
     }
 
@@ -47,6 +58,13 @@ public class DatasetVersionsSectionStack extends SiemacMetadataResourceSectionSt
                     break;
                 }
             }
+        }
+    }
+
+    public void showUpdateStatus(boolean show) {
+        ListGridField fieldStatus = listGrid.getField(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS);
+        if (fieldStatus != null) {
+            fieldStatus.setHidden(!show);
         }
     }
 }
