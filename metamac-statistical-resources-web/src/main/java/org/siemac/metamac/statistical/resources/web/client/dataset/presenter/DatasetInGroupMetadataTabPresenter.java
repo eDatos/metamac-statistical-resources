@@ -232,10 +232,4 @@ public class DatasetInGroupMetadataTabPresenter
     private void goToDatasetList() {
         placeManager.revealRelativePlace(-2);
     }
-
-    @Override
-    public void retrieveDataset(String datasetIdentifier) {
-        // TODO Auto-generated method stub
-
-    }
 }
