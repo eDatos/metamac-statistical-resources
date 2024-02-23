@@ -54,6 +54,12 @@ public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers
 
     }
 
+    @Override
+    public void clearSelectedCategorisations() {
+        categorisationsPanel.clearSelectedCategorisations();
+
+    }
+
     private class DatasetInGroupCategorisationsPanel extends CategorisationsInGroupPanel {
 
         @Override
@@ -87,10 +93,8 @@ public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers
                     continue;
                 }
                 CategorisationDto categorisationDto = new CategorisationDto();
-                categorisationDto.setId(category.getId());
-                categorisationDto.setCode(category.getCode());
+                categorisationDto.setCode(category.getCode()); // not real code in categorisation. Only for visualisation purpose.
                 categorisationDto.setTitle(category.getTitle());
-                categorisationDto.setUrn(category.getUrn());
                 categorisationDto.setCategory(category);
                 dto.add(categorisationDto);
             }
@@ -100,12 +104,12 @@ public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers
 
         @Override
         public void deleteCategorisations(ListGridRecord[] selectedResources) {
-            CategorisationRecord[] categorisations = new CategorisationRecord[categorisationListGrid.getRecords().length - categorisationListGrid.getSelectedRecords().length];
+            CategorisationRecord[] categorisations = new CategorisationRecord[categorisationListGrid.getRecords().length - selectedResources.length];
             int numCategorisation = 0;
 
             for (ListGridRecord rawRecord : categorisationListGrid.getRecords()) {
                 CategorisationRecord categorisationRecord = (CategorisationRecord) rawRecord;
-                if (!deleteCategorisation(categorisationRecord.getUrn())) {
+                if (!deleteCategorisation(categorisationRecord.getCategory().getUrn())) {
                     categorisations[numCategorisation++] = categorisationRecord;
                 }
             }
@@ -118,11 +122,17 @@ public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers
         private boolean deleteCategorisation(String urnCategorisation) {
             for (ListGridRecord record : categorisationListGrid.getSelectedRecords()) {
                 CategorisationRecord categorisationRecord = (CategorisationRecord) record;
-                if (categorisationRecord.getUrn().equals(urnCategorisation)) {
+                if (categorisationRecord.getCategory().getUrn().equals(urnCategorisation)) {
                     return true;
                 }
             }
             return false;
+        }
+
+        public void clearSelectedCategorisations() {
+            CategorisationRecord[] categorisations = new CategorisationRecord[0];
+            categorisationListGrid.setAutoFitMaxRecords(0);
+            categorisationListGrid.setData(categorisations);
         }
 
         @Override

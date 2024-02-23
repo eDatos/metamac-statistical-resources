@@ -53,6 +53,8 @@ public class DatasetInGroupCategorisationsTabPresenter
 
         void setCategorySchemesForCategorisations(List<ExternalItemDto> categorySchemes, Integer firstResultOut, Integer totalResults);
 
+        void clearSelectedCategorisations();
+
         List<CategorisationDto> getCategorisations();
 
     }
@@ -93,7 +95,7 @@ public class DatasetInGroupCategorisationsTabPresenter
         super.prepareFromRequest(request);
 
         String origin = PlaceRequestUtils.getOriginDatasetDetailParamFromUrl(placeManager);
-        if (origin != null && !ConstantsPlaceRequest.updateDatasetsInGroup.equals(origin)) {
+        if (!ConstantsPlaceRequest.updateDatasetsInGroup.equals(origin)) {
             StatisticalResourcesWeb.showErrorPage();
         }
 

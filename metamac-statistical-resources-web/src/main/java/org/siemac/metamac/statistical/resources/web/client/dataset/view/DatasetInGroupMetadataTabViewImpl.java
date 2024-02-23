@@ -5,6 +5,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.RequiredFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceMetadataBaseViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupMetadataTabPresenter.DatasetInGroupMetadataTabView;
@@ -149,13 +150,14 @@ public class DatasetInGroupMetadataTabViewImpl extends StatisticalResourceMetada
         // Intellectual property descriptors
         intellectualPropertyDescriptorsEditionForm = new SiemacMetadataIntellectualPropertyDescriptorsEditionForm(true);
         mainFormLayout.addEditionCanvas(intellectualPropertyDescriptorsEditionForm);
+
+        initMetadataInGroupForm();
     }
 
     @Override
-    public void initDatasetForUpdateInGroup(DatasetVersionDto datasetDto) {
-
+    public void initMetadataInGroupForm() {
         this.datasetVersionDto = new DatasetVersionDto();
-        this.datasetVersionDto.setProcStatus(datasetDto.getProcStatus());
+        this.datasetVersionDto.setProcStatus(ProcStatusEnum.DRAFT); // for draw required fields is irrelevant the status.
 
         mainFormLayout.setDatasetVersion();
         mainFormLayout.setEditionMode();
@@ -163,7 +165,6 @@ public class DatasetInGroupMetadataTabViewImpl extends StatisticalResourceMetada
         setDatasetEditionMode(datasetVersionDto);
 
         mainFormLayout.markForRedraw();
-
     }
 
     private void setDatasetEditionMode(DatasetVersionDto datasetDto) {
@@ -327,12 +328,6 @@ public class DatasetInGroupMetadataTabViewImpl extends StatisticalResourceMetada
     @Override
     protected SiemacMetadataLanguageEditionForm getLanguageEditionForm() {
         return languageEditionForm;
-    }
-
-    @Override
-    public void setDataset(DatasetVersionDto datasetDto) {
-        // TODO Auto-generated method stub
-
     }
 
     @Override

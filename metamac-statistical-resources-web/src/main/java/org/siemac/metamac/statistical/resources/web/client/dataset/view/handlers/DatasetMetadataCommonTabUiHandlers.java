@@ -10,7 +10,6 @@ import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 public interface DatasetMetadataCommonTabUiHandlers extends BaseUiHandlers, StatisticalResourceUiHandlers {
 
-    void retrieveDataset(String datasetIdentifier);
     void retrieveMainCoveragesForDatasetVersion(String datasetVersionUrn);
 
     // DSD

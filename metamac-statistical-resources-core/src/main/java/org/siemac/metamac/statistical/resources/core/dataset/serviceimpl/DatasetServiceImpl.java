@@ -68,6 +68,7 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.checks.DatasetMetadataEditionChecks;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CategorisationProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -1266,6 +1267,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         // Save categorisation
         return getCategorisationRepository().save(categorisation);
+
     }
 
     @Override
@@ -2240,27 +2242,36 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
     
     private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
+
+
+        //getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
+
+        //     @Override
+        //     protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
         datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
         DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
         updateDatasetVersion(ctx, datasetVersion);   
-        updateDatasetVersionCategorisations(ctx, datasetVersion, datasetVersionMetadataToChange.getCategorisations());
-
+        updateDatasetVersionCategorisations(ctx, datasetVersion, DatasetVersionUpdateUtils.copyCategorisations(datasetVersionMetadataToChange.getCategorisations()));
+        //      return null;
+        //  }
+        //});
 
     }
-    
+
     private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {
         if (!categorisations.isEmpty()) {
-            
-            // TODO EDATOS-4385 PENDIENTE SI TIENE SENTIDO BORRAR LAS QUE TENGAN. 
-      //      for (Categorisation categorisation : datasetVersion.getCategorisations() ) {
-      //          getCategorisationRepository().delete(categorisation);
-      //      }
 
             for (Categorisation categorisation : categorisations ) {
-                categorisation.setDatasetVersion(datasetVersion);
-                fillMetadataForCreateCategorisation(ctx, categorisation);
+                List<ConditionalCriteria> condition = criteriaFor(Categorisation.class).withProperty(CategorisationProperties.category().urn()).eq(categorisation.getCategory().getUrn()).and()
+                        .withProperty(CategorisationProperties.datasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersion.getSiemacMetadataStatisticalResource().getUrn())
+                        .distinctRoot().build();
+                List<Categorisation> result = getCategorisationRepository().findByCondition(condition);
+                if (result.isEmpty()) {
+                    categorisation.setDatasetVersion(datasetVersion);
+                    fillMetadataForCreateCategorisation(ctx, categorisation);
 
-                getCategorisationRepository().save(categorisation);
+                    getCategorisationRepository().save(categorisation);
+                }
             }
         }
     }

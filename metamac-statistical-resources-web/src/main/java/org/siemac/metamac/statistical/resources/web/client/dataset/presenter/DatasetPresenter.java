@@ -141,9 +141,7 @@ public class DatasetPresenter extends Presenter<DatasetPresenter.DatasetView, Da
                     loadInitialData();
                 }
 
-            } else if (origin != null && ConstantsPlaceRequest.updateDatasetsInGroup.equals(origin)) {
-                return;
-            } else {
+            } else if (!ConstantsPlaceRequest.updateDatasetsInGroup.equals(origin)) {
                 StatisticalResourcesWeb.showErrorPage();
             }
         }

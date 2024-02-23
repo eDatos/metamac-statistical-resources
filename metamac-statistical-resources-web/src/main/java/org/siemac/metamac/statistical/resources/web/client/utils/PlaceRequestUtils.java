@@ -78,7 +78,7 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
                 return getRequestParameter(request, PlaceRequestParams.originDatasetDetailParam);
             }
         }
-        return null;
+        return "";
     }
 
     public static List<String> getDatasetsInGroupParamFromUrl(PlaceManager placeManager) {

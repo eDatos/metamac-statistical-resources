@@ -70,6 +70,8 @@ public class UpdateDatasetVersionMetadataInGroupActionHandler extends UpdateReso
             ExternalItemDto maintainer = srmRestInternalFacade.retrieveAgencyByUrn(organisationUrn);
             for (CategorisationDto categorisationDto : categorisationsDto) {
                 categorisationDto.setMaintainer(maintainer);
+                categorisationDto.setCode(null);
+                categorisationDto.setUrn(null);
             }
         }
     }

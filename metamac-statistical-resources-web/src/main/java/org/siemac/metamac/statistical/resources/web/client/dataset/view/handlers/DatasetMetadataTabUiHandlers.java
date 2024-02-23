@@ -17,6 +17,7 @@ public interface DatasetMetadataTabUiHandlers extends DatasetMetadataCommonTabUi
 
     void previewData(DatasetVersionDto datasetVersionDto);
 
+    void retrieveDataset(String datasetIdentifier);
     void saveDataset(DatasetVersionDto datasetDto);
 
     void deleteDatasetVersion(String urn);

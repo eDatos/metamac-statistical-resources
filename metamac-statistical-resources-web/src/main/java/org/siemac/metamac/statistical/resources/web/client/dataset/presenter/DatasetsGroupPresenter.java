@@ -77,6 +77,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         void selectCategorisationsTab();
         void refreshStatusUpdateDatasetVersionInProgress(String urn, StreamMessageStatusEnum status);
         void showUnauthorizedResourceWarningMessage();
+        void initChildViews();
     }
 
     @ProxyCodeSplit
@@ -105,6 +106,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         getView().selectMetadataTab();
         if (NameTokens.datasetsGroupPage.equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
             goToDatasetInGroupMetadata();
+            getView().initChildViews();
         }
     }
 
@@ -168,30 +170,26 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
 
     @Override
     public void updateDatasets(List<String> datasetsUrnsUpdate, DatasetVersionDto datasetChangedMetadataDto, List<CategorisationDto> categorisations) {
-        List<String> urns = new ArrayList<String>();
-        for (final String urn : datasetsUrnsUpdate) {
-            try {
-                urns.clear();
-                urns.add(urn);
-                dispatcher.execute(new UpdateDatasetVersionMetadataInGroupAction(urns, datasetChangedMetadataDto, categorisations),
-                        new WaitingAsyncCallbackHandlingError<UpdateDatasetVersionMetadataInGroupResult>(this) {
+        try {
+            dispatcher.execute(new UpdateDatasetVersionMetadataInGroupAction(datasetsUrnsUpdate, datasetChangedMetadataDto, categorisations),
+                    new WaitingAsyncCallbackHandlingError<UpdateDatasetVersionMetadataInGroupResult>(this) {
 
-                            @Override
-                            public void onWaitFailure(Throwable caught) {
-                                hideWaitPopup();
-                                super.onWaitFailure(caught);
-                                getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.FAILED);
-                            }
+                        @Override
+                        public void onWaitFailure(Throwable caught) {
+                            hideWaitPopup();
+                            super.onWaitFailure(caught);
+                            // getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.FAILED);
+                        }
 
-                            @Override
-                            public void onWaitSuccess(UpdateDatasetVersionMetadataInGroupResult result) {
-                                getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.SENT);
-                                // TODO EDATOS-4385 HACER ALGO
-                            }
-                        });
-            } catch (Exception e) {
-                hideWaitPopup();
-            }
+                        @Override
+                        public void onWaitSuccess(UpdateDatasetVersionMetadataInGroupResult result) {
+                            fireSuccessMessage(StatisticalResourcesWeb.getMessages().datasetSubjectsSaved()); // EDATOS-4385 PONER MENSAJE
+                            // getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.SENT);
+                            // TODO EDATOS-4385 HACER ALGO
+                        }
+                    });
+        } catch (Exception e) {
+            hideWaitPopup();
         }
     }
 

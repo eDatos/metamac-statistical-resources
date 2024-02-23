@@ -74,14 +74,11 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
 
         MultiLanguageRichTextEditorItem dataProviderAnnotations = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS,
                 getConstants().siemacMetadataStatisticalResourceDataProviderAnnotations());
-        dataProviderAnnotations.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         MultiLanguageRichTextEditorItem conformsTo = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO, getConstants().siemacMetadataStatisticalResourceConformsTo());
-        conformsTo.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         MultiLanguageRichTextEditorItem conformsToInternal = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO_INTERNAL,
                 getConstants().siemacMetadataStatisticalResourceConformsToInternal());
-        conformsToInternal.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         setFields(dateCreated, lastUpdate, maintainer, creatorItem, dataProviderItem, dataProviderAnnotations, contributorItem, conformsTo, conformsToInternal);
     }

@@ -148,6 +148,17 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetsGroupPresenter.DatasetsGroupView#initChildViews()
+     * It is necessary the form are cleaned (each tab form) when the user updates a dataset group and he leaves the actual screen and does this operation again. In this case, the forms must be clean
+     */
+    @Override
+    public void initChildViews() {
+        datasetInGroupCategorisationsTabView.clearSelectedCategorisations();
+        datasetInGroupMetadataTabView.initMetadataInGroupForm();
+    }
+
     private void bindEvents() {
         datasetInGroupMetadataTab.addTabSelectedHandler(new TabSelectedHandler() {
 
@@ -237,6 +248,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         return panel;
     }
 
+    // TODO EDATOS-4385 QUITAR SI NO SE VA A USAR
     @Override
     public void refreshStatusUpdateDatasetVersionInProgress(String datasetUrn, StreamMessageStatusEnum status) {
         versionsSectionStack.refreshStatusDatasetVersion(datasetUrn, status);
