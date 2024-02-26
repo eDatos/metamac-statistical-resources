@@ -2213,51 +2213,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
-      
-        
-        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
-        
-
-            DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
-            updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange);
-            
-            /* TODO EDATOS-4385
-        } else {
-            for(String datasetVersionUrn : datasetUrnsToChange) {
-                try {
-                DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);             
-                updateDatasetVersionInGroupInJob(ctx, datasetVersion, datasetVersionMetadataToChange);
-                } catch (MetamacException e) {
-                    // TODO EDATOS-4385
-                    MetamacExceptionItem item = new MetamacExceptionItem(ServiceExceptionType.DATASET_NO_DATA, datasetVersionUrn);
-                    exceptionItems.add(item);
-                    
-                }
-            }            
-
-            if (!exceptionItems.isEmpty()) {
-                throw new MetamacException(exceptionItems);
-                }
-        }   
-            */        
-
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
+        updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange); 
     }
     
     private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
-
-
-        //getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
-
-        //     @Override
-        //     protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
         datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
+        
         DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
         updateDatasetVersion(ctx, datasetVersion);   
         updateDatasetVersionCategorisations(ctx, datasetVersion, DatasetVersionUpdateUtils.copyCategorisations(datasetVersionMetadataToChange.getCategorisations()));
-        //      return null;
-        //  }
-        //});
-
+        
     }
 
     private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {

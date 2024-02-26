@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.gwtplatform.mvp.client.UiHandlers;
 
@@ -15,4 +16,5 @@ public interface DatasetsGroupUiHandlers extends UiHandlers {
 
     public void showWaitPopup();
     public void hideWaitPopup();
+    public void showUpdateResults(MetamacWebException notificationException);
 }

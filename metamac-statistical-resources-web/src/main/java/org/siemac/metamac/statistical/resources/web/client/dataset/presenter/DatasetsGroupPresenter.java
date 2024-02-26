@@ -29,7 +29,9 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDa
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupResult;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
+import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
+import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
@@ -75,7 +77,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         void setDatasetVersionsSelected(List<DatasetVersionBaseDto> datasetVersionBaseDtos);
         void selectMetadataTab();
         void selectCategorisationsTab();
-        void refreshStatusUpdateDatasetVersionInProgress(String urn, StreamMessageStatusEnum status);
+        void refreshStatusUpdateDatasetVersionInProgress(String urn, StreamMessageStatusEnum status, MetamacWebException notificationException);
         void showUnauthorizedResourceWarningMessage();
         void initChildViews();
     }
@@ -180,14 +182,11 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
                         public void onWaitFailure(Throwable caught) {
                             hideWaitPopup();
                             super.onWaitFailure(caught);
-                            // getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.FAILED);
                         }
 
                         @Override
                         public void onWaitSuccess(UpdateDatasetVersionMetadataInGroupResult result) {
-                            // fireSuccessMessage(StatisticalResourcesWeb.getMessages().datasetSubjectsSaved()); // EDATOS-4385 PONER MENSAJE
-                            getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.SENT);
-                            // TODO EDATOS-4385 HACER ALGO
+                            getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.SENT, result.getNotificationException());
                         }
                     });
         } catch (Exception e) {
@@ -203,6 +202,15 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
     @Override
     public void hideWaitPopup() {
         ChangeWaitPopupVisibilityEvent.fire(this, false);
+    }
+
+    @Override
+    public void showUpdateResults(MetamacWebException notificationException) {
+        if (notificationException == null) {
+            ShowMessageEvent.fireSuccessMessage(DatasetsGroupPresenter.this, StatisticalResourcesWeb.getMessages().datasetSubjectsSaved());
+        } else {
+            ShowMessageEvent.fireWarningMessageWithError(DatasetsGroupPresenter.this, StatisticalResourcesWeb.getMessages().errorUpdateDatasestInGroup(), notificationException);
+        }
     }
 
     //
@@ -224,4 +232,5 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         hierarchy.add(new PlaceRequest(tabNameToken));
         placeManager.revealPlaceHierarchy(hierarchy);
     }
+
 }

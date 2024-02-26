@@ -2469,9 +2469,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             datasetVersion.addCategorisation(datasetDto2DoMapper.categorisationDtoToDo(categorisationDto));
         }
 
-        // TODO PONER CONTROL DE ERRORES AQUÍ PARA QUE SEA TRANSACTIONAL Y SIGA CON EL SIGUIENTE
-        int i = 1;
-
         getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
 
         logger.info("Execution end - updateDatasetVersionInGroup at {} ", new DateTime());

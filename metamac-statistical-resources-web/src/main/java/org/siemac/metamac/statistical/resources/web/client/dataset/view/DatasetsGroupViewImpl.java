@@ -4,6 +4,7 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
 import static org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.BooleanUtils;
@@ -24,6 +25,7 @@ import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.TitleLabel;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
+import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -139,6 +141,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
             @Override
             public void onClick(ClickEvent event) {
+                versionsSectionStack.resetAllStatusDatasetVersion();
                 resultDatasetMetadata = new ResultDatasetMetadata();
                 resultDatasetMetadata.setDatasetsUrnsUpdate(versionsSectionStack.getAllDatasetUrns());
                 resultDatasetMetadata.setDatasetDto(datasetInGroupMetadataTabView.getDatasetVersionMetadata());
@@ -252,24 +255,52 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         return panel;
     }
 
-    // TODO EDATOS-4385 QUITAR SI NO SE VA A USAR
     @Override
-    public void refreshStatusUpdateDatasetVersionInProgress(String datasetUrn, StreamMessageStatusEnum status) {
-        versionsSectionStack.refreshStatusDatasetVersion(datasetUrn, status);
+    public void refreshStatusUpdateDatasetVersionInProgress(String datasetUrn, StreamMessageStatusEnum status, MetamacWebException notificationException) {
+        try {
+            if (notificationException != null) {
+                status = StreamMessageStatusEnum.FAILED;
+                resultDatasetMetadata.addNotificationExceptions(notificationException);
+
+            }
+
+            versionsSectionStack.refreshStatusDatasetVersion(datasetUrn, status);
+            callSynchronouslyUpdateNextDatasetVersion();
+
+        } catch (Exception e) {
+            MetamacWebException metamacWebException = new MetamacWebException("", e.getMessage());
+            if (resultDatasetMetadata != null) {
+                getUiHandlers().showUpdateResults(resultDatasetMetadata.getNotificationException());
+                resultDatasetMetadata.clear();
+            }
+        }
+    }
+
+    private void callSynchronouslyUpdateNextDatasetVersion() {
         String nextUrn = resultDatasetMetadata.getNextUrn();
         if (nextUrn != null) {
             getUiHandlers().updateDatasets(nextUrn, resultDatasetMetadata.getDatasetDto(), resultDatasetMetadata.getCategorisations());
         } else {
+            getUiHandlers().showUpdateResults(resultDatasetMetadata.getNotificationException());
             resultDatasetMetadata.clear();
         }
     }
 
     protected class ResultDatasetMetadata {
 
-        List<String>            datasetsUrnsUpdate      = null;
-        int                     posInDatasetsUrnsUpdate = 0;
-        DatasetVersionDto       datasetDto              = null;
-        List<CategorisationDto> categorisations         = null;
+        List<String>              datasetsUrnsUpdate      = null;
+        int                       posInDatasetsUrnsUpdate = 0;
+        DatasetVersionDto         datasetDto              = null;
+        List<CategorisationDto>   categorisations         = null;
+        List<MetamacWebException> notificationExceptions  = new ArrayList<MetamacWebException>();
+
+        public void setNotificationExceptions(List<MetamacWebException> notificationExceptions) {
+            this.notificationExceptions = notificationExceptions;
+        }
+
+        public void addNotificationExceptions(MetamacWebException metamacWebException) {
+            this.notificationExceptions.add(metamacWebException);
+        }
 
         public List<String> getDatasetsUrnsUpdate() {
             return datasetsUrnsUpdate;
@@ -309,6 +340,20 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
             datasetsUrnsUpdate = null;
             datasetDto = null;
             categorisations = null;
+            notificationExceptions.clear();
+        }
+
+        protected MetamacWebException getNotificationException() {
+
+            if (notificationExceptions.isEmpty()) {
+                return null;
+            }
+
+            MetamacWebException metamacWebException = new MetamacWebException();
+            for (MetamacWebException exception : notificationExceptions) {
+                metamacWebException.getWebExceptionItems().addAll(exception.getWebExceptionItems());
+            }
+            return metamacWebException;
         }
     }
 }

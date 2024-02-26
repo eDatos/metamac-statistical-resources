@@ -4,8 +4,11 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.server.handlers.UpdateResourceProcStatusBaseActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.rest.SrmRestInternalFacade;
@@ -37,29 +40,22 @@ public class UpdateDatasetVersionMetadataInGroupActionHandler extends UpdateReso
 
     @Override
     public UpdateDatasetVersionMetadataInGroupResult executeSecurityAction(UpdateDatasetVersionMetadataInGroupAction action) throws ActionException {
-        MetamacException metamacException = new MetamacException();
+        MetamacWebException notificationException = null;
         try {
             updateCategorisation(action.getCategorisations());
             statisticalResourcesServiceFacade.updateDatasetVersionInGroup(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersion(), action.getDatasetUrnToUpdate(),
                     action.getCategorisations());
 
         } catch (MetamacException e) {
-            metamacException = e;
-            // datasetVersionTemplateDto.setUrn(urn);
-            // addExceptionsItemToMetamacException(action.getDatasetVersion().getProcStatus(), datasetVersionTemplateDto, metamacException, e);
+
+            MetamacExceptionItem principal = new MetamacExceptionItem(ServiceExceptionType.DB_UPDATE_DATASET_IN_GROUP_ERROR, action.getDatasetUrnToUpdate());
+            principal.getExceptionItems().addAll(e.getExceptionItems());
+            notificationException = WebExceptionUtils.createMetamacWebException(MetamacExceptionBuilder.builder().withPrincipalException(principal).build());
+
         }
 
-        MetamacWebException notificationException = null;
+        return new UpdateDatasetVersionMetadataInGroupResult.Builder().notificationException(notificationException).build();
 
-        if (metamacException.getExceptionItems() == null || metamacException.getExceptionItems().isEmpty()) {
-            return new UpdateDatasetVersionMetadataInGroupResult.Builder().notificationException(notificationException).build();
-        } else {
-            MetamacWebException metamacWebException = WebExceptionUtils.createMetamacWebException(metamacException);
-            if (notificationException != null) {
-                metamacWebException.getWebExceptionItems().addAll(notificationException.getWebExceptionItems());
-            }
-            throw metamacWebException;
-        }
     }
 
     private void updateCategorisation(List<CategorisationDto> categorisationsDto) throws MetamacException, MetamacWebException {

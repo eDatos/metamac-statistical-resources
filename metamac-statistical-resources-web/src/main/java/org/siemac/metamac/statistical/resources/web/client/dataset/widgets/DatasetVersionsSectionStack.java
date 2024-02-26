@@ -61,6 +61,15 @@ public class DatasetVersionsSectionStack extends SiemacMetadataResourceSectionSt
         }
     }
 
+    public void resetAllStatusDatasetVersion() {
+        if (listGrid.getRecords() != null) {
+            for (ListGridRecord rawRecord : listGrid.getRecords()) {
+                DatasetRecord datasetRecord = (DatasetRecord) rawRecord;
+                datasetRecord.resetPublicationStreamStatus();
+            }
+        }
+    }
+
     public void showUpdateStatus(boolean show) {
         ListGridField fieldStatus = listGrid.getField(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS);
         if (fieldStatus != null) {

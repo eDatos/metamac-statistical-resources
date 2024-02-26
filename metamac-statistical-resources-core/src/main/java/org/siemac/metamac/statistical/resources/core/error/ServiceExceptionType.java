@@ -352,6 +352,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "notice_message.resources.exception.db_import_dataset_job.fails");
     public static final CommonServiceExceptionType DB_IMPORT_DATASET_JOB_ERROR_AND_CANT_MARK_AS_FINISHED                                       = create(
             "notice_message.resources.exception.db_import_dataset_job.fails_and_cant_mark_as_finished");
+    public static final CommonServiceExceptionType DB_UPDATE_DATASET_IN_GROUP_ERROR                                                            = create(
+            "notice_message.resources.exception.update_dataset_in_group.fails");
 
     // Stream messaging
     public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER                                  = create(

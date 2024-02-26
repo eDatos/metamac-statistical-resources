@@ -240,10 +240,20 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkExistingDatasetVersion(DatasetVersion datasetVersion, String metadataName, List<MetamacExceptionItem> exceptions) {
+
+        if (datasetVersion.getSiemacMetadataStatisticalResource().getUrn().equals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ISTAC:C00010A_000040(1.0)")
+                || datasetVersion.getSiemacMetadataStatisticalResource().getUrn().equals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ISTAC:C00010A_000024(001.000)")) {
+            StatisticalResourcesValidationUtils.checkParameterRequired(null, metadataName, exceptions);
+        }
+
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, metadataName, exceptions);
 
         if (datasetVersion == null) {
             return;
+        }
+
+        if (datasetVersion.getSiemacMetadataStatisticalResource().getUrn().equals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ISTAC:C00010A_000017(001.000)")) {
+            checkObservationalTimePeriodType("pruebas", ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
         }
 
         checkObservationalTimePeriodType(datasetVersion.getDateNextUpdate(), ServiceExceptionSingleParameters.DATE_NEXT_UPDATE, exceptions);
