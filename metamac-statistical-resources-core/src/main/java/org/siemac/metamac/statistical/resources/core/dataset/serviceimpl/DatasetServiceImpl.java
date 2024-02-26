@@ -2212,14 +2212,16 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, List<String> datasetUrnsToChange) throws MetamacException {
+    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
       
         
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         
-        if (datasetUrnsToChange.size() == 1) {
-            DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnsToChange.get(0));             
+
+            DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
             updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange);
+            
+            /* TODO EDATOS-4385
         } else {
             for(String datasetVersionUrn : datasetUrnsToChange) {
                 try {
@@ -2232,12 +2234,12 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     
                 }
             }            
-            
+
             if (!exceptionItems.isEmpty()) {
                 throw new MetamacException(exceptionItems);
                 }
         }   
-        
+            */        
 
     }
     

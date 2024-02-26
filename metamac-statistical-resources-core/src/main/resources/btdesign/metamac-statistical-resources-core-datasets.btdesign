@@ -58,7 +58,7 @@ Application DatasetsStatisticalResources {
 			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
 			"Finds resource from cache by criteria"
 			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
-			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, List<String> datasetUrnsToChange) throws MetamacException;
+			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			
     		
     		"Link a dataset view to the latest version of the indicator"

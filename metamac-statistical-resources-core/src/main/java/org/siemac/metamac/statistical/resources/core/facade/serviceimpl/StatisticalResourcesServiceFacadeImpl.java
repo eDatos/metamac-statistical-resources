@@ -2458,10 +2458,10 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersionDto datasetVersionMetadataToChangeDto, List<String> datasetUrnsToChange, List<CategorisationDto> categorisationsDto)
+    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersionDto datasetVersionMetadataToChangeDto, String datasetUrnToChange, List<CategorisationDto> categorisationsDto)
             throws MetamacException {
 
-        logger.info("Execution start - updateDatasetVersionInGroup - number datasets : {}, at {} ", datasetUrnsToChange.size(), new DateTime());
+        logger.info("Execution start - updateDatasetVersionInGroup at {} ", new DateTime());
 
         DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionMetadataToChangeDto);
 
@@ -2471,14 +2471,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // TODO PONER CONTROL DE ERRORES AQUÍ PARA QUE SEA TRANSACTIONAL Y SIGA CON EL SIGUIENTE
         int i = 1;
-        for (String urn : datasetUrnsToChange) {
-            logger.info(i++ + ") --- Execution start updateDatasetVersionInGroup for urn dataset {} at {} ", urn, new DateTime());
-            List<String> urns = new ArrayList<String>(); // TODO EDATOS-4385 CAMBIAR TODO ÉSTO PARA PASAR UNO A UNO A SERVICIOS
-            urns.add(urn);
-            getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, urns);
 
-            logger.info("Execution end updateDatasetVersionInGroup for urn dataset {} at {} ", urn, new DateTime());
-        }
+        getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
 
         logger.info("Execution end - updateDatasetVersionInGroup at {} ", new DateTime());
 

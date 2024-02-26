@@ -370,9 +370,9 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
 
     }
 
-    public static void checkUpdateDatasetVersionInGroup(DatasetVersion datasetVersionMetadataToChange, List<String> datasetUrnsToChange, List<MetamacExceptionItem> exceptions) {
+    public static void checkUpdateDatasetVersionInGroup(DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionMetadataToChange, ServiceExceptionParameters.DATASET_VERSION, exceptions);
-        StatisticalResourcesValidationUtils.checkParameterRequired(datasetUrnsToChange, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetUrnToChange, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
 
     }
 

@@ -6,7 +6,6 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
-import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.server.handlers.UpdateResourceProcStatusBaseActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.rest.SrmRestInternalFacade;
@@ -39,10 +38,9 @@ public class UpdateDatasetVersionMetadataInGroupActionHandler extends UpdateReso
     @Override
     public UpdateDatasetVersionMetadataInGroupResult executeSecurityAction(UpdateDatasetVersionMetadataInGroupAction action) throws ActionException {
         MetamacException metamacException = new MetamacException();
-        DatasetVersionDto datasetVersionTemplateDto = action.getDatasetVersion();
         try {
             updateCategorisation(action.getCategorisations());
-            statisticalResourcesServiceFacade.updateDatasetVersionInGroup(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersion(), action.getDatasetsUrnsoUpdate(),
+            statisticalResourcesServiceFacade.updateDatasetVersionInGroup(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersion(), action.getDatasetUrnToUpdate(),
                     action.getCategorisations());
 
         } catch (MetamacException e) {

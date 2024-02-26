@@ -169,9 +169,11 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
     }
 
     @Override
-    public void updateDatasets(List<String> datasetsUrnsUpdate, DatasetVersionDto datasetChangedMetadataDto, List<CategorisationDto> categorisations) {
+    public void updateDatasets(final String urn, DatasetVersionDto datasetChangedMetadataDto, List<CategorisationDto> categorisations) {
         try {
-            dispatcher.execute(new UpdateDatasetVersionMetadataInGroupAction(datasetsUrnsUpdate, datasetChangedMetadataDto, categorisations),
+            List<String> urns = new ArrayList<String>();
+            urns.add(urn);
+            dispatcher.execute(new UpdateDatasetVersionMetadataInGroupAction(urn, datasetChangedMetadataDto, categorisations),
                     new WaitingAsyncCallbackHandlingError<UpdateDatasetVersionMetadataInGroupResult>(this) {
 
                         @Override
@@ -183,8 +185,8 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
 
                         @Override
                         public void onWaitSuccess(UpdateDatasetVersionMetadataInGroupResult result) {
-                            fireSuccessMessage(StatisticalResourcesWeb.getMessages().datasetSubjectsSaved()); // EDATOS-4385 PONER MENSAJE
-                            // getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.SENT);
+                            // fireSuccessMessage(StatisticalResourcesWeb.getMessages().datasetSubjectsSaved()); // EDATOS-4385 PONER MENSAJE
+                            getView().refreshStatusUpdateDatasetVersionInProgress(urn, StreamMessageStatusEnum.SENT);
                             // TODO EDATOS-4385 HACER ALGO
                         }
                     });

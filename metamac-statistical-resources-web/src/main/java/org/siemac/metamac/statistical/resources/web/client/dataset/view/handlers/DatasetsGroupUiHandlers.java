@@ -11,7 +11,7 @@ public interface DatasetsGroupUiHandlers extends UiHandlers {
 
     public void goToDatasetInGroupMetadata();
     public void goToDatasetCategorisations();
-    public void updateDatasets(List<String> datasetsUrnsUpdate, DatasetVersionDto datasetChangedMetadataDto, List<CategorisationDto> categorisations);
+    public void updateDatasets(String urn, DatasetVersionDto datasetChangedMetadataDto, List<CategorisationDto> categorisations);
 
     public void showWaitPopup();
     public void hideWaitPopup();

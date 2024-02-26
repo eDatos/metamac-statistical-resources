@@ -59,12 +59,14 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
     protected CustomToolStripButton              saveButton;
     private DatasetInGroupMetadataTabView        datasetInGroupMetadataTabView;
     private DatasetInGroupCategorisationsTabView datasetInGroupCategorisationsTabView;
+    private ResultDatasetMetadata                resultDatasetMetadata = new ResultDatasetMetadata();
 
     @Inject
     public DatasetsGroupViewImpl(DatasetInGroupMetadataTabView datasetInGroupMetadataTabView, DatasetInGroupCategorisationsTabView datasetInGroupCategorisationsTabView) {
         panel = new VLayout();
         this.datasetInGroupMetadataTabView = datasetInGroupMetadataTabView;
         this.datasetInGroupCategorisationsTabView = datasetInGroupCategorisationsTabView;
+        this.resultDatasetMetadata = new ResultDatasetMetadata();
 
         titleLabel = new TitleLabel(new String());
         titleLabel.setVisible(false);
@@ -137,11 +139,12 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
             @Override
             public void onClick(ClickEvent event) {
-                List<String> datasetsUrnsUpdate = versionsSectionStack.getAllDatasetUrns();
-                DatasetVersionDto datasetDto = datasetInGroupMetadataTabView.getDatasetVersionMetadata();
-                if (datasetDto != null) {
-                    List<CategorisationDto> categorisations = datasetInGroupCategorisationsTabView.getCategorisations();
-                    getUiHandlers().updateDatasets(datasetsUrnsUpdate, datasetDto, categorisations);
+                resultDatasetMetadata = new ResultDatasetMetadata();
+                resultDatasetMetadata.setDatasetsUrnsUpdate(versionsSectionStack.getAllDatasetUrns());
+                resultDatasetMetadata.setDatasetDto(datasetInGroupMetadataTabView.getDatasetVersionMetadata());
+                if (resultDatasetMetadata.getDatasetDto() != null) {
+                    resultDatasetMetadata.setCategorisations(datasetInGroupCategorisationsTabView.getCategorisations());
+                    getUiHandlers().updateDatasets(resultDatasetMetadata.getNextUrn(), resultDatasetMetadata.getDatasetDto(), resultDatasetMetadata.getCategorisations());
                 }
             }
         };
@@ -155,6 +158,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
      */
     @Override
     public void initChildViews() {
+        resultDatasetMetadata.clear();
         datasetInGroupCategorisationsTabView.clearSelectedCategorisations();
         datasetInGroupMetadataTabView.initMetadataInGroupForm();
     }
@@ -252,6 +256,59 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
     @Override
     public void refreshStatusUpdateDatasetVersionInProgress(String datasetUrn, StreamMessageStatusEnum status) {
         versionsSectionStack.refreshStatusDatasetVersion(datasetUrn, status);
+        String nextUrn = resultDatasetMetadata.getNextUrn();
+        if (nextUrn != null) {
+            getUiHandlers().updateDatasets(nextUrn, resultDatasetMetadata.getDatasetDto(), resultDatasetMetadata.getCategorisations());
+        } else {
+            resultDatasetMetadata.clear();
+        }
+    }
 
+    protected class ResultDatasetMetadata {
+
+        List<String>            datasetsUrnsUpdate      = null;
+        int                     posInDatasetsUrnsUpdate = 0;
+        DatasetVersionDto       datasetDto              = null;
+        List<CategorisationDto> categorisations         = null;
+
+        public List<String> getDatasetsUrnsUpdate() {
+            return datasetsUrnsUpdate;
+        }
+        public void setDatasetsUrnsUpdate(List<String> datasetsUrnsUpdate) {
+            this.datasetsUrnsUpdate = datasetsUrnsUpdate;
+        }
+        public DatasetVersionDto getDatasetDto() {
+            return datasetDto;
+        }
+        public void setDatasetDto(DatasetVersionDto datasetDto) {
+            this.datasetDto = datasetDto;
+        }
+        public List<CategorisationDto> getCategorisations() {
+            return categorisations;
+        }
+        public void setCategorisations(List<CategorisationDto> categorisations) {
+            this.categorisations = categorisations;
+        }
+        public int getPosInDatasetsUrnsUpdate() {
+            return posInDatasetsUrnsUpdate;
+        }
+        public void setPosInDatasetsUrnsUpdate(int posInDatasetsUrnsUpdate) {
+            this.posInDatasetsUrnsUpdate = posInDatasetsUrnsUpdate;
+        }
+
+        protected String getNextUrn() {
+            if (posInDatasetsUrnsUpdate < datasetsUrnsUpdate.size()) {
+                return datasetsUrnsUpdate.get(posInDatasetsUrnsUpdate++);
+            } else {
+                return null;
+            }
+        }
+
+        protected void clear() {
+            posInDatasetsUrnsUpdate = 0;
+            datasetsUrnsUpdate = null;
+            datasetDto = null;
+            categorisations = null;
+        }
     }
 }

@@ -15,7 +15,7 @@ import com.gwtplatform.dispatch.annotation.Out;
 public class UpdateDatasetVersionMetadataInGroup {
 
     @In(1)
-    List<String>            datasetsUrnsoUpdate;
+    String                  datasetUrnToUpdate;
 
     @In(2)
     DatasetVersionDto       datasetVersion;
