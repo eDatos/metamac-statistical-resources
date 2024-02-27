@@ -1,30 +1,34 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.view;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
-import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
 import static org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.siemac.metamac.core.common.util.shared.BooleanUtils;
-import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
-import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.CustomTabSet;
+import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupCategorisationsTabPresenter.DatasetInGroupCategorisationsTabView;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupMetadataTabPresenter.DatasetInGroupMetadataTabView;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetsGroupPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetsGroupUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionsSectionStack;
-import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
+import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchMultipleStatisticalRelatedResourcePaginatedWindow;
+import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.TitleLabel;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
+import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.user.client.ui.Widget;
@@ -43,25 +47,29 @@ import com.smartgwt.client.widgets.toolbar.ToolStrip;
 
 public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHandlers> implements DatasetsGroupPresenter.DatasetsGroupView {
 
-    private VLayout                              panel;
+    private VLayout                                                 panel;
 
-    private TitleLabel                           titleLabel;
-    private InformationLabel                     informationLabel;
-    private WarningLabel                         warningLabel;
+    private TitleLabel                                              titleLabel;
+    private InformationLabel                                        informationLabel;
+    private WarningLabel                                            warningLabel;
 
-    private DatasetVersionsSectionStack          versionsSectionStack;
+    private DatasetVersionsSectionStack                             versionsSectionStack;
 
-    private CustomTabSet                         tabSet;
-    private Tab                                  datasetInGroupMetadataTab;
-    private Tab                                  datasetInGroupCategorisationsTab;
+    private CustomTabSet                                            tabSet;
+    private Tab                                                     datasetInGroupMetadataTab;
+    private Tab                                                     datasetInGroupCategorisationsTab;
 
-    protected ToolStrip                          toolStrip;
+    protected ToolStrip                                             toolStrip;
 
     // button
-    protected CustomToolStripButton              saveButton;
-    private DatasetInGroupMetadataTabView        datasetInGroupMetadataTabView;
-    private DatasetInGroupCategorisationsTabView datasetInGroupCategorisationsTabView;
-    private ResultDatasetMetadata                resultDatasetMetadata = new ResultDatasetMetadata();
+    protected CustomToolStripButton                                 saveButton;
+    protected CustomToolStripButton                                 addDatasetButton;
+    private DatasetInGroupMetadataTabView                           datasetInGroupMetadataTabView;
+    private DatasetInGroupCategorisationsTabView                    datasetInGroupCategorisationsTabView;
+    private ResultDatasetMetadata                                   resultDatasetMetadata = new ResultDatasetMetadata();
+
+    private SearchMultipleStatisticalRelatedResourcePaginatedWindow searchDatasetVersionsWindow;
+    private ProcStatusEnum                                          statusDatasets;
 
     @Inject
     public DatasetsGroupViewImpl(DatasetInGroupMetadataTabView datasetInGroupMetadataTabView, DatasetInGroupCategorisationsTabView datasetInGroupCategorisationsTabView) {
@@ -122,12 +130,20 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         bindEvents();
     }
 
+    @Override
+    public void setUiHandlers(DatasetsGroupUiHandlers uiHandlers) {
+        super.setUiHandlers(uiHandlers);
+    }
+
     private void createToolTrip() {
         toolStrip = new ToolStrip();
         toolStrip.setWidth100();
 
         saveButton = createSaveButton();
         toolStrip.addButton(saveButton);
+
+        addDatasetButton = createAddDatasetButton();
+        toolStrip.addButton(addDatasetButton);
     }
 
     private CustomToolStripButton createSaveButton() {
@@ -186,58 +202,13 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
     @Override
     public void setDataset(DatasetVersionDto datasetVersionDto) {
-        clearWarningLabel();
-        setTitleLabelContents(datasetVersionDto);
-        setInformationLabelContents(datasetVersionDto);
         tabSet.show();
     }
 
     @Override
     public void setDatasetVersionsSelected(List<DatasetVersionBaseDto> datasetVersionBaseDtos) {
+        setStatusDatataset(datasetVersionBaseDtos);
         versionsSectionStack.setDatasetVersions(datasetVersionBaseDtos);
-    }
-
-    @Override
-    public void showUnauthorizedResourceWarningMessage() {
-        clearTitleLabel();
-        clearInformationLabel();
-        tabSet.hide();
-        setWarningLabelContents(getMessages().lifeCycleResourceRetrieveOperationNotAllowed(StatisticalResourcesWeb.getCurrentUser().getUserId()));
-    }
-
-    private void setTitleLabelContents(DatasetVersionDto datasetVersionDto) {
-        titleLabel.setContents(InternationalStringUtils.getLocalisedString(datasetVersionDto.getTitle()));
-        titleLabel.show();
-    }
-
-    private void setWarningLabelContents(String message) {
-        warningLabel.setContents(message);
-        warningLabel.show();
-    }
-
-    private void setInformationLabelContents(DatasetVersionDto datasetVersionDto) {
-        if (BooleanUtils.isTrue(datasetVersionDto.getIsTaskInBackground())) {
-            String message = getMessages().datasetVersionInProcessInBackground();
-            informationLabel.setContents(message);
-            informationLabel.show();
-        } else {
-            clearInformationLabel();
-        }
-    }
-
-    private void clearInformationLabel() {
-        informationLabel.setContents(StringUtils.EMPTY);
-        informationLabel.hide();
-    }
-
-    private void clearWarningLabel() {
-        warningLabel.setContents(StringUtils.EMPTY);
-        warningLabel.hide();
-    }
-
-    private void clearTitleLabel() {
-        titleLabel.setContents(StringUtils.EMPTY);
-        titleLabel.hide();
     }
 
     @Override
@@ -273,6 +244,14 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
                 getUiHandlers().showUpdateResults(resultDatasetMetadata.getNotificationException());
                 resultDatasetMetadata.clear();
             }
+        }
+    }
+
+    private void setStatusDatataset(List<DatasetVersionBaseDto> datasetVersionBaseDtos) {
+        if (datasetVersionBaseDtos != null && !datasetVersionBaseDtos.isEmpty()) {
+            statusDatasets = datasetVersionBaseDtos.get(0).getProcStatus();
+        } else {
+            statusDatasets = ProcStatusEnum.DRAFT;
         }
     }
 
@@ -355,5 +334,69 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
             }
             return metamacWebException;
         }
+    }
+
+    private CustomToolStripButton createAddDatasetButton() {
+        CustomToolStripButton button = new CustomToolStripButton(getConstants().actionAdd(), RESOURCE.editListGrid().getURL());
+        button.addClickHandler(getAddDatasetButtonClickHandler());
+        return button;
+    }
+
+    private ClickHandler getAddDatasetButtonClickHandler() {
+        return new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                searchDatasetVersionsWindow = new SearchMultipleStatisticalRelatedResourcePaginatedWindow(getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS,
+                        new SearchPaginatedAction<VersionableStatisticalResourceWebCriteria>() {
+
+                            @Override
+                            public void retrieveResultSet(int firstResult, int maxResults, VersionableStatisticalResourceWebCriteria webCriteria) {
+                                getUiHandlers().retrieveDatasets(firstResult, maxResults, webCriteria, statusDatasets);
+                            }
+
+                        });
+
+                getUiHandlers().retrieveStatisticalOperationsForDatasetSelection();
+
+                // Load resources (to populate the selection window)
+                getUiHandlers().retrieveDatasets(0, StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, searchDatasetVersionsWindow.getSearchCriteria(), statusDatasets);
+
+                searchDatasetVersionsWindow.setSaveAction(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                        List<RelatedResourceDto> selectedResource = searchDatasetVersionsWindow.getSelectedResources();
+                        List<DatasetVersionBaseDto> newSelectedDataset = RelatedResourceUtils.getRelatedResourceDtosAsDatasetVersionBaseDtos(selectedResource, statusDatasets);
+                        if (!newSelectedDataset.isEmpty()) {
+                            versionsSectionStack.addDatasetVersions(newSelectedDataset);
+                        }
+                        searchDatasetVersionsWindow.markForDestroy();
+                    }
+                });
+            }
+        };
+
+    }
+
+    public void setStatisticalOperationsForDatasetSelection(List<ExternalItemDto> externalItemsDtos, ExternalItemDto defaultSelected) {
+        if (searchDatasetVersionsWindow != null) {
+            searchDatasetVersionsWindow.setStatisticalOperations(externalItemsDtos);
+            searchDatasetVersionsWindow.setSelectedStatisticalOperation(defaultSelected);
+        }
+    }
+
+    public void setDatasetsForAdd(GetDatasetVersionsResult result) {
+        List<RelatedResourceDto> relatedResourceDtos = RelatedResourceUtils.getDatasetVersionBaseDtosAsRelatedResourceDtos(result.getDatasetVersionBaseDtos());
+        if (searchDatasetVersionsWindow != null) {
+            searchDatasetVersionsWindow.setResources(relatedResourceDtos);
+            searchDatasetVersionsWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), relatedResourceDtos.size(), result.getTotalResults());
+        }
+    }
+
+    @Override
+    public void showUnauthorizedResourceWarningMessage() {
+        // TODO Auto-generated method stub
+
     }
 }

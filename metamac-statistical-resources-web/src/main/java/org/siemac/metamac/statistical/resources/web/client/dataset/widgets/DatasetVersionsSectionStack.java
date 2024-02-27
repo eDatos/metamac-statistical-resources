@@ -31,13 +31,34 @@ public class DatasetVersionsSectionStack extends SiemacMetadataResourceSectionSt
         setListGridFields();
     }
 
+    private boolean existDatasetVersion(String urn) {
+        if (listGrid.getRecords() != null) {
+            for (ListGridRecord rawRecord : listGrid.getRecords()) {
+                DatasetRecord datasetRecord = (DatasetRecord) rawRecord;
+                if (urn.equals(datasetRecord.getUrn())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void setDatasetVersions(List<DatasetVersionBaseDto> datasetVersionBaseDtos) {
         listGrid.selectAllRecords();
         listGrid.removeSelectedData();
         for (DatasetVersionBaseDto datasetDto : datasetVersionBaseDtos) {
             listGrid.addData(StatisticalResourcesRecordUtils.getDatasetRecord(datasetDto));
         }
-        listGrid.sort(DatasetDS.VERSION, SortDirection.DESCENDING);
+        listGrid.sort(DatasetDS.CODE, SortDirection.DESCENDING);
+    }
+
+    public void addDatasetVersions(List<DatasetVersionBaseDto> datasetVersionBaseDtos) {
+        for (DatasetVersionBaseDto datasetDto : datasetVersionBaseDtos) {
+            if (!existDatasetVersion(datasetDto.getUrn())) {
+                listGrid.addData(StatisticalResourcesRecordUtils.getDatasetRecord(datasetDto));
+            }
+        }
+        listGrid.sort(DatasetDS.CODE, SortDirection.DESCENDING);
     }
 
     public void selectDatasetVersion(String currentDatasetVersionUrn) {

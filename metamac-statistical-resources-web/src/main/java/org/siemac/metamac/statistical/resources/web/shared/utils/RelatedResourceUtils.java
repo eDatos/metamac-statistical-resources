@@ -15,6 +15,7 @@ import org.siemac.metamac.statistical.resources.core.dto.multidataset.Multidatas
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
 import org.siemac.metamac.web.common.shared.RelatedResourceBaseUtils;
@@ -34,6 +35,16 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
         return relatedResourceDto;
     }
 
+    public static DatasetVersionBaseDto getRelatedResourceDtoAsIdentifiableResourceDto(RelatedResourceDto relatedResourceDto) {
+        DatasetVersionBaseDto datasetVersionBaseDto = new DatasetVersionBaseDto();
+        datasetVersionBaseDto.setCode(relatedResourceDto.getCode());
+        datasetVersionBaseDto.setUrn(relatedResourceDto.getUrn());
+        ExternalItemDto externaItemDto = new ExternalItemDto();
+        externaItemDto.setUrn(relatedResourceDto.getStatisticalOperationUrn());
+        datasetVersionBaseDto.setStatisticalOperation(externaItemDto);
+        return datasetVersionBaseDto;
+    }
+
     // -------------------------------------------------------------------------------------------------------------
     // NAMEABLE RESOURCE
     // -------------------------------------------------------------------------------------------------------------
@@ -48,6 +59,12 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
         RelatedResourceDto relatedResourceDto = getIdentifiableResourceDtoAsRelatedResourceDto(nameableStatisticalResourceBaseDto);
         relatedResourceDto.setTitle(nameableStatisticalResourceBaseDto.getTitle());
         return relatedResourceDto;
+    }
+
+    public static DatasetVersionBaseDto getRelatedResourceDtoAsNameableResourceBaseDto(RelatedResourceDto relatedResourceDto) {
+        DatasetVersionBaseDto datasetVersionBaseDto = getRelatedResourceDtoAsIdentifiableResourceDto(relatedResourceDto);
+        datasetVersionBaseDto.setTitle(relatedResourceDto.getTitle());
+        return datasetVersionBaseDto;
     }
 
     // -------------------------------------------------------------------------------------------------------------
@@ -95,10 +112,10 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
     public static RelatedResourceDto getDatasetVersionBaseDtoAsRelatedResourceDto(DatasetVersionBaseDto datasetVersionBaseDto) {
         RelatedResourceDto relatedResourceDto = getNameableResourceBaseDtoAsRelatedResourceDto(datasetVersionBaseDto);
         relatedResourceDto.setType(TypeRelatedResourceEnum.DATASET_VERSION);
-        
+
         relatedResourceDto.setLastVersion(datasetVersionBaseDto.getLastVersion());
         relatedResourceDto.setVersionLogic(datasetVersionBaseDto.getVersionLogic());
-        
+
         return relatedResourceDto;
     }
 
@@ -116,6 +133,29 @@ public class RelatedResourceUtils extends RelatedResourceBaseUtils {
             relatedResourceDtos.add(getDatasetVersionBaseDtoAsRelatedResourceDto(datasetVersionBaseDto));
         }
         return relatedResourceDtos;
+    }
+
+    public static DatasetVersionBaseDto getRelatedResourceDtoAsDatasetVersionBaseDto(RelatedResourceDto relatedResourceDto, ProcStatusEnum status) {
+        DatasetVersionBaseDto datasetVersionBaseDto = getRelatedResourceDtoAsNameableResourceBaseDto(relatedResourceDto);
+
+        datasetVersionBaseDto.setLastVersion(relatedResourceDto.getLastVersion());
+        datasetVersionBaseDto.setVersionLogic(relatedResourceDto.getVersionLogic());
+        datasetVersionBaseDto.setProcStatus(status);
+
+        return datasetVersionBaseDto;
+    }
+
+    public static List<DatasetVersionBaseDto> getRelatedResourceDtosAsDatasetVersionBaseDtos(List<RelatedResourceDto> relatedResourceDtos, ProcStatusEnum status) {
+
+        if (relatedResourceDtos == null) {
+            return new ArrayList<DatasetVersionBaseDto>();
+        }
+
+        List<DatasetVersionBaseDto> datasetVersionBaseDtos = new ArrayList<DatasetVersionBaseDto>(relatedResourceDtos.size());
+        for (RelatedResourceDto relatedResourceDto : relatedResourceDtos) {
+            datasetVersionBaseDtos.add(getRelatedResourceDtoAsDatasetVersionBaseDto(relatedResourceDto, status));
+        }
+        return datasetVersionBaseDtos;
     }
 
     public static String getRelatedResourceName(RelatedResourceDto relatedResourceDto) {
