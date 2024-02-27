@@ -23,6 +23,7 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionSearchSectionStack;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportZipDatasourceWithMappingWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.NewDatasetWindow;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
@@ -231,7 +232,11 @@ public class DatasetListViewImpl extends StatisticalResourceUpdateMultipleResour
             public void onClick(ClickEvent event) {
                 List<DatasetVersionBaseDto> datasetVersionDtos = StatisticalResourcesRecordUtils.getDatasetVersionBaseDtosFromListGridRecords(listGrid.getListGrid().getSelectedRecords());
                 if (!datasetVersionDtos.isEmpty()) {
-                    getUiHandlers().goToDatasetsInGroup(getUrnsFromSelectedDatasetVersion(datasetVersionDtos));
+                    if (datasetVersionDtos.size() <= CommonUtils.getMaxNumberOfUpdatedDatasetInGroup()) {
+                        getUiHandlers().goToDatasetsInGroup(getUrnsFromSelectedDatasetVersion(datasetVersionDtos));
+                    } else {
+                        getUiHandlers().showMessageMaxDatasetsExceeded();
+                    }
                 }
             }
         };

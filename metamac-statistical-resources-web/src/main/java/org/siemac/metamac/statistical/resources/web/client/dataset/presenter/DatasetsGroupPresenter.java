@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.presenter;
 
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -278,6 +280,11 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         List<PlaceRequest> hierarchy = PlaceRequestUtils.getHierarchyUntilNameToken(placeManager, NameTokens.datasetsGroupPage);
         hierarchy.add(new PlaceRequest(tabNameToken));
         placeManager.revealPlaceHierarchy(hierarchy);
+    }
+
+    @Override
+    public void showMessageMaxDatasetsExceeded() {
+        ShowMessageEvent.fireErrorMessage(DatasetsGroupPresenter.this, getMessages().datasetMaxNumberUpdateInGroupExceeded(String.valueOf(CommonUtils.getMaxNumberOfUpdatedDatasetInGroup())));
     }
 
     @Override

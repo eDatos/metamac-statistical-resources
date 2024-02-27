@@ -20,6 +20,7 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.Dat
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetsGroupPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetsGroupUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionsSectionStack;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchMultipleStatisticalRelatedResourcePaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
@@ -337,7 +338,8 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
     }
 
     private CustomToolStripButton createAddDatasetButton() {
-        CustomToolStripButton button = new CustomToolStripButton(getConstants().actionAdd(), RESOURCE.editListGrid().getURL());
+        CustomToolStripButton button = new CustomToolStripButton(getConstants().actionAdd(),
+                org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources.RESOURCE.newListGrid().getURL());
         button.addClickHandler(getAddDatasetButtonClickHandler());
         return button;
     }
@@ -369,7 +371,12 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
                         List<RelatedResourceDto> selectedResource = searchDatasetVersionsWindow.getSelectedResources();
                         List<DatasetVersionBaseDto> newSelectedDataset = RelatedResourceUtils.getRelatedResourceDtosAsDatasetVersionBaseDtos(selectedResource, statusDatasets);
                         if (!newSelectedDataset.isEmpty()) {
-                            versionsSectionStack.addDatasetVersions(newSelectedDataset);
+                            Integer totalSelectedDataset = versionsSectionStack.getNumberSelectedDatasets() + newSelectedDataset.size();
+                            if (totalSelectedDataset <= CommonUtils.getMaxNumberOfUpdatedDatasetInGroup()) {
+                                versionsSectionStack.addDatasetVersions(newSelectedDataset);
+                            } else {
+                                getUiHandlers().showMessageMaxDatasetsExceeded();
+                            }
                         }
                         searchDatasetVersionsWindow.markForDestroy();
                     }

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
-import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.navigation.shared.ConstantsPlaceRequest;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -16,13 +15,9 @@ import org.siemac.metamac.statistical.resources.web.client.base.presenter.Statis
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetInGroupMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
-import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
-import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionMainCoveragesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionMainCoveragesResult;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsAction;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListAction;
@@ -66,10 +61,6 @@ public class DatasetInGroupMetadataTabPresenter
         void initMetadataInGroupForm();
 
         // metadata fill methods
-        void setDatasetsForReplaces(GetDatasetVersionsResult result);
-
-        void setStatisticalOperationsForReplacesSelection(List<ExternalItemDto> results, ExternalItemDto defaultSelected);
-
         void setDatasetsMainCoverages(GetDatasetVersionMainCoveragesResult result);
 
         void setStatisticalOperationsForDsdSelection(List<ExternalItemDto> results, ExternalItemDto defaultSelected);
@@ -127,23 +118,6 @@ public class DatasetInGroupMetadataTabPresenter
             @Override
             public void onWaitSuccess(GetDatasetVersionMainCoveragesResult result) {
                 getView().setDatasetsMainCoverages(result);
-            }
-        });
-    }
-
-    @Override
-    public void retrieveDatasetsForReplaces(int firstResult, int maxResults, VersionableStatisticalResourceWebCriteria criteria) {
-
-        DatasetVersionWebCriteria versionableCriteria = new DatasetVersionWebCriteria(criteria.getCriteria());
-        versionableCriteria.setOnlyLastVersion(criteria.isOnlyLastVersion());
-        versionableCriteria.setStatisticalOperationUrn(criteria.getStatisticalOperationUrn());
-        versionableCriteria.setProcStatus(ProcStatusEnum.PUBLISHED);
-
-        dispatcher.execute(new GetDatasetVersionsAction(firstResult, maxResults, versionableCriteria), new WaitingAsyncCallbackHandlingError<GetDatasetVersionsResult>(this) {
-
-            @Override
-            public void onWaitSuccess(GetDatasetVersionsResult result) {
-                getView().setDatasetsForReplaces(result);
             }
         });
     }
@@ -210,17 +184,6 @@ public class DatasetInGroupMetadataTabPresenter
             @Override
             public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
                 getView().setStatisticalOperationsForDsdSelection(result.getOperationsList(), StatisticalResourcesDefaults.getSelectedStatisticalOperation());
-            }
-        });
-    }
-
-    @Override
-    public void retrieveStatisticalOperationsForReplacesSelection() {
-        dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(0, Integer.MAX_VALUE, null), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
-
-            @Override
-            public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
-                getView().setStatisticalOperationsForReplacesSelection(result.getOperationsList(), StatisticalResourcesDefaults.getSelectedStatisticalOperation());
             }
         });
     }

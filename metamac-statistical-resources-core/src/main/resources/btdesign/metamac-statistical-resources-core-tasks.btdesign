@@ -30,9 +30,7 @@ Application DatasetsStatisticalResources {
     		"Perform the update geographical coverage cache task for external publications"
     		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		executeResendPublishedDatasetsKafkaMessageTask() throws MetamacException;
-    		"Perform the update dataset version task"
-    		executeUpdateDatasetVersionTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
-    		
+	
     		"Perform the database dataset pooling task"
     		executeDatabaseDatasetPollingTask()  throws MetamacException;
     		"Import a set of files provided by urn as attributes in a datasetVersion"
@@ -76,8 +74,6 @@ Application DatasetsStatisticalResources {
             String planifyUpdateGeocoverageCache(@TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException;
             "Plannify a scheduled task to update the geographical coverage cache for external datasets"
             String planifyUpdateExternalGeocoverageCache(@TaskInfoDataset taskInfoDataset) throws MetamacException;
-            "Plannify a scheduled task to update dataset version"
-            String planifyUpdateDatasetVersion(@TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException;
 			"Perform the importation task"
     		processImportationTask(String importationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Import a set of files provided by urn as attributes in a datasetVersion"
@@ -98,9 +94,7 @@ Application DatasetsStatisticalResources {
     		processDatabaseDatasetPollingTask() throws MetamacException;   		
     		"Perform the geographic coverage cache clear task"
     		processGeographicCoverageCacheClearTask() throws MetamacException;
-    		"Perform the dataset version update task"
-    		processUpdateDatasetVersionTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
-    		
+ 		
      		"Check if exists any kind of job task in the @param resourceId"
     		boolean existsTaskForResource(String resourceId) throws MetamacException;
     
@@ -124,10 +118,7 @@ Application DatasetsStatisticalResources {
 			
 			"Check if exists an db importation job task in the @param resourceId"
     		boolean existDatabaseImportationTaskInResource(String resourceId) throws MetamacException;
-    		
-    		"Check if exists an db dataset version update job task in the @param resourceId"
-    		boolean existUpdateDatasetVersionTaskInResource(String resourceId) throws MetamacException;
-    		
+    			
     		"Creates a task"
 			@Task createTask(@Task task) throws MetamacException;
 			"Updates a task"

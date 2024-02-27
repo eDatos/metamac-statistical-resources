@@ -406,4 +406,8 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
         }
     }
 
+    @Override
+    public void showMessageMaxDatasetsExceeded() {
+        ShowMessageEvent.fireErrorMessage(DatasetListPresenter.this, getMessages().datasetMaxNumberUpdateInGroupExceeded(String.valueOf(CommonUtils.getMaxNumberOfUpdatedDatasetInGroup())));
+    }
 }

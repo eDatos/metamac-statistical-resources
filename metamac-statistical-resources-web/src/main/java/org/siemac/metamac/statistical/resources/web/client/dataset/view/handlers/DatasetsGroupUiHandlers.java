@@ -22,4 +22,5 @@ public interface DatasetsGroupUiHandlers extends BaseUiHandlers, UiHandlers {
     public void showWaitPopup();
     public void hideWaitPopup();
     public void showUpdateResults(MetamacWebException notificationException);
+    public void showMessageMaxDatasetsExceeded();
 }

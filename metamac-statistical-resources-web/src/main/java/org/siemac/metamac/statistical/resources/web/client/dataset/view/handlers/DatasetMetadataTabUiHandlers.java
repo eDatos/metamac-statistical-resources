@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.view.handler
 
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
 
 public interface DatasetMetadataTabUiHandlers extends DatasetMetadataCommonTabUiHandlers {
 
@@ -22,4 +23,9 @@ public interface DatasetMetadataTabUiHandlers extends DatasetMetadataCommonTabUi
 
     void deleteDatasetVersion(String urn);
     void copyDataset(String urn);
+
+    // RELATED DATASETS
+    void retrieveStatisticalOperationsForReplacesSelection();
+    void retrieveDatasetsForReplaces(int firstResult, int maxResults, VersionableStatisticalResourceWebCriteria criteria);
+
 }

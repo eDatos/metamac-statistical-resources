@@ -119,7 +119,6 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateSd
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportAttributesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
-import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateDatasetVersionJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
@@ -792,10 +791,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         if (!createJobKeyForUpdateGeocoverageCacheResource(datasetUrn).equals(jobKey)) {
             checkExistUpdateGeocoverageCacheResource(ctx, datasetUrn);
         }
-
-        if (!createJobKeyForUpdateDatasetVersion(datasetUrn).equals(jobKey)) {
-            checkExistUpdateDatasetVersionInResource(ctx, datasetUrn);
-        }
     }
 
     private void checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ServiceContext ctx, JobKey jobKey) throws MetamacException {
@@ -839,12 +834,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private void checkExistImportationTaskInResource(ServiceContext ctx, String datasetUrn) throws MetamacException {
         if (existImportationTaskInResource(ctx, datasetUrn)) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_JOB_IMPORTATION_IN_PROCESS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
-        }
-    }
-
-    private void checkExistUpdateDatasetVersionInResource(ServiceContext ctx, String datasetUrn) throws MetamacException {
-        if (existUpdateDatasetVersionTaskInResource(ctx, datasetUrn)) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_JOB_UPDATE_DATASET_VERSION_IN_PROGRESS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
         }
     }
 
@@ -1394,7 +1383,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public boolean existsTaskForResource(ServiceContext ctx, String resourceId) throws MetamacException {
         taskServiceInvocationValidator.checkExistsTaskForResource(ctx, resourceId);
         return existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
-                || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId) || existUpdateDatasetVersionTaskInResource(ctx, resourceId);
+                || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId);
     }
 
     @Override
@@ -1469,17 +1458,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
             return !DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) && sched.checkExists(createJobKeyForDatabaseImportationResource(resourceId));
-        } catch (SchedulerException e) {
-            throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
-        }
-    }
-    
-    @Override
-    public boolean existUpdateDatasetVersionTaskInResource(ServiceContext ctx, String resourceId) throws MetamacException {
-        taskServiceInvocationValidator.checkExistUpdateDatasetVersionTaskInResource(ctx, resourceId);
-        try {
-            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
-            return sched.checkExists(createJobKeyForUpdateDatasetVersion(resourceId));
         } catch (SchedulerException e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
         }
@@ -2232,61 +2210,5 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling resend all published last version dataset kafka messages job", e);
         }
-    }
-
-    @Override
-    public String planifyUpdateDatasetVersion(ServiceContext ctx, TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException {
-        taskServiceInvocationValidator.checkPlanifyUpdateDatasetVersion(ctx, taskInfoDataset, sendNotification);
-        
-        String datasetUrn = taskInfoDataset.getDatasetUrn();
-
-        JobKey jobKey = createJobKeyForUpdateDatasetVersion(datasetUrn);
-        TriggerKey triggerKey = createTriggerKeyForUpdateDatasetVersion(datasetUrn);
-        String taskName = createTaskNameUpdateDatasetVersion(taskInfoDataset.getDatasetVersionId());
-
-        try {
-            
-            StringBuilder alternativeRepresentations = new StringBuilder();
-            StringBuilder datasetVersionRationaleTypes = new StringBuilder();
-            StringBuilder datasetVersionDataProvidersUrn = new StringBuilder();
-            serializeAlternativeRepresentations(taskInfoDataset, alternativeRepresentations);
-            serializeDatasetVersionRationaleTypes(taskInfoDataset, datasetVersionRationaleTypes);
-            serializeDatasetVersionDataProvidersUrn(taskInfoDataset, datasetVersionDataProvidersUrn);
-            checkExistTaskInResource(ctx, jobKey, datasetUrn);
-
-            JobDetail job = newJob(UpdateDatasetVersionJob.class).withIdentity(jobKey).usingJobData(UpdateDatasetVersionJob.DATASET_URN, taskInfoDataset.getDatasetUrn())
-                    .usingJobData(UpdateDatasetVersionJob.DATASET_VERSION_ID, taskInfoDataset.getDatasetVersionId()).usingJobData(UpdateDatasetVersionJob.TASK_NAME, taskName)
-                    .usingJobData(AbstractImportDatasetJob.USER, ctx.getUserId()).usingJobData(AbstractImportDatasetJob.DATA_STRUCTURE_URN, taskInfoDataset.getDataStructureUrn()).requestRecovery().build();
-
-
-            // No existing Job
-            Task newTask = new Task(taskName);
-            newTask.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
-            newTask.setExtensionPoint(taskInfoDataset.getDatasetVersionId());
-            
-            createTask(ctx, newTask);
-            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
-
-            // Scheduler an importation job
-            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
-            sched.scheduleJob(job, trigger);
-
-        } catch (Exception e) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
-                    .build(); // Error
-        }
-
-        return jobKey.getName();
-        
-    }
-
-    @Override
-    public void processUpdateDatasetVersionTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
-        taskServiceInvocationValidator.checkProcessUpdateDatasetVersionTask(ctx, jobKey, taskInfoDataset);
-        
-        String d = taskInfoDataset.getDatasetVersionId();
-        
-        markTaskAsFinished(ctx, jobKey); // Finish the importation
-        
     }
 }

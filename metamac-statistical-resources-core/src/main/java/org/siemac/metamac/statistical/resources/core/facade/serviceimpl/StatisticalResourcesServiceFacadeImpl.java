@@ -2461,8 +2461,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersionDto datasetVersionMetadataToChangeDto, String datasetUrnToChange, List<CategorisationDto> categorisationsDto)
             throws MetamacException {
 
-        logger.info("Execution start - updateDatasetVersionInGroup at {} ", new DateTime());
-
         DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionMetadataToChangeDto);
 
         for (CategorisationDto categorisationDto : categorisationsDto) {
@@ -2470,8 +2468,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         }
 
         getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
-
-        logger.info("Execution end - updateDatasetVersionInGroup at {} ", new DateTime());
 
     }
 }

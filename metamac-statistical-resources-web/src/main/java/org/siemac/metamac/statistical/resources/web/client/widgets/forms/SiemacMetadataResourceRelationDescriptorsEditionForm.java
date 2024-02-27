@@ -10,7 +10,6 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.SiemacMetadataStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
-import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceLinkItem;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.SearchRelatedResourceLinkItem;
@@ -29,19 +28,13 @@ public abstract class SiemacMetadataResourceRelationDescriptorsEditionForm exten
 
     public SiemacMetadataResourceRelationDescriptorsEditionForm() {
         super(getConstants().formResourceRelationDescriptors());
-        init(false);
+        init();
     }
 
-    public SiemacMetadataResourceRelationDescriptorsEditionForm(boolean isMultipleUpdate) {
-        super(getConstants().formResourceRelationDescriptors());
-        init(isMultipleUpdate);
-    }
-
-    public void init(boolean isMultipleUpdate) {
+    public void init() {
         SearchRelatedResourceLinkItem replaces = createReplacesItem(SiemacMetadataDS.REPLACES, getConstants().siemacMetadataStatisticalResourceReplaces());
         RelatedResourceLinkItem isReplacedBy = new RelatedResourceLinkItem(SiemacMetadataDS.IS_REPLACED_BY, getConstants().siemacMetadataStatisticalResourceIsReplacedBy(),
                 getCustomLinkItemNavigationClickHandler());
-        isReplacedBy.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         setFields(replaces, isReplacedBy);
     }

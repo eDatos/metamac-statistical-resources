@@ -57,6 +57,7 @@ import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 public class CommonUtils {
 
     private static String                               metamacPortalBaseUrl;
+    private static Integer                              maxNumberOfUpdatedDatasetInGroup;
     private static Map<String, StatisticOfficialityDto> statisticOfficialitiesMap;
 
     // -----------------------------------------------------------------------------------------
@@ -696,6 +697,14 @@ public class CommonUtils {
         }
 
         return hashMap;
+    }
+
+    public static Integer getMaxNumberOfUpdatedDatasetInGroup() {
+        return maxNumberOfUpdatedDatasetInGroup;
+    }
+
+    public static void setMaxNumberOfUpdatedDatasetInGroup(Integer maxNumberOfUpdatedDatasetInGroup) {
+        CommonUtils.maxNumberOfUpdatedDatasetInGroup = maxNumberOfUpdatedDatasetInGroup;
     }
 
 }

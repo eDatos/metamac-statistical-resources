@@ -243,10 +243,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_GET_ALL_EXTERNAL_PUBLICATION_MESSAGES_ERROR     = create(
             "exception.resources.task.error.update_external_geocoverage_cache_get_all_external_publication_messages_error");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                                           = create("exception.resources.task.in_progress");
-    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_DATASET_VERSION_IN_PROGRESS                                                = create(
-            "exception.resources.task.error.imporation_in_process");                                                                                                                                    // TODO
-                                                                                                                                                                                                        // EDATOS-4385
-                                                                                                                                                                                                        // PENDIENTE
+
     // Dataset Importation
     public static final CommonServiceExceptionType FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION                                     = create(
             "exception.resources.dataset.importation.file_not_linked_to_any_dataset_in_statistical_operation");

@@ -20,6 +20,7 @@ public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers 
     void createDataset(DatasetVersionDto datasetDto);
     void deleteDatasets(List<String> urnsFromSelected);
     void retrieveDatasets(int firstResult, int maxResults, DatasetVersionWebCriteria criteria);
+    public void showMessageMaxDatasetsExceeded();
 
     // LifeCycle
 

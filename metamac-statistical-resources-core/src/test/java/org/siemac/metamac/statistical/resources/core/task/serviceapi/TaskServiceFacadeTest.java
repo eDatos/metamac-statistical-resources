@@ -97,10 +97,4 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
         // No test
     }
-
-    @Override
-    public void testExecuteUpdateDatasetVersionTask() throws Exception {
-        // No test
-
-    }
 }

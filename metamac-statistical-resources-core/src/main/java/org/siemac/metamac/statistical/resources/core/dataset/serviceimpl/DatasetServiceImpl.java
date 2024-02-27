@@ -2243,23 +2243,4 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             }
         }
     }
-
-    // TODO EDATOS-4385 PENDIENTE JOB
-    private void updateDatasetVersionInGroupInJob(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
-        datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
-        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
-
-            @Override
-            protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                TaskInfoDataset taskInfo = new TaskInfoDataset();
-                taskInfo.setDatasetVersionId(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-                taskInfo.setDatasetUrn(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
-                taskService.planifyUpdateDatasetVersion(ctx, taskInfo, true);
-
-                return null;
-            }
-        });
-    } 
-
-
 }

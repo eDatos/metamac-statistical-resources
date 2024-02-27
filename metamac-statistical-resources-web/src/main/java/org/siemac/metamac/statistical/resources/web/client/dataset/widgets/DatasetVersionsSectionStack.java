@@ -97,4 +97,8 @@ public class DatasetVersionsSectionStack extends SiemacMetadataResourceSectionSt
             fieldStatus.setHidden(!show);
         }
     }
+
+    public Integer getNumberSelectedDatasets() {
+        return listGrid.getRecords() != null ? listGrid.getRecords().length : 0;
+    }
 }
