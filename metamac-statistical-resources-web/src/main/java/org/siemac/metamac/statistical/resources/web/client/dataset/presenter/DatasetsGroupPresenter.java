@@ -1,14 +1,13 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.presenter;
 
-import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
@@ -16,7 +15,6 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
-import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetsGroupUiHandlers;
@@ -37,12 +35,9 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDa
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupResult;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
-import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
@@ -72,7 +67,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
 
     private PlaceManager                              placeManager;
     private DispatchAsync                             dispatcher;
-    private String                                    operationCode;
+    private String                                    operationUrn;
 
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetContextAreaDataset         = new Type<RevealContentHandler<?>>();
@@ -92,7 +87,6 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         void selectCategorisationsTab();
         void refreshStatusUpdateDatasetVersionInProgress(String urn, StreamMessageStatusEnum status, MetamacWebException notificationException);
         void showUnauthorizedResourceWarningMessage();
-        void setStatisticalOperationsForDatasetSelection(List<ExternalItemDto> externalItemsDtos, ExternalItemDto defaultSelected);
         void setDatasetsForAdd(GetDatasetVersionsResult result);
         void initChildViews();
 
@@ -133,10 +127,11 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         super.onReveal();
 
         String operationCode = PlaceRequestUtils.getOperationParamFromUrl(placeManager);
+        String operationUrn = UrnUtils.generateUrn(UrnConstants.URN_SIEMAC_CLASS_OPERATION_PREFIX, operationCode);
 
         if (PlaceRequestUtils.isExpectedCurrentPlaceRequestNameToken(placeManager, DatasetsGroupPresenter.DATASET_GROUP_EXPECTED_NAME_TOKENS)) {
             if (!StringUtils.isBlank(operationCode)) {
-                loadInitialData(operationCode);
+                loadInitialData(operationUrn);
             } else {
                 StatisticalResourcesWeb.showErrorPage();
             }
@@ -160,8 +155,8 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
         getView().showUnauthorizedResourceWarningMessage();
     }
 
-    private void loadInitialData(String operationCode) {
-        this.operationCode = operationCode;
+    private void loadInitialData(String operationUrn) {
+        this.operationUrn = operationUrn;
         List<String> datasetsIdentifiers = PlaceRequestUtils.getDatasetsInGroupParamFromUrl(placeManager);
         List<String> datasetsUrns = new ArrayList<String>();
         for (String id : datasetsIdentifiers) {
@@ -185,21 +180,6 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
                     }
                 });
 
-    }
-
-    @Override
-    public void retrieveStatisticalOperationsForDatasetSelection() {
-        MetamacWebCriteria metamacWebCriteria = new MetamacWebCriteria();
-        metamacWebCriteria.setCriteria(operationCode);
-
-        dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(0, Integer.MAX_VALUE, metamacWebCriteria),
-                new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
-
-                    @Override
-                    public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
-                        getView().setStatisticalOperationsForDatasetSelection(result.getOperationsList(), StatisticalResourcesDefaults.getSelectedStatisticalOperation());
-                    }
-                });
     }
 
     @Override
@@ -250,7 +230,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
 
         DatasetVersionWebCriteria versionableCriteria = new DatasetVersionWebCriteria(criteria.getCriteria());
         versionableCriteria.setOnlyLastVersion(criteria.isOnlyLastVersion());
-        versionableCriteria.setStatisticalOperationUrn(criteria.getStatisticalOperationUrn());
+        versionableCriteria.setStatisticalOperationUrn(operationUrn);
         versionableCriteria.setProcStatus(status);
 
         dispatcher.execute(new GetDatasetVersionsAction(firstResult, maxResults, versionableCriteria), new WaitingAsyncCallbackHandlingError<GetDatasetVersionsResult>(this) {
@@ -283,8 +263,8 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
     }
 
     @Override
-    public void showMessageMaxDatasetsExceeded() {
-        ShowMessageEvent.fireErrorMessage(DatasetsGroupPresenter.this, getMessages().datasetMaxNumberUpdateInGroupExceeded(String.valueOf(CommonUtils.getMaxNumberOfUpdatedDatasetInGroup())));
+    public void showMessageMaxDatasetsExceeded(String message) {
+        ShowMessageEvent.fireErrorMessage(DatasetsGroupPresenter.this, message);
     }
 
     @Override

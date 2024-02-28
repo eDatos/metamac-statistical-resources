@@ -22,8 +22,8 @@ public class DatasetVersionsSectionStack extends SiemacMetadataResourceSectionSt
         initDatasetVersionsSectionStack();
     }
 
-    public DatasetVersionsSectionStack(String title, String statusTitle) {
-        super(title, statusTitle);
+    public DatasetVersionsSectionStack(String title, String statusTitle, boolean canRemoveElements) {
+        super(title, statusTitle, canRemoveElements);
         initDatasetVersionsSectionStack();
     }
 

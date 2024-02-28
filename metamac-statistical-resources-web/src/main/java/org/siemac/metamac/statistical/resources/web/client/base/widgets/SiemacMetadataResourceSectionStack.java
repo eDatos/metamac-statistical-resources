@@ -19,8 +19,8 @@ public class SiemacMetadataResourceSectionStack extends VersionableResourceSecti
         super(title);
     }
 
-    public SiemacMetadataResourceSectionStack(String title, String statusTitle) {
-        super(title);
+    public SiemacMetadataResourceSectionStack(String title, String statusTitle, boolean canRemoveElements) {
+        super(title, canRemoveElements);
         this.statusTitle = statusTitle;
     }
 

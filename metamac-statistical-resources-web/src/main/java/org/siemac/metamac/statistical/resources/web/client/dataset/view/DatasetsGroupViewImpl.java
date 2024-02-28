@@ -1,12 +1,12 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.view;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
 import static org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
@@ -95,7 +95,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         // DATASET VERSIONS
         //
 
-        versionsSectionStack = new DatasetVersionsSectionStack(getConstants().datasetVersionsSelected(), getConstants().updateDatasetVersionsInGroupStatus());
+        versionsSectionStack = new DatasetVersionsSectionStack(getConstants().datasetVersionsSelected(), getConstants().updateDatasetVersionsInGroupStatus(), true);
 
         // TABS
 
@@ -158,17 +158,26 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
             @Override
             public void onClick(ClickEvent event) {
-                versionsSectionStack.resetAllStatusDatasetVersion();
-                resultDatasetMetadata = new ResultDatasetMetadata();
-                resultDatasetMetadata.setDatasetsUrnsUpdate(versionsSectionStack.getAllDatasetUrns());
-                resultDatasetMetadata.setDatasetDto(datasetInGroupMetadataTabView.getDatasetVersionMetadata());
-                if (resultDatasetMetadata.getDatasetDto() != null) {
-                    resultDatasetMetadata.setCategorisations(datasetInGroupCategorisationsTabView.getCategorisations());
-                    getUiHandlers().updateDatasets(resultDatasetMetadata.getNextUrn(), resultDatasetMetadata.getDatasetDto(), resultDatasetMetadata.getCategorisations());
+                if (checkCanSave()) {
+                    versionsSectionStack.resetAllStatusDatasetVersion();
+                    resultDatasetMetadata = new ResultDatasetMetadata();
+                    resultDatasetMetadata.setDatasetsUrnsUpdate(versionsSectionStack.getAllDatasetUrns());
+                    resultDatasetMetadata.setDatasetDto(datasetInGroupMetadataTabView.getDatasetVersionMetadata());
+                    if (resultDatasetMetadata.getDatasetDto() != null) {
+                        resultDatasetMetadata.setCategorisations(datasetInGroupCategorisationsTabView.getCategorisations());
+                        getUiHandlers().updateDatasets(resultDatasetMetadata.getNextUrn(), resultDatasetMetadata.getDatasetDto(), resultDatasetMetadata.getCategorisations());
+                    }
                 }
             }
         };
+    }
 
+    private boolean checkCanSave() {
+        if (versionsSectionStack.getNumberSelectedDatasets() == 0) {
+            getUiHandlers().showMessageMaxDatasetsExceeded(getMessages().datasetNoEntriesUpdateInGroup());
+            return false;
+        }
+        return true;
     }
 
     /*
@@ -240,7 +249,6 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
             callSynchronouslyUpdateNextDatasetVersion();
 
         } catch (Exception e) {
-            MetamacWebException metamacWebException = new MetamacWebException("", e.getMessage());
             if (resultDatasetMetadata != null) {
                 getUiHandlers().showUpdateResults(resultDatasetMetadata.getNotificationException());
                 resultDatasetMetadata.clear();
@@ -359,8 +367,6 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
                         });
 
-                getUiHandlers().retrieveStatisticalOperationsForDatasetSelection();
-
                 // Load resources (to populate the selection window)
                 getUiHandlers().retrieveDatasets(0, StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, searchDatasetVersionsWindow.getSearchCriteria(), statusDatasets);
 
@@ -375,7 +381,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
                             if (totalSelectedDataset <= CommonUtils.getMaxNumberOfUpdatedDatasetInGroup()) {
                                 versionsSectionStack.addDatasetVersions(newSelectedDataset);
                             } else {
-                                getUiHandlers().showMessageMaxDatasetsExceeded();
+                                getUiHandlers().showMessageMaxDatasetsExceeded(getMessages().datasetMaxNumberUpdateInGroupExceeded(String.valueOf(CommonUtils.getMaxNumberOfUpdatedDatasetInGroup())));
                             }
                         }
                         searchDatasetVersionsWindow.markForDestroy();
@@ -384,13 +390,6 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
             }
         };
 
-    }
-
-    public void setStatisticalOperationsForDatasetSelection(List<ExternalItemDto> externalItemsDtos, ExternalItemDto defaultSelected) {
-        if (searchDatasetVersionsWindow != null) {
-            searchDatasetVersionsWindow.setStatisticalOperations(externalItemsDtos);
-            searchDatasetVersionsWindow.setSelectedStatisticalOperation(defaultSelected);
-        }
     }
 
     public void setDatasetsForAdd(GetDatasetVersionsResult result) {
@@ -403,7 +402,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
     @Override
     public void showUnauthorizedResourceWarningMessage() {
-        // TODO Auto-generated method stub
+        // Without impl
 
     }
 }

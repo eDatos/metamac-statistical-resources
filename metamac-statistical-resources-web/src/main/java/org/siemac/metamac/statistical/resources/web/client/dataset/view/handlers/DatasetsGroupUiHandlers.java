@@ -17,10 +17,9 @@ public interface DatasetsGroupUiHandlers extends BaseUiHandlers, UiHandlers {
     public void goToDatasetCategorisations();
     public void updateDatasets(String urn, DatasetVersionDto datasetChangedMetadataDto, List<CategorisationDto> categorisations);
     public void retrieveDatasets(int firstResult, int maxResults, VersionableStatisticalResourceWebCriteria criteria, ProcStatusEnum status);
-    public void retrieveStatisticalOperationsForDatasetSelection();
 
     public void showWaitPopup();
     public void hideWaitPopup();
     public void showUpdateResults(MetamacWebException notificationException);
-    public void showMessageMaxDatasetsExceeded();
+    public void showMessageMaxDatasetsExceeded(String message);
 }
