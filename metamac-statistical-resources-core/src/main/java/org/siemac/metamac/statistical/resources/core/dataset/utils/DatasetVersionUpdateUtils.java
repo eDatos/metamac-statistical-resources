@@ -9,6 +9,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.NameableStatist
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.utils.CommonVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -86,8 +87,34 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
     private static void copyLanguageMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         if (!source.getLanguages().isEmpty()) {
             target.getLanguages().clear();
-            target.getLanguages().addAll(copyCollectionExternalItem(source.getLanguages()));
+            target.getLanguages().addAll(copyLanguages(source.getLanguages(), target.getLanguage()));
         }
+    }
+
+    public static Collection<ExternalItem> copyLanguages(Collection<ExternalItem> source, ExternalItem defaultLanguage) {
+        if (source.isEmpty()) {
+            return new ArrayList<ExternalItem>();
+        }
+
+        if (defaultLanguage == null) {
+            return copyCollectionExternalItem(source);
+        }
+
+        boolean existDefaultLanguage = false;
+
+        List<ExternalItem> target = new ArrayList<ExternalItem>();
+        for (ExternalItem item : source) {
+            target.add(copyExternalItem(item));
+            if (!existDefaultLanguage && item.getUrn().equals(defaultLanguage.getUrn())) {
+                existDefaultLanguage = true;
+            }
+        }
+
+        if (!existDefaultLanguage) {
+            target.add(defaultLanguage);
+        }
+
+        return target;
     }
 
     private static void copyContentClassifiersMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
