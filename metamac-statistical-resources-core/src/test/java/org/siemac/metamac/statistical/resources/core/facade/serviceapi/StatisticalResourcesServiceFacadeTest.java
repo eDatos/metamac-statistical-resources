@@ -4308,7 +4308,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Override
     public void testUpdateDatasetVersionInGroup() throws Exception {
-        // TODO EDATOS-4385
+        // // Without test in facade
 
     }
 }

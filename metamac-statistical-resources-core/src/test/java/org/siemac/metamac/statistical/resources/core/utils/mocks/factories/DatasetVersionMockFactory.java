@@ -287,6 +287,9 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     public static final String               DATASET_VERSION_119_DRAFT_DATABASE_DATASET_NAME                                                               = "DATASET_VERSION_119_DRAFT_DATABASE_DATASET";
     public static final String               DATASET_VERSION_120_VALIDATION_REJECTED_DATABASE_DATASET_NAME                                                 = "DATASET_VERSION_120_VALIDATION_REJECTED_DATABASE_DATASET";
 
+    public static final String               DATASET_VERSION_01_FOR_UPDATE_MULTIPLE                                                                        = "DATASET_VERSION_01_FOR_UPDATE_MULTIPLE";
+    public static final String               DATASET_VERSION_02_FOR_UPDATE_MULTIPLE                                                                        = "DATASET_VERSION_02_FOR_UPDATE_MULTIPLE";
+
     private static DatasetVersionMockFactory instance                                                                                                      = null;
 
     private DatasetVersionMockFactory() {
@@ -1291,6 +1294,38 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         datasetVersion.getDatasources().clear();
         datasetVersion.setDataSourceType(DataSourceTypeEnum.DATABASE);
         return datasetVersion;
+    }
+
+    private static DatasetVersion getDatasetVersion01ForUpdateMultiple() {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
+        datasetVersion.getDatasources().clear();
+        datasetVersion.setDataSourceType(DataSourceTypeEnum.DATABASE);
+        return datasetVersion;
+    }
+
+    private static DatasetVersion getDatasetVersion02ForUpdateMultiple() {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
+        datasetVersion.getDatasources().clear();
+        datasetVersion.setDataSourceType(DataSourceTypeEnum.DATABASE);
+        return datasetVersion;
+    }
+
+    public static void changeDatasetVersionBasicMetadataNotPermitted(DatasetVersion metadataToChange) {
+        DatasetVersion newDatasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, metadataToChange.getSiemacMetadataStatisticalResource().getProcStatus());
+        metadataToChange.getSiemacMetadataStatisticalResource().setUrn(newDatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        metadataToChange.getSiemacMetadataStatisticalResource().setTitle(newDatasetVersion.getSiemacMetadataStatisticalResource().getTitle());
+        metadataToChange.getSiemacMetadataStatisticalResource().setMaintainer(newDatasetVersion.getSiemacMetadataStatisticalResource().getMaintainer());
+        metadataToChange.getSiemacMetadataStatisticalResource().setLanguage(newDatasetVersion.getSiemacMetadataStatisticalResource().getLanguage());
+        metadataToChange.getSiemacMetadataStatisticalResource().setLastUpdated(newDatasetVersion.getSiemacMetadataStatisticalResource().getLastUpdate());
+        metadataToChange.getSiemacMetadataStatisticalResource().setLastVersion(newDatasetVersion.getSiemacMetadataStatisticalResource().getLastVersion());
+        metadataToChange.getSiemacMetadataStatisticalResource().setIsReplacedBy(newDatasetVersion.getSiemacMetadataStatisticalResource().getIsReplacedBy());
+        metadataToChange.getSiemacMetadataStatisticalResource().setReplaces(newDatasetVersion.getSiemacMetadataStatisticalResource().getReplaces());
+        metadataToChange.getSiemacMetadataStatisticalResource().setStatisticalOperation(newDatasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
+        metadataToChange.getSiemacMetadataStatisticalResource().setCreatedDate(newDatasetVersion.getSiemacMetadataStatisticalResource().getCreatedDate());
+        metadataToChange.setBibliographicCitation(newDatasetVersion.getBibliographicCitation());
+        metadataToChange.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem());
+        metadataToChange.setDateStart(newDatasetVersion.getDateStart());
+        metadataToChange.setDateEnd(newDatasetVersion.getDateEnd());
     }
 
     // -----------------------------------------------------------------

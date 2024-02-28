@@ -138,4 +138,14 @@ public class DatasetLifecycleTestUtils {
 
         StatisticalResourcesPersistedDoMocks.computeCoverageRelatedMetadata(datasetVersion);
     }
+
+    public static void fillGranularitiesAlternative(DatasetVersion datasetVersion) {
+        ExternalItem geoGranularity = StatisticalResourcesPersistedDoMocks.mockCodeExternalItem("code_gr_1");
+        datasetVersion.getGeographicGranularities().clear();
+        datasetVersion.addGeographicGranularity(geoGranularity);
+
+        ExternalItem timeGranularity = StatisticalResourcesPersistedDoMocks.mockCodeExternalItem("code_time_gr_1");
+        datasetVersion.getTemporalGranularities().clear();
+        datasetVersion.addTemporalGranularity(timeGranularity);
+    }
 }
