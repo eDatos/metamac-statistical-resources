@@ -14,12 +14,14 @@ import org.siemac.metamac.statistical.resources.core.common.utils.CommonVersioni
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
+import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 
 public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
 
     /**
      * Create a new {@link DatasetVersion} copying values from a source.
      */
+
     public static void updateDatasetVersion(DatasetVersion source, DatasetVersion target) {
         copyMetadata(source, target);
     }
@@ -101,22 +103,17 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
             return new ArrayList<ExternalItem>();
         }
 
-        if (defaultLanguage == null) {
+        if (defaultLanguage == null || defaultLanguage.getUrn() == null) {
             return copyCollectionExternalItem(source);
         }
-
-        boolean existDefaultLanguage = false;
 
         List<ExternalItem> target = new ArrayList<ExternalItem>();
         for (ExternalItem item : source) {
             target.add(copyExternalItem(item));
-            if (!existDefaultLanguage && item.getUrn().equals(defaultLanguage.getUrn())) {
-                existDefaultLanguage = true;
-            }
         }
 
-        if (!existDefaultLanguage) {
-            target.add(defaultLanguage);
+        if (!StatisticalResourcesCollectionUtils.isExternalItemInCollection(target, defaultLanguage)) {
+            target.add(CommonVersioningCopyUtils.copyExternalItem(defaultLanguage));
         }
 
         return target;
@@ -146,13 +143,13 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
             target.setKeywords(copyInternationalString(source.getKeywords()));
         }
 
-        if (source.getCommonMetadata() != null && source.getCommonMetadata().getId() != null) {
+        if (source.getCommonMetadata() != null && source.getCommonMetadata().getUrn() != null) {
             target.setCommonMetadata(copyExternalItem(source.getCommonMetadata()));
         }
     }
 
     private static void copyProductionDescriptorsMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
-        if (source.getCreator() != null && source.getCreator().getId() != null) {
+        if (source.getCreator() != null && source.getCreator().getUrn() != null) {
             target.setCreator(copyExternalItem(source.getCreator()));
         }
 

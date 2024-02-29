@@ -61,20 +61,23 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
     }
 
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
-        setSiemacMetadataStatisticalResourceDto(datasetDto);
-        setRelatedDsd(datasetDto.getRelatedDsd());
-        relatedDsd.setShowIfCondition(getRelatedDsdFormItemIfFunction(datasetDto));
-
-        if (!DatasetMetadataEditionChecks.canDsdBeReplacedByAnyOtherDsd(datasetDto.getId(), datasetDto.getVersionLogic(), datasetDto.getProcStatus())) {
-            fixedDsdCode = datasetDto.getRelatedDsd().getCode();
-            statisticalOperation = datasetDto.getStatisticalOperation();
-        } else {
-            fixedDsdCode = null;
-        }
+        setDatasetVersionDto(datasetDto, true);
     }
 
-    public void setDatasetVersionDto() {
-        fixedDsdCode = null;
+    public void setDatasetVersionDto(DatasetVersionDto datasetDto, boolean checkDsd) {
+        setSiemacMetadataStatisticalResourceDto(datasetDto);
+
+        if (checkDsd) {
+            setRelatedDsd(datasetDto.getRelatedDsd());
+            relatedDsd.setShowIfCondition(getRelatedDsdFormItemIfFunction(datasetDto));
+
+            if (!DatasetMetadataEditionChecks.canDsdBeReplacedByAnyOtherDsd(datasetDto.getId(), datasetDto.getVersionLogic(), datasetDto.getProcStatus())) {
+                fixedDsdCode = datasetDto.getRelatedDsd().getCode();
+                statisticalOperation = datasetDto.getStatisticalOperation();
+            } else {
+                fixedDsdCode = null;
+            }
+        }
     }
 
     public DatasetVersionDto getDatasetVersionDto(DatasetVersionDto datasetDto) {

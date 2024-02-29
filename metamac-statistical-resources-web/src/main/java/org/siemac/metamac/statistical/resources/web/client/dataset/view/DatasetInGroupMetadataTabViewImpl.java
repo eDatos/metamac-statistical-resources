@@ -176,7 +176,7 @@ public class DatasetInGroupMetadataTabViewImpl extends StatisticalResourceMetada
         languageEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
 
         // Production descriptors
-        productionDescriptorsEditionForm.setDatasetVersionDto();
+        productionDescriptorsEditionForm.setDatasetVersionDto(datasetDto, false);
         productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
 
         // Publication descriptors
