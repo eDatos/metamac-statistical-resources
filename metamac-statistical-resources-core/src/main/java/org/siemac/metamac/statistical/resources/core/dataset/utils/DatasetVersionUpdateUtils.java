@@ -54,11 +54,6 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
             target.getTemporalGranularities().addAll(copyCollectionExternalItem(source.getTemporalGranularities()));
         }
 
-        if (!source.getStatisticalUnit().isEmpty()) {
-            target.getStatisticalUnit().clear();
-            target.getStatisticalUnit().addAll(copyCollectionExternalItem(source.getStatisticalUnit()));
-        }
-
         if (source.getUpdateFrequency() != null && source.getUpdateFrequency().getCode() != null) {
             target.setUpdateFrequency(copyExternalItem(source.getUpdateFrequency()));
         }

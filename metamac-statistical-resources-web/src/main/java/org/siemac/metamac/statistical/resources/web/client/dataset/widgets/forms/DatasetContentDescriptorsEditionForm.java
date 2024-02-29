@@ -90,6 +90,7 @@ public class DatasetContentDescriptorsEditionForm extends SiemacMetadataContentD
 
         dateStart.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleDatasetUpdate));
         dateEnd.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleDatasetUpdate));
+        statisticalUnit.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleDatasetUpdate));
 
         addFields(dateStart, dateEnd, statisticalUnit, geographicCoverage, temporalCoverage, measures, geographicalGranularitiesItem, temporalGranularitiesItem);
     }
