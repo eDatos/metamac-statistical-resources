@@ -11,7 +11,6 @@ import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.c
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationAttributes;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationResource;
-import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateDatasetVersion;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateExternalGeocoverageCache;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeocoverageCache;
 
@@ -187,8 +186,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                    GROUP_EXTERNAL_CACHE                         = "externalCacheUpdate";
     public static final String                    PREFIX_JOB_IMPORT_ATTRIBUTES                 = "job_import_attributes_";
     public static final String                    PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES        = "job_recovery_import_attributes_";
-    public static final String                    PREFIX_JOB_UPDATE_DATASET_VERSION            = "job_updatedatasetversion_";
-    public static final String                    GROUP_UPDATE_DATASET                         = "updatedatasetversion";
 
     @Autowired
     private TaskServiceInvocationValidator        taskServiceInvocationValidator;
@@ -470,20 +467,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return createJobNameForImportationAttributes(datasetVersionId);
     }
 
-    private String createTaskNameUpdateDatasetVersion(String datasetVersionId) {
-        return createJobNameForUpdateDatasetVersion(datasetVersionId);
-    }
-
     protected JobKey createJobKeyImportAttributes(String datasetUrn) {
         return createJobKeyForImportationAttributes(datasetUrn);
     }
 
     protected JobKey createJobKey(ServiceContext ctx, String datasetUrn) {
         return (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx) ? createJobKeyForDatabaseImportationResource(datasetUrn) : createJobKeyForImportationResource(datasetUrn));
-    }
-
-    protected JobKey createJobKeyUpdateDatasetVersion(ServiceContext ctx, String datasetUrn) {
-        return createJobKeyForDatabaseImportationResource(datasetUrn);
     }
 
     protected TriggerKey createTriggerKey(ServiceContext ctx, String datasetUrn) {
@@ -1381,9 +1370,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public boolean existsTaskForResource(ServiceContext ctx, String resourceId) throws MetamacException {
+        try {
         taskServiceInvocationValidator.checkExistsTaskForResource(ctx, resourceId);
-        return existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
+        boolean a = existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
                 || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId);
+        return a;
+        } catch(Exception e) {
+            logger.error("existsTaskForResource ----", e);
+        }
+        return true;
     }
 
     @Override
@@ -1627,10 +1622,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return new JobKey(createJobNameForUpdateExternalGeocoverageCache());
     }
     
-    private JobKey createJobKeyForUpdateDatasetVersion(String resourceId) {
-        return new JobKey(createJobNameForUpdateDatasetVersion(resourceId), GROUP_UPDATE_DATASET);
-    }
-    
     private TriggerKey createTriggerKeyForImportationDataset(String datasetId) {
         return new TriggerKey(createJobNameForImportationResource(datasetId), GROUP_IMPORTATION);
     }
@@ -1661,10 +1652,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private TriggerKey createTriggerKeyForUpdateExternalGeocoverageCache() {
         return new TriggerKey(createJobNameForUpdateExternalGeocoverageCache(), GROUP_EXTERNAL_CACHE);
-    }
-    
-    private TriggerKey createTriggerKeyForUpdateDatasetVersion(String datasetId) {
-        return new TriggerKey(createJobNameForUpdateDatasetVersion(datasetId), GROUP_UPDATE_DATASET);
     }
     
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {
