@@ -88,27 +88,35 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
 
     private static void copyLanguageMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
         if (!source.getLanguages().isEmpty()) {
+            Collection<ExternalItem> newTargets = copyLanguages(source.getLanguages(), target.getLanguages(), target.getLanguage());
             target.getLanguages().clear();
-            target.getLanguages().addAll(copyLanguages(source.getLanguages(), target.getLanguage()));
+            target.getLanguages().addAll(newTargets);
         }
     }
 
-    public static Collection<ExternalItem> copyLanguages(Collection<ExternalItem> source, ExternalItem defaultLanguage) {
-        if (source.isEmpty()) {
-            return new ArrayList<ExternalItem>();
-        }
-
-        if (defaultLanguage == null || defaultLanguage.getUrn() == null) {
-            return copyCollectionExternalItem(source);
-        }
+    public static Collection<ExternalItem> copyLanguages(Collection<ExternalItem> source, Collection<ExternalItem> oldTarget, ExternalItem defaultLanguage) {
 
         List<ExternalItem> target = new ArrayList<ExternalItem>();
-        for (ExternalItem item : source) {
-            target.add(copyExternalItem(item));
+
+        // default language should always be
+        if (defaultLanguage != null && !StatisticalResourcesCollectionUtils.isExternalItemInCollection(source, defaultLanguage)) {
+            source.add(CommonVersioningCopyUtils.copyExternalItem(defaultLanguage));
         }
 
-        if (!StatisticalResourcesCollectionUtils.isExternalItemInCollection(target, defaultLanguage)) {
-            target.add(CommonVersioningCopyUtils.copyExternalItem(defaultLanguage));
+        // only add language that did not exist before
+        for (ExternalItem itemSource : source) {
+            boolean exists = false;
+            for (ExternalItem itemOldTarget : oldTarget) {
+                if (itemSource.getUrn().equals(itemOldTarget.getUrn())) {
+                    itemSource.setUrn(null);
+                    target.add(itemOldTarget);
+                    exists = true;
+                    break;
+                }
+            }
+            if (!exists) {
+                target.add(copyExternalItem(itemSource));
+            }
         }
 
         return target;
