@@ -192,6 +192,9 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
             target.getMediator().addAll(copyCollectionExternalItem(source.getMediator()));
         }
 
+        if (source.getNewnessUntilDate() != null) {
+            target.setNewnessUntilDate(source.getNewnessUntilDate());
+        }
     }
 
     private static void copyResourcesRelationDescriptorsMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {
