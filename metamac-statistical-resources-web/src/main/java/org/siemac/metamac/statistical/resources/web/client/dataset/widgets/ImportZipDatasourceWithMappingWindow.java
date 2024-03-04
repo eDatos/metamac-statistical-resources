@@ -36,6 +36,7 @@ import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.constants.CommonWebConstants;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
+import org.siemac.metamac.web.common.client.widgets.TranslateToolStripButton;
 import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWindow;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
@@ -54,6 +55,8 @@ import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.Overflow;
+import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.events.ClickHandler;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
@@ -64,17 +67,19 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
     private DatasetListUiHandlers uiHandlers;
 
-    private static int            formWidth       = 600;
-    private static int            formWidthFields = 400;
-    private static int            extraFormHeight = 550;
+    private static int            formWidth          = 620;
+    private static int            formWidthFields    = 400;
+    private static int            formWidthToolStrip = formWidth;
+    private static int            extraFormHeight    = 550;
     protected InformationLabel    informationLabel;
     protected WarningLabel        warningLabelSdmxPattern;
+    TranslateToolStripButton      translateButton;
 
-    private static final String[] REQUIRED_FIELDS = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
+    private static final String[] REQUIRED_FIELDS    = new String[]{VersionableResourceDS.VERSION_RATIONALE_TYPES, VersionableResourceDS.NEXT_VERSION, VersionableResourceDS.DATE_NEXT_VERSION,
             LifeCycleResourceDS.PROC_STATUS};
 
     protected ImportZipDatasourceWithMappingWindow() {
-        super(getConstants().actionLoadDatasource());
+        super(getConstants().actionLoadDatasource(), true, String.valueOf(formWidthToolStrip));
         addFieldsInMainForm();
         addFieldsInExtraForm();
         addRequiredFieldsInExtraForm(false, false);
@@ -88,10 +93,9 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     @Override
     protected CustomDynamicForm buildExtraForm() {
         CustomDynamicForm form = new CustomDynamicForm();
-        form.setOverflow(Overflow.AUTO);
+        form.setOverflow(Overflow.SCROLL);
         form.setHeight(extraFormHeight);
         form.setWidth(formWidth);
-        form.setMargin(1);
         form.setVisible(false);
         return form;
     }
@@ -182,8 +186,12 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         });
 
         items.add(uploadButton);
+
+        translateButton = createImportDatasourcesButton();
+
+        toolStrip.addButton(translateButton);
+
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
-        extraForm.setTranslationsShowed(true);
 
     }
 
@@ -214,6 +222,19 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraItemsToAdd.add(addFieldUpdateFrequencyItem());
         extraItemsToAdd.add(addFieldProcStatus());
         return extraItemsToAdd;
+    }
+
+    private TranslateToolStripButton createImportDatasourcesButton() {
+        TranslateToolStripButton createTranslateButton = new TranslateToolStripButton();
+        createTranslateButton.addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                extraForm.setTranslationsShowed(translateButton.isSelected());
+            }
+        });
+        createTranslateButton.setVisible(false);
+        return createTranslateButton;
     }
 
     private TextItem addFieldNextVersionDate() {
@@ -318,7 +339,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         MultiLanguageRichTextEditorItem versionRationale = new MultiLanguageRichTextEditorItem(VersionableResourceDS.VERSION_RATIONALE,
                 getConstants().versionableStatisticalResourceVersionRationale());
         versionRationale.setTitleColSpan(2);
-        versionRationale.setWidth(formWidthFields - 50);
+        versionRationale.setWidth(formWidthFields);
         return versionRationale;
 
     }
@@ -478,9 +499,10 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     protected void onPreviewComplete(String response) {
         extraForm.clearValues();
         clearExtraFormValues();
+        toolStrip.setVisible(true);
         extraForm.setVisible(true);
         informationLabel.setVisible(true);
-
+        translateButton.setVisible(true);
     }
 
     @Override
@@ -509,8 +531,10 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     @Override
     public void show() {
         clearExtraFormValues();
+        toolStrip.hide();
         extraForm.hide();
         informationLabel.hide();
+        translateButton.hide();
         super.show();
     }
 
