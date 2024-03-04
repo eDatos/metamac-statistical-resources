@@ -65,6 +65,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
     // button
     protected CustomToolStripButton                                 saveButton;
     protected CustomToolStripButton                                 addDatasetButton;
+    protected CustomToolStripButton                                 cleanDatasetButton;
     private DatasetInGroupMetadataTabView                           datasetInGroupMetadataTabView;
     private DatasetInGroupCategorisationsTabView                    datasetInGroupCategorisationsTabView;
     private ResultDatasetMetadata                                   resultDatasetMetadata = new ResultDatasetMetadata();
@@ -131,11 +132,6 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         bindEvents();
     }
 
-    @Override
-    public void setUiHandlers(DatasetsGroupUiHandlers uiHandlers) {
-        super.setUiHandlers(uiHandlers);
-    }
-
     private void createToolTrip() {
         toolStrip = new ToolStrip();
         toolStrip.setWidth100();
@@ -145,6 +141,9 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
         addDatasetButton = createAddDatasetButton();
         toolStrip.addButton(addDatasetButton);
+
+        cleanDatasetButton = createCleanDatasetButton();
+        toolStrip.addButton(cleanDatasetButton);
     }
 
     private CustomToolStripButton createSaveButton() {
@@ -387,6 +386,22 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
                         searchDatasetVersionsWindow.markForDestroy();
                     }
                 });
+            }
+        };
+    }
+
+    private CustomToolStripButton createCleanDatasetButton() {
+        CustomToolStripButton button = new CustomToolStripButton(getConstants().actionClearDataset(), RESOURCE.clear().getURL());
+        button.addClickHandler(getCleanDatasetButtonClickHandler());
+        return button;
+    }
+
+    private ClickHandler getCleanDatasetButtonClickHandler() {
+        return new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                initChildViews();
             }
         };
 
