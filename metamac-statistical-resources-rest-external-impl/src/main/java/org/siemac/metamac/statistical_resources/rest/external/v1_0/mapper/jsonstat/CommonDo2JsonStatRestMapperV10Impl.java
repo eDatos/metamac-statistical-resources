@@ -129,7 +129,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 labelMap.put(dsdAttribute.getComponentId(), toI18nValue(attributeNames.get(0), selectedLanguage));
                 Concept concept = findConceptById(measureConcepts, dsdAttribute);
                 if (isMeasure(dsdAttribute)) {
-                    setUnitIfExists(unitMap, dsdAttribute, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage);
+                    setUnitIfExists(unitMap, dsdAttribute, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, dataAttributes, selectedLanguage);
                 }
 
                 jsonStatDimension.getCategory().setIndex(indexMap);
@@ -155,10 +155,10 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, DsdExternalProcessor.DsdAttribute dsdAttribute, Concept concept, Attribute unitMeasureAttribute,
-            Attribute unitMeasureMultiplierAttribute, String selectedLanguage) {
+            Attribute unitMeasureMultiplierAttribute, DataAttributes dataAttributes, String selectedLanguage) {
         if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
                 || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
-            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, null));
+            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, dataAttributes));
         } else if (concept != null && concept.getQuantity() != null) {
             unitMap.put(dsdAttribute.getComponentId(), toUnit(concept, selectedLanguage));
         }

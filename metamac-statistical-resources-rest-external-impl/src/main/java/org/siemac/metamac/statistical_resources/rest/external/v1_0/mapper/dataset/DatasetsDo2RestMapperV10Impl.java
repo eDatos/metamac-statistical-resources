@@ -41,6 +41,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalRes
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
@@ -149,11 +150,19 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
+
         if (includeMetadata || includeData) {
             dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
         }
         if (includeMetadata) {
-            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, selectedLanguages, fields));
+            boolean includeConstraint = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_DATASET_CONSTRAINTS);
+            ConstraintDimensionRepresentations constraintDimensionRepresentations = null;
+            if (includeConstraint) {
+                constraintDimensionRepresentations = commonDo2RestMapper.processDatasetConstraint(source.getSiemacMetadataStatisticalResource().getUrn());
+            }
+
+            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, fields));
+
         }
         if (includeData) {
             target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
@@ -162,6 +171,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (includeKeywords) {
             target.setKeywords(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
         }
+
         return target;
     }
 
@@ -246,7 +256,8 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-    private DatasetMetadata toDatasetMetadata(DatasetVersion source, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages, Set<String> fields) throws MetamacException {
+    private DatasetMetadata toDatasetMetadata(DatasetVersion source, DsdProcessorResult dsdProcessorResult, ConstraintDimensionRepresentations constraintDimensionRepresentations,
+            List<String> selectedLanguages, Set<String> fields) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -254,6 +265,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setRelatedDsd(commonDo2RestMapper.toDataStructureDefinition(source.getRelatedDsd(), dsdProcessorResult.getDataStructure(), selectedLanguages));
         target.setDimensions(commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, fields));
         target.setAttributes(commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages));
+        target.setConstraints(constraintDimensionRepresentations);
         target.setGeographicCoverages(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getGeographicCoverage(), selectedLanguages));
         target.setTemporalCoverages(toTemporalCoverages(source.getTemporalCoverage(), selectedLanguages));
         target.setMeasureCoverages(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getMeasureCoverage(), selectedLanguages));

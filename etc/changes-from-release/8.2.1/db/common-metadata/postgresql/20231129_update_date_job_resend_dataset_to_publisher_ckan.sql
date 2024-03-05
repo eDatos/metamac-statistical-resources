@@ -7,7 +7,7 @@
 
 update tb_data_configurations
 set conf_value = FILL_ME --0 30 20 29 AUG ? 2023  29 de agosto de 2023 a las 20:30   
-where conf_key = 'metamac.statistical_resources.resend_dataset_kafka_message.cron_expression'
+where conf_key = 'metamac.statistical_resources.resend_dataset_kafka_message.cron_expression';
 
 commit;
 
