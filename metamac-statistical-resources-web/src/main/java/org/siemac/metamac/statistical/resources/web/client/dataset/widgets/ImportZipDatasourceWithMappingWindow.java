@@ -13,6 +13,8 @@ import java.util.List;
 
 import org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.dto.InternationalStringDto;
+import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.util.shared.ArrayUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
@@ -131,7 +133,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraFields.setDefaultValue(true);
         HiddenItem dataProviderItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATA_PROVIDER);
         HiddenItem versionRationaleTypeItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES);
-        HiddenItem versionRationaletem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE);
+        HiddenItem versionRationaleItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE);
         HiddenItem nextVersionItem = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_NEXT_VERSION);
         HiddenItem nextVersionDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION);
         HiddenItem nextUpdateDate = new HiddenItem(StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_UPDATE);
@@ -140,7 +142,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         extraItemsToAdd.add(extraFields);
         extraItemsToAdd.add(dataProviderItem);
         extraItemsToAdd.add(versionRationaleTypeItem);
-        extraItemsToAdd.add(versionRationaletem);
+        extraItemsToAdd.add(versionRationaleItem);
         extraItemsToAdd.add(nextVersionItem);
         extraItemsToAdd.add(nextVersionDate);
         extraItemsToAdd.add(nextUpdateDate);
@@ -187,7 +189,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
         items.add(uploadButton);
 
-        translateButton = createImportDatasourcesButton();
+        translateButton = createTranslateButton();
 
         toolStrip.addButton(translateButton);
 
@@ -224,7 +226,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         return extraItemsToAdd;
     }
 
-    private TranslateToolStripButton createImportDatasourcesButton() {
+    private TranslateToolStripButton createTranslateButton() {
         TranslateToolStripButton createTranslateButton = new TranslateToolStripButton();
         createTranslateButton.addClickHandler(new ClickHandler() {
 
@@ -419,6 +421,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     protected void copyHiddenValuesToMainForm(UploadForm mainForm, DynamicForm extraForm) {
         setFormFieldDataProviderItem();
         setFormFieldVersionRationaleTypeItem();
+        setFormFieldVersionRationaleItem();
         setFormFieldNextVersion();
         setFormFieldDateNextVersion();
         setFormFieldDateNextUpdate();
@@ -470,6 +473,28 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
         }
 
         mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE_TYPES, versionRationaleTypes.toString());
+    }
+
+    /*
+     * InternationalStringDto serialization example : [es#spanish language|en#English language|ca#cat language]
+     */
+    private void setFormFieldVersionRationaleItem() {
+        InternationalStringDto versionRationale = extraForm.getValueAsInternationalStringDto(DatasetDS.VERSION_RATIONALE);
+
+        StringBuilder versionRationaleToString = new StringBuilder();
+        for (LocalisedStringDto localisedString : versionRationale.getTexts()) {
+
+            if (versionRationaleToString.length() != 0) {
+                versionRationaleToString.append("|");
+            }
+
+            versionRationaleToString.append(localisedString.getLocale());
+            versionRationaleToString.append("#");
+            versionRationaleToString.append(localisedString.getLabel());
+        }
+
+        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE, versionRationaleToString.toString());
+
     }
 
     private void setFormFieldDataProviderItem() {
@@ -539,6 +564,7 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     }
 
     private void clearExtraFormValues() {
+        this.mainForm.setTranslationsShowed(false);
         SearchSrmListItemWithSchemeFilterItem dataProviderItem = (SearchSrmListItemWithSchemeFilterItem) extraForm.getItem(SiemacMetadataDS.DATA_PROVIDER);
         dataProviderItem.clearRelatedResourceList();
 
