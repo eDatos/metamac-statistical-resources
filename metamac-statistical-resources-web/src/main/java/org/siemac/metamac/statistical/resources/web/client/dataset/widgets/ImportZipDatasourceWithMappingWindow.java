@@ -36,13 +36,13 @@ import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResou
 import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.constants.CommonWebConstants;
+import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
 import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.TranslateToolStripButton;
 import org.siemac.metamac.web.common.client.widgets.UploadResourceWithPreviewWindow;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomButtonItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
@@ -64,6 +64,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.HiddenItem;
 import com.smartgwt.client.widgets.form.fields.TextItem;
 import com.smartgwt.client.widgets.form.fields.UploadItem;
+import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 
 public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourceWithPreviewWindow {
 
@@ -169,13 +170,12 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
 
         items.addAll(addExtraFields());
 
-        CustomButtonItem uploadButton = new CustomButtonItem("button-import", MetamacWebCommon.getConstants().accept());
+        ToolStripButton uploadButton = new ToolStripButton(MetamacWebCommon.getConstants().accept(), GlobalResources.RESOURCE.success().getURL());
         uploadButton.setAlign(Alignment.CENTER);
-        uploadButton.setColSpan(3);
-        uploadButton.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+        uploadButton.addClickHandler(new ClickHandler() {
 
             @Override
-            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+            public void onClick(ClickEvent event) {
                 String dateNextUpdateValue = ((TextItem) extraForm.getItem(DatasetDS.DATE_NEXT_UPDATE)).getValueAsString();
                 String dateNextVersion = ((TextItem) extraForm.getItem(DatasetDS.DATE_NEXT_VERSION)).getValueAsString();
                 if (isDateInSdmxFormat(dateNextUpdateValue) && isDateInSdmxFormat(dateNextVersion)) {
@@ -187,10 +187,9 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
             }
         });
 
-        items.add(uploadButton);
-
         translateButton = createTranslateButton();
 
+        toolStrip.addButton(uploadButton);
         toolStrip.addButton(translateButton);
 
         extraForm.setFields(items.toArray(new FormItem[items.size()]));
