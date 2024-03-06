@@ -843,14 +843,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
         taskInfo.setStoreAlternativeRepresentations(storeDimensionRepresentationMapping);
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-        taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextVersion() : null);
-        taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextVersionDate() : null);
-        taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextUpdateDate() : null);
-        taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getUpdateFrequency() : null);
-        taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getDataProvidersUrn() : null);
-        taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getVersionRationaleTypes() : null);
-        taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextProcStatus() : null);
-        taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getAutomaticLifeCicle() : null);
+        if (basicVersionableStatisticalResourceDto != null) {
+            taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
+            taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
+            taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto.getNextUpdateDate());
+            taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto.getUpdateFrequency());
+            taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto.getDataProvidersUrn());
+            taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
+            taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto.getNextProcStatus());
+            taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
+            taskInfo.setVersionRationale(basicVersionableStatisticalResourceDto.getVersionRationale());
+        }
         for (String dimensionId : dimensionRepresentationMapping.keySet()) {
             AlternativeEnumeratedRepresentation representation = new AlternativeEnumeratedRepresentation();
             representation.setComponentId(dimensionId);

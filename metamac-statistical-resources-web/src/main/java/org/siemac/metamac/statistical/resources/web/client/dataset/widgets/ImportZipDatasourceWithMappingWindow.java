@@ -481,20 +481,21 @@ public abstract class ImportZipDatasourceWithMappingWindow extends UploadResourc
     private void setFormFieldVersionRationaleItem() {
         InternationalStringDto versionRationale = extraForm.getValueAsInternationalStringDto(DatasetDS.VERSION_RATIONALE);
 
-        StringBuilder versionRationaleToString = new StringBuilder();
-        for (LocalisedStringDto localisedString : versionRationale.getTexts()) {
+        if (versionRationale != null) {
+            StringBuilder versionRationaleToString = new StringBuilder();
+            for (LocalisedStringDto localisedString : versionRationale.getTexts()) {
 
-            if (versionRationaleToString.length() != 0) {
-                versionRationaleToString.append("|");
+                if (versionRationaleToString.length() != 0) {
+                    versionRationaleToString.append("|");
+                }
+
+                versionRationaleToString.append(localisedString.getLocale());
+                versionRationaleToString.append("#");
+                versionRationaleToString.append(localisedString.getLabel());
             }
 
-            versionRationaleToString.append(localisedString.getLocale());
-            versionRationaleToString.append("#");
-            versionRationaleToString.append(localisedString.getLabel());
+            mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE, versionRationaleToString.toString());
         }
-
-        mainForm.setValue(StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE, versionRationaleToString.toString());
-
     }
 
     private void setFormFieldDataProviderItem() {

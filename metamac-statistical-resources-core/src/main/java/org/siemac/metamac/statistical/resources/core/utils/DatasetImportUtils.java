@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.utils;
 
+import java.util.Map.Entry;
+
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -8,6 +10,8 @@ import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
+import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
@@ -30,6 +34,7 @@ public class DatasetImportUtils {
             CommonDto2DoMapper dto2DoMapper) throws MetamacException {
         setDatasetVersionDataProviders(datasetVersion, taskInfoDataset, srmRestInternalService, dto2DoMapper);
         setDatasetVersionVersionRationaleType(datasetVersion, taskInfoDataset);
+        setDatasetVersionVersionRationale(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersion(datasetVersion, taskInfoDataset);
         setDatasetVersionNextVersionDate(datasetVersion, taskInfoDataset);
         setDatasetVersionNextUpdateDate(datasetVersion, taskInfoDataset);
@@ -54,6 +59,16 @@ public class DatasetImportUtils {
             for (String DatasetVersionRationaleTypes : taskInfoDataset.getDatasetVersionRationaleTypes()) {
                 datasetVersion.getSiemacMetadataStatisticalResource().getVersionRationaleTypes().add(new VersionRationaleType(VersionRationaleTypeEnum.valueOf(DatasetVersionRationaleTypes)));
             }
+        }
+    }
+
+    private static void setDatasetVersionVersionRationale(DatasetVersion datasetVersion, TaskInfoDataset taskInfoDataset) {
+        if (taskInfoDataset.getVersionRationale() != null) {
+            InternationalString versionRationale = new InternationalString();
+            for (Entry<String, String> entry : taskInfoDataset.getVersionRationale().entrySet()) {
+                versionRationale.addText(new LocalisedString(entry.getKey(), entry.getValue()));
+            }
+            datasetVersion.getSiemacMetadataStatisticalResource().setVersionRationale(versionRationale);
         }
     }
 
