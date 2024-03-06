@@ -96,7 +96,7 @@ public abstract class AbstractImportDatasetJob implements Job {
         String datasetUpdateFrequency = data.getString(DATASET_UPDATE_FREQUENCY);
         Boolean datasetAutomaticLifeCicle = data.getBoolean(DATASET_AUTOMATIC_LIFE_CICLE);
         String datasetNextProcStatus = data.getString(DATASET_NEXT_PROC_STATUS);
-        Map<String, String> versionRationale = (Map<String, String>) data.get(DATASET_VERSION_RATIONALE);
+        Map<String, String> versionRationale = (Map<String, String>) context.getMergedJobDataMap().get(DATASET_VERSION_RATIONALE);
 
         try {
             logger.info("Importation job: {} starting at {}", jobKey, new Date());

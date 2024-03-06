@@ -68,7 +68,10 @@ public class DatasetImportUtils {
             for (Entry<String, String> entry : taskInfoDataset.getVersionRationale().entrySet()) {
                 versionRationale.addText(new LocalisedString(entry.getKey(), entry.getValue()));
             }
-            datasetVersion.getSiemacMetadataStatisticalResource().setVersionRationale(versionRationale);
+
+            if (!versionRationale.getTexts().isEmpty()) {
+                datasetVersion.getSiemacMetadataStatisticalResource().setVersionRationale(versionRationale);
+            }
         }
     }
 

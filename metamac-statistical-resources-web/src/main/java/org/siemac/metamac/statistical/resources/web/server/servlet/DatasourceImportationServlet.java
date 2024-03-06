@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.web.server.servlet;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -167,7 +168,13 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         }
 
         if (StatisticalResourcesSharedTokens.UPLOAD_VERSION_RATIONALE.equals(item.getFieldName())) {
-            getVersionRationaleFromRequest(item.getString(), basicVersionableStatisticalResourceDto);
+
+            try {
+                getVersionRationaleFromRequest(item.getString("UTF-8"), basicVersionableStatisticalResourceDto);
+            } catch (UnsupportedEncodingException e) {
+                logger.log(Level.SEVERE, "Unsupported encoding exception with version rationale field in import datasource with zip = " + e.getMessage());
+            }
+
         }
 
         if (StatisticalResourcesSharedTokens.UPLOAD_DATE_NEXT_VERSION.equals(item.getFieldName())) {
