@@ -9,16 +9,22 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.Dat
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetCategorisationsTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetConstraintsTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetDatasourcesTabPresenter;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupCategorisationsTabPresenter;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupMetadataTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetMetadataTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetPresenter;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetsGroupPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetAttributesTabViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetCategorisationsTabViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetConstraintsTabViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetDatasourcesTabViewImpl;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetInGroupCategorisationsTabViewImpl;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetInGroupMetadataTabViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetListViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetMetadataTabViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetViewImpl;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.DatasetsGroupViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.presenter.MultidatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.presenter.MultidatasetMetadataTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.presenter.MultidatasetPresenter;
@@ -111,6 +117,13 @@ public class ClientModule extends AbstractPresenterModule {
 
         bindPresenter(QueryListPresenter.class, QueryListPresenter.QueryListView.class, QueryListViewImpl.class, QueryListPresenter.QueryListProxy.class);
         bindPresenter(QueryPresenter.class, QueryPresenter.QueryView.class, QueryViewImpl.class, QueryPresenter.QueryProxy.class);
+
+        // Update datasets in a group
+        bindPresenter(DatasetsGroupPresenter.class, DatasetsGroupPresenter.DatasetsGroupView.class, DatasetsGroupViewImpl.class, DatasetsGroupPresenter.DatasetsGroupProxy.class);
+        bindPresenter(DatasetInGroupMetadataTabPresenter.class, DatasetInGroupMetadataTabPresenter.DatasetInGroupMetadataTabView.class, DatasetInGroupMetadataTabViewImpl.class,
+                DatasetInGroupMetadataTabPresenter.DatasetInGroupMetadataTabProxy.class);
+        bindPresenter(DatasetInGroupCategorisationsTabPresenter.class, DatasetInGroupCategorisationsTabPresenter.DatasetInGroupCategorisationsTabView.class,
+                DatasetInGroupCategorisationsTabViewImpl.class, DatasetInGroupCategorisationsTabPresenter.DatasetInGroupCategorisationsTabProxy.class);
 
         // Error pages
         bindPresenter(ErrorPagePresenter.class, ErrorPagePresenter.ErrorPageView.class, ErrorPageViewImpl.class, ErrorPagePresenter.ErrorPageProxy.class);

@@ -10,9 +10,11 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLink
 public class StatisticalResourceThematicContentClassifiersForm extends GroupDynamicForm {
 
     public StatisticalResourceThematicContentClassifiersForm() {
-
         super(getConstants().formThematicContentClassifiers());
+        init();
+    }
 
+    private void init() {
         ExternalItemLinkItem statisticalOperation = new ExternalItemLinkItem(StatisticalResourceDS.STATISTICAL_OPERATION, getConstants().siemacMetadataStatisticalResourceStatisticalOperation());
 
         setFields(statisticalOperation);

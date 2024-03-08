@@ -11,6 +11,7 @@ import org.siemac.metamac.statistical.resources.core.dto.SiemacMetadataStatistic
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.view.handlers.StatisticalResourceUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
@@ -29,6 +30,16 @@ public class SiemacMetadataLanguageEditionForm extends GroupDynamicForm {
 
     public SiemacMetadataLanguageEditionForm() {
         super(getConstants().formLanguages());
+        init(false);
+    }
+
+    public SiemacMetadataLanguageEditionForm(boolean isMultipleUpdate) {
+        super(getConstants().formLanguages());
+        init(isMultipleUpdate);
+
+    }
+
+    private void init(boolean isMultipleUpdate) {
 
         ExternalItemLinkItem language = new ExternalItemLinkItem(SiemacMetadataDS.LANGUAGE, getConstants().siemacMetadataStatisticalResourceLanguage());
 
@@ -41,6 +52,8 @@ public class SiemacMetadataLanguageEditionForm extends GroupDynamicForm {
                 return CommonUtils.isResourceInProductionValidationOrGreaterProcStatus(procStatus) ? (values != null && values.size() > 0) : true;
             }
         });
+
+        language.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         setFields(language, languagesItem);
     }

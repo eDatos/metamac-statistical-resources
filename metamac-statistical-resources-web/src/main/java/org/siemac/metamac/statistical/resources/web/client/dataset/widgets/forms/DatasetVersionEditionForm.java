@@ -7,11 +7,10 @@ import java.util.List;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataCommonTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceVersionEditionForm;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
@@ -21,13 +20,22 @@ import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
 public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionForm {
 
-    private DatasetMetadataTabUiHandlers uiHandlers;
-    private SearchExternalItemSimpleItem updateFrequency;
-    private ProcStatusEnum               procStatus;
-    private CustomDatePickerItem dateNextUpdate;
-    
+    private DatasetMetadataCommonTabUiHandlers uiHandlers;
+    private SearchExternalItemSimpleItem       updateFrequency;
+    private ProcStatusEnum                     procStatus;
+    private CustomDatePickerItem               dateNextUpdate;
+
     public DatasetVersionEditionForm() {
         super();
+        initDatasetVersionEditionForm();
+    }
+
+    public DatasetVersionEditionForm(boolean isMultipleUpdate) {
+        super(isMultipleUpdate);
+        initDatasetVersionEditionForm();
+    }
+
+    private void initDatasetVersionEditionForm() {
 
         updateFrequency = createUpdateFrequencyItem();
         updateFrequency.setShowIfCondition(getUpdateFrecuencyFormItemIfFunction());
@@ -41,10 +49,10 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
         });
 
         dateNextUpdate = createFieldDateNextUpdate();
-        
+
         addFields(dateNextUpdate, updateFrequency);
     }
-    
+
     public void setDatasetVersionDto(DatasetVersionDto dto) {
         super.setLifeCycleStatisticalResourceDto(dto);
 
@@ -85,7 +93,7 @@ public class DatasetVersionEditionForm extends LifeCycleResourceVersionEditionFo
         updateFrequency.setResources(items, firstResult, totalResults);
     }
 
-    public void setUiHandlers(DatasetMetadataTabUiHandlers uiHandlers) {
+    public void setUiHandlers(DatasetMetadataCommonTabUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
     }
 }

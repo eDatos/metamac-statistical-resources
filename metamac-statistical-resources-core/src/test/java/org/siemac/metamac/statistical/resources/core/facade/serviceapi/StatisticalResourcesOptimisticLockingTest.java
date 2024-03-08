@@ -1321,7 +1321,8 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         try {
             List<URL> urls = Arrays.asList(new URL("file", null, "prueba.px"));
             Map<String, String> mappings = new HashMap<String, String>();
-            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDtoSession02, urls, mappings, false, new BasicVersionableStatisticalResourceDto());
+            statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(getServiceContextAdministrador(), datasetVersionDtoSession02, urls, mappings, false,
+                    new BasicVersionableStatisticalResourceDto());
             fail("optimistic locking");
         } catch (MetamacException e) {
             assertEqualsMetamacExceptionItem(ServiceExceptionType.OPTIMISTIC_LOCKING, 0, null, e.getExceptionItems().get(0));
@@ -1362,7 +1363,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
         // no optimistic locking in this operation
     }
-    
+
     @Override
     public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
         // no optimistic locking in this operation
@@ -1992,7 +1993,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
     @Override
     public void testImportAttributesFromFile() throws Exception {
-     // Retrieve dataset - session 1
+        // Retrieve dataset - session 1
         String datasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME).getSiemacMetadataStatisticalResource().getUrn();
         DatasetVersionDto datasetVersionDtoSession01 = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
         assertEquals(Long.valueOf(0), datasetVersionDtoSession01.getOptimisticLockingVersion());
@@ -2018,6 +2019,12 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     @Override
     public void testCheckAttributeInstance() throws Exception {
         // no optimistic locking in this operation
+    }
+
+    @Override
+    public void testUpdateDatasetVersionInGroup() throws Exception {
+        // no optimistic locking in this operation
+
     }
 
 }

@@ -68,6 +68,7 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.checks.DatasetMetadataEditionChecks;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CategorisationProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -81,6 +82,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarEle
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUpdateUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
@@ -1268,6 +1270,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         // Save categorisation
         return getCategorisationRepository().save(categorisation);
+
     }
 
     @Override
@@ -2211,4 +2214,38 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return null;
     }
 
+    @Override
+    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
+        updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange); 
+    }
+    
+    private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
+        
+        datasetServiceInvocationValidator.checkUpdateDatasetVersionInGroup(ctx, datasetVersion, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        
+        DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
+        updateDatasetVersion(ctx, datasetVersion);   
+        updateDatasetVersionCategorisations(ctx, datasetVersion, DatasetVersionUpdateUtils.copyCategorisations(datasetVersionMetadataToChange.getCategorisations()));
+        
+    }
+
+    private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {
+        if (!categorisations.isEmpty()) {
+
+            for (Categorisation categorisation : categorisations ) {
+                List<ConditionalCriteria> condition = criteriaFor(Categorisation.class).withProperty(CategorisationProperties.category().urn()).eq(categorisation.getCategory().getUrn()).and()
+                        .withProperty(CategorisationProperties.datasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersion.getSiemacMetadataStatisticalResource().getUrn())
+                        .distinctRoot().build();
+                List<Categorisation> result = getCategorisationRepository().findByCondition(condition);
+                if (result.isEmpty()) {
+                    categorisation.setDatasetVersion(datasetVersion);
+                    fillMetadataForCreateCategorisation(ctx, categorisation);
+
+                    getCategorisationRepository().save(categorisation);
+                }
+            }
+        }
+    }
 }

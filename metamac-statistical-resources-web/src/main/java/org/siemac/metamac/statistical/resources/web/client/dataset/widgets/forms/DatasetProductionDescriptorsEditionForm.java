@@ -13,14 +13,12 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
-import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataProductionDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDsdPaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
-import org.siemac.metamac.web.common.client.utils.ExternalItemUtils;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
-import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
 
 import com.smartgwt.client.widgets.form.DynamicForm;
@@ -42,7 +40,17 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
     private SearchExternalItemLinkItem     relatedDsd;
 
     public DatasetProductionDescriptorsEditionForm() {
+        initDatasetProductionDescriptorsEditionForm(false);
+    }
+
+    public DatasetProductionDescriptorsEditionForm(boolean isMultipleUpdate) {
+        super(isMultipleUpdate);
+        initDatasetProductionDescriptorsEditionForm(isMultipleUpdate);
+    }
+
+    private void initDatasetProductionDescriptorsEditionForm(boolean isMultipleUpdate) {
         relatedDsd = createDsdsItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD());
+        relatedDsd.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
         relatedDsd.setRequired(true);
         addFields(relatedDsd);
     }
@@ -53,15 +61,22 @@ public class DatasetProductionDescriptorsEditionForm extends SiemacMetadataProdu
     }
 
     public void setDatasetVersionDto(DatasetVersionDto datasetDto) {
-        setSiemacMetadataStatisticalResourceDto(datasetDto);
-        setRelatedDsd(datasetDto.getRelatedDsd());
-        relatedDsd.setShowIfCondition(getRelatedDsdFormItemIfFunction(datasetDto));
+        setDatasetVersionDto(datasetDto, true);
+    }
 
-        if (!DatasetMetadataEditionChecks.canDsdBeReplacedByAnyOtherDsd(datasetDto.getId(), datasetDto.getVersionLogic(), datasetDto.getProcStatus())) {
-            fixedDsdCode = datasetDto.getRelatedDsd().getCode();
-            statisticalOperation = datasetDto.getStatisticalOperation();
-        } else {
-            fixedDsdCode = null;
+    public void setDatasetVersionDto(DatasetVersionDto datasetDto, boolean checkDsd) {
+        setSiemacMetadataStatisticalResourceDto(datasetDto);
+
+        if (checkDsd) {
+            setRelatedDsd(datasetDto.getRelatedDsd());
+            relatedDsd.setShowIfCondition(getRelatedDsdFormItemIfFunction(datasetDto));
+
+            if (!DatasetMetadataEditionChecks.canDsdBeReplacedByAnyOtherDsd(datasetDto.getId(), datasetDto.getVersionLogic(), datasetDto.getProcStatus())) {
+                fixedDsdCode = datasetDto.getRelatedDsd().getCode();
+                statisticalOperation = datasetDto.getStatisticalOperation();
+            } else {
+                fixedDsdCode = null;
+            }
         }
     }
 

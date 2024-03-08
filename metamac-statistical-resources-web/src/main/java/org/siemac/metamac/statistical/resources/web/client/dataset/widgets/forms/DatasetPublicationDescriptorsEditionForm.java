@@ -5,6 +5,7 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataPublicationDescriptorsEditionForm;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
@@ -16,6 +17,15 @@ public class DatasetPublicationDescriptorsEditionForm extends SiemacMetadataPubl
 
     public DatasetPublicationDescriptorsEditionForm() {
         super();
+        init(false);
+    }
+
+    public DatasetPublicationDescriptorsEditionForm(boolean isMultipleUpdate) {
+        super();
+        init(isMultipleUpdate);
+    }
+
+    private void init(boolean isMultipleUpdate) {
 
         final CustomSelectItem statisticOfficiality = new CustomSelectItem(DatasetDS.STATISTIC_OFFICIALITY, getConstants().datasetStatisticOfficiality());
         statisticOfficiality.setValueMap(CommonUtils.getStatisticOfficialityHashMap());
@@ -29,6 +39,7 @@ public class DatasetPublicationDescriptorsEditionForm extends SiemacMetadataPubl
         });
 
         ViewMultiLanguageTextItem bibliographicCitation = new ViewMultiLanguageTextItem(DatasetDS.BIBLIOGRAPHIC_CITATION, getConstants().datasetBibliographicCitation());
+        bibliographicCitation.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         addFields(statisticOfficiality, bibliographicCitation);
     }
