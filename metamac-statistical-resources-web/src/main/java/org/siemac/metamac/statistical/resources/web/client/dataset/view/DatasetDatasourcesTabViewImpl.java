@@ -61,9 +61,9 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
 
         datasourcesListPanel = new DatasourcesListPanel();
         datasourcesListPanel.setWidth("99%");
+        datasourceMainFormLayout.addCustomPanel(datasourcesListPanel);
 
         panel.addMember(datasourceMainFormLayout);
-        panel.addMember(datasourcesListPanel);
     }
 
     @Override
