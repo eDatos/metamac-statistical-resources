@@ -108,7 +108,6 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
             boolean exists = false;
             for (ExternalItem itemOldTarget : oldTarget) {
                 if (itemSource.getUrn().equals(itemOldTarget.getUrn())) {
-                    itemSource.setUrn(null);
                     target.add(itemOldTarget);
                     exists = true;
                     break;
