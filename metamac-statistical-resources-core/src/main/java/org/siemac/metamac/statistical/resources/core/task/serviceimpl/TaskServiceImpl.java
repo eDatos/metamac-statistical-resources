@@ -1370,9 +1370,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public boolean existsTaskForResource(ServiceContext ctx, String resourceId) throws MetamacException {
+        try {
         taskServiceInvocationValidator.checkExistsTaskForResource(ctx, resourceId);
-        return existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
+        boolean a = existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
                 || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId);
+        return a;
+        } catch(Exception e) {
+            logger.error("existsTaskForResource ----", e);
+        }
+        return true;
     }
 
     @Override

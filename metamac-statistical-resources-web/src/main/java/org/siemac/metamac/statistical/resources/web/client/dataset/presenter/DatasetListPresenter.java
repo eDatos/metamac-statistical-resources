@@ -401,4 +401,16 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
             placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeDatasetPlaceRequest(urn));
         }
     }
+
+    @Override
+    public void goToDatasetsInGroup(String selectedDatasetIdentifiers) {
+        if (!selectedDatasetIdentifiers.isEmpty()) {
+            placeManager.revealRelativePlace(PlaceRequestUtils.buildRelativeDatasetInGroupUpdatePlaceRequest(selectedDatasetIdentifiers));
+        }
+    }
+
+    @Override
+    public void showMessageMaxDatasetsExceeded() {
+        ShowMessageEvent.fireErrorMessage(DatasetListPresenter.this, getMessages().datasetMaxNumberUpdateInGroupExceeded(String.valueOf(CommonUtils.getMaxNumberOfUpdatedDatasetInGroup())));
+    }
 }

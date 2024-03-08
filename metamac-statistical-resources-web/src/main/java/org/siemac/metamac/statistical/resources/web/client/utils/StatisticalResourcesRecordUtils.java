@@ -176,6 +176,17 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         return datasetVersionBaseDtos;
     }
 
+    public static List<String> getDatasetVersionUrnsFromListGridRecords(ListGridRecord[] records) {
+        List<String> datasetVersionUrns = new ArrayList<String>();
+        if (records != null) {
+            for (ListGridRecord record : records) {
+                DatasetRecord datasetRecord = (DatasetRecord) record;
+                datasetVersionUrns.add(datasetRecord.getUrn());
+            }
+        }
+        return datasetVersionUrns;
+    }
+
     public static CategorisationRecord getCategorisationRecord(CategorisationDto categorisationDto) {
         CategorisationRecord record = new CategorisationRecord(categorisationDto.getId(), categorisationDto.getCode(), InternationalStringUtils.getLocalisedString(categorisationDto.getTitle()),
                 categorisationDto.getCategory(), categorisationDto.getUrn(), categorisationDto.getMaintainer(), categorisationDto.getValidFrom(), categorisationDto.getValidTo(), categorisationDto);

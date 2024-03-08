@@ -240,6 +240,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkExistingDatasetVersion(DatasetVersion datasetVersion, String metadataName, List<MetamacExceptionItem> exceptions) {
+
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, metadataName, exceptions);
 
         if (datasetVersion == null) {
@@ -367,6 +368,12 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkManageDatabaseView(String datasetRepositoryId, DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetRepositoryId, ServiceExceptionParameters.DATASET_REPOSITORY_ID, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
+
+    }
+
+    public static void checkUpdateDatasetVersionInGroup(DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionMetadataToChange, ServiceExceptionParameters.DATASET_VERSION, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetUrnToChange, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
 
     }
 

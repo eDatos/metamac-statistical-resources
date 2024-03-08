@@ -66,13 +66,15 @@ public class StatisticalResourcesWeb extends MetamacSecurityEntryPoint {
 
     @Override
     protected String[] getPropertiesToLoad() {
-        return new String[]{ConfigurationConstants.WEB_APPLICATION_PORTAL_INTERNAL_WEB_VISUALIZER};
+        return new String[]{ConfigurationConstants.WEB_APPLICATION_PORTAL_INTERNAL_WEB_VISUALIZER, ConfigurationConstants.MAX_PERMITTED_DATASET_TO_UPDATE_IN_GROUP};
     }
 
     @Override
     protected void setConfigurationProperties(Map<String, String> propertyValues) {
         super.setConfigurationProperties(propertyValues);
         String metamacPortalBaseUrl = propertyValues.get(ConfigurationConstants.WEB_APPLICATION_PORTAL_INTERNAL_WEB_VISUALIZER);
+        String maxDatasetsInGroup = propertyValues.get(ConfigurationConstants.MAX_PERMITTED_DATASET_TO_UPDATE_IN_GROUP);
+        CommonUtils.setMaxNumberOfUpdatedDatasetInGroup(Integer.parseInt(maxDatasetsInGroup));
         CommonUtils.setMetamacPortalBaseUrl(metamacPortalBaseUrl);
     }
 

@@ -13,6 +13,7 @@ import org.siemac.metamac.statistical.resources.core.common.criteria.enums.Stati
 import org.siemac.metamac.statistical.resources.core.common.criteria.enums.StatisticalResourcesCriteriaPropertyEnum;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.LifeCycleStatisticalResourceWebCriteria;
+import org.siemac.metamac.statistical.resources.web.shared.criteria.MultipleDatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.QueryVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.SiemacMetadataStatisticalResourceWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
@@ -85,6 +86,19 @@ public class MetamacWebCriteriaUtils {
             addRestrictionIfExists(criteria, buildDatasetVersionCriteria(queryVersionWebCriteria));
             addRestrictionIfExists(criteria, buildQueryStatusCriteria(queryVersionWebCriteria));
             addRestrictionIfExists(criteria, buildQueryTypeCriteria(queryVersionWebCriteria));
+        }
+
+        return criteria;
+    }
+
+    public static MetamacCriteriaRestriction buildMultipleDatasetVersionsCriteriaFromWebcriteria(MultipleDatasetVersionWebCriteria webCriteria) {
+        MetamacCriteriaConjunctionRestriction criteria = new MetamacCriteriaConjunctionRestriction();
+
+        if (webCriteria.getDatasetVersionUrns() != null && !webCriteria.getDatasetVersionUrns().isEmpty()) {
+            MetamacCriteriaPropertyRestriction metamacCriteriaPropertyRestriction = new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.URN.name(), Boolean.FALSE,
+                    OperationType.IN);
+            metamacCriteriaPropertyRestriction.setListStringValue(webCriteria.getDatasetVersionUrns());
+            criteria.getRestrictions().add(metamacCriteriaPropertyRestriction);
         }
 
         return criteria;

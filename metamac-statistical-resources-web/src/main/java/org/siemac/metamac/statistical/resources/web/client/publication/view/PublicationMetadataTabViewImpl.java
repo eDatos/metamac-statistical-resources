@@ -342,7 +342,7 @@ public class PublicationMetadataTabViewImpl extends StatisticalResourceMetadataB
         mainFormLayout.addEditionCanvas(thematicContentClassifiersEditionForm);
 
         // Languages
-        languageEditionForm = new SiemacMetadataLanguageEditionForm();
+        languageEditionForm = new SiemacMetadataLanguageEditionForm(false);
         mainFormLayout.addEditionCanvas(languageEditionForm);
 
         // Production descriptors

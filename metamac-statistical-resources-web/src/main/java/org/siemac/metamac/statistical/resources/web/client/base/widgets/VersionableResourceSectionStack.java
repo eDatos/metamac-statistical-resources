@@ -23,6 +23,10 @@ public class VersionableResourceSectionStack extends CustomListGridSectionStack 
         super(new BaseCustomListGrid(), title, "versionSectionStackStyle");
     }
 
+    public VersionableResourceSectionStack(String title, boolean canRemoveElements) {
+        super(new BaseCustomListGrid(), title, "versionSectionStackStyle", canRemoveElements);
+    }
+
     protected void setListGridFields() {
         setListGridFields(null);
     }

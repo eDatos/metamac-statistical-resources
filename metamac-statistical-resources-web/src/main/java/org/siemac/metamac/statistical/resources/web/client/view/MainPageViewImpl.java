@@ -32,24 +32,24 @@ import com.smartgwt.client.widgets.layout.VLayout;
 
 public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> implements MainPagePresenter.MainPageView {
 
-    private static final int NORTH_HEIGHT = 85;
-    private static final String DEFAULT_MARGIN = "0px";
-    public static final String HEADER_ID = "header";
+    private static final int                    NORTH_HEIGHT   = 85;
+    private static final String                 DEFAULT_MARGIN = "0px";
+    public static final String                  HEADER_ID      = "header";
 
-    private MainPageUiHandlers uiHandlers;
+    private MainPageUiHandlers                  uiHandlers;
 
-    private final MasterHead masterHead;
+    private final MasterHead                    masterHead;
     private final StatisticalResourcesAdminMenu adminMenu;
-    private final StatisticalResourcesMenu navigationMenu;
-    private final BreadCrumbsPanel breadCrumbsPanel;
-    private WaitPopup waitPopup;
+    private final StatisticalResourcesMenu      navigationMenu;
+    private final BreadCrumbsPanel              breadCrumbsPanel;
+    private WaitPopup                           waitPopup;
 
-    private final MessagePanel messagePanel;
+    private final MessagePanel                  messagePanel;
 
-    private VLayout panel;
-    private VLayout northLayout;
-    private HLayout southLayout;
-    private FooterLayout footerLayout;
+    private VLayout                             panel;
+    private VLayout                             northLayout;
+    private HLayout                             southLayout;
+    private FooterLayout                        footerLayout;
 
     @Inject
     public MainPageViewImpl(MasterHead masterHead, StatisticalResourcesAdminMenu adminMenu, StatisticalResourcesMenu navigationMenu, BreadCrumbsPanel breadCrumbsPanel, MessagePanel messagePanel) {
@@ -218,7 +218,9 @@ public class MainPageViewImpl extends ViewWithUiHandlers<MainPageUiHandlers> imp
             header.removeMember(this.navigationMenu);
         } else if (resourceType == StatisticalResourcesToolStripLayoutEnum.OPERATION_RESOURCES) {
             header.addMember(this.navigationMenu);
-            header.removeMember(this.adminMenu);
+            if (header.hasMember(this.adminMenu)) {
+                header.removeMember(this.adminMenu);
+            }
         }
     }
 

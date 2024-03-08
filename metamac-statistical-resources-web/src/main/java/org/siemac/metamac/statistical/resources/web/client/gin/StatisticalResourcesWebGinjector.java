@@ -5,9 +5,12 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.Dat
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetCategorisationsTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetConstraintsTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetDatasourcesTabPresenter;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupCategorisationsTabPresenter;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupMetadataTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetMetadataTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetPresenter;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetsGroupPresenter;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.presenter.MultidatasetListPresenter;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.presenter.MultidatasetMetadataTabPresenter;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.presenter.MultidatasetPresenter;
@@ -44,6 +47,7 @@ public interface StatisticalResourcesWebGinjector extends MetamacWebGinjector {
     AsyncProvider<DatasetListPresenter> getDatasetListPresenter();
     AsyncProvider<DatasetPresenter> getDatasetPresenter();
     AsyncProvider<DatasetMetadataTabPresenter> getDatasetMetadataTabPresenter();
+    AsyncProvider<DatasetInGroupMetadataTabPresenter> getDatasetInGroupMetadataTabPresenter();
     AsyncProvider<DatasetConstraintsTabPresenter> getDatasetConstraintsTabPresenter();
     AsyncProvider<DatasetDatasourcesTabPresenter> getDatasetDatasourcesTabPresenter();
     AsyncProvider<DatasetAttributesTabPresenter> getDatasetAttributesTabPresenter();
@@ -58,6 +62,8 @@ public interface StatisticalResourcesWebGinjector extends MetamacWebGinjector {
     AsyncProvider<MultidatasetPresenter> getMultidatasetPresenter();
     AsyncProvider<MultidatasetMetadataTabPresenter> getMultidatasetMetadataTabPresenter();
     AsyncProvider<MultidatasetStructureTabPresenter> getMultidatasetStructureTabPresenter();
+    AsyncProvider<DatasetsGroupPresenter> getDatasetsInGroupPresenter();
+    AsyncProvider<DatasetInGroupCategorisationsTabPresenter> getDatasetsInGroupCategorisationsTabPresenter();
 
     AsyncProvider<ErrorPagePresenter> getErrorPagePresenter();
     AsyncProvider<UnauthorizedPagePresenter> getUnauthorizedPagePresenter();

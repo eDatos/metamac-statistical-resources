@@ -197,5 +197,4 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     @Override
     public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
     }
-
 }
