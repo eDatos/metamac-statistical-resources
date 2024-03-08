@@ -87,18 +87,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
         // Import datasources window
 
-        importZipDatasourceWithMappingWindow = new ImportZipDatasourceWithMappingWindow() {
-
-            @Override
-            protected void uploadSuccess(String message) {
-                getUiHandlers().datasourcesImportationSucceed(message);
-            }
-
-            @Override
-            protected void uploadFailed(String error) {
-                getUiHandlers().datasourcesImportationFailed(error);
-            }
-        };
+        createUploadForm();
     }
 
     @Override
@@ -119,6 +108,24 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
+    }
+
+    @Override
+    public void createUploadForm() {
+        // Import datasources window
+
+        importZipDatasourceWithMappingWindow = new ImportZipDatasourceWithMappingWindow() {
+
+            @Override
+            protected void uploadSuccess(String message) {
+                getUiHandlers().datasourcesImportationSucceed(message);
+            }
+
+            @Override
+            protected void uploadFailed(String error) {
+                getUiHandlers().datasourcesImportationFailed(error);
+            }
+        };
     }
 
     @Override
