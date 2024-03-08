@@ -708,6 +708,12 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         return createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.PUBLISHED);
     }
 
+    protected static DatasetVersion getDatasetVersion56DraftWithDatasourceAndQueries() {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
+        datasetVersion.getSiemacMetadataStatisticalResource().setVersionLogic(StatisticalResourcesMockFactory.INIT_VERSION);
+        return datasetVersion;
+    }
+
     private static DatasetVersion getDatasetVersion57DraftInitialVersion() {
         DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
         datasetVersion.getSiemacMetadataStatisticalResource().setVersionLogic(StatisticalResourcesMockFactory.INIT_VERSION);
