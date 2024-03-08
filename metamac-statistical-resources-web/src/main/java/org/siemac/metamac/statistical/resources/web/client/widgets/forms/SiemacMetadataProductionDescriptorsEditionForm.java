@@ -12,6 +12,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.base.view.handlers.StatisticalResourceUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.constants.CommonWebConstants;
@@ -35,11 +36,21 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
     private SearchSrmListItemWithSchemeFilterItem     dataProviderItem;
 
     private SearchSrmItemLinkItemWithSchemeFilterItem creatorItem;
-   
+
     public SiemacMetadataProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
+        init(false);
+    }
+
+    public SiemacMetadataProductionDescriptorsEditionForm(boolean isMultipleUpdate) {
+        super(getConstants().formProductionDescriptors());
+        init(isMultipleUpdate);
+    }
+
+    public void init(boolean isMultipleUpdate) {
 
         ExternalItemLinkItem maintainer = new ExternalItemLinkItem(SiemacMetadataDS.MAINTAINER, getConstants().siemacMetadataStatisticalResourceMaintainer());
+        maintainer.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         creatorItem = createCreatorItem();
         creatorItem.setValidators(new CustomRequiredValidator() {
@@ -52,30 +63,35 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
         });
 
         contributorItem = createContributorItem();
-        
-                
+
         ViewTextItem dateCreated = new ViewTextItem(SiemacMetadataDS.DATE_CREATED, getConstants().siemacMetadataStatisticalResourceDateCreated());
+        dateCreated.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
+
         ViewTextItem lastUpdate = new ViewTextItem(SiemacMetadataDS.LAST_UPDATE, getConstants().siemacMetadataStatisticalResourceLastUpdate());
-        
+        lastUpdate.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
+
         dataProviderItem = createDataProviderItem();
-        
-        MultiLanguageRichTextEditorItem dataProviderAnnotations = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS, getConstants().siemacMetadataStatisticalResourceDataProviderAnnotations());
-        
+
+        MultiLanguageRichTextEditorItem dataProviderAnnotations = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS,
+                getConstants().siemacMetadataStatisticalResourceDataProviderAnnotations());
+
         MultiLanguageRichTextEditorItem conformsTo = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO, getConstants().siemacMetadataStatisticalResourceConformsTo());
-        MultiLanguageRichTextEditorItem conformsToInternal = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO_INTERNAL, getConstants()
-                .siemacMetadataStatisticalResourceConformsToInternal());
-        
+
+        MultiLanguageRichTextEditorItem conformsToInternal = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.CONFORMS_TO_INTERNAL,
+                getConstants().siemacMetadataStatisticalResourceConformsToInternal());
+
         setFields(dateCreated, lastUpdate, maintainer, creatorItem, dataProviderItem, dataProviderAnnotations, contributorItem, conformsTo, conformsToInternal);
     }
-    
+
     public void setSiemacMetadataStatisticalResourceDto(SiemacMetadataStatisticalResourceDto siemacMetadataStatisticalResourceDto) {
         this.procStatus = siemacMetadataStatisticalResourceDto.getProcStatus();
 
         setValue(SiemacMetadataDS.MAINTAINER, siemacMetadataStatisticalResourceDto.getMaintainer());
+
         setValue(SiemacMetadataDS.CREATOR, siemacMetadataStatisticalResourceDto.getCreator());
         setExternalItemsValue(getItem(SiemacMetadataDS.DATA_PROVIDER), siemacMetadataStatisticalResourceDto.getDataProvider());
         setValue(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS, siemacMetadataStatisticalResourceDto.getDataProviderAnnotations());
-        
+
         setExternalItemsValue(getItem(SiemacMetadataDS.CONTRIBUTOR), siemacMetadataStatisticalResourceDto.getContributor());
         setValue(SiemacMetadataDS.DATE_CREATED, siemacMetadataStatisticalResourceDto.getResourceCreatedDate());
         setValue(SiemacMetadataDS.LAST_UPDATE, siemacMetadataStatisticalResourceDto.getLastUpdate());
@@ -85,11 +101,11 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
 
     public SiemacMetadataStatisticalResourceDto getSiemacMetadataStatisticalResourceDto(SiemacMetadataStatisticalResourceDto siemacMetadataStatisticalResourceDto) {
         siemacMetadataStatisticalResourceDto.setCreator(getValueAsExternalItemDto(SiemacMetadataDS.CREATOR));
-        
+
         siemacMetadataStatisticalResourceDto.getDataProvider().clear();
         siemacMetadataStatisticalResourceDto.getDataProvider().addAll(getExternalItemsValue(getItem(SiemacMetadataDS.DATA_PROVIDER)));
         siemacMetadataStatisticalResourceDto.setDataProviderAnnotations(getValueAsInternationalStringDto(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS));
-        
+
         siemacMetadataStatisticalResourceDto.getContributor().clear();
         siemacMetadataStatisticalResourceDto.getContributor().addAll(getExternalItemsValue(getItem(SiemacMetadataDS.CONTRIBUTOR)));
         siemacMetadataStatisticalResourceDto.setConformsTo(getValueAsInternationalStringDto(SiemacMetadataDS.CONFORMS_TO));
@@ -110,7 +126,8 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
     }
 
     private SearchSrmItemLinkItemWithSchemeFilterItem createCreatorItem() {
-        return new SearchSrmItemLinkItemWithSchemeFilterItem(SiemacMetadataDS.CREATOR, getConstants().siemacMetadataStatisticalResourceCreator(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
+        return new SearchSrmItemLinkItemWithSchemeFilterItem(SiemacMetadataDS.CREATOR, getConstants().siemacMetadataStatisticalResourceCreator(),
+                StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
 
             @Override
             protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
@@ -135,10 +152,9 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
     public void setOrganisationUnitSchemesForContributor(List<ExternalItemDto> items, int firstResult, int totalResults) {
         contributorItem.setFilterResources(items, firstResult, totalResults);
     }
-        
+
     private SearchSrmListItemWithSchemeFilterItem createContributorItem() {
-        return new SearchSrmListItemWithSchemeFilterItem(SiemacMetadataDS.CONTRIBUTOR, getConstants().siemacMetadataStatisticalResourceContributor(),
-                CommonWebConstants.FORM_LIST_MAX_RESULTS) {
+        return new SearchSrmListItemWithSchemeFilterItem(SiemacMetadataDS.CONTRIBUTOR, getConstants().siemacMetadataStatisticalResourceContributor(), CommonWebConstants.FORM_LIST_MAX_RESULTS) {
 
             @Override
             protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
@@ -163,10 +179,9 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
     public void setDataProviderSchemes(List<ExternalItemDto> items, int firstResult, int totalResults) {
         dataProviderItem.setFilterResources(items, firstResult, totalResults);
     }
-        
+
     private SearchSrmListItemWithSchemeFilterItem createDataProviderItem() {
-        return new SearchSrmListItemWithSchemeFilterItem(SiemacMetadataDS.DATA_PROVIDER, getConstants().siemacMetadataStatisticalResourceDataProvider(),
-                CommonWebConstants.FORM_LIST_MAX_RESULTS) {
+        return new SearchSrmListItemWithSchemeFilterItem(SiemacMetadataDS.DATA_PROVIDER, getConstants().siemacMetadataStatisticalResourceDataProvider(), CommonWebConstants.FORM_LIST_MAX_RESULTS) {
 
             @Override
             protected void retrieveItemSchemes(int firstResult, int maxResults, SrmExternalResourceRestCriteria webCriteria) {
@@ -179,7 +194,7 @@ public class SiemacMetadataProductionDescriptorsEditionForm extends GroupDynamic
             }
         };
     }
-        
+
     public void setUiHandlers(StatisticalResourceUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
     }

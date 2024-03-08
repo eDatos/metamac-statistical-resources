@@ -13,7 +13,8 @@ import org.siemac.metamac.statistical.resources.web.client.base.checks.DatasetMe
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
-import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetMetadataCommonTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataContentDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.TemporalCodeListItem;
@@ -34,7 +35,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class DatasetContentDescriptorsEditionForm extends SiemacMetadataContentDescriptorsEditionForm {
 
-    private DatasetMetadataTabUiHandlers                         uiHandlers;
+    private DatasetMetadataCommonTabUiHandlers                   uiHandlers;
     private SearchMultipleSrmItemWithSchemeFilterPaginatedWindow statisticalUnitWindow;
 
     private SearchMultiExternalItemSimpleItem                    geographicalGranularitiesItem;
@@ -42,6 +43,15 @@ public class DatasetContentDescriptorsEditionForm extends SiemacMetadataContentD
 
     public DatasetContentDescriptorsEditionForm() {
         super();
+        init(false);
+    }
+
+    public DatasetContentDescriptorsEditionForm(boolean isMultipleUpdate) {
+        super();
+        init(isMultipleUpdate);
+    }
+
+    private void init(boolean isMultipleDatasetUpdate) {
 
         ExternalItemListItem geographicCoverage = new ExternalItemListItem(DatasetDS.GEOGRAPHIC_COVERAGE, getConstants().datasetGeographicCoverage(), false);
         geographicCoverage.setShowIfCondition(getCanShowCoveragesFunction());
@@ -72,11 +82,15 @@ public class DatasetContentDescriptorsEditionForm extends SiemacMetadataContentD
             }
         });
 
-        ViewTextItem dateStart = new ViewTextItem(DatasetDS.DATE_START, getConstants().datasetDateStart());
+        ExternalItemListItem statisticalUnit = createStatisticalUnitItem();
 
+        // only in one dataset update
+        ViewTextItem dateStart = new ViewTextItem(DatasetDS.DATE_START, getConstants().datasetDateStart());
         ViewTextItem dateEnd = new ViewTextItem(DatasetDS.DATE_END, getConstants().datasetDateEnd());
 
-        ExternalItemListItem statisticalUnit = createStatisticalUnitItem();
+        dateStart.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleDatasetUpdate));
+        dateEnd.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleDatasetUpdate));
+        statisticalUnit.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleDatasetUpdate));
 
         addFields(dateStart, dateEnd, statisticalUnit, geographicCoverage, temporalCoverage, measures, geographicalGranularitiesItem, temporalGranularitiesItem);
     }
@@ -203,7 +217,7 @@ public class DatasetContentDescriptorsEditionForm extends SiemacMetadataContentD
         uiHandlers.retrieveConceptsForStatisticalUnit(firstResult, maxResults, webCriteria);
     };
 
-    public void setUiHandlers(DatasetMetadataTabUiHandlers uiHandlers) {
+    public void setUiHandlers(DatasetMetadataCommonTabUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
     }
 

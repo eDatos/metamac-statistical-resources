@@ -12,9 +12,14 @@ public class DatasetResourceRelationDescriptorsForm extends SiemacMetadataResour
 
     public DatasetResourceRelationDescriptorsForm() {
         super();
+        initDatasetResourceRelationDescriptorsForm();
+    }
+
+    private void initDatasetResourceRelationDescriptorsForm() {
 
         RelatedResourceListItem isRequiredBy = new RelatedResourceListItem(DatasetDS.IS_REQUIRED_BY, getConstants().siemacMetadataStatisticalResourceIsRequiredBy(), false,
                 getRecordNavigationHandler());
+
         RelatedResourceListItem isPartOf = new RelatedResourceListItem(DatasetDS.IS_PART_OF, getConstants().siemacMetadataStatisticalResourceIsPartOf(), false, getRecordNavigationHandler());
 
         addFields(isPartOf, isRequiredBy);

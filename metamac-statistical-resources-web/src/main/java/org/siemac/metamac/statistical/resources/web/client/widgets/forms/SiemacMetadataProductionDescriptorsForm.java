@@ -14,15 +14,23 @@ public class SiemacMetadataProductionDescriptorsForm extends LifeCycleResourcePr
 
     public SiemacMetadataProductionDescriptorsForm() {
         super();
+        init();
+    }
+
+    public void init() {
 
         ExternalItemLinkItem creator = new ExternalItemLinkItem(SiemacMetadataDS.CREATOR, getConstants().siemacMetadataStatisticalResourceCreator());
         ExternalItemListItem dataProvider = new ExternalItemListItem(SiemacMetadataDS.DATA_PROVIDER, getConstants().siemacMetadataStatisticalResourceDataProvider(), false);
-        ViewMultiLanguageTextItem dataProviderAnnotations = new ViewMultiLanguageTextItem(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS, getConstants().siemacMetadataStatisticalResourceDataProviderAnnotations());
-        
+        ViewMultiLanguageTextItem dataProviderAnnotations = new ViewMultiLanguageTextItem(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS,
+                getConstants().siemacMetadataStatisticalResourceDataProviderAnnotations());
+
         ExternalItemListItem contributor = new ExternalItemListItem(SiemacMetadataDS.CONTRIBUTOR, getConstants().siemacMetadataStatisticalResourceContributor(), false);
         ViewTextItem dateCreated = new ViewTextItem(SiemacMetadataDS.DATE_CREATED, getConstants().siemacMetadataStatisticalResourceDateCreated());
+
         ViewTextItem lastUpdate = new ViewTextItem(SiemacMetadataDS.LAST_UPDATE, getConstants().siemacMetadataStatisticalResourceLastUpdate());
+
         ViewMultiLanguageTextItem conformsTo = new ViewMultiLanguageTextItem(SiemacMetadataDS.CONFORMS_TO, getConstants().siemacMetadataStatisticalResourceConformsTo());
+
         ViewMultiLanguageTextItem conformsToInternal = new ViewMultiLanguageTextItem(SiemacMetadataDS.CONFORMS_TO_INTERNAL, getConstants().siemacMetadataStatisticalResourceConformsToInternal());
 
         addFields(dateCreated, lastUpdate, creator, dataProvider, dataProviderAnnotations, contributor, conformsTo, conformsToInternal);
@@ -33,7 +41,7 @@ public class SiemacMetadataProductionDescriptorsForm extends LifeCycleResourcePr
 
         setValue(SiemacMetadataDS.CREATOR, dto.getCreator());
         setExternalItemsValue(getItem(SiemacMetadataDS.DATA_PROVIDER), dto.getDataProvider());
-        setValue(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS, dto.getDataProviderAnnotations());       
+        setValue(SiemacMetadataDS.DATA_PROVIDER_ANNOTATIONS, dto.getDataProviderAnnotations());
         setExternalItemsValue(getItem(SiemacMetadataDS.CONTRIBUTOR), dto.getContributor());
         setValue(SiemacMetadataDS.DATE_CREATED, dto.getResourceCreatedDate());
         setValue(SiemacMetadataDS.LAST_UPDATE, dto.getLastUpdate());

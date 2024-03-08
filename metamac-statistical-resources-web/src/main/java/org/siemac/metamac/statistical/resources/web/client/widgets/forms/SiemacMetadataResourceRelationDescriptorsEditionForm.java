@@ -28,14 +28,16 @@ public abstract class SiemacMetadataResourceRelationDescriptorsEditionForm exten
 
     public SiemacMetadataResourceRelationDescriptorsEditionForm() {
         super(getConstants().formResourceRelationDescriptors());
+        init();
+    }
 
+    public void init() {
         SearchRelatedResourceLinkItem replaces = createReplacesItem(SiemacMetadataDS.REPLACES, getConstants().siemacMetadataStatisticalResourceReplaces());
         RelatedResourceLinkItem isReplacedBy = new RelatedResourceLinkItem(SiemacMetadataDS.IS_REPLACED_BY, getConstants().siemacMetadataStatisticalResourceIsReplacedBy(),
                 getCustomLinkItemNavigationClickHandler());
 
         setFields(replaces, isReplacedBy);
     }
-
     //
     // SETTERS
     //
