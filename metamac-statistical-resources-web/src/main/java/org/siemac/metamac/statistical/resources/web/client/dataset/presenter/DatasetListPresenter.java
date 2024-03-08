@@ -102,10 +102,12 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
         void setDataProviderSchemesForField(GetDataProviderSchemesPaginatedListResult result, SiemacMetadataExternalField field);
         void setDataProviderForField(GetDataProviderPaginatedListResult result, SiemacMetadataExternalField field);
         void setTemporalCodesForField(GetTemporalGranularitiesListResult result, DatasetMetadataExternalField field);
-        
+
         // Search
         void clearSearchSection();
         DatasetVersionWebCriteria getDatasetVersionWebCriteria();
+
+        void createUploadForm();
     }
 
     @Inject
@@ -154,6 +156,7 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
 
     private void loadInitialData() {
         getView().clearSearchSection();
+        getView().createUploadForm();
 
         DatasetVersionWebCriteria datasetVersionWebCriteria = new DatasetVersionWebCriteria();
         datasetVersionWebCriteria.setStatisticalOperationUrn(StatisticalResourcesDefaults.getSelectedStatisticalOperation().getUrn());
@@ -184,7 +187,7 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
                     }
                 });
     }
-    
+
     @Override
     public void createNewDatasetFailed(String errorMessage) {
         ShowMessageEvent.fireErrorMessage(DatasetListPresenter.this, errorMessage);
@@ -376,7 +379,7 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
             }
         });
     }
-    
+
     @Override
     public void retrieveTemporalCodesForField(int firstResult, int maxResults, MetamacWebCriteria webCriteria, final DatasetMetadataExternalField field) {
         dispatcher.execute(new GetTemporalGranularitiesListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesListResult>(this) {
@@ -387,7 +390,7 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
             }
         });
     }
-    
+
     //
     // NAVIGATION
     //
