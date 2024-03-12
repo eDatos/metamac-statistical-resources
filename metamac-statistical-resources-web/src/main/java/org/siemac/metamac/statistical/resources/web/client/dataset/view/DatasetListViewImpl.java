@@ -126,6 +126,8 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
                 getUiHandlers().datasourcesImportationFailed(error);
             }
         };
+
+        importZipDatasourceWithMappingWindow.setUiHandlers(getUiHandlers());
     }
 
     @Override
