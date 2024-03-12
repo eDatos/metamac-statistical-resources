@@ -130,6 +130,8 @@ public class DatasetListViewImpl extends StatisticalResourceUpdateMultipleResour
                 getUiHandlers().datasourcesImportationFailed(error);
             }
         };
+
+        importZipDatasourceWithMappingWindow.setUiHandlers(getUiHandlers());
     }
 
     @Override
