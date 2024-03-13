@@ -15,6 +15,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.CustomTabSet;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupCategorisationsTabPresenter.DatasetInGroupCategorisationsTabView;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupMetadataTabPresenter.DatasetInGroupMetadataTabView;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetsGroupPresenter;
@@ -217,7 +218,7 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
     @Override
     public void setDatasetVersionsSelected(List<DatasetVersionBaseDto> datasetVersionBaseDtos) {
         setStatusDatataset(datasetVersionBaseDtos);
-        versionsSectionStack.setDatasetVersions(datasetVersionBaseDtos);
+        versionsSectionStack.setDatasetVersions(datasetVersionBaseDtos, DatasetDS.CODE);
     }
 
     @Override
