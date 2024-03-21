@@ -61,7 +61,9 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
     private Tab                                                     datasetInGroupMetadataTab;
     private Tab                                                     datasetInGroupCategorisationsTab;
 
-    protected ToolStrip                                             toolStrip;
+    protected ToolStrip                                             toolStripSectionStack;
+
+    protected ToolStrip                                             toolStripSectionMetadata;
 
     // button
     protected CustomToolStripButton                                 saveButton;
@@ -117,12 +119,22 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
 
         VLayout subPanel = new VLayout();
         subPanel.setOverflow(Overflow.SCROLL);
-        subPanel.setMembersMargin(5);
-        subPanel.addMember(versionsSectionStack);
+        subPanel.setMembersMargin(2);
+
+        VLayout tabSubPanelToolStripSectionStack = new VLayout();
+        tabSubPanelToolStripSectionStack.setMembersMargin(10);
+        tabSubPanelToolStripSectionStack.setMargin(15);
+        versionsSectionStack.setMargin(0);
+
+        createToolTripSectionStack();
+        tabSubPanelToolStripSectionStack.addMember(toolStripSectionStack);
+
+        tabSubPanelToolStripSectionStack.addMember(versionsSectionStack);
+        subPanel.addMember(tabSubPanelToolStripSectionStack);
 
         VLayout tabSubPanel = new VLayout();
-        createToolTrip();
-        tabSubPanel.addMember(toolStrip);
+        createToolTripSectionMetadata();
+        tabSubPanel.addMember(toolStripSectionMetadata);
 
         tabSubPanel.addMember(tabSet);
         tabSubPanel.setMargin(15);
@@ -133,18 +145,24 @@ public class DatasetsGroupViewImpl extends ViewWithUiHandlers<DatasetsGroupUiHan
         bindEvents();
     }
 
-    private void createToolTrip() {
-        toolStrip = new ToolStrip();
-        toolStrip.setWidth100();
-
-        saveButton = createSaveButton();
-        toolStrip.addButton(saveButton);
+    private void createToolTripSectionStack() {
+        toolStripSectionStack = new ToolStrip();
+        toolStripSectionStack.setWidth100();
 
         addDatasetButton = createAddDatasetButton();
-        toolStrip.addButton(addDatasetButton);
+        toolStripSectionStack.addButton(addDatasetButton);
+
+    }
+
+    private void createToolTripSectionMetadata() {
+        toolStripSectionMetadata = new ToolStrip();
+        toolStripSectionMetadata.setWidth100();
+
+        saveButton = createSaveButton();
+        toolStripSectionMetadata.addButton(saveButton);
 
         cleanDatasetButton = createCleanDatasetButton();
-        toolStrip.addButton(cleanDatasetButton);
+        toolStripSectionMetadata.addButton(cleanDatasetButton);
     }
 
     private CustomToolStripButton createSaveButton() {
