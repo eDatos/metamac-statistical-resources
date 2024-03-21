@@ -62,12 +62,6 @@ public interface StatisticalResourcesV1_0 {
             @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
 
     @GET
-    @Produces("application/vnd.ms-excel")
-    @Path("datasets/{agencyID}/{resourceID}/{version}")
-    Response retrieveDatasetXLS(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
-            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
-
-    @GET
     @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     Response retrieveDatasetXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
@@ -140,8 +134,8 @@ public interface StatisticalResourcesV1_0 {
     @Path("resources")
     Resources findResources(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
             @QueryParam("lang") List<String> lang);
-    
+
     @HEAD
     @Path("datasets/{agencyID}/{resourceID}/{version}")
-    public Response retrieveDatasetHead (@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version);
+    public Response retrieveDatasetHead(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version);
 }
