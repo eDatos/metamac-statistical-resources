@@ -349,7 +349,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         List<DsdAttribute> attributes = DsdProcessor.getAttributes(dsd);
         for (DsdAttribute attribute : attributes) {
-            deleteAllAttributeInstances(datasetVersion, attribute);
+            if (attribute.isDimensionAttribute() || attribute.isObservationAttribute()) {
+                deleteAllAttributeInstances(datasetVersion, attribute);
+            }
         }
     }
 
