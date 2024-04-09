@@ -163,11 +163,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetXLS(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xls");
-    }
-
-    @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
         return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx");
     }
@@ -322,11 +317,11 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetHead (String agencyID, String resourceID, String version) {
-    	if (!commonService.checkDatasetVersion(agencyID, resourceID, version)) {
-    		return Response.status(Response.Status.NOT_FOUND).build();
-    	}
-    	return Response.ok().build();
+    public Response retrieveDatasetHead(String agencyID, String resourceID, String version) {
+        if (!commonService.checkDatasetVersion(agencyID, resourceID, version)) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+        return Response.ok().build();
     }
 
     private Resources findResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
