@@ -122,6 +122,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         private CustomToolStripButton              importZipDatasourcesButton;
         private CustomToolStripButton              importDatabaseDatasourcesButton;
         private CustomToolStripButton              importDatasourceButton;
+        private CustomToolStripButton              exportConsolidatedDatasourceButton;
         private CustomListGrid                     datasourcesList;
 
         private DeleteConfirmationWindow           deleteConfirmationWindow;
@@ -152,6 +153,9 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
 
             importDatabaseDatasourcesButton = createImportDbDatasourcesButton();
             toolStrip.addButton(importDatabaseDatasourcesButton);
+
+            exportConsolidatedDatasourceButton = createExportConsolidatedDatasourceButton();
+            toolStrip.addButton(exportConsolidatedDatasourceButton);
 
             // List
 
@@ -291,6 +295,20 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
                 }
             });
             return importDatasourcesButton;
+        }
+
+        private CustomToolStripButton createExportConsolidatedDatasourceButton() {
+            final CustomToolStripButton exportConsolidatedDatasourcesButton = new CustomToolStripButton(getConstants().actionExportConsolidatedDatasources(),
+                    org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+            exportConsolidatedDatasourcesButton.setVisible(Boolean.TRUE);
+            exportConsolidatedDatasourcesButton.addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    // TODO
+                }
+            });
+            return exportConsolidatedDatasourcesButton;
         }
 
         private void bindEvents() {
