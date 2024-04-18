@@ -1,7 +1,10 @@
 package org.siemac.metamac.statistical.resources.core.utils;
 
+import java.time.LocalDate;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.edatos.core.common.util.TimeGranularityUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
@@ -21,11 +24,8 @@ public class DatabaseDatasetImportUtils extends DatabaseDatasetImportSharedUtils
 
     public static void setRequiredMetadataForDatabaseDatasetImportation(DatasetVersion datasetVersion) {
         DatabaseDatasetImportUtils.setDatasetVersionVersionRationaleType(datasetVersion);
-
-        // TODO METAMAC-2866 - METAMAC-2956 How to define these metadata has not been defined yet
         DatabaseDatasetImportUtils.setDatasetVersionNextVersion(datasetVersion);
-        DatabaseDatasetImportUtils.setDatasetVersionNextVersionDate(datasetVersion);
-        DatabaseDatasetImportUtils.setDatasetVersionDateNextUpdate(datasetVersion);
+        DatabaseDatasetImportUtils.setDatasetVersionNextVersionAndNextUpdateDate(datasetVersion);
     }
 
     private static void setDatasetVersionVersionRationaleType(DatasetVersion datasetVersion) {
@@ -36,19 +36,19 @@ public class DatabaseDatasetImportUtils extends DatabaseDatasetImportSharedUtils
 
     private static void setDatasetVersionNextVersion(DatasetVersion datasetVersion) {
         if (datasetVersion.getSiemacMetadataStatisticalResource().getNextVersion() == null) {
-            // TODO METAMAC-2866 - METAMAC-2956 The value of this metadata should be "SCHEDULED_UPDATE" but it is necessary to establish a translation between the value of the update_frecuency
-            // metadata and next_version_date and date_next_update to calculate their values ​​in the proper way.
-            // The task METAMAC-2956 was created in order to define and resolve this TODO
             datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
             datasetVersion.setUpdateFrequency(null);
         }
     }
 
-    private static void setDatasetVersionNextVersionDate(DatasetVersion datasetVersion) {
-        // TODO METAMAC-2866 - METAMAC-2956 it's necessary to resolve TODO in method setDatasetVersionNextVersion to assign proper value in this metadata
+    private static void setDatasetVersionNextVersionAndNextUpdateDate(DatasetVersion datasetVersion) {
+        if (NextVersionTypeEnum.SCHEDULED_UPDATE.equals(datasetVersion.getSiemacMetadataStatisticalResource().getNextVersion()) && datasetVersion.getUpdateFrequency() != null) {
+            LocalDate nextVersionUpdate = TimeGranularityUtils.addTimeGranularityToDate(LocalDate.now(), datasetVersion.getUpdateFrequency().getCode());
+            if (nextVersionUpdate != null) {
+                datasetVersion.setDateNextUpdate(TimeGranularityUtils.getDateInSdmxFormat(nextVersionUpdate));
+                datasetVersion.getSiemacMetadataStatisticalResource().setNextVersionDate(datasetVersion.getDateNextUpdate());
+            }
+        }
     }
 
-    private static void setDatasetVersionDateNextUpdate(DatasetVersion datasetVersion) {
-        // TODO METAMAC-2866 - METAMAC-2956 it's necessary to resolve TODO in method setDatasetVersionNextVersion to assign proper value in this metadata
-    }
 }
