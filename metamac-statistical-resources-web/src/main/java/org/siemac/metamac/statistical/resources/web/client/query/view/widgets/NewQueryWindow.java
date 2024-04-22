@@ -231,6 +231,7 @@ public class NewQueryWindow extends CustomWindow {
     private CodeItemListItem createCodeListItemForDimension(final String datasetUrn, final String dimensionId, final boolean editable) {
         CodeItemListItem item = new CodeItemListItem(buildSelectionItemId(dimensionId), dimensionId, editable);
         if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId)) {
+            item.setShowIfCondition(getFormItemIfFunctionShowTemporalGranularity());
             item.setShowIfCondition(getFormItemIfFunctionShowTemporalDimension());
         } else {
             item.setShowIfCondition(getFormItemIfFunctionShowSelections());
@@ -295,6 +296,18 @@ public class NewQueryWindow extends CustomWindow {
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 CustomSelectItem selectType = ((CustomSelectItem) form.getItem(QueryDS.TYPE));
+                String typeStr = selectType.getValueAsString();
+                return !(typeStr == null || QueryTypeEnum.LATEST_DATA.name().equals(typeStr));
+            }
+        };
+    }
+
+    private FormItemIfFunction getFormItemIfFunctionShowTemporalGranularity() {
+        return new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                CustomSelectItem selectType = ((CustomSelectItem) form.getItem(QueryDS.TYPE_GRANULARITIES));
                 String typeStr = selectType.getValueAsString();
                 return !(typeStr == null || QueryTypeEnum.LATEST_DATA.name().equals(typeStr));
             }
