@@ -219,7 +219,7 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
     @Override
     public void showUpdateResults(MetamacWebException notificationException) {
         if (notificationException == null) {
-            ShowMessageEvent.fireSuccessMessage(DatasetsGroupPresenter.this, StatisticalResourcesWeb.getMessages().datasetSubjectsSaved());
+            ShowMessageEvent.fireSuccessMessage(DatasetsGroupPresenter.this, StatisticalResourcesWeb.getMessages().datasetGroupSaved());
         } else {
             ShowMessageEvent.fireWarningMessageWithError(DatasetsGroupPresenter.this, StatisticalResourcesWeb.getMessages().errorUpdateDatasestInGroup(), notificationException);
         }
