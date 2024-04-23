@@ -288,7 +288,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
 
-        checkDatasetVersionForDatasourceHasNoQueries(datasource);
+        checkDatasetVersionForDatasourceHasNoQueries(datasource, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
 
         datasetVersion = deleteDatasourceToDataset(datasource);
 
@@ -367,10 +367,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void checkDatasetVersionForDatasourceHasNoQueries(Datasource datasource) throws MetamacException {
+    private void checkDatasetVersionForDatasourceHasNoQueries(Datasource datasource, String datasetUrn) throws MetamacException {
+
+        Boolean isDataSourceUsed = checkExistsAttributeInstanceValues(datasetUrn, datasource.getIdentifiableStatisticalResource().getCode());
+
         List<QueryVersion> queries = queryVersionRepository.findLinkedToFixedDatasetVersion(datasource.getDatasetVersion().getId());
         List<QueryVersion> queriesDataset = queryVersionRepository.findLinkedToDataset(datasource.getDatasetVersion().getDataset().getId());
-        if (!queries.isEmpty() || !queriesDataset.isEmpty()) {
+        if ((!queries.isEmpty() || !queriesDataset.isEmpty()) && isDataSourceUsed) {
             throw new MetamacException(ServiceExceptionType.DATASOURCE_IN_DATASET_VERSION_WITH_QUERIES_DELETE_ERROR, datasource.getIdentifiableStatisticalResource().getUrn());
         }
     }
@@ -387,6 +390,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.DATASOURCE_DATA_DELETE_ERROR, datasource.getIdentifiableStatisticalResource().getCode());
+        }
+    }
+
+    private Boolean checkExistsAttributeInstanceValues(String datasetUrn, String dataSourceAtttributeUrn) throws MetamacException {
+        try {
+
+            String locale = configurationService.retrieveLanguageDefault();
+            return statisticsDatasetRepositoriesServiceFacade.checkExistsAttributeInstanceValues(datasetUrn, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, locale, dataSourceAtttributeUrn);
+
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.DATASOURCE_IN_DATASET_VERSION_CHECK_DATASOURCE_IS_USED_ERROR, dataSourceAtttributeUrn, datasetUrn);
         }
     }
 
