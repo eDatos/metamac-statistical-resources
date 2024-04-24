@@ -1033,6 +1033,16 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Override
     @Test
+    @MetamacMock({DATASET_VERSION_01_BASIC_NAME})
+    public void testDeleteDatasourcesNotUsed() throws Exception {
+        // TODO EDATOS-3013 pendiente.
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        List<String> dataSourcesDeleted = statisticalResourcesServiceFacade.deleteDatasourcesNotUsed(getServiceContextAdministrador(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn(),
+                Boolean.TRUE);;
+    }
+
+    @Override
+    @Test
     @MetamacMock({DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME})
     public void testRetrieveDatasourcesByDatasetVersion() throws Exception {
         // Version DATASET_VERSION_03_ASSOCIATED_WITH_DATASET_03

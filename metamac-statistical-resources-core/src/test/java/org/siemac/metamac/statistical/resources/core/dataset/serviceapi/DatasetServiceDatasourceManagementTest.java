@@ -459,6 +459,8 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
         datasetService.retrieveDatasourceByUrn(getServiceContextWithoutPrincipal(), datasourceUrn);
     }
 
+    // TODO EDATOS-3013 ADD TESTS FOR DELETEDATASOURCES NO USED
+
     @Test
     @MetamacMock(DATASET_VERSION_89_WITH_ONE_DATASOURCE_NAME)
     public void testDeleteDatasourceKeepDatasetRepository() throws Exception {

@@ -35,6 +35,7 @@ Application DatasetsStatisticalResources {
 	    	@Datasource updateDatasource(@Datasource datasource) throws MetamacException;
 	    	@Datasource retrieveDatasourceByUrn(String urn) throws MetamacException;
 	    	int deleteDatasource(String urn, boolean deleteAttributes) throws MetamacException;
+	    	List<String> deleteDatasourcesNotUsed(String datasetUrn, boolean deleteAttributes) throws MetamacException;
 	    	List<@Datasource> retrieveDatasourcesByDatasetVersion(String datasetVersionUrn) throws MetamacException;
 	    	
 	    	// Datasets Versions

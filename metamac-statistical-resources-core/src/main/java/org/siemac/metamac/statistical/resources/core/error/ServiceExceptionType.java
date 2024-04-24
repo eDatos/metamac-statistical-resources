@@ -58,6 +58,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.datasource.data.datasetversion_with_queries_delete_error");
     public static final CommonServiceExceptionType DATASOURCE_IN_DATASET_VERSION_CHECK_DATASOURCE_IS_USED_ERROR                                = create(
             "exception.resources.datasource.data.datasetversion_check_datasource_is_used_error");
+    public static final CommonServiceExceptionType DATASOURCE_IN_DATASET_VERSION_FIND_DATASOURCES_USED_ERROR                                   = create(
+            "exception.resources.datasource.data.datasetversion_find_datasources_used_error");
 
     // Categorisation
     public static final CommonServiceExceptionType CATEGORISATION_NOT_FOUND                                                                    = create("exception.resources.categorisation.not_found");

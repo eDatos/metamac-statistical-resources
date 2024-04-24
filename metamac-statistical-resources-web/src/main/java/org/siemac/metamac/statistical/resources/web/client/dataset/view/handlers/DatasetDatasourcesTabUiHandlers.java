@@ -10,6 +10,7 @@ import com.gwtplatform.mvp.client.UiHandlers;
 public interface DatasetDatasourcesTabUiHandlers extends UiHandlers {
 
     void deleteDatasources(List<String> datasourcesUrns, boolean deleteAttributes);
+    void deleteAllDatasourcesNotUsed(String datasetUrn, boolean deleteAttributes);
 
     // Importation
 
@@ -17,9 +18,9 @@ public interface DatasetDatasourcesTabUiHandlers extends UiHandlers {
     void datasourcesImportationSucceed(String fileName);
     void retrieveAlternativeCodelistsForVariable(String dimensionId, String variableUrn, int firstResult, int maxResults, SrmExternalResourceRestCriteria criteria);
     void retrieveDimensionVariablesForDataset(String urn);
-    
+
     void showWaitPopup();
 
-	void saveDataset(DatasetVersionDto datasetVersionDto);
+    void saveDataset(DatasetVersionDto datasetVersionDto);
     void createDatabaseDatasource(String urn, String tablename);
 }
