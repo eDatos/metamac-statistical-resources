@@ -34,6 +34,8 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionsAction;
@@ -91,6 +93,8 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
         void setStatisticalOperationsForDatasetSelection(GetStatisticalOperationsPaginatedListResult result);
         void setDatasetDimensionCodes(String dimensionId, List<CodeItemDto> codesDimension);
         void setDatasetDimensionsIds(List<String> datasetDimensionsIds);
+
+        void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result);
     }
 
     @Inject
@@ -336,6 +340,18 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
         });
     }
 
+    @Override
+    public void retrieveTemporalCodesForField(final String datasetUrn) {
+        
+        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(datasetUrn), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
+                getView().setTemporalCodesForField(result);
+            }
+        });
+        
+    }
     //
     // NAVIGATION
     //

@@ -17,6 +17,8 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
@@ -28,6 +30,7 @@ import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResource
 import org.siemac.metamac.web.common.client.utils.ExternalItemUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomWindow;
+import org.siemac.metamac.web.common.client.widgets.SearchExternalItemWindow;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchAction;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.CustomDynamicForm;
@@ -36,6 +39,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerIte
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchMultiExternalItemSimpleItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
 import com.smartgwt.client.types.Overflow;
@@ -63,6 +67,7 @@ public class NewQueryWindow extends CustomWindow {
     private SearchSingleDatasetVersionRelatedResourcePaginatedWindow searchDatasetWindow;
     private Map<String, CodeItemListItem>                            selectionFields;
     private Map<String, SearchMultipleCodeItemWindow>                dimensionCodeSelectionWindow;
+    private SearchMultiExternalItemSimpleItem                        searchTemporalGranularitiesWindow;
 
     public NewQueryWindow(String title) {
         super(title);
@@ -192,11 +197,9 @@ public class NewQueryWindow extends CustomWindow {
             datasetDimensions.add(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
             hasTemporalDimension = true;
         }
-        for (String dimensionId : datasetDimensions) {
-            CodeItemListItem item = createCodeListItemForDimension(datasetVersion.getUrn(), dimensionId, true);
-            fields.add(item);
-            selectionFields.put(dimensionId, item);
-        }
+
+        setDimensions(datasetDimensions, datasetVersion, fields);
+
         if (hasTemporalDimension) {
             CustomIntegerItem latestData = new CustomIntegerItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
             latestData.setShowIfCondition(getFormItemIfFunctionShowLatestDataItem());
@@ -224,6 +227,36 @@ public class NewQueryWindow extends CustomWindow {
         form.redraw();
     }
 
+    public void setCodesForTemporalGranularities(List<ExternalItemDto> items, int firstResult, int totalResults) {
+        searchTemporalGranularitiesWindow.setResources(items, firstResult, totalResults);
+    }
+
+    private void setDimensions(List<String> datasetDimensions, RelatedResourceDto datasetVersion, List<FormItem> fields) {
+        for (String dimensionId : datasetDimensions) {
+            CodeItemListItem item = createCodeListItemForDimension(datasetVersion.getUrn(), dimensionId, true);
+            selectionFields.put(dimensionId, item);
+            if (!dimensionId.equals("TIME_PERIOD")) {
+                fields.add(item);
+            } else {
+                createTemporalGranularitiesItem(datasetVersion.getUrn());
+                searchTemporalGranularitiesWindow.setShowIfCondition(getFormItemIfFunctionShowTemporalDimension());
+                fields.add(searchTemporalGranularitiesWindow);
+                fields.add(item);
+            }
+        }
+    }
+
+    private void createTemporalGranularitiesItem(final String datasetUrn) {
+        searchTemporalGranularitiesWindow = new SearchMultiExternalItemSimpleItem(QueryDS.TYPE_GRANULARITIES, getConstants().datasetTemporalGranularities(),
+                StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
+
+            @Override
+            protected void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
+               uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+            }
+        };
+    }
+
     private void retrieveDimensionsForDataset(String urn) {
         uiHandlers.retrieveDimensionsForDataset(urn);
     }
@@ -231,7 +264,6 @@ public class NewQueryWindow extends CustomWindow {
     private CodeItemListItem createCodeListItemForDimension(final String datasetUrn, final String dimensionId, final boolean editable) {
         CodeItemListItem item = new CodeItemListItem(buildSelectionItemId(dimensionId), dimensionId, editable);
         if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId)) {
-            item.setShowIfCondition(getFormItemIfFunctionShowTemporalGranularity());
             item.setShowIfCondition(getFormItemIfFunctionShowTemporalDimension());
         } else {
             item.setShowIfCondition(getFormItemIfFunctionShowSelections());
@@ -296,18 +328,6 @@ public class NewQueryWindow extends CustomWindow {
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 CustomSelectItem selectType = ((CustomSelectItem) form.getItem(QueryDS.TYPE));
-                String typeStr = selectType.getValueAsString();
-                return !(typeStr == null || QueryTypeEnum.LATEST_DATA.name().equals(typeStr));
-            }
-        };
-    }
-
-    private FormItemIfFunction getFormItemIfFunctionShowTemporalGranularity() {
-        return new FormItemIfFunction() {
-
-            @Override
-            public boolean execute(FormItem item, Object value, DynamicForm form) {
-                CustomSelectItem selectType = ((CustomSelectItem) form.getItem(QueryDS.TYPE_GRANULARITIES));
                 String typeStr = selectType.getValueAsString();
                 return !(typeStr == null || QueryTypeEnum.LATEST_DATA.name().equals(typeStr));
             }

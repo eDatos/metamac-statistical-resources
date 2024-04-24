@@ -38,4 +38,5 @@ public interface QueryListUiHandlers extends BaseUiHandlers {
     void createQuery(QueryVersionDto datasetDto);
     void retrieveDimensionCodesForDataset(String urn, String dimensionId, MetamacWebCriteria webCriteria);
     void retrieveDimensionsForDataset(String urn);
+    void retrieveTemporalCodesForField(String datasetUrn);
 }

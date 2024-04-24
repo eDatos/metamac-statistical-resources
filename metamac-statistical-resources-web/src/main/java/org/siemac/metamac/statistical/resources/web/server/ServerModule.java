@@ -60,6 +60,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.external.Get
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationInstancesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationsPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetTemporalGranularitiesByDatasetActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetTemporalGranularitiesListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.multidataset.DeleteMultidatasetCubeActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.multidataset.DeleteMultidatasetVersionsActionHandler;
@@ -150,6 +151,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetSrmResour
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationInstancesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetCubeAction;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetVersionsAction;
@@ -220,6 +222,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetDsdsPaginatedListAction.class, GetDsdsPaginatedListActionHandler.class);
         bindHandler(GetGeographicalGranularitiesListAction.class, GetGeographicalGranularitiesListActionHandler.class);
         bindHandler(GetTemporalGranularitiesListAction.class, GetTemporalGranularitiesListActionHandler.class);
+        bindHandler(GetTemporalGranularitiesByDatasetAction.class, GetTemporalGranularitiesByDatasetActionHandler.class);
         bindHandler(GetLanguagesCodesAction.class, GetLanguagesCodesActionHandler.class);
         bindHandler(GetConceptSchemesPaginatedListAction.class, GetConceptSchemesPaginatedListActionHandler.class);
         bindHandler(GetConceptsPaginatedListAction.class, GetConceptsPaginatedListActionHandler.class);
