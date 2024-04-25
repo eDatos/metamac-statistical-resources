@@ -992,11 +992,10 @@
                      "description":"",
                      "type":"string"
                   },
-                  "(value)":{
+                  "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "//": "FIXME revisar si es value o (value)",
                      "description":"",
                      "type":"string"
                   }
@@ -1185,7 +1184,7 @@
                      "description":"",
                      "type":"string"
                   },
-                  "(value)":{
+                  "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
