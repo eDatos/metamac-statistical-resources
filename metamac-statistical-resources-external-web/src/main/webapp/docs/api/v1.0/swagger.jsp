@@ -445,7 +445,10 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     }
                   }
                }
             }
@@ -1568,7 +1571,10 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"",
-                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     "type": "array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     }
                   }
                }
             }
