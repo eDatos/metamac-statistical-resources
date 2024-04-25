@@ -2539,7 +2539,7 @@
          ],
          "description":""
       },
-      "Resources":{
+      "ResourcesWithStatisticalOperation":{
          "type":"object",
          "title":"Resources",
          "allOf":[
@@ -3649,7 +3649,7 @@
                "200":{
                   "schema":{
                      "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "$ref":"#/definitions/ResourcesWithStatisticalOperation"
                   },
                   "headers":{
 
