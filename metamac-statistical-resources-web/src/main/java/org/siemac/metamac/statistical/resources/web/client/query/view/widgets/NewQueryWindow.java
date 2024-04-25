@@ -137,7 +137,14 @@ public class NewQueryWindow extends CustomWindow {
             latestDataNumber = ((CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
         }
         queryDto.setLatestDataNumber(latestDataNumber);
+        setTemporalGranularitie(queryDto);
         return queryDto;
+    }
+
+    private void setTemporalGranularitie(QueryVersionDto queryVersionDto) {
+        List<ExternalItemDto> externalItemsDto = new ArrayList<ExternalItemDto>();
+        externalItemsDto.addAll(searchTemporalGranularitiesWindow.getSelectedRelatedResources());
+        queryVersionDto.getTemporalGranularities().addAll(externalItemsDto);
     }
 
     public boolean validateForm() {
