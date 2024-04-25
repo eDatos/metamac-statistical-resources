@@ -54,6 +54,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_10_OPER_0002_CODE_000001_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_113_DATABASE_TYPE_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_11_OPER_0002_CODE_000002_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_12_OPER_0002_MAX_CODE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_13_OPER_0002_CODE_000003_PROD_VAL_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME;
@@ -169,6 +170,7 @@ import java.util.Map;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.junit.Assert;
 import org.junit.Before;
@@ -1033,12 +1035,23 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Override
     @Test
-    @MetamacMock({DATASET_VERSION_01_BASIC_NAME})
+    @MetamacMock({DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME})
     public void testDeleteDatasourcesNotUsed() throws Exception {
-        // TODO EDATOS-3013 pendiente.
-        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
-        List<String> dataSourcesDeleted = statisticalResourcesServiceFacade.deleteDatasourcesNotUsed(getServiceContextAdministrador(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn(),
-                Boolean.TRUE);;
+        mockDsdAndDataRepositorySimpleDimensions();
+
+        ServiceContext ctx = getServiceContextAdministrador();
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME);
+
+        List<DatasourceDto> actual = statisticalResourcesServiceFacade.retrieveDatasourcesByDatasetVersion(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        List<String> dataSourcesDeleted = statisticalResourcesServiceFacade.deleteDatasourcesNotUsed(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), Boolean.FALSE);
+
+        assertEquals(2, dataSourcesDeleted.size());
+        assertEquals(true, dataSourcesDeleted.contains(actual.get(0).getCode()));
+        assertEquals(true, dataSourcesDeleted.contains(actual.get(1).getCode()));
+
+        List<DatasourceDto> expected = statisticalResourcesServiceFacade.retrieveDatasourcesByDatasetVersion(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        assertEquals(0, expected.size());
+
     }
 
     @Override
