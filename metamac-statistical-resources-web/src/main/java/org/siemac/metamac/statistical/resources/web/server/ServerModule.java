@@ -14,6 +14,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Dele
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasetConstraintActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasetVersionsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesNotUsedActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.EndCategorisationsValidityActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetCodelistsWithVariableActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributeInstancesActionHandler;
@@ -104,6 +105,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDataset
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetConstraintAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.EndCategorisationsValidityAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesAction;
@@ -249,6 +251,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetDatasourcesByDatasetAction.class, GetDatasourcesByDatasetActionHandler.class);
         bindHandler(SaveDatasourceAction.class, SaveDatasourceActionHandler.class);
         bindHandler(DeleteDatasourcesAction.class, DeleteDatasourcesActionHandler.class);
+        bindHandler(DeleteDatasourcesNotUsedAction.class, DeleteDatasourcesNotUsedActionHandler.class);
         bindHandler(GetDatasetDimensionsIdsAction.class, GetDatasetDimensionsIdsActionHandler.class);
         bindHandler(GetDatasetDimensionCoverageAction.class, GetDatasetDimensionCoverageActionHandler.class);
         bindHandler(GetDatasetDimensionsCoverageAction.class, GetDatasetDimensionsCoverageActionHandler.class);

@@ -1647,6 +1647,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     @Override
+    public void testDeleteDatasourcesNotUsed() throws Exception {
+        // In DatasetServiceDatasourceManagementTest.java
+    }
+
+    @Override
     public void testRetrieveDatasourcesByDatasetVersion() throws Exception {
         // In DatasetServiceDatasourceManagementTest.java
     }

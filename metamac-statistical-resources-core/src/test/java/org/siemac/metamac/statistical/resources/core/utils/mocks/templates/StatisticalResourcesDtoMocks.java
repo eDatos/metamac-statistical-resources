@@ -137,6 +137,18 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         return datasourceDto;
     }
 
+    public static DatasourceDto mockDatasourceDto(String code, DatasetVersionDto datasetVersionDto) {
+        DatasourceDto datasourceDto = new DatasourceDto();
+
+        mockIdentifiableStatisticalResourceDto(datasourceDto);
+
+        datasourceDto.setCode(code);
+        datasourceDto.setDatasetVersionUrn(datasetVersionDto.getUrn());
+        datasourceDto.setStatisticalOperation(datasetVersionDto.getStatisticalOperation());
+
+        return datasourceDto;
+    }
+
     // -----------------------------------------------------------------
     // ATTRIBUTES
     // -----------------------------------------------------------------
