@@ -4311,4 +4311,10 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // // Without test in facade
 
     }
+
+    @Override
+    public void testRetrieveExternalItemsByDatasetUrn() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

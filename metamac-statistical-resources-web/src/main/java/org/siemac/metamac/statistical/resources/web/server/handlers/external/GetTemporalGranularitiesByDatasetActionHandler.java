@@ -1,7 +1,9 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.external;
 
+import java.util.List;
+
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
@@ -25,11 +27,10 @@ public class GetTemporalGranularitiesByDatasetActionHandler extends SecurityActi
 
     @Override
     public GetTemporalGranularitiesByDatasetResult executeSecurityAction(GetTemporalGranularitiesByDatasetAction action) throws ActionException {
-        DatasetVersionDto dataset;
         try {
-            dataset = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetUrn());
-            GetTemporalGranularitiesByDatasetResult temporalGranularitiesByDatasetResult = new GetTemporalGranularitiesByDatasetResult(dataset.getTemporalGranularities(), 0,
-                    dataset.getTemporalGranularities().size());
+            List<ExternalItemDto> externalItemsDto =  statisticalResourcesServiceFacade.retrieveExternalItemsByDatasetUrn(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetUrn());
+            GetTemporalGranularitiesByDatasetResult temporalGranularitiesByDatasetResult = new GetTemporalGranularitiesByDatasetResult(externalItemsDto, 0,
+                    externalItemsDto.size());
             return temporalGranularitiesByDatasetResult;
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);

@@ -2027,4 +2027,10 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
     }
 
+    @Override
+    public void testRetrieveExternalItemsByDatasetUrn() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

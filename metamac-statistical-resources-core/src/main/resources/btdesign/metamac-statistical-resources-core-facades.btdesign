@@ -112,6 +112,8 @@ Application FacadeStatisticalResources {
             MetamacCriteriaResult<@DatasetVersionBaseDto> findDatasetsVersionsByCondition(MetamacCriteria criteria) throws MetamacException;
             "Retrieves a dataset by URN"
             @DatasetVersionDto retrieveDatasetVersionByUrn(String urn) throws MetamacException;
+            "Retrieves temporal granularities by URN"
+            List<@ExternalItemDto> retrieveExternalItemsByDatasetUrn(String urn) throws MetamacException;
             "Retrieves all dataset versions"
             List<@DatasetVersionBaseDto> retrieveDatasetVersions(String datasetVersionUrn) throws MetamacException;
     		"Retrieve latest datasetVersion providing datasetUrn"
