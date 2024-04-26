@@ -152,7 +152,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.AttributeDimensions.properties.dimension.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/AttributeDimension"
+                     "items":{
+                       "$ref":"#/definitions/AttributeDimension"
+                     }
                   }
                }
             }
@@ -184,7 +186,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Attributes.properties.attribute.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/Attribute"
+                     "items":{
+                        "$ref":"#/definitions/Attribute"
+                     }
                   }
                }
             }
@@ -256,7 +260,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.CodeRepresentations.properties.representation.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/CodeRepresentation"
+                     "items":{
+                        "$ref":"#/definitions/CodeRepresentation"
+                     }
                   }
                }
             }
@@ -827,7 +833,9 @@
                      },
                      "type":"array",
                      "description":"${msg['api.doc.swagger.definitions.ChildLinks.properties.childLink.description']}",
-                     "$ref":"#/definitions/ResourceLink"
+                     "items":{
+                        "$ref":"#/definitions/ResourceLink"
+                     }
                   }
                }
             }
@@ -846,7 +854,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.InternationalString.properties.text.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/LocalisedString"
+                     "items":{
+                        "$ref":"#/definitions/LocalisedString"
+                     }
                   }
                }
             }
@@ -898,7 +908,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Items.properties.item.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/Item"
+                     "items":{
+                        "$ref":"#/definitions/Item"
+                     }
                   }
                }
             }
@@ -1225,7 +1237,10 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataAttributes.properties.attribute.description']}",
-                     "$ref":"#/definitions/DataAttribute"
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/DataAttribute"
+                     }
                   }
                }
             }
@@ -1267,7 +1282,10 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.heading.description']}",
-                     "$ref":"#/definitions/DimensionsId"
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/DimensionsId"
+                     }
                   },
                   "showDecimals":{
                      "xml":{
@@ -1281,7 +1299,10 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.stub.description']}",
-                     "$ref":"#/definitions/DimensionsId"
+                     "type":"array",
+                     "item": {                   
+                        "$ref":"#/definitions/DimensionsId"
+                     }
                   }
                }
             }
@@ -1412,7 +1433,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateEnd.description']}",
-                     "type":"string"
+                     "$ref":"#/definitions/InternationalString"
                   },
                   "dateNextUpdate":{
                      "xml":{
@@ -1426,7 +1447,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateStart.description']}",
-                     "type":"string"
+                     "$ref":"#/definitions/InternationalString"
                   },
                   "dimensions":{
                      "xml":{
@@ -1688,7 +1709,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DimensionRepresentations.properties.dimension.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/DimensionRepresentation"
+                     "items":{
+                        "$ref":"#/definitions/DimensionRepresentation"
+                     }
                   }
                }
             }
@@ -1731,7 +1754,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.Dimensions.properties.dimension.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/Dimension"
+                     "items":{
+                        "$ref":"#/definitions/Dimension"
+                     }
                   }
                }
             }
@@ -1808,7 +1833,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValues.properties.value.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/EnumeratedAttributeValue"
+                     "items":{
+                        "$ref":"#/definitions/EnumeratedAttributeValue"
+                     }
                   }
                }
             }
@@ -2200,6 +2227,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.SelectedLanguages.properties.language.description']}",
+                     "type":"array",
                      "items":{
                         "type":"string"
                      }
@@ -2541,7 +2569,9 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.VersionRationaleTypes.properties.versionRationaleType.description']}",
                      "type":"array",
-                     "$ref":"#/definitions/VersionRationaleType"
+                     "items":{
+                        "$ref":"#/definitions/VersionRationaleType"
+                     }
                   }
                }
             }
