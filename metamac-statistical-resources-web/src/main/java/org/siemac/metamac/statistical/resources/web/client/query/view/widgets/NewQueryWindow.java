@@ -243,7 +243,7 @@ public class NewQueryWindow extends CustomWindow {
                 fields.add(item);
             } else {
                 createTemporalGranularitiesItem(datasetVersion.getUrn());
-                searchTemporalGranularitiesWindow.setShowIfCondition(getFormItemIfFunctionShowTemporalDimension());
+                searchTemporalGranularitiesWindow.setShowIfCondition(getFormItemIfFunctionShowSelections());
                 fields.add(searchTemporalGranularitiesWindow);
                 fields.add(item);
             }
