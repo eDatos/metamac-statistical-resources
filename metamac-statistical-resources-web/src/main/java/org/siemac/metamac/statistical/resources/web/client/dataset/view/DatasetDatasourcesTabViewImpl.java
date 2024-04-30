@@ -305,7 +305,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    // TODO
+                    getUiHandlers().exportConsolidatedDatasources(datasetVersionDto.getUrn());
                 }
             });
             return exportConsolidatedDatasourcesButton;

@@ -724,6 +724,11 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         return datasetDo2DtoMapper.dimensionRepresentationMappingDoToDto(mapping);
     }
 
+    @Override
+    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+        return null;
+    }
+
     // ------------------------------------------------------------------------
     // DATASETS
     // ------------------------------------------------------------------------

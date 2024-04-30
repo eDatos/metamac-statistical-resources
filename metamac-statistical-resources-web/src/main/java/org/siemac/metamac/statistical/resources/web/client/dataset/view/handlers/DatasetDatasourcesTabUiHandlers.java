@@ -23,4 +23,6 @@ public interface DatasetDatasourcesTabUiHandlers extends UiHandlers {
 
     void saveDataset(DatasetVersionDto datasetVersionDto);
     void createDatabaseDatasource(String urn, String tablename);
+
+    void exportConsolidatedDatasources(String urn);
 }
