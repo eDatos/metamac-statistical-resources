@@ -73,4 +73,8 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
 
+    @Override
+    public String retrieveAnalyticsWebAppUrl() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
 }

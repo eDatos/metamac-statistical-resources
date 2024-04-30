@@ -21,6 +21,9 @@ public class GetDatasetDimensionCoverage {
     @In(3)
     MetamacWebCriteria criteria;
 
+    @In(4)
+    List<String>       temporalGranularitiesCodes;
+
     @Out(1)
     List<CodeItemDto>  codesDimension;
 

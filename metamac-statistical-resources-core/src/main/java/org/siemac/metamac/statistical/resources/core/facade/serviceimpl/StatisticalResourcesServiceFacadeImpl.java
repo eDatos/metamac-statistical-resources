@@ -830,7 +830,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             for (ResourceInternal resource : codes.getCodes()) {
                 codesExternalItems.add(buildExternalItemDtoFromResource(resource, TypeExternalArtefactsEnum.CODE));
             }
-            List<CodeItemDto> codeItemsDto = filterCoverageForDatasetVersionDimension(ctx, urn, "TIME_PERIOD", null);
+            List<CodeItemDto> codeItemsDto = filterCoverageForDatasetVersionDimension(ctx, urn, "TIME_PERIOD", null, null);
             List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = getTemporalGranularities(codeItemsDto);
             for (ExternalItemDto externalItemDto : codesExternalItems) {
                 if (checkGranularityInList(istacTimeGranularityCodesEnum, externalItemDto)) {
@@ -925,13 +925,27 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter) throws MetamacException {
+    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter, List<String> temporalGranularities) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canFilterCoverageForDatasetVersionDimension(ctx);
 
         List<CodeDimension> codeDimensions = getDatasetService().filterCoverageForDatasetVersionDimension(ctx, datasetVersionUrn, dsdDimensionId, filter);
+        if (temporalGranularities != null && dsdDimensionId.equals("TIME_PERIOD")) {
+            return datasetDo2DtoMapper.codeDimensionDoListToCodeItemDtoList(getCodeDimensionsFiltered(codeDimensions, temporalGranularities));
+        }
 
         return datasetDo2DtoMapper.codeDimensionDoListToCodeItemDtoList(codeDimensions);
+    }
+
+    private List<CodeDimension> getCodeDimensionsFiltered(List<CodeDimension> codeDimensions, List<String> temporalGranularities) throws MetamacException {
+        List<CodeDimension> codeDimensionsFiltered = new ArrayList<>();
+        for (CodeDimension codeDimension : codeDimensions) {
+            IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
+            if (temporalGranularities.contains(istacTimeGranularityCodeEnum.getLabel())) {
+                codeDimensionsFiltered.add(codeDimension);
+            }
+        }
+        return codeDimensionsFiltered;
     }
 
     @Override

@@ -256,7 +256,7 @@ public class NewQueryWindow extends CustomWindow {
 
             @Override
             protected void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
-               uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+                uiHandlers.retrieveTemporalCodesForField(datasetUrn);
             }
         };
     }
@@ -274,19 +274,18 @@ public class NewQueryWindow extends CustomWindow {
         }
         item.setRequired(true);
         item.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
-
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
                 final SearchMultipleCodeItemWindow window = new SearchMultipleCodeItemWindow(dimensionId, new SearchAction<MetamacWebCriteria>() {
 
                     @Override
                     public void retrieveResultSet(MetamacWebCriteria webCriteria) {
-                        uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, webCriteria);
+                        uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, webCriteria, searchTemporalGranularitiesWindow.getCodes());
                     }
                 });
                 dimensionCodeSelectionWindow.put(dimensionId, window);
 
-                uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, new MetamacWebCriteria());
+                uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, new MetamacWebCriteria(), searchTemporalGranularitiesWindow.getCodes());
 
                 final CodeItemListItem item = new CodeItemListItem(buildSelectionItemId(dimensionId), dimensionId, editable);
                 window.setSelectedResources(item.getCodeItemsDtos());

@@ -329,8 +329,8 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
     }
 
     @Override
-    public void retrieveDimensionCodesForDataset(String urn, final String dimensionId, MetamacWebCriteria webCriteria) {
-        dispatcher.execute(new GetDatasetDimensionCoverageAction(urn, dimensionId, webCriteria), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionCoverageResult>(this) {
+    public void retrieveDimensionCodesForDataset(String urn, final String dimensionId, MetamacWebCriteria webCriteria, List<String> temporalGranularities) {
+        dispatcher.execute(new GetDatasetDimensionCoverageAction(urn, dimensionId, webCriteria, temporalGranularities), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionCoverageResult>(this) {
 
             @Override
             public void onWaitSuccess(GetDatasetDimensionCoverageResult result) {
