@@ -22,6 +22,7 @@ Application QueriesStatisticalResourcesDto {
 			- @QueryTypeEnum type;
 			Integer latestDataNumber;
 			CodeDimensionMap selection;
+			- Bag<@ExternalItemDto> temporalGranularities;
 			- Bag<@RelatedResourceDto> isPartOf;
 		}
 		

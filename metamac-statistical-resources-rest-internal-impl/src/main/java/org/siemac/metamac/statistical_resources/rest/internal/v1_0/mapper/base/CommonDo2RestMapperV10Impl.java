@@ -81,6 +81,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTyp
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.InternalWebApplicationNavigation;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -420,7 +421,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
      */
     @Override
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,
-            Set<String> fields) throws MetamacException {
+            Set<String> fields, List<ExternalItem> externalItems) throws MetamacException {
 
         List<DsdDimension> sources = dsdProcessorResult.getDimensions();
         if (CollectionUtils.isEmpty(sources)) {
@@ -455,7 +456,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             if (effectiveDimensionValuesToDataByDimension != null) {
                 effectiveDimensionValuesToData = effectiveDimensionValuesToDataByDimension.get(dimensionId);
             }
-            Dimension target = toDimension(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields);
+            Dimension target = toDimension(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, externalItems);
             targets.getDimensions().add(target);
         }
         targets.setTotal(BigInteger.valueOf(targets.getDimensions().size()));
@@ -883,7 +884,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private Dimension toDimension(String datasetVersionUrn, DataStructure dataStructure, DsdDimension source, DimensionVisualisation dimensionVisualisation,
-            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields) throws MetamacException {
+            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields, List<ExternalItem> externalItems) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -894,12 +895,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setPluralName(source.getPluralName());
 
         // Dimension values
-        target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields));
+        target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, externalItems));
         return target;
     }
 
     private DimensionValues toDimensionValues(String datasetVersionUrn, DataStructure dataStructure, DsdDimension dimension, DimensionVisualisation dimensionVisualisation,
-            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields) throws MetamacException {
+            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields, List<ExternalItem> externalItems) throws MetamacException {
         if (dimension == null) {
             return null;
         }
@@ -920,7 +921,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             targets = toEnumeratedDimensionValuesFromConceptScheme(coveragesById, dataStructure, dimension.getType(), dimension.getConceptSchemeRepresentationUrn(), effectiveDimensionValuesToData,
                     selectedLanguages, fields);
         } else if (dimension.getTextFormatRepresentation() != null) {
-            targets = toNonEnumeratedDimensionValuesFromTextFormatType(coverages, dimension.getTextFormatRepresentation(), dimension.getType(), effectiveDimensionValuesToData, selectedLanguages);
+            targets = toNonEnumeratedDimensionValuesFromTextFormatType(coverages, dimension.getTextFormatRepresentation(), dimension.getType(), effectiveDimensionValuesToData, selectedLanguages,
+                    dimension.getComponentId(), externalItems);
         } else {
             logger.error("Dimension definition unsupported for dimension: " + dimension.getComponentId());
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -1027,7 +1029,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private NonEnumeratedDimensionValues toNonEnumeratedDimensionValuesFromTextFormatType(List<CodeDimension> coverages, TextFormat textFormatType, DsdComponentType dimensionType,
-            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages) throws MetamacException {
+            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, String dimensionId, List<ExternalItem> externalItems) throws MetamacException {
         if (textFormatType == null) {
             return null;
         }
@@ -1038,8 +1040,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             DatasetVersionUtils.sortTemporalCodeDimensions(coverages);
         }
 
+        List<String> temporalGranularities = getTemporalGranularities(externalItems);
         for (CodeDimension coverage : coverages) {
-            if (effectiveDimensionValuesToData != null && !effectiveDimensionValuesToData.contains(coverage.getIdentifier())) {
+            if (!checkCodeDimensionsInTemporalGranularities(coverage, temporalGranularities, dimensionId) || (effectiveDimensionValuesToData != null && !effectiveDimensionValuesToData.contains(coverage.getIdentifier()))) {
                 // skip to include only values in query
                 continue;
             }
@@ -1047,6 +1050,27 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         targets.setTotal(BigInteger.valueOf(targets.getValues().size()));
         return targets;
+    }
+
+    private List<String> getTemporalGranularities(List<ExternalItem> externalItems) {
+        if (externalItems == null) {
+            return new ArrayList<String>();
+        }
+        List<String> temporalGranularities = new ArrayList<>();
+        for (ExternalItem externalItem : externalItems) {
+            if (!temporalGranularities.contains(externalItem.getCode())) {
+                temporalGranularities.add(externalItem.getCode());
+            }
+        }
+        return temporalGranularities;
+    }
+
+    private boolean checkCodeDimensionsInTemporalGranularities(CodeDimension codeDimension, List<String> temporalGranularities, String dimensionId) throws MetamacException {
+        if (!"TIME_PERIOD".equals(dimensionId) || temporalGranularities == null || temporalGranularities.isEmpty()) {
+            return true;
+        }
+        IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
+        return temporalGranularities.contains(istacTimeGranularityCodeEnum.getLabel());
     }
 
     private EnumeratedDimensionValue toEnumeratedDimensionValue(CodeResourceInternal source, Map<String, String> parentsReplacedToVisualisation, List<String> selectedLanguages)

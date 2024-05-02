@@ -17,12 +17,18 @@ import org.siemac.metamac.core.common.criteria.MetamacCriteria;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaResult;
 import org.siemac.metamac.core.common.criteria.SculptorCriteria;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.dto.InternationalStringDto;
+import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
+import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
@@ -32,6 +38,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
+import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
 import org.siemac.metamac.statistical.resources.core.constraint.mapper.ConstraintDto2RestMapper;
 import org.siemac.metamac.statistical.resources.core.constraint.mapper.ConstraintRest2DtoMapper;
@@ -74,6 +81,8 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.Publication
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
@@ -226,6 +235,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Autowired
     private LifecycleService<MultidatasetVersion>                     multidatasetLifecycleService;
+
+    @Autowired
+    private StatisticalResourcesConfiguration                         configurationService;
 
     @Autowired
     private StatisticalResourcesDto2StatRepoDtoMapper                 statisticalResourcesDto2StatRepoDtoMapper;
@@ -820,6 +832,77 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
+    public List<ExternalItemDto> retrieveExternalItemsByDatasetUrn(ServiceContext ctx, String urn) throws MetamacException {
+        String temporalGranularityCodelistUrn = configurationService.retrieveDefaultCodelistTemporalGranularityUrn();
+        List<ExternalItemDto> externalItemsDto = new ArrayList<>();
+        if (!StringUtils.isEmpty(temporalGranularityCodelistUrn)) {
+            Codes codes = srmRestInternalService.findCodes(temporalGranularityCodelistUrn, 0, null, "");
+
+            List<ExternalItemDto> codesExternalItems = new ArrayList<>();
+            for (ResourceInternal resource : codes.getCodes()) {
+                codesExternalItems.add(buildExternalItemDtoFromResource(resource, TypeExternalArtefactsEnum.CODE));
+            }
+            List<CodeItemDto> codeItemsDto = filterCoverageForDatasetVersionDimension(ctx, urn, "TIME_PERIOD", null, null);
+            List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = getTemporalGranularities(codeItemsDto);
+            for (ExternalItemDto externalItemDto : codesExternalItems) {
+                if (checkGranularityInList(istacTimeGranularityCodesEnum, externalItemDto)) {
+                    externalItemsDto.add(externalItemDto);
+                }
+            }
+        }
+        return externalItemsDto;
+    }
+
+    private ExternalItemDto buildExternalItemDtoFromResource(ResourceInternal resource, TypeExternalArtefactsEnum type) {
+        ExternalItemDto externalItemDto = new ExternalItemDto();
+        buildExternalItemDtoFromResource(externalItemDto, resource, type);
+        return externalItemDto;
+    }
+
+    private void buildExternalItemDtoFromResource(ExternalItemDto externalItemDto, ResourceInternal resource, TypeExternalArtefactsEnum type) {
+        externalItemDto.setCode(resource.getId());
+        externalItemDto.setCodeNested(resource.getNestedId());
+        externalItemDto.setUri(resource.getSelfLink().getHref());
+        externalItemDto.setUrn(resource.getUrn());
+        externalItemDto.setUrnProvider(resource.getUrnProvider());
+        externalItemDto.setType(type);
+        externalItemDto.setTitle(getInternationalStringDtoFromInternationalString(resource.getName()));
+        externalItemDto.setManagementAppUrl(resource.getManagementAppLink());
+    }
+
+    private InternationalStringDto getInternationalStringDtoFromInternationalString(InternationalString internationalString) {
+        if (internationalString != null) {
+            InternationalStringDto internationalStringDto = new InternationalStringDto();
+            List<LocalisedString> localisedStringList = internationalString.getTexts();
+            for (LocalisedString localisedString : localisedStringList) {
+                LocalisedStringDto localisedStringDto = new LocalisedStringDto();
+                localisedStringDto.setLocale(localisedString.getLang());
+                localisedStringDto.setLabel(localisedString.getValue());
+                internationalStringDto.addText(localisedStringDto);
+            }
+            return internationalStringDto;
+        }
+        return null;
+    }
+    private Boolean checkGranularityInList(List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum, ExternalItemDto externalItemDto) {
+        for (IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum : istacTimeGranularityCodesEnum) {
+            if (istacTimeGranularityCodeEnum.getLabel().equals(externalItemDto.getCode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+    private List<IstacTimeGranularityCodeEnum> getTemporalGranularities(List<CodeItemDto> codes) throws MetamacException {
+        List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = new ArrayList<>();
+        for (CodeItemDto codeItem : codes) {
+            IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeUtils.guessTimeGranularity(codeItem.getCode());
+            if (!istacTimeGranularityCodesEnum.contains(istacTimeGranularityCodeEnum)) {
+                istacTimeGranularityCodesEnum.add(istacTimeGranularityCodeEnum);
+            }
+        }
+        return istacTimeGranularityCodesEnum;
+    }
+    @Override
     public List<DatasetVersionBaseDto> retrieveDatasetVersions(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canRetrieveDatasetVersions(ctx);
@@ -854,13 +937,27 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter) throws MetamacException {
+    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter, List<String> temporalGranularities) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canFilterCoverageForDatasetVersionDimension(ctx);
 
         List<CodeDimension> codeDimensions = getDatasetService().filterCoverageForDatasetVersionDimension(ctx, datasetVersionUrn, dsdDimensionId, filter);
+        if (temporalGranularities != null && dsdDimensionId.equals("TIME_PERIOD")) {
+            return datasetDo2DtoMapper.codeDimensionDoListToCodeItemDtoList(getCodeDimensionsFiltered(codeDimensions, temporalGranularities));
+        }
 
         return datasetDo2DtoMapper.codeDimensionDoListToCodeItemDtoList(codeDimensions);
+    }
+
+    private List<CodeDimension> getCodeDimensionsFiltered(List<CodeDimension> codeDimensions, List<String> temporalGranularities) throws MetamacException {
+        List<CodeDimension> codeDimensionsFiltered = new ArrayList<>();
+        for (CodeDimension codeDimension : codeDimensions) {
+            IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
+            if (temporalGranularities.contains(istacTimeGranularityCodeEnum.getLabel())) {
+                codeDimensionsFiltered.add(codeDimension);
+            }
+        }
+        return codeDimensionsFiltered;
     }
 
     @Override

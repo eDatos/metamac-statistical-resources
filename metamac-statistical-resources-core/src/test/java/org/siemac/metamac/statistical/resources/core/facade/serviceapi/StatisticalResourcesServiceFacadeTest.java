@@ -2251,7 +2251,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME);
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
         {
-            List<CodeItemDto> codeDimensions = statisticalResourcesServiceFacade.filterCoverageForDatasetVersionDimension(getServiceContextAdministrador(), datasetVersionUrn, "TIME_PERIOD", "Enero");
+            List<CodeItemDto> codeDimensions = statisticalResourcesServiceFacade.filterCoverageForDatasetVersionDimension(getServiceContextAdministrador(), datasetVersionUrn, "TIME_PERIOD", "Enero", null);
             Assert.assertEquals(1, codeDimensions.size());
         }
     }
@@ -4333,5 +4333,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     public void testUpdateDatasetVersionInGroup() throws Exception {
         // // Without test in facade
 
+    }
+
+    @Override
+    public void testRetrieveExternalItemsByDatasetUrn() throws Exception {
+        // TODO Auto-generated method stub
+        
     }
 }

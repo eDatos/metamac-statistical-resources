@@ -114,6 +114,8 @@ Application FacadeStatisticalResources {
             MetamacCriteriaResult<@DatasetVersionBaseDto> findDatasetsVersionsByCondition(MetamacCriteria criteria) throws MetamacException;
             "Retrieves a dataset by URN"
             @DatasetVersionDto retrieveDatasetVersionByUrn(String urn) throws MetamacException;
+            "Retrieves temporal granularities by URN"
+            List<@ExternalItemDto> retrieveExternalItemsByDatasetUrn(String urn) throws MetamacException;
             "Retrieves all dataset versions"
             List<@DatasetVersionBaseDto> retrieveDatasetVersions(String datasetVersionUrn) throws MetamacException;
     		"Retrieve latest datasetVersion providing datasetUrn"
@@ -145,7 +147,7 @@ Application FacadeStatisticalResources {
     		List<String> retrieveDatasetVersionDimensionsIds(String datasetVersionUrn) throws MetamacException;
     		"Retrieve the coverage for a given dimension"
     		List<@CodeItemDto> retrieveCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId) throws MetamacException;
-    		List<@CodeItemDto> filterCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId, String filter) throws MetamacException;
+    		List<@CodeItemDto> filterCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId, String filter, List<String> temporalGranularities) throws MetamacException;
     		"Import a set of files provided by urn as datasources in a datasetVersion"
     		importDatasourcesInDatasetVersion(@DatasetVersionDto datasetVersionDto, List<URL> fileUrls, Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
     		"Import attribues from file"
