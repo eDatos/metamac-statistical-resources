@@ -28,8 +28,8 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
-import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
@@ -752,7 +752,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
             return tmpFileObservations.getName();
         } catch (Exception e) {
-            throw new MetamacException(e, ServiceExceptionType.UNKNOWN); // FIXME: set correct ServiceExceptionType
+            throw new MetamacException(e, ServiceExceptionType.UNKNOWN);
         } finally {
             IOUtils.closeQuietly(outputStreamObservations);
         }
