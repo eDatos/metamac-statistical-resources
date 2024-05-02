@@ -282,7 +282,6 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
             @Override
             public void onWaitSuccess(ExportDatasourcesResult result) {
                 CommonUtils.downloadFile(result.getFileName());
-                //deleteTemporalFile(result.getFileName());
             }
         });
     }
