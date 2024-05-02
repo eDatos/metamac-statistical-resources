@@ -679,6 +679,18 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
+    public List<String> deleteDatasourcesNotUsed(ServiceContext ctx, String datasetUrn, boolean deleteAttributes) throws MetamacException {
+        // Retrieve
+        String operationCode = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetUrn).getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode();
+
+        // Security
+        DatasetsSecurityUtils.canDeleteDatasource(ctx, operationCode);
+
+        // Delete
+        return getDatasetService().deleteDatasourcesNotUsed(ctx, datasetUrn, deleteAttributes);
+    }
+
+    @Override
     public List<DatasourceDto> retrieveDatasourcesByDatasetVersion(ServiceContext ctx, String urnDatasetVersion) throws MetamacException {
         // Retrieve
         String operationCode = getDatasetService().retrieveDatasetVersionByUrn(ctx, urnDatasetVersion).getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode();

@@ -1485,6 +1485,11 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     }
 
     @Override
+    public void testDeleteDatasourcesNotUsed() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
     public void testRetrieveDatasourcesByDatasetVersion() throws Exception {
         // no optimistic locking in this operation
     }

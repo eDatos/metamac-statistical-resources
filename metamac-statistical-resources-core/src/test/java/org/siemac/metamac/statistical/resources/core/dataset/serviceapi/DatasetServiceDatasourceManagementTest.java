@@ -10,6 +10,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.asserts.Datase
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_02_BASIC_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_49_WITH_DATASOURCE_FROM_PX_WITH_NEXT_UPDATE_IN_ONE_MONTH_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_50_WITH_DATASOURCE_FROM_PX_WITH_USER_NEXT_UPDATE_IN_ONE_MONTH_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_51_IN_DRAFT_WITH_DATASOURCE_NAME;
@@ -24,9 +25,11 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasourceMockFactory.DATASOURCE_02_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.QUERY_07_SIMPLE_MULTI_VERSION_NAME;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Assert;
@@ -457,6 +460,31 @@ public class DatasetServiceDatasourceManagementTest extends StatisticalResources
 
         expectedMetamacException(new MetamacException(ServiceExceptionType.DATASOURCE_NOT_FOUND, datasourceUrn));
         datasetService.retrieveDatasourceByUrn(getServiceContextWithoutPrincipal(), datasourceUrn);
+    }
+
+    @Test
+    @MetamacMock({DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME})
+    public void testDeleteDatasourcesNotUsed() throws Exception {
+        mockDsdAndDataRepositorySimpleDimensionsNoAttributes();
+
+        ServiceContext ctx = getServiceContextAdministrador();
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME);
+
+        List<Datasource> actual = datasetService.retrieveDatasourcesByDatasetVersion(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        assertEquals(2, actual.size());
+        List<String> actualDataSourceNames = Arrays.asList(actual.get(0).getIdentifiableStatisticalResource().getCode(), actual.get(1).getIdentifiableStatisticalResource().getCode());
+
+        List<String> dataSourcesDeleted = datasetService.deleteDatasourcesNotUsed(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), Boolean.FALSE);
+
+        assertEquals(2, dataSourcesDeleted.size());
+        assertEquals(0, actual.size());
+
+        dataSourcesDeleted.removeAll(actualDataSourceNames);
+        assertEquals(0, dataSourcesDeleted.size());
+
+        List<Datasource> expected = datasetService.retrieveDatasourcesByDatasetVersion(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        assertEquals(0, expected.size());
+
     }
 
     @Test

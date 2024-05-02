@@ -287,6 +287,8 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     public static final String               DATASET_VERSION_119_DRAFT_DATABASE_DATASET_NAME                                                               = "DATASET_VERSION_119_DRAFT_DATABASE_DATASET";
     public static final String               DATASET_VERSION_120_VALIDATION_REJECTED_DATABASE_DATASET_NAME                                                 = "DATASET_VERSION_120_VALIDATION_REJECTED_DATABASE_DATASET";
 
+    public static final String               DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME                                                             = "DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE";
+
     public static final String               DATASET_VERSION_01_FOR_UPDATE_MULTIPLE                                                                        = "DATASET_VERSION_01_FOR_UPDATE_MULTIPLE";
     public static final String               DATASET_VERSION_02_FOR_UPDATE_MULTIPLE                                                                        = "DATASET_VERSION_02_FOR_UPDATE_MULTIPLE";
 
@@ -690,6 +692,10 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
 
     private static DatasetVersion getDatasetVersion51InDraftWithDatasource() {
         return createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
+    }
+
+    private static DatasetVersion getDatasetVersion121InDraftWithDatasource() {
+        return createDatasetVersionInStatusWithSpecificDatasource(1, ProcStatusEnum.DRAFT, "TSV_DATA_SOURCE_20111.tsv");
     }
 
     private static DatasetVersion getDatasetVersion52InProductionValidationWithDatasource() {
@@ -1372,6 +1378,12 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     public static DatasetVersion createDatasetVersionInStatusWithGeneratedDatasource(int sequentialId, ProcStatusEnum procStatus) {
         DatasetVersion datasetVersion = createDatasetVersionWithSequence(sequentialId);
         return fillDatasetVersionInStatusWithGeneratedDatasource(datasetVersion, procStatus);
+    }
+
+    public static DatasetVersion createDatasetVersionInStatusWithSpecificDatasource(int sequentialId, ProcStatusEnum procStatus, String datasourceName) {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(sequentialId, procStatus);
+        datasetVersion.addDatasource(DatasourceMockFactory.generateDatasource(datasourceName));
+        return datasetVersion;
     }
 
     public static DatasetVersion fillDatasetVersionInStatusWithGeneratedDatasource(DatasetVersion datasetVersion, ProcStatusEnum procStatus) {
