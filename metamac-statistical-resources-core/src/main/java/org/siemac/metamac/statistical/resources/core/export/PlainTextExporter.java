@@ -39,8 +39,6 @@ public class PlainTextExporter {
     }
 
     private void createBodyForPlainTextObservations() throws MetamacException {
-        boolean isHeaderFill = false;
-
         Map<String, List<String>> datasourceColumns = new LinkedHashMap<>();
 
         try {
