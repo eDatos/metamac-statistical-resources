@@ -16,6 +16,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Dele
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesNotUsedActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.EndCategorisationsValidityActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.ExportDatasourcesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetCodelistsWithVariableActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributeInstancesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributesActionHandler;
@@ -108,6 +109,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDataset
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.EndCategorisationsValidityAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributesAction;
@@ -269,6 +271,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(CreateDatasetCategorisationsAction.class, CreateDatasetCategorisationsActionHandler.class);
         bindHandler(DeleteCategorisationsAction.class, DeleteCategorisationsActionHandler.class);
         bindHandler(EndCategorisationsValidityAction.class, EndCategorisationsValidityActionHandler.class);
+        bindHandler(ExportDatasourcesAction.class, ExportDatasourcesActionHandler.class);
         bindHandler(GetDatasetConstraintAction.class, GetDatasetConstraintActionHandler.class);
         bindHandler(CreateDatasetConstraintAction.class, CreateDatasetConstraintActionHandler.class);
         bindHandler(DeleteDatasetConstraintAction.class, DeleteDatasetConstraintActionHandler.class);

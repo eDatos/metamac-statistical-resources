@@ -27,6 +27,8 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasou
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionsVariableMappingAction;
@@ -269,6 +271,17 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
             public void onWaitSuccess(CreateDatabaseDatasourceResult result) {
                 ShowMessageEvent.fireSuccessMessage(DatasetDatasourcesTabPresenter.this, getMessages().databaseDatasourceCreated());
                 retrieveDatasourcesByDataset(datasetVersion.getUrn(), 0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
+            }
+        });
+    }
+
+    @Override
+    public void exportDatasources(String urn) {
+        dispatcher.execute(new ExportDatasourcesAction(urn), new WaitingAsyncCallbackHandlingError<ExportDatasourcesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(ExportDatasourcesResult result) {
+                CommonUtils.downloadFile(result.getFileName());
             }
         });
     }

@@ -14,6 +14,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
@@ -52,6 +53,8 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePicker
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 
 public class CommonUtils {
@@ -698,6 +701,26 @@ public class CommonUtils {
 
         return hashMap;
     }
+
+    public static void downloadFile(String fileName) {
+        StringBuffer url = new StringBuffer();
+        url.append(URL.encode(StatisticalResourcesWeb.getRelativeURL(StatisticalResourcesConstants.FILE_DOWNLOAD_DIR_PATH)));
+        url.append("?").append(URL.encode(StatisticalResourcesConstants.PARAM_FILE_NAME)).append("=").append(URL.encode(fileName));
+        Window.open(url.toString(), "_blank", "");
+    }
+
+    // TODO
+    /*private void deleteTemporalFile(String fileName) {
+        dispatcher.execute(new DeleteTemporalFileAction(fileName), new WaitingAsyncCallbackHandlingError<DeleteTemporalFileResult>(this) {
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(IndicatorListPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(DeleteTemporalFileResult result) {
+            }
+        });
+    }*/
 
     public static Integer getMaxNumberOfUpdatedDatasetInGroup() {
         return maxNumberOfUpdatedDatasetInGroup;
