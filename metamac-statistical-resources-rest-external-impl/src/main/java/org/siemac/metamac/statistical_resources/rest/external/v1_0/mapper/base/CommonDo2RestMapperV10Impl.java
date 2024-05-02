@@ -996,7 +996,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
         List<String> temporalGranularities = getTemporalGranularities(externalItems);
         for (CodeDimension coverage : coverages) {
-            if (!getCodeDimensionsFiltered(coverage, temporalGranularities, dimensionId)
+            if (!checkCodeDimensionsInTemporalGranularities(coverage, temporalGranularities, dimensionId)
                     || (effectiveDimensionValuesToData != null && !effectiveDimensionValuesToData.contains(coverage.getIdentifier()))) {
                 // skip to include only values in query
                 continue;
@@ -1020,8 +1020,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return temporalGranularities;
     }
 
-    private boolean getCodeDimensionsFiltered(CodeDimension codeDimension, List<String> temporalGranularities, String dimensionId) throws MetamacException {
-        if (!"TIME_PERIOD".equals(dimensionId)) {
+    private boolean checkCodeDimensionsInTemporalGranularities(CodeDimension codeDimension, List<String> temporalGranularities, String dimensionId) throws MetamacException {
+        if (!"TIME_PERIOD".equals(dimensionId) || temporalGranularities == null || temporalGranularities.isEmpty()) {
             return true;
         }
         IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
