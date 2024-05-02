@@ -122,7 +122,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         private CustomToolStripButton              importZipDatasourcesButton;
         private CustomToolStripButton              importDatabaseDatasourcesButton;
         private CustomToolStripButton              importDatasourceButton;
-        private CustomToolStripButton              exportConsolidatedDatasourceButton;
+        private CustomToolStripButton              exportDatasourceButton;
         private CustomListGrid                     datasourcesList;
 
         private DeleteConfirmationWindow           deleteConfirmationWindow;
@@ -154,8 +154,8 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
             importDatabaseDatasourcesButton = createImportDbDatasourcesButton();
             toolStrip.addButton(importDatabaseDatasourcesButton);
 
-            exportConsolidatedDatasourceButton = createExportConsolidatedDatasourceButton();
-            toolStrip.addButton(exportConsolidatedDatasourceButton);
+            exportDatasourceButton = createExportDatasourceButton();
+            toolStrip.addButton(exportDatasourceButton);
 
             // List
 
@@ -297,18 +297,18 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
             return importDatasourcesButton;
         }
 
-        private CustomToolStripButton createExportConsolidatedDatasourceButton() {
-            final CustomToolStripButton exportConsolidatedDatasourcesButton = new CustomToolStripButton(getConstants().actionExportConsolidatedDatasources(),
+        private CustomToolStripButton createExportDatasourceButton() {
+            final CustomToolStripButton exportDatasourcesButton = new CustomToolStripButton(getConstants().actionExportDatasources(),
                     org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
-            exportConsolidatedDatasourcesButton.setVisible(Boolean.TRUE);
-            exportConsolidatedDatasourcesButton.addClickHandler(new ClickHandler() {
+            exportDatasourcesButton.setVisible(Boolean.TRUE);
+            exportDatasourcesButton.addClickHandler(new ClickHandler() {
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().exportConsolidatedDatasources(datasetVersionDto.getUrn());
+                    getUiHandlers().exportDatasources(datasetVersionDto.getUrn());
                 }
             });
-            return exportConsolidatedDatasourcesButton;
+            return exportDatasourcesButton;
         }
 
         private void bindEvents() {
