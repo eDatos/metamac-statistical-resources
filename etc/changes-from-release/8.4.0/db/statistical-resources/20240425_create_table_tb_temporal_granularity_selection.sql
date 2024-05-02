@@ -12,4 +12,3 @@ CREATE TABLE tb_temporal_granularity_selection (
 CREATE INDEX pk_tb_temporal_granularity_selection_fk ON tb_temporal_granularity_selection USING btree (temporal_granularity_fk);
 
 commit;
-
