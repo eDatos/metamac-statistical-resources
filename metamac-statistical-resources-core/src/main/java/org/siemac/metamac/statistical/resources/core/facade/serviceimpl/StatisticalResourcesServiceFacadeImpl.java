@@ -748,7 +748,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
 
             PlainTextExporter exporter = new PlainTextExporter(observations);
-            exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations);
+            exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
 
             return tmpFileObservations.getName();
         } catch (Exception e) {

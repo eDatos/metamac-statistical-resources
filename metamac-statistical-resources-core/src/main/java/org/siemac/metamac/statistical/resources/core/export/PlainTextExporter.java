@@ -23,14 +23,16 @@ public class PlainTextExporter {
     private static final String EXCLUDE_HEADER = "DATA_SOURCE_ID";
     private static final String SEPARATOR = "\t";
     private final Map<String, ObservationExtendedDto> observations;
-    PrintWriter printWriter;
+    private PrintWriter printWriter;
+    private String lang;
 
     public PlainTextExporter(Map<String, ObservationExtendedDto> observations) {
         this.observations = observations;
     }
 
-    public void writeObservationsAndAttributesWithObservationAttachmentLevel(OutputStream os) throws MetamacException {
+    public void writeObservationsAndAttributesWithObservationAttachmentLevel(OutputStream os, String lang) throws MetamacException {
         try {
+            this.lang = lang;
             printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
             createBodyForPlainTextObservations();
         } catch (Exception e) {
@@ -108,7 +110,7 @@ public class PlainTextExporter {
         // attributes second pass: add values
         for (String attributeId : attributeIds) {
             if (observation.getAttributesAsMap().containsKey(attributeId)) {
-                String value = observation.getAttributesAsMap().get(attributeId).getValue().getLocalisedLabel("es");
+                String value = observation.getAttributesAsMap().get(attributeId).getValue().getLocalisedLabel(lang);
                 datasourceColumns.get(attributeId).add(value);
             } else {
                 datasourceColumns.get(attributeId).add(null);
