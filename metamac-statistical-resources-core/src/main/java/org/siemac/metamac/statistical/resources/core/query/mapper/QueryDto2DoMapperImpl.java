@@ -46,7 +46,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
-    private CommonDto2DoMapper               dto2DoMapper;
+    private CommonDto2DoMapper           dto2DoMapper;
 
     @Override
     public void checkOptimisticLocking(QueryVersionBaseDto source) throws MetamacException {
