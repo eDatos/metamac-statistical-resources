@@ -1,7 +1,5 @@
 package org.siemac.metamac.statistical.resources.core.export;
 
-import static org.siemac.metamac.core.common.exception.CommonServiceExceptionType.UNKNOWN;
-
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -12,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceObservationDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
@@ -31,13 +30,9 @@ public class PlainTextExporter {
     }
 
     public void writeObservationsAndAttributesWithObservationAttachmentLevel(OutputStream os, String lang) throws MetamacException {
-        try {
-            this.lang = lang;
-            printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
-            createBodyForPlainTextObservations();
-        } catch (Exception e) {
-            throw new MetamacException(e, UNKNOWN, "Error exporting");
-        }
+        this.lang = lang;
+        printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+        createBodyForPlainTextObservations();
     }
 
     private void createBodyForPlainTextObservations() throws MetamacException {
@@ -45,7 +40,7 @@ public class PlainTextExporter {
 
         try {
             if (observations == null || observations.keySet().isEmpty()) {
-                throw new MetamacException(UNKNOWN, "No datasources to export");
+                throw new MetamacException(ServiceExceptionType.DATASOURCE_EXPORT_NO_DATA_PRESENT);
             }
 
             for (Map.Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
