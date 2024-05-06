@@ -751,8 +751,10 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
 
             return tmpFileObservations.getName();
+        } catch (MetamacException e) {
+            throw e; // rethrow metamac exception as such so message is correctly shown in app
         } catch (Exception e) {
-            throw new MetamacException(e, ServiceExceptionType.UNKNOWN);
+            throw new MetamacException(e, ServiceExceptionType.DATASOURCE_EXPORT_ERROR, e.getMessage());
         } finally {
             IOUtils.closeQuietly(outputStreamObservations);
         }
