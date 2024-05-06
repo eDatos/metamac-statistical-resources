@@ -226,6 +226,7 @@ public class NewQueryWindow extends CustomWindow {
         form.setFields(fields.toArray(new FormItem[fields.size()]));
         if (fields.size() > MAX_NUM_OF_ELEMENTS) {
             form.setHeight(MAX_HEIGHT);
+            form.setWidth(MAX_HEIGHT);
             form.setOverflow(Overflow.AUTO);
         }
         form.redraw();
