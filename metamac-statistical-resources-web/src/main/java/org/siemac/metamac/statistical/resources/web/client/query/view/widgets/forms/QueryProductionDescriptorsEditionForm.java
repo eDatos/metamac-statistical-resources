@@ -1,7 +1,9 @@
 package org.siemac.metamac.statistical.resources.web.client.query.view.widgets.forms;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.getExternalItemsValue;
 import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.getRelatedResourceValue;
+import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.setExternalItemsValue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +19,8 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
@@ -36,6 +40,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerIte
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchMultiExternalItemSimpleItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmItemLinkItemWithSchemeFilterItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
@@ -65,6 +70,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     private Map<String, List<CodeItemDto>>                           dtoSelection;
 
     private QueryVersionDto                                          queryDto;
+    private SearchMultiExternalItemSimpleItem                        temporalGranularitiesItem;
 
     public QueryProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
@@ -101,8 +107,21 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             }
         });
         fields.add(typeSelectorItem);
-
         return fields;
+    }
+
+    private SearchMultiExternalItemSimpleItem createTemporalGranularitiesItem() {
+        return new SearchMultiExternalItemSimpleItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
+
+            @Override
+            protected void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
+                uiHandlers.retrieveTemporalCodesForField(firstResult, maxResults, webCriteria, DatasetMetadataExternalField.TEMPORAL_GRANULARITY);
+            }
+        };
+    }
+
+    public void setCodesForTemporalGranularities(List<ExternalItemDto> items, int firstResult, int totalResults) {
+        temporalGranularitiesItem.setResources(items, firstResult, totalResults);
     }
 
     public void setQueryDto(QueryVersionDto queryDto) {
@@ -149,6 +168,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             latestDataNumber = ((CustomIntegerItem) getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
         }
         queryDto.setLatestDataNumber(latestDataNumber);
+        queryDto.getTemporalGranularities().addAll(getExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY)));
         return queryDto;
     }
 
@@ -279,8 +299,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             latestData.setRequired(true);
             fields.add(latestData);
         }
-
+        temporalGranularitiesItem = createTemporalGranularitiesItem();
+        fields.add(temporalGranularitiesItem);
         setFields(fields.toArray(new FormItem[fields.size()]));
+        setExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY), queryDto.getTemporalGranularities());
 
         getItem(QueryDS.TYPE).setValidators(new QueryTypeValidator(hasTemporalDimension));
 
