@@ -16,7 +16,6 @@ import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalW
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
-import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.enums.LifeCycleActionEnum;
 import org.siemac.metamac.statistical.resources.web.client.operation.presenter.OperationPresenter;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryUiHandlers;
@@ -41,8 +40,6 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListAction;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionAction;

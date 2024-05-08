@@ -399,7 +399,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform to Dto
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
-
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
         return queryVersionDto;
     }
 

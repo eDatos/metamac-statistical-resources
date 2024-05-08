@@ -82,11 +82,11 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
             for (String dimensionId : queryDto.getSelection().keySet()) {
                 if (!(isLatestData && isTemporalDimension(dimensionId))) {
                     CodeItemListItem item = (CodeItemListItem) getItem(QueryDS.SELECTION + "_" + dimensionId);
+                    if (isTemporalDimension(dimensionId) && queryDto.getTemporalGranularities() != null && !queryDto.getTemporalGranularities().isEmpty()) {
+                        ((ExternalItemListItem) getItem(DatasetDS.TEMPORAL_GRANULARITY)).setExternalItems(queryDto.getTemporalGranularities());
+                    }
                     item.setCodeItems(queryDto.getSelection().get(dimensionId));
                 }
-            }
-            if (queryDto.getTemporalGranularities() != null && !queryDto.getTemporalGranularities().isEmpty()) {
-                ((ExternalItemListItem) getItem(DatasetDS.TEMPORAL_GRANULARITY)).setExternalItems(queryDto.getTemporalGranularities());
             }
         }
 

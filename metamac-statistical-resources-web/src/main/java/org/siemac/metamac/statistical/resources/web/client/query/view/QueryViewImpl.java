@@ -15,7 +15,6 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.RequiredFieldUtils;
-import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.client.query.model.record.QueryRecord;
 import org.siemac.metamac.statistical.resources.web.client.query.presenter.QueryPresenter;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryUiHandlers;
@@ -41,7 +40,6 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetAgenciesP
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgencySchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 

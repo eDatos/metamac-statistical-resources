@@ -163,8 +163,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     }
     private void resetTimePeriods() {
         CodeItemListItem item = (CodeItemListItem) getItem(QueryDS.SELECTION + "_" + StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
-        item.setCodeItems(new ArrayList<CodeItemDto>());
-        this.markForRedraw();
+        if (item != null) {
+            item.setCodeItems(new ArrayList<CodeItemDto>());
+            this.markForRedraw();
+        }
     }
 
     private void showFields(ListGrid listGrid, Set<String> fieldNamesToShow) {
@@ -226,8 +228,35 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             latestDataNumber = ((CustomIntegerItem) getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
         }
         queryDto.setLatestDataNumber(latestDataNumber);
-        queryDto.getTemporalGranularities().addAll(getExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY)));
+        setTemporalGranularities(queryDto);
         return queryDto;
+    }
+
+    private void setTemporalGranularities(QueryVersionDto queryDto) {
+        List<ExternalItemDto> externalItemsDtos = getExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY));
+        if (externalItemsDtos == null || externalItemsDtos.isEmpty()) {
+            queryDto.getTemporalGranularities().clear();
+        }
+        for (ExternalItemDto externalItemDto : queryDto.getTemporalGranularities()) {
+            if (!checkTemporalGranularityInList(externalItemsDtos, externalItemDto)) {
+                queryDto.getTemporalGranularities().remove(externalItemDto);
+            }
+        }
+        
+        for (ExternalItemDto externalItemDto : externalItemsDtos) {
+            if (externalItemDto.getUrn() != null && !checkTemporalGranularityInList(queryDto.getTemporalGranularities(), externalItemDto)) {
+                queryDto.getTemporalGranularities().add(externalItemDto);
+            }
+        }
+    }
+
+    private boolean checkTemporalGranularityInList(List<ExternalItemDto> externalItemsDtos, ExternalItemDto newExternalItemDto) {
+        for (ExternalItemDto externalItemDto : externalItemsDtos) {
+            if (newExternalItemDto.getUrn() != null && externalItemDto.getUrn() != null && newExternalItemDto.getUrn().equals(externalItemDto.getUrn())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
