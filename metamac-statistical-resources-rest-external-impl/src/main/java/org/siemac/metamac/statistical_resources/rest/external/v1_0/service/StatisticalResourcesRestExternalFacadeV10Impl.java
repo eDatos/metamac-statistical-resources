@@ -8,13 +8,7 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -22,6 +16,8 @@ import javax.ws.rs.core.Response.Status;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.io.DeleteOnCloseFileInputStream;
@@ -36,7 +32,9 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
@@ -45,11 +43,8 @@ import org.siemac.metamac.statistical_resources.rest.common.StatisticalResources
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.*;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
@@ -334,13 +329,16 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            // Add condition for specific or default locale
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            sculptorCriteria.setOrderByCaseCondition(DatasetVersion.class, DatasetVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(),
+                    selectedLanguages, "=");
+
             // Find
             PagedResult<DatasetVersion> entitiesPagedResult = commonService.findDatasetVersions(agencyID, resourceID, version, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Datasets datasets = datasetsDo2RestMapper.toDatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
-            return datasets;
+            return datasetsDo2RestMapper.toDatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -355,8 +353,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Collections collections = collectionsDo2RestMapper.toCollections(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
-            return collections;
+
+            return collectionsDo2RestMapper.toCollections(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
