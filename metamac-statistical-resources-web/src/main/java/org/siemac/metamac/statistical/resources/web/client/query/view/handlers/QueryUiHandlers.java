@@ -2,7 +2,6 @@ package org.siemac.metamac.statistical.resources.web.client.query.view.handlers;
 
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
-import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetMetadataExternalField;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
@@ -38,5 +37,5 @@ public interface QueryUiHandlers extends BaseUiHandlers {
     void version(QueryVersionDto queryVersionDto, VersionTypeEnum versionType);
     void resendStreamMessage(QueryVersionDto queryVersionDto);
     // Time codes
-    void retrieveTemporalCodesForField(int firstResult, int maxResults, MetamacWebCriteria webCriteria, DatasetMetadataExternalField updateFrequency);
+    void retrieveTemporalCodesForField(String datasetUrn);
 }

@@ -39,6 +39,8 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsAction;
@@ -113,7 +115,7 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
 
         void showUnauthorizedResourceWarningMessage();
 
-        void setTemporalCodesForField(GetTemporalGranularitiesListResult result, DatasetMetadataExternalField field);
+        void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result);
     }
 
     @Inject
@@ -422,12 +424,12 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
     }
 
     @Override
-    public void retrieveTemporalCodesForField(int firstResult, int maxResults, MetamacWebCriteria webCriteria, final DatasetMetadataExternalField field) {
-        dispatcher.execute(new GetTemporalGranularitiesListAction(firstResult, maxResults, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesListResult>(this) {
+    public void retrieveTemporalCodesForField(String datasetUrn) {
+        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(datasetUrn), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
 
             @Override
-            public void onWaitSuccess(GetTemporalGranularitiesListResult result) {
-                getView().setTemporalCodesForField(result, field);
+            public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
+                getView().setTemporalCodesForField(result);
             }
         });
     }
