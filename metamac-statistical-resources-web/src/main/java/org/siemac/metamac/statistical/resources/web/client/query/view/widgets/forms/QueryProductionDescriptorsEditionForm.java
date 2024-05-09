@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.base.checks.MetadataEditionChecks;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
@@ -36,6 +37,8 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.windows.searc
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDatasetVersionRelatedResourcePaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.web.common.client.model.ds.ExternalItemDS;
+import org.siemac.metamac.web.common.client.model.record.ExternalItemRecord;
+import org.siemac.metamac.web.common.client.utils.NavigationUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchAction;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
@@ -49,6 +52,7 @@ import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
@@ -61,6 +65,9 @@ import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.validator.CustomValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
+import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDynamicForm {
 
@@ -117,7 +124,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     }
 
     private SearchMultiExternalItem createTemporalGranularitiesItem(final String datasetUrn) {
-        SearchMultiExternalItem item = new SearchMultiExternalItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
+        SearchMultiExternalItem item = new SearchMultiExternalItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities()) {
 
             @Override
             public void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
@@ -125,6 +132,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             }
         }; 
         appendWindow(item, datasetUrn);
+        setRecordHandlerToListGrid(item);
         return item; 
     }
 
@@ -161,6 +169,42 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             }
         });
     }
+
+    private void setRecordHandlerToListGrid(final SearchMultiExternalItem item) {
+        item.getListGrid().addRecordClickHandler(new RecordClickHandler() {
+
+            @Override
+            public void onRecordClick(RecordClickEvent event) {
+                if (event.getFieldNum() == 3) {
+                    ListGridRecord[] records = item.getListGrid().getRecords();
+                    int i = event.getRecordNum();
+                    item.getListGrid().setRecords(removeListGridRecord(records, i));
+                    resetTimePeriods();
+                } else {
+                    Record record = event.getRecord();
+                    if (record != null && record instanceof ExternalItemRecord) {
+                        String url = ((ExternalItemRecord) record).getManagementAppUrl();
+                        if (!StringUtils.isBlank(url)) {
+                            NavigationUtils.goTo(url);
+                        }
+                    }
+                }
+            }
+        });       
+    }
+
+    private ListGridRecord[] removeListGridRecord(ListGridRecord[] listGridRecord, int i) {
+        ListGridRecord[] removeItemListGridRecord = new ListGridRecord[listGridRecord.length - 1];
+        for (int j = 0; j < listGridRecord.length; j++) {
+            if (j < i) {
+                removeItemListGridRecord[j] = listGridRecord[j];
+            } else if (j > i) {
+                removeItemListGridRecord[j - 1] = listGridRecord[j];
+            }
+        }
+        return removeItemListGridRecord;
+    }
+
     private void resetTimePeriods() {
         CodeItemListItem item = (CodeItemListItem) getItem(QueryDS.SELECTION + "_" + StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
         if (item != null) {
