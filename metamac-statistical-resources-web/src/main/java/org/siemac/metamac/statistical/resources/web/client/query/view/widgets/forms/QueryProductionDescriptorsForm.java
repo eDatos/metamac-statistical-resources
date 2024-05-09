@@ -65,11 +65,13 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
             for (String dimensionId : dimensionIds) {
                 if (!(isLatestData && isTemporalDimension(dimensionId))) {
+                    if (isTemporalDimension(dimensionId)) {
+                        ExternalItemListItem temporalGranularities = new ExternalItemListItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities(), false);
+                        fields.add(temporalGranularities);
+                    }
                     fields.add(createCodeListItemForDimension(dimensionId));
                 }
             }
-            ExternalItemListItem temporalGranularities = new ExternalItemListItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities(), false);
-            fields.add(temporalGranularities);
             if (isLatestData) {
                 ViewTextItem latestData = new ViewTextItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
                 fields.add(latestData);
