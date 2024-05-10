@@ -282,8 +282,8 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
     }
 
     @Override
-    public void retrieveDimensionCodesForDataset(String urn, final String dimensionId, MetamacWebCriteria webCriteria) {
-        dispatcher.execute(new GetDatasetDimensionCoverageAction(urn, dimensionId, webCriteria, null), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionCoverageResult>(this) {
+    public void retrieveDimensionCodesForDataset(String urn, final String dimensionId, MetamacWebCriteria webCriteria, List<String> temporalGranularities) {
+        dispatcher.execute(new GetDatasetDimensionCoverageAction(urn, dimensionId, webCriteria, temporalGranularities), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionCoverageResult>(this) {
 
             @Override
             public void onWaitSuccess(GetDatasetDimensionCoverageResult result) {

@@ -190,7 +190,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                     }
                 }
             }
-        });       
+        });
     }
 
     private ListGridRecord[] removeListGridRecord(ListGridRecord[] listGridRecord, int i) {
@@ -463,12 +463,12 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
                     @Override
                     public void retrieveResultSet(MetamacWebCriteria webCriteria) {
-                        uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, webCriteria);
+                        uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, webCriteria, temporalGranularitiesItem.getCodes());
                     }
                 });
                 dimensionCodeSelectionWindow.put(dimensionId, window);
 
-                uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, new MetamacWebCriteria());
+                uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, new MetamacWebCriteria(), temporalGranularitiesItem.getCodes());
 
                 CodeItemListItem item = (CodeItemListItem) getItem(buildSelectionItemId(dimensionId));
                 window.setSelectedResources(item.getCodeItemsDtos());
