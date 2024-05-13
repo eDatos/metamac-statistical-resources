@@ -1,14 +1,20 @@
 package org.siemac.metamac.statistical.resources.web.client.query.view.widgets.forms;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.getExternalItemsValue;
 import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.getRelatedResourceValue;
+import static org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils.setExternalItemsValue;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.base.checks.MetadataEditionChecks;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
@@ -17,6 +23,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
@@ -29,6 +36,9 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchMultipleCodeItemWindow;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDatasetVersionRelatedResourcePaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
+import org.siemac.metamac.web.common.client.model.ds.ExternalItemDS;
+import org.siemac.metamac.web.common.client.model.record.ExternalItemRecord;
+import org.siemac.metamac.web.common.client.utils.NavigationUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchAction;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
@@ -37,19 +47,27 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmItemLinkItemWithSchemeFilterItem;
+import org.siemac.metamac.web.common.client.widgets.windows.search.SearchMultipleExternalItemPaginatedWindow;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
 import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
+import com.smartgwt.client.data.Record;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
 import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
+import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.validator.CustomValidator;
+import com.smartgwt.client.widgets.grid.ListGrid;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
+import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDynamicForm {
 
@@ -65,6 +83,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     private Map<String, List<CodeItemDto>>                           dtoSelection;
 
     private QueryVersionDto                                          queryDto;
+    private SearchMultiExternalItem                                  temporalGranularitiesItem;
 
     public QueryProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
@@ -101,8 +120,112 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             }
         });
         fields.add(typeSelectorItem);
-
         return fields;
+    }
+
+    private SearchMultiExternalItem createTemporalGranularitiesItem(final String datasetUrn) {
+        SearchMultiExternalItem item = new SearchMultiExternalItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities()) {
+
+            @Override
+            public void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
+                uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+            }
+        }; 
+        appendWindow(item, datasetUrn);
+        setRecordHandlerToListGrid(item);
+        return item; 
+    }
+
+    private void appendWindow(final SearchMultiExternalItem item, final String datasetUrn) {
+        item.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+                item.setWindow(new SearchMultipleExternalItemPaginatedWindow(org.siemac.metamac.web.common.client.MetamacWebCommon.getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, new SearchPaginatedAction<MetamacWebCriteria>() {
+
+                    @Override
+                    public void retrieveResultSet(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
+                        uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+                    }
+
+                }));
+                Set<String> fieldNamesToShow = new HashSet<String>(Arrays.asList(ExternalItemDS.CODE, ExternalItemDS.TITLE, ExternalItemDS.URN));
+                showFields(item.getWindow().getPaginatedCheckListGrid(), fieldNamesToShow);
+                showFields(item.getWindow().getSelectionListGrid(), fieldNamesToShow);
+
+                item.getWindow().retrieveItems();
+
+                item.getWindow().setSelectedResources(item.getSelectedRelatedResources());
+
+                item.getWindow().setSaveAction(new ClickHandler() {
+
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        item.setExternalItems(item.getWindow().getSelectedResources());
+                        item.getWindow().markForDestroy();
+                        resetTimePeriods();
+                    }
+                });
+            }
+        });
+    }
+
+    private void setRecordHandlerToListGrid(final SearchMultiExternalItem item) {
+        item.getListGrid().addRecordClickHandler(new RecordClickHandler() {
+
+            @Override
+            public void onRecordClick(RecordClickEvent event) {
+                if (event.getFieldNum() == 3) {
+                    ListGridRecord[] records = item.getListGrid().getRecords();
+                    int i = event.getRecordNum();
+                    item.getListGrid().setRecords(removeListGridRecord(records, i));
+                    resetTimePeriods();
+                } else {
+                    Record record = event.getRecord();
+                    if (record != null && record instanceof ExternalItemRecord) {
+                        String url = ((ExternalItemRecord) record).getManagementAppUrl();
+                        if (!StringUtils.isBlank(url)) {
+                            NavigationUtils.goTo(url);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private ListGridRecord[] removeListGridRecord(ListGridRecord[] listGridRecord, int i) {
+        ListGridRecord[] removeItemListGridRecord = new ListGridRecord[listGridRecord.length - 1];
+        for (int j = 0; j < listGridRecord.length; j++) {
+            if (j < i) {
+                removeItemListGridRecord[j] = listGridRecord[j];
+            } else if (j > i) {
+                removeItemListGridRecord[j - 1] = listGridRecord[j];
+            }
+        }
+        return removeItemListGridRecord;
+    }
+
+    private void resetTimePeriods() {
+        CodeItemListItem item = (CodeItemListItem) getItem(QueryDS.SELECTION + "_" + StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
+        if (item != null) {
+            item.setCodeItems(new ArrayList<CodeItemDto>());
+            this.markForRedraw();
+        }
+    }
+
+    private void showFields(ListGrid listGrid, Set<String> fieldNamesToShow) {
+        List<ListGridField> fieldsToInclude = new ArrayList<ListGridField>(fieldNamesToShow.size());
+        for (ListGridField field : listGrid.getFields()) {
+            if (fieldNamesToShow.contains(field.getName())) {
+                fieldsToInclude.add(field);
+            }
+        }
+        listGrid.setFields(fieldsToInclude.toArray(new ListGridField[fieldsToInclude.size()]));
+    }
+
+    
+    public void setCodesForTemporalGranularities(List<ExternalItemDto> items, int firstResult, int totalResults) {
+        temporalGranularitiesItem.setResources(items, firstResult, totalResults);
     }
 
     public void setQueryDto(QueryVersionDto queryDto) {
@@ -149,7 +272,13 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             latestDataNumber = ((CustomIntegerItem) getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
         }
         queryDto.setLatestDataNumber(latestDataNumber);
+        setTemporalGranularities(queryDto);
         return queryDto;
+    }
+
+    private void setTemporalGranularities(QueryVersionDto queryDto) {
+        queryDto.getTemporalGranularities().clear();
+        queryDto.getTemporalGranularities().addAll(getExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY)));
     }
 
     @Override
@@ -269,7 +398,15 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
         for (String dimensionId : datasetDimensions) {
             CodeItemListItem item = createCodeListItemForDimension(datasetVersion.getUrn(), dimensionId, true);
-            fields.add(item);
+            
+            if (!dimensionId.equals("TIME_PERIOD")) {
+                fields.add(item);
+            } else {
+                temporalGranularitiesItem = createTemporalGranularitiesItem(queryDto.getRelatedDatasetVersion().getUrn());
+
+                fields.add(temporalGranularitiesItem);
+                fields.add(item);
+            }
             selectionFields.put(dimensionId, item);
         }
 
@@ -279,8 +416,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             latestData.setRequired(true);
             fields.add(latestData);
         }
-
         setFields(fields.toArray(new FormItem[fields.size()]));
+        setExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY), queryDto.getTemporalGranularities());
 
         getItem(QueryDS.TYPE).setValidators(new QueryTypeValidator(hasTemporalDimension));
 
@@ -326,12 +463,12 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
                     @Override
                     public void retrieveResultSet(MetamacWebCriteria webCriteria) {
-                        uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, webCriteria);
+                        uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, webCriteria, temporalGranularitiesItem.getCodes());
                     }
                 });
                 dimensionCodeSelectionWindow.put(dimensionId, window);
 
-                uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, new MetamacWebCriteria());
+                uiHandlers.retrieveDimensionCodesForDataset(datasetUrn, dimensionId, new MetamacWebCriteria(), temporalGranularitiesItem.getCodes());
 
                 CodeItemListItem item = (CodeItemListItem) getItem(buildSelectionItemId(dimensionId));
                 window.setSelectedResources(item.getCodeItemsDtos());
