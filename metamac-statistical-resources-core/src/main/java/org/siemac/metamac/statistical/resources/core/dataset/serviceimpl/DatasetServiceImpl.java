@@ -682,22 +682,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
 
-        PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements = geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
+        return geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
 
-        updateOperationTitleTerritoriesCache(cacheElements);
-
-        return cacheElements;
-    }
-
-    private void updateOperationTitleTerritoriesCache(PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements) throws MetamacException {
-        Map<String, InternationalString> operationTitles = statisticalOperationsRestInternalService.getOperationTitles(null);
-
-        for (GeoCovVarElementCacheDatasetVersion cacheElement : cacheElements.getValues()) {
-            InternationalString operationTitle = operationTitles.get(cacheElement.getOperationCode());
-            if (operationTitle != null) {
-                cacheElement.setOperationTitle(operationTitle);
-            }
-        }
     }
 
     @Override
