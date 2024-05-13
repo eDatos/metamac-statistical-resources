@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.client.query.view.widgets.forms;
 
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -34,13 +36,14 @@ import com.smartgwt.client.widgets.layout.HLayout;
 
 public abstract class SearchMultiExternalItem extends ExternalItemListItem {
 
+    private static final String DELETE_ICON = "deleteIcon";
     private SearchMultipleExternalItemPaginatedWindow window;
 
     public SearchMultiExternalItem(String name, String title) {
         super(name, title, true);
         setColumnsToShow(new HashSet<String>(Arrays.asList(ExternalItemDS.CODE, ExternalItemDS.TITLE, ExternalItemDS.URN)));
         ListGridField[] gridFields = listGrid.getAllFields();
-        ListGridField deleteField = new ListGridField("deleteIcon", "Eliminar");
+        ListGridField deleteField = new ListGridField(DELETE_ICON, getConstants().delete());
         deleteField.setType(ListGridFieldType.ICON);
         deleteField.setCellFormatter(new com.smartgwt.client.widgets.grid.CellFormatter() {
 

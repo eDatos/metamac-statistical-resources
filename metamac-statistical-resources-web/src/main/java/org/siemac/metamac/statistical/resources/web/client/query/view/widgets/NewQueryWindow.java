@@ -283,7 +283,7 @@ public class NewQueryWindow extends CustomWindow {
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
-                item.setWindow(new SearchMultipleExternalItemPaginatedWindow("pepito", StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, new SearchPaginatedAction<MetamacWebCriteria>() {
+                item.setWindow(new SearchMultipleExternalItemPaginatedWindow(org.siemac.metamac.web.common.client.MetamacWebCommon.getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, new SearchPaginatedAction<MetamacWebCriteria>() {
 
                     @Override
                     public void retrieveResultSet(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
