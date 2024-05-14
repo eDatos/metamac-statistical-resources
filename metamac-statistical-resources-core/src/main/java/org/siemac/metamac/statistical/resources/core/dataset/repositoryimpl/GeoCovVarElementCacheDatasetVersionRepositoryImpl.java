@@ -74,6 +74,26 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVar
         return query.getResultList();
     }
 
+    public void removeOperationTitlesUsed(Set<String> internationalStringsOperationTitles) {
+
+        if (internationalStringsOperationTitles.isEmpty()) {
+            return;
+        }
+
+        String sqlInValues = "(" + String.join(", ", internationalStringsOperationTitles) + ")";
+        //@formatter:off
+          Query query = getEntityManager().createNativeQuery(
+                  "SELECT distinct(operation_title_fk) "
+                + "FROM tb_geocov_varelem_cache_datasets_versions a "
+                + "WHERE  a.operation_title_fk IN " + sqlInValues + " AND a.is_activated = true");
+          //@formatter:on
+        List<Object> operationsUsed = query.getResultList();
+
+        for (Object operation : operationsUsed) {
+            internationalStringsOperationTitles.remove(getStringFromBigInteger((BigInteger) operation));
+        }
+    }
+
     private String getStringFromBigInteger(BigInteger id) {
         return id.toString();
     }
@@ -83,6 +103,7 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVar
         Set<String> geoCovVarElementCacheDatasetVersionId = new HashSet<>();
         Set<String> variableElementId = new HashSet<>();
         Set<String> internationalStrings = new HashSet<>();
+        Set<String> internationalStringsOperationTitles = new HashSet<>();
 
         List<Object> disabledElements = findNoActivatedElements();
 
@@ -98,11 +119,13 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVar
 
             // Only it is necessary the title when the dataset comes from jaxi publication. In other cases title is retrieved from statistical operation ad-hoc to have the last updated title.
             if (cols[3] != null) {
-                internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
+                internationalStringsOperationTitles.add(getStringFromBigInteger((BigInteger) cols[3]));
             }
 
             internationalStrings.add(getStringFromBigInteger((BigInteger) cols[4]));
         }
+
+        removeOperationTitlesUsed(internationalStringsOperationTitles);
 
         Session session = (Session) getEntityManager().getDelegate();
         try {
@@ -118,6 +141,12 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVar
                     executeSqlSentenceWithIn(connection, "DELETE FROM TB_LOCALISED_STRINGS WHERE international_string_fk IN ", internationalStrings, "TB_LOCALISED_STRINGS");
 
                     executeSqlSentenceWithIn(connection, "DELETE FROM TB_INTERNATIONAL_STRINGS WHERE id IN ", internationalStrings, "TB_INTERNATIONAL_STRINGS");
+
+                    // For compatibility with an old development, It is necessary to ckech if operation_title may be being used by other activated cache entries.
+                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_LOCALISED_STRINGS a WHERE international_string_fk IN ", internationalStringsOperationTitles,
+                            "TB_LOCALISED_STRINGS->OPERATION_TITLE");
+
+                    executeSqlSentenceWithIn(connection, "DELETE FROM TB_INTERNATIONAL_STRINGS a WHERE id IN ", internationalStringsOperationTitles, "TB_INTERNATIONAL_STRINGS->OPERATION_TITLE");
                 }
             });
         } catch (Exception e) {
@@ -128,13 +157,13 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVar
 
     private void executeSqlSentenceWithIn(Connection connection, String sqlSentence, Set<String> parametersIn, String tableAudit) throws SQLException {
         logger.info("Execution start - delete  <" + tableAudit + "> all disabled entries from geographic coverage cache at : {} ", new DateTime());
-
         Set<String> partialParametersIn = new HashSet<>();
 
         for (String parameterIn : parametersIn) {
             partialParametersIn.add(parameterIn);
             if (partialParametersIn.size() > MAX_SIZE_IN_CLAUSE) {
                 executeSqlStatement(connection, fillSqlSentenceWithIn(sqlSentence, partialParametersIn));
+
                 partialParametersIn.clear();
             }
         }
@@ -162,4 +191,5 @@ public class GeoCovVarElementCacheDatasetVersionRepositoryImpl extends GeoCovVar
     private String fillSqlSentenceWithIn(String sqlSentence, Set<String> partialParametersIn) {
         return sqlSentence + "(" + String.join(", ", partialParametersIn) + ")";
     }
+
 }
