@@ -3,11 +3,17 @@ package org.siemac.metamac.statistical.resources.core.dataset.serviceimpl;
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCollection;
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
-
+import sun.security.action.GetPropertyAction;
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2281,6 +2287,25 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
                     getCategorisationRepository().save(categorisation);
                 }
+            }
+        }
+    }
+
+    @Override
+    public void deleteTemporalFile(ServiceContext ctx, String temporalFile) throws MetamacException {
+        FileSystem fileSystem = FileSystems.getDefault();
+        File tmpdir = new File(AccessController.doPrivileged(new GetPropertyAction("java.io.tmpdir")));
+        Path path = fileSystem.getPath(tmpdir.getPath() + "/" + temporalFile);
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            try {
+                Thread.sleep(5000);
+                Files.delete(path);
+            } catch (InterruptedException | IOException ex) {
+                log.error("Could not delete temporal file: " + temporalFile);
+                log.error(ex.getMessage(), ex);
+                Thread.currentThread().interrupt();
             }
         }
     }

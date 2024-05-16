@@ -709,19 +709,6 @@ public class CommonUtils {
         Window.open(url.toString(), "_blank", "");
     }
 
-    // TODO
-    /*private void deleteTemporalFile(String fileName) {
-        dispatcher.execute(new DeleteTemporalFileAction(fileName), new WaitingAsyncCallbackHandlingError<DeleteTemporalFileResult>(this) {
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                ShowMessageEvent.fireErrorMessage(IndicatorListPresenter.this, caught);
-            }
-            @Override
-            public void onWaitSuccess(DeleteTemporalFileResult result) {
-            }
-        });
-    }*/
-
     public static Integer getMaxNumberOfUpdatedDatasetInGroup() {
         return maxNumberOfUpdatedDatasetInGroup;
     }

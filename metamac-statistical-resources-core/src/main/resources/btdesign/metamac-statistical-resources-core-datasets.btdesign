@@ -70,7 +70,8 @@ Application DatasetsStatisticalResources {
     		importAttributesFromFile(String datasetVersionUrn, List<URL> fileUrls) throws MetamacException;
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
-    		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException; 
+    		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
+    		deleteTemporalFile(String temporalFile) throws MetamacException; 
 
     		// Datasets
     		"Finds datasets by criteria"

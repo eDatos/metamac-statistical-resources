@@ -27,6 +27,8 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasou
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteTemporalFileAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteTemporalFileResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
@@ -282,6 +284,20 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
             @Override
             public void onWaitSuccess(ExportDatasourcesResult result) {
                 CommonUtils.downloadFile(result.getFileName());
+                deleteTemporalFile(result.getFileName());
+            }
+        });
+    }
+
+    private void deleteTemporalFile(String fileName) {
+        dispatcher.execute(new DeleteTemporalFileAction(fileName), new WaitingAsyncCallbackHandlingError<DeleteTemporalFileResult>(this) {
+       
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                ShowMessageEvent.fireErrorMessage(DatasetDatasourcesTabPresenter.this, caught);
+            }
+            @Override
+            public void onWaitSuccess(DeleteTemporalFileResult result) {
             }
         });
     }

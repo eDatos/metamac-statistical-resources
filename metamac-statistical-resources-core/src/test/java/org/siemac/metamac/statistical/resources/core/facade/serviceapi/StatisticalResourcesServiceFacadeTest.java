@@ -4286,4 +4286,9 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void testDeleteTemporalFile() throws Exception {
+
+    }
 }

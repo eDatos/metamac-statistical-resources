@@ -2616,4 +2616,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
 
     }
+
+    @Override
+    public void deleteTemporalFile(ServiceContext ctx, String temporalFile) throws MetamacException {
+
+    }
 }
