@@ -34,7 +34,7 @@ public class DeleteTemporalFileActionHandler extends SecurityActionHandler<Delet
     public DeleteTemporalFileResult executeSecurityAction(DeleteTemporalFileAction action) throws ActionException {
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         try {
-            //indicatorsServiceFacade.deleteTemporalFile(ServiceContextHolder.getCurrentServiceContext(), action.getTemporalFile());
+            statisticalResourcesServiceFacade.deleteTemporalFile(null, action.getTemporalFile());
         } catch (MetamacException e) {
             exceptionItems.addAll(e.getExceptionItems());
         }

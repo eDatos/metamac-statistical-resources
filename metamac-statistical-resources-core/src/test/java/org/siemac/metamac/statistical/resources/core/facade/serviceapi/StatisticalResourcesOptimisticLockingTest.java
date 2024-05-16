@@ -2043,4 +2043,9 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         
     }
 
+    @Override
+    public void testDeleteTemporalFile() throws Exception {
+        
+    }
+
 }
