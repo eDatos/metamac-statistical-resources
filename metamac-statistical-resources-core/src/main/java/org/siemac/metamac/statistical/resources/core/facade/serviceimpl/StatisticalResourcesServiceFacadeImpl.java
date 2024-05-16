@@ -2619,6 +2619,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public void deleteTemporalFile(ServiceContext ctx, String temporalFile) throws MetamacException {
-
+        getDatasetService().deleteTemporalFile(ctx, temporalFile);
     }
 }
