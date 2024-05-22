@@ -1786,7 +1786,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         // Callback
         getDatasetService().proccessDatasetFileImportationResult(ctx, taskInfoDataset.getDatasetVersionId(), filesResult);
-        publishConstraints(ctx, taskInfoDataset.getDatasetVersionId(), calculateConstraints);
     }
 
     private String generateDataSourceId(ServiceContext serviceContext, String fileName, DateTime dateTime) {

@@ -270,8 +270,8 @@ public class DatasetConstraintsTabPresenter extends Presenter<DatasetConstraints
     }
 
     @Override
-    public void saveRegion(String contentConstraintUrn, RegionValueDto regionToSave, final DsdDimensionDto selectedDimension) {
-        dispatcher.execute(new SaveRegionAction(contentConstraintUrn, regionToSave), new WaitingAsyncCallbackHandlingError<SaveRegionResult>(this) {
+    public void saveRegion(String contentConstraintUrn, RegionValueDto regionToSave, final DsdDimensionDto selectedDimension, final String datasetUrn) {
+        dispatcher.execute(new SaveRegionAction(contentConstraintUrn, regionToSave, selectedDimension, datasetUrn), new WaitingAsyncCallbackHandlingError<SaveRegionResult>(this) {
 
             @Override
             public void onWaitSuccess(SaveRegionResult result) {
@@ -279,6 +279,15 @@ public class DatasetConstraintsTabPresenter extends Presenter<DatasetConstraints
                 getView().setConstraint(datasetVersionDto, contentConstraintDto, result.getSavedRegion());
                 getView().updateDimensionsList(result.getSavedRegion());
                 getView().showDimensionConstraints(selectedDimension);
+            }
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                if (CommonErrorUtils.isOperationNotAllowedException(caught)) {
+                    ShowUnauthorizedDatasetWarningMessageEvent.fire(DatasetConstraintsTabPresenter.this, selectedDimension.getDimensionId());
+                } else {
+                    super.onWaitFailure(caught);
+                }
             }
         });
     }
