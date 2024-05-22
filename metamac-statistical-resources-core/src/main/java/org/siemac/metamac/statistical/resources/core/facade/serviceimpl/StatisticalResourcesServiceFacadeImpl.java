@@ -2032,13 +2032,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         ConstraintsSecurityUtils.canCreateContentConstraint(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode(),
                 datasetVersion.getLifeCycleStatisticalResource().getProcStatus());
 
-        // Check that there isn't data sources
-        if (!datasetVersion.getDatasources().isEmpty()) {
-            throw MetamacExceptionBuilder.builder()
-                    .withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINTS_CREATE_DATASET_WITH_DATASOURCES, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()))
-                    .build();
-        }
-
         // Transform
         ContentConstraint contentConstraint = constraintDto2RestMapper.constraintDtoTo(contentConstraintDto);
 
