@@ -341,9 +341,9 @@ public class QueryListPresenter extends LifeCycleBaseListPresenter<QueryListPres
     }
 
     @Override
-    public void retrieveTemporalCodesForField(final String datasetUrn) {
+    public void retrieveTemporalCodesForField(int firstResult, int maxResults, final String datasetUrn, MetamacWebCriteria webCriteria) {
         
-        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(datasetUrn), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
+        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(firstResult, maxResults, datasetUrn, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
 
             @Override
             public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {

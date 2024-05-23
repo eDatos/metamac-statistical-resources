@@ -833,31 +833,19 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public List<ExternalItemDto> retrieveExternalItemsByDatasetUrn(ServiceContext ctx, String urn) throws MetamacException {
+    public List<ExternalItemDto> retrieveExternalItemsByDatasetUrn(ServiceContext ctx, String urn, List<ExternalItemDto> externalItemDtos) throws MetamacException {
         String temporalGranularityCodelistUrn = configurationService.retrieveDefaultCodelistTemporalGranularityUrn();
         List<ExternalItemDto> externalItemsDto = new ArrayList<>();
         if (!StringUtils.isEmpty(temporalGranularityCodelistUrn)) {
-            Codes codes = srmRestInternalService.findCodes(temporalGranularityCodelistUrn, 0, null, "");
-
-            List<ExternalItemDto> codesExternalItems = new ArrayList<>();
-            for (ResourceInternal resource : codes.getCodes()) {
-                codesExternalItems.add(buildExternalItemDtoFromResource(resource, TypeExternalArtefactsEnum.CODE));
-            }
             List<CodeItemDto> codeItemsDto = filterCoverageForDatasetVersionDimension(ctx, urn, "TIME_PERIOD", null, null);
             List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = getTemporalGranularities(codeItemsDto);
-            for (ExternalItemDto externalItemDto : codesExternalItems) {
+            for (ExternalItemDto externalItemDto : externalItemDtos) {
                 if (checkGranularityInList(istacTimeGranularityCodesEnum, externalItemDto)) {
                     externalItemsDto.add(externalItemDto);
                 }
             }
         }
         return externalItemsDto;
-    }
-
-    private ExternalItemDto buildExternalItemDtoFromResource(ResourceInternal resource, TypeExternalArtefactsEnum type) {
-        ExternalItemDto externalItemDto = new ExternalItemDto();
-        buildExternalItemDtoFromResource(externalItemDto, resource, type);
-        return externalItemDto;
     }
 
     private void buildExternalItemDtoFromResource(ExternalItemDto externalItemDto, ResourceInternal resource, TypeExternalArtefactsEnum type) {

@@ -124,11 +124,11 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     }
 
     private SearchMultiExternalItem createTemporalGranularitiesItem(final String datasetUrn) {
-        SearchMultiExternalItem item = new SearchMultiExternalItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities()) {
+        SearchMultiExternalItem item = new SearchMultiExternalItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularitiesCapitalLetter()) {
 
             @Override
             public void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
-                uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+                uiHandlers.retrieveTemporalCodesForField(firstResult, maxResults, datasetUrn, webCriteria);
             }
         }; 
         appendWindow(item, datasetUrn);
@@ -141,11 +141,11 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
-                item.setWindow(new SearchMultipleExternalItemPaginatedWindow(org.siemac.metamac.web.common.client.MetamacWebCommon.getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, new SearchPaginatedAction<MetamacWebCriteria>() {
+                item.setWindow(new SearchMultipleExternalItemPaginatedWindow(StatisticalResourcesWeb.getConstants().codeSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, new SearchPaginatedAction<MetamacWebCriteria>() {
 
                     @Override
                     public void retrieveResultSet(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
-                        uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+                        uiHandlers.retrieveTemporalCodesForField(firstResult, maxResults, datasetUrn, webCriteria);
                     }
 
                 }));
@@ -417,7 +417,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             fields.add(latestData);
         }
         setFields(fields.toArray(new FormItem[fields.size()]));
-        setExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY), queryDto.getTemporalGranularities());
+        FormItem formItem = getItem(DatasetDS.TEMPORAL_GRANULARITY);
+        if (formItem != null) {
+            setExternalItemsValue(formItem, queryDto.getTemporalGranularities());
+        }
 
         getItem(QueryDS.TYPE).setValidators(new QueryTypeValidator(hasTemporalDimension));
 
