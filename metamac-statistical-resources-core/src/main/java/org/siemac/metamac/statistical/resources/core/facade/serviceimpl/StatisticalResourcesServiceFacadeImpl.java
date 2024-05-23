@@ -870,45 +870,17 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public List<ExternalItemDto> retrieveExternalItemsByDatasetUrn(ServiceContext ctx, String urn, List<ExternalItemDto> externalItemDtos) throws MetamacException {
-        String temporalGranularityCodelistUrn = configurationService.retrieveDefaultCodelistTemporalGranularityUrn();
         List<ExternalItemDto> externalItemsDto = new ArrayList<>();
-        if (!StringUtils.isEmpty(temporalGranularityCodelistUrn)) {
-            List<CodeItemDto> codeItemsDto = filterCoverageForDatasetVersionDimension(ctx, urn, "TIME_PERIOD", null, null);
-            List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = getTemporalGranularities(codeItemsDto);
-            for (ExternalItemDto externalItemDto : externalItemDtos) {
-                if (checkGranularityInList(istacTimeGranularityCodesEnum, externalItemDto)) {
-                    externalItemsDto.add(externalItemDto);
-                }
+        List<CodeItemDto> codeItemsDto = filterCoverageForDatasetVersionDimension(ctx, urn, "TIME_PERIOD", null, null);
+        List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = getTemporalGranularities(codeItemsDto);
+        for (ExternalItemDto externalItemDto : externalItemDtos) {
+            if (checkGranularityInList(istacTimeGranularityCodesEnum, externalItemDto)) {
+                externalItemsDto.add(externalItemDto);
             }
         }
         return externalItemsDto;
     }
 
-    private void buildExternalItemDtoFromResource(ExternalItemDto externalItemDto, ResourceInternal resource, TypeExternalArtefactsEnum type) {
-        externalItemDto.setCode(resource.getId());
-        externalItemDto.setCodeNested(resource.getNestedId());
-        externalItemDto.setUri(resource.getSelfLink().getHref());
-        externalItemDto.setUrn(resource.getUrn());
-        externalItemDto.setUrnProvider(resource.getUrnProvider());
-        externalItemDto.setType(type);
-        externalItemDto.setTitle(getInternationalStringDtoFromInternationalString(resource.getName()));
-        externalItemDto.setManagementAppUrl(resource.getManagementAppLink());
-    }
-
-    private InternationalStringDto getInternationalStringDtoFromInternationalString(InternationalString internationalString) {
-        if (internationalString != null) {
-            InternationalStringDto internationalStringDto = new InternationalStringDto();
-            List<LocalisedString> localisedStringList = internationalString.getTexts();
-            for (LocalisedString localisedString : localisedStringList) {
-                LocalisedStringDto localisedStringDto = new LocalisedStringDto();
-                localisedStringDto.setLocale(localisedString.getLang());
-                localisedStringDto.setLabel(localisedString.getValue());
-                internationalStringDto.addText(localisedStringDto);
-            }
-            return internationalStringDto;
-        }
-        return null;
-    }
     private Boolean checkGranularityInList(List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum, ExternalItemDto externalItemDto) {
         for (IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum : istacTimeGranularityCodesEnum) {
             if (istacTimeGranularityCodeEnum.getLabel().equals(externalItemDto.getCode())) {
@@ -917,6 +889,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         }
         return false;
     }
+
     private List<IstacTimeGranularityCodeEnum> getTemporalGranularities(List<CodeItemDto> codes) throws MetamacException {
         List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = new ArrayList<>();
         for (CodeItemDto codeItem : codes) {
@@ -927,6 +900,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         }
         return istacTimeGranularityCodesEnum;
     }
+
     @Override
     public List<DatasetVersionBaseDto> retrieveDatasetVersions(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
         // Security
