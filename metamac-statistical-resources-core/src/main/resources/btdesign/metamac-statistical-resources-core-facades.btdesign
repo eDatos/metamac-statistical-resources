@@ -96,6 +96,8 @@ Application FacadeStatisticalResources {
 	    	List<@DatasourceDto> retrieveDatasourcesByDatasetVersion(String urnDatasetVersion) throws MetamacException;
 	    	"Retrieves the dimension representation mapping of the datasetVersion for the filename specified"
 	    	@DimensionRepresentationMappingDto retrieveDimensionRepresentationMappings(String datasetVersionUrn, String filename) throws MetamacException;
+	    	"Export datasources"
+	    	String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
 
 	    	// DATASETS 
 	   		"Find all datasets"
@@ -165,7 +167,8 @@ Application FacadeStatisticalResources {
     		deleteAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
     		"Retrieve attribute instances given the dataset version URN and the attribute Id"
     		List<@DsdAttributeInstanceDto> retrieveAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
-
+            "Delete temporal file"
+	    	deleteTemporalFile(String temporalFile) throws MetamacException;
     		// Other actions
     		void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;

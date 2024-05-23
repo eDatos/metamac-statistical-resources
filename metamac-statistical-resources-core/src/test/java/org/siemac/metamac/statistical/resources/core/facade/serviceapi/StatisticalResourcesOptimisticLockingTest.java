@@ -574,6 +574,11 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
     }
 
+    @Override
+    public void testExportDatasourcesTsv() throws Exception {
+        // TODO
+    }
+
     // ------------------------------------------------------------
     // PUBLICATION
     // ------------------------------------------------------------
@@ -2035,6 +2040,11 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     @Override
     public void testRetrieveExternalItemsByDatasetUrn() throws Exception {
         // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void testDeleteTemporalFile() throws Exception {
         
     }
 

@@ -423,4 +423,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkParameterRequired(agencyId, ServiceExceptionParameters.DATASET_VERSION__MAINTAINER__ID, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.DATASET_VERSION__CODE, exceptions);
     }
+
+    public static void checkDeleteTemporalFile(String temporalFile, List<MetamacExceptionItem> exceptions) {
+
+    }
 }
