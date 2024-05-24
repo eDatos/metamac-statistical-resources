@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -36,12 +35,9 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
@@ -103,7 +99,6 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestI
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
-import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -151,6 +146,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -2100,61 +2096,27 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     private void checkObservationsWithContentConstraint(ServiceContext ctx, String datasetUrn, RegionReference regionReference, DsdDimensionDto selectedDimension) throws MetamacException {
+        List<CodeDimensionDto> observationValuesByDimensionId = new ArrayList<>();
         List<MetamacExceptionItem> exceptions = new LinkedList<>();
-        Map<String, CodeHierarchy> codeHierarchyMap = getCodeHierarchyMap(ctx, selectedDimension);
-        Map<String, ObservationExtendedDto> observations = null;
+        Map<String, CodeHierarchy> codeHierarchyMap = ConstraintsValidator.getCodeHierarchyMap(srmRestInternalService, selectedDimension);
         try {
-            observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetUrn, null);
 
-            if (observations == null || observations.keySet().isEmpty()) {
+            observationValuesByDimensionId = datasetRepositoriesServiceFacade.findObservationsValuesByDimensionId(datasetUrn, selectedDimension.getDimensionId());
+
+            if (observationValuesByDimensionId == null || observationValuesByDimensionId.isEmpty()) {
                 return;
             }
 
-            for (Map.Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
-                checkObservationContentConstraints(datasetUrn, entry.getValue(), regionReference, codeHierarchyMap, exceptions);
+            Key keysByDimensionId = ConstraintsValidator.getConstraintKeysByDimensionId(regionReference, selectedDimension.getDimensionId());
+            if (keysByDimensionId != null) {
+                ConstraintsValidator.checkObservationContentConstraints(observationValuesByDimensionId, keysByDimensionId, codeHierarchyMap, exceptions);
             }
+
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.CONSTRAINTS_UPDATE_CHECK_EXISTING_OBSERVATIONS, datasetUrn);
         }
 
         ExceptionUtils.throwIfException(exceptions);
-    }
-
-    private void checkObservationContentConstraints(String datasetUrn, ObservationExtendedDto overExtendedDto, RegionReference regionReference, Map<String, CodeHierarchy> codeHierarchyMap,
-            List<MetamacExceptionItem> exceptions) throws MetamacException {
-
-        if (regionReference.getKeys() != null) {
-            List<Key> keies = regionReference.getKeys().getKeies();
-
-            if (!ConstraintsValidator.checkObservationAgaintsConstraintsKey(overExtendedDto, keies, codeHierarchyMap)) {
-                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_OBSERVATION_MANDATORY_CONTENT_CONSTRAINT_FAIL,
-                        ManipulateDataUtils.toStringUnorderedKeyForObservation(overExtendedDto.getCodesDimension()), datasetUrn));
-            }
-        }
-    }
-
-    private Map<String, CodeHierarchy> getCodeHierarchyMap(ServiceContext ctx, DsdDimensionDto selectedDimension) throws MetamacException {
-        String codelistRepresentationUrn = selectedDimension.getCodelistRepresentationUrn();
-
-        Map<String, CodeHierarchy> codeHierarchyMap = new HashMap<>();
-        if (codelistRepresentationUrn != null) {
-
-            Codes codes = null;
-
-            codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(codelistRepresentationUrn);
-            for (CodeResourceInternal codeType : codes.getCodes()) {
-                ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content constraints validate
-            }
-        }
-        String conceptSchemeRepresentationUrn = selectedDimension.getConceptSchemeRepresentationUrn();
-        if (conceptSchemeRepresentationUrn != null) {
-            Concepts concepts = srmRestInternalService.retrieveConceptsOfConceptSchemeEfficiently(conceptSchemeRepresentationUrn);
-
-            for (ItemResourceInternal conceptType : concepts.getConcepts()) {
-                ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content constraints validate
-            }
-        }
-        return codeHierarchyMap;
     }
 
     @Override

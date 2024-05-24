@@ -200,6 +200,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.constraints.update.datasources_no_empty");
     public static final CommonServiceExceptionType CONSTRAINTS_UPDATE_CHECK_EXISTING_OBSERVATIONS                                              = create(
             "exception.resources.constraints.update.check_existing_observations");
+    public static final CommonServiceExceptionType CONSTRAINT_UPDATE_CHECK_EXISTING_OBSERVATIONS_FAIL                                          = create(
+            "exception.resources.constraints.update.check_existing_observations_fail");
 
     // Identifiable Statistical Resource
     public static final CommonServiceExceptionType IDENTIFIABLE_STATISTICAL_RESOURCE_NOT_FOUND                                                 = create(
