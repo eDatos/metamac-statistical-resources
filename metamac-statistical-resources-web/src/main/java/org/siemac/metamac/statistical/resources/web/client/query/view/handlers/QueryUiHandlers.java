@@ -39,5 +39,5 @@ public interface QueryUiHandlers extends BaseUiHandlers {
     void version(QueryVersionDto queryVersionDto, VersionTypeEnum versionType);
     void resendStreamMessage(QueryVersionDto queryVersionDto);
     // Time codes
-    void retrieveTemporalCodesForField(String datasetUrn);
+    void retrieveTemporalCodesForField(int firstResult, int maxResults, String datasetUrn, MetamacWebCriteria webCriteria);
 }

@@ -421,8 +421,8 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
     }
 
     @Override
-    public void retrieveTemporalCodesForField(String datasetUrn) {
-        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(datasetUrn), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
+    public void retrieveTemporalCodesForField(int firstResult, int maxResults, String datasetUrn, MetamacWebCriteria webCriteria) {
+        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(firstResult, maxResults, datasetUrn, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
 
             @Override
             public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
