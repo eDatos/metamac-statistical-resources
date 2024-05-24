@@ -75,12 +75,14 @@ public class ImportAttributesJob implements Job {
         metamacPrincipal.getAccesses().add(new MetamacPrincipalAccess(StatisticalResourcesRoleEnum.ADMINISTRADOR.getName(), StatisticalResourcesConstants.APPLICATION_ID, null));
         serviceContext.setProperty(SsoClientConstants.PRINCIPAL_ATTRIBUTE, metamacPrincipal);
         try {
+            logger.info("JobExecutionContext: " + jobKey + " starting at " + new Date());
             TaskInfoDataset taskInfoDataset = new TaskInfoDataset();
             taskInfoDataset.getFiles().addAll(inflateFileDescriptors(filePaths, fileNames, fileFormats));
             taskInfoDataset.setDatasetUrn(datasetUrn);
             taskInfoDataset.setDatasetVersionId(datasetVersionId);
             taskInfoDataset.setDataStructureUrn(dataStructureUrn);
             executeImportTask(serviceContext, datasetVersionId, taskInfoDataset, taskName);
+            logger.info("JobExecutionContext: " + jobKey + " finished at " + new Date());
             sendSuccessNotification(fileNames, user);
         } catch (UnsupportedEncodingException e) {
             logger.error("The importation with key {} has failed due to an unsupported encoding", jobKey.getName(), e);
