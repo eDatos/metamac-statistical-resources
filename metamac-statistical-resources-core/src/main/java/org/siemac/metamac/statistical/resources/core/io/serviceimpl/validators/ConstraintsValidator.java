@@ -79,7 +79,7 @@ public class ConstraintsValidator {
         }
 
         // Update validation result against isIncluded flag
-        return constraintKey.isIncluded() && match;
+        return constraintKey.isIncluded() ? match : !match;
 
     }
 
