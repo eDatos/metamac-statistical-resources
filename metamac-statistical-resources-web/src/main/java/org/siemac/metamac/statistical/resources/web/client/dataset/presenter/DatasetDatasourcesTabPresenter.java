@@ -296,6 +296,7 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
             public void onWaitFailure(Throwable caught) {
                 ShowMessageEvent.fireErrorMessage(DatasetDatasourcesTabPresenter.this, caught);
             }
+
             @Override
             public void onWaitSuccess(DeleteTemporalFileResult result) {
             }
