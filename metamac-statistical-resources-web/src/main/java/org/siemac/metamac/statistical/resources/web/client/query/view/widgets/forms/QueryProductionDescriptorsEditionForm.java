@@ -278,7 +278,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
     private void setTemporalGranularities(QueryVersionDto queryDto) {
         queryDto.getTemporalGranularities().clear();
-        queryDto.getTemporalGranularities().addAll(getExternalItemsValue(getItem(DatasetDS.TEMPORAL_GRANULARITY)));
+        FormItem item = getItem(DatasetDS.TEMPORAL_GRANULARITY);
+        if (item != null) {
+            queryDto.getTemporalGranularities().addAll(getExternalItemsValue(item));
+        }
     }
 
     @Override
