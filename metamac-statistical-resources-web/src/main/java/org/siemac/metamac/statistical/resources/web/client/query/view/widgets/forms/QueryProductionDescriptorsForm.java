@@ -66,7 +66,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
             for (String dimensionId : dimensionIds) {
                 if (!(isLatestData && isTemporalDimension(dimensionId))) {
                     if (isTemporalDimension(dimensionId)) {
-                        ExternalItemListItem temporalGranularities = new ExternalItemListItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities(), false);
+                        ExternalItemListItem temporalGranularities = new ExternalItemListItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularitiesCapitalLetter(), false);
                         fields.add(temporalGranularities);
                     }
                     fields.add(createCodeListItemForDimension(dimensionId));

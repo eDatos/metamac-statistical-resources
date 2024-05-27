@@ -322,6 +322,23 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
     }
 
     @Override
+    public ExternalItemsResult findCodesInCodelist(String codelistUrn, Integer firstResult, Integer maxResult, MetamacWebCriteria criteria) throws MetamacWebException {
+        try {
+            String query = buildQueryCode(criteria);
+
+            Codes codes = srmRestInternalService.findCodes(codelistUrn, firstResult, maxResult, query);
+
+            List<ExternalItemDto> codesExternalItems = new ArrayList<ExternalItemDto>();
+            for (ResourceInternal resource : codes.getCodes()) {
+                codesExternalItems.add(ExternalItemWebUtils.buildExternalItemDtoFromResource(resource, TypeExternalArtefactsEnum.CODE));
+            }
+            return ExternalItemWebUtils.createExternalItemsResultFromListBase(codes, codesExternalItems);
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
+
+    @Override
     public ExternalItemDto retrieveCodeByUrn(String urn) throws MetamacWebException {
         try {
             Code code = srmRestInternalService.retrieveCodeByUrn(urn);

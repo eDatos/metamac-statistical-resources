@@ -36,6 +36,7 @@ public interface SrmRestInternalFacade {
     // CODES
 
     public ExternalItemsResult findCodesInCodelist(String codelistUrn, int firstResult, int maxResult, MetamacWebCriteria condition) throws MetamacWebException;
+    public ExternalItemsResult findCodesInCodelist(String codelistUrn, Integer firstResult, Integer maxResult, MetamacWebCriteria criteria) throws MetamacWebException;
     public ExternalItemsResult findCodes(int firstResult, int maxResult, SrmItemRestCriteria condition) throws MetamacWebException;
     public ExternalItemDto retrieveCodeByUrn(String urn) throws MetamacWebException;
     public List<ItemDto> retrieveCodes(String codelistUrn, String codeRestriction) throws MetamacWebException;

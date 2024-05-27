@@ -44,7 +44,6 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerIte
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.RequiredTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
-import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchMultiExternalItemSimpleItem;
 import org.siemac.metamac.web.common.client.widgets.windows.search.SearchMultipleExternalItemPaginatedWindow;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
@@ -267,11 +266,11 @@ public class NewQueryWindow extends CustomWindow {
     }
 
     private void createTemporalGranularitiesItem(final String datasetUrn) {
-        searchTemporalGranularitiesWindow = new SearchMultiExternalItem(QueryDS.TYPE_GRANULARITIES, getConstants().datasetTemporalGranularities()) {
+        searchTemporalGranularitiesWindow = new SearchMultiExternalItem(QueryDS.TYPE_GRANULARITIES, getConstants().datasetTemporalGranularitiesCapitalLetter()) {
 
             @Override
             public void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
-                uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+                uiHandlers.retrieveTemporalCodesForField(firstResult, maxResults, datasetUrn, webCriteria);
             }
         };
         appendWindow(searchTemporalGranularitiesWindow, datasetUrn);
@@ -283,11 +282,11 @@ public class NewQueryWindow extends CustomWindow {
 
             @Override
             public void onFormItemClick(FormItemIconClickEvent event) {
-                item.setWindow(new SearchMultipleExternalItemPaginatedWindow(org.siemac.metamac.web.common.client.MetamacWebCommon.getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, new SearchPaginatedAction<MetamacWebCriteria>() {
+                item.setWindow(new SearchMultipleExternalItemPaginatedWindow(getConstants().datasetTemporalGranularitiesCapitalLetter(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, new SearchPaginatedAction<MetamacWebCriteria>() {
 
                     @Override
                     public void retrieveResultSet(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
-                        uiHandlers.retrieveTemporalCodesForField(datasetUrn);
+                        uiHandlers.retrieveTemporalCodesForField(firstResult, maxResults, datasetUrn, webCriteria);
                     }
 
                 }));
