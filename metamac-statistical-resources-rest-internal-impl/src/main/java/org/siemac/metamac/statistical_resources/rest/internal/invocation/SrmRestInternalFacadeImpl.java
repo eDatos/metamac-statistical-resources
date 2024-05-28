@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.internal.invocation;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.cxf.jaxrs.client.WebClient;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
@@ -126,14 +127,14 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
     @Override
     public ContentConstraint retrieveDatasetContentConstraint(String datasetUrn) {
         try {
-
-            String urnConstraint = findContentConstraints(datasetUrn);
+            String includeDraft = BooleanUtils.toStringTrueFalse(true);
+            String urnConstraint = findContentConstraints(datasetUrn, includeDraft);
             if (urnConstraint != null) {
                 String[] contentConstraintComponents = GeneratorUrnUtils.extractVersionableArtefactParts(urnConstraint);
                 String agencyId = contentConstraintComponents[0];
                 String resourceId = contentConstraintComponents[1];
                 String version = contentConstraintComponents[2];
-                return restApiLocator.getSrmRestExternalFacadeV10().retrieveContentConstraint(agencyId, resourceId, version, null);
+                return restApiLocator.getSrmRestExternalFacadeV10().retrieveContentConstraint(agencyId, resourceId, version, includeDraft);
             }
             return null;
         } catch (Exception e) {
@@ -141,13 +142,13 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
         }
     }
 
-    private String findContentConstraints(String datasetUrn) throws MetamacException {
+    private String findContentConstraints(String datasetUrn, String includeDraft) throws MetamacException {
 
         StringBuilder queryBuilder = new StringBuilder(ContentConstraintCriteriaPropertyRestriction.ARTEFACT_URN.value());
         queryBuilder.append(CommonConstants.SPACE).append(ComparisonOperator.EQ).append(CommonConstants.SPACE).append(CommonConstants.DOUBLE_QUOTE).append(datasetUrn)
                 .append(CommonConstants.DOUBLE_QUOTE);
 
-        ContentConstraints contentConstraint = restApiLocator.getSrmRestExternalFacadeV10().findContentConstraints(queryBuilder.toString(), null, null, null, null);
+        ContentConstraints contentConstraint = restApiLocator.getSrmRestExternalFacadeV10().findContentConstraints(queryBuilder.toString(), null, null, null, includeDraft);
 
         if (contentConstraint != null && !contentConstraint.getContentConstraints().isEmpty()) {
             Resource datasetConstraint = contentConstraint.getContentConstraints().get(0);
