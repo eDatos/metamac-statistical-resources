@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
@@ -27,6 +29,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
@@ -35,6 +38,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.sso.utils.SecurityUtils;
@@ -73,6 +77,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepresentationMappingDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionBaseDto;
@@ -91,6 +96,8 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParam
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
@@ -139,6 +146,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -936,7 +944,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter, List<String> temporalGranularities) throws MetamacException {
+    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter, List<String> temporalGranularities)
+            throws MetamacException {
         // Security
         DatasetsSecurityUtils.canFilterCoverageForDatasetVersionDimension(ctx);
 
@@ -1981,13 +1990,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         ConstraintsSecurityUtils.canCreateContentConstraint(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode(),
                 datasetVersion.getLifeCycleStatisticalResource().getProcStatus());
 
-        // Check that there isn't data sources
-        if (!datasetVersion.getDatasources().isEmpty()) {
-            throw MetamacExceptionBuilder.builder()
-                    .withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINTS_CREATE_DATASET_WITH_DATASOURCES, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()))
-                    .build();
-        }
-
         // Transform
         ContentConstraint contentConstraint = constraintDto2RestMapper.constraintDtoTo(contentConstraintDto);
 
@@ -2027,7 +2029,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public RegionValueDto saveRegionForContentConstraint(ServiceContext ctx, String contentConstraintUrn, RegionValueDto regionValueDto) throws MetamacException {
+    public RegionValueDto saveRegionForContentConstraint(ServiceContext ctx, String contentConstraintUrn, RegionValueDto regionValueDto, DsdDimensionDto selectedDimensionDto, String datasetUrn)
+            throws MetamacException {
         // Retrieve
         ContentConstraint contentConstraint = constraintsService.retrieveContentConstraintByUrn(ctx, contentConstraintUrn, Boolean.TRUE);
 
@@ -2037,27 +2040,45 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
                 datasetVersion.getLifeCycleStatisticalResource().getProcStatus());
 
         if (contentConstraint.isIsFinal()) {
-            // Can not update final constraint
+            // Can not update externally_published constraints. Internally published constraint can be updated because dataset is yet in draft.
             throw MetamacExceptionBuilder.builder()
                     .withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINTS_UPDATE_FINAL, contentConstraint.getConstraintAttachment().getUrn())).build();
         }
 
-        // Check not exists datasources
-        if (!datasetVersion.getDatasources().isEmpty()) {
-            // Can not update final constraint
-            throw MetamacExceptionBuilder.builder()
-                    .withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINTS_UPDATE_DATASOURCES_NO_EMPTY, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()))
-                    .build();
-        }
-
         // Transform
         RegionReference regionReference = constraintDto2RestMapper.toRegionReference(regionValueDto);
+
+        checkObservationsWithContentConstraint(ctx, datasetUrn, regionReference, selectedDimensionDto);
 
         // Create
         regionReference = constraintsService.saveRegionForContentConstraint(ctx, regionReference);
 
         // Transform
         return constraintRest2DtoMapper.toRegionDto(regionReference);
+    }
+
+    private void checkObservationsWithContentConstraint(ServiceContext ctx, String datasetUrn, RegionReference regionReference, DsdDimensionDto selectedDimension) throws MetamacException {
+        List<CodeDimensionDto> observationValuesByDimensionId = new ArrayList<>();
+        List<MetamacExceptionItem> exceptions = new LinkedList<>();
+        Map<String, CodeHierarchy> codeHierarchyMap = ConstraintsValidator.getCodeHierarchyMap(srmRestInternalService, selectedDimension);
+        try {
+
+            observationValuesByDimensionId = datasetRepositoriesServiceFacade.findObservationsValuesByDimensionId(datasetUrn, selectedDimension.getDimensionId());
+
+            if (observationValuesByDimensionId == null || observationValuesByDimensionId.isEmpty()) {
+                return;
+            }
+
+            Key keysByDimensionId = ConstraintsValidator.getConstraintKeysByDimensionId(regionReference, selectedDimension.getDimensionId());
+            if (keysByDimensionId != null) {
+                ConstraintsValidator.checkObservationContentConstraints(observationValuesByDimensionId, keysByDimensionId, codeHierarchyMap, exceptions);
+            }
+
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.CONSTRAINTS_UPDATE_CHECK_EXISTING_OBSERVATIONS, datasetUrn);
+        }
+
+        ExceptionUtils.throwIfException(exceptions);
     }
 
     @Override
