@@ -43,11 +43,13 @@ public interface CommonDo2RestMapperV10 {
     public ConstraintDimensionRepresentations processDatasetConstraint(String datasetUrn) throws MetamacException;
     public void toMetadataStatisticalResource(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) throws MetamacException;
     public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception;
+    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, boolean checkNoData)
+            throws Exception;
     public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages);
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,
             Set<String> fields, List<ExternalItem> externalItems) throws MetamacException;
     public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages) throws MetamacException;
-
+    public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages, boolean checkNoData) throws MetamacException;
     public ResourceStatisticalResourceBase toResource(ResourceStatisticalResourceBase source, List<String> selectedLanguages);
     public void toResource(ResourceStatisticalResourceBase source, ResourceStatisticalResourceBase target, List<String> selectedLanguages);
     public ResourcesStatisticalResourceBase toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException;

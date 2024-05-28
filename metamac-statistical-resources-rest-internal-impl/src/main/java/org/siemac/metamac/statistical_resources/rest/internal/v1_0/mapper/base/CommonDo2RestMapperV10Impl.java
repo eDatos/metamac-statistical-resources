@@ -82,6 +82,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.InternalWebApplicationNavigation;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -373,6 +374,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     @Override
     public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
+        return toData(source, dsdProcessorResult, dimensionValuesSelected, selectedLanguages, true);
+    }
+
+    @Override
+    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, boolean checkNoData)
+            throws Exception {
         if (source == null) {
             return null;
         }
@@ -395,9 +402,15 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 target.getAttributes().setTotal(BigInteger.valueOf(target.getAttributes().getAttributes().size()));
             }
         } catch (MetamacException e) {
-            StatisticalResourcesRestImplCommonUtils.handleException(e);
+            handleDatasetException(e, checkNoData);
         }
         return target;
+    }
+
+    private void handleDatasetException(MetamacException e, boolean checkNoData) throws MetamacException {
+        if (checkNoData || (e.getExceptionItems().isEmpty() || !e.getExceptionItems().iterator().next().getCode().equals(ServiceExceptionType.DATASET_NO_DATA.getCode()))) {
+            StatisticalResourcesRestImplCommonUtils.handleException(e);
+        }
     }
 
     @Override
@@ -466,6 +479,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     @Override
     public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages) throws MetamacException {
 
+        return toAttributes(datasetVersionUrn, dsdProcessorResult, selectedLanguages, true);
+    }
+
+    @Override
+    public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages, boolean checkNoData) throws MetamacException {
+
         List<DsdAttribute> sources = dsdProcessorResult.getAttributes();
         if (CollectionUtils.isEmpty(sources)) {
             return null;
@@ -481,7 +500,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
             targets.setTotal(BigInteger.valueOf(targets.getAttributes().size()));
         } catch (MetamacException e) {
-            StatisticalResourcesRestImplCommonUtils.handleException(e);
+            handleDatasetException(e, checkNoData);
         }
         return targets;
     }
@@ -1042,7 +1061,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
         List<String> temporalGranularities = getTemporalGranularities(externalItems);
         for (CodeDimension coverage : coverages) {
-            if (!checkCodeDimensionsInTemporalGranularities(coverage, temporalGranularities, dimensionId) || (effectiveDimensionValuesToData != null && !effectiveDimensionValuesToData.contains(coverage.getIdentifier()))) {
+            if (!checkCodeDimensionsInTemporalGranularities(coverage, temporalGranularities, dimensionId)
+                    || (effectiveDimensionValuesToData != null && !effectiveDimensionValuesToData.contains(coverage.getIdentifier()))) {
                 // skip to include only values in query
                 continue;
             }
