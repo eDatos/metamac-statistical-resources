@@ -202,7 +202,8 @@ public class ConstraintsValidator {
 
             codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(codelistRepresentationUrn);
             for (CodeResourceInternal codeType : codes.getCodes()) {
-                ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content constraints validate
+                codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content constraints
+                                                                                                                                                             // validate
             }
         }
         String conceptSchemeRepresentationUrn = selectedDimension.getConceptSchemeRepresentationUrn();
@@ -210,7 +211,8 @@ public class ConstraintsValidator {
             Concepts concepts = srmRestInternalService.retrieveConceptsOfConceptSchemeEfficiently(conceptSchemeRepresentationUrn);
 
             for (ItemResourceInternal conceptType : concepts.getConcepts()) {
-                ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content constraints validate
+                codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content
+                                                                                                                                                                      // constraints validate
             }
         }
         return codeHierarchyMap;

@@ -772,7 +772,8 @@ public class ValidateDataVersusDsd {
                     for (CodeResourceInternal codeType : codes.getCodes()) {
                         enumerationRepresentationsMultimap.put(codelistRepresentationUrn, codeType.getId());
 
-                        ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content constraints validate
+                        codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content
+                                                                                                                                                                     // constraints validate
                     }
                 }
 
@@ -829,8 +830,9 @@ public class ValidateDataVersusDsd {
                 for (ItemResourceInternal conceptType : concepts.getConcepts()) {
                     enumerationRepresentationsMultimap.put(conceptSchemeRepresentationUrn, conceptType.getId());
 
-                    ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content constraints
-                                                                                                                                                       // validate
+                    codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content
+                                                                                                                                                                          // constraints
+                    // validate
                 }
             }
         }
