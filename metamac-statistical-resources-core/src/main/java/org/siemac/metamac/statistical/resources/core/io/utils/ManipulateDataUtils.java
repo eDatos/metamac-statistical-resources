@@ -218,7 +218,7 @@ public class ManipulateDataUtils {
      * @param codeId
      * @param codeParentUrn
      */
-    public static void cacheCodeHierarchyGraph(Map<String, CodeHierarchy> codeHierarchyMap, String codeUrn, String codeId, String codeParentUrn) {
+    public static Map<String, CodeHierarchy> cacheCodeHierarchyGraph(Map<String, CodeHierarchy> codeHierarchyMap, String codeUrn, String codeId, String codeParentUrn) {
         if (codeHierarchyMap == null) {
             codeHierarchyMap = new LinkedHashMap<String, CodeHierarchy>();
         }
@@ -229,6 +229,8 @@ public class ManipulateDataUtils {
             codeHierarchyParent = codeHierarchyMap.get(codeParentUrn);
         }
         codeHierarchyMap.put(codeUrn, CodeHierarchyBuilder.codeHierarchy().withCode(codeId).withUrn(codeUrn).withParent(codeHierarchyParent).build());
+
+        return codeHierarchyMap;
     }
 
 };
