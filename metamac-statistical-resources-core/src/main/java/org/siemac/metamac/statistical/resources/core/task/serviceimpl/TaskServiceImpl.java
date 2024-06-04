@@ -1534,9 +1534,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
         String datasetVersionUrn = extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(jobKey);
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
-
+  
         getNoticesRestInternalService().createUpdateGeocoverageCacheNotification(datasetVersion, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
                 ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionUrn);
+        
+        markTaskAsFinished(ctx, jobKey);
     }
     
     private void processRollbackUpdateExternalPublicationGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
