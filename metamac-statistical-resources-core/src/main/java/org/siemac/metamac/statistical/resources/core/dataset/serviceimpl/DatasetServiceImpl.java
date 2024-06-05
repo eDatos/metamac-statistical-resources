@@ -341,6 +341,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
 
         for (String dataSourceUrn : urnsDataSourcesDeleted) {
+            log.info("Deleting a not used datasource. Dataset = {}, Datasource = {}", new Object[]{datasetUrn, dataSourceUrn});
             deleteDatasource(ctx, dataSourceUrn, deleteAttributes);
         }
 
@@ -417,6 +418,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             localisedStringDto.setLabel(datasource.getIdentifiableStatisticalResource().getCode());
             localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
             internationalStringDto.addText(localisedStringDto);
+
+            log.info("Deleting a datasource is trying to delete observations by attribute instance value. Dataset = {}, Datasource = {}",
+                    new Object[]{datasetId, datasource.getIdentifiableStatisticalResource().getCode()});
 
             return statisticsDatasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(datasetId, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, internationalStringDto);
 
@@ -615,6 +619,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         // Dataset repository
         try {
+            log.info("The dataset table will be deleted from the repository when trying to delete data related to the dataset metadata. Dataset = {}", resource.getDatasetRepositoryId());
             statisticsDatasetRepositoriesServiceFacade.deleteDatasetRepository(resource.getDatasetRepositoryId());
             resource.setDatasetRepositoryId(null);
         } catch (ApplicationException e) {
@@ -735,6 +740,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         constraintsService.deleteContentConstraintsForArtefactUrn(ctx, datasetVersionUrn);
 
         // Remove data dataset-repository
+        log.info("The dataset table will be deleted from the repository when trying to delete the dataset version. Dataset = {}", datasetRepositoryId);
         tryToDeleteDatasetRepository(datasetRepositoryId);
     }
 
