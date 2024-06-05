@@ -2042,10 +2042,4 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // TODO Auto-generated method stub
         
     }
-
-    @Override
-    public void testDeleteTemporalFile() throws Exception {
-        
-    }
-
 }

@@ -755,7 +755,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             
             return fileName;
         } catch (MetamacException e) {
-            getDatasetService().deleteTemporalFile(ctx, fileName);
             throw e; // rethrow metamac exception as such so message is correctly shown in app
         } catch (Exception e) {
             throw new MetamacException(e, ServiceExceptionType.DATASOURCE_EXPORT_ERROR, e.getMessage());
@@ -2580,10 +2579,5 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
 
-    }
-
-    @Override
-    public void deleteTemporalFile(ServiceContext ctx, String temporalFile) throws MetamacException {
-        getDatasetService().deleteTemporalFile(ctx, temporalFile);
     }
 }
