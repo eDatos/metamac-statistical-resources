@@ -1103,6 +1103,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
                 internationalStringDto.addText(localisedStringDto);
 
+                logger.info("Rollback importation task is trying to delete observations by attribute instance value. Dataset = {}, Datasource = {}",
+                        new Object[]{taskInfoDataset.getDatasetVersionId(), dataSourceId});
+
                 datasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(taskInfoDataset.getDatasetVersionId(), StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
                         internationalStringDto);
             }
