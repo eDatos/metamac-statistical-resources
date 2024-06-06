@@ -14,7 +14,6 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
-import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
@@ -43,6 +42,7 @@ import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesD
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.enums.DatasetConstraintInclusionTypeEnum;
 import org.siemac.metamac.statistical.resources.web.shared.dtos.RangeDto;
+import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
@@ -703,8 +703,8 @@ public class CommonUtils {
 
     public static void downloadFile(String fileName) {
         StringBuffer url = new StringBuffer();
-        url.append(URL.encode(StatisticalResourcesWeb.getRelativeURL(StatisticalResourcesConstants.FILE_DOWNLOAD_DIR_PATH)));
-        url.append("?").append(URL.encode(StatisticalResourcesConstants.PARAM_FILE_NAME)).append("=").append(URL.encode(fileName));
+        url.append(URL.encode(StatisticalResourcesWeb.getRelativeURL(StatisticalResourcesSharedTokens.FILE_DOWNLOAD_DIR_PATH)));
+        url.append("?").append(URL.encode(StatisticalResourcesSharedTokens.PARAM_FILE_NAME)).append("=").append(URL.encode(fileName));
         downloadUrl(url.toString());
     }
 

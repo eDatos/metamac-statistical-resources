@@ -10,8 +10,6 @@ public class StatisticalResourcesConstants {
     public static final String CATEGORISATION_CODE_PREFIX                = "cat_data_";
     public static final String DATASET_REPOSITORY_TABLE_NAME_SEPARATOR   = "_";
     public static final String DATASET_REPOSITORY_TABLE_NAME_PREFIX      = "DATA" + DATASET_REPOSITORY_TABLE_NAME_SEPARATOR;
-    public static final String FILE_DOWNLOAD_DIR_PATH                    = "files/download";
-    public static final String PARAM_FILE_NAME                           = "fileName";
 
     // Extensions
     public static final String PX_EXTENSION                              = ".px";
