@@ -54,7 +54,6 @@ import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.http.client.URL;
-import com.google.gwt.user.client.Window;
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 
 public class CommonUtils {
@@ -706,8 +705,14 @@ public class CommonUtils {
         StringBuffer url = new StringBuffer();
         url.append(URL.encode(StatisticalResourcesWeb.getRelativeURL(StatisticalResourcesConstants.FILE_DOWNLOAD_DIR_PATH)));
         url.append("?").append(URL.encode(StatisticalResourcesConstants.PARAM_FILE_NAME)).append("=").append(URL.encode(fileName));
-        Window.open(url.toString(), "_blank", "");
+        downloadUrl(url.toString());
     }
+
+    // @formatter:off
+    private static native void downloadUrl(String url) /*-{
+        $wnd.location = url;
+    }-*/;
+    // @formatter:on
 
     public static Integer getMaxNumberOfUpdatedDatasetInGroup() {
         return maxNumberOfUpdatedDatasetInGroup;
