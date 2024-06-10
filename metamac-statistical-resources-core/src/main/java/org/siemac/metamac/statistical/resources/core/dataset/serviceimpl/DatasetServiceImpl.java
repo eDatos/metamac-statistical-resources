@@ -2297,23 +2297,4 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             }
         }
     }
-
-    @Override
-    public void deleteTemporalFile(ServiceContext ctx, String temporalFile) throws MetamacException {
-        FileSystem fileSystem = FileSystems.getDefault();
-        File tmpdir = new File(AccessController.doPrivileged(new GetPropertyAction("java.io.tmpdir")));
-        Path path = fileSystem.getPath(tmpdir.getPath() + "/" + temporalFile);
-        try {
-            Files.delete(path);
-        } catch (IOException e) {
-            try {
-                Thread.sleep(5000);
-                Files.delete(path);
-            } catch (InterruptedException | IOException ex) {
-                log.error("Could not delete temporal file: " + temporalFile);
-                log.error(ex.getMessage(), ex);
-                Thread.currentThread().interrupt();
-            }
-        }
-    }
 }

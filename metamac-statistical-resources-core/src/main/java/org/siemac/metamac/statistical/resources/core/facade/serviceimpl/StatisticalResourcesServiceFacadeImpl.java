@@ -742,6 +742,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     @Override
     public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
         FileOutputStream outputStreamObservations = null;
+        String fileName = "";
         try {
             DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
             Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), null);
@@ -750,12 +751,13 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             String prefix = "datasource" + "-" + datasetUrn[0] + "-" + datasetUrn[1] + "-" + datasetUrn[2] + "-";
 
             File tmpFileObservations = File.createTempFile(prefix, ".tsv");
+            fileName = tmpFileObservations.getName();
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
 
             PlainTextExporter exporter = new PlainTextExporter(observations);
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
-
-            return tmpFileObservations.getName();
+            
+            return fileName;
         } catch (MetamacException e) {
             throw e; // rethrow metamac exception as such so message is correctly shown in app
         } catch (Exception e) {
@@ -2594,10 +2596,5 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
 
-    }
-
-    @Override
-    public void deleteTemporalFile(ServiceContext ctx, String temporalFile) throws MetamacException {
-        getDatasetService().deleteTemporalFile(ctx, temporalFile);
     }
 }
