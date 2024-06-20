@@ -10,6 +10,8 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtensi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
@@ -22,10 +24,12 @@ public interface CommonDo2JsonStatRestMapperV10 {
     String JSON_STAT_VERSION = "2.0";
     String JSON_STAT_CLASS   = "dataset";
 
-    Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, String selectedLanguage) throws Exception;
+    Map<String, JsonStatDimension> toJsonStatDatasetDimensions(Dimensions dimensions, DimensionRepresentations dimensionRepresentations, DsdProcessorResult dsdProcessorResult, Attributes attributes, DataAttributes dataAttributes, String selectedLanguage) throws Exception;
+    String getSelectedLanguage(DatasetVersion source, List<String> selectedLanguages);
     List<String> toJsonStatNote(DatasetVersion source, Data data, Dimensions dimensions, Attributes attributes, DsdProcessorResult dsdProcessorResult, String selectedLanguage);
-    List<String> getJsonStatId(Data data);
-    List<Long> toJsonStatSize(Data data);
+    String getValueFromPosition(List<DimensionRepresentation> dimensions, List<String> values, int... position);
+    List<String> getJsonStatId(Data data, DsdProcessorResult attributes);
+    List<Long> toJsonStatSize(Data data, DsdProcessorResult dsdProcessorResult, Attributes attributes);
     JsonStatExtension toJsonStatExtension(DatasetVersion source, String selectedLanguage);
     Map<String, List<String>> toJsonStatRoles(DsdProcessorResult dsdProcessorResult) throws MetamacException;
     List<String> toJsonStatDatasetValues(Data data) throws Exception;

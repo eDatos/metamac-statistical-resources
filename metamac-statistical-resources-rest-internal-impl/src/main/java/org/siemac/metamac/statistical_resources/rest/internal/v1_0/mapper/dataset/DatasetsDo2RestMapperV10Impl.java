@@ -81,18 +81,18 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     private static final Logger               logger = LoggerFactory.getLogger(DatasetsDo2RestMapperV10.class);
 
     @Override
-    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimension, String selectedLanguage, Set<String> parsedFields) throws Exception {
+    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
         if (source == null) {
             return null;
         }
 
-        List<String> selectedLanguageList = Collections.singletonList(selectedLanguage);
+        List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
 
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-        Data data = toDatasetData(source, dsdProcessorResult, selectedDimension, selectedLanguageList, true);
+        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages, true);
 
-        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguageList, parsedFields, null);
-        Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguageList);
+        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields, null);
+        Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
 
         // ********************************************
         // ***** See https://json-stat.org/full/ ******
@@ -103,10 +103,10 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setVersion(CommonDo2JsonStatRestMapperV10.JSON_STAT_VERSION);
         target.setClazz(CommonDo2JsonStatRestMapperV10.JSON_STAT_CLASS);
         target.addAllValues(commonDo2JsonStatRestMapper.toJsonStatDatasetValues(data));
-        target.setDimension(commonDo2JsonStatRestMapper.toJsonStatDatasetDimensions(dimensions, data.getDimensions(), selectedLanguage));
+        target.setDimension(commonDo2JsonStatRestMapper.toJsonStatDatasetDimensions(dimensions, data.getDimensions(), dsdProcessorResult, attributes, data.getAttributes(), selectedLanguage));
         target.setRole(commonDo2JsonStatRestMapper.toJsonStatRoles(dsdProcessorResult));
-        target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data));
-        target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data));
+        target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data, dsdProcessorResult));
+        target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data, dsdProcessorResult, attributes));
         target.setLabel(commonDo2JsonStatRestMapper.toI18nValue(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
         target.setUpdated(source.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
         target.setExtension(commonDo2JsonStatRestMapper.toJsonStatExtension(source, selectedLanguage));

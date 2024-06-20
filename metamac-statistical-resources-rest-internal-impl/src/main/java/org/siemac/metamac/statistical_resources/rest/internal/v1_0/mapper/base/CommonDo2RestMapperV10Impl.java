@@ -259,6 +259,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
+    public Concept toConcept(String urn) {
+        return srmRestExternalFacade.retrieveConceptByUrn(urn);
+    }
+
+    @Override
     public DsdProcessorResult processDataStructure(String urn) throws MetamacException {
         DsdProcessorResult dsdProcessorResult = new DsdProcessorResult();
         DataStructure dataStructure = srmRestExternalFacade.retrieveDataStructureByUrn(urn);
