@@ -739,32 +739,11 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         return datasetDo2DtoMapper.dimensionRepresentationMappingDoToDto(mapping);
     }
 
+
+
     @Override
     public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
-        FileOutputStream outputStreamObservations = null;
-        String fileName = "";
-        try {
-            DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
-            Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), null);
-
-            String[] datasetUrn = UrnUtils.splitUrnStructure(datasetVersionUrn);
-            String prefix = "datasource" + "-" + datasetUrn[0] + "-" + datasetUrn[1] + "-" + datasetUrn[2] + "-";
-
-            File tmpFileObservations = File.createTempFile(prefix, ".tsv");
-            fileName = tmpFileObservations.getName();
-            outputStreamObservations = new FileOutputStream(tmpFileObservations);
-
-            PlainTextExporter exporter = new PlainTextExporter(observations);
-            exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
-            
-            return fileName;
-        } catch (MetamacException e) {
-            throw e; // rethrow metamac exception as such so message is correctly shown in app
-        } catch (Exception e) {
-            throw new MetamacException(e, ServiceExceptionType.DATASOURCE_EXPORT_ERROR, e.getMessage());
-        } finally {
-            IOUtils.closeQuietly(outputStreamObservations);
-        }
+        return getDatasetService().exportDatasourcesTsv(ctx, datasetVersionUrn);
     }
 
     // ------------------------------------------------------------------------
