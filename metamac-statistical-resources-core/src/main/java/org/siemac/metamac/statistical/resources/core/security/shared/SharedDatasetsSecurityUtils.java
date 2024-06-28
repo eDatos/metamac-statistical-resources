@@ -176,6 +176,10 @@ public class SharedDatasetsSecurityUtils extends SharedSecurityUtils {
         return false;
     }
 
+    public static boolean canExportDatasourcesTsv(MetamacPrincipal metamacPrincipal, String operationCode) {
+        return isOperationAllowed(metamacPrincipal, operationCode, PRODUCTION_ROLES);
+
+    }
     public static boolean canRetrieveCategorisationsByDatasetVersion(MetamacPrincipal metamacPrincipal, String operationCode, ProcStatusEnum procStatus) {
         return canRetrieveStatisticalResource(metamacPrincipal, operationCode, procStatus);
     }

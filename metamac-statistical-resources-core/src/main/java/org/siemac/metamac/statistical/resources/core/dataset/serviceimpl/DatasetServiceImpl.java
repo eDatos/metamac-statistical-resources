@@ -24,6 +24,7 @@ import java.util.UUID;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -2303,9 +2304,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     @Override
     public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
         datasetServiceInvocationValidator.checkExportDatasourcesTsv(ctx,datasetVersionUrn);
+        FileOutputStream outputStreamObservations = null;
+        String fileName = "";
         try {
-            FileOutputStream outputStreamObservations = null;
-            String fileName = "";
             DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
             Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), null);
 
@@ -2321,46 +2322,12 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
 
-
             return fileName;
 
-//                OutputStream outputStream = null;
-//                OutputStreamWriter writer = null;
-//                File file = null;
-//                try {
-//                    file = File.createTempFile("codes", ".tsv");
-//                    outputStream = new FileOutputStream(file);
-//                    writer = new OutputStreamWriter(outputStream, SrmConstants.TSV_EXPORTATION_ENCODING);
-//
-//                    writeCodesHeader(writer, languages);
-//
-//                    for (ItemResult itemResult : items) {
-//                        writer.write(SrmConstants.TSV_LINE_SEPARATOR);
-//                        writeItemCode(writer, itemResult);
-//                        writeParentCode(writer, itemResult);
-//                        writeItemExtensionPointIsExtended(writer, itemResult);
-//                        writeCodeVariableElement(writer, itemResult);
-//                        writeItemName(writer, itemResult, languages);
-//                        writeItemDescription(writer, itemResult, languages);
-//                        writeItemComment(writer, itemResult, languages);
-//                        writeItemExtensionPointShortName(writer, itemResult, languages);
-//                    }
-//                    writer.flush();
-//                    return file.getName();
-//                } catch (Exception e) {
-//                    throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.EXPORTATION_TSV_ERROR).withMessageParameters(e).build();
-//                } finally {
-//                    IOUtils.closeQuietly(outputStream);
-//                    IOUtils.closeQuietly(writer);
-//                }
-//            }
-
-
-
-        } catch (MetamacException e) {
-            throw e; // rethrow metamac exception as such so message is correctly shown in app
         } catch (Exception e) {
             throw new MetamacException(e, ServiceExceptionType.DATASOURCE_EXPORT_ERROR, e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(outputStreamObservations);
         }
     }
 }
