@@ -289,7 +289,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
             }
         });
 
-        mainFormLayout.getCopyKeepingMaintainer().addClickHandler(new ClickHandler() {
+        mainFormLayout.getCopyDatasetButton().addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {

@@ -15,6 +15,8 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
     private DatasetVersionDto    datasetVersionDto;
     private MainFormLayoutButton updateGeocoverageCache;
 
+    private MainFormLayoutButton copyDataset;
+
     public DatasetMainFormLayout() {
         super();
         createButtonsForToolStrip();
@@ -22,7 +24,10 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
 
     private void createButtonsForToolStrip() {
         updateGeocoverageCache = new MainFormLayoutButton(getConstants().updateGeographicCoverageVariableElementsCache(), GlobalResources.RESOURCE.reload().getURL());
+        copyDataset = new MainFormLayoutButton(getConstants().actionCopy(), GlobalResources.RESOURCE.copy().getURL());
+
         toolStrip.addButton(updateGeocoverageCache);
+        toolStrip.addButton(copyDataset);
     }
 
     public DatasetMainFormLayout(boolean canEdit) {
@@ -80,9 +85,8 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
         return DatasetClientSecurityUtils.canPreviewDatasetData(datasetVersionDto);
     }
 
-    @Override
-    protected boolean canShowCopyButton() {
-        return true;
+    protected boolean canCopyDataset() {
+        return DatasetClientSecurityUtils.canCopyDataset(datasetVersionDto);
     }
 
     @Override
@@ -98,21 +102,33 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
         }
     }
 
+    private void showCopyDatasetButton() {
+        if (canCopyDataset()) {
+            copyDataset.show();
+        }
+    }
+
     @Override
     protected void updateVisibility() {
         super.updateVisibility();
-        if (canUpdateGeocoverageCache()) {
+        if (canUpdateGeocoverageCache()) { // este if tiene pinta de redundante
             showUpdateGeocoverageCacheButton();
         }
+        showCopyDatasetButton();
     }
 
     @Override
     protected void hideAllLifeCycleButtons() {
         super.hideAllLifeCycleButtons();
         updateGeocoverageCache.hide();
+        copyDataset.hide();
     }
 
     public HasClickHandlers getUpdateGeocoverageCache() {
         return updateGeocoverageCache;
+    }
+
+    public HasClickHandlers getCopyDatasetButton() {
+        return copyDataset;
     }
 }
