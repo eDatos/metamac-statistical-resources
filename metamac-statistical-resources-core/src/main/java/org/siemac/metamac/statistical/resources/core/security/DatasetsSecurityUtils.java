@@ -263,8 +263,8 @@ public class DatasetsSecurityUtils extends SecurityUtils {
         }
     }
 
-    public static void canExportDatasourcesTsv(ServiceContext ctx,String operationCode) throws MetamacException {
-        if (!SharedDatasetsSecurityUtils.canExportDatasourcesTsv(getMetamacPrincipal(ctx), operationCode)) {
+    public static void canExportDatasourcesTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canExportDatasourcesTsv(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }

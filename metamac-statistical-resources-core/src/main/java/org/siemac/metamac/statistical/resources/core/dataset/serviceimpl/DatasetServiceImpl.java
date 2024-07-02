@@ -148,65 +148,65 @@ import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
 @Service("datasetService")
 public class DatasetServiceImpl extends DatasetServiceImplBase {
 
-    private static final Logger log = LoggerFactory.getLogger(DatasetServiceImpl.class);
+    private static final Logger                       log = LoggerFactory.getLogger(DatasetServiceImpl.class);
 
     @Autowired
     private IdentifiableStatisticalResourceRepository identifiableStatisticalResourceRepository;
 
     @Autowired
-    private DatasetServiceInvocationValidator datasetServiceInvocationValidator;
+    private DatasetServiceInvocationValidator         datasetServiceInvocationValidator;
 
     @Autowired
-    private SiemacStatisticalResourceGeneratedCode siemacStatisticalResourceGeneratedCode;
+    private SiemacStatisticalResourceGeneratedCode    siemacStatisticalResourceGeneratedCode;
 
     @Autowired
-    private SrmRestInternalService srmRestInternalService;
+    private SrmRestInternalService                    srmRestInternalService;
 
     @Autowired
-    StatisticalOperationsRestInternalService statisticalOperationsRestInternalService;
+    StatisticalOperationsRestInternalService          statisticalOperationsRestInternalService;
 
     @Autowired
-    private QueryVersionRepository queryVersionRepository;
+    private QueryVersionRepository                    queryVersionRepository;
 
     @Autowired
-    private QueryService queryService;
+    private QueryService                              queryService;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade statisticsDatasetRepositoriesServiceFacade;
+    private DatasetRepositoriesServiceFacade          statisticsDatasetRepositoriesServiceFacade;
 
     @Autowired
-    private RestMapper restMapper;
+    private RestMapper                                restMapper;
 
     @Autowired
-    private ExternalItemChecker externalItemChecker;
+    private ExternalItemChecker                       externalItemChecker;
 
     @Autowired
-    private DatasetVersionRepository datasetVersionRepository;
+    private DatasetVersionRepository                  datasetVersionRepository;
 
     @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private StatisticalResourcesConfiguration         configurationService;
 
     @Autowired
-    private ConstraintsService constraintsService;
+    private ConstraintsService                        constraintsService;
 
     @Autowired
-    private RelatedResourceRepository relatedResourceRepository;
+    private RelatedResourceRepository                 relatedResourceRepository;
 
     @Autowired
-    private NoticesRestInternalService noticesRestInternalService;
+    private NoticesRestInternalService                noticesRestInternalService;
 
     @Autowired
-    private TaskService taskService;
+    private TaskService                               taskService;
 
     @Autowired
     @Qualifier("txManager")
-    private PlatformTransactionManager platformTransactionManager;
+    private PlatformTransactionManager                platformTransactionManager;
 
     @Autowired
-    GeoCovVarElementCacheDatasetVersionRepository geoCovVarElementCacheDatasetVersionRepository;
+    GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
+    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
 
     // ------------------------------------------------------------------------
     // DATASOURCES
@@ -364,8 +364,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         List<Datasource> datasources = retrieveDatasourcesByDatasetAndSourceName(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), filename);
         // The dimension representation mapping is only deleted if there is no more datasources associated with the same file
         if (datasources.isEmpty()) {
-            DimensionRepresentationMapping dimensionRepresentationMapping = getDimensionRepresentationMappingRepository().findByDatasetAndDatasourceFilename(
-                    datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), filename);
+            DimensionRepresentationMapping dimensionRepresentationMapping = getDimensionRepresentationMappingRepository()
+                    .findByDatasetAndDatasourceFilename(datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), filename);
             if (dimensionRepresentationMapping != null) {
                 getDimensionRepresentationMappingRepository().delete(dimensionRepresentationMapping);
             }
@@ -1092,8 +1092,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         datasetServiceInvocationValidator.checkSaveDimensionRepresentationMapping(ctx, dataset, datasourceFilename, mapping);
 
-        DimensionRepresentationMapping dimensionRepresentationMapping = getDimensionRepresentationMappingRepository().findByDatasetAndDatasourceFilename(
-                dataset.getIdentifiableStatisticalResource().getUrn(), datasourceFilename);
+        DimensionRepresentationMapping dimensionRepresentationMapping = getDimensionRepresentationMappingRepository()
+                .findByDatasetAndDatasourceFilename(dataset.getIdentifiableStatisticalResource().getUrn(), datasourceFilename);
         if (dimensionRepresentationMapping == null) {
             dimensionRepresentationMapping = new DimensionRepresentationMapping();
             dimensionRepresentationMapping.setDataset(dataset);
@@ -1694,8 +1694,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     private void processDateNextUpdate(DatasetVersion resource) {
-        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE) && (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(
-                resource.getUserModifiedDateNextUpdate()))) {
+        if (NextVersionTypeEnumUtils.isInAnyNextVersionType(resource, NextVersionTypeEnum.SCHEDULED_UPDATE)
+                && (resource.getDateNextUpdate() == null || BooleanUtils.isNotTrue(resource.getUserModifiedDateNextUpdate()))) {
             DateTime mostRecentDate = null;
             for (Datasource datasource : resource.getDatasources()) {
                 if (datasource.getDateNextUpdate() != null && isNewDateBestOptionForDateNextUpdate(mostRecentDate, datasource.getDateNextUpdate())) {
@@ -2163,9 +2163,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         dataset.setViewCode(DatasetVersionUtils.generateViewCode(code));
 
         datasetVersion.getSiemacMetadataStatisticalResource().setCode(code);
-        datasetVersion.getSiemacMetadataStatisticalResource()
-                .setUrn(GeneratorUrnUtils.generateSiemacStatisticalResourceDatasetVersionUrn(maintainerCodes, datasetVersion.getSiemacMetadataStatisticalResource().getCode(),
-                        datasetVersion.getSiemacMetadataStatisticalResource().getVersionLogic()));
+        datasetVersion.getSiemacMetadataStatisticalResource().setUrn(GeneratorUrnUtils.generateSiemacStatisticalResourceDatasetVersionUrn(maintainerCodes,
+                datasetVersion.getSiemacMetadataStatisticalResource().getCode(), datasetVersion.getSiemacMetadataStatisticalResource().getVersionLogic()));
 
         // Checks
         identifiableStatisticalResourceRepository.checkDuplicatedUrn(datasetVersion.getSiemacMetadataStatisticalResource());
@@ -2216,9 +2215,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void checkTableNameLength(String tableName, String datasetVersionUrn) throws MetamacException {
         if (!DatabaseDatasetImportUtils.checkTableNameLength(tableName)) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.INVALID_TABLENAME_LENGTH)
-                    .withMessageParameters(tableName.length(), tableName, datasetVersionUrn, DatabaseDatasetImportUtils.TABLENAME_MIN_LENGTH_PERMITTED,
-                            DatabaseDatasetImportUtils.TABLENAME_MAX_LENGTH_PERMITTED).build();
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.INVALID_TABLENAME_LENGTH).withMessageParameters(tableName.length(), tableName, datasetVersionUrn,
+                    DatabaseDatasetImportUtils.TABLENAME_MIN_LENGTH_PERMITTED, DatabaseDatasetImportUtils.TABLENAME_MAX_LENGTH_PERMITTED).build();
         }
     }
 

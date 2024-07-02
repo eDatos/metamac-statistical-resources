@@ -60,6 +60,7 @@ Application DatasetsStatisticalResources {
 			"Finds resource from cache by criteria"
 			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
+			"Export datasources to TSV"
 			String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
     		
     		"Link a dataset view to the latest version of the indicator"
