@@ -1535,13 +1535,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
+        logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask-> inicio");
         String datasetVersionUrn = extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(jobKey);
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
-  
+        logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask-> envío notificación");
         getNoticesRestInternalService().createUpdateGeocoverageCacheNotification(datasetVersion, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
                 ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionUrn);
-        
+        logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask-> envío notificación ok");
         markTaskAsFinished(ctx, jobKey);
+        logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask-> fin");
     }
     
     private void processRollbackUpdateExternalPublicationGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
@@ -1558,7 +1560,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public void markTaskAsFailed(ServiceContext ctx, String jobKey, String datasetVersionId, String datasetUrn) throws MetamacException {
+        logger.info("markTaskAsFailed-> inicio");
         Task task = retrieveTaskByJob(ctx, jobKey);
+        logger.info("markTaskAsFailed-> after retrieveTaskByJob");
         // Plannify a recovery job
         if (jobKey.startsWith(PREFIX_JOB_IMPORT_DATA)) {
             TaskInfoDataset recoveryTaskInfo = setTaskInfoToPlanifyRecovery(ctx, datasetVersionId, datasetUrn, task);

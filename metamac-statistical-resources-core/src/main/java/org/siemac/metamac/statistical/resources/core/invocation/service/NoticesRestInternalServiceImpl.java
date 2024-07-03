@@ -50,23 +50,22 @@ import es.ibestat.jaxi.stream.messages.DatasetAvro;
 @Component(NoticesRestInternalService.BEAN_ID)
 public class NoticesRestInternalServiceImpl implements NoticesRestInternalService {
 
-    private static final String               ERROR  = "ERROR";
+    private static final String                            ERROR  = "ERROR";
 
-    private static Logger                     logger = LoggerFactory.getLogger(NoticesRestInternalServiceImpl.class);
-
-    @Autowired
-    private MetamacApisLocator                restApiLocator;
+    private static Logger                                  logger = LoggerFactory.getLogger(NoticesRestInternalServiceImpl.class);
 
     @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private MetamacApisLocator                             restApiLocator;
 
     @Autowired
-    private TranslateExceptions               translateExceptions;
+    private StatisticalResourcesConfiguration              configurationService;
 
     @Autowired
-    private RestMapper                        restMapper;
+    private TranslateExceptions                            translateExceptions;
 
-    
+    @Autowired
+    private RestMapper                                     restMapper;
+
     private static Map<ProcStatusEnum, MetamacRolesEnum[]> roles;
     private static Map<ProcStatusEnum, String>             actionCodes;
     private static Map<ProcStatusEnum, String>             messageCodes;
@@ -89,7 +88,7 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         messageCodes.put(VALIDATION_REJECTED, ServiceNoticeMessage.RESOURCE_CANCEL_VALIDATION_OK);
         messageCodes.put(PUBLISHED, ServiceNoticeMessage.RESOURCE_PUBLICATION_OK);
     }
-    
+
     @Override
     public void createErrorBackgroundNotification(String user, String actionCode, MetamacException exception) {
         try {
@@ -104,8 +103,8 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         } catch (MetamacException e) {
             logger.error("Error creating createErrorBackgroundNotification:", e);
         }
-    } 
-    
+    }
+
     @Override
     public void createErrorBackgroundNotification(String actionCode, MetamacException exception) {
         try {
@@ -119,8 +118,8 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         } catch (MetamacException e) {
             logger.error("Error creating createErrorBackgroundNotification:", e);
         }
-    } 
-    
+    }
+
     @Override
     public void createDatabaseImportErrorBackgroundNotification(DatasetVersion datasetVersion, String actionCode, MetamacException exception) {
         try {
@@ -177,22 +176,25 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             logger.error("Error creating createErrorUpdateGeocoverageCacheBackgroundNotification:", e);
         }
     }
-        
+
     @Override
     public void createUpdateGeocoverageCacheNotification(DatasetVersion datasetVersion, String actionCode, String messageCode, Serializable... messageParameters) {
         try {
+            logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask->createUpdateGeocoverageCacheNotification-> inicio");
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
             ResourceInternal resourceInternal = restMapper.generateResourceInternal(datasetVersion);
             Message message = createMessage(locale, Collections.singletonList(resourceInternal), messageCode, messageParameters);
-
+            logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask->createUpdateGeocoverageCacheNotification-> crea not en background");
             createUpdateGeocoverageCacheBackgroundNotification(locale, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn(), actionCode, message);
         } catch (MetamacException e) {
             logger.error("Error creating createUpdateGeocoverageCacheNotification:", e);
         }
+        logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask->createUpdateGeocoverageCacheNotification-> fin");
     }
 
     private void createUpdateGeocoverageCacheBackgroundNotification(Locale locale, String urnStatisticalOperation, String actionCode, Message message) throws MetamacException {
         try {
+            logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask->createUpdateGeocoverageCacheNotification->createUpdateGeocoverageCacheBackgroundNotification-> inicio");
             String subject = LocaleUtil.getMessageForCode(actionCode, locale);
             String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS.getName();
 
@@ -209,8 +211,9 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         } catch (Exception e) {
             throw manageNoticesInternalRestException(e);
         }
+        logger.info("markTaskAsFailed->processRollbackUpdateGeocoverageCacheTask->createUpdateGeocoverageCacheNotification->createUpdateGeocoverageCacheBackgroundNotification-> fin ok");
     }
-    
+
     private void createBackgroundNotification(String actionCode, String message, String user) throws MetamacException {
         try {
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
@@ -270,16 +273,16 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
                     new ArrayList<DatasetVersion>(), keyMessage);
         }
     }
-    
+
     @Override
     public void createConsumerFromKafkaErrorBackgroundNotification(String keyMessage) {
         createBackgroundNotification(ServiceNoticeAction.RESOURCE_RECEIVED_FROM_KAFKA_ERROR, ServiceNoticeMessage.RESOURCE_RECEIVED_FROM_KAFKA_ERROR, new ArrayList<DatasetVersion>(), keyMessage);
     }
-    
+
     private void createBackgroundNotification(String actionCode, String messageCode, List<DatasetVersion> failedDatasets, Object... messageParams) {
         createAndSendViewNotification(actionCode, messageCode, failedDatasets, messageParams);
     }
-    
+
     @Override
     public void createErrorOnStreamMessagingService(String user, String actionCode, HasSiemacMetadata affectedResource, String errorMessageCode, Serializable... extraParameters) {
         ResourceInternal resourceInternal = restMapper.generateResourceInternal(affectedResource);
