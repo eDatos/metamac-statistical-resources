@@ -1,7 +1,5 @@
 package org.siemac.metamac.statistical.resources.core.facade.serviceimpl;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.commons.io.IOUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -29,7 +26,6 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
-import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
@@ -88,7 +84,6 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranul
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
@@ -141,7 +136,6 @@ import org.springframework.stereotype.Service;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 /**
@@ -741,30 +735,11 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
-        FileOutputStream outputStreamObservations = null;
-        String fileName = "";
-        try {
-            DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
-            Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), null);
 
-            String[] datasetUrn = UrnUtils.splitUrnStructure(datasetVersionUrn);
-            String prefix = "datasource" + "-" + datasetUrn[0] + "-" + datasetUrn[1] + "-" + datasetUrn[2] + "-";
+        // Security
+        DatasetsSecurityUtils.canExportDatasourcesTsv(ctx);
 
-            File tmpFileObservations = File.createTempFile(prefix, ".tsv");
-            fileName = tmpFileObservations.getName();
-            outputStreamObservations = new FileOutputStream(tmpFileObservations);
-
-            PlainTextExporter exporter = new PlainTextExporter(observations);
-            exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
-            
-            return fileName;
-        } catch (MetamacException e) {
-            throw e; // rethrow metamac exception as such so message is correctly shown in app
-        } catch (Exception e) {
-            throw new MetamacException(e, ServiceExceptionType.DATASOURCE_EXPORT_ERROR, e.getMessage());
-        } finally {
-            IOUtils.closeQuietly(outputStreamObservations);
-        }
+        return getDatasetService().exportDatasourcesTsv(ctx, datasetVersionUrn);
     }
 
     // ------------------------------------------------------------------------

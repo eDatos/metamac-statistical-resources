@@ -2210,4 +2210,10 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextWithoutPrincipal(), urn);
         assertEqualsDatasetVersion(expected, actual);
     }
+
+    @Override
+    @Test
+    public void testExportDatasourcesTsv() throws Exception {
+        // NOTHING TO DO
+    }
 }
