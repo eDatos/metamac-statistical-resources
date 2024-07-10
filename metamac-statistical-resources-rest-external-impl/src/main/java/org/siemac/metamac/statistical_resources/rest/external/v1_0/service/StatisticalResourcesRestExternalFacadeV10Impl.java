@@ -29,6 +29,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
@@ -360,11 +361,14 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             SculptorCriteria sculptorCriteria = queriesRest2DoMapper.getQueryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            // Add condition for specific or default locale
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            sculptorCriteria.setOrderByCaseCondition(QueryVersion.class, QueryVersionProperties.lifeCycleStatisticalResource().title().texts().locale(), selectedLanguages, "=");
+
             // Find
             PagedResult<QueryVersion> entitiesPagedResult = commonService.findQueryVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Queries queries = queriesDo2RestMapper.toQueries(entitiesPagedResult, agencyID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
             return queries;
         } catch (Exception e) {
