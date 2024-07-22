@@ -1300,7 +1300,7 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.stub.description']}",
                      "type":"array",
-                     "item": {                   
+                     "item":{
                         "$ref":"#/definitions/DimensionsId"
                      }
                   }
@@ -1601,7 +1601,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.Datasets.properties.dataset.description']}",
-                     "type": "array",
+                     "type":"array",
                      "items":{
                         "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
