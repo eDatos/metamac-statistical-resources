@@ -1300,9 +1300,6 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.stub.description']}",
                      "type":"array",
-                     "item":{
-                        "$ref":"#/definitions/DimensionsId"
-                     }
                   }
                }
             }
@@ -2723,7 +2720,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collections"
                   },
                   "headers":{
@@ -2759,7 +2755,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"lang",
@@ -2801,7 +2798,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collections"
                   },
                   "headers":{
@@ -2837,13 +2833,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required": true
                },
                {
                   "name":"fields",
@@ -2861,7 +2859,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collection"
                   },
                   "headers":{
@@ -2900,7 +2897,8 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.lang.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.lang.description']}",
+                  "required": true
                },
                {
                   "name":"limit",
@@ -2936,7 +2934,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -2972,7 +2969,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"lang",
@@ -3014,7 +3012,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -3050,13 +3047,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required": true
                },
                {
                   "name":"lang",
@@ -3098,7 +3097,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -3137,19 +3135,22 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.resourceID.description']}",
+                  "required": true
                },
                {
                   "name":"version",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.version.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.version.description']}",
+                  "required": true
                },
                {
                   "name":"representation",
@@ -3179,7 +3180,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Dataset"
                   },
                   "headers":{
@@ -3254,7 +3254,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Queries"
                   },
                   "headers":{
@@ -3290,7 +3289,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"lang",
@@ -3332,7 +3332,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Queries"
                   },
                   "headers":{
@@ -3369,13 +3368,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required": true
                },
                {
                   "name":"representation",
@@ -3405,7 +3406,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Query"
                   },
                   "headers":{
@@ -3480,7 +3480,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidatasets"
                   },
                   "headers":{
@@ -3516,7 +3515,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"lang",
@@ -3558,7 +3558,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidatasets"
                   },
                   "headers":{
@@ -3594,13 +3593,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required": true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required": true
                },
                {
                   "name":"fields",
@@ -3618,7 +3619,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidataset"
                   },
                   "headers":{
@@ -3687,7 +3687,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ResourcesWithStatisticalOperation"
                   },
                   "headers":{
