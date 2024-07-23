@@ -14,7 +14,9 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Dele
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasetConstraintActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasetVersionsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesNotUsedActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.EndCategorisationsValidityActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.ExportDatasourcesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetCodelistsWithVariableActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributeInstancesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributesActionHandler;
@@ -31,11 +33,13 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetD
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasourcesByDatasetActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetItemsActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetMultipleDatasetVersionsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetVersionsOfDatasetActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasetAttributeInstanceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasetVersionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasourceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveRegionActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionMetadataInGroupActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateDatasetVersionsProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.UpdateGeographicCoverageVariableElementsCacheActionHandler;
@@ -58,6 +62,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.external.Get
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationInstancesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetStatisticalOperationsPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetTemporalGranularitiesByDatasetActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetTemporalGranularitiesListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.multidataset.DeleteMultidatasetCubeActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.multidataset.DeleteMultidatasetVersionsActionHandler;
@@ -102,7 +107,9 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDataset
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetConstraintAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.EndCategorisationsValidityAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributesAction;
@@ -119,11 +126,13 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVer
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasourcesByDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetItemsAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetVersionsOfDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetAttributeInstanceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveRegionAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionsProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
@@ -146,6 +155,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetSrmResour
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationInstancesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetCubeAction;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.DeleteMultidatasetVersionsAction;
@@ -216,6 +226,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetDsdsPaginatedListAction.class, GetDsdsPaginatedListActionHandler.class);
         bindHandler(GetGeographicalGranularitiesListAction.class, GetGeographicalGranularitiesListActionHandler.class);
         bindHandler(GetTemporalGranularitiesListAction.class, GetTemporalGranularitiesListActionHandler.class);
+        bindHandler(GetTemporalGranularitiesByDatasetAction.class, GetTemporalGranularitiesByDatasetActionHandler.class);
         bindHandler(GetLanguagesCodesAction.class, GetLanguagesCodesActionHandler.class);
         bindHandler(GetConceptSchemesPaginatedListAction.class, GetConceptSchemesPaginatedListActionHandler.class);
         bindHandler(GetConceptsPaginatedListAction.class, GetConceptsPaginatedListActionHandler.class);
@@ -245,6 +256,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetDatasourcesByDatasetAction.class, GetDatasourcesByDatasetActionHandler.class);
         bindHandler(SaveDatasourceAction.class, SaveDatasourceActionHandler.class);
         bindHandler(DeleteDatasourcesAction.class, DeleteDatasourcesActionHandler.class);
+        bindHandler(DeleteDatasourcesNotUsedAction.class, DeleteDatasourcesNotUsedActionHandler.class);
         bindHandler(GetDatasetDimensionsIdsAction.class, GetDatasetDimensionsIdsActionHandler.class);
         bindHandler(GetDatasetDimensionCoverageAction.class, GetDatasetDimensionCoverageActionHandler.class);
         bindHandler(GetDatasetDimensionsCoverageAction.class, GetDatasetDimensionsCoverageActionHandler.class);
@@ -259,11 +271,14 @@ public class ServerModule extends HandlerModule {
         bindHandler(CreateDatasetCategorisationsAction.class, CreateDatasetCategorisationsActionHandler.class);
         bindHandler(DeleteCategorisationsAction.class, DeleteCategorisationsActionHandler.class);
         bindHandler(EndCategorisationsValidityAction.class, EndCategorisationsValidityActionHandler.class);
+        bindHandler(ExportDatasourcesAction.class, ExportDatasourcesActionHandler.class);
         bindHandler(GetDatasetConstraintAction.class, GetDatasetConstraintActionHandler.class);
         bindHandler(CreateDatasetConstraintAction.class, CreateDatasetConstraintActionHandler.class);
         bindHandler(DeleteDatasetConstraintAction.class, DeleteDatasetConstraintActionHandler.class);
         bindHandler(SaveRegionAction.class, SaveRegionActionHandler.class);
         bindHandler(CreateDatabaseDatasourceAction.class, CreateDatabaseDatasourceActionHandler.class);
+        bindHandler(GetMultipleDatasetVersionsAction.class, GetMultipleDatasetVersionsActionHandler.class);
+        bindHandler(UpdateDatasetVersionMetadataInGroupAction.class, UpdateDatasetVersionMetadataInGroupActionHandler.class);
 
         // PUBLICATIONS
         bindHandler(GetPublicationVersionsAction.class, GetPublicationVersionsActionHandler.class);

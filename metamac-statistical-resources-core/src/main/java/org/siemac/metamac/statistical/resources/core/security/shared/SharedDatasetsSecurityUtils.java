@@ -129,6 +129,10 @@ public class SharedDatasetsSecurityUtils extends SharedSecurityUtils {
         return isOperationAllowed(metamacPrincipal, operationCode, PRODUCTION_ROLES);
     }
 
+    public static boolean canUpdateDatasetsInGroupInStatisticalOperation(MetamacPrincipal metamacPrincipal, String operationCode) {
+        return isOperationAllowed(metamacPrincipal, operationCode, PRODUCTION_ROLES);
+    }
+
     public static boolean canRetrieveDatasetVersionMainCoverages(MetamacPrincipal metamacPrincipal) {
         return isAnyStatisticalResourceRole(metamacPrincipal);
     }
@@ -172,6 +176,9 @@ public class SharedDatasetsSecurityUtils extends SharedSecurityUtils {
         return false;
     }
 
+    public static boolean canExportDatasourcesTsv(MetamacPrincipal metamacPrincipal) {
+        return isAnyStatisticalResourceRole(metamacPrincipal);
+    }
     public static boolean canRetrieveCategorisationsByDatasetVersion(MetamacPrincipal metamacPrincipal, String operationCode, ProcStatusEnum procStatus) {
         return canRetrieveStatisticalResource(metamacPrincipal, operationCode, procStatus);
     }

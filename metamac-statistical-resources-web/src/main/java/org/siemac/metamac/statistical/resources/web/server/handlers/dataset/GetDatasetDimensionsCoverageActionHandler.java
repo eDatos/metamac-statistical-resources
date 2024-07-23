@@ -33,7 +33,7 @@ public class GetDatasetDimensionsCoverageActionHandler extends SecurityActionHan
             Map<String, List<CodeItemDto>> codesDimensions = new HashMap<String, List<CodeItemDto>>();
             for (String dimensionId : action.getDimensionsIds()) {
                 List<CodeItemDto> codes = statisticalResourcesServiceFacade.filterCoverageForDatasetVersionDimension(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionUrn(),
-                        dimensionId, action.getCriteria() != null ? action.getCriteria().getCriteria() : null);
+                        dimensionId, action.getCriteria() != null ? action.getCriteria().getCriteria() : null, null);
                 codesDimensions.put(dimensionId, codes);
             }
             return new GetDatasetDimensionsCoverageResult(codesDimensions);

@@ -178,6 +178,9 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     protected void applySendToPublishedPreviousResource(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         try {
             if (!resource.isKeepAllData()) {
+                logger.info(
+                        "The dataset table will be deleted from the repository when trying to publish a new version of the dataset since it does not save the observations in previous versions. Dataset = {}",
+                        resource.getDatasetRepositoryId());
                 datasetRepositoriesServiceFacade.deleteDatasetRepository(resource.getDatasetRepositoryId());
                 resource.setDatasetRepositoryId(null);
             }

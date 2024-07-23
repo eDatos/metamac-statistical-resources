@@ -159,7 +159,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages);
     
             Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
-                    calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null);
+                    calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null, source.getTemporalGranularities());
             Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
     
             // ********************************************
@@ -171,10 +171,10 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             target.setVersion(commonDo2JsonStatRestMapper.JSON_STAT_VERSION);
             target.setClazz(commonDo2JsonStatRestMapper.JSON_STAT_CLASS);
             target.addAllValues(commonDo2JsonStatRestMapper.toJsonStatDatasetValues(data));
-            target.setDimension(commonDo2JsonStatRestMapper.toJsonStatDatasetDimensions(dimensions, data.getDimensions(), selectedLanguage));
+            target.setDimension(commonDo2JsonStatRestMapper.toJsonStatDatasetDimensions(dimensions, data.getDimensions(), dsdProcessorResult, attributes, data.getAttributes(), selectedLanguage));
             target.setRole(commonDo2JsonStatRestMapper.toJsonStatRoles(dsdProcessorResult));
-            target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data));
-            target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data));
+            target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data, dsdProcessorResult));
+            target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data, dsdProcessorResult, attributes));
             target.setLabel(commonDo2JsonStatRestMapper.toI18nValue(datasetVersion.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
             target.setUpdated(datasetVersion.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
             target.setExtension(commonDo2JsonStatRestMapper.toJsonStatExtension(datasetVersion, selectedLanguage));
@@ -258,7 +258,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
 
         target.setRelatedDsd(commonDo2RestMapper.toDataStructureDefinition(datasetVersion.getRelatedDsd(), dsdProcessorResult.getDataStructure(), selectedLanguages));
         target.setDimensions(commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, effectiveDimensionValuesToDataByDimension,
-                selectedLanguages, null));
+                selectedLanguages, null, source.getTemporalGranularities()));
         target.setAttributes(commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages));
 
         ResourceStatisticalResourceBase relatedDataset = null;

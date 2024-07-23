@@ -32,4 +32,9 @@ public abstract class LifeCycleResourceRecord extends VersionableResourceRecord 
             setAttribute(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS, publicationStreamStatusIcon);
         }
     }
+
+    public void resetPublicationStreamStatus() {
+        FormItemIcon publicationStreamStatusIcon = null;
+        setAttribute(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS, publicationStreamStatusIcon);
+    }
 }

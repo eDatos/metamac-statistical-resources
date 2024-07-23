@@ -93,6 +93,8 @@ Application StatisticalResourcesDto {
 			List<String> dataProvidersUrn;
 			List<String> versionRationaleTypes;
 			Boolean automaticLifeCicle;
+			StringMap versionRationale;
+			
 			
 		}
 		

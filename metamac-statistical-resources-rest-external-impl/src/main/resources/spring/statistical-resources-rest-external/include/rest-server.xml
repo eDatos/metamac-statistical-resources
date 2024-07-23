@@ -27,7 +27,6 @@
             <entry key="tsv" value="text/tab-separated-values" />
         	<entry key="csv" value="text/csv" />
         	<entry key="xlsx" value="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
-        	<entry key="xls" value="application/vnd.ms-excel" />
         </jaxrs:extensionMappings>
         
         <jaxrs:providers>

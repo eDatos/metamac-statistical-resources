@@ -101,4 +101,8 @@ public interface GlobalResources extends ClientBundleWithLookup {
     @ImageOptions(repeatStyle = RepeatStyle.Both)
     @Source("images/copy.png")
     ImageResource copy();
+
+    @ImageOptions(repeatStyle = RepeatStyle.Both)
+    @Source("images/new_listgrid.png")
+    ImageResource newListGrid();
 }

@@ -10,6 +10,7 @@ import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalRes
 import org.siemac.metamac.statistical.resources.core.dto.VersionRationaleTypeDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.SearchVersionRationaleTypeItem;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.utils.DatasetWidgetsUtil;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
@@ -32,8 +33,19 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
 
     public LifeCycleResourceVersionEditionForm() {
         super(getConstants().formVersion());
+        init(false);
+    }
+
+    public LifeCycleResourceVersionEditionForm(boolean isMultipleUpdate) {
+        super(getConstants().formVersion());
+        init(isMultipleUpdate);
+
+    }
+
+    private void init(boolean isMultipleUpdate) {
 
         ViewTextItem versionLogic = new ViewTextItem(VersionableResourceDS.VERSION, getConstants().versionableStatisticalResourceVersionLogic());
+        versionLogic.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
 
         final SearchVersionRationaleTypeItem versionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES,
                 getConstants().versionableStatisticalResourceVersionRationaleTypes(), true);
@@ -71,9 +83,11 @@ public class LifeCycleResourceVersionEditionForm extends GroupDynamicForm {
         });
 
         ViewTextItem validFrom = new ViewTextItem(VersionableResourceDS.VALID_FROM, getConstants().versionableStatisticalResourceValidFrom());
+        validFrom.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
         validFrom.setCanEdit(false);
 
         ViewTextItem validTo = new ViewTextItem(VersionableResourceDS.VALID_TO, getConstants().versionableStatisticalResourceValidTo());
+        validTo.setShowIfCondition(DatasetWidgetsUtil.getIsSingleUpdateFunction(isMultipleUpdate));
         validTo.setCanEdit(false);
 
         final CustomSelectItem nextVersion = new CustomSelectItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion());

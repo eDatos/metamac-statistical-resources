@@ -169,11 +169,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetXLS(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xls");
-    }
-
-    @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
         return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx");
     }

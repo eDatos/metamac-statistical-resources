@@ -11,6 +11,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.CustomTabSet;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetAttributesTabPresenter.DatasetAttributesTabView;
 import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetCategorisationsTabPresenter.DatasetCategorisationsTabView;
@@ -181,7 +182,7 @@ public class DatasetViewImpl extends ViewWithUiHandlers<DatasetUiHandlers> imple
 
     @Override
     public void setDatasetVersionsAndSelectCurrent(String currentDatasetUrn, List<DatasetVersionBaseDto> datasetVersionBaseDtos) {
-        versionsSectionStack.setDatasetVersions(datasetVersionBaseDtos);
+        versionsSectionStack.setDatasetVersions(datasetVersionBaseDtos, DatasetDS.VERSION);
         versionsSectionStack.selectDatasetVersion(currentDatasetUrn);
     }
 

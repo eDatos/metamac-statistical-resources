@@ -58,6 +58,11 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkParameterRequired(deleteAttributes, ServiceExceptionParameters.DELETE_ATTRIBUTES, exceptions);
     }
 
+    public static void checkDeleteDatasourcesNotUsed(String datasetUrn, boolean deleteAttributes, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetUrn, ServiceExceptionParameters.DATASET_URN, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(deleteAttributes, ServiceExceptionParameters.DELETE_ATTRIBUTES, exceptions);
+    }
+
     public static void checkRetrieveDatasourcesByDatasetVersion(String datasetVersionUrn, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
     }
@@ -240,6 +245,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkExistingDatasetVersion(DatasetVersion datasetVersion, String metadataName, List<MetamacExceptionItem> exceptions) {
+
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, metadataName, exceptions);
 
         if (datasetVersion == null) {
@@ -370,6 +376,12 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
 
     }
 
+    public static void checkUpdateDatasetVersionInGroup(DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionMetadataToChange, ServiceExceptionParameters.DATASET_VERSION, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetUrnToChange, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
+
+    }
+
     public static void checkUpdateGeographicCoverageVariableElementsCache(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.DATASET_VERSION, exceptions);
     }
@@ -410,5 +422,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkGetDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(agencyId, ServiceExceptionParameters.DATASET_VERSION__MAINTAINER__ID, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.DATASET_VERSION__CODE, exceptions);
+    }
+    public static void checkExportDatasourcesTsv(String datasetVersionUrn, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
     }
 }

@@ -72,7 +72,7 @@ public class DimensionConstraintMainFormLayout extends MainFormLayout {
                             regionValueDto = createRegion();
                         }
                         regionValueDto = enumeratedValuesSelectionEditionForm.updateRegionDto(regionValueDto);
-                        getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, enumeratedValuesSelectionEditionForm.getSelectedDimension());
+                        getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, enumeratedValuesSelectionEditionForm.getSelectedDimension(), datasetVersionDto.getUrn());
                     }
                 } else if (nonEnumeratedValuesSelectionEditionForm.isVisible()) {
                     if (nonEnumeratedValuesSelectionEditionForm.validate(false)) {
@@ -80,7 +80,7 @@ public class DimensionConstraintMainFormLayout extends MainFormLayout {
                             regionValueDto = createRegion();
                         }
                         regionValueDto = nonEnumeratedValuesSelectionEditionForm.updateRegionDto(regionValueDto);
-                        getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, nonEnumeratedValuesSelectionEditionForm.getSelectedDimension());
+                        getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, nonEnumeratedValuesSelectionEditionForm.getSelectedDimension(), datasetVersionDto.getUrn());
                     }
                 }
             }
@@ -92,10 +92,10 @@ public class DimensionConstraintMainFormLayout extends MainFormLayout {
             public void onClick(ClickEvent event) {
                 if (enumeratedValuesSelectionForm.isVisible()) {
                     regionValueDto = CommonUtils.removeKeyValueOfDimension(regionValueDto, enumeratedValuesSelectionForm.getSelectedDimension());
-                    getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, enumeratedValuesSelectionForm.getSelectedDimension());
+                    getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, enumeratedValuesSelectionForm.getSelectedDimension(), datasetVersionDto.getUrn());
                 } else if (nonEnumeratedValuesSelectionForm.isVisible()) {
                     regionValueDto = CommonUtils.removeKeyValueOfDimension(regionValueDto, nonEnumeratedValuesSelectionForm.getSelectedDimension());
-                    getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, nonEnumeratedValuesSelectionForm.getSelectedDimension());
+                    getUiHandlers().saveRegion(contentConstraintDto.getUrn(), regionValueDto, nonEnumeratedValuesSelectionForm.getSelectedDimension(), datasetVersionDto.getUrn());
                 }
             }
         });

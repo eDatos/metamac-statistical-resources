@@ -486,6 +486,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private JobDetail createJob(ServiceContext serviceContext, JobKey jobKey, String taskName, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats,
             StringBuilder alternativeRepresentations, StringBuilder versionRationaleTypes, StringBuilder datasetVersionDataProvidersUrn, TaskInfoDataset taskInfoDataset) {
         // @formatter:off
+        
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE, taskInfoDataset.getVersionRationale());
+        
         JobBuilder jobBuilder = 
                 newJob().withIdentity(jobKey)
                     .usingJobData(AbstractImportDatasetJob.FILE_PATHS, filePaths.toString())
@@ -505,7 +509,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(AbstractImportDatasetJob.DATASET_NEXT_PROC_STATUS, taskInfoDataset.getDatasetNextProcStatus())
                     .usingJobData(AbstractImportDatasetJob.DATASET_AUTOMATIC_LIFE_CICLE, taskInfoDataset.getDatasetAutomaticLifeCicle())
                     .usingJobData(AbstractImportDatasetJob.TASK_NAME, taskName)
-                    .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId());
+                    .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId())
+                    .usingJobData(jobDataMap);
         // @formatter:on
 
         if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(serviceContext)) {
@@ -1098,6 +1103,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
                 internationalStringDto.addText(localisedStringDto);
 
+                logger.info("Rollback importation task is trying to delete observations by attribute instance value. Dataset = {}, Datasource = {}",
+                        new Object[]{taskInfoDataset.getDatasetVersionId(), dataSourceId});
+
                 datasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(taskInfoDataset.getDatasetVersionId(), StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
                         internationalStringDto);
             }
@@ -1370,9 +1378,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public boolean existsTaskForResource(ServiceContext ctx, String resourceId) throws MetamacException {
+        try {
         taskServiceInvocationValidator.checkExistsTaskForResource(ctx, resourceId);
-        return existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
+        boolean a = existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
                 || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId);
+        return a;
+        } catch(Exception e) {
+            logger.error("existsTaskForResource ----", e);
+        }
+        return true;
     }
 
     @Override
@@ -1521,12 +1535,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
-        String datasetVersionUrn = extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(jobKey);
+         String datasetVersionUrn = extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(jobKey);
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
-
         getNoticesRestInternalService().createUpdateGeocoverageCacheNotification(datasetVersion, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB,
                 ServiceNoticeMessage.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, datasetVersionUrn);
-    }
+         markTaskAsFinished(ctx, jobKey);
+     }
     
     private void processRollbackUpdateExternalPublicationGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
 
@@ -1775,7 +1789,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         // Callback
         getDatasetService().proccessDatasetFileImportationResult(ctx, taskInfoDataset.getDatasetVersionId(), filesResult);
-        publishConstraints(ctx, taskInfoDataset.getDatasetVersionId(), calculateConstraints);
     }
 
     private String generateDataSourceId(ServiceContext serviceContext, String fileName, DateTime dateTime) {

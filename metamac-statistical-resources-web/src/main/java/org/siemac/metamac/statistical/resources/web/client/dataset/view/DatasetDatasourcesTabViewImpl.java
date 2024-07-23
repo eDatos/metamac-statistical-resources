@@ -61,9 +61,9 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
 
         datasourcesListPanel = new DatasourcesListPanel();
         datasourcesListPanel.setWidth("99%");
+        datasourceMainFormLayout.addCustomPanel(datasourcesListPanel);
 
         panel.addMember(datasourceMainFormLayout);
-        panel.addMember(datasourcesListPanel);
     }
 
     @Override
@@ -118,13 +118,17 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
     private class DatasourcesListPanel extends VLayout {
 
         private CustomToolStripButton              deleteDatasourceButton;
+        private CustomToolStripButton              deleteAllDatasourcesNotUsedButton;
         private CustomToolStripButton              importZipDatasourcesButton;
         private CustomToolStripButton              importDatabaseDatasourcesButton;
         private CustomToolStripButton              importDatasourceButton;
+        private CustomToolStripButton              exportDatasourceButton;
         private CustomListGrid                     datasourcesList;
 
         private DeleteConfirmationWindow           deleteConfirmationWindow;
+        private DeleteConfirmationWindow           deleteDatasourcesNotUsedConfirmationWindow;
         private DeleteAttributesConfirmationWindow deleteAttributesConfirmationWindow;
+        private DeleteAttributesConfirmationWindow deleteAllDatasourcesNotUsedAttributesConfirmationWindow;
         private ImportDatasourcesWindow            importDatasourcesWindow;
         private CreateDatabaseDatasourceWindow     createDatabaseDatasourceWindow;
         private ImportDatasourceWithMappingWindow  importDatasourceWithMappingWindow;
@@ -138,6 +142,9 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
             deleteDatasourceButton = createDeleteDatasourcesButton();
             toolStrip.addButton(deleteDatasourceButton);
 
+            deleteAllDatasourcesNotUsedButton = createDeleteAllDatasourcesNotUsedButton();
+            toolStrip.addButton(deleteAllDatasourcesNotUsedButton);
+
             importDatasourceButton = createImportDatasourceButton();
             toolStrip.addButton(importDatasourceButton);
 
@@ -146,6 +153,9 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
 
             importDatabaseDatasourcesButton = createImportDbDatasourcesButton();
             toolStrip.addButton(importDatabaseDatasourcesButton);
+
+            exportDatasourceButton = createExportDatasourceButton();
+            toolStrip.addButton(exportDatasourceButton);
 
             // List
 
@@ -173,9 +183,16 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
             deleteConfirmationWindow = new DeleteConfirmationWindow(getConstants().actionConfirmDeleteTitle(), getConstants().datasourceDeleteConfirmation());
             deleteConfirmationWindow.setVisible(false);
 
+            deleteDatasourcesNotUsedConfirmationWindow = new DeleteConfirmationWindow(getConstants().actionConfirmDeleteTitle(), getConstants().datasourcesNotUsedDeleteConfirmation());
+            deleteDatasourcesNotUsedConfirmationWindow.setVisible(false);
+
             deleteAttributesConfirmationWindow = new DeleteAttributesConfirmationWindow(getConstants().actionConfirmDeleteAttributesTitle(), getConstants().datasourceDeleteAttributesConfirmation(),
                     getConstants().datasourceDeleteAttributesConfirmationWarning());
             deleteAttributesConfirmationWindow.setVisible(Boolean.FALSE);
+
+            deleteAllDatasourcesNotUsedAttributesConfirmationWindow = new DeleteAttributesConfirmationWindow(getConstants().actionConfirmDeleteAttributesTitle(),
+                    getConstants().datasourceDeleteAttributesConfirmation(), getConstants().datasourceDeleteAttributesConfirmationWarning());
+            deleteAllDatasourcesNotUsedAttributesConfirmationWindow.setVisible(Boolean.FALSE);
 
             // Import datasource from DB window
 
@@ -193,6 +210,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         private void updateListGridButtonsVisibilityBasedOnSelection(ListGridRecord[] selection) {
             boolean someSelected = selection.length > 0;
             deleteDatasourceButton.setVisible(DatasetClientSecurityUtils.canDeleteDatasources(datasetVersionDto) && someSelected);
+            deleteAllDatasourcesNotUsedButton.setVisible(DatasetClientSecurityUtils.canDeleteDatasources(datasetVersionDto));
         }
 
         private void setUiHandlers(DatasetDatasourcesTabUiHandlers uiHandlers) {
@@ -206,7 +224,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         }
 
         private CustomToolStripButton createDeleteDatasourcesButton() {
-            CustomToolStripButton deleteDatasourceButton = new CustomToolStripButton(getConstants().actionDelete(), RESOURCE.deleteListGrid().getURL());
+            CustomToolStripButton deleteDatasourceButton = new CustomToolStripButton(getConstants().actionDeleteSelectedDatasources(), RESOURCE.deleteListGrid().getURL());
             deleteDatasourceButton.setVisible(false);
             deleteDatasourceButton.addClickHandler(new ClickHandler() {
 
@@ -216,6 +234,19 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
                 }
             });
             return deleteDatasourceButton;
+        }
+
+        private CustomToolStripButton createDeleteAllDatasourcesNotUsedButton() {
+            CustomToolStripButton button = new CustomToolStripButton(getConstants().actionDeleteAllDatasourcesNotUsed(), RESOURCE.deleteListGrid().getURL());
+            button.setVisible(false);
+            button.addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    deleteDatasourcesNotUsedConfirmationWindow.show();
+                }
+            });
+            return button;
         }
 
         private CustomToolStripButton createImportZipDatasourcesButton() {
@@ -266,6 +297,20 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
             return importDatasourcesButton;
         }
 
+        private CustomToolStripButton createExportDatasourceButton() {
+            final CustomToolStripButton exportDatasourcesButton = new CustomToolStripButton(getConstants().actionExportDatasources(),
+                    org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+            exportDatasourcesButton.setVisible(Boolean.TRUE);
+            exportDatasourcesButton.addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    getUiHandlers().exportDatasources(datasetVersionDto.getUrn());
+                }
+            });
+            return exportDatasourcesButton;
+        }
+
         private void bindEvents() {
             datasourcesList.addSelectionChangedHandler(new SelectionChangedHandler() {
 
@@ -303,6 +348,30 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
                 }
             });
 
+            deleteDatasourcesNotUsedConfirmationWindow.getYesButton().addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    deleteAllDatasourcesNotUsedAttributesConfirmationWindow.show();
+                }
+            });
+
+            deleteAllDatasourcesNotUsedAttributesConfirmationWindow.getYesButton().addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    getUiHandlers().deleteAllDatasourcesNotUsed(datasetVersionDto.getUrn(), Boolean.TRUE);
+                }
+            });
+
+            deleteAllDatasourcesNotUsedAttributesConfirmationWindow.getNoButton().addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    getUiHandlers().deleteAllDatasourcesNotUsed(datasetVersionDto.getUrn(), Boolean.FALSE);
+                }
+            });
+
             createDatabaseDatasourceWindow.getSaveButtonHandlers().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() { // NOSONAR
 
                 @Override
@@ -319,6 +388,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         private void showListGridDeleteButton() {
             if (DatasetClientSecurityUtils.canDeleteDatasources(datasetVersionDto)) {
                 deleteDatasourceButton.show();
+                deleteAllDatasourcesNotUsedButton.show();
             }
         }
 

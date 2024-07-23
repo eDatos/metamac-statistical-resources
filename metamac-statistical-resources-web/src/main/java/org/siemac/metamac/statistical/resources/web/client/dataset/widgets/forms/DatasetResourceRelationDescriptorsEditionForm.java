@@ -19,6 +19,10 @@ public class DatasetResourceRelationDescriptorsEditionForm extends SiemacMetadat
 
     public DatasetResourceRelationDescriptorsEditionForm() {
         super();
+        initDatasetResourceRelationDescriptorsEditionForm();
+    }
+
+    private void initDatasetResourceRelationDescriptorsEditionForm() {
 
         RelatedResourceListItem isRequiredBy = new RelatedResourceListItem(DatasetDS.IS_REQUIRED_BY, getConstants().siemacMetadataStatisticalResourceIsRequiredBy(), false,
                 getRecordNavigationHandler());

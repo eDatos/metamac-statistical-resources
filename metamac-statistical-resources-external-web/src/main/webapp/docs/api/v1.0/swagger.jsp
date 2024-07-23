@@ -1,9 +1,19 @@
-<%@page import="org.siemac.metamac.core.common.util.swagger.SwaggerUtils"%>
-<%@page pageEncoding="UTF-8"%>
+<%@ page pageEncoding="UTF-8"%>
+<%@ page import="org.siemac.metamac.core.common.util.swagger.SwaggerUtils"%>
+<%@ page import="java.util.ResourceBundle"%>
+<%@ page import="org.siemac.metamac.statistical.resources.web.external.MessagesResourceBundle"%>
+<%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils"%>
+<%
+    String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+    
+    MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale);
+    pageContext.setAttribute("msg", messagesResource);
+
+%>
 {
    "swagger":"2.0",
    "info":{
-      "description":"Los recursos de información estadística son los resultados que se obtienen de una operación estadística. El objetivo de esta API es consultar todos los recursos de información estadística de la organización.",
+      "description":"${msg['api.doc.swagger.info.description']}",
       "version":"1.0",
       "title":"API de recursos estadísticos v1.0"
    },
@@ -13,2091 +23,27 @@
    ],
    "tags":[
       {
-         "name":"Cubos estadísticos",
-         "description":""
+         "name":"${msg['api.doc.swagger.tags.Cubos.name']}",
+         "description":"${msg['api.doc.swagger.tags.Cubos.description']}"
       },
       {
-         "name":"Publicaciones estadísticas",
-         "description":""
+         "name":"${msg['api.doc.swagger.tags.Publicaciones.name']}",
+         "description":"${msg['api.doc.swagger.tags.Publicaciones.description']}"
       },
       {
-         "name":"Consultas estadísticas",
-         "description":""
+         "name":"${msg['api.doc.swagger.tags.Consultas.name']}",
+         "description":"${msg['api.doc.swagger.tags.Consultas.description']}"
       },
       {
-         "name":"Multidatasets estadísticos",
-         "description":""
+         "name":"${msg['api.doc.swagger.tags.Multidatasets.name']}",
+         "description":"${msg['api.doc.swagger.tags.Multidatasets.description']}"
       },
       {
-         "name":"Utilidades",
-         "description":""
+         "name":"${msg['api.doc.swagger.tags.Utilidades.name']}",
+         "description":"${msg['api.doc.swagger.tags.Utilidades.description']}"
       }
    ],
    "definitions":{
-      "Attribute":{
-         "type":"object",
-         "title":"Attribute",
-         "properties":{
-            "attachmentLevel":{
-               "description":"",
-               "$ref":"#/definitions/AttributeAttachmentLevelType"
-            },
-            "attributeValues":{
-               "description":"",
-               "$ref":"#/definitions/AttributeValues"
-            },
-            "dimensions":{
-               "description":"",
-               "$ref":"#/definitions/AttributeDimensions"
-            },
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "type":{
-               "description":"",
-               "$ref":"#/definitions/ComponentType"
-            }
-         },
-         "description":""
-      },
-      "AttributeAttachmentLevelType":{
-         "type":"string",
-         "title":"AttributeAttachmentLevelType",
-         "enum":[
-            "DATASET",
-            "DIMENSION",
-            "PRIMARY_MEASURE"
-         ],
-         "description":""
-      },
-      "AttributeDimension":{
-         "type":"object",
-         "title":"AttributeDimension",
-         "properties":{
-            "dimensionId":{
-               "description":"",
-               "type":"string"
-            },
-            "values":{
-               "description":"",
-               "$ref":"#/definitions/AttributeValues"
-            }
-         },
-         "description":""
-      },
-      "AttributeDimensions":{
-         "type":"object",
-         "title":"AttributeDimensions",
-         "properties":{
-            "dimension":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/AttributeDimension"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "AttributeValues":{
-         "type":"object",
-         "title":"AttributeValues",
-         "description":""
-      },
-      "Attributes":{
-         "type":"object",
-         "title":"Attributes",
-         "properties":{
-            "attribute":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/Attribute"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "Chapter":{
-         "type":"object",
-         "title":"Chapter",
-         "allOf":[
-            {
-               "$ref":"#/definitions/CollectionNode"
-            },
-            {
-               "properties":{
-                  "nodes":{
-                     "description":"",
-                     "$ref":"#/definitions/CollectionNodes"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "ChildLinks":{
-         "type":"object",
-         "title":"ChildLinks",
-         "properties":{
-            "childLink":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/ResourceLink"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "CodeRepresentation":{
-         "type":"object",
-         "title":"CodeRepresentation",
-         "properties":{
-            "code":{
-               "description":"",
-               "type":"string"
-            },
-            "index":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "CodeRepresentations":{
-         "type":"object",
-         "title":"CodeRepresentations",
-         "properties":{
-            "representation":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/CodeRepresentation"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "Collection":{
-         "type":"object",
-         "title":"Collection",
-         "properties":{
-            "childLinks":{
-               "description":"",
-               "$ref":"#/definitions/ChildLinks"
-            },
-            "data":{
-               "description":"",
-               "$ref":"#/definitions/CollectionData"
-            },
-            "description":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            },
-            "metadata":{
-               "description":"",
-               "$ref":"#/definitions/CollectionMetadata"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "parentLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "selectedLanguages":{
-               "description":"",
-               "$ref":"#/definitions/SelectedLanguages"
-            },
-            "selfLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "urn":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "CollectionData":{
-         "type":"object",
-         "title":"CollectionData",
-         "properties":{
-            "nodes":{
-               "description":"",
-               "$ref":"#/definitions/CollectionNodes"
-            }
-         },
-         "description":""
-      },
-      "CollectionMetadata":{
-         "type":"object",
-         "title":"CollectionMetadata",
-         "allOf":[
-            {
-               "$ref":"#/definitions/StatisticalResource"
-            },
-            {
-               "properties":{
-                  "formatExtentResources":{
-                     "description":"",
-                     "type":"number"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "CollectionNode":{
-         "type":"object",
-         "title":"CollectionNode",
-         "properties":{
-            "description":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            }
-         },
-         "description":""
-      },
-      "CollectionNodes":{
-         "type":"object",
-         "title":"CollectionNodes",
-         "properties":{
-            "node":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/CollectionNode"
-               }
-            }
-         },
-         "description":""
-      },
-      "Collections":{
-         "type":"object",
-         "title":"Collections",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "collection":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Contact":{
-         "type":"object",
-         "title":"Contact",
-         "properties":{
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "organisationUnit":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "responsibility":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "telephones":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "type":"string"
-               }
-            },
-            "faxes":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "type":"string"
-               }
-            },
-            "urls":{
-               "type":"array",
-               "items":{
-                  "type":"string"
-               }
-            },
-            "emails":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "type":"string"
-               }
-            }
-         },
-         "description":""
-      },
-      "Contacts":{
-         "type":"object",
-         "title":"Contacts",
-         "properties":{
-            "dimension":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/Contact"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "Multidataset":{
-         "type":"object",
-         "title":"Multidataset",
-         "properties":{
-            "childLinks":{
-               "description":"",
-               "$ref":"#/definitions/ChildLinks"
-            },
-            "data":{
-               "description":"",
-               "$ref":"#/definitions/MultidatasetData"
-            },
-            "description":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            },
-            "metadata":{
-               "description":"",
-               "$ref":"#/definitions/MultidatasetMetadata"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "parentLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "selectedLanguages":{
-               "description":"",
-               "$ref":"#/definitions/SelectedLanguages"
-            },
-            "selfLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "urn":{
-               "description":"",
-               "type":"string"
-            },
-            "visualizerHtmlLink":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "MultidatasetData":{
-         "type":"object",
-         "title":"MultidatasetData",
-         "properties":{
-            "nodes":{
-               "description":"",
-               "$ref":"#/definitions/MultidatasetNodes"
-            }
-         },
-         "description":""
-      },
-      "MultidatasetMetadata":{
-         "type":"object",
-         "title":"MultidatasetMetadata",
-         "allOf":[
-            {
-               "$ref":"#/definitions/StatisticalResource"
-            },
-            {
-               "properties":{
-                  "formatExtentResources":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "filteringDimension":{
-                     "description":"",
-                     "$ref":"#/definitions/InternationalString"
-                  }                 
-               }
-            }
-         ],
-         "description":""
-      },
-      "MultidatasetNode":{
-         "type":"object",
-         "title":"MultidatasetNode",
-         "properties":{
-            "description":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            }
-         },
-         "description":""
-      },
-      "MultidatasetNodes":{
-         "type":"object",
-         "title":"MultidatasetNodes",
-         "properties":{
-            "node":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/MultidatasetNode"
-               }
-            }
-         },
-         "description":""
-      },
-      "Multidatasets":{
-         "type":"object",
-         "title":"Multidatasets",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "multidataset":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "ComponentType":{
-         "type":"string",
-         "title":"ComponentType",
-         "enum":[
-            "OTHER",
-            "SPATIAL",
-            "TEMPORAL",
-            "MEASURE"
-         ],
-         "description":""
-      },
-      "Data":{
-         "type":"object",
-         "title":"Data",
-         "properties":{
-            "attributes":{
-               "description":"",
-               "$ref":"#/definitions/DataAttributes"
-            },
-            "dimensions":{
-               "description":"",
-               "$ref":"#/definitions/DimensionRepresentations"
-            },
-            "observations":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "DataAttribute":{
-         "type":"object",
-         "title":"DataAttribute",
-         "properties":{
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "value":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "DataAttributes":{
-         "type":"object",
-         "title":"DataAttributes",
-         "properties":{
-            "attribute":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/DataAttribute"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "DataStructureDefinition":{
-         "type":"object",
-         "title":"DataStructureDefinition",
-         "allOf":[
-            {
-               "$ref":"#/definitions/Resource"
-            },
-            {
-               "properties":{
-                  "autoOpen":{
-                     "description":"",
-                     "type":"boolean"
-                  },
-                  "showNullValuesByDefault":{
-                     "description":"",
-                     "type":"boolean"
-                  },
-                  "showZeroValuesByDefault":{
-                     "description":"",
-                     "type":"boolean"
-                  },
-                  "heading":{
-                     "description":"",
-                     "$ref":"#/definitions/DimensionsId"
-                  },
-                  "showDecimals":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "stub":{
-                     "description":"",
-                     "$ref":"#/definitions/DimensionsId"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Dataset":{
-         "type":"object",
-         "title":"Dataset",
-         "properties":{
-            "childLinks":{
-               "description":"",
-               "$ref":"#/definitions/ChildLinks"
-            },
-            "data":{
-               "description":"",
-               "$ref":"#/definitions/Data"
-            },
-            "description":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            },
-            "metadata":{
-               "description":"",
-               "$ref":"#/definitions/DatasetMetadata"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "parentLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "selectedLanguages":{
-               "description":"",
-               "$ref":"#/definitions/SelectedLanguages"
-            },
-            "selfLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "urn":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "DatasetMetadata":{
-         "type":"object",
-         "title":"DatasetMetadata",
-         "allOf":[
-            {
-               "$ref":"#/definitions/StatisticalResource"
-            },
-            {
-               "properties":{
-                  "attributes":{
-                     "description":"",
-                     "$ref":"#/definitions/Attributes"
-                  },
-                  "bibliographicCitation":{
-                     "description":"",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "dateEnd":{
-                     "description":"",
-                     "type":"string"
-                  },
-                  "dateNextUpdate":{
-                     "description":"",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "dateStart":{
-                     "description":"",
-                     "type":"string"
-                  },
-                  "dimensions":{
-                     "description":"",
-                     "$ref":"#/definitions/Dimensions"
-                  },
-                  "formatExtentDimensions":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "formatExtentObservations":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "formatExtentTableSize":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "geographicCoverages":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
-                  },
-                  "geographicGranularities":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
-                  },
-                  "isReplacedByVersion":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "isRequiredBy":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
-                  },
-                  "keepAllData":{
-                     "description":"",
-                     "type":"boolean"
-                  },
-                  "measureCoverages":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
-                  },
-                  "relatedDsd":{
-                     "description":"",
-                     "$ref":"#/definitions/DataStructureDefinition"
-                  },
-                  "replacesVersion":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "statisticOfficiality":{
-                     "description":"",
-                     "$ref":"#/definitions/Item"
-                  },
-                  "statisticalUnit":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
-                  },
-                  "subjectAreas":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
-                  },
-                  "temporalCoverages":{
-                     "description":"",
-                     "$ref":"#/definitions/Items"
-                  },
-                  "temporalGranularities":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
-                  },
-                  "updateFrequency":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "constraints":{
-                     "description":"",
-                     "$ref":"#/definitions/ConstraintDimensionRepresentations"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Datasets":{
-         "type":"object",
-         "title":"Datasets",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "dataset":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Dimension":{
-         "type":"object",
-         "title":"Dimension",
-         "properties":{
-            "dimensionValues":{
-               "description":"",
-               "$ref":"#/definitions/DimensionValues"
-            },
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "type":{
-               "description":"",
-               "$ref":"#/definitions/DimensionType"
-            },
-            "variable":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "pluralName":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            }
-         },
-         "description":""
-      },
-      "DimensionRepresentation":{
-         "type":"object",
-         "title":"DimensionRepresentation",
-         "properties":{
-            "dimensionId":{
-               "description":"",
-               "type":"string"
-            },
-            "representations":{
-               "description":"",
-               "$ref":"#/definitions/CodeRepresentations"
-            }
-         },
-         "description":""
-      },
-      "DimensionRepresentations":{
-         "type":"object",
-         "title":"DimensionRepresentations",
-         "properties":{
-            "dimension":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/DimensionRepresentation"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "DimensionType":{
-         "type":"string",
-         "title":"DimensionType",
-         "enum":[
-            "MEASURE_DIMENSION",
-            "TIME_DIMENSION",
-            "GEOGRAPHIC_DIMENSION",
-            "DIMENSION"
-         ],
-         "description":""
-      },
-      "DimensionValues":{
-         "type":"object",
-         "title":"DimensionValues",
-         "description":""
-      },
-      "Dimensions":{
-         "type":"object",
-         "title":"Dimensions",
-         "properties":{
-            "dimension":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/Dimension"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "DimensionsId":{
-         "type":"object",
-         "title":"DimensionsId",
-         "properties":{
-            "dimensionId":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "type":"string"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "EnumeratedAttributeValue":{
-         "type":"object",
-         "title":"EnumeratedAttributeValue",
-         "allOf":[
-            {
-               "$ref":"#/definitions/Resource"
-            },
-            {
-               "properties":{
-                  "measureQuantity":{
-                     "description":"",
-                     "$ref":"#/definitions/MeasureQuantity"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "EnumeratedAttributeValues":{
-         "type":"object",
-         "title":"EnumeratedAttributeValues",
-         "allOf":[
-            {
-               "$ref":"#/definitions/AttributeValues"
-            },
-            {
-               "properties":{
-                  "total":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "value":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/EnumeratedAttributeValue"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "EnumeratedDimensionValue":{
-         "type":"object",
-         "title":"EnumeratedDimensionValue",
-         "allOf":[
-            {
-               "$ref":"#/definitions/Resource"
-            },
-            {
-               "properties":{
-               	  "geographicGranularity":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "measureQuantity":{
-                     "description":"",
-                     "$ref":"#/definitions/MeasureQuantity"
-                  },
-                  "open":{
-                     "description":"",
-                     "type":"boolean"
-                  },
-                  "showDecimalsPrecision":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "variableElement":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "visualisationParent":{
-                     "description":"",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "EnumeratedDimensionValues":{
-         "type":"object",
-         "title":"EnumeratedDimensionValues",
-         "allOf":[
-            {
-               "$ref":"#/definitions/DimensionValues"
-            },
-            {
-               "properties":{
-                  "total":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "value":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/EnumeratedDimensionValue"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "InternationalString":{
-         "type":"object",
-         "title":"InternationalString",
-         "properties":{
-            "text":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/LocalisedString"
-               }
-            }
-         },
-         "description":""
-      },
-      "Item":{
-         "type":"object",
-         "title":"Item",
-         "properties":{
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            }
-         },
-         "description":""
-      },
-      "ItemResource":{
-         "type":"object",
-         "title":"ItemResource",
-         "allOf":[
-            {
-               "$ref":"#/definitions/Resource"
-            },
-            {
-               "properties":{
-                  "parent":{
-                     "description":"",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Items":{
-         "type":"object",
-         "title":"Items",
-         "properties":{
-            "item":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/Item"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "ListBase":{
-         "type":"object",
-         "title":"ListBase",
-         "properties":{
-            "firstLink":{
-               "description":"",
-               "type":"string"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            },
-            "lastLink":{
-               "description":"",
-               "type":"string"
-            },
-            "limit":{
-               "description":"",
-               "type":"number"
-            },
-            "nextLink":{
-               "description":"",
-               "type":"string"
-            },
-            "offset":{
-               "description":"",
-               "type":"number"
-            },
-            "previousLink":{
-               "description":"",
-               "type":"string"
-            },
-            "selfLink":{
-               "description":"",
-               "type":"string"
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "LocalisedString":{
-         "type":"object",
-         "title":"LocalisedString",
-         "properties":{
-            "lang":{
-               "description":"",
-               "type":"string"
-            },
-            "value":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "MeasureQuantity":{
-         "type":"object",
-         "title":"MeasureQuantity",
-         "properties":{
-            "unitCode":{
-               "description":"",
-               "$ref":"#/definitions/ItemResource"
-            },
-            "unitMultiplier":{
-               "description":"",
-               "$ref":"#/definitions/ItemResource"
-            }
-         },
-         "description":""
-      },
-      "NextVersionType":{
-         "type":"string",
-         "title":"NextVersionType",
-         "enum":[
-            "NO_UPDATES",
-            "NON_SCHEDULED_UPDATE",
-            "SCHEDULED_UPDATE"
-         ],
-         "description":""
-      },
-      "NonEnumeratedAttributeValue":{
-         "type":"object",
-         "title":"NonEnumeratedAttributeValue",
-         "properties":{
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            }
-         },
-         "description":""
-      },
-      "NonEnumeratedAttributeValues":{
-         "type":"object",
-         "title":"NonEnumeratedAttributeValues",
-         "allOf":[
-            {
-               "$ref":"#/definitions/AttributeValues"
-            },
-            {
-               "properties":{
-                  "total":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "value":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/NonEnumeratedAttributeValue"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "NonEnumeratedDimensionValue":{
-         "type":"object",
-         "title":"NonEnumeratedDimensionValue",
-         "properties":{
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "temporalGranularity":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "NonEnumeratedDimensionValues":{
-         "type":"object",
-         "title":"NonEnumeratedDimensionValues",
-         "allOf":[
-            {
-               "$ref":"#/definitions/DimensionValues"
-            },
-            {
-               "properties":{
-                  "total":{
-                     "description":"",
-                     "type":"number"
-                  },
-                  "value":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/NonEnumeratedDimensionValue"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Queries":{
-         "type":"object",
-         "title":"Queries",
-         "allOf":[
-            {
-               "$ref":"#/definitions/ListBase"
-            },
-            {
-               "properties":{
-                  "query":{
-                     "description":"",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
-                     }
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Query":{
-         "type":"object",
-         "title":"Query",
-         "properties":{
-            "childLinks":{
-               "description":"",
-               "$ref":"#/definitions/ChildLinks"
-            },
-            "data":{
-               "description":"",
-               "$ref":"#/definitions/Data"
-            },
-            "description":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            },
-            "metadata":{
-               "description":"",
-               "$ref":"#/definitions/QueryMetadata"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "parentLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "selectedLanguages":{
-               "description":"",
-               "$ref":"#/definitions/SelectedLanguages"
-            },
-            "selfLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "urn":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "QueryMetadata":{
-         "type":"object",
-         "title":"QueryMetadata",
-         "properties":{
-            "attributes":{
-               "description":"",
-               "$ref":"#/definitions/Attributes"
-            },
-            "dimensions":{
-               "description":"",
-               "$ref":"#/definitions/Dimensions"
-            },
-            "isPartOf":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "latestDataNumber":{
-               "description":"",
-               "type":"number"
-            },
-            "maintainer":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "relatedDataset":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "relatedDsd":{
-               "description":"",
-               "$ref":"#/definitions/DataStructureDefinition"
-            },
-            "requires":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "statisticalOperation":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "status":{
-               "description":"",
-               "$ref":"#/definitions/QueryStatus"
-            },
-            "type":{
-               "description":"",
-               "$ref":"#/definitions/QueryType"
-            },
-            "validFrom":{
-               "description":"",
-               "type":"string"
-            },
-            "validTo":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "QueryStatus":{
-         "type":"string",
-         "title":"QueryStatus",
-         "enum":[
-            "ACTIVE",
-            "DISCONTINUED"
-         ],
-         "description":""
-      },
-      "QueryType":{
-         "type":"string",
-         "title":"QueryType",
-         "enum":[
-            "AUTOINCREMENTAL",
-            "LATEST_DATA",
-            "FIXED"
-         ],
-         "description":""
-      },
-      "Resource":{
-         "type":"object",
-         "title":"Resource",
-         "properties":{
-            "id":{
-               "description":"",
-               "type":"string"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            },
-            "name":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "nestedId":{
-               "description":"",
-               "type":"string"
-            },
-            "selfLink":{
-               "description":"",
-               "$ref":"#/definitions/ResourceLink"
-            },
-            "urn":{
-               "description":"",
-               "type":"string"
-            },
-            "visualizerHtmlLink":{
-				"description":"",
-				"type":"string"
-			}
-         },
-         "description":""
-      },
-      "ResourceLink":{
-         "type":"object",
-         "title":"ResourceLink",
-         "properties":{
-            "href":{
-               "description":"",
-               "type":"string"
-            },
-            "kind":{
-               "description":"",
-               "type":"string"
-            }
-         },
-         "description":""
-      },
-      "ResourceWithStatisticalOperation":{
-         "type":"object",
-         "title":"ResourceWithStatisticalOperation",
-         "allOf":[
-            {
-               "$ref":"#/definitions/Resource"
-            },
-            {
-               "properties":{
-                  "statisticalOperation":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-               }
-            }
-         ],
-      },
-      "Resources":{
-         "type":"object",
-         "title":"Resources",
-         "properties":{
-            "resource":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/Resource"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "SelectedLanguages":{
-         "type":"object",
-         "title":"SelectedLanguages",
-         "properties":{
-            "language":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "type":"string"
-               }
-            },
-            "total":{
-               "description":"",
-               "type":"number"
-            }
-         },
-         "description":""
-      },
-      "StatisticalResource":{
-         "type":"object",
-         "title":"StatisticalResource",
-         "properties":{
-            "abstract":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "accessRights":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "conformsTo":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "contributors":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "copyrightDate":{
-               "description":"",
-               "type":"number"
-            },
-            "createdDate":{
-               "description":"",
-               "type":"string"
-            },
-            "creator":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "hasPart":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "isPartOf":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "isReplacedBy":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "keywords":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "language":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "languages":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "lastUpdate":{
-               "description":"",
-               "type":"string"
-            },
-            "license":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "maintainer":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "mediators":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "newnessUntilDate":{
-               "description":"",
-               "type":"string"
-            },
-            "nextVersion":{
-               "description":"",
-               "$ref":"#/definitions/NextVersionType"
-            },
-            "publisherContributors":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "publishers":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "replaces":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "rightsHolder":{
-               "description":"",
-               "$ref":"#/definitions/Organisation"
-            },
-            "statisticalOperation":{
-               "description":"",
-               "$ref":"#/definitions/Resource"
-            },
-            "statisticalOperationInstances":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "subtitle":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "titleAlternative":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "type":{
-               "description":"",
-               "$ref":"#/definitions/StatisticalResourceType"
-            },
-            "validFrom":{
-               "description":"",
-               "type":"string"
-            },
-            "validTo":{
-               "description":"",
-               "type":"string"
-            },
-            "version":{
-               "description":"",
-               "type":"string"
-            },
-            "versionRationale":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            },
-            "versionRationaleTypes":{
-               "description":"",
-               "$ref":"#/definitions/VersionRationaleTypes"
-            },
-            "dataProviders":{
-               "description":"",
-               "$ref":"#/definitions/Resources"
-            },
-            "dataProviderAnnotations":{
-               "description":"",
-               "$ref":"#/definitions/InternationalString"
-            }
-         },
-         "description":""
-      },
-      "StatisticalResourceType":{
-         "type":"string",
-         "title":"StatisticalResourceType",
-         "enum":[
-            "DATASET",
-            "COLLECTION",
-            "QUERY",
-            "MULTIDATASET"
-         ],
-         "description":""
-      },
-      "Table":{
-         "type":"object",
-         "title":"Table",
-         "allOf":[
-            {
-               "$ref":"#/definitions/CollectionNode"
-            },
-            {
-               "properties":{
-                  "dataset":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "query":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "MultidatasetTable":{
-         "type":"object",
-         "title":"MultidatasetTable",
-         "allOf":[
-            {
-               "$ref":"#/definitions/MultidatasetNode"
-            },
-            {
-               "properties":{
-                  "dataset":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-                  "query":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "VersionRationaleType":{
-         "type":"string",
-         "title":"VersionRationaleType",
-         "enum":[
-            "MAJOR_NEW_RESOURCE",
-            "MAJOR_ESTIMATORS",
-            "MAJOR_CATEGORIES",
-            "MAJOR_VARIABLES",
-            "MAJOR_OTHER",
-            "MINOR_ERRATA",
-            "MINOR_METADATA",
-            "MINOR_DATA_UPDATE",
-            "MINOR_SERIES_UPDATE",
-            "MINOR_OTHER"
-         ],
-         "description":""
-      },
-      "VersionRationaleTypes":{
-         "type":"object",
-         "title":"VersionRationaleTypes",
-         "properties":{
-            "total":{
-               "description":"",
-               "type":"number"
-            },
-            "versionRationaleType":{
-               "description":"",
-               "type":"array",
-               "items":{
-                  "$ref":"#/definitions/VersionRationaleType"
-               }
-            }
-         },
-         "description":""
-      },
-      "ChildLinks":{
-         "type":"object",
-         "title":"ChildLinks",
-         "allOf":[
-            {
-               "properties":{
-                  "total":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"number"
-                  },
-                  "childLink":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "$ref":"#/definitions/ResourceLink"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "InternationalString":{
-         "type":"object",
-         "title":"InternationalString",
-         "allOf":[
-            {
-               "properties":{
-                  "text":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "$ref":"#/definitions/LocalisedString"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Item":{
-         "type":"object",
-         "title":"Item",
-         "allOf":[
-            {
-               "properties":{
-                  "id":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "name":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "$ref":"#/definitions/InternationalString"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Items":{
-         "type":"object",
-         "title":"Items",
-         "allOf":[
-            {
-               "properties":{
-                  "total":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"number"
-                  },
-                  "item":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "$ref":"#/definitions/Item"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "ListBase":{
-         "type":"object",
-         "title":"ListBase",
-         "allOf":[
-            {
-               "properties":{
-                  "firstLink":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "kind":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "lastLink":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "limit":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"number"
-                  },
-                  "nextLink":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "offset":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"number"
-                  },
-                  "previousLink":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "selfLink":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "total":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"number"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "LocalisedString":{
-         "type":"object",
-         "title":"LocalisedString",
-         "allOf":[
-            {
-               "properties":{
-                  "lang":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":"http://www.w3.org/XML/1998/namespace"
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "(value)":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "Resource":{
-         "type":"object",
-         "title":"Resource",
-         "allOf":[
-            {
-               "properties":{
-                  "kind":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "id":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "name":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "$ref":"#/definitions/InternationalString"
-                  },
-                  "nestedId":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "selfLink":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "$ref":"#/definitions/ResourceLink"
-                  },
-                  "urn":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "visualizerHtmlLink":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "ResourceLink":{
-         "type":"object",
-         "title":"ResourceLink",
-         "allOf":[
-            {
-               "properties":{
-                  "href":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  },
-                  "kind":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"string"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
-      "ResourceWithStatisticalOperation":{
-         "type":"object",
-         "title":"ResourceWithStatisticalOperation",
-         "allOf":[
-            {
-               "$ref":"#/definitions/Resource"
-            },
-            {
-               "properties":{
-                  "statisticalOperation":{
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  },
-               }
-            }
-         ],
-      },
-      "Resources":{
-         "type":"object",
-         "title":"Resources",
-         "allOf":[
-            {
-               "properties":{
-                  "total":{
-                     "xml":{
-                        "attribute":true,
-                        "namespace":""
-                     },
-                     "description":"",
-                     "type":"number"
-                  },
-                  "resource":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"",
-                     "$ref":"#/definitions/Resource"
-                  }
-               }
-            }
-         ],
-         "description":""
-      },
       "Attribute":{
          "type":"object",
          "title":"Attribute",
@@ -2108,48 +54,48 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.attachmentLevel.description']}",
                      "$ref":"#/definitions/AttributeAttachmentLevelType"
                   },
                   "attributeValues":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.attributeValues.description']}",
                      "$ref":"#/definitions/AttributeValues"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.dimensions.description']}",
                      "$ref":"#/definitions/AttributeDimensions"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/componentType"
+                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.type.description']}",
+                     "$ref":"#/definitions/ComponentType"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Attribute.description']}"
       },
       "AttributeAttachmentLevelType":{
          "type":"string",
@@ -2159,7 +105,7 @@
             "DIMENSION",
             "PRIMARY_MEASURE"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.AttributeAttachmentLevelType.description']}"
       },
       "AttributeDimension":{
          "type":"object",
@@ -2171,20 +117,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.AttributeDimension.properties.dimensionId.description']}",
                      "type":"string"
                   },
                   "values":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.AttributeDimension.properties.values.description']}",
                      "$ref":"#/definitions/AttributeValues"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.AttributeDimension.description']}"
       },
       "AttributeDimensions":{
          "type":"object",
@@ -2197,30 +143,28 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.AttributeDimensions.properties.total.description']}",
                      "type":"number"
                   },
                   "dimension":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/AttributeDimension"
+                     "description":"${msg['api.doc.swagger.definitions.AttributeDimensions.properties.dimension.description']}",
+                     "type":"array",
+                     "items":{
+                       "$ref":"#/definitions/AttributeDimension"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.AttributeDimensions.description']}"
       },
       "AttributeValues":{
          "type":"object",
          "title":"AttributeValues",
-         "allOf":[
-            {
-
-            }
-         ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.AttributeValues.description']}"
       },
       "Attributes":{
          "type":"object",
@@ -2233,20 +177,41 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Attributes.properties.total.description']}",
                      "type":"number"
                   },
                   "attribute":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/Attribute"
+                     "description":"${msg['api.doc.swagger.definitions.Attributes.properties.attribute.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Attribute"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Attributes.description']}"
+      },
+      "Chapter":{
+         "type":"object",
+         "title":"Chapter",
+         "allOf":[
+            {
+               "$ref":"#/definitions/CollectionNode"
+            },
+            {
+               "properties":{
+                  "nodes":{
+                     "description":"${msg['api.doc.swagger.definitions.Chapter.properties.nodes.description']}",
+                     "$ref":"#/definitions/CollectionNodes"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Chapter.description']}"
       },
       "CodeRepresentation":{
          "type":"object",
@@ -2259,7 +224,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentation.properties.code.description']}",
                      "type":"string"
                   },
                   "index":{
@@ -2267,13 +232,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentation.properties.index.description']}",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.CodeRepresentation.description']}"
       },
       "CodeRepresentations":{
          "type":"object",
@@ -2286,20 +251,23 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentations.properties.total.description']}",
                      "type":"number"
                   },
                   "representation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/CodeRepresentation"
+                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentations.properties.representation.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/CodeRepresentation"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.CodeRepresentations.description']}"
       },
       "Collection":{
          "type":"object",
@@ -2312,90 +280,90 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.kind.description']}",
                      "type":"string"
                   },
                   "childLinks":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.childLinks.description']}",
                      "$ref":"#/definitions/ChildLinks"
                   },
                   "data":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.data.description']}",
                      "$ref":"#/definitions/CollectionData"
                   },
                   "description":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.id.description']}",
                      "type":"string"
                   },
                   "metadata":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.metadata.description']}",
                      "$ref":"#/definitions/CollectionMetadata"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "parentLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.parentLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "selectedLanguages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.selectedLanguages.description']}",
                      "$ref":"#/definitions/SelectedLanguages"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.urn.description']}",
                      "type":"string"
                   },
                   "visualizerHtmlLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.visualizerHtmlLink.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Collection.description']}"
       },
       "CollectionData":{
          "type":"object",
@@ -2407,13 +375,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CollectionData.properties.nodes.description']}",
                      "$ref":"#/definitions/CollectionNodes"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.CollectionData.description']}"
       },
       "CollectionMetadata":{
          "type":"object",
@@ -2428,13 +396,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CollectionMetadata.properties.formatExtentResources.description']}",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.CollectionMetadata.description']}"
       },
       "CollectionNode":{
          "type":"object",
@@ -2446,20 +414,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CollectionNode.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CollectionNode.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.CollectionNode.description']}"
       },
       "CollectionNodes":{
          "type":"object",
@@ -2471,13 +439,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.CollectionNodes.properties.node.description']}",
                      "$ref":"#/definitions/CollectionNode"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.CollectionNodes.description']}"
       },
       "Collections":{
          "type":"object",
@@ -2492,25 +460,706 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     "description":"${msg['api.doc.swagger.definitions.Collections.properties.collection.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Collections.description']}"
+      },  
+      "Contact":{
+         "type":"object",
+         "title":"Contact",
+         "properties":{
+            "id":{
+               "description":"${msg['api.doc.swagger.definitions.Contact.properties.id.description']}",
+               "type":"string"
+            },
+            "name":{
+               "description":"${msg['api.doc.swagger.definitions.Contact.properties.name.description']}",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "organisationUnit":{
+               "description":"${msg['api.doc.swagger.definitions.Contact.properties.organisationUnit.description']}",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "responsibility":{
+               "description":"${msg['api.doc.swagger.definitions.Contact.properties.responsibility.description']}",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "telephones":{
+               "description":"${msg['api.doc.swagger.definitions.Contact.properties.telephones.description']}",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "faxes":{
+               "description":"${msg['api.doc.swagger.definitions.Contact.properties.faxes.description']}",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "urls":{
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            },
+            "emails":{
+               "description":"${msg['api.doc.swagger.definitions.Contact.properties.emails.description']}",
+               "type":"array",
+               "items":{
+                  "type":"string"
+               }
+            }
+         },
+         "description":"${msg['api.doc.swagger.definitions.Contact.description']}"
       },
-      "componentType":{
+      "Contacts":{
+         "type":"object",
+         "title":"Contacts",
+         "properties":{
+            "dimension":{
+               "description":"${msg['api.doc.swagger.definitions.Contacts.properties.dimension.description']}",
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/Contact"
+               }
+            },
+            "total":{
+               "description":"${msg['api.doc.swagger.definitions.Contacts.properties.total.description']}",
+               "type":"number"
+            }
+         },
+         "description":"${msg['api.doc.swagger.definitions.Contacts.description']}"
+      },
+      "ComponentType":{
          "type":"string",
-         "title":"componentType",
+         "title":"ComponentType",
          "enum":[
             "OTHER",
             "SPATIAL",
             "TEMPORAL",
             "MEASURE"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.ComponentType.description']}"
       },
+      "Multidataset":{
+         "type":"object",
+         "title":"Multidataset",
+         "properties":{
+            "childLinks":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.childLinks.description']}",
+               "$ref":"#/definitions/ChildLinks"
+            },
+            "data":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.data.description']}",
+               "$ref":"#/definitions/MultidatasetData"
+            },
+            "description":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.description.description']}",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "id":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.id.description']}",
+               "type":"string"
+            },
+            "kind":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.kind.description']}",
+               "type":"string"
+            },
+            "metadata":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.metadata.description']}",
+               "$ref":"#/definitions/MultidatasetMetadata"
+            },
+            "name":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.name.description']}",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "parentLink":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.parentLink.description']}",
+               "$ref":"#/definitions/ResourceLink"
+            },
+            "selectedLanguages":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.selectedLanguages.description']}",
+               "$ref":"#/definitions/SelectedLanguages"
+            },
+            "selfLink":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.selfLink.description']}",
+               "$ref":"#/definitions/ResourceLink"
+            },
+            "urn":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.urn.description']}",
+               "type":"string"
+            },
+            "visualizerHtmlLink":{
+               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.visualizerHtmlLink.description']}",
+               "type":"string"
+            }
+         },
+         "description":"${msg['api.doc.swagger.definitions.Multidataset.description']}"
+      },
+      "MultidatasetData":{
+         "type":"object",
+         "title":"MultidatasetData",
+         "properties":{
+            "nodes":{
+               "description":"${msg['api.doc.swagger.definitions.MultidatasetData.properties.nodes.description']}",
+               "$ref":"#/definitions/MultidatasetNodes"
+            }
+         },
+         "description":"${msg['api.doc.swagger.definitions.MultidatasetData.description']}"
+      },
+      "MultidatasetMetadata":{
+         "type":"object",
+         "title":"MultidatasetMetadata",
+         "allOf":[
+            {
+               "$ref":"#/definitions/StatisticalResource"
+            },
+            {
+               "properties":{
+                  "formatExtentResources":{
+                     "description":"${msg['api.doc.swagger.definitions.MultidatasetMetadata.properties.formatExtentResources.description']}",
+                     "type":"number"
+                  },
+                  "filteringDimension":{
+                     "description":"${msg['api.doc.swagger.definitions.MultidatasetMetadata.properties.filteringDimension.description']}",
+                     "$ref":"#/definitions/InternationalString"
+                  }                 
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.MultidatasetMetadata.description']}"
+      },
+      "MultidatasetNode":{
+         "type":"object",
+         "title":"MultidatasetNode",
+         "properties":{
+            "description":{
+               "description":"${msg['api.doc.swagger.definitions.MultidatasetNode.properties.description.description']}",
+               "$ref":"#/definitions/InternationalString"
+            },
+            "name":{
+               "description":"${msg['api.doc.swagger.definitions.MultidatasetNode.properties.name.description']}",
+               "$ref":"#/definitions/InternationalString"
+            }
+         },
+         "description":"${msg['api.doc.swagger.definitions.MultidatasetNode.description']}"
+      },
+      "MultidatasetNodes":{
+         "type":"object",
+         "title":"MultidatasetNodes",
+         "properties":{
+            "node":{
+               "description":"${msg['api.doc.swagger.definitions.MultidatasetNodes.properties.node.description']}",
+               "type":"array",
+               "items":{
+                  "$ref":"#/definitions/MultidatasetNode"
+               }
+            }
+         },
+         "description":"${msg['api.doc.swagger.definitions.MultidatasetNodes.description']}"
+      },
+      "Multidatasets":{
+         "type":"object",
+         "title":"Multidatasets",
+         "allOf":[
+            {
+               "$ref":"#/definitions/ListBase"
+            },
+            {
+               "properties":{
+                  "multidataset":{
+                     "description":"${msg['api.doc.swagger.definitions.Multidatasets.properties.multidataset.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Multidatasets.description']}"
+      },      
+      "EnumeratedDimensionValue":{
+         "type":"object",
+         "title":"EnumeratedDimensionValue",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+               	  "geographicGranularity":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.geographicGranularity.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "measureQuantity":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.measureQuantity.description']}",
+                     "$ref":"#/definitions/MeasureQuantity"
+                  },
+                  "open":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.open.description']}",
+                     "type":"boolean"
+                  },
+                  "showDecimalsPrecision":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.showDecimalsPrecision.description']}",
+                     "type":"number"
+                  },
+                  "variableElement":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.variableElement.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "visualisationParent":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.visualisationParent.description']}",
+                     "type":"string"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.description']}"
+      },
+      "EnumeratedDimensionValues":{
+         "type":"object",
+         "title":"EnumeratedDimensionValues",
+         "allOf":[
+            {
+               "$ref":"#/definitions/DimensionValues"
+            },
+            {
+               "properties":{
+                  "total":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValues.properties.total.description']}",
+                     "type":"number"
+                  },
+                  "value":{
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValues.properties.value.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/EnumeratedDimensionValue"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValues.description']}"
+      },   
+      "NonEnumeratedAttributeValue":{
+         "type":"object",
+         "title":"NonEnumeratedAttributeValue",
+         "properties":{
+            "id":{
+               "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValue.properties.id.description']}",
+               "type":"string"
+            },
+            "name":{
+               "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValue.properties.name.description']}",
+               "$ref":"#/definitions/InternationalString"
+            }
+         },
+         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValue.description']}"
+      },
+      "NonEnumeratedAttributeValues":{
+         "type":"object",
+         "title":"NonEnumeratedAttributeValues",
+         "allOf":[
+            {
+               "$ref":"#/definitions/AttributeValues"
+            },
+            {
+               "properties":{
+                  "total":{
+                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValues.properties.total.description']}",
+                     "type":"number"
+                  },
+                  "value":{
+                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValues.properties.value.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/NonEnumeratedAttributeValue"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValues.description']}"
+      },
+      "MultidatasetTable":{
+         "type":"object",
+         "title":"MultidatasetTable",
+         "allOf":[
+            {
+               "$ref":"#/definitions/MultidatasetNode"
+            },
+            {
+               "properties":{
+                  "dataset":{
+                     "description":"${msg['api.doc.swagger.definitions.MultidatasetTable.properties.dataset.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "query":{
+                     "description":"${msg['api.doc.swagger.definitions.MultidatasetTable.properties.query.description']}",
+                     "$ref":"#/definitions/Resource"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.MultidatasetTable.description']}"
+      },
+      "ChildLinks":{
+         "type":"object",
+         "title":"ChildLinks",
+         "allOf":[
+            {
+               "properties":{
+                  "total":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ChildLinks.properties.total.description']}",
+                     "type":"number"
+                  },
+                  "childLink":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "type":"array",
+                     "description":"${msg['api.doc.swagger.definitions.ChildLinks.properties.childLink.description']}",
+                     "items":{
+                        "$ref":"#/definitions/ResourceLink"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.ChildLinks.description']}"
+      },
+      "InternationalString":{
+         "type":"object",
+         "title":"InternationalString",
+         "allOf":[
+            {
+               "properties":{
+                  "text":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.InternationalString.properties.text.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/LocalisedString"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.InternationalString.description']}"
+      },
+      "Item":{
+         "type":"object",
+         "title":"Item",
+         "allOf":[
+            {
+               "properties":{
+                  "id":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Item.properties.id.description']}",
+                     "type":"string"
+                  },
+                  "name":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Item.properties.name.description']}",
+                     "$ref":"#/definitions/InternationalString"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Item.description']}"
+      },
+      "Items":{
+         "type":"object",
+         "title":"Items",
+         "allOf":[
+            {
+               "properties":{
+                  "total":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Items.properties.total.description']}",
+                     "type":"number"
+                  },
+                  "item":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Items.properties.item.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Item"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Items.description']}"
+      },
+      "ListBase":{
+         "type":"object",
+         "title":"ListBase",
+         "allOf":[
+            {
+               "properties":{
+                  "firstLink":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.firstLink.description']}",
+                     "type":"string"
+                  },
+                  "kind":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.kind.description']}",
+                     "type":"string"
+                  },
+                  "lastLink":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.lastLink.description']}",
+                     "type":"string"
+                  },
+                  "limit":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.limit.description']}",
+                     "type":"number"
+                  },
+                  "nextLink":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.nextLink.description']}",
+                     "type":"string"
+                  },
+                  "offset":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.offset.description']}",
+                     "type":"number"
+                  },
+                  "previousLink":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.previousLink.description']}",
+                     "type":"string"
+                  },
+                  "selfLink":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.selfLink.description']}",
+                     "type":"string"
+                  },
+                  "total":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.total.description']}",
+                     "type":"number"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.ListBase.description']}"
+      },
+      "LocalisedString":{
+         "type":"object",
+         "title":"LocalisedString",
+         "allOf":[
+            {
+               "properties":{
+                  "lang":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":"http://www.w3.org/XML/1998/namespace"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.lang.description']}",
+                     "type":"string"
+                  },
+                  "value":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.value.description']}",
+                     "type":"string"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.LocalisedString.description']}"
+      },
+      "Resource":{
+         "type":"object",
+         "title":"Resource",
+         "allOf":[
+            {
+               "properties":{
+                  "kind":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.kind.description']}",
+                     "type":"string"
+                  },
+                  "id":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.id.description']}",
+                     "type":"string"
+                  },
+                  "name":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.name.description']}",
+                     "$ref":"#/definitions/InternationalString"
+                  },
+                  "nestedId":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.nestedId.description']}",
+                     "type":"string"
+                  },
+                  "selfLink":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.selfLink.description']}",
+                     "$ref":"#/definitions/ResourceLink"
+                  },
+                  "urn":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.urn.description']}",
+                     "type":"string"
+                  },
+                  "visualizerHtmlLink":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.visualizerHtmlLink.description']}",
+                     "type":"string"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Resource.description']}"
+      },
+      "ResourceLink":{
+         "type":"object",
+         "title":"ResourceLink",
+         "allOf":[
+            {
+               "properties":{
+                  "href":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ResourceLink.properties.href.description']}",
+                     "type":"string"
+                  },
+                  "kind":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ResourceLink.properties.kind.description']}",
+                     "type":"string"
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.ResourceLink.description']}"
+      },
+      "ResourceWithStatisticalOperation":{
+         "type":"object",
+         "title":"ResourceWithStatisticalOperation",
+         "allOf":[
+            {
+               "$ref":"#/definitions/Resource"
+            },
+            {
+               "properties":{
+                  "statisticalOperation":{
+                     "description":"${msg['api.doc.swagger.definitions.ResourceWithStatisticalOperation.properties.statisticalOperation.description']}",
+                     "$ref":"#/definitions/Resource"
+                  }
+               }
+            }
+         ]
+      },
+      "Resources":{
+         "type":"object",
+         "title":"Resources",
+         "allOf":[
+            {
+               "properties":{
+                  "total":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resources.properties.total.description']}",
+                     "type":"number"
+                  },
+                  "resource":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.Resources.properties.resource.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Resource"
+                     }
+                  }
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
+      },      
       "Data":{
          "type":"object",
          "title":"Data",
@@ -2521,27 +1170,27 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Data.properties.attributes.description']}",
                      "$ref":"#/definitions/DataAttributes"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Data.properties.dimensions.description']}",
                      "$ref":"#/definitions/DimensionRepresentations"
                   },
                   "observations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Data.properties.observations.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Data.description']}"
       },
       "DataAttribute":{
          "type":"object",
@@ -2554,20 +1203,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DataAttribute.properties.id.description']}",
                      "type":"string"
                   },
-                  "(value)":{
+                  "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DataAttribute.properties.value.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DataAttribute.description']}"
       },
       "DataAttributes":{
          "type":"object",
@@ -2580,20 +1229,23 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DataAttributes.properties.total.description']}",
                      "type":"number"
                   },
                   "attribute":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/DataAttribute"
+                     "description":"${msg['api.doc.swagger.definitions.DataAttributes.properties.attribute.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/DataAttribute"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DataAttributes.description']}"
       },
       "DataStructureDefinition":{
          "type":"object",
@@ -2608,48 +1260,54 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.autoOpen.description']}",
                      "type":"boolean"
                   },
                   "showNullValuesByDefault":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.showNullValuesByDefault.description']}",
                      "type":"boolean"
                   },
                   "showZeroValuesByDefault":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.showZeroValuesByDefault.description']}",
                      "type":"boolean"
                   },
                   "heading":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/DimensionsId"
+                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.heading.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/DimensionsId"
+                     }
                   },
                   "showDecimals":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.showDecimals.description']}",
                      "type":"number"
                   },
                   "stub":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/DimensionsId"
+                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.stub.description']}",
+                     "type":"array",
+                     "item": {                   
+                        "$ref":"#/definitions/DimensionsId"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.description']}"
       },
       "Dataset":{
          "type":"object",
@@ -2662,90 +1320,90 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.kind.description']}",
                      "type":"string"
                   },
                   "childLinks":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.childLinks.description']}",
                      "$ref":"#/definitions/ChildLinks"
                   },
                   "data":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.data.description']}",
                      "$ref":"#/definitions/Data"
                   },
                   "description":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.id.description']}",
                      "type":"string"
                   },
                   "metadata":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.metadata.description']}",
                      "$ref":"#/definitions/DatasetMetadata"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "parentLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.parentLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "selectedLanguages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.selectedLanguages.description']}",
                      "$ref":"#/definitions/SelectedLanguages"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.urn.description']}",
                      "type":"string"
                   },
                   "visualizerHtmlLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.visualizerHtmlLink.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Dataset.description']}"
       },
       "DatasetMetadata":{
          "type":"object",
@@ -2760,174 +1418,174 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.attributes.description']}",
                      "$ref":"#/definitions/Attributes"
                   },
                   "bibliographicCitation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.bibliographicCitation.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "dateEnd":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "type":"string"
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateEnd.description']}",
+                     "$ref":"#/definitions/InternationalString"
                   },
                   "dateNextUpdate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateNextUpdate.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "dateStart":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "type":"string"
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateStart.description']}",
+                     "$ref":"#/definitions/InternationalString"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dimensions.description']}",
                      "$ref":"#/definitions/Dimensions"
                   },
                   "formatExtentDimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.formatExtentDimensions.description']}",
                      "type":"number"
                   },
                   "formatExtentObservations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.formatExtentObservations.description']}",
                      "type":"number"
                   },
                   "formatExtentTableSize":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.formatExtentTableSize.description']}",
                      "type":"number"
                   },
                   "geographicCoverages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.geographicCoverages.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "geographicGranularities":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.geographicGranularities.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "isReplacedByVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.isReplacedByVersion.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "isRequiredBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.isRequiredBy.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "keepAllData":{
                   	 "xml":{
-						"namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+						      "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.keepAllData.description']}",
                      "type":"boolean"
                   },
                   "measureCoverages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.measureCoverages.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "relatedDsd":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.relatedDsd.description']}",
                      "$ref":"#/definitions/DataStructureDefinition"
                   },
                   "replacesVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.replacesVersion.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticOfficiality":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.statisticOfficiality.description']}",
                      "$ref":"#/definitions/Item"
                   },
                   "statisticalUnit":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.statisticalUnit.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "subjectAreas":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.subjectAreas.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "temporalCoverages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.temporalCoverages.description']}",
                      "$ref":"#/definitions/Items"
                   },
                   "temporalGranularities":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.temporalGranularities.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "updateFrequency":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.updateFrequency.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                    "constraints":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.constraints.description']}",
                      "$ref":"#/definitions/ConstraintDimensionRepresentations"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.description']}"
       },
       "Datasets":{
          "type":"object",
@@ -2942,13 +1600,16 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     "description":"${msg['api.doc.swagger.definitions.Datasets.properties.dataset.description']}",
+                     "type": "array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Datasets.description']}"
       },
       "Dimension":{
          "type":"object",
@@ -2960,48 +1621,48 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.dimensionValues.description']}",
                      "$ref":"#/definitions/DimensionValues"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.type.description']}",
                      "$ref":"#/definitions/DimensionType"
                   },
                   "variable":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.variable.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "pluralName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.pluralName.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Dimension.description']}"
       },
       "DimensionRepresentation":{
          "type":"object",
@@ -3013,20 +1674,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentation.properties.dimensionId.description']}",
                      "type":"string"
                   },
                   "representations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentation.properties.representations.description']}",
                      "$ref":"#/definitions/CodeRepresentations"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DimensionRepresentation.description']}"
       },
       "DimensionRepresentations":{
          "type":"object",
@@ -3039,20 +1700,23 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentations.properties.total.description']}",
                      "type":"number"
                   },
                   "dimension":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/DimensionRepresentation"
+                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentations.properties.dimension.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/DimensionRepresentation"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DimensionRepresentations.description']}"
       },
       "DimensionType":{
          "type":"string",
@@ -3063,17 +1727,12 @@
             "GEOGRAPHIC_DIMENSION",
             "DIMENSION"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DimensionType.description']}"
       },
       "DimensionValues":{
          "type":"object",
          "title":"DimensionValues",
-         "allOf":[
-            {
-
-            }
-         ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DimensionValues.description']}"
       },
       "Dimensions":{
          "type":"object",
@@ -3086,20 +1745,23 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Dimensions.properties.total.description']}",
                      "type":"number"
                   },
                   "dimension":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/Dimension"
+                     "description":"${msg['api.doc.swagger.definitions.Dimensions.properties.dimension.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/Dimension"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Dimensions.description']}"
       },
       "DimensionsId":{
          "type":"object",
@@ -3112,20 +1774,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DimensionsId.properties.total.description']}",
                      "type":"number"
                   },
                   "dimensionId":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.DimensionsId.properties.dimensionId.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.DimensionsId.description']}"
       },
       "EnumeratedAttributeValue":{
          "type":"object",
@@ -3140,13 +1802,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValue.properties.measureQuantity.description']}",
                      "$ref":"#/definitions/MeasureQuantity"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValue.description']}"
       },
       "EnumeratedAttributeValues":{
          "type":"object",
@@ -3162,20 +1824,23 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValues.properties.total.description']}",
                      "type":"number"
                   },
                   "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/EnumeratedAttributeValue"
+                     "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValues.properties.value.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/EnumeratedAttributeValue"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValues.description']}"
       },
       "ItemResource":{
          "type":"object",
@@ -3190,13 +1855,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.ItemResource.properties.parent.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.ItemResource.description']}"
       },
       "MeasureQuantity":{
          "type":"object",
@@ -3208,20 +1873,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.MeasureQuantity.properties.unitCode.description']}",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "unitMultiplier":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.MeasureQuantity.properties.unitMultiplier.description']}",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.MeasureQuantity.description']}"
       },
       "NextVersionType":{
          "type":"string",
@@ -3231,7 +1896,7 @@
             "NON_SCHEDULED_UPDATE",
             "SCHEDULED_UPDATE"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.NextVersionType.description']}"
       },
       "NonEnumeratedDimensionValue":{
          "type":"object",
@@ -3243,20 +1908,24 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
+                  },
+                  "temporalGranularity":{
+                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.properties.temporalGranularity.description']}",
+                     "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.description']}"
       },
       "NonEnumeratedDimensionValues":{
          "type":"object",
@@ -3272,20 +1941,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValues.properties.total.description']}",
                      "type":"number"
                   },
                   "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValues.properties.value.description']}",
                      "$ref":"#/definitions/NonEnumeratedDimensionValue"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValues.description']}"
       },
       "Organisation":{
          "type":"object",
@@ -3297,13 +1966,13 @@
             {
                "properties":{
                   "contacts":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Organisation.properties.contacts.description']}",
                      "$ref":"#/definitions/Contacts"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Organisation.description']}"
       },
       "Queries":{
          "type":"object",
@@ -3318,13 +1987,16 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     "description":"${msg['api.doc.swagger.definitions.Queries.properties.query.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Queries.description']}"
       },
       "Query":{
          "type":"object",
@@ -3337,83 +2009,83 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.kind.description']}",
                      "type":"string"
                   },
                   "childLinks":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.childLinks.description']}",
                      "$ref":"#/definitions/ChildLinks"
                   },
                   "data":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.data.description']}",
                      "$ref":"#/definitions/Data"
                   },
                   "description":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.id.description']}",
                      "type":"string"
                   },
                   "metadata":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.metadata.description']}",
                      "$ref":"#/definitions/QueryMetadata"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "parentLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.parentLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "selectedLanguages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.selectedLanguages.description']}",
                      "$ref":"#/definitions/SelectedLanguages"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Query.properties.urn.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Query.description']}"
       },
       "QueryMetadata":{
          "type":"object",
@@ -3425,97 +2097,97 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.attributes.description']}",
                      "$ref":"#/definitions/Attributes"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.dimensions.description']}",
                      "$ref":"#/definitions/Dimensions"
                   },
                   "isPartOf":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.isPartOf.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "latestDataNumber":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.latestDataNumber.description']}",
                      "type":"number"
                   },
                   "maintainer":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.maintainer.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "relatedDataset":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.relatedDataset.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "relatedDsd":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.relatedDsd.description']}",
                      "$ref":"#/definitions/DataStructureDefinition"
                   },
                   "requires":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.requires.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.statisticalOperation.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "status":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.status.description']}",
                      "$ref":"#/definitions/QueryStatus"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.type.description']}",
                      "$ref":"#/definitions/QueryType"
                   },
                   "validFrom":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.validFrom.description']}",
                      "type":"string"
                   },
                   "validTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.validTo.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.QueryMetadata.description']}"
       },
       "QueryStatus":{
          "type":"string",
@@ -3524,7 +2196,7 @@
             "ACTIVE",
             "DISCONTINUED"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.QueryStatus.description']}"
       },
       "QueryType":{
          "type":"string",
@@ -3534,7 +2206,7 @@
             "LATEST_DATA",
             "FIXED"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.QueryType.description']}"
       },
       "SelectedLanguages":{
          "type":"object",
@@ -3547,20 +2219,23 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.SelectedLanguages.properties.total.description']}",
                      "type":"number"
                   },
                   "language":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "type":"string"
+                     "description":"${msg['api.doc.swagger.definitions.SelectedLanguages.properties.language.description']}",
+                     "type":"array",
+                     "items":{
+                        "type":"string"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.SelectedLanguages.description']}"
       },
       "StatisticalResource":{
          "type":"object",
@@ -3572,251 +2247,251 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.abstract.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "accessRights":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.accessRights.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "conformsTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.conformsTo.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "contributors":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.contributors.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "copyrightDate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.copyrightDate.description']}",
                      "type":"number"
                   },
                   "createdDate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.createdDate.description']}",
                      "type":"string"
                   },
                   "creator":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.creator.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "hasPart":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.hasPart.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "isPartOf":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.isPartOf.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "isReplacedBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.isReplacedBy.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "keywords":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.keywords.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "language":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.language.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "languages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.languages.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "lastUpdate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.lastUpdate.description']}",
                      "type":"string"
                   },
                   "license":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.license.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "maintainer":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.maintainer.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "mediators":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.mediators.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "newnessUntilDate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.newnessUntilDate.description']}",
                      "type":"string"
                   },
                   "nextVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.nextVersion.description']}",
                      "$ref":"#/definitions/NextVersionType"
                   },
                   "publisherContributors":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.publisherContributors.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "publishers":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.publishers.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "replaces":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.replaces.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "rightsHolder":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.rightsHolder.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.statisticalOperation.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticalOperationInstances":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.statisticalOperationInstances.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "subtitle":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.subtitle.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "titleAlternative":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.titleAlternative.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.type.description']}",
                      "$ref":"#/definitions/StatisticalResourceType"
                   },
                   "validFrom":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.validFrom.description']}",
                      "type":"string"
                   },
                   "validTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.validTo.description']}",
                      "type":"string"
                   },
                   "version":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.version.description']}",
                      "type":"string"
                   },
                   "versionRationale":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.versionRationale.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "versionRationaleTypes":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.versionRationaleTypes.description']}",
                      "$ref":"#/definitions/VersionRationaleTypes"
                   },
                   "dataProviders":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.dataProviders.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "dataProviderAnnotations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.dataProviderAnnotations.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.StatisticalResource.description']}"
       },
       "StatisticalResourceType":{
          "type":"string",
@@ -3824,9 +2499,10 @@
          "enum":[
             "DATASET",
             "COLLECTION",
-            "QUERY"
+            "QUERY",
+            "MULTIDATASET"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.StatisticalResourceType.description']}"
       },
       "Table":{
          "type":"object",
@@ -3841,20 +2517,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Table.properties.dataset.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "query":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.Table.properties.query.description']}",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.Table.description']}"
       },
       "VersionRationaleType":{
          "type":"string",
@@ -3871,7 +2547,7 @@
             "MINOR_SERIES_UPDATE",
             "MINOR_OTHER"
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.VersionRationaleType.description']}"
       },
       "VersionRationaleTypes":{
          "type":"object",
@@ -3884,22 +2560,25 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.VersionRationaleTypes.properties.total.description']}",
                      "type":"number"
                   },
                   "versionRationaleType":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"",
-                     "$ref":"#/definitions/VersionRationaleType"
+                     "description":"${msg['api.doc.swagger.definitions.VersionRationaleTypes.properties.versionRationaleType.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/VersionRationaleType"
+                     }
                   }
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.VersionRationaleTypes.description']}"
       },
-      "Resources":{
+      "ResourcesWithStatisticalOperation":{
          "type":"object",
          "title":"Resources",
          "allOf":[
@@ -3909,7 +2588,7 @@
             {
                "properties":{
                   "resource":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.definitions.ResourcesWithStatisticalOperation.properties.resource.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/ResourceWithStatisticalOperation"
@@ -3918,78 +2597,78 @@
                }
             }
          ],
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.ResourcesWithStatisticalOperation.description']}"
       },
       "ConstraintCodeRepresentation":{
          "type":"object",
          "title":"ConstraintCodeRepresentation",
          "properties":{
             "code":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentation.properties.code.description']}",
                "type":"string"
             }
          },
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentation.description']}"
       },
       "ConstraintCodeRepresentations":{
          "type":"object",
          "title":"ConstraintCodeRepresentations",
          "properties":{
             "representation":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentations.properties.representation.description']}",
                "type":"array",
                "items":{
                   "$ref":"#/definitions/ConstraintCodeRepresentation"
                }
             },
             "total":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentations.properties.total.description']}",
                "type":"number"
             }
          },
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentations.description']}"
       },
       "ConstraintDimensionRepresentation":{
          "type":"object",
          "title":"ConstraintDimensionRepresentation",
          "properties":{
             "dimensionId":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentation.properties.dimensionId.description']}",
                "type":"string"
             },
             "representations":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentation.properties.representations.description']}",
                "$ref":"#/definitions/ConstraintCodeRepresentations"
             }
          },
-         "description":""
+         "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentation.description']}"
       },
       "ConstraintDimensionRepresentations":{
          "type":"object",
          "title":"ConstraintDimensionRepresentations",
          "properties":{
          	"id":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.id.description']}",
                "type":"string"
             },
             "urn":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.urn.description']}",
                "type":"string"
             },
             "dimensions":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.dimensions.description']}",
                "type":"array",
                "items":{
                   "$ref":"#/definitions/ConstraintDimensionRepresentation"
                }
             },
             "total":{
-               "description":"",
+               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.total.description']}",
                "type":"number"
             }
          },
-         "description":""
-      },
+         "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.description']}"
+      }
    },
    "paths":{
       "/v1.0/collections":{
@@ -3997,7 +2676,7 @@
             "tags":[
                "Publicaciones estadísticas"
             ],
-            "description":"Permite obtener el listado de publicaciones estadísticas.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.description']}",
             "operationId":"resource__v1.0_collections_findCollections_GET",
             "produces":[
                "application/json",
@@ -4008,58 +2687,58 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collections"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.503.description']}"
                }
             }
          }
@@ -4069,7 +2748,7 @@
             "tags":[
                "Publicaciones estadísticas"
             ],
-            "description":"Permite obtener todas las publicaciones estadísticas mantenidas por una determinada organización.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.description']}",
             "operationId":"resource__v1.0_collections__agencyID__findCollections_GET",
             "produces":[
                "application/json",
@@ -4080,64 +2759,64 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collections"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.503.description']}"
                }
             }
          }
@@ -4147,7 +2826,7 @@
             "tags":[
                "Publicaciones estadísticas"
             ],
-            "description":"Permite obtener la publicación estadística que tienen un determinado identificador y que además es mantenida por una determinada organización.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_collections__agencyID___resourceID__retrieveCollection_GET",
             "produces":[
                "application/json",
@@ -4158,49 +2837,49 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.resourceID.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.fields.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.lang.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collection"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.200.description']}"
                },
                "404":{
-                  "description":"No encontrado. El recurso solicitado no existe."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.404.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.503.description']}"
                }
             }
          }
@@ -4210,7 +2889,7 @@
             "tags":[
                "Cubos estadísticos"
             ],
-            "description":"Permite consultar todos los cubos de datos estadísticos existentes.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.description']}",
             "operationId":"resource__v1.0_datasets_findDatasets_GET",
             "produces":[
                "application/json",
@@ -4221,58 +2900,58 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.503.description']}"
                }
             }
          }
@@ -4282,7 +2961,7 @@
             "tags":[
                "Cubos estadísticos"
             ],
-            "description":"Permite consultar todos los datasets mantenidos por una determinada organización.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID__findDatasets_GET",
             "produces":[
                "application/json",
@@ -4293,64 +2972,64 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.503.description']}"
                }
             }
          }
@@ -4360,7 +3039,7 @@
             "tags":[
                "Cubos estadísticos"
             ],
-            "description":"Permite obtener todas las versiones de un cubo estadístico con un determinado identificador y que además es mantenido por una organización determinada.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID__findDatasets_GET",
             "produces":[
                "application/json",
@@ -4371,70 +3050,70 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.resourceID.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, GEOGRAPHIC_COVERAGE_URN, GEOGRAPHIC_COVERAGE_TITLE, GEOGRAPHIC_COVERAGE_CODE, TEMPORAL_COVERAGE, GEOGRAPHIC_GRANULARITY_URN, TEMPORAL_GRANULARITY_URN, DATE_START, DATE_END, STATISTICAL_UNIT_URN, MEASURE_COVERAGE_URN, RELATED_DSD_URN, DATE_NEXT_UPDATE, STATISTIC_OFFICIALITY, SUBTITLE, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO, STATISTICAL_OPERATION_URN, GEOCOV_VARELEM_ID e IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.503.description']}"
                }
             }
          }
@@ -4444,7 +3123,7 @@
             "tags":[
                "Cubos estadísticos"
             ],
-            "description":"Permite consultar una versión en particular de un cubo estadístico.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_GET",
             "produces":[
                "application/json",
@@ -4458,67 +3137,67 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.agencyID.description']}"
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.resourceID.description']}"
                },
                {
                   "name":"version",
                   "in":"path",
                   "type":"string",
-                  "description":"Versión del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.version.description']}"
                },
                {
                   "name":"representation",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- representation=TIME_PERIOD[2009|2010]<br/>\r\n- representation=TIME_PERIOD[2009|2010]:INDICADORES[INDICE_OCUPACION_PLAZAS] <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: representation=TIME_PERIOD[~last=2] <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: representation=TIME_PERIOD[~after=2012-M02] <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: representation=TIME_PERIOD[~range=2012;2013]"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.representation.description']}"
                },
                {
                   "name":"dim",
                   "in":"query",
                   "type":"string",
-                  "description":"<b>DEPRECADO use representations en su lugar.</b> Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.dim.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\",  \"+keywords\", \"+dimension.description\" y \"+constraints\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data <br/>\r\n- fields=-data,+dimension.description\r\n- fields=+keywords\r\n- fields=+constraints (limitaciones de datasets)"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.fields.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.lang.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Dataset"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.description']}"
                },
                "404":{
-                  "description":"No encontrado. El recurso solicitado no existe."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.404.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.503.description']}"
                }
             }
          }
@@ -4528,7 +3207,7 @@
             "tags":[
                "Consultas estadísticas"
             ],
-            "description":"Permite obtener el listado de todas las consultas estadísticas existentes.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.description']}",
             "operationId":"resource__v1.0_queries_findQueries_GET",
             "produces":[
                "application/json",
@@ -4539,58 +3218,58 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, RELATED_DATASET_URN, TYPE, STATUS, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Queries"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.503.description']}"
                }
             }
          }
@@ -4600,7 +3279,7 @@
             "tags":[
                "Consultas estadísticas"
             ],
-            "description":"Permite obtener el listado de todas las consultas estadísticas realizadas por una determinada organización.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.description']}",
             "operationId":"resource__v1.0_queries__agencyID__findQueries_GET",
             "produces":[
                "application/json",
@@ -4611,64 +3290,64 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, RELATED_DATASET_URN, TYPE, STATUS, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Queries"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.503.description']}"
                }
             }
          }
@@ -4678,7 +3357,7 @@
             "tags":[
                "Consultas estadísticas"
             ],
-            "description":"Permite obtener todas las consultas estadísticas que son mantenidas por una determinada organización y tienen un identificador en particular.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_queries__agencyID___resourceID__retrieveQuery_GET",
             "produces":[
                "application/json",
@@ -4690,61 +3369,61 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.resourceID.description']}"
                },
                {
                   "name":"representation",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- representation=TIME_PERIOD[2009|2010]<br/>\r\n- representation=TIME_PERIOD[2009|2010]:INDICADORES[INDICE_OCUPACION_PLAZAS] <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: representation=TIME_PERIOD[~last=2] <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: representation=TIME_PERIOD[~after=2012-M02] <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: representation=TIME_PERIOD[~range=2012;2013]"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.representation.description']}"
                },
                {
                   "name":"dim",
                   "in":"query",
                   "type":"string",
-                  "description":"<b>DEPRECADO use representations en su lugar.</b> Permite filtrar los datos que se obtienen en la respuesta. Para ello, bastará con especificar las dimensiones que se quieren filtrar y los valores a obtener para cada una de ellas. De las dimensiones que no se especifique ningún filtro se obtendrán todos los valores existentes. De manera adicional, las dimensiones temporales permiten el uso de los modificadores ~last, ~after y ~range. <br/>Ejemplos: <br/>\r\n- dim=TIME_PERIOD:2009|2010<br/>\r\n- dim=TIME_PERIOD:2009|2010:INDICADORES:INDICE_OCUPACION_PLAZAS <br/>\r\n- ~last=n devolverá los últimos n valores de la dimensión temporal. Ejemplo de uso: dim=TIME_PERIOD:~last=2 <br/>\r\n- ~after=FECHA devolverá las fechas posteriores a FECHA, incluida ella misma. Ejemplo de uso: dim=TIME_PERIOD:~after=2012-M02 <br/>\r\n- ~range=FECHA1;FECHA2 devolverá las fechas entre FECHA1 y FECHA2, ambas incluidas. Ejemplo de uso: dim=TIME_PERIOD:~range=2012;2013"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.dim.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.fields.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.lang.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Query"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.200.description']}"
                },
                "404":{
-                  "description":"No encontrado. El recurso solicitado no existe."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.404.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.503.description']}"
                }
             }
          }
@@ -4754,7 +3433,7 @@
             "tags":[
                "Multidatasets estadísticos"
             ],
-            "description":"Permite obtener el listado de multidatasets estadísticos.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.description']}",
             "operationId":"resource__v1.0_multidatasets_findMultidatasets_GET",
             "produces":[
                "application/json",
@@ -4765,58 +3444,58 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidatasets"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.503.description']}"
                }
             }
          }
@@ -4826,7 +3505,7 @@
             "tags":[
                 "Multidatasets estadísticos"
             ],
-            "description":"Permite obtener todos los multidatasets estadísticos mantenidos por una determinada organización.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.description']}",
             "operationId":"resource__v1.0_multidatasets__agencyID__findMultidatasets_GET",
             "produces":[
                "application/json",
@@ -4837,64 +3516,64 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID, NAME, DESCRIPTION, TITLE_ALTERNATIVE, KEYWORD, NEWNESS_UNTIL_DATE, VALID_FROM, VALID_TO y STATISTICAL_OPERATION_URN.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.query.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"+statisticalOperation\".<br/>Ejemplos: <br/>\r\n- fields=+statisticalOperation<br/>"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidatasets"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.503.description']}"
                }
             }
          }
@@ -4904,7 +3583,7 @@
             "tags":[
                "Multidatasets estadísticos"
             ],
-            "description":"Permite obtener el multidataset estadístico que tienen un determinado identificador y que además es mantenido por una determinada organización.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_multidatasets__agencyID___resourceID__retrieveMultidataset_GET",
             "produces":[
                "application/json",
@@ -4915,49 +3594,49 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador de la organización mantenedora del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.agencyID.description']}"
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"Identificador del recurso."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.resourceID.description']}"
                },
                {
                   "name":"fields",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite personalizar la respuesta mediante la exclusión o inclusión de campos de la misma. Los posibles valores son \"-metadata\", \"-data\" y \"+keywords\".<br/>Ejemplos: <br/>\r\n- fields=-metadata<br/>\r\n- fields=-metadata,-data\r\n- fields=+keywords"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.fields.description']}"
                },
                {
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.lang.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidataset"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.200.description']}"
                },
                "404":{
-                  "description":"No encontrado. El recurso solicitado no existe."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.404.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.503.description']}"
                }
             }
          }
@@ -4967,7 +3646,7 @@
             "tags":[
                "Utilidades"
             ],
-            "description":"Permite obtener el listado de datasets cacheados por elemento de variable u operación estadística.",
+            "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.description']}",
             "operationId":"resource__v1.0_resources_findResources_GET",
             "produces":[
                "application/json",
@@ -4978,52 +3657,52 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"Idiomas en los que se desea obtener la respuesta. A los idiomas especificados siempre se le incluirá el idioma por defecto de la organización. Además, en caso de no especificarse ningún idioma, la respuesta se devolverá en todos los idiomas disponibles. <br/>Ejemplos: <br/>\r\n- lang=es,en,ca<br/>\r\n- lang=pt"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
                   "in":"query",
                   "type":"string",
-                  "description":"Número máximo de resultados a obtener"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.limit.description']}"
                },
                {
                   "name":"offset",
                   "in":"query",
                   "type":"string",
-                  "description":"Desplazamiento. Número a partir del cual se comienzan a obtener los resultados."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.offset.description']}"
                },
                {
                   "name":"orderBy",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite ordenar la lista de resultados según un determinado metadato. El orden se especifica mediante un metadato y el sentido del orden (operador) que se le quiere aplicar.<br/>\r\n Los posibles operadores son ASC y DESC.<br/>\r\n El metadato que se puede usar es ID. <br/>Ejemplos:<br/>\r\n- ID ASC<br/>\r\n- ID DESC"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.orderBy.description']}"
                },
                {
                   "name":"query",
                   "in":"query",
                   "type":"string",
-                  "description":"Permite realizar una búsqueda sobre los resultados. <br/>\r\n Los metadatos sobre los que se puede buscar son: ID (dataset code), GEOCOV_VARELEM_ID, STATISTICAL_OPERATION_URN, IS_LAST_VERSION.<br/>\r\n Los operadores lógicos que se permite usar son: AND y OR.  <br/>\r\n Los operadores de comparación que se permite usar son: EQ, IEQ, LIKE, ILIKE, NE, LT, LE, GT, GE, IS_NULL, IS_NOT_NULL e IN."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.query.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "description":"",
-                     "$ref":"#/definitions/Resources"
+                     "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.200.schema.description']}",
+                     "$ref":"#/definitions/ResourcesWithStatisticalOperation"
                   },
                   "headers":{
 
                   },
-                  "description":"Éxito. Indica que la petición ha sido resuelta correctamente."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.200.description']}"
                },
                "406":{
-                  "description":"No aceptable. El formato solicitado no es válido."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.406.description']}"
                },
                "500":{
-                  "description":"Error interno del servidor. Se ha producido un error que impide que se obtenga el recurso solicitado."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.500.description']}"
                },
                "503":{
-                  "description":"Servicio no disponible. Indica que actualmente el servidor no está disponible y por tanto, la solicitud no puede procesarse. El error puede deberse a una sobrecarga temporal o a labores de mantenimiento del servidor. Se trata de una situación temporal."
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.503.description']}"
                }
             }
          }

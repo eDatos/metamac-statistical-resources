@@ -33,23 +33,23 @@
 	<properties>
         <metamac-statistical-resources-rest-api-common.version>2.8.0</metamac-statistical-resources-rest-api-common.version>
 		<metamac-common-metadata-rest-external-api.version>3.3.0</metamac-common-metadata-rest-external-api.version>
-		<metamac-core-common.version>7.7.0</metamac-core-common.version>
+		<metamac-core-common.version>7.9.0</metamac-core-common.version>
 		<metamac-rest-api.version>2.3.0</metamac-rest-api.version>
-		<metamac-rest-common.version>2.4.1</metamac-rest-common.version>
+		<metamac-rest-common.version>2.5.0</metamac-rest-common.version>
 		<metamac-srm-rest-internal-api.version>3.0.0</metamac-srm-rest-internal-api.version>
 		<metamac-srm-rest-external-api.version>3.0.0</metamac-srm-rest-external-api.version>
-		<metamac-sso.version>4.4.1</metamac-sso.version>
+		<metamac-sso.version>4.6.0</metamac-sso.version>
 		<metamac-statistical-operations-rest-internal-api.version>2.5.0</metamac-statistical-operations-rest-internal-api.version>
 		<metamac-statistical-operations-rest-external-api.version>3.5.0</metamac-statistical-operations-rest-external-api.version>
 		<metamac-sdmx-data-rest-external-api.version>2.0.0</metamac-sdmx-data-rest-external-api.version>
-		<metamac-web-common.version>5.6.0</metamac-web-common.version>
+		<metamac-web-common.version>5.6.2-SNAPSHOT</metamac-web-common.version>
 		<metamac-notifications-rest-internal-api.version>3.6.0</metamac-notifications-rest-internal-api.version>
 
 		<metamac-statistical-resources.baseDir>${basedir}/..</metamac-statistical-resources.baseDir>
 		<metamac-statistical-resources.etcDir>${metamac-statistical-resources.baseDir}/etc</metamac-statistical-resources.etcDir>
 
         <!-- EDATOS DATASET REPOSITORY -->
-        <edatos-dataset-repository.version>2.1.2</edatos-dataset-repository.version>
+        <edatos-dataset-repository.version>2.1.3-SNAPSHOT</edatos-dataset-repository.version>
         
 		<statistic-parser.version>2.1.0</statistic-parser.version>
 		<statistic-sdmx-srm-rest-external-api.version>3.6.0</statistic-sdmx-srm-rest-external-api.version>

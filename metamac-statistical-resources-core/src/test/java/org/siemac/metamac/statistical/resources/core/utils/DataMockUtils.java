@@ -40,7 +40,14 @@ public class DataMockUtils {
 
         // Mock codelist and concept Scheme
         mockDsdAndRelatedWithNoAttributes(srmRestInternalService);
+
+        mockCheckExistsAttributeInstanceValues(datasetRepositoriesServiceFacade);
     }
+
+    private static void mockCheckExistsAttributeInstanceValues(DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade) throws Exception {
+        Mockito.when(datasetRepositoriesServiceFacade.checkExistsAttributeInstanceValues(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn(true);
+    }
+
     public static void mockDataRepositorySimpleDimensionsNoAttributes(DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade) throws Exception {
         Map<String, List<String>> coverageMap = new HashMap<String, List<String>>();
         coverageMap.put("GEO_DIM", Arrays.asList("code-01", "code-02", "code-03"));

@@ -36,6 +36,7 @@ public interface QueryListUiHandlers extends BaseUiHandlers {
     void retrieveDatasetsForQuery(int firstResult, int maxResults, DatasetVersionWebCriteria criteria);
     void retrieveStatisticalOperationsForDatasetSelection();
     void createQuery(QueryVersionDto datasetDto);
-    void retrieveDimensionCodesForDataset(String urn, String dimensionId, MetamacWebCriteria webCriteria);
+    void retrieveDimensionCodesForDataset(String urn, String dimensionId, MetamacWebCriteria webCriteria, List<String> temporalGranularities);
     void retrieveDimensionsForDataset(String urn);
+    void retrieveTemporalCodesForField(int firstResult, int maxResults, String datasetUrn, MetamacWebCriteria webCriteria);
 }

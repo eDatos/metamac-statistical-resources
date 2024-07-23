@@ -8,6 +8,7 @@ import java.util.List;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
 import org.siemac.metamac.statistical.resources.web.client.query.utils.QueryRelatedDatasetUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
@@ -17,12 +18,13 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.ExternalItemListItem;
 
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm {
 
-    private BaseUiHandlers uiHandlers;
+    private BaseUiHandlers                    uiHandlers;
 
     public QueryProductionDescriptorsForm() {
         super(getConstants().formProductionDescriptors());
@@ -63,10 +65,13 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
             for (String dimensionId : dimensionIds) {
                 if (!(isLatestData && isTemporalDimension(dimensionId))) {
+                    if (isTemporalDimension(dimensionId)) {
+                        ExternalItemListItem temporalGranularities = new ExternalItemListItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularitiesCapitalLetter(), false);
+                        fields.add(temporalGranularities);
+                    }
                     fields.add(createCodeListItemForDimension(dimensionId));
                 }
             }
-
             if (isLatestData) {
                 ViewTextItem latestData = new ViewTextItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
                 fields.add(latestData);
@@ -79,6 +84,9 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
             for (String dimensionId : queryDto.getSelection().keySet()) {
                 if (!(isLatestData && isTemporalDimension(dimensionId))) {
                     CodeItemListItem item = (CodeItemListItem) getItem(QueryDS.SELECTION + "_" + dimensionId);
+                    if (isTemporalDimension(dimensionId) && queryDto.getTemporalGranularities() != null && !queryDto.getTemporalGranularities().isEmpty()) {
+                        ((ExternalItemListItem) getItem(DatasetDS.TEMPORAL_GRANULARITY)).setExternalItems(queryDto.getTemporalGranularities());
+                    }
                     item.setCodeItems(queryDto.getSelection().get(dimensionId));
                 }
             }

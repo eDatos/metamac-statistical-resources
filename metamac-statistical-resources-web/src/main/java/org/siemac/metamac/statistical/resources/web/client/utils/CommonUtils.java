@@ -42,6 +42,7 @@ import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesD
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.enums.DatasetConstraintInclusionTypeEnum;
 import org.siemac.metamac.statistical.resources.web.shared.dtos.RangeDto;
+import org.siemac.metamac.statistical.resources.web.shared.utils.StatisticalResourcesSharedTokens;
 import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.events.ShowMessageEvent;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
@@ -52,11 +53,13 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePicker
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.gwt.http.client.URL;
 import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 
 public class CommonUtils {
 
     private static String                               metamacPortalBaseUrl;
+    private static Integer                              maxNumberOfUpdatedDatasetInGroup;
     private static Map<String, StatisticOfficialityDto> statisticOfficialitiesMap;
 
     // -----------------------------------------------------------------------------------------
@@ -696,6 +699,27 @@ public class CommonUtils {
         }
 
         return hashMap;
+    }
+
+    public static void downloadFile(String fileName) {
+        StringBuffer url = new StringBuffer();
+        url.append(URL.encode(StatisticalResourcesWeb.getRelativeURL(StatisticalResourcesSharedTokens.FILE_DOWNLOAD_DIR_PATH)));
+        url.append("?").append(URL.encode(StatisticalResourcesSharedTokens.PARAM_FILE_NAME)).append("=").append(URL.encode(fileName));
+        downloadUrl(url.toString());
+    }
+
+    // @formatter:off
+    private static native void downloadUrl(String url) /*-{
+        $wnd.location = url;
+    }-*/;
+    // @formatter:on
+
+    public static Integer getMaxNumberOfUpdatedDatasetInGroup() {
+        return maxNumberOfUpdatedDatasetInGroup;
+    }
+
+    public static void setMaxNumberOfUpdatedDatasetInGroup(Integer maxNumberOfUpdatedDatasetInGroup) {
+        CommonUtils.maxNumberOfUpdatedDatasetInGroup = maxNumberOfUpdatedDatasetInGroup;
     }
 
 }

@@ -35,6 +35,7 @@ Application DatasetsStatisticalResources {
 	    	@Datasource updateDatasource(@Datasource datasource) throws MetamacException;
 	    	@Datasource retrieveDatasourceByUrn(String urn) throws MetamacException;
 	    	int deleteDatasource(String urn, boolean deleteAttributes) throws MetamacException;
+	    	List<String> deleteDatasourcesNotUsed(String datasetUrn, boolean deleteAttributes) throws MetamacException;
 	    	List<@Datasource> retrieveDatasourcesByDatasetVersion(String datasetVersionUrn) throws MetamacException;
 	    	
 	    	// Datasets Versions
@@ -58,7 +59,9 @@ Application DatasetsStatisticalResources {
 			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
 			"Finds resource from cache by criteria"
 			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
-			
+			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
+			"Export datasources to TSV"
+			String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
     		
     		"Link a dataset view to the latest version of the indicator"
 	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;
@@ -68,7 +71,7 @@ Application DatasetsStatisticalResources {
     		importAttributesFromFile(String datasetVersionUrn, List<URL> fileUrls) throws MetamacException;
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
-    		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException; 
+    		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
 
     		// Datasets
     		"Finds datasets by criteria"
