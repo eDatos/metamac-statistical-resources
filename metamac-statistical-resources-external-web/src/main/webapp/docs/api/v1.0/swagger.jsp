@@ -15,7 +15,7 @@
    "info":{
       "description":"${msg['api.doc.swagger.info.description']}",
       "version":"1.0",
-      "title":"API de recursos estadísticos v1.0"
+      "title":"${msg['api.doc.title']}"
    },
    "host":"<%=SwaggerUtils.getApiBaseURLForSwagger()%>",
    "schemes":[
@@ -2674,7 +2674,7 @@
       "/v1.0/collections":{
          "get":{
             "tags":[
-               "Publicaciones estadísticas"
+               "${msg['api.doc.swagger.tags.Publicaciones.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.description']}",
             "operationId":"resource__v1.0_collections_findCollections_GET",
@@ -2746,7 +2746,7 @@
       "/v1.0/collections/{agencyID}":{
          "get":{
             "tags":[
-               "Publicaciones estadísticas"
+               "${msg['api.doc.swagger.tags.Publicaciones.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.description']}",
             "operationId":"resource__v1.0_collections__agencyID__findCollections_GET",
@@ -2824,7 +2824,7 @@
       "/v1.0/collections/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Publicaciones estadísticas"
+               "${msg['api.doc.swagger.tags.Publicaciones.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_collections__agencyID___resourceID__retrieveCollection_GET",
@@ -2887,7 +2887,7 @@
       "/v1.0/datasets":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.Cubos.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.description']}",
             "operationId":"resource__v1.0_datasets_findDatasets_GET",
@@ -2959,7 +2959,7 @@
       "/v1.0/datasets/{agencyID}":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.Cubos.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID__findDatasets_GET",
@@ -3037,7 +3037,7 @@
       "/v1.0/datasets/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.Cubos.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID__findDatasets_GET",
@@ -3121,7 +3121,7 @@
       "/v1.0/datasets/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.Cubos.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_GET",
@@ -3205,7 +3205,7 @@
       "/v1.0/queries":{
          "get":{
             "tags":[
-               "Consultas estadísticas"
+               "${msg['api.doc.swagger.tags.Consultas.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.description']}",
             "operationId":"resource__v1.0_queries_findQueries_GET",
@@ -3277,7 +3277,7 @@
       "/v1.0/queries/{agencyID}":{
          "get":{
             "tags":[
-               "Consultas estadísticas"
+               "${msg['api.doc.swagger.tags.Consultas.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.description']}",
             "operationId":"resource__v1.0_queries__agencyID__findQueries_GET",
@@ -3355,7 +3355,7 @@
       "/v1.0/queries/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Consultas estadísticas"
+               "${msg['api.doc.swagger.tags.Consultas.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_queries__agencyID___resourceID__retrieveQuery_GET",
@@ -3431,7 +3431,7 @@
        "/v1.0/multidatasets":{
          "get":{
             "tags":[
-               "Multidatasets estadísticos"
+               "${msg['api.doc.swagger.tags.Multidatasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.description']}",
             "operationId":"resource__v1.0_multidatasets_findMultidatasets_GET",
@@ -3503,7 +3503,7 @@
       "/v1.0/multidatasets/{agencyID}":{
          "get":{
             "tags":[
-                "Multidatasets estadísticos"
+               "${msg['api.doc.swagger.tags.Multidatasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.description']}",
             "operationId":"resource__v1.0_multidatasets__agencyID__findMultidatasets_GET",
@@ -3581,7 +3581,7 @@
       "/v1.0/multidatasets/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Multidatasets estadísticos"
+               "${msg['api.doc.swagger.tags.Multidatasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_multidatasets__agencyID___resourceID__retrieveMultidataset_GET",
@@ -3644,7 +3644,7 @@
       "/v1.0/resources":{
          "get":{
             "tags":[
-               "Utilidades"
+               "${msg['api.doc.swagger.tags.Utilidades.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.description']}",
             "operationId":"resource__v1.0_resources_findResources_GET",
