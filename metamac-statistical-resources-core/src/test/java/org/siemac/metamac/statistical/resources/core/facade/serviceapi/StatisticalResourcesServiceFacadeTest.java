@@ -4271,19 +4271,16 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Override
     public void testCheckAttributeInstance() throws Exception {
-        // TODO Auto-generated method stub
-
+        // // Without test in facade
     }
 
     @Override
     public void testUpdateDatasetVersionInGroup() throws Exception {
         // // Without test in facade
-
     }
 
     @Override
     public void testRetrieveExternalItemsByDatasetUrn() throws Exception {
-        // TODO Auto-generated method stub
-
+        // // Without test in facade
     }
 }
