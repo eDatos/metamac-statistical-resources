@@ -142,31 +142,31 @@ public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers
 
         @Override
         protected void deleteCategorisations(List<String> selectedCategorisationUrns) {
-            // TODO Auto-generated method stub
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
         }
 
         @Override
         public void updateNewButtonVisibility() {
-            // TODO Auto-generated method stub
-
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
         }
 
         @Override
         public boolean canCancelAllCategorisationsValidity(ListGridRecord[] records) {
-            // TODO Auto-generated method stub
             return false;
         }
 
         @Override
         protected void createCategorisations(List<String> selectedResourcesUrns) {
-            // TODO Auto-generated method stub
-
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
         }
 
         @Override
         protected void endCategorisationsValidity(List<String> selectedCategorisationUrns, Date endValidityDate) {
-            // TODO Auto-generated method stub
-
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
         }
     }
 }
