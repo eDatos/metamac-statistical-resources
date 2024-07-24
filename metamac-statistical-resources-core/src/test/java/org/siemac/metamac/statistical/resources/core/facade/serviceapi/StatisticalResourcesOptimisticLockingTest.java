@@ -576,7 +576,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
 
     @Override
     public void testExportDatasourcesTsv() throws Exception {
-        // TODO
+        // no optimistic locking in this operation
     }
 
     // ------------------------------------------------------------
