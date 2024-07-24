@@ -207,7 +207,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         List<Concept> measureConcepts = new ArrayList<>();
         for (Dimension dim : dimensions.getDimensions()) {
             if (dim.getType().equals(DimensionType.MEASURE_DIMENSION)) {
-                Concept measure = commonDo2RestMapper.toConcept(((EnumeratedDimensionValues) dim.getDimensionValues()).getValues().get(0).getUrn()); // TODO: get(0) ????
+                Concept measure = commonDo2RestMapper.toConcept(((EnumeratedDimensionValues) dim.getDimensionValues()).getValues().get(0).getUrn());
                 measureConcepts.add(measure);
             }
         }
