@@ -183,7 +183,7 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attributes.properties.attribute.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attributes.properties.attribute.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/Attribute"
@@ -1299,7 +1299,7 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.properties.stub.description']}",
                      "type":"array",
-                     "item": {
+                     "items": {
                         "$ref":"#/definitions/DimensionsId"
                      }
                   }
@@ -2721,6 +2721,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/Collections"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.200.description']}"
                },
                "406":{
@@ -2794,7 +2800,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collections"
                   },
                   "headers":{
@@ -2856,7 +2861,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collection"
                   },
                   "headers":{
@@ -2932,7 +2936,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -3011,7 +3014,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -3097,7 +3099,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -3181,7 +3182,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Dataset"
                   },
                   "headers":{
@@ -3255,6 +3255,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/Queries"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.200.description']}"
                },
                "406":{
@@ -3327,6 +3333,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/Queries"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.200.description']}"
                },
                "406":{
@@ -3395,6 +3407,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/Query"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.200.description']}"
                },
                "404":{
@@ -3463,6 +3481,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/Multidatasets"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.200.description']}"
                },
                "406":{
@@ -3535,6 +3559,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/Multidatasets"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.200.description']}"
                },
                "406":{
@@ -3590,6 +3620,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/Multidataset"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.200.description']}"
                },
                "404":{
@@ -3652,6 +3688,12 @@
             ],
             "responses":{
                "200":{
+                  "schema":{
+                     "$ref":"#/definitions/ResourcesWithStatisticalOperation"
+                  },
+                  "headers":{
+
+                  },
                   "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.200.description']}"
                },
                "406":{
