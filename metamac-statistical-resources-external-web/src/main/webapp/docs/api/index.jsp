@@ -8,7 +8,6 @@
 <%
     String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
-    String appName = ResourceBundle.getBundle("i18n.messages-swagger", LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("apps.api_catalog.name");
 %>
 <html>
 <head>
@@ -35,7 +34,7 @@
 
   <!-- Some basic translations -->
   <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/translator.js" type='text/javascript'></script>
-  <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/es.js" type='text/javascript'></script>  
+  <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/<%=locale %>.js" type='text/javascript'></script>  
   
   <c:set var="apiStyleCssUrl" value="<%=org.siemac.metamac.core.common.util.WebUtils.getApiStyleCssUrl()%>" />
 
@@ -125,7 +124,6 @@
 	
 	<c:if test="${!empty apiStyleFooterUrl}">
 	   <c:import charEncoding="UTF-8" url="${apiStyleFooterUrl}">
-	      <c:param name="appName" value="<%= appName %>" />
 	      <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
 	   </c:import>
 	</c:if>
