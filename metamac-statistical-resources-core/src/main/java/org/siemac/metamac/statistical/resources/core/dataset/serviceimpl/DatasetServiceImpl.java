@@ -5,15 +5,9 @@ import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCol
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.security.AccessController;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -55,6 +49,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemRes
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
+import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -142,7 +137,6 @@ import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import es.ibestat.jaxi.stream.messages.DatasetAvro;
 import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
-import sun.security.action.GetPropertyAction;
 
 /**
  * Implementation of DatasetService.
@@ -490,6 +484,119 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         datasetVersion.setDatasetRepositoryId(datasetRepositoryDto.getDatasetId());
 
         return getDatasetVersionRepository().save(datasetVersion);
+    }
+
+    @Override
+    public DatasetVersion copyDatasetVersion(ServiceContext ctx, String urn) throws MetamacException {
+        DatasetVersion datasetVersion = getDatasetVersionRepository().retrieveByUrn(urn);
+        ExternalItem statisticalOperation = datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation();
+        DatasetVersion datasetVersionCopy = getEntityToCopy(datasetVersion);
+        // Validations
+        datasetServiceInvocationValidator.checkCreateDatasetVersion(ctx, datasetVersionCopy, statisticalOperation);
+
+        // Create dataset
+        Dataset dataset = new Dataset();
+        fillMetadataForCreateDataset(ctx, dataset, statisticalOperation);
+
+        // Fill metadata
+        fillMetadataForCreateDatasetVersion(ctx, datasetVersionCopy, statisticalOperation);
+
+        // Save version
+        datasetVersionCopy.setDataset(dataset);
+
+        assignCodeAndSaveDataset(dataset, datasetVersionCopy);
+
+        datasetVersionCopy = getDatasetVersionRepository().retrieveByUrn(datasetVersionCopy.getSiemacMetadataStatisticalResource().getUrn());
+        DatasetRepositoryDto datasetRepositoryDto = createDatasetRepository(ctx, datasetVersionCopy);
+        datasetVersionCopy.setDatasetRepositoryId(datasetRepositoryDto.getDatasetId());
+
+        return getDatasetVersionRepository().save(datasetVersionCopy);
+    }
+
+    private DatasetVersion getEntityToCopy(DatasetVersion datasetVersion) {
+        DatasetVersion datasetVersionCopy = new DatasetVersion();
+        datasetVersionCopy.setDateStart(datasetVersion.getDateStart());
+        datasetVersionCopy.setDateEnd(datasetVersion.getDateEnd());
+        datasetVersionCopy.setDatasetRepositoryId(datasetVersion.getDatasetRepositoryId());
+        datasetVersionCopy.setKeepAllData(datasetVersion.isKeepAllData());
+        datasetVersionCopy.setFormatExtentObservations(datasetVersion.getFormatExtentObservations());
+        datasetVersionCopy.setFormatExtentDimensions(datasetVersion.getFormatExtentDimensions());
+        datasetVersionCopy.setFormatExtentTableSize(datasetVersion.getFormatExtentTableSize());
+        datasetVersionCopy.setDateNextUpdate(datasetVersion.getDateNextUpdate());
+        datasetVersionCopy.setUserModifiedDateNextUpdate(datasetVersion.getUserModifiedDateNextUpdate());
+        SiemacMetadataStatisticalResource siemacMetadataStatisticalResource = getSiemacMetadataStatisticalResource(datasetVersion);
+        datasetVersionCopy.setSiemacMetadataStatisticalResource(siemacMetadataStatisticalResource);
+        datasetVersionCopy.setDataSourceType(datasetVersion.getDataSourceType());
+        datasetVersionCopy.setRelatedDsd(datasetVersion.getRelatedDsd());
+        datasetVersionCopy.setUpdateFrequency(datasetVersion.getUpdateFrequency());
+        datasetVersionCopy.setStatisticOfficiality(datasetVersion.getStatisticOfficiality());
+        datasetVersionCopy.setBibliographicCitation(datasetVersion.getBibliographicCitation());
+        datasetVersionCopy.getDimensionsCoverage().addAll(datasetVersion.getDimensionsCoverage());
+        datasetVersionCopy.getAttributesCoverage().addAll(datasetVersion.getAttributesCoverage());
+        datasetVersionCopy.getCategorisations().addAll(datasetVersion.getCategorisations());
+        datasetVersionCopy.getGeographicCoverage().addAll(datasetVersion.getGeographicCoverage());
+        datasetVersionCopy.getTemporalCoverage().addAll(datasetVersion.getTemporalCoverage());
+        datasetVersionCopy.getMeasureCoverage().addAll(datasetVersion.getMeasureCoverage());
+        datasetVersionCopy.getGeographicGranularities().addAll(datasetVersion.getGeographicGranularities());
+        datasetVersionCopy.getTemporalGranularities().addAll(datasetVersion.getTemporalGranularities());
+        datasetVersionCopy.getStatisticalUnit().addAll(datasetVersion.getStatisticalUnit());
+        return datasetVersionCopy;
+    }
+
+    private SiemacMetadataStatisticalResource getSiemacMetadataStatisticalResource(DatasetVersion datasetVersion) {
+        SiemacMetadataStatisticalResource siemacMetadataStatisticalResource = new SiemacMetadataStatisticalResource();
+        siemacMetadataStatisticalResource.setUserModifiedKeywords(datasetVersion.getSiemacMetadataStatisticalResource().getUserModifiedKeywords());
+        siemacMetadataStatisticalResource.setResourceCreatedDate(datasetVersion.getSiemacMetadataStatisticalResource().getResourceCreatedDate());
+        siemacMetadataStatisticalResource.setLastUpdate(datasetVersion.getSiemacMetadataStatisticalResource().getLastUpdate());
+        siemacMetadataStatisticalResource.setNewnessUntilDate(datasetVersion.getSiemacMetadataStatisticalResource().getNewnessUntilDate());
+        siemacMetadataStatisticalResource.setCopyrightedDate(datasetVersion.getSiemacMetadataStatisticalResource().getCopyrightedDate());
+        siemacMetadataStatisticalResource.setLanguage(datasetVersion.getSiemacMetadataStatisticalResource().getLanguage());
+        siemacMetadataStatisticalResource.setSubtitle(datasetVersion.getSiemacMetadataStatisticalResource().getSubtitle());
+        siemacMetadataStatisticalResource.setTitleAlternative(datasetVersion.getSiemacMetadataStatisticalResource().getTitleAlternative());
+        siemacMetadataStatisticalResource.setAbstractLogic(datasetVersion.getSiemacMetadataStatisticalResource().getAbstractLogic());
+        siemacMetadataStatisticalResource.setKeywords(datasetVersion.getSiemacMetadataStatisticalResource().getKeywords());
+        siemacMetadataStatisticalResource.setCommonMetadata(datasetVersion.getSiemacMetadataStatisticalResource().getCommonMetadata());
+        siemacMetadataStatisticalResource.setType(datasetVersion.getSiemacMetadataStatisticalResource().getType());
+        siemacMetadataStatisticalResource.setCreator(datasetVersion.getSiemacMetadataStatisticalResource().getCreator());
+        siemacMetadataStatisticalResource.setConformsTo(datasetVersion.getSiemacMetadataStatisticalResource().getConformsTo());
+        siemacMetadataStatisticalResource.setConformsToInternal(datasetVersion.getSiemacMetadataStatisticalResource().getConformsToInternal());
+        siemacMetadataStatisticalResource.setDataProviderAnnotations(datasetVersion.getSiemacMetadataStatisticalResource().getDataProviderAnnotations());
+        siemacMetadataStatisticalResource.setReplaces(datasetVersion.getSiemacMetadataStatisticalResource().getReplaces());
+        siemacMetadataStatisticalResource.setIsReplacedBy(datasetVersion.getSiemacMetadataStatisticalResource().getIsReplacedBy());
+        siemacMetadataStatisticalResource.setAccessRights(datasetVersion.getSiemacMetadataStatisticalResource().getAccessRights());
+        siemacMetadataStatisticalResource.getLanguages().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getLanguages());
+        siemacMetadataStatisticalResource.getStatisticalOperationInstances().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperationInstances());
+        siemacMetadataStatisticalResource.getContributor().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getContributor());
+        siemacMetadataStatisticalResource.getDataProvider().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getDataProvider());
+        siemacMetadataStatisticalResource.getPublisher().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getPublisher());
+        siemacMetadataStatisticalResource.getPublisherContributor().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getPublisherContributor());
+        siemacMetadataStatisticalResource.getMediator().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getMediator());
+        siemacMetadataStatisticalResource.setCreationDate(datasetVersion.getSiemacMetadataStatisticalResource().getCreationDate());
+        siemacMetadataStatisticalResource.setCreationUser(datasetVersion.getSiemacMetadataStatisticalResource().getCreationUser());
+        siemacMetadataStatisticalResource.setProductionValidationDate(datasetVersion.getSiemacMetadataStatisticalResource().getProductionValidationDate());
+        siemacMetadataStatisticalResource.setDiffusionValidationDate(datasetVersion.getSiemacMetadataStatisticalResource().getDiffusionValidationDate());
+        siemacMetadataStatisticalResource.setDiffusionValidationUser(datasetVersion.getSiemacMetadataStatisticalResource().getDiffusionValidationUser());
+        siemacMetadataStatisticalResource.setRejectValidationDate(datasetVersion.getSiemacMetadataStatisticalResource().getRejectValidationDate());
+        siemacMetadataStatisticalResource.setRejectValidationUser(datasetVersion.getSiemacMetadataStatisticalResource().getRejectValidationUser());
+        siemacMetadataStatisticalResource.setPublicationDate(datasetVersion.getSiemacMetadataStatisticalResource().getPublicationDate());
+        siemacMetadataStatisticalResource.setPublicationUser(datasetVersion.getSiemacMetadataStatisticalResource().getPublicationUser());
+        siemacMetadataStatisticalResource.setLastVersion(datasetVersion.getSiemacMetadataStatisticalResource().getLastVersion());
+        siemacMetadataStatisticalResource.setNextVersionDate(datasetVersion.getSiemacMetadataStatisticalResource().getNextVersionDate());
+        siemacMetadataStatisticalResource.setValidFrom(datasetVersion.getSiemacMetadataStatisticalResource().getValidFrom());
+        siemacMetadataStatisticalResource.setValidTo(datasetVersion.getSiemacMetadataStatisticalResource().getValidTo());
+        siemacMetadataStatisticalResource.setVersionRationale(datasetVersion.getSiemacMetadataStatisticalResource().getVersionRationale());
+        siemacMetadataStatisticalResource.setNextVersion(datasetVersion.getSiemacMetadataStatisticalResource().getNextVersion());
+        siemacMetadataStatisticalResource.getVersionRationaleTypes().addAll(datasetVersion.getSiemacMetadataStatisticalResource().getVersionRationaleTypes());
+        siemacMetadataStatisticalResource.setTitle(datasetVersion.getSiemacMetadataStatisticalResource().getTitle());
+        siemacMetadataStatisticalResource.setDescription(datasetVersion.getSiemacMetadataStatisticalResource().getDescription());
+        siemacMetadataStatisticalResource.setCode(datasetVersion.getSiemacMetadataStatisticalResource().getCode());
+        siemacMetadataStatisticalResource.setUpdateDate(datasetVersion.getSiemacMetadataStatisticalResource().getUpdateDate());
+        siemacMetadataStatisticalResource.setStatisticalOperation(null);
+        siemacMetadataStatisticalResource.setPublicationStreamStatus(null);
+        siemacMetadataStatisticalResource.setReplacesVersion(datasetVersion.getSiemacMetadataStatisticalResource().getReplacesVersion());
+        siemacMetadataStatisticalResource.setIsReplacedByVersion(datasetVersion.getSiemacMetadataStatisticalResource().getIsReplacedByVersion());
+        siemacMetadataStatisticalResource.setMaintainer(datasetVersion.getSiemacMetadataStatisticalResource().getMaintainer());
+        return siemacMetadataStatisticalResource;
     }
 
     private DatasetRepositoryDto createDatasetRepository(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
@@ -1618,6 +1725,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
+        @Override
         public final T doInTransaction(TransactionStatus status) {
             try {
                 return doInMetamacTransaction(status);
@@ -2234,6 +2342,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     }
 
+    @Override
     public Long calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         Long tableSize = Long.valueOf(1);
         DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());

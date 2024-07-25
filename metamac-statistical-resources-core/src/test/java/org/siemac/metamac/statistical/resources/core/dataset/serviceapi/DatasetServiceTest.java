@@ -2172,6 +2172,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertEquals(Long.valueOf(27), tableSize);
     }
 
+    @Override
     public void testGetDatasetLastVersionPublishedByDatasetUrn() throws Exception {
         // NOTHING TO DO
     }
@@ -2209,5 +2210,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         datasetService.updateDatasetVersionInGroup(getServiceContextWithoutPrincipal(), metadataToChange, urn);
         DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextWithoutPrincipal(), urn);
         assertEqualsDatasetVersion(expected, actual);
+    }
+
+    @Override
+    public void testCopyDatasetVersion() throws Exception {
+        // TODO Auto-generated method stub
+        
     }
 }

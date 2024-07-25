@@ -1,6 +1,5 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.dataset;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetResult;
@@ -25,8 +24,7 @@ public class CopyDatasetActionHandler extends SecurityActionHandler<CopyDatasetA
     @Override
     public CopyDatasetResult executeSecurityAction(CopyDatasetAction action) throws ActionException {
         try {
-            DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), action.getUrn());
-            return  new CopyDatasetResult(statisticalResourcesServiceFacade.copyDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, datasetVersionDto.getStatisticalOperation()));
+            return  new CopyDatasetResult(statisticalResourcesServiceFacade.copyDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), action.getUrn()));
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }
