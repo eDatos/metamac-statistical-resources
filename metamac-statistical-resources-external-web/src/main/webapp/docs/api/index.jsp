@@ -125,6 +125,7 @@
 	<c:if test="${!empty apiStyleFooterUrl}">
 	   <c:import charEncoding="UTF-8" url="${apiStyleFooterUrl}">
 	      <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
+	      <c:param name="appId" value="statistical-resources-external"/>
 	   </c:import>
 	</c:if>
 </body>
