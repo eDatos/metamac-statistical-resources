@@ -4294,7 +4294,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
         mockDsdAndCreateDatasetRepository(datasetVersionDto, statisticalOperation);
 
-        DatasetVersionDto newDatasetVersionDto = statisticalResourcesServiceFacade.copyDatasetVersion(getServiceContextAdministrador(), datasetVersionDto.getUrn());
+        DatasetVersionDto newDatasetVersionDto = statisticalResourcesServiceFacade.copyDatasetVersion(getServiceContextAdministrador(), datasetVersionDto);
         assertNotNull(newDatasetVersionDto);
         assertNotNull(newDatasetVersionDto.getUrn());
         assertNotNull(newDatasetVersionDto.getViewCode());

@@ -49,8 +49,10 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         checkExistingDatasource(datasource, ServiceExceptionParameters.DATASOURCE, exceptions);
     }
 
-    public static void checkCopyDatasetVersion(String urn, List<MetamacExceptionItem> exceptions) throws MetamacException {
-        //TODO: HAY QUE IMPLEMENTAR EL CHECK
+    public static void checkCopyDatasetVersion(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        checkNewDatasetVersion(datasetVersion, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation(), ServiceExceptionParameters.STATISTICAL_OPERATION,
+                exceptions);
     }
 
     public static void checkRetrieveDatasourceByUrn(String urn, List<MetamacExceptionItem> exceptions) throws MetamacException {

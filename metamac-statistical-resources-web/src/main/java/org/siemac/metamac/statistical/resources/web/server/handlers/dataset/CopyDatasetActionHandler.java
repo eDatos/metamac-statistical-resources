@@ -24,7 +24,7 @@ public class CopyDatasetActionHandler extends SecurityActionHandler<CopyDatasetA
     @Override
     public CopyDatasetResult executeSecurityAction(CopyDatasetAction action) throws ActionException {
         try {
-            return  new CopyDatasetResult(statisticalResourcesServiceFacade.copyDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), action.getUrn()));
+            return  new CopyDatasetResult(statisticalResourcesServiceFacade.copyDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersion()));
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

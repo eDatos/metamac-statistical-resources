@@ -36,7 +36,6 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
-import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
 import org.siemac.metamac.statistical.resources.core.constraint.mapper.ConstraintDto2RestMapper;
 import org.siemac.metamac.statistical.resources.core.constraint.mapper.ConstraintRest2DtoMapper;
@@ -238,9 +237,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Autowired
     private LifecycleService<MultidatasetVersion>                     multidatasetLifecycleService;
-
-    @Autowired
-    private StatisticalResourcesConfiguration                         configurationService;
 
     @Autowired
     private StatisticalResourcesDto2StatRepoDtoMapper                 statisticalResourcesDto2StatRepoDtoMapper;
@@ -2549,10 +2545,14 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, String urn) throws MetamacException {
-        //TODO: HAY QUE IMPLEMENTAR ALGuN CHECK TAMBIeN
+    public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canCreateDataset(ctx, datasetVersionDto.getStatisticalOperation().getCode());
         // Transform
-        DatasetVersion datasetVersionCreated = getDatasetService().copyDatasetVersion(ctx, urn);
+        DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionDto);
+
+        // Copy
+        DatasetVersion datasetVersionCreated = getDatasetService().copyDatasetVersion(ctx, datasetVersion);
         DatasetVersionDto datasetCreated = datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersionCreated);
         return datasetCreated;
     }

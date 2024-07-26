@@ -449,8 +449,8 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
     }
 
     @Override
-    public void copyDataset(String urn) {
-        dispatcher.execute(new CopyDatasetAction(urn), new WaitingAsyncCallbackHandlingError<CopyDatasetResult>(this) {
+    public void copyDataset(DatasetVersionDto dataset) {
+        dispatcher.execute(new CopyDatasetAction(dataset), new WaitingAsyncCallbackHandlingError<CopyDatasetResult>(this) {
 
             @Override
             public void onWaitSuccess(CopyDatasetResult result) {
