@@ -269,8 +269,6 @@ public class DatasetsGroupPresenter extends Presenter<DatasetsGroupPresenter.Dat
 
     @Override
     public void goTo(List<PlaceRequest> location) {
-        // TODO Auto-generated method stub
-
     }
 
 }

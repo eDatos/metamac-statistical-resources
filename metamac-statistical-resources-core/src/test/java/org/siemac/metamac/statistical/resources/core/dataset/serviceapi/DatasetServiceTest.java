@@ -2213,6 +2213,12 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     @Override
+    @Test
+    public void testExportDatasourcesTsv() throws Exception {
+        // NOTHING TO DO
+    }
+
+    @Override
     public void testCopyDatasetVersion() throws Exception {
         // TODO Auto-generated method stub
         

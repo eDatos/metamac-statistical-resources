@@ -163,20 +163,18 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
 
     @Override
     public void testImportAttributesInDatasetVersion() throws Exception {
-        // TODO Auto-generated method stub
+        // No test
 
     }
 
     @Override
     public void testPlanifyImportationAttributes() throws Exception {
-        // TODO Auto-generated method stub
-
+        // No test
     }
 
     @Override
     public void testPlanifyRecoveryImportAttributes() throws Exception {
-        // TODO Auto-generated method stub
-
+        // No test
     }
 
     @Override
