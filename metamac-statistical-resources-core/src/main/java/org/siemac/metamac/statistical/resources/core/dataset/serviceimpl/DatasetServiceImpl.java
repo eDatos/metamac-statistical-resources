@@ -496,11 +496,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     @Override
     public DatasetVersion copyDatasetVersion(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
         ExternalItem statisticalOperation = datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation();
+        // we set the following null data because they are set when we create the dataset
         datasetVersion.getSiemacMetadataStatisticalResource().setStatisticalOperation(null);
   
         // Validations
         datasetServiceInvocationValidator.checkCreateDatasetVersion(ctx, datasetVersion, statisticalOperation);
-     // we set the following null data because they are set when we create the dataset
         // Create dataset
         Dataset dataset = new Dataset();
         fillMetadataForCreateDataset(ctx, dataset, statisticalOperation);
