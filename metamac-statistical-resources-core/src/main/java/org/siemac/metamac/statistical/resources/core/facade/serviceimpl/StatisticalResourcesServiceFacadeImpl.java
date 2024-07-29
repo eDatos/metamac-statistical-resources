@@ -2548,13 +2548,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canCreateDataset(ctx, datasetVersionDto.getStatisticalOperation().getCode());
-        // Transform
-        DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionDto);
-
         // Copy
-        DatasetVersion datasetVersionCreated = getDatasetService().copyDatasetVersion(ctx, datasetVersion);
-        DatasetVersionDto datasetCreated = datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersionCreated);
-        return datasetCreated;
+        DatasetVersion datasetVersionCreated = getDatasetService().copyDatasetVersion(ctx, datasetVersionDto.getUrn());
+        return datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersionCreated);
     }
 
     @Override

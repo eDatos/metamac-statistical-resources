@@ -265,7 +265,6 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
     }
 
     public static boolean canCopyDataset(DatasetVersionDto datasetVersionDto) {
-        // TODO EDATOS-4539 Esto habría que revisarlo porque igual hay que añadir alguna validación adicional
-        return BooleanUtils.isFalse(datasetVersionDto.getIsTaskInBackground());
+        return SharedDatasetsSecurityUtils.canCopyDataset(getMetamacPrincipal(), getCurrentStatisticalOperationCode()) && BooleanUtils.isFalse(datasetVersionDto.getIsTaskInBackground());
     }
 }
