@@ -8,8 +8,6 @@
   <title>APIs de recursos estadísticos</title>
  
   <link href="<%=WebUtils.getFavicon()%>" rel="shortcut icon"/>
-  
-  <c:set var="apiStyleCssUrl" value="<%=WebUtils.getApiStyleCssUrl()%>" />
 
   <c:if test="${!empty apiStyleCssUrl}">
     <link href="<c:out value='${apiStyleCssUrl}'/>" media='screen' rel='stylesheet' type='text/css' />
