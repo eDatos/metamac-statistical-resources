@@ -254,10 +254,10 @@ public class NewQueryWindow extends CustomWindow {
         for (String dimensionId : datasetDimensions) {
             CodeItemListItem item = createCodeListItemForDimension(datasetVersion.getUrn(), dimensionId, true);
             selectionFields.put(dimensionId, item);
+            createTemporalGranularitiesItem(datasetVersion.getUrn());
             if (!dimensionId.equals("TIME_PERIOD")) {
                 fields.add(item);
             } else {
-                createTemporalGranularitiesItem(datasetVersion.getUrn());
                 searchTemporalGranularitiesWindow.setShowIfCondition(getFormItemIfFunctionShowSelections());
                 fields.add(searchTemporalGranularitiesWindow);
                 fields.add(item);
