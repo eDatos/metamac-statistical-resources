@@ -2,10 +2,19 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
+<%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
+<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="org.apache.commons.lang.LocaleUtils" %>
+<%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
+<%
+    String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
+    String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+    ResourceBundle rs = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
+%>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>APIs de recursos estadísticos</title>
+  <title><%=rs.getString("app.name") %></title>
  
   <link href="<%=WebUtils.getFavicon()%>" rel="shortcut icon"/>
 
@@ -25,20 +34,20 @@
     </c:if>
     
     <div class="version-list">
-       <h1>APIs de recursos estadísticos</h1>
-       <h2>Versiones</h2>
+       <h1><%=rs.getString("api.doc.title") %></h1>
+       <h2><%=rs.getString("api.doc.versions") %></h2>
        <ul>
            <li>
-               <h3 class="version-title"><a href="${apiBaseURL}/latest" alt="Última versión de la API">/latest</a></h3>
+               <h3 class="version-title"><a href="${apiBaseURL}/latest">/latest</a></h3>
                <div class="version-description">
-                   <p><strong>latest</strong> es la palabra clave reservada con la que se puede acceder a la última versión de la API</p>                      
+                   <p><strong>latest</strong> <%=rs.getString("api.doc.latest") %></p>
                </div>
            </li>
            
            <li>
-               <h3 class="version-title"><a href="${apiBaseURL}/v1.0" alt="Versión 1.0">/v1.0</a></h3>
+               <h3 class="version-title"><a href="${apiBaseURL}/v1.0">/v1.0</a></h3>
                <div class="version-description">
-                    <p>Versión 1.0 de la API</p>    
+                    <p><%=rs.getString("api.doc.version.1_0") %></p>
                </div>
            </li>
        </ul>
