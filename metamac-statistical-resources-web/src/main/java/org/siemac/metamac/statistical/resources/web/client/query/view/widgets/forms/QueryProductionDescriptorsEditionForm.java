@@ -399,13 +399,13 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             hasTemporalDimension = true;
         }
 
+        temporalGranularitiesItem = createTemporalGranularitiesItem(queryDto.getRelatedDatasetVersion().getUrn());
         for (String dimensionId : datasetDimensions) {
             CodeItemListItem item = createCodeListItemForDimension(datasetVersion.getUrn(), dimensionId, true);
             
             if (!dimensionId.equals("TIME_PERIOD")) {
                 fields.add(item);
             } else {
-                temporalGranularitiesItem = createTemporalGranularitiesItem(queryDto.getRelatedDatasetVersion().getUrn());
 
                 fields.add(temporalGranularitiesItem);
                 fields.add(item);
@@ -434,7 +434,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             }
         }
         setValue(QueryDS.MAINTAINER, maintainer);
-        QueryRelatedDatasetUtils.setRelatedDataset(datasetVersion, (SearchRelatedResourceLinkItem) getItem(QueryDS.RELATED_DATASET_VERSION));
+        QueryRelatedDatasetUtils.setRelatedDataset(datasetVersion, getItem(QueryDS.RELATED_DATASET_VERSION));
         if (hasTemporalDimension && QueryTypeEnum.LATEST_DATA.equals(queryDto.getType())) {
             setValue(QueryDS.LATEST_N_DATA, queryDto.getLatestDataNumber());
         }
