@@ -10,6 +10,7 @@
     String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
     ResourceBundle rs = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT));
+    String appName = rs.getString("apps.api_catalog.name");
 %>
 <html>
 <head>
@@ -30,7 +31,10 @@
     <c:set var="apiBaseURL" value="<%=WebUtils.getApiBaseURL()%>" />
     
     <c:if test="${!empty apiStyleHeaderUrl}">
-       <c:import charEncoding="UTF-8" url="${apiStyleHeaderUrl}" />
+       <c:import charEncoding="UTF-8" url="${apiStyleHeaderUrl}">
+          <c:param name="appName" value="<%= appName %>" />
+          <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
+       </c:import>
     </c:if>
     
     <div class="version-list">
