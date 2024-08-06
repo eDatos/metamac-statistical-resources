@@ -173,6 +173,8 @@ import org.siemac.metamac.statistical.resources.web.shared.publication.DeletePub
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationStructureAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationVersionsAction;
+import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsAction;
+import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsActionHandler;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetVersionsOfPublicationAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationStructureElementAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationVersionAction;
@@ -292,6 +294,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdatePublicationStructureElementLocationAction.class, UpdatePublicationStructureElementLocationActionHandler.class);
         bindHandler(DeletePublicationStructureElementAction.class, DeletePublicationStructureElementActionHandler.class);
         bindHandler(GetVersionsOfPublicationAction.class, GetVersionsOfPublicationActionHandler.class);
+        bindHandler(GetPublicationsAction.class, GetPublicationsActionHandler.class);
 
         // QUERIES
         bindHandler(GetQueriesAction.class, GetQueriesActionHandler.class);

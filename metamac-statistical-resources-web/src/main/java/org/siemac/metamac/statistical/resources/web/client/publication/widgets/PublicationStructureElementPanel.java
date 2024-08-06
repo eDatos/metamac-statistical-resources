@@ -18,6 +18,7 @@ import org.siemac.metamac.statistical.resources.web.shared.criteria.StatisticalR
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.GetMultidatasetsResult;
+import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueriesResult;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
@@ -172,8 +173,8 @@ public class PublicationStructureElementPanel extends VLayout {
 
             @Override
             public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                String queryUrn = editionForm.getValueAsString(ElementLevelDS.COLLECTION);
-                //getUiHandlers().goToLastVersion(queryUrn);
+                String collectionUrn = editionForm.getValueAsString(ElementLevelDS.COLLECTION);
+                getUiHandlers().goToLastVersion(collectionUrn);
             }
         });
         return collection;
@@ -567,7 +568,7 @@ public class PublicationStructureElementPanel extends VLayout {
 
                             @Override
                             public void retrieveResultSet(int firstResult, int maxResults, StatisticalResourceWebCriteria criteria) {
-                                //getUiHandlers().retrieveQueriesForCubes(firstResult, maxResults, criteria);
+                                getUiHandlers().retrieveCollectionsForCubes(firstResult, maxResults, criteria);
                             }
                         });
 
@@ -671,6 +672,13 @@ public class PublicationStructureElementPanel extends VLayout {
         if (searchMultidatasetWindow != null) {
             searchMultidatasetWindow.setResources(result.getMultidatasets());
             searchMultidatasetWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), result.getMultidatasets().size(), result.getTotalResults());
+        }
+    }
+
+    public void setCollectionsForCubes(GetPublicationsResult result) {
+        if (searchMultidatasetWindow != null) {
+            searchMultidatasetWindow.setResources(result.getCollections());
+            searchMultidatasetWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), result.getCollections().size(), result.getTotalResults());
         }
     }
 }

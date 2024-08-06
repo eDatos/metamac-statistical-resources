@@ -11,6 +11,7 @@ import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalReso
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationStructureDto;
+import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -38,6 +39,8 @@ import org.siemac.metamac.statistical.resources.web.shared.publication.DeletePub
 import org.siemac.metamac.statistical.resources.web.shared.publication.DeletePublicationStructureElementResult;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationStructureAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationStructureResult;
+import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsAction;
+import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsResult;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationStructureElementAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationStructureElementResult;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdatePublicationStructureElementLocationAction;
@@ -81,6 +84,7 @@ public class PublicationStructureTabPresenter extends Presenter<PublicationStruc
         void setDatasetsForCubes(GetDatasetsResult result);
         void setStatisticalOperationsForDatasetSelection(GetStatisticalOperationsPaginatedListResult result);
         void setQueriesForCubes(GetQueriesResult result);
+        void setPublicationsForCubes(GetPublicationsResult result);
         void setStatisticalOperationsForQuerySelection(GetStatisticalOperationsPaginatedListResult result);
 
         void setMultidatasetsForCubes(GetMultidatasetsResult result);
@@ -244,6 +248,17 @@ public class PublicationStructureTabPresenter extends Presenter<PublicationStruc
     }
 
     @Override
+    public void retrieveCollectionsForCubes(int firstResult, int maxResults, StatisticalResourceWebCriteria criteria) {
+        dispatcher.execute(new GetPublicationsAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetPublicationsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetPublicationsResult result) {
+                getView().setPublicationsForCubes(result);
+            }
+        });
+    }
+
+    @Override
     public void retrieveStatisticalOperationsForQuerySelection() {
         dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(0, Integer.MAX_VALUE, null), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
 
@@ -325,6 +340,8 @@ public class PublicationStructureTabPresenter extends Presenter<PublicationStruc
                         placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteQueryPlaceRequest(operationUrn, resourceUrn));
                     } else if (resourceVersion instanceof MultidatasetVersionDto) {
                         placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteMultidatasetPlaceRequest(operationUrn, resourceUrn));
+                    } else if (resourceVersion instanceof PublicationVersionDto) {
+                        placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteCollectionPlaceRequest(operationUrn, resourceUrn));
                     }
                 }
             });

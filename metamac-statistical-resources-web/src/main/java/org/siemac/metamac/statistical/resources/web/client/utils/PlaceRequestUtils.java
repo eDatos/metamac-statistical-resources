@@ -256,6 +256,26 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
         return placeRequests;
     }
 
+    public static PlaceRequest buildRelativeCollectionPlaceRequest() {
+        return new PlaceRequest(NameTokens.publicationsListPage);
+    }
+
+    public static PlaceRequest buildRelativeCollectionPlaceRequest(String urn) {
+        return new PlaceRequest(NameTokens.publicationPage).with(PlaceRequestParams.publicationParam, UrnUtils.removePrefix(urn));
+    }
+
+    public static List<PlaceRequest> buildAbsoluteCollectionPlaceRequest(String operationUrn) {
+        List<PlaceRequest> placeRequests = buildAbsoluteOperationPlaceRequest(operationUrn);
+        placeRequests.add(buildRelativeCollectionPlaceRequest());
+        return placeRequests;
+    }
+
+    public static List<PlaceRequest> buildAbsoluteCollectionPlaceRequest(String operationUrn, String collectiontUrn) {
+        List<PlaceRequest> placeRequests = buildAbsoluteCollectionPlaceRequest(operationUrn);
+        placeRequests.add(buildRelativeCollectionPlaceRequest(collectiontUrn));
+        return placeRequests;
+    }
+
     public static String getMultidatasetBreadCrumbTitle(PlaceRequest placeRequest) {
         String urnWithoutPrefix = getRequestParameter(placeRequest, PlaceRequestParams.multidatasetParam);
         if (!StringUtils.isBlank(urnWithoutPrefix)) {
