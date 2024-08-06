@@ -53,6 +53,7 @@ public class PublicationStructureElementPanel extends VLayout {
     private SearchSingleStatisticalRelatedResourcePaginatedWindow searchDatasetsWindow;
     private SearchSingleStatisticalRelatedResourcePaginatedWindow searchQueriesWindow;
     private SearchSingleStatisticalRelatedResourcePaginatedWindow searchMultidatasetWindow;
+    private SearchSingleStatisticalRelatedResourcePaginatedWindow searchCollectionWindow;
 
     private PublicationVersionBaseDto                             publicationVersion;
     private NameableStatisticalResourceDto                        element;
@@ -156,14 +157,27 @@ public class PublicationStructureElementPanel extends VLayout {
                 getUiHandlers().goToLastVersion(multidatasetUrn);
             }
         });
-
+        CustomLinkItem collection = createCollectionCustomLink();
         ViewTextItem url = new ViewTextItem(ElementLevelDS.URL, getConstants().url());
         url.setShowIfCondition(getIsNotEmptyFormItemIfFunction());
         
-        form.setFields(title, description, urn, dataset, query, multidataset, url);
+        form.setFields(title, description, urn, dataset, query, multidataset, collection, url);
         mainFormLayout.addViewCanvas(form);
     }
 
+    private CustomLinkItem createCollectionCustomLink() {
+        CustomLinkItem collection = new CustomLinkItem(ElementLevelDS.COLLECTION, getConstants().publication());
+        collection.setShowIfCondition(getIsNotEmptyFormItemIfFunction());
+        collection.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+            @Override
+            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                String queryUrn = editionForm.getValueAsString(ElementLevelDS.COLLECTION);
+                //getUiHandlers().goToLastVersion(queryUrn);
+            }
+        });
+        return collection;
+    }
     private void createEditionForm() {
         editionForm = new GroupDynamicForm(getConstants().publicationStructureElement());
         editionForm.setNumCols(2);
@@ -252,6 +266,9 @@ public class PublicationStructureElementPanel extends VLayout {
             }
         });
 
+        //Collections
+        SearchCustomLinkItem collection = setSearchCollectionItem();
+
         CustomTextItem url = new CustomTextItem(ElementLevelDS.URL, getConstants().url());
         url.setRequired(true);
         url.setShowIfCondition(new FormItemIfFunction() {
@@ -262,8 +279,28 @@ public class PublicationStructureElementPanel extends VLayout {
             }
         });
         
-        editionForm.setFields(title, description, urn, resourceTypeToLink, dataset, query, multidataset, url);
+        editionForm.setFields(title, description, urn, resourceTypeToLink, dataset, query, multidataset, collection, url);
         mainFormLayout.addEditionCanvas(editionForm);
+    }
+
+    private SearchCustomLinkItem setSearchCollectionItem() {
+        SearchCustomLinkItem collection = createSearchCollectionItem(ElementLevelDS.COLLECTION, getConstants().publication());
+        collection.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+            @Override
+            public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                String collectionUrn = editionForm.getValueAsString(ElementLevelDS.COLLECTION);
+                getUiHandlers().goToLastVersion(collectionUrn);
+            }
+        });
+        collection.setShowIfCondition(new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                return StringUtils.equals(StatisticalResourceTypeEnum.COLLECTION.name(), editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK));
+            }
+        });
+        return collection;
     }
 
     public void setElement(NameableStatisticalResourceDto element) {
@@ -294,11 +331,13 @@ public class PublicationStructureElementPanel extends VLayout {
             form.setValue(ElementLevelDS.DATASET, cubeDto.getDatasetUrn());
             form.setValue(ElementLevelDS.QUERY, cubeDto.getQueryUrn());
             form.setValue(ElementLevelDS.MULTIDATASET, cubeDto.getMultidatasetUrn());
+            form.setValue(ElementLevelDS.COLLECTION, cubeDto.getCollectionUrn());
             form.setValue(ElementLevelDS.URL, cubeDto.getUrl());
         } else {
             form.setValue(ElementLevelDS.DATASET, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.QUERY, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.MULTIDATASET, StringUtils.EMPTY);
+            form.setValue(ElementLevelDS.COLLECTION, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.URL, StringUtils.EMPTY);
         }
 
@@ -320,7 +359,9 @@ public class PublicationStructureElementPanel extends VLayout {
             } else if (!StringUtils.isBlank(cubeDto.getQueryUrn())) {
                 resourceTypeToLink = StatisticalResourceTypeEnum.QUERY.name();
             } else if (!StringUtils.isBlank(cubeDto.getMultidatasetUrn())) {
-                resourceTypeToLink = StatisticalResourceTypeEnum.MULTIDATASET.name();
+                resourceTypeToLink = StatisticalResourceTypeEnum.MULTIDATASET.name(); 
+            }else if (!StringUtils.isBlank(cubeDto.getCollectionUrn())) {
+                resourceTypeToLink = StatisticalResourceTypeEnum.COLLECTION.name();
             } else if (!StringUtils.isBlank(cubeDto.getUrl())) {
                 resourceTypeToLink = StatisticalResourceTypeEnum.URL.name();
             }
@@ -328,12 +369,14 @@ public class PublicationStructureElementPanel extends VLayout {
             setDatasetInEditionForm(cubeDto.getDatasetUrn());
             setQueryInEditionForm(cubeDto.getQueryUrn());
             setMultidatasetInEditionForm(cubeDto.getMultidatasetUrn());
+            setCollectionInEditionForm(cubeDto.getCollectionUrn());
             setUrlInEditionForm(cubeDto.getUrl());
         } else {
             editionForm.setValue(ElementLevelDS.RESOURCE_TYPE_TO_LINK, StringUtils.EMPTY);
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.DATASET)).clearValue();
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.QUERY)).clearValue();
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.MULTIDATASET)).clearValue();
+            ((CustomLinkItem) editionForm.getItem(ElementLevelDS.COLLECTION)).clearValue();
             ((CustomTextItem) editionForm.getItem(ElementLevelDS.URL)).clearValue();
         }
 
@@ -348,6 +391,10 @@ public class PublicationStructureElementPanel extends VLayout {
 
     private void setDatasetInEditionForm(String datasetUrn) {
         ((CustomLinkItem) editionForm.getItem(ElementLevelDS.DATASET)).setValue(datasetUrn, null);
+    }
+
+    private void setCollectionInEditionForm(String datasetUrn) {
+        ((CustomLinkItem) editionForm.getItem(ElementLevelDS.COLLECTION)).setValue(datasetUrn, null);
     }
 
     private void setQueryInEditionForm(String queryUrn) {
@@ -372,14 +419,22 @@ public class PublicationStructureElementPanel extends VLayout {
                 ((CubeDto) element).setDatasetUrn(editionForm.getValueAsString(ElementLevelDS.DATASET));
                 ((CubeDto) element).setQueryUrn(null);
                 ((CubeDto) element).setMultidatasetUrn(null);
+                ((CubeDto) element).setCollectionUrn(null);
                 ((CubeDto) element).setUrl(null);
             } else if (StatisticalResourceTypeEnum.QUERY.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
                 ((CubeDto) element).setQueryUrn(editionForm.getValueAsString(ElementLevelDS.QUERY));
                 ((CubeDto) element).setDatasetUrn(null);
                 ((CubeDto) element).setMultidatasetUrn(null);
+                ((CubeDto) element).setCollectionUrn(null);
                 ((CubeDto) element).setUrl(null);
             } else if (StatisticalResourceTypeEnum.MULTIDATASET.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
                 ((CubeDto) element).setMultidatasetUrn(editionForm.getValueAsString(ElementLevelDS.MULTIDATASET));
+                ((CubeDto) element).setDatasetUrn(null);
+                ((CubeDto) element).setQueryUrn(null);
+                ((CubeDto) element).setCollectionUrn(null);
+                ((CubeDto) element).setUrl(null); 
+            }else if (StatisticalResourceTypeEnum.COLLECTION.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
+                ((CubeDto) element).setMultidatasetUrn(editionForm.getValueAsString(ElementLevelDS.COLLECTION));
                 ((CubeDto) element).setDatasetUrn(null);
                 ((CubeDto) element).setQueryUrn(null);
                 ((CubeDto) element).setUrl(null);
@@ -387,6 +442,7 @@ public class PublicationStructureElementPanel extends VLayout {
                 ((CubeDto) element).setUrl(editionForm.getValueAsString(ElementLevelDS.URL));
                 ((CubeDto) element).setMultidatasetUrn(null);
                 ((CubeDto) element).setDatasetUrn(null);
+                ((CubeDto) element).setCollectionUrn(null);
                 ((CubeDto) element).setQueryUrn(null);   
             }
         }
@@ -496,6 +552,43 @@ public class PublicationStructureElementPanel extends VLayout {
         });
         queryItem.setRequired(true);
         return queryItem;
+    }
+
+    private SearchCustomLinkItem createSearchCollectionItem(String name, String title) {
+
+        final SearchCustomLinkItem collectionItem = new SearchCustomLinkItem(name, title);
+        collectionItem.getSearchIcon().addFormItemClickHandler(new FormItemClickHandler() {
+
+            @Override
+            public void onFormItemClick(FormItemIconClickEvent event) {
+
+                searchCollectionWindow = new SearchSingleStatisticalRelatedResourcePaginatedWindow(getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS,
+                        new SearchPaginatedAction<StatisticalResourceWebCriteria>() {
+
+                            @Override
+                            public void retrieveResultSet(int firstResult, int maxResults, StatisticalResourceWebCriteria criteria) {
+                                //getUiHandlers().retrieveQueriesForCubes(firstResult, maxResults, criteria);
+                            }
+                        });
+
+                // Load statistical operations to filter queries
+                //getUiHandlers().retrieveStatisticalOperationsForQuerySelection();
+
+                searchCollectionWindow.setSaveAction(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
+
+                    @Override
+                    public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                        RelatedResourceDto selectedResource = searchCollectionWindow.getSelectedResource();
+                        searchCollectionWindow.markForDestroy();
+                        // Set selected resource in form
+                        setQueryInEditionForm(selectedResource != null ? selectedResource.getUrn() : StringUtils.EMPTY);
+                        editionForm.validate(false);
+                    }
+                });
+            }
+        });
+        collectionItem.setRequired(true);
+        return collectionItem;
     }
 
     private SearchCustomLinkItem createSearchMultidatasetItem(String name, String title) {
