@@ -215,6 +215,11 @@ public class PublicationStructureTabViewImpl extends ViewWithUiHandlers<Publicat
     }
 
     @Override
+    public void setStatisticalOperationsForCollectionSelection(GetStatisticalOperationsPaginatedListResult result) {
+        publicationStructureElementPanel.setStatisticalOperationsForCollectionSelection(result);
+    }
+
+    @Override
     public void setQueriesForCubes(GetQueriesResult result) {
         publicationStructureElementPanel.setQueriesForCubes(result);
     }

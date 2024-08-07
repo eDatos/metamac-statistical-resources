@@ -435,7 +435,8 @@ public class PublicationStructureElementPanel extends VLayout {
                 ((CubeDto) element).setCollectionUrn(null);
                 ((CubeDto) element).setUrl(null); 
             }else if (StatisticalResourceTypeEnum.COLLECTION.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
-                ((CubeDto) element).setMultidatasetUrn(editionForm.getValueAsString(ElementLevelDS.COLLECTION));
+                ((CubeDto) element).setCollectionUrn(editionForm.getValueAsString(ElementLevelDS.COLLECTION));
+                ((CubeDto) element).setMultidatasetUrn(null);
                 ((CubeDto) element).setDatasetUrn(null);
                 ((CubeDto) element).setQueryUrn(null);
                 ((CubeDto) element).setUrl(null);
@@ -573,7 +574,7 @@ public class PublicationStructureElementPanel extends VLayout {
                         });
 
                 // Load statistical operations to filter queries
-                //getUiHandlers().retrieveStatisticalOperationsForQuerySelection();
+                getUiHandlers().retrieveStatisticalOperationsForCollectionSelection();
 
                 searchCollectionWindow.setSaveAction(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
@@ -582,7 +583,7 @@ public class PublicationStructureElementPanel extends VLayout {
                         RelatedResourceDto selectedResource = searchCollectionWindow.getSelectedResource();
                         searchCollectionWindow.markForDestroy();
                         // Set selected resource in form
-                        setQueryInEditionForm(selectedResource != null ? selectedResource.getUrn() : StringUtils.EMPTY);
+                        setCollectionInEditionForm(selectedResource != null ? selectedResource.getUrn() : StringUtils.EMPTY);
                         editionForm.validate(false);
                     }
                 });
@@ -654,6 +655,13 @@ public class PublicationStructureElementPanel extends VLayout {
         }
     }
 
+    public void setStatisticalOperationsForCollectionSelection(GetStatisticalOperationsPaginatedListResult result) {
+        if (searchCollectionWindow != null) {
+            searchCollectionWindow.setStatisticalOperations(result.getOperationsList());
+            getUiHandlers().retrieveCollectionsForCubes(0, StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS, searchCollectionWindow.getSearchCriteria());
+        }
+    }
+
     public void setQueriesForCubes(GetQueriesResult result) {
         if (searchQueriesWindow != null) {
             searchQueriesWindow.setResources(result.getQueries());
@@ -676,9 +684,9 @@ public class PublicationStructureElementPanel extends VLayout {
     }
 
     public void setCollectionsForCubes(GetPublicationsResult result) {
-        if (searchMultidatasetWindow != null) {
-            searchMultidatasetWindow.setResources(result.getCollections());
-            searchMultidatasetWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), result.getCollections().size(), result.getTotalResults());
+        if (searchCollectionWindow != null) {
+            searchCollectionWindow.setResources(result.getCollections());
+            searchCollectionWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), result.getCollections().size(), result.getTotalResults());
         }
     }
 }

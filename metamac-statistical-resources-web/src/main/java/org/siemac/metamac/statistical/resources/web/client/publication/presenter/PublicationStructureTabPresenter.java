@@ -86,6 +86,7 @@ public class PublicationStructureTabPresenter extends Presenter<PublicationStruc
         void setQueriesForCubes(GetQueriesResult result);
         void setPublicationsForCubes(GetPublicationsResult result);
         void setStatisticalOperationsForQuerySelection(GetStatisticalOperationsPaginatedListResult result);
+        void setStatisticalOperationsForCollectionSelection(GetStatisticalOperationsPaginatedListResult result);
 
         void setMultidatasetsForCubes(GetMultidatasetsResult result);
         void setStatisticalOperationsForMultidatasetSelection(GetStatisticalOperationsPaginatedListResult result);
@@ -270,15 +271,16 @@ public class PublicationStructureTabPresenter extends Presenter<PublicationStruc
     }
 
     @Override
-    public void retrieveMultidatasetsForCubes(int firstResult, int maxResults, StatisticalResourceWebCriteria criteria) {
-        dispatcher.execute(new GetMultidatasetsAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetMultidatasetsResult>(this) {
+    public void retrieveStatisticalOperationsForCollectionSelection() {
+        dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(0, Integer.MAX_VALUE, null), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
 
             @Override
-            public void onWaitSuccess(GetMultidatasetsResult result) {
-                getView().setMultidatasetsForCubes(result);
+            public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
+                getView().setStatisticalOperationsForCollectionSelection(result);
             }
         });
     }
+
 
     @Override
     public void retrieveStatisticalOperationsForMultidatasetSelection() {
@@ -287,6 +289,17 @@ public class PublicationStructureTabPresenter extends Presenter<PublicationStruc
             @Override
             public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
                 getView().setStatisticalOperationsForMultidatasetSelection(result);
+            }
+        });
+    }
+
+    @Override
+    public void retrieveMultidatasetsForCubes(int firstResult, int maxResults, StatisticalResourceWebCriteria criteria) {
+        dispatcher.execute(new GetMultidatasetsAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetMultidatasetsResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetMultidatasetsResult result) {
+                getView().setMultidatasetsForCubes(result);
             }
         });
     }

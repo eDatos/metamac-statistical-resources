@@ -266,6 +266,10 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
             numberOfRelatedResourceTypes++;
         }
 
+        if (cube.getPublication() != null) {
+            numberOfRelatedResourceTypes++;
+        }
+
         // throw an exception if no related resources has been specified or more than one related resources has been specified
         if (numberOfRelatedResourceTypes == 0) {
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.METADATA_REQUIRED,

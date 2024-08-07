@@ -213,6 +213,8 @@ Application PublicationsStatisticalResources {
 			- @Query query cascade="none" nullable databaseColumn="QUERY_FK";
 			"Multidataset"
 			- @Multidataset multidataset cascade="none" nullable databaseColumn="MULTIDATASET_FK";
+			"Publication"
+			- @Publication publication cascade="none" nullable databaseColumn="PUBLICATION_FK";
 			
 			String url nullable databaseColumn="url";
             
