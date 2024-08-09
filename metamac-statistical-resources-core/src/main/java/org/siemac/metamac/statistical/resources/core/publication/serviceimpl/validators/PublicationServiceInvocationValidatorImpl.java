@@ -240,6 +240,9 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
             StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getMultidatasetUrn(), ServiceExceptionParameters.CUBE__MULTIDATASET__URN, exceptions);
         }
         
+        if (cube.getPublication() != null) {
+            StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getPublicationUrn(), ServiceExceptionParameters.CUBE__PUBLICATION__URN, exceptions);
+        }
         if (cube.getUrl() != null) {
             ValidationUtils.validateUrl(cube.getUrl(), ServiceExceptionParameters.CUBE_URL, exceptions);
         }

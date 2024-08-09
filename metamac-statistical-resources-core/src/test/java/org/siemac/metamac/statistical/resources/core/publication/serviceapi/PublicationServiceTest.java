@@ -2011,6 +2011,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNotNull(expected.getQuery());
         assertNull(expected.getMultidataset());
         assertNull(expected.getUrl());
+        assertNull(expected.getPublication());
 
         expected.setQuery(null);
         expected.setMultidataset(expectedMultidataset);
@@ -2022,6 +2023,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(actual.getQuery());
         assertNull(actual.getUrl());
         assertNotNull(actual.getMultidataset());
+        assertNull(actual.getPublication());
         assertEqualsMultidataset(expectedMultidataset, actual.getMultidataset());
     }
 
@@ -2038,6 +2040,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNotNull(expected.getQuery());
         assertNull(expected.getMultidataset());
         assertNull(expected.getUrl());
+        assertNull(expected.getPublication());
 
         expected.setQuery(null);
         expected.setUrl(expectedUrl);
@@ -2048,6 +2051,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(actual.getDataset());
         assertNull(actual.getQuery());
         assertNull(actual.getMultidataset());
+        assertNull(actual.getPublication());
         assertEquals(expectedUrl, actual.getUrl());
     }
     
