@@ -44,6 +44,8 @@ Application PublicationsStatisticalResources {
     		PagedResult<@PublicationVersion> findPublicationVersionsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException;
 			"Deletes publication version. This must be last version and no published"
     		deletePublicationVersion(String publicationVersionUrn) throws MetamacException;
+    		"Finds multidatasets by criteria"
+    		PagedResult<@Publication> findPublicationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
     		
     		// Structure
     		@PublicationVersion importPublicationVersionStructure(String publicationVersionUrn, URL fileURL, String language) throws MetamacException;
@@ -84,6 +86,7 @@ Application PublicationsStatisticalResources {
 			Repository PublicationRepository {
 				@Publication retrieveByUrn(String urn) throws MetamacException;
 				findByCondition;
+				findByCondition(PagingParameter pagingParameter);
 				save;
 				delete;
 			}

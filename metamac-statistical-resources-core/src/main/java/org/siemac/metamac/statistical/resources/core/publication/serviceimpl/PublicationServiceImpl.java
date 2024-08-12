@@ -41,11 +41,13 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParam
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetProperties;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Chapter;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.publication.serviceapi.validators.PublicationServiceInvocationValidator;
@@ -357,6 +359,9 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         } else if (StatisticalResourceTypeEnum.MULTIDATASET.equals(type)) {
             Multidataset multidataset = retrieveMultidatasetByCode(ctx, element.getRelatedResourceCode(), element.getLineNumber());
             cube.setMultidataset(multidataset);
+        } else if (StatisticalResourceTypeEnum.COLLECTION.equals(type)) {
+            Publication publication = retrievePublicationByCode(ctx, element.getRelatedResourceCode(), element.getLineNumber());
+            cube.setPublication(publication);
         } else if (StatisticalResourceTypeEnum.URL.equals(type)) {
             cube.setUrl(element.getRelatedResourceCode());
         }
@@ -369,6 +374,18 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         PagedResult<Multidataset> multidatasets = multidatasetService.findMultidatasetsByCondition(ctx, conditions, pagingParameter);
         if (multidatasets.getTotalRows() > 0) {
             return multidatasets.getValues().get(0);
+        }
+        throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.PUBLICATION_VERSION_STRUCTURE_IMPORTATION_CUBE_WITH_NONEXISTENT_MULTIDATASET)
+                .withMessageParameters(lineNumber, code).build();
+    }
+
+    private Publication retrievePublicationByCode(ServiceContext ctx, String code, int lineNumber) throws MetamacException {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Publication.class).withProperty(PublicationProperties.identifiableStatisticalResource().code()).eq(code)
+                .build();
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, 1, true);
+        PagedResult<Publication> publications = findPublicationsByCondition(ctx, conditions, pagingParameter);
+        if (publications.getTotalRows() > 0) {
+            return publications.getValues().get(0);
         }
         throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.PUBLICATION_VERSION_STRUCTURE_IMPORTATION_CUBE_WITH_NONEXISTENT_MULTIDATASET)
                 .withMessageParameters(lineNumber, code).build();
@@ -882,5 +899,16 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     private void updateLastUpdateMetadata(PublicationVersion publicationVersion) {
         publicationVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime());
         getPublicationVersionRepository().save(publicationVersion);
+    }
+
+    @Override
+    public PagedResult<Publication> findPublicationsByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException {
+        // Validations
+        publicationServiceInvocationValidator.checkFindPublicationVersionsByCondition(ctx, conditions, pagingParameter);
+
+        conditions = CriteriaUtils.initConditions(conditions, MultidatasetVersion.class);
+        pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
+
+        return getPublicationRepository().findByCondition(conditions, pagingParameter);
     }
 }

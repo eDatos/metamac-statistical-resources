@@ -30,6 +30,10 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         StatisticalResourcesValidationUtils.checkParameterRequired(statisticalOperation, ServiceExceptionParameters.STATISTICAL_OPERATION, exceptions);
     }
 
+    public static void checkFindPublicationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
+        
+    }
+
     public static void checkUpdatePublicationVersion(PublicationVersion publicationVersion, List<MetamacExceptionItem> exceptions) throws MetamacException {
         checkExistingPublicationVersion(publicationVersion, exceptions);
     }

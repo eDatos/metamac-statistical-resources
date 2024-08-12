@@ -2559,4 +2559,10 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
 
         publicationService.deletePublicationVersion(getServiceContextAdministrador(), publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
     }
+
+    @Override
+    public void testFindPublicationsByCondition() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }
