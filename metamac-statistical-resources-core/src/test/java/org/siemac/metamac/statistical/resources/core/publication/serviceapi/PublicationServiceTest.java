@@ -73,9 +73,11 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Chapter;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
+import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
@@ -2562,7 +2564,17 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
 
     @Override
     public void testFindPublicationsByCondition() throws Exception {
-        // TODO Auto-generated method stub
+        Publication result = publicationMockFactory.retrieveMock(PUBLICATION_02_BASIC_WITH_GENERATED_VERSION_NAME);
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Multidataset.class).withProperty(MultidatasetProperties.identifiableStatisticalResource().code())
+                .eq(result.getIdentifiableStatisticalResource().getCode()).build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+
+        PagedResult<Publication> publications = publicationService.findPublicationsByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(1, publications.getTotalRows());
+        assertEquals(result.getIdentifiableStatisticalResource().getUrn(), publications.getValues().get(0).getIdentifiableStatisticalResource().getUrn());
         
     }
 }

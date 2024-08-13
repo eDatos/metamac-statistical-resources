@@ -31,7 +31,7 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
     }
 
     public static void checkFindPublicationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
-        
+        //NOTHING
     }
 
     public static void checkUpdatePublicationVersion(PublicationVersion publicationVersion, List<MetamacExceptionItem> exceptions) throws MetamacException {
