@@ -51,14 +51,20 @@ public class ManipulateDataUtils {
         InternationalStringDto internationalStringDto = new InternationalStringDto();
         LocalisedStringDto localisedStringDto = new LocalisedStringDto();
         localisedStringDto.setLabel(dataSourceId);
-        // In SDMX the attributes aren't localized. For use localised in SDMX must be use a enumerated representation.
-        // In this case, in the repo exists the code of enumerated representation, never the i18n of code.
-        localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
+        localisedStringDto.setLocale(getLocaleDatasourceIdentificationAttribute());
         internationalStringDto.addText(localisedStringDto);
 
         AttributeInstanceObservationDto attributeDto = new AttributeInstanceObservationDto(StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, internationalStringDto);
 
         return attributeDto;
+    }
+
+    /*
+     * In SDMX the attributes aren't localized. For use localised in SDMX must be use a enumerated representation.
+     * In this case, in the repo exists the code of enumerated representation, never the i18n of code.
+     */
+    public static String getLocaleDatasourceIdentificationAttribute() {
+        return StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE;
     }
 
     /**
