@@ -100,6 +100,9 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.NextVersionType
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
@@ -210,10 +213,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private PlatformTransactionManager                platformTransactionManager;
 
     @Autowired
-    GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
+    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
+    CacheService                                      cacheService;
+
+    @Autowired
+    GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
 
     @Autowired
     private ManipulateCsvDataService                  manipulateCsvDataService;
@@ -742,6 +748,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     @Override
     public PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
             throws MetamacException {
+
+        // TODO EDATOS-4587 QUITAR ESTE MÉTODO AL COMPLETO.
         // Validations
         datasetServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions, pagingParameter);
 
@@ -1559,25 +1567,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             jaxiDatasetVersionAvro = (DatasetAvro) message;
         }
 
-        if (!hasValidStatisticalOperation(jaxiDatasetVersionAvro)) {
+    if (!hasValidStatisticalOperation(jaxiDatasetVersionAvro)) {
             return;
         }
 
-        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
+        cacheService.disabledResourceByUrn(ctx, jaxiDatasetVersionAvro.getUrn());
+
         if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
-            List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
-                    exceptionItems);
+            List<GeoCacheTerritoriesByGeoCacheResource> territories = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService,
+                    noticesRestInternalService, exceptionItems);
             if (exceptionItems.isEmpty()) {
                 InternationalString datasetTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getTitle());
-                InternationalString operationTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getStatisticalOperation().getTitle());
+                GeoCacheResource geoCacheResource = cacheService.updateGeoCacheExternalResource(ctx, jaxiDatasetVersionAvro, datasetTitle);
+                geoCacheResource.getTerritories().addAll(territories);
 
-                for (ExternalItem variableElement : externalItemGeographicCoverage) {
-                    GeoCovVarElementCacheDatasetVersion result = updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, datasetTitle, operationTitle, variableElement);
-                    if (datasetTitle.getId() == null) {
-                        datasetTitle = result.getTitle();
-                        operationTitle = result.getOperationTitle();
-                    }
-                }
             } else {
                 MetamacException metamacException = new MetamacException();
                 metamacException.getExceptionItems().addAll(exceptionItems);
@@ -1608,23 +1611,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 return null;
             }
         });
-    }
-
-    private GeoCovVarElementCacheDatasetVersion updateGeographicCoverageVariableElementsCache(DatasetAvro jaxiDatasetVersionAvro, InternationalString datasetTitle, InternationalString operationTitle,
-            ExternalItem variableElement) {
-        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
-        geoCovVarElementCacheDatasetVersion.setCode(jaxiDatasetVersionAvro.getCode());
-        geoCovVarElementCacheDatasetVersion.setUrn(jaxiDatasetVersionAvro.getUrn());
-        geoCovVarElementCacheDatasetVersion.setTitle(datasetTitle);
-        geoCovVarElementCacheDatasetVersion.setOperationCode(jaxiDatasetVersionAvro.getStatisticalOperation().getCode());
-        geoCovVarElementCacheDatasetVersion.setOperationUrn(jaxiDatasetVersionAvro.getStatisticalOperation().getUrn());
-        geoCovVarElementCacheDatasetVersion.setOperationTitle(operationTitle);
-        geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
-        geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.TRUE);
-        geoCovVarElementCacheDatasetVersion.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
-        geoCovVarElementCacheDatasetVersion.setIsLastVersion(true);
-        geoCovVarElementCacheDatasetVersion.setIsActivated(true);
-        return geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
 
     private TransactionTemplate getTransactionTemplate() {

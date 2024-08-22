@@ -1596,7 +1596,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
 
         assertRelaxedEqualsCube(expected, actual);
     }
-   
+
     @Test
     @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testCreateCubeUrlFormatError() throws Exception {
@@ -1610,7 +1610,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
             assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
         }
     }
-    
+
     @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME, DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME})
     public void testCreateCubeErrorParameterRequiredPublicationVersionUrn() throws Exception {
@@ -2056,7 +2056,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(actual.getPublication());
         assertEquals(expectedUrl, actual.getUrl());
     }
-    
+
     @Test
     @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testUpdateCubeUrlFormatError() throws Exception {
@@ -2071,7 +2071,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
             assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
         }
     }
-    
+
     @SuppressWarnings("static-access")
     @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
@@ -2576,5 +2576,15 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertEquals(1, publications.getTotalRows());
         assertEquals(result.getIdentifiableStatisticalResource().getUrn(), publications.getValues().get(0).getIdentifiableStatisticalResource().getUrn());
         
+    }
+    
+     @Override
+    public void testUpdateGeographicalCache() throws Exception {
+        // TODO 4587
+    }
+
+    @Override
+    public void testGetPublicationLastVersionPublished() throws Exception {
+        // TODO 4587
     }
 }

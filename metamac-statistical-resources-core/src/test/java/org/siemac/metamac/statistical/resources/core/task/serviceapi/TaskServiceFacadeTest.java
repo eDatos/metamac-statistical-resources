@@ -97,4 +97,9 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
         // No test
     }
+
+    @Override
+    public void testExecuteUpdateGeographicalCacheRelatedResourceTask() throws Exception {
+        // No test
+    }
 }

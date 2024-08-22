@@ -9,6 +9,8 @@ import "classpath:/btdesign/metamac-statistical-resources-core-multidatasets.btd
 
 import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
 import "classpath:/btdesign/metamac-core-common-enum.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-tasks-dtos.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-tasks.btdesign"
 
 Application PublicationsStatisticalResources {
 	basePackage=unused
@@ -26,6 +28,8 @@ Application PublicationsStatisticalResources {
 			> @ElementLevelRepository
 			> @ChapterRepository
 			> @CubeRepository
+			> @TaskService
+			> @CacheService
 			
 			// Publications
 	    	"Creates publication version"
@@ -47,6 +51,8 @@ Application PublicationsStatisticalResources {
     		"Finds multidatasets by criteria"
     		PagedResult<@Publication> findPublicationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
     		
+    		@PublicationVersion getPublicationLastVersionPublished(String agencyId, String resourceId) throws MetamacException;
+     		
     		// Structure
     		@PublicationVersion importPublicationVersionStructure(String publicationVersionUrn, URL fileURL, String language) throws MetamacException;
     		
@@ -63,6 +69,9 @@ Application PublicationsStatisticalResources {
 	    	@Cube updateCubeLocation(String cubeUrn, String parentChapterUrn, Long orderInLevel) throws MetamacException;
 	    	@Cube retrieveCube(String cubeUrn) throws MetamacException;
 	    	deleteCube(String cubeUrn) throws MetamacException;
+	    	
+	   		// geographical coverage cache
+    		updateGeographicalCache(@PublicationVersion publicationVersion) throws MetamacException;
 		}  
 
 

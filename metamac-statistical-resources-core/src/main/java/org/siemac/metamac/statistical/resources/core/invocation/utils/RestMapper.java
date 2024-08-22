@@ -26,6 +26,7 @@ import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoM
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -71,9 +72,9 @@ public class RestMapper {
         return externalItems;
     }
 
-    public List<ExternalItem> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, SrmRestInternalService srmRestInternalService,
+    public List<GeoCacheTerritoriesByGeoCacheResource> buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, SrmRestInternalService srmRestInternalService,
             NoticesRestInternalService noticesRestInternalService, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
-        List<ExternalItem> externalItems = new ArrayList<ExternalItem>();
+        List<GeoCacheTerritoriesByGeoCacheResource> territories = new ArrayList<GeoCacheTerritoriesByGeoCacheResource>();
         for (ExternalItemAvro externalAvro : jaxiDatasetVersionAvro.getGeographicCoverage()) {
             TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
 
@@ -102,11 +103,12 @@ public class RestMapper {
 
                 externalItem.setUrn(externalAvro.getUrn());
                 externalItem.setTitle(getInternationalStringFromInternationalStringAvro(externalAvro.getTitle()));
-                externalItems.add(externalItem);
+                GeoCacheTerritoriesByGeoCacheResource territory = new GeoCacheTerritoriesByGeoCacheResource();
+                territory.setVariableElement(externalItem);
             }
         }
 
-        return externalItems;
+        return territories;
     }
 
     public ExternalItem buildExternalItemFromResourceInternal(ResourceInternal resource) throws MetamacException {

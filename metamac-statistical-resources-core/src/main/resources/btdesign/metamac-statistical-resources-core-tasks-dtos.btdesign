@@ -27,6 +27,14 @@ Application DatasetsStatisticalResourcesDto {
 			String datasetVersionCode;
 			
  		}
+ 		
+ 		// TASK INFO ANY RESOURCES
+		DataTransferObject TaskInfoResources {
+			String versionId;
+			String urn;
+			"string associated to one of the StatisticalResourceTypeEnum value"
+			String resourceType; 
+ 		}
 
 		DataTransferObject FileDescriptor {
 			gap

@@ -56,7 +56,7 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
         if (basicVersionableStatisticalResourceDto == null || !Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle())) {
             ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForImportDatasourcesInDatasetVersion);
         }
-        
+
         if (basicVersionableStatisticalResourceDto != null && Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle())) {
             ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForImportZipDatasources);
         }

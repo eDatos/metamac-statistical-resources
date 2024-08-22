@@ -62,6 +62,11 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         StatisticalResourcesValidationUtils.checkParameterRequired(publicationVersionUrn, ServiceExceptionParameters.PUBLICATION_VERSION_URN, exceptions);
     }
 
+    public static void checkGetPublicationLastVersionPublished(String agencyId, String resourceId, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        StatisticalResourcesValidationUtils.checkParameterRequired(agencyId, ServiceExceptionParameters.PUBLICATION_VERSION__MAINTAINER__ID, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.PUBLICATION_VERSION__CODE, exceptions);
+    }
+
     public static void checkVersioningPublicationVersion(String publicationVersionUrnToCopy, VersionTypeEnum versionType, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(publicationVersionUrnToCopy, ServiceExceptionParameters.PUBLICATION_VERSION_URN_TO_COPY, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(versionType, ServiceExceptionParameters.VERSION_TYPE, exceptions);
@@ -181,7 +186,7 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
 
     public static void checkCreateCube(String publicationVersionUrn, Cube cube, List<MetamacExceptionItem> exceptions) {
         if (cube.getUrl() == null) {
-        StatisticalResourcesValidationUtils.checkParameterRequired(publicationVersionUrn, ServiceExceptionParameters.PUBLICATION_VERSION_URN, exceptions);
+            StatisticalResourcesValidationUtils.checkParameterRequired(publicationVersionUrn, ServiceExceptionParameters.PUBLICATION_VERSION_URN, exceptions);
         }
         checkNewCube(cube, exceptions);
 
@@ -216,7 +221,7 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         checkNewNameableStatisticalResource(cube.getNameableStatisticalResource(), ServiceExceptionParameters.CUBE, exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getElementLevel().getOrderInLevel(), ServiceExceptionParameters.CUBE__ORDER_IN_LEVEL, exceptions);
     }
-    
+
     private static void checkExistingCube(Cube cube, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(cube, ServiceExceptionParameters.CUBE, exceptions);
 
@@ -258,7 +263,7 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         if (cube.getUrl() != null) {
             return;
         }
-        
+
         int numberOfRelatedResourceTypes = 0;
 
         if (cube.getDataset() != null) {
@@ -285,5 +290,9 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
             exceptions.add(new MetamacExceptionItem(ServiceExceptionType.METADATA_UNEXPECTED,
                     ServiceExceptionParameters.CUBE__DATASET + " / " + ServiceExceptionParameters.CUBE__QUERY + " / " + ServiceExceptionParameters.CUBE__MULTIDATASET));
         }
+    }
+
+    public static void checkUpdateGeographicalCache(PublicationVersion publicationVersion, List<MetamacExceptionItem> exceptions) {
+        checkExistingPublicationVersion(publicationVersion, exceptions);
     }
 }

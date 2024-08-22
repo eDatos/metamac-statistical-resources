@@ -1,5 +1,8 @@
 package org.siemac.metamac.statistical.resources.core.publication.serviceimpl;
 
+import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn;
+import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionVersionUrn;
+
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -20,7 +23,6 @@ import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
-import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
@@ -35,10 +37,12 @@ import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResour
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetProperties;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -48,7 +52,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.ElementL
 import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.publication.serviceapi.validators.PublicationServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.publication.utils.ElementLevelComparator;
 import org.siemac.metamac.statistical.resources.core.publication.utils.structure.Element;
@@ -57,6 +61,7 @@ import org.siemac.metamac.statistical.resources.core.publication.utils.structure
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryProperties;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
+import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,9 +82,6 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     private PublicationServiceInvocationValidator     publicationServiceInvocationValidator;
 
     @Autowired
-    private PublicationVersionRepository              publicationVersionRepository;
-
-    @Autowired
     private PublicationStructureTSVProcessor          publicationStructureTSVProcessor;
 
     @Autowired
@@ -94,6 +96,9 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     @Autowired
     private RelatedResourceRepository                 relatedResourceRepository;
 
+    @Autowired
+    CacheService                                      cacheService;
+
     public PublicationServiceImpl() {
     }
 
@@ -104,7 +109,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
 
         // Create publication
         Publication publication = new Publication();
-        fillMetadataForCreatePublication(publication, statisticalOperation, ctx);
+        fillMetadataForCreatePublication(publication, statisticalOperation);
 
         // Fill metadata
         fillMetadataForCreatePublicationVersion(publicationVersion, statisticalOperation, ctx);
@@ -140,8 +145,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         publicationServiceInvocationValidator.checkRetrievePublicationVersionByUrn(ctx, publicationVersionUrn);
 
         // Retrieve
-        PublicationVersion publicationVersion = getPublicationVersionRepository().retrieveByUrn(publicationVersionUrn);
-        return publicationVersion;
+        return getPublicationVersionRepository().retrieveByUrn(publicationVersionUrn);
     }
 
     @Override
@@ -150,8 +154,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         publicationServiceInvocationValidator.checkRetrieveLatestPublicationVersionByPublicationUrn(ctx, publicationUrn);
 
         // Retrieve
-        PublicationVersion publicationVersion = getPublicationVersionRepository().retrieveLastVersion(publicationUrn);
-        return publicationVersion;
+        return getPublicationVersionRepository().retrieveLastVersion(publicationUrn);
     }
 
     @Override
@@ -160,8 +163,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         publicationServiceInvocationValidator.checkRetrieveLatestPublishedPublicationVersionByPublicationUrn(ctx, publicationUrn);
 
         // Retrieve
-        PublicationVersion publicationVersion = getPublicationVersionRepository().retrieveLastPublishedVersion(publicationUrn);
-        return publicationVersion;
+        return getPublicationVersionRepository().retrieveLastPublishedVersion(publicationUrn);
     }
 
     @Override
@@ -423,7 +425,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         ProcStatusValidator.checkStatisticalResourceStructureCanBeEdited(publicationVersion);
 
         // Fill metadata for create chapter
-        fillMetadataForCreateChapter(ctx, chapter, publicationVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
+        fillMetadataForCreateChapter(chapter, publicationVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
 
         // Create element level
         ElementLevel elementLevel = createChapterElementLevel(ctx, publicationVersion, chapter);
@@ -431,7 +433,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         return elementLevel.getChapter();
     }
 
-    private Chapter fillMetadataForCreateChapter(ServiceContext ctx, Chapter chapter, ExternalItem statisticalOperation) {
+    private Chapter fillMetadataForCreateChapter(Chapter chapter, ExternalItem statisticalOperation) {
         FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(chapter.getNameableStatisticalResource(), statisticalOperation);
         chapter.fillCodeAndUrn();
         return chapter;
@@ -497,7 +499,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         ProcStatusValidator.checkStatisticalResourceStructureCanBeEdited(publicationVersion);
 
         // Fill metadata for create cube
-        fillMetadataForCreateCube(ctx, cube, publicationVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
+        fillMetadataForCreateCube(cube, publicationVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
 
         // Create element level
         ElementLevel elementLevel = createCubeElementLevel(ctx, publicationVersion, cube);
@@ -505,7 +507,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         return elementLevel.getCube();
     }
 
-    private Cube fillMetadataForCreateCube(ServiceContext ctx, Cube cube, ExternalItem statisticalOperation) {
+    private Cube fillMetadataForCreateCube(Cube cube, ExternalItem statisticalOperation) {
         FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(cube.getNameableStatisticalResource(), statisticalOperation);
         cube.fillCodeAndUrn();
         return cube;
@@ -542,8 +544,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         publicationServiceInvocationValidator.checkRetrieveCube(ctx, cubeUrn);
 
         // Retrieve
-        Cube cube = getCubeRepository().retrieveCubeByUrn(cubeUrn);
-        return cube;
+        return getCubeRepository().retrieveCubeByUrn(cubeUrn);
     }
 
     @Override
@@ -558,11 +559,36 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         deleteElementLevel(ctx, elementLevel);
     }
 
+    @Override
+    public void updateGeographicalCache(ServiceContext ctx, PublicationVersion publicationVersion) throws MetamacException {
+        ProcStatusValidator.checkStatisticalResourceStructureCanBeEdited(publicationVersion);
+        updateGeographicalCacheInJob(ctx, publicationVersion, true);
+    }
+
+    @Override
+    public PublicationVersion getPublicationLastVersionPublished(ServiceContext ctx, String agencyId, String resourceId) throws MetamacException {
+        PagingParameter paging = PagingParameter.rowAccess(0, 1, 1);
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(PublicationVersion.class)
+                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).and()
+                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().maintainer().code()).eq(agencyId).and()
+                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().code()).eq(resourceId).and()
+                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
+
+        // @formatter:off
+
+        PagedResult<PublicationVersion> result =  getPublicationVersionRepository().findByCondition(conditions, paging);
+        
+        if ( result.getValues() != null && !result.getValues().isEmpty() && result.getValues().size() == 1) {
+            return result.getValues().get(0);
+        }
+        return null;
+    }
+    
     // ------------------------------------------------------------------------
     // PRIVATE METHODS
     // ------------------------------------------------------------------------
 
-    private static void fillMetadataForCreatePublication(Publication publication, ExternalItem statisticalOperation, ServiceContext ctx) {
+    private static void fillMetadataForCreatePublication(Publication publication, ExternalItem statisticalOperation) {
         publication.setIdentifiableStatisticalResource(new IdentifiableStatisticalResource());
         FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(publication.getIdentifiableStatisticalResource(), statisticalOperation);
     }
@@ -578,11 +604,10 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
 
         // Fill code and urn for root and version
         publication.getIdentifiableStatisticalResource().setCode(code);
-        publication.getIdentifiableStatisticalResource()
-                .setUrn(GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn(maintainer, publication.getIdentifiableStatisticalResource().getCode()));
+        publication.getIdentifiableStatisticalResource().setUrn(generateSiemacStatisticalResourceCollectionUrn(maintainer, publication.getIdentifiableStatisticalResource().getCode()));
 
         publicationVersion.getSiemacMetadataStatisticalResource().setCode(code);
-        publicationVersion.getSiemacMetadataStatisticalResource().setUrn(GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionVersionUrn(maintainer,
+        publicationVersion.getSiemacMetadataStatisticalResource().setUrn(generateSiemacStatisticalResourceCollectionVersionUrn(maintainer,
                 publicationVersion.getSiemacMetadataStatisticalResource().getCode(), publicationVersion.getSiemacMetadataStatisticalResource().getVersionLogic()));
 
         // Checks
@@ -633,7 +658,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         publicationVersion = getPublicationVersionRepository().save(publicationVersion);
 
         // Check order and update order of other elements in this level
-        updatePublicationVersionElementsOrdersInLevelAddingElement(ctx, publicationVersion.getChildrenFirstLevel(), elementLevel);
+        updatePublicationVersionElementsOrdersInLevelAddingElement(publicationVersion.getChildrenFirstLevel(), elementLevel);
         return elementLevel;
     }
 
@@ -658,19 +683,19 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         elementLevelParent = updateElementLevel(elementLevelParent);
 
         // Update order of other elements in this level
-        updatePublicationVersionElementsOrdersInLevelAddingElement(ctx, elementLevelParent.getChildren(), elementLevel);
+        updatePublicationVersionElementsOrdersInLevelAddingElement(elementLevelParent.getChildren(), elementLevel);
 
         // Update indicators system adding element to all children
         publicationVersion.addChildrenAllLevel(elementLevel);
-        publicationVersion = getPublicationVersionRepository().save(publicationVersion);
+        getPublicationVersionRepository().save(publicationVersion);
 
         return elementLevel;
     }
 
-    private void updatePublicationVersionElementsOrdersInLevelAddingElement(ServiceContext ctx, List<ElementLevel> elementsAtLevel, ElementLevel elementToAdd) throws MetamacException {
+    private void updatePublicationVersionElementsOrdersInLevelAddingElement(List<ElementLevel> elementsAtLevel, ElementLevel elementToAdd) throws MetamacException {
 
         // Create a set with all possibles orders. At the end of this method, this set must be empty
-        Set<Long> orders = new HashSet<Long>();
+        Set<Long> orders = new HashSet<>();
         for (int i = 1; i <= elementsAtLevel.size(); i++) {
             orders.add(Long.valueOf(i));
         }
@@ -784,7 +809,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
             elementsInLevel = parentTarget.getChildren();
         }
         // Check order is correct and update orders
-        updatePublicationVersionElementsOrdersInLevelAddingElement(ctx, elementsInLevel, elementLevel);
+        updatePublicationVersionElementsOrdersInLevelAddingElement(elementsInLevel, elementLevel);
 
         // Update dimension, changing parent
         if (parentTarget == null) {
@@ -899,7 +924,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         publicationVersion.getSiemacMetadataStatisticalResource().setLastUpdate(new DateTime());
         getPublicationVersionRepository().save(publicationVersion);
     }
-
+    
     @Override
     public PagedResult<Publication> findPublicationsByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException {
         // Validations
@@ -910,4 +935,27 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
 
         return getPublicationRepository().findByCondition(conditions, pagingParameter);
     }
+
+    private void updateGeographicalCacheInJob(ServiceContext ctx, PublicationVersion publicationVersion, boolean sendNotification) throws MetamacException {
+        ProcStatusValidator.checkStatisticalResourceStructureCanBeEdited(publicationVersion);
+
+        String publicationUrn = publicationVersion.getPublication().getIdentifiableStatisticalResource().getUrn();
+        String publicationVersionUrn = publicationVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        checkNotTasksInProgress(ctx, publicationVersionUrn);
+
+        TaskInfoResources taskInfo = new TaskInfoResources();
+        taskInfo.setVersionId(publicationVersionUrn);
+        taskInfo.setUrn(publicationUrn);
+        taskInfo.setResourceType(StatisticalResourceTypeEnum.COLLECTION.name());
+        getTaskService().planifyUpdateGeographicalCacheRelatedResource(ctx, taskInfo, sendNotification);
+
+    }
+
+    private void checkNotTasksInProgress(ServiceContext ctx, String pulicationUrn) throws MetamacException {
+        if (getTaskService().existsTaskForResource(ctx, pulicationUrn)) {
+            throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, pulicationUrn);
+        }
+    }
+
 }

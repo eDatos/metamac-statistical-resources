@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.task.domain.Task;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
+import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskProperties;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.slf4j.Logger;
@@ -57,6 +58,11 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     @Override
     public void executeUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         taskservice.processUpdateGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
+    }
+
+    @Override
+    public void executeUpdateGeographicalCacheRelatedResourceTask(ServiceContext ctx, String jobKey, TaskInfoResources taskInfoResource) throws MetamacException {
+        taskservice.processUpdateGeographicalCacheRelatedResourceTask(ctx, jobKey, taskInfoResource);
     }
 
     @Override
