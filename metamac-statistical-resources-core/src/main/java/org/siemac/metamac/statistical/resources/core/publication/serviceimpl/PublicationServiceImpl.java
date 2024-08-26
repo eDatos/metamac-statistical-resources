@@ -41,7 +41,6 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParam
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetProperties;
-import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Chapter;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
@@ -906,7 +905,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         // Validations
         publicationServiceInvocationValidator.checkFindPublicationVersionsByCondition(ctx, conditions, pagingParameter);
 
-        conditions = CriteriaUtils.initConditions(conditions, MultidatasetVersion.class);
+        conditions = CriteriaUtils.initConditions(conditions, PublicationVersion.class);
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
 
         return getPublicationRepository().findByCondition(conditions, pagingParameter);
