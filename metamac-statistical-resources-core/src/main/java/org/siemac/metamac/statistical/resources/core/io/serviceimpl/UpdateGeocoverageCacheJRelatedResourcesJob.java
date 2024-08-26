@@ -26,6 +26,7 @@ public class UpdateGeocoverageCacheJRelatedResourcesJob implements Job {
     public static final String USER                = "user";
     public static final String RESOURCE_VERSION_ID = "versionId";
     public static final String RESOURCE_URN        = "urn";
+    public static final String RESOURCE_TYPE       = "resourceType";
     public static final String TASK_NAME           = "taskName";
     public static final String SEND_NOTIFICATION   = "sendNotification";
 
@@ -35,6 +36,7 @@ public class UpdateGeocoverageCacheJRelatedResourcesJob implements Job {
      * Quartz requires a public empty constructor so that the scheduler can instantiate the class whenever it needs.
      */
     public UpdateGeocoverageCacheJRelatedResourcesJob() {
+        // without explicit initializations
     }
 
     public TaskServiceFacade getTaskServiceFacade() {
@@ -51,37 +53,51 @@ public class UpdateGeocoverageCacheJRelatedResourcesJob implements Job {
         JobKey jobKey = context.getJobDetail().getKey();
         JobDataMap data = context.getJobDetail().getJobDataMap();
 
-        String resourceVersionId = data.getString(RESOURCE_VERSION_ID);
         String user = data.getString(USER);
-        String resourceUrn = data.getString(RESOURCE_URN);
         String taskName = data.getString(TASK_NAME);
         boolean sendNotification = data.getBoolean(SEND_NOTIFICATION);
+        TaskInfoResources taskInfoResource = setDataIntoTask(data);
 
         ServiceContext serviceContext = new ServiceContext(user, context.getFireInstanceId(), "statistical-resources-core");
 
         try {
             logger.info("UpdateGeocoverageCacheJob for related resource: {} starting at {}", jobKey, new Date());
 
-            TaskInfoResources taskInfoResource = new TaskInfoResources();
-            taskInfoResource.setVersionId(resourceVersionId);
-
             getTaskServiceFacade().executeUpdateGeographicalCacheRelatedResourceTask(serviceContext, taskName, taskInfoResource);
             logger.info("UpdateGeocoverageCacheJob  for related resource: {} finished at {}", jobKey, new Date());
 
         } catch (MetamacException e) {
-            logger.error("UpdateGeocoverageCacheJob for related resource: the cache update job with key " + jobKey.getName() + " has failed", e);
-            if (sendNotification) {
-                getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB, e);
-            }
+            manageExceptions(e, serviceContext, taskInfoResource, sendNotification, jobKey, user, taskName);
+        }
+    }
 
-            try {
-                getTaskServiceFacade().markTaskAsFailed(serviceContext, taskName, resourceVersionId, resourceUrn, e);
-                logger.info("UpdateGeocoverageCacheJob: {} marked as error at {}", jobKey, new Date());
-                e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, resourceVersionId));
-            } catch (MetamacException e1) {
-                logger.error("UpdateGeocoverageCacheJob: the cache update job with key " + jobKey.getName() + " has failed and it can't marked as error", e1);
-                e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR, resourceVersionId));
-            }
+    private TaskInfoResources setDataIntoTask(JobDataMap data) {
+
+        String resourceVersionId = data.getString(RESOURCE_VERSION_ID);
+        String resourceUrn = data.getString(RESOURCE_URN);
+        String resourceType = data.getString(RESOURCE_TYPE);
+
+        TaskInfoResources taskInfoResource = new TaskInfoResources();
+        taskInfoResource.setVersionId(resourceVersionId);
+        taskInfoResource.setUrn(resourceUrn);
+        taskInfoResource.setResourceType(resourceType);
+
+        return taskInfoResource;
+    }
+
+    private void manageExceptions(MetamacException e, ServiceContext ctx, TaskInfoResources taskInfoResource, boolean sendNotification, JobKey jobKey, String user, String taskName) {
+        logger.error("UpdateGeocoverageCacheJob for related resource: the cache update job with key " + jobKey.getName() + " has failed", e);
+        if (sendNotification) {
+            getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB, e);
+        }
+
+        try {
+            getTaskServiceFacade().markTaskAsFailed(ctx, taskName, taskInfoResource.getVersionId(), taskInfoResource.getUrn(), e);
+            logger.info("UpdateGeocoverageCacheJob: {} marked as error at {}", jobKey, new Date());
+            e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, taskInfoResource.getVersionId()));
+        } catch (MetamacException e1) {
+            logger.error("UpdateGeocoverageCacheJob: the cache update job with key " + jobKey.getName() + " has failed and it can't marked as error", e1);
+            e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR, taskInfoResource.getVersionId()));
         }
     }
 

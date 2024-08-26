@@ -68,4 +68,8 @@ public class JobUtil {
     public static String createJobNameForUpdateExternalGeocoverageCache() {
         return TaskServiceImpl.PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE;
     }
+
+    public static String createJobNameForUpdateGeoCacheRelatedResources(String resourceId) {
+        return TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + resourceId;
+    }
 }

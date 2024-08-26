@@ -45,8 +45,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import es.ibestat.jaxi.stream.messages.DatasetAvro;
-
 @Component(NoticesRestInternalService.BEAN_ID)
 public class NoticesRestInternalServiceImpl implements NoticesRestInternalService {
 
@@ -179,14 +177,14 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     }
 
     @Override
-    public void createErrorUpdateGeocoverageCacheBackgroundNotification(DatasetAvro jaxiDatasetVersionAvro, String actionCode, String messageCode, Serializable... messageParameters) {
+   public void createErrorUpdateGeocoverageCacheBackgroundNotification(String resourceUrn, String actionCode, String messageCode, Serializable... messageParameters) {
         try {
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
             Message message = createMessage(locale, messageCode, messageParameters);
 
-            createUpdateGeocoverageCacheBackgroundNotification(locale, jaxiDatasetVersionAvro.getStatisticalOperation().getUrn(), actionCode, message);
+            createUpdateGeocoverageCacheBackgroundNotification(locale, resourceUrn, actionCode, message);
         } catch (MetamacException e) {
-            logger.error("Error creating createErrorUpdateGeocoverageCacheBackgroundNotification:", e);
+            logger.error("Error creating createErrorUpdateGeocoverageCacheBackgroundNotification for Urn {}:", resourceUrn, e);
         }
     }
 

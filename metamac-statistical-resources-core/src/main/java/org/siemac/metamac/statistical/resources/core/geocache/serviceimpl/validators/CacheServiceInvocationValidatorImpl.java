@@ -9,6 +9,8 @@ import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatis
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 
 import es.ibestat.jaxi.stream.messages.DatasetAvro;
 
@@ -65,6 +67,15 @@ public class CacheServiceInvocationValidatorImpl {
     }
 
     public static void checkRetrieveGeoCacheResourceByUrn(String resourceUrn, List<MetamacExceptionItem> exceptions) {
+
+    }
+
+    public static void checkUpdateRelatedResourceByCacheResource(GeoCacheResource geoCacheResource, List<GeoCacheResource> geoCacheResourcesDisabled,
+            List<GeoCacheResource> geoCacheResourcesOldVersions, List<MetamacExceptionItem> exceptions) {
+
+    }
+
+    public static void checkCreateRelatedResourceByCacheResourceByUrn(GeoCacheByRelatedResource geoCacheByRelatedResource, String resourceUrn, List<MetamacExceptionItem> exceptions) {
 
     }
 

@@ -87,4 +87,16 @@ public class CacheServiceTest extends AbstractDbUnitJpaTests implements CacheSer
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void testUpdateRelatedResourceByCacheResource() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void testCreateRelatedResourceByCacheResourceByUrn() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }

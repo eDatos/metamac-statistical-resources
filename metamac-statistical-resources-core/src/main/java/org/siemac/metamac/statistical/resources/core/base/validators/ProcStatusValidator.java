@@ -69,6 +69,10 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
         ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForEditPublicationStructure);
     }
 
+    public static void checkStatisticalResourceStructureCanBeCached(PublicationVersion resource) throws MetamacException {
+        ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForSendResourceToVersion);
+    }
+
     // --------------------------------------------------------------------
     // MultidatasetVersion
     // --------------------------------------------------------------------

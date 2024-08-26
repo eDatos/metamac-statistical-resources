@@ -561,7 +561,6 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
 
     @Override
     public void updateGeographicalCache(ServiceContext ctx, PublicationVersion publicationVersion) throws MetamacException {
-        ProcStatusValidator.checkStatisticalResourceStructureCanBeEdited(publicationVersion);
         updateGeographicalCacheInJob(ctx, publicationVersion, true);
     }
 
@@ -937,7 +936,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     }
 
     private void updateGeographicalCacheInJob(ServiceContext ctx, PublicationVersion publicationVersion, boolean sendNotification) throws MetamacException {
-        ProcStatusValidator.checkStatisticalResourceStructureCanBeEdited(publicationVersion);
+        ProcStatusValidator.checkStatisticalResourceStructureCanBeCached(publicationVersion);
 
         String publicationUrn = publicationVersion.getPublication().getIdentifiableStatisticalResource().getUrn();
         String publicationVersionUrn = publicationVersion.getSiemacMetadataStatisticalResource().getUrn();

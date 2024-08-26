@@ -21,16 +21,21 @@ Application CacheStatisticalResources {
 		
 			//CACHE RESOURCES
 			
+			"creation"
+			boolean createRelatedResourceByCacheResourceByUrn(@GeoCacheByRelatedResource geoCacheByRelatedResource, String resourceUrn) throws MetamacException;
+			
+			
 			"updates"
 			@GeoCacheResource updateGeoCacheExternalResource(DatasetAvro jaxiDatasetVersionAvro, @InternationalString datasetTitle)
 			@GeoCacheResource updateGeoCacheResource(@SiemacMetadataStatisticalResource metadataResource, @LifeCycleStatisticalResource lifeCycleResource,
             @StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException;
-            updateAllGeoCacheResourcesByUrn(String resourceUrn, String resourceVersionUrn);
+            List<@GeoCacheResource> updateAllGeoCacheResourcesByUrn(String resourceUrn, String resourceVersionUrn);
+            updateRelatedResourceByCacheResource(@GeoCacheResource newGeoCacheResource, List<@GeoCacheResource> geoCacheResourcesDisabled, List<@GeoCacheResource> geoCacheResourcesOldVersions);
             
             "deletes"
-            disabledResourceByUrn(String resourceUrn);
+            List<@GeoCacheResource> disabledResourceByUrn(String resourceUrn);
             deleteDisabledCacheEntries();
-            
+                        
             //retrieves
             @GeoCacheResource retrieveGeoCacheResourceByUrn(String resourceUrn);
             
@@ -71,7 +76,6 @@ Application CacheStatisticalResources {
 			boolean isActivated databaseColumn="is_activated" not nullable;
 			
 			- Bag<@GeoCacheTerritoriesByGeoCacheResource> territories cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> cacheResource;
-			- Bag<@GeoCacheResourcesByRelatedResource> resourcesByRelatedResources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> geoCacheResource;
 	
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
@@ -106,7 +110,7 @@ Application CacheStatisticalResources {
 
 	Entity GeoCacheByRelatedResource {
 			databaseTable="TB_GEO_CACHE_RELATED_RESOURCE"
-			hint="idSequence=GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE"
+			hint="idSequence=GEO_CACHE_RELATED_RESOURCE"
 			
     		Long id not nullable key;
 			String code databaseColumn="code" not nullable;
@@ -139,6 +143,7 @@ Application CacheStatisticalResources {
     	
     	  Entity GeoCacheResourcesByRelatedResource { 
     		databaseTable="TB_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE"
+    		hint="idSequence=GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE"
     		!auditable
 			gap
 			
@@ -146,10 +151,12 @@ Application CacheStatisticalResources {
 			Long id key;
 
 			- @GeoCacheByRelatedResource geoCacheResourcesByRelated cascade="none" fetch="lazy" not nullable databaseColumn="GEO_CACHE_RELATED_RESOURCE_FK" <-> relatedResources;
-    		- @GeoCacheResource geoCacheResource cascade="none" fetch="lazy" not nullable databaseColumn="GEO_CACHE_RESOURCE_FK" <-> resourcesByRelatedResources;
+    		- @GeoCacheResource geoCacheResource cascade="none" fetch="lazy" not nullable databaseColumn="GEO_CACHE_RESOURCE_FK";
     	
 
     		Repository GeoCacheResourcesByRelatedResourceRepository {
+    			delete;
+    			save;
     		    findByCondition;
     		}	
     	}

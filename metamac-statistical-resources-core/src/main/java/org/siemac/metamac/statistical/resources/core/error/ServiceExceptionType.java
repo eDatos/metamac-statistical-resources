@@ -260,6 +260,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.task.error.database_importation_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_GEOCOVERAGE_CACHE_IN_PROCESS                                               = create(
             "exception.resources.task.error.update_geocoverage_cache_in_process");
+    public static final CommonServiceExceptionType TASKS_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES_IN_PROCESS                                     = create(
+            "exception.resources.task.error.update_geo_cache_related_resources_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_IN_PROCESS                                      = create(
             "exception.resources.task.error.update_external_geocoverage_cache_in_process");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_GET_ALL_EXTERNAL_PUBLICATION_MESSAGES_ERROR     = create(

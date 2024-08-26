@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.geocache.serviceimpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -15,6 +16,8 @@ import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByR
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResourceProperties;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,20 +93,31 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     }
 
     @Override
-    public void updateAllGeoCacheResourcesByUrn(ServiceContext ctx, String resourceUrn, String resourceVersionUrn) {
+    public List<GeoCacheResource> updateAllGeoCacheResourcesByUrn(ServiceContext ctx, String resourceUrn, String resourceVersionUrn) {
         List<GeoCacheResource> geoCacheResources = findResourcesLastVersionByUrn(resourceUrn);
+        List<GeoCacheResource> geoCacheRelatedResourcesDisabled = new ArrayList<>();
 
         for (GeoCacheResource geoCacheResource : geoCacheResources) {
             if (!geoCacheResource.getUrn().equals(resourceVersionUrn)) {
                 geoCacheResource.setIsLastVersion(Boolean.FALSE);
+                geoCacheRelatedResourcesDisabled.add(geoCacheResource);
                 this.getGeoCacheResourceRepository().save(geoCacheResource);
             }
         }
+        return geoCacheRelatedResourcesDisabled;
     }
 
     @Override
-    public void disabledResourceByUrn(ServiceContext ctx, String resourceUrn) {
-        this.getGeoCacheResourceRepository().disabledByResourceVersionUrn(resourceUrn);
+    public List<GeoCacheResource> disabledResourceByUrn(ServiceContext ctx, String resourceUrn) {
+        List<GeoCacheResource> geoCacheResources = retrieveGeoCacheResourceByUrnAndVersion(ctx, resourceUrn, false);
+
+        if (geoCacheResources != null) {
+            for (GeoCacheResource geoCacheResource : geoCacheResources) {
+                geoCacheResource.setIsActivated(false);
+                this.getGeoCacheResourceRepository().save(geoCacheResource);
+            }
+        }
+        return geoCacheResources;
     }
 
     @Override
@@ -112,29 +126,48 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     }
 
     private List<GeoCacheResource> findResourcesLastVersionByUrn(String resourceUrn) {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.urn()).like(resourceUrn + "%").and()
-                .withProperty(GeoCacheResourceProperties.isLastVersion()).eq(Boolean.TRUE).distinctRoot().build();
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.urn()).like(resourceUrn + '%').and()
+                .withProperty(GeoCacheResourceProperties.isLastVersion()).eq(Boolean.TRUE).withProperty(GeoCacheResourceProperties.isActivated()).eq(Boolean.TRUE).distinctRoot().build();
         // @formatter:off
 
         List<GeoCacheResource> geoCacheResources = this.getGeoCacheResourceRepository().findByCondition(conditions);     
         return geoCacheResources;
     }
     
-    @Override
-    public GeoCacheResource retrieveGeoCacheResourceByUrn(ServiceContext ctx, String resourceUrn) {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.urn()).eq(resourceUrn).and()
-                .withProperty(GeoCacheResourceProperties.isActivated()).eq(Boolean.TRUE).distinctRoot().build();
-        // @formatter:off
-
-        List<GeoCacheResource> geoCacheResources = this.getGeoCacheResourceRepository().findByCondition(conditions);     
-                
+    private GeoCacheResource retrieveResourcesLastVersionByUrnAndVersion(String resourceUrn) {
+       
+        List<GeoCacheResource> geoCacheResources = findResourcesLastVersionByUrn(resourceUrn);
+        
         if ( geoCacheResources != null && !geoCacheResources.isEmpty() && geoCacheResources.size() == 1) {
             return geoCacheResources.get(0);
         }
+        
         return null;
+    }
+    
+    @Override
+    public GeoCacheResource retrieveGeoCacheResourceByUrn(ServiceContext ctx, String resourceUrn) {
+       List<GeoCacheResource> geoCacheResources =  retrieveGeoCacheResourceByUrnAndVersion(ctx, resourceUrn, false);
+       if ( geoCacheResources != null && !geoCacheResources.isEmpty() && geoCacheResources.size() == 1) {
+           return geoCacheResources.get(0);
+       }
+       return null;
 
     }
+    
+    private List<GeoCacheResource> retrieveGeoCacheResourceByUrnAndVersion(ServiceContext ctx, String resourceUrn, boolean latestVersion) {
+        
+        
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.urn()).eq(resourceUrn).and()
+                .withProperty(GeoCacheResourceProperties.isActivated()).eq(Boolean.TRUE).distinctRoot().build();
+        
+        if (latestVersion) {
+            conditions.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.isLastVersion()).eq(Boolean.TRUE).buildSingle());
+        }
 
+        return this.getGeoCacheResourceRepository().findByCondition(conditions);     
+    }
+       
     //RELATED CACHE RESOURCES
     
     @Override
@@ -160,16 +193,14 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     }
     
     @Override
-    public void updateAllGeoCacheRelatedResourcesByUrn(ServiceContext ctx, String resourceUrn, String resourceVersionUrn) {
+    public void  updateAllGeoCacheRelatedResourcesByUrn(ServiceContext ctx, String resourceUrn, String resourceVersionUrn) {
         List<GeoCacheByRelatedResource> geoCacheRelatedResources = findRelatedResourcesByUrn(resourceUrn);
-
         for (GeoCacheByRelatedResource geoCacheRelatedResource : geoCacheRelatedResources) {
             if (!geoCacheRelatedResource.getUrn().equals(resourceVersionUrn)) {
                 geoCacheRelatedResource.setIsLastVersion(Boolean.FALSE);
                 this.getGeoCacheByRelatedResourceRepository().save(geoCacheRelatedResource);
             }
-        }
-        
+        }        
     }
 
     private List<GeoCacheByRelatedResource> findRelatedResourcesByUrn(String resourceUrn) {
@@ -177,6 +208,13 @@ public class CacheServiceImpl extends CacheServiceImplBase {
                 .withProperty(GeoCacheByRelatedResourceProperties.isLastVersion()).eq(Boolean.TRUE).distinctRoot().build();
 
         return this.getGeoCacheByRelatedResourceRepository().findByCondition(conditions);     
+    }
+    
+
+    private List<GeoCacheResourcesByRelatedResource> findRelatedResourceByCacheResource(Long geoCacheResourceId) {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResourcesByRelatedResource.class).withProperty(GeoCacheResourcesByRelatedResourceProperties.geoCacheResource().id()).eq(geoCacheResourceId).distinctRoot().build();
+
+        return this.getGeoCacheResourcesByRelatedResourceRepository().findByCondition(conditions);     
     }
     
     @Override
@@ -188,6 +226,47 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     @Override
     public void deleteDisabledRelatedResourceCacheEntries(ServiceContext ctx) {
         // TODO EDATOS-4587
+        
+    }
+
+    /*
+     * update related resource associated with newGeoCacheResource urn to this version of the resource because is the last published.
+     * newGeoCacheResource new cache resource that is being inserted.
+     * geoCacheResourcesDisabled cache entries that have been disabled because users have been updated this resource manually from the app.
+     * geoCacheResourcesOldVersions Cache entry that was the last version until now but has been replaced for the entry represented by the parameter newGeoCacheResource as the new last version resource.  
+     */
+    @Override
+    public void updateRelatedResourceByCacheResource(ServiceContext ctx, GeoCacheResource newGeoCacheResource, List<GeoCacheResource> geoCacheResourcesDisabled, List<GeoCacheResource> geoCacheResourcesOldVersions) {
+
+        for (GeoCacheResource geoCacheResource : geoCacheResourcesDisabled) {
+            updateRelatedResourceByCacheResource(geoCacheResource, newGeoCacheResource);
+        }
+        
+        for (GeoCacheResource geoCacheResource : geoCacheResourcesOldVersions) {
+            updateRelatedResourceByCacheResource(geoCacheResource, newGeoCacheResource);
+        }
+        
+    }
+
+    private void updateRelatedResourceByCacheResource(GeoCacheResource geoCacheResourceToChange, GeoCacheResource newGeoCacheResource) {
+        List<GeoCacheResourcesByRelatedResource> geoCacheResourcesByRelatedResourceToUpdate = findRelatedResourceByCacheResource(geoCacheResourceToChange.getId());           
+        for (GeoCacheResourcesByRelatedResource geoCacheResourcesByRelatedResource: geoCacheResourcesByRelatedResourceToUpdate) {
+            geoCacheResourcesByRelatedResource.setGeoCacheResource(newGeoCacheResource);
+            this.getGeoCacheResourcesByRelatedResourceRepository().save(geoCacheResourcesByRelatedResource);
+        }
+    }
+    
+    @Override
+    public boolean createRelatedResourceByCacheResourceByUrn(ServiceContext ctx, GeoCacheByRelatedResource geoCacheByRelatedResource, String resourceUrn) throws MetamacException {
+        GeoCacheResourcesByRelatedResource geoCacheResourcesByRelatedResource = new GeoCacheResourcesByRelatedResource();
+        GeoCacheResource geoCacheResource = retrieveResourcesLastVersionByUrnAndVersion(resourceUrn);
+        if (geoCacheResource == null) {
+            return false;
+        }
+        geoCacheResourcesByRelatedResource.setGeoCacheResource(geoCacheResource);
+        geoCacheResourcesByRelatedResource.setGeoCacheResourcesByRelated(geoCacheByRelatedResource);
+        geoCacheByRelatedResource.addRelatedResource(geoCacheResourcesByRelatedResource);
+        return true;
         
     }
     

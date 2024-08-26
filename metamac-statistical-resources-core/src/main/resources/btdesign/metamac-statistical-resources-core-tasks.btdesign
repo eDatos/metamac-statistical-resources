@@ -124,6 +124,9 @@ Application DatasetsStatisticalResources {
 
 			"Check if exists a update geocoverage cache job task in the @param resourceId"
 			boolean existUpdateGeocoverageCacheTaskInResource(String resourceId) throws MetamacException;
+
+			"Check if exists a update geo cache related resource job task in the @param resourceId"
+			boolean existUpdateGeoCacheRelatedResourcesTaskInResource(String resourceId) throws MetamacException;
 			
 			"Check if exists a import attributes job task in the @param resourceId"
 			boolean existsTaskImportAttributes(String resourceId) throws MetamacException;
