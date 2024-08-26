@@ -433,8 +433,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private Boolean checkExistsAttributeInstanceValues(String datasetUrn, String dataSourceAtttributeUrn) throws MetamacException {
         try {
 
-            String locale = configurationService.retrieveLanguageDefault();
-            return statisticsDatasetRepositoriesServiceFacade.checkExistsAttributeInstanceValues(datasetUrn, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, locale, dataSourceAtttributeUrn);
+            return statisticsDatasetRepositoriesServiceFacade.checkExistsAttributeInstanceValues(datasetUrn, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
+                    ManipulateDataUtils.getLocaleDatasourceIdentificationAttribute(), dataSourceAtttributeUrn);
 
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.DATASOURCE_IN_DATASET_VERSION_CHECK_DATASOURCE_IS_USED_ERROR, dataSourceAtttributeUrn, datasetUrn);
@@ -444,8 +444,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private List<String> findDataSourcesUsedInDataset(String datasetUrn) throws MetamacException {
         try {
 
-            String locale = configurationService.retrieveLanguageDefault();
-            return statisticsDatasetRepositoriesServiceFacade.findDataSourcesAttributesByDatasetId(datasetUrn, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, locale);
+            return statisticsDatasetRepositoriesServiceFacade.findDataSourcesAttributesByDatasetId(datasetUrn, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
+                    ManipulateDataUtils.getLocaleDatasourceIdentificationAttribute());
 
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.DATASOURCE_IN_DATASET_VERSION_FIND_DATASOURCES_USED_ERROR, datasetUrn);
