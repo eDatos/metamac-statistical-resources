@@ -1,18 +1,34 @@
 package org.siemac.metamac.statistical.resources.core.geocache.serviceapi;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory.GEO_COV_VAR_ELEMENT_CACHE_01;
 
-import org.fornax.cartridges.sculptor.framework.test.AbstractDbUnitJpaTests;
+import java.util.List;
+
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.junit.Test;
+import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
+import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceRepository;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Spring based transactional test with DbUnit support.
  */
-public class CacheServiceTest extends AbstractDbUnitJpaTests implements CacheServiceTestBase {
+public class CacheServiceTest extends StatisticalResourcesBaseTest implements CacheServiceTestBase {
 
     @Autowired
-    protected CacheService cacheService;
+    protected CacheService             cacheService;
+
+    @Autowired
+    private GeoCacheResourceRepository geoCacheResourceRepository;
 
     // TODO EDATOS-4587 VER TESTS
 
@@ -99,4 +115,27 @@ public class CacheServiceTest extends AbstractDbUnitJpaTests implements CacheSer
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    @Test
+    @MetamacMock(GEO_COV_VAR_ELEMENT_CACHE_01)
+    public void testFindResourcesByCondition() throws Exception {
+        GeoCacheResource actual = geoCovVarElementCacheDatasetVersionFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_01);
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.territories().variableElement().code())
+                .eq(GeoCovVarElementCacheDatasetVersionFactory.VARIABLE_ELEMENT_01).orderBy(GeoCacheResourceProperties.code()).ascending().build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+        PagedResult<GeoCacheResource> resourcesPagedResult = cacheService.findResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+        assertEquals(1, resourcesPagedResult.getTotalRows());
+        assertEquals(actual.getUrn(), resourcesPagedResult.getValues().get(0).getUrn());
+
+    }
+
+    @Override
+    public void testFindGeoRelatedResourcesByCondition() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
 }

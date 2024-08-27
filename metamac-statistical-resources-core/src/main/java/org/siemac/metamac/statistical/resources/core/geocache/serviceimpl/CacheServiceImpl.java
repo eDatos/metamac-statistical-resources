@@ -5,12 +5,16 @@ import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
@@ -268,6 +272,30 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         geoCacheByRelatedResource.addRelatedResource(geoCacheResourcesByRelatedResource);
         return true;
         
+    }
+    
+    @Override
+    public PagedResult<GeoCacheResource> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException {
+
+        // Validations
+     //   datasetServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions, pagingParameter);
+        // TODO EDATOS-4587 PONER VALIDATOR A CacheServiceInvocationValidator
+
+        // Find
+        conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
+        pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
+
+        return this.getGeoCacheResourceRepository().findByCondition(conditions, pagingParameter);
+
+    }
+
+    @Override
+    public PagedResult<GeoCacheByRelatedResource> findGeoRelatedResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
+            throws MetamacException {
+        conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
+        pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
+
+        return this.getGeoCacheByRelatedResourceRepository().findByCondition(conditions, pagingParameter);
     }
     
     

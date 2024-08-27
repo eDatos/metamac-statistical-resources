@@ -82,7 +82,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
@@ -743,22 +742,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         PagedResult<DatasetVersion> datasetVersionPagedResult = getDatasetVersionRepository().findByCondition(conditions, pagingParameter);
         return datasetVersionPagedResult;
-    }
-
-    @Override
-    public PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
-            throws MetamacException {
-
-        // TODO EDATOS-4587 QUITAR ESTE MÉTODO AL COMPLETO.
-        // Validations
-        datasetServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions, pagingParameter);
-
-        // Find
-        conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
-        pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
-
-        return geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
-
     }
 
     @Override

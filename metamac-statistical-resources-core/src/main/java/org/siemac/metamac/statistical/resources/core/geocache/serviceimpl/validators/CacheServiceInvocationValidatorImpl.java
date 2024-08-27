@@ -3,6 +3,8 @@ package org.siemac.metamac.statistical.resources.core.geocache.serviceimpl.valid
 import java.util.List;
 
 import org.apache.avro.specific.SpecificRecordBase;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
@@ -77,6 +79,14 @@ public class CacheServiceInvocationValidatorImpl {
 
     public static void checkCreateRelatedResourceByCacheResourceByUrn(GeoCacheByRelatedResource geoCacheByRelatedResource, String resourceUrn, List<MetamacExceptionItem> exceptions) {
 
+    }
+
+    public static void checkFindResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
+    public static void checkFindGeoRelatedResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
     }
 
 }

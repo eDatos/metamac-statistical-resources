@@ -6,7 +6,7 @@ import "classpath:/btdesign/metamac-statistical-resources-core-tasks.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-datasets-enums.btdesign"
 import "classpath:/btdesign/metamac-core-common-enum.btdesign"
-
+import "classpath:/btdesign/metamac-statistical-resources-core-caches.btdesign"
 
 Application DatasetsStatisticalResources { 
 	basePackage=unused
@@ -58,9 +58,7 @@ Application DatasetsStatisticalResources {
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Calculate table size"
-			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
-			"Finds resource from cache by criteria"
-			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+			Long calculateTableSize(DatasetVersion resource) throws MetamacException;		
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			"Export datasources to TSV"
 			String exportDatasourcesTsv(String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException;

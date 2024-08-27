@@ -23,10 +23,13 @@ import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatis
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResourceProperties.SiemacMetadataStatisticalResourceProperty;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -62,6 +65,9 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
 
     @Autowired
     private SrmRestExternalFacade srmRestExternalFacade;
+
+    @Autowired
+    private CacheService          cacheService;
 
     @Override
     public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version) {
@@ -129,7 +135,7 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
     }
 
     @Override
-    public PagedResult<GeoCovVarElementCacheDatasetVersion> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
+    public PagedResult<GeoCacheResource> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
             return findResourcesCommon(conditionalCriteria, pagingParameter);
         } catch (Exception e) {
@@ -137,22 +143,47 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
         }
     }
 
-    private PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
+    private PagedResult<GeoCacheResource> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
 
         // Criteria to find by criteria
         List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
         if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
             conditionalCriteria.addAll(conditionalCriteriaQuery);
         } else {
-            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).distinctRoot().build());
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).distinctRoot().build());
         }
 
         // only activated records are available
-        conditionalCriteria.add(
-                ConditionalCriteriaBuilder.criteriaFor(GeoCovVarElementCacheDatasetVersion.class).withProperty(GeoCovVarElementCacheDatasetVersionProperties.isActivated()).eq(true).buildSingle());
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.isActivated()).eq(true).buildSingle());
 
         // Find
-        return datasetService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
+        return cacheService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
+    }
+
+    @Override
+    public PagedResult<GeoCacheByRelatedResource> findRelatedGeoResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
+        try {
+            return findRelatedGeoResourcesCommon(conditionalCriteria, pagingParameter);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private PagedResult<GeoCacheByRelatedResource> findRelatedGeoResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
+
+        // Criteria to find by criteria
+        List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
+        if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
+            conditionalCriteria.addAll(conditionalCriteriaQuery);
+        } else {
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).distinctRoot().build());
+        }
+
+        // only activated records are available
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).buildSingle());
+
+        // Find
+        return cacheService.findGeoRelatedResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
     }
 
     @Override
