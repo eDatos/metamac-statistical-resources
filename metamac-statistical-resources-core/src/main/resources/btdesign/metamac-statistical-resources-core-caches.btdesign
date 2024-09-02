@@ -35,6 +35,7 @@ Application CacheStatisticalResources {
             "deletes"
             List<@GeoCacheResource> disabledResourceByUrn(String resourceUrn);
             deleteDisabledCacheEntries();
+            deleteRelatedResourceOldVersions(String resourceUrn);
                         
             //retrieves
             @GeoCacheResource retrieveGeoCacheResourceByUrn(String resourceUrn);
@@ -46,15 +47,8 @@ Application CacheStatisticalResources {
             
             "updates"
             @GeoCacheByRelatedResource updateGeoCacheByRelatedResource(@SiemacMetadataStatisticalResource metadataResource, @LifeCycleStatisticalResource lifeCycleResource,
-            @StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException;
-            updateAllGeoCacheRelatedResourcesByUrn(String resourceUrn, String resourceVersionUrn);
-            
-            "deletes"
-            disabledRelatedResourceByUrn(String relatedResourceUrn);
-            deleteDisabledRelatedResourceCacheEntries();
-            
-            
-            
+            @StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException;            
+              
 		}
 	    
 	    	
@@ -136,10 +130,8 @@ Application CacheStatisticalResources {
     		Repository GeoCacheByRelatedResourceRepository {
     			save;
 				delete;	
-				deleteAll();
     		    findByCondition;
 				findByCondition(PagingParameter pagingParameter);
-				disabledByResourceVersionUrn(String resourceVersionUrn);
     			findByQuery;
     		}	
     	}

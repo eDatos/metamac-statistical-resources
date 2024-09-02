@@ -89,4 +89,8 @@ public class CacheServiceInvocationValidatorImpl {
         // NOTHING
     }
 
+    public static void checkDeleteRelatedResourceOldVersions(String resourceUrn, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
 }

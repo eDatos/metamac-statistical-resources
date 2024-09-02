@@ -24,6 +24,8 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -137,6 +139,32 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
 
         // Find
         return cacheService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
+    }
+
+    @Override
+    public PagedResult<GeoCacheByRelatedResource> findRelatedGeoResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
+        try {
+            return findRelatedGeoResourcesCommon(conditionalCriteria, pagingParameter);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private PagedResult<GeoCacheByRelatedResource> findRelatedGeoResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
+
+        // Criteria to find by criteria
+        List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
+        if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
+            conditionalCriteria.addAll(conditionalCriteriaQuery);
+        } else {
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).distinctRoot().build());
+        }
+
+        // only activated records are available
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).buildSingle());
+
+        // Find
+        return cacheService.findGeoRelatedResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
     }
 
     @Override

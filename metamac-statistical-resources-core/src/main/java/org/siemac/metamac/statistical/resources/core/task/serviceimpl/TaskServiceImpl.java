@@ -2330,22 +2330,32 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         boolean isLastVersionPublished = isPublicationLastVersionPublished(ctx, publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
 
-        GeoCacheByRelatedResource geoCacheRelatedResource = cacheService.updateGeoCacheByRelatedResource(ctx, publicationVersion.getSiemacMetadataStatisticalResource(),
-                publicationVersion.getLifeCycleStatisticalResource(), StatisticalResourceTypeEnum.COLLECTION, isLastVersionPublished);
+        // only it is necessary to save in cache last version of related resources.
+        if (isLastVersionPublished) {
 
-        List<String> urnCacheResourcesNotLinked = new ArrayList<>();
-        for (RelatedResource relatedResource : publicationVersion.getHasPart()) {
-            if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
-                boolean inserted = cacheService.createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
-                if (!inserted) {
-                    urnCacheResourcesNotLinked.add(relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
+            cacheService.deleteRelatedResourceOldVersions(ctx, taskInfoResource.getUrn());
+
+            GeoCacheByRelatedResource geoCacheRelatedResource = cacheService.updateGeoCacheByRelatedResource(ctx, publicationVersion.getSiemacMetadataStatisticalResource(),
+                    publicationVersion.getLifeCycleStatisticalResource(), StatisticalResourceTypeEnum.COLLECTION, isLastVersionPublished);
+
+            List<String> urnCacheResourcesNotLinked = new ArrayList<>();
+            for (RelatedResource relatedResource : publicationVersion.getHasPart()) {
+                if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
+                    boolean inserted = cacheService.createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
+                    if (!inserted) {
+                        urnCacheResourcesNotLinked.add(relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
+                    }
                 }
             }
-        }
 
-        if (!urnCacheResourcesNotLinked.isEmpty()) {
-            // TODO EDATOS-4587 MANDAR NOTIFICACIÓN CON LA LISTA DE RESOURCES QUE NO SE PUDIERON ASOCIAR. DE MOMENTO SE LANZA EXCEPTION
-            throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, taskInfoResource.getVersionId());
+            if (!urnCacheResourcesNotLinked.isEmpty()) {
+                // TODO EDATOS-4587 MANDAR NOTIFICACIÓN CON LA LISTA DE RESOURCES QUE NO SE PUDIERON ASOCIAR. DE MOMENTO SE LANZA EXCEPTION
+                throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, taskInfoResource.getVersionId());
+            }
+        } else {
+            logger.info(
+                    "> check is resource last version. The result was FALSE and the resource it  will not inserted in cache - Processing updating geographic cache related resource task - collections {}",
+                    taskInfoResource.getVersionId());
         }
 
         logger.debug("> END Subprocess - Processing updating geographic cache related resource task - collections {}", taskInfoResource.getVersionId());

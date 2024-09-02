@@ -195,17 +195,6 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
         return this.getGeoCacheByRelatedResourceRepository().save(geoCacheByRelatedResource);
     }
-    
-    @Override
-    public void  updateAllGeoCacheRelatedResourcesByUrn(ServiceContext ctx, String resourceUrn, String resourceVersionUrn) {
-        List<GeoCacheByRelatedResource> geoCacheRelatedResources = findRelatedResourcesByUrn(resourceUrn);
-        for (GeoCacheByRelatedResource geoCacheRelatedResource : geoCacheRelatedResources) {
-            if (!geoCacheRelatedResource.getUrn().equals(resourceVersionUrn)) {
-                geoCacheRelatedResource.setIsLastVersion(Boolean.FALSE);
-                this.getGeoCacheByRelatedResourceRepository().save(geoCacheRelatedResource);
-            }
-        }        
-    }
 
     private List<GeoCacheByRelatedResource> findRelatedResourcesByUrn(String resourceUrn) {
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.urn()).like(resourceUrn + "%").and()
@@ -222,15 +211,14 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     }
     
     @Override
-    public void disabledRelatedResourceByUrn(ServiceContext ctx, String relatedResourceUrn) {
-        this.getGeoCacheByRelatedResourceRepository().disabledByResourceVersionUrn(relatedResourceUrn);
+    public void deleteRelatedResourceOldVersions(ServiceContext ctx, String resourceUrn) {
         
-    }
-
-    @Override
-    public void deleteDisabledRelatedResourceCacheEntries(ServiceContext ctx) {
-        // TODO EDATOS-4587
-        
+        List<GeoCacheByRelatedResource> geoCacheRelatedResources = findRelatedResourcesByUrn(resourceUrn);
+        for (GeoCacheByRelatedResource geoCacheRelatedResource : geoCacheRelatedResources) {
+            if (!geoCacheRelatedResource.getUrn().equals(resourceUrn)) {
+                this.getGeoCacheByRelatedResourceRepository().delete(geoCacheRelatedResource); 
+            }
+        }                
     }
 
     /*
@@ -296,7 +284,6 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
 
         return this.getGeoCacheByRelatedResourceRepository().findByCondition(conditions, pagingParameter);
-    }
-    
+    }   
     
 }

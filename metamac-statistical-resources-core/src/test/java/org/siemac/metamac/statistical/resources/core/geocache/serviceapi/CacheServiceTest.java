@@ -81,24 +81,6 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
     }
 
     @Override
-    public void testUpdateAllGeoCacheRelatedResourcesByUrn() throws Exception {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void testDisabledRelatedResourceByUrn() throws Exception {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void testDeleteDisabledRelatedResourceCacheEntries() throws Exception {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void testRetrieveGeoCacheResourceByUrn() throws Exception {
         // TODO Auto-generated method stub
 
@@ -138,4 +120,9 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
 
     }
 
+    @Override
+    public void testDeleteRelatedResourceOldVersions() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }

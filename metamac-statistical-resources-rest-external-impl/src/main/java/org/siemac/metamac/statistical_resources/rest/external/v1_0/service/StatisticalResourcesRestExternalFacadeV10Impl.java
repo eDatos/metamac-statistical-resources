@@ -46,7 +46,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
@@ -511,23 +510,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Override
     public Resources findResources(String query, String orderBy, String limit, String offset, List<String> lang) {
-        return findResourcesCommon(query, orderBy, limit, offset, lang);
-    }
-
-    private Resources findResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
-        try {
-
-            SculptorCriteria sculptorCriteria = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset, true);
-
-            // Find
-            PagedResult<GeoCacheResource> entitiesPagedResult = commonService.findResources(sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
-
-            // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
-        } catch (Exception e) {
-            throw manageException(e);
-        }
+        return findRelatedResourcesCommon(query, orderBy, limit, offset, lang);
     }
 
     private Resources findRelatedResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
@@ -540,9 +523,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            return new Resources();
-            // TODO EDATOS-4587
-            // return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
         } catch (Exception e) {
             throw manageException(e);
         }

@@ -6,6 +6,7 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
@@ -28,4 +29,5 @@ public interface StatisticalResourcesRestInternalCommonService {
     public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditions, PagingParameter pagingParameter);
 
     public PagedResult<GeoCacheResource> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
+    public PagedResult<GeoCacheByRelatedResource> findRelatedGeoResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
 }
