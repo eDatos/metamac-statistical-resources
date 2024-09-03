@@ -2,7 +2,6 @@ package org.siemac.metamac.statistical.resources.web.client.widgets.forms;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
@@ -20,8 +19,7 @@ public class VisualizationMetadataDescriptorsForm extends GroupDynamicForm {
         setFields(dimensionCodesVisualisationItem);
     }
 
-    public void setSiemacMetadataStatisticalResourceDto(List<RelatedResourceDto> stubDimensions) {
-        List<RelatedResourceDto> headDimensions = new ArrayList<RelatedResourceDto>();
-        ((DimensionsVisualisationItem) getItem("dataset-dim-codes")).setVisualisationDimensions(headDimensions, stubDimensions);
+    public void setSiemacMetadataStatisticalResourceDto(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions) {
+        ((DimensionsVisualisationItem) getItem("dataset-dim-codes")).setVisualisationDimensions(headingDimensions, stubDimensions);
     }
 }

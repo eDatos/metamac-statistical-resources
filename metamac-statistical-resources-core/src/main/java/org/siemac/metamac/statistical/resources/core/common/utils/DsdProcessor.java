@@ -30,6 +30,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Primary
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Representation;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TextFormat;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TimeDimension;
+import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,6 +65,33 @@ public class DsdProcessor {
             }
         }
         return dimensions;
+    }
+
+    public static List<RelatedResourceDto> getDimensions(DataStructure dsd, List<String> dimensionsName) {
+        List<RelatedResourceDto> dimensions = new ArrayList<RelatedResourceDto>();
+        List<DimensionBase> dimensionsBase = dsd.getDataStructureComponents().getDimensions().getDimensions();
+        for (String dimensionName : dimensionsName) {
+            DimensionBase dimensionBase = getDimension(dimensionName, dimensionsBase);
+            if (dimensionBase != null) {
+                RelatedResourceDto target = new RelatedResourceDto();
+                target.setCode(dimensionBase.getId());
+                target.setTitle(null);
+                target.setType(TypeRelatedResourceEnum.CATEGORISATION);
+                target.setUrn(dimensionBase.getUrn());
+                dimensions.add(target);
+            }
+        }
+
+        return dimensions;
+    }
+
+    private static DimensionBase getDimension(String dimensionName, List<DimensionBase> dimensions) {
+        for (DimensionBase dimensionBase : dimensions) {
+            if (dimensionBase.getId().equals(dimensionName)) {
+                return dimensionBase;
+            }
+        }
+        return null;
     }
 
     public static DsdDimension getDimension(DataStructure dsd, String dimensionId) throws MetamacException {

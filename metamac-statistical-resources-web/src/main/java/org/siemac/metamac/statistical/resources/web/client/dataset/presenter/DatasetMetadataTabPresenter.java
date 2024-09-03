@@ -41,8 +41,8 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVer
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubDimensionsAction;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubDimensionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubAndHeadingDimensionsAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubAndHeadingDimensionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
@@ -93,7 +93,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
 
         void setDataset(DatasetVersionDto datasetDto);
 
-        void setMetadataVisualization(List<RelatedResourceDto> stubDimensions);
+        void setMetadataVisualization(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions);
 
         // metadata fill methods
         void setDatasetsForReplaces(GetDatasetVersionsResult result);
@@ -199,7 +199,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
     }
 
     private void setMetadataVisualizate(final DatasetVersionDto datasetVersionDto) {
-        dispatcher.execute(new GetStubDimensionsAction(datasetVersionDto.getRelatedDsd().getUrn()), new WaitingAsyncCallbackHandlingError<GetStubDimensionsResult>(this) {
+        dispatcher.execute(new GetStubAndHeadingDimensionsAction(datasetVersionDto.getRelatedDsd().getUrn()), new WaitingAsyncCallbackHandlingError<GetStubAndHeadingDimensionsResult>(this) {
 
             @Override
             public void onWaitFailure(Throwable caught) {
@@ -210,10 +210,10 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
                 }
             }
             @Override
-            public void onWaitSuccess(GetStubDimensionsResult result) {
+            public void onWaitSuccess(GetStubAndHeadingDimensionsResult result) {
                 
-                getView().setMetadataVisualization(result.getStubDimensions());
-                //SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getStubDimensions());
+                getView().setMetadataVisualization(result.getHeadingDimensions(), result.getStubDimensions());
+                SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, datasetVersionDto);
             }
         });
     }

@@ -435,9 +435,9 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
     }
 
     @Override
-    public void setMetadataVisualization(List<RelatedResourceDto> stubDimensions) {
+    public void setMetadataVisualization(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions) {
         //Metadata visualization
-        visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(stubDimensions);
+        visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(headingDimensions, stubDimensions);
     }
 
     private void setDatasetViewMode(DatasetVersionDto datasetDto) {
