@@ -9,6 +9,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
@@ -40,6 +41,8 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVer
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubDimensionsAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubDimensionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
@@ -89,6 +92,8 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
     public interface DatasetMetadataTabView extends StatisticalResourceMetadataBasePresenter.StatisticalResourceMetadataBaseView, HasUiHandlers<DatasetMetadataTabUiHandlers> {
 
         void setDataset(DatasetVersionDto datasetDto);
+
+        void setMetadataVisualization(List<RelatedResourceDto> stubDimensions);
 
         // metadata fill methods
         void setDatasetsForReplaces(GetDatasetVersionsResult result);
@@ -172,6 +177,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
 
     @Override
     public void retrieveDataset(String datasetIdentifier) {
+        //aquí se está seteando el dataset
         final String urn = CommonUtils.generateDatasetUrn(datasetIdentifier);
         dispatcher.execute(new GetDatasetVersionAction(urn), new WaitingAsyncCallbackHandlingError<GetDatasetVersionResult>(this) {
 
@@ -186,7 +192,28 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             @Override
             public void onWaitSuccess(GetDatasetVersionResult result) {
                 getView().setDataset(result.getDatasetVersionDto());
+                setMetadataVisualizate(result.getDatasetVersionDto());
                 SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getDatasetVersionDto());
+            }
+        });
+    }
+
+    private void setMetadataVisualizate(final DatasetVersionDto datasetVersionDto) {
+        dispatcher.execute(new GetStubDimensionsAction(datasetVersionDto.getRelatedDsd().getUrn()), new WaitingAsyncCallbackHandlingError<GetStubDimensionsResult>(this) {
+
+            @Override
+            public void onWaitFailure(Throwable caught) {
+                if (CommonErrorUtils.isOperationNotAllowedException(caught)) {
+                    ShowUnauthorizedDatasetWarningMessageEvent.fire(DatasetMetadataTabPresenter.this, datasetVersionDto.getRelatedDsd().getUrn());
+                } else {
+                    super.onWaitFailure(caught);
+                }
+            }
+            @Override
+            public void onWaitSuccess(GetStubDimensionsResult result) {
+                
+                getView().setMetadataVisualization(result.getStubDimensions());
+                //SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getStubDimensions());
             }
         });
     }

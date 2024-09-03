@@ -40,6 +40,7 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacM
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataPublicationDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataDescriptorsForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionMainCoveragesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
@@ -71,6 +72,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
     private DatasetClassDescriptorsForm                              classDescriptorsForm;
     private DatasetResourceRelationDescriptorsForm                   resourceRelationDescriptorsForm;
     private DatasetPublicationDescriptorsForm                        publicationDescriptorsForm;
+    private VisualizationMetadataDescriptorsForm                     visualizationMetadataDescriptorsForm;
     private LifeCycleResourceLifeCycleForm                           lifeCycleForm;
     private DatasetVersionForm                                       versionForm;
     private SiemacMetadataIntellectualPropertyDescriptorsForm        intellectualPropertyDescriptorsForm;
@@ -156,6 +158,10 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
                 publicationDescriptorsForm.setTranslationsShowed(translationsShowed);
                 publicationDescriptorsEditionForm.setTranslationsShowed(translationsShowed);
+
+                // Visualization metadata descriptors
+                visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
+                mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
 
                 lifeCycleForm.setTranslationsShowed(translationsShowed);
                 lifeCycleEditionForm.setTranslationsShowed(translationsShowed);
@@ -343,6 +349,11 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         publicationDescriptorsForm = new DatasetPublicationDescriptorsForm();
         mainFormLayout.addViewCanvas(publicationDescriptorsForm);
 
+        // Visualization metadata descriptors
+        //en teoría va aquí
+        visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
+        mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
+
         // Life cycle
         lifeCycleForm = new LifeCycleResourceLifeCycleForm();
         mainFormLayout.addViewCanvas(lifeCycleForm);
@@ -421,6 +432,12 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         }
 
         mainFormLayout.markForRedraw();
+    }
+
+    @Override
+    public void setMetadataVisualization(List<RelatedResourceDto> stubDimensions) {
+        //Metadata visualization
+        visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(stubDimensions);
     }
 
     private void setDatasetViewMode(DatasetVersionDto datasetDto) {
