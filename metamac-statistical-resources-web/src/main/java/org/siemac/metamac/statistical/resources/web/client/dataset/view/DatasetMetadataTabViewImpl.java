@@ -41,6 +41,7 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacM
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataDescriptorsForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionMainCoveragesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
@@ -73,6 +74,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
     private DatasetResourceRelationDescriptorsForm                   resourceRelationDescriptorsForm;
     private DatasetPublicationDescriptorsForm                        publicationDescriptorsForm;
     private VisualizationMetadataDescriptorsForm                     visualizationMetadataDescriptorsForm;
+    private VisualizationMetadataEditionForm                         visualizationMetadataEditionForm;
     private LifeCycleResourceLifeCycleForm                           lifeCycleForm;
     private DatasetVersionForm                                       versionForm;
     private SiemacMetadataIntellectualPropertyDescriptorsForm        intellectualPropertyDescriptorsForm;
@@ -350,7 +352,6 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         mainFormLayout.addViewCanvas(publicationDescriptorsForm);
 
         // Visualization metadata descriptors
-        //en teoría va aquí
         visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
         mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
 
@@ -404,6 +405,10 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         publicationDescriptorsEditionForm = new DatasetPublicationDescriptorsEditionForm();
         mainFormLayout.addEditionCanvas(publicationDescriptorsEditionForm);
 
+        // Visualization metadata descriptors
+        visualizationMetadataEditionForm = new VisualizationMetadataEditionForm();
+        mainFormLayout.addEditionCanvas(visualizationMetadataEditionForm);
+
         // Life cycle
         lifeCycleEditionForm = new LifeCycleResourceLifeCycleForm();
         mainFormLayout.addEditionCanvas(lifeCycleEditionForm);
@@ -438,6 +443,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
     public void setMetadataVisualization(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions) {
         //Metadata visualization
         visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(headingDimensions, stubDimensions);
+        visualizationMetadataEditionForm.setSiemacMetadataStatisticalResourceDto(headingDimensions, stubDimensions);
     }
 
     private void setDatasetViewMode(DatasetVersionDto datasetDto) {
