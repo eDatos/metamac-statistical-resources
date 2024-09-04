@@ -267,6 +267,10 @@ Application DatasetsStatisticalResources {
 			- Bag<@Datasource> datasources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersion;
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
+			"Heading Dimensions"
+			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersionHeading;
+			"Stub dimensions"
+			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersionStub;
 			
 			Repository DatasetVersionRepository {
 				save;
@@ -437,8 +441,8 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}  	
-    	
+    	}
+
 		Entity GeoCovVarElementCacheDatasetVersion {
 			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
 			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
@@ -466,6 +470,22 @@ Application DatasetsStatisticalResources {
 				disabledByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 			}
+		}
+
+    	Entity DimensionOrder {
+			databaseTable="TB_M_DIMENSION_ORDERS"
+			hint="idSequence=M_DIMENSION_ORDERS"
+			!auditable
+			
+			// Order
+			Integer dimOrder not nullable;
+			
+			"Not null when dimension is in heading"
+			- @DatasetVersion datasetVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_heading_fk" <-> headingDimensions;
+
+			"Not null when dimension is in stub"
+			- @DatasetVersion datasetVersionStub cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_stub_fk" <-> stubDimensions;
+			
 		}
 	}
 }
