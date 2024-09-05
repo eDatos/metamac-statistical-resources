@@ -5,6 +5,7 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.web.common.client.utils.FormItemUtils;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
@@ -15,8 +16,8 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class VisualizationMetadataEditionForm extends GroupDynamicForm {
 
-    private static final String DIMENSIONS_VISUALISATIONS = "dataset-dim-codes";
-    private static final String MODIFY_DISTRIBUTION_DIMENSION = "dataset-mod-distribution";
+    public static final String DIMENSIONS_VISUALISATIONS = "dataset-dim-codes";
+    public static final String MODIFY_DISTRIBUTION_DIMENSION = "dataset-mod-distribution";
 
     public VisualizationMetadataEditionForm(String groupTitle) {
         super(groupTitle);
@@ -35,6 +36,22 @@ public class VisualizationMetadataEditionForm extends GroupDynamicForm {
 
     public void setSiemacMetadataStatisticalResourceDto(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions) {
         ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS)).setVisualisationDimensions(headingDimensions, stubDimensions);
+    }
+
+    public DatasetVersionDto getSiemacMetadataStatisticalResourceDto(DatasetVersionDto dto) {
+        CustomCheckboxItem modifyDistributionDimension = (CustomCheckboxItem) getItem(MODIFY_DISTRIBUTION_DIMENSION);
+        if (modifyDistributionDimension.getValueAsBoolean()) {
+            DimensionsVisualisationItem dimensionVisualizationItem = ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS));
+            if (dto.getStubDimensions() != null) {
+                dto.getStubDimensions().clear();
+            }
+            dto.getStubDimensions().addAll(dimensionVisualizationItem.getStubDimensions());
+            if (dto.getHeadingDimensions() != null) {
+                dto.getHeadingDimensions().clear();
+            }
+            dto.getHeadingDimensions().addAll(dimensionVisualizationItem.getHeadingDimensions());
+        }
+        return dto;
     }
 
     private FormItemIfFunction getUpdateFrecuencyFormItemIfFunction() {

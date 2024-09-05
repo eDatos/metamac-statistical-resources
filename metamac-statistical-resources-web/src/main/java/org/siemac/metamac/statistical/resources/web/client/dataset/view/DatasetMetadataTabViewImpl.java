@@ -572,6 +572,8 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         // Intellectual property descriptors
         datasetVersionDto = (DatasetVersionDto) intellectualPropertyDescriptorsEditionForm.getSiemacMetadataStatisticalResourceDto(datasetVersionDto);
 
+        datasetVersionDto = visualizationMetadataEditionForm.getSiemacMetadataStatisticalResourceDto(datasetVersionDto);
+
         return datasetVersionDto;
     }
 

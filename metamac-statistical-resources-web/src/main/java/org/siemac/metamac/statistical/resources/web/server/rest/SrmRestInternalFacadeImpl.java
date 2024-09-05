@@ -44,7 +44,6 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TimeDim
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdDimension;
-import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.ItemDto;
@@ -99,22 +98,6 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }
-    }
-
-    @Override
-    public List<RelatedResourceDto> retrieveDsdStubDimensions(DataStructure dataStructure) throws MetamacWebException {
-        if (dataStructure.getStub() == null || dataStructure.getStub().getDimensions() == null) {
-            return new ArrayList<RelatedResourceDto>();
-        }
-        return DsdProcessor.getDimensions(dataStructure, dataStructure.getStub().getDimensions());
-    }
-
-    @Override
-    public List<RelatedResourceDto> retrieveDsdHeadingDimensions(DataStructure dataStructure) throws MetamacWebException {
-        if (dataStructure.getHeading() == null || dataStructure.getHeading().getDimensions() == null) {
-            return new ArrayList<RelatedResourceDto>();
-        }
-        return DsdProcessor.getDimensions(dataStructure, dataStructure.getHeading().getDimensions());
     }
 
     @Override

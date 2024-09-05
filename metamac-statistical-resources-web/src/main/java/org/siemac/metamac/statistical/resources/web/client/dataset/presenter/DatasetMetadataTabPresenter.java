@@ -41,8 +41,6 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVer
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubAndHeadingDimensionsAction;
-import org.siemac.metamac.statistical.resources.web.shared.dataset.GetStubAndHeadingDimensionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionProcStatusAction;
@@ -192,28 +190,8 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             @Override
             public void onWaitSuccess(GetDatasetVersionResult result) {
                 getView().setDataset(result.getDatasetVersionDto());
-                setMetadataVisualizate(result.getDatasetVersionDto());
+                getView().setMetadataVisualization(result.getDatasetVersionDto().getHeadingDimensions(), result.getDatasetVersionDto().getStubDimensions());
                 SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getDatasetVersionDto());
-            }
-        });
-    }
-
-    private void setMetadataVisualizate(final DatasetVersionDto datasetVersionDto) {
-        dispatcher.execute(new GetStubAndHeadingDimensionsAction(datasetVersionDto.getRelatedDsd().getUrn()), new WaitingAsyncCallbackHandlingError<GetStubAndHeadingDimensionsResult>(this) {
-
-            @Override
-            public void onWaitFailure(Throwable caught) {
-                if (CommonErrorUtils.isOperationNotAllowedException(caught)) {
-                    ShowUnauthorizedDatasetWarningMessageEvent.fire(DatasetMetadataTabPresenter.this, datasetVersionDto.getRelatedDsd().getUrn());
-                } else {
-                    super.onWaitFailure(caught);
-                }
-            }
-            @Override
-            public void onWaitSuccess(GetStubAndHeadingDimensionsResult result) {
-                
-                getView().setMetadataVisualization(result.getHeadingDimensions(), result.getStubDimensions());
-                SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, datasetVersionDto);
             }
         });
     }

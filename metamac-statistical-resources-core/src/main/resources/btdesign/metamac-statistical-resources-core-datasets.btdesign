@@ -268,9 +268,9 @@ Application DatasetsStatisticalResources {
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
 			"Heading Dimensions"
-			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersionHeading;
+			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> datasetVersionHeading;
 			"Stub dimensions"
-			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersionStub;
+			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> datasetVersionStub;
 			
 			Repository DatasetVersionRepository {
 				save;
@@ -479,6 +479,8 @@ Application DatasetsStatisticalResources {
 			
 			// Order
 			Integer dimOrder not nullable;
+			
+			String urnDimComponentFk not nullable;
 			
 			"Not null when dimension is in heading"
 			- @DatasetVersion datasetVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_heading_fk" <-> headingDimensions;

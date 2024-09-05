@@ -1,10 +1,10 @@
 package org.siemac.metamac.statistical.resources.core.dataset.mapper;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -24,11 +24,13 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceRepository;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficialityRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.exception.DatasetVersionNotFoundException;
 import org.siemac.metamac.statistical.resources.core.dataset.exception.DatasourceNotFoundException;
 import org.siemac.metamac.statistical.resources.core.dataset.exception.StatisticOfficialityNotFoundException;
+import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
@@ -174,8 +176,40 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
         target.setKeepAllData(source.isKeepAllData());
         target.setDataSourceType(source.getDataSourceType());
         target.setDateLastTimeDataImport(dateDtoToDo(source.getDateLastTimeDataImport()));
+        target.getHeadingDimensions().addAll(getHeadingDimension(source.getHeadingDimensions(), target));
+        target.getStubDimensions().addAll(getStubDimension(source.getStubDimensions(), target));
 
         return target;
+    }
+
+    private List<DimensionOrder> getHeadingDimension(List<RelatedResourceDto> relatedResources, DatasetVersion target) {
+        target.getHeadingDimensions().clear();
+        int count = 1;
+        List<DimensionOrder> dimensionsOrder = new ArrayList<>();
+        for (RelatedResourceDto relatedResource : relatedResources) {
+            DimensionOrder dimensionOrder = new DimensionOrder();
+            dimensionOrder.setDimOrder(count);
+            dimensionOrder.setUrnDimComponentFk(relatedResource.getUrn());
+            dimensionOrder.setDatasetVersionHeading(target);
+            dimensionsOrder.add(dimensionOrder);
+            count++;
+        }
+        return dimensionsOrder;
+    }
+
+    private List<DimensionOrder> getStubDimension(List<RelatedResourceDto> relatedResources, DatasetVersion target) {
+        target.getStubDimensions().clear();
+        int count = 1;
+        List<DimensionOrder> dimensionsOrder = new ArrayList<>();
+        for (RelatedResourceDto relatedResource : relatedResources) {
+            DimensionOrder dimensionOrder = new DimensionOrder();
+            dimensionOrder.setDimOrder(count);
+            dimensionOrder.setUrnDimComponentFk(relatedResource.getUrn());
+            dimensionOrder.setDatasetVersionStub(target);
+            dimensionsOrder.add(dimensionOrder);
+            count++;
+        }
+        return dimensionsOrder;
     }
 
     /**
