@@ -4350,6 +4350,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     @Override
     public void testResendPublishedQueryVersionXMessage() throws Exception {
         // // Without test in facade
+    }
+
+@Override
+     public void testUpdateGeoCacheRelatedResource() throws Exception {
+        // // Without test in facade
 
     }
 

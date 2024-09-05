@@ -27,4 +27,8 @@ public interface PublicationMetadataTabUiHandlers extends StatisticalResourceUiH
     void publish(PublicationVersionDto publication);
     void version(PublicationVersionDto publication, VersionTypeEnum versionType);
     void resendStreamMessage(PublicationVersionDto publicationVersionDto);
+
+    // GEOGRAPHICAL CACHE
+
+    void updateGeoCacheRelatedResources(PublicationVersionDto publication);
 }

@@ -40,6 +40,8 @@ import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublic
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationVersionResult;
+import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceAction;
+import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceResult;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdatePublicationVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdatePublicationVersionProcStatusAction.Builder;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdatePublicationVersionProcStatusResult;
@@ -310,6 +312,17 @@ public class PublicationMetadataTabPresenter
             @Override
             public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
                 getView().setStatisticalOperationsForReplacesSelection(result.getOperationsList(), StatisticalResourcesDefaults.getSelectedStatisticalOperation());
+            }
+        });
+    }
+
+    @Override
+    public void updateGeoCacheRelatedResources(PublicationVersionDto publication) {
+        dispatcher.execute(new UpdateGeoCacheRelatedResourceAction(publication.getUrn()), new WaitingAsyncCallbackHandlingError<UpdateGeoCacheRelatedResourceResult>(this) {
+
+            @Override
+            public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
+                fireSuccessMessage(getMessages().publicationUpdateGeoCacheBackgroundInProgress());
             }
         });
     }

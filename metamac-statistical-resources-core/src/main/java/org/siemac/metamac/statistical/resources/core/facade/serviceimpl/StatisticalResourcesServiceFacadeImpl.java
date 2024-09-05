@@ -81,6 +81,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
@@ -1365,6 +1366,19 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
 
         return DsdProcessor.getAttribute(dsd, attributeId);
+    }
+
+    @Override
+    public void updateGeoCacheRelatedResource(ServiceContext ctx, String resourceUrn, StatisticalResourceTypeEnum resourceType) throws MetamacException {
+
+        // Security
+        DatasetsSecurityUtils.canUpdateGeoCacheRelatedResource(ctx);
+
+        if (StatisticalResourceTypeEnum.COLLECTION.equals(resourceType)) {
+            PublicationVersion publicationVersion = getPublicationService().retrievePublicationVersionByUrn(ctx, resourceUrn);
+
+            getPublicationService().updateGeographicalCache(ctx, publicationVersion);
+        }
     }
 
     @Override

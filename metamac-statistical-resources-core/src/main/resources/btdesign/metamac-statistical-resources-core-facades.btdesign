@@ -325,6 +325,11 @@ Application FacadeStatisticalResources {
     		@RegionValueDto saveRegionForContentConstraint(String contentConstraintUrn, @RegionValueDto regionValueDto, @DsdDimensionDto selectedDimensionDto, String datasetUrn) throws MetamacException;
     		"Remove region"
     		deleteRegion(String contentConstraintUrn, String regionCode) throws MetamacException;
+    		
+    		
+    		// GEOGRAPHICAL CACHE
+    		void updateGeoCacheRelatedResource(String resourceUrn, @StatisticalResourceTypeEnum resourceType) throws MetamacException;
+    	
 		}
 	}
 }

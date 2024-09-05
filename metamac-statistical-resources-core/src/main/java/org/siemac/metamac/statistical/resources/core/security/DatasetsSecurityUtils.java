@@ -297,4 +297,10 @@ public class DatasetsSecurityUtils extends SecurityUtils {
         }
     }
 
+    public static void canUpdateGeoCacheRelatedResource(ServiceContext ctx) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canUpdateGeoCacheRelatedResource(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
 }

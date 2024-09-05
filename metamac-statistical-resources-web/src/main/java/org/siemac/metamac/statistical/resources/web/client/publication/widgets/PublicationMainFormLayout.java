@@ -1,19 +1,33 @@
 package org.siemac.metamac.statistical.resources.web.client.publication.widgets;
 
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.LifecycleMainFormLayout;
 import org.siemac.metamac.statistical.resources.web.client.publication.utils.PublicationClientSecurityUtils;
+import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
+import org.siemac.metamac.web.common.client.widgets.MainFormLayoutButton;
+
+import com.smartgwt.client.widgets.events.HasClickHandlers;
 
 public class PublicationMainFormLayout extends LifecycleMainFormLayout {
 
     private PublicationVersionDto publicationVersionDto;
+    private MainFormLayoutButton  updateGeoCacheRelatedResource;
 
     public PublicationMainFormLayout() {
         super();
+        createButtonsForToolStrip();
     }
 
     public PublicationMainFormLayout(boolean canEdit) {
         super(canEdit);
+        createButtonsForToolStrip();
+    }
+
+    private void createButtonsForToolStrip() {
+        updateGeoCacheRelatedResource = new MainFormLayoutButton(getConstants().updateGeographicCoverageVariableElementsCache(), GlobalResources.RESOURCE.reload().getURL());
+        toolStrip.addButton(updateGeoCacheRelatedResource);
     }
 
     public void setPublicationVersion(PublicationVersionDto publicationVersionDto) {
@@ -61,5 +75,38 @@ public class PublicationMainFormLayout extends LifecycleMainFormLayout {
     @Override
     protected boolean canPreviewData() {
         return PublicationClientSecurityUtils.canPreviewDataPublicationVersion(publicationVersionDto);
+    }
+
+    @Override
+    protected boolean canShowCopyButton() {
+        return false;
+    }
+
+    private boolean canUpdateGeoCacheRelatedResource() {
+        return PublicationClientSecurityUtils.canUpdateGeoCacheRelatedResource(publicationVersionDto);
+    }
+
+    @Override
+    protected void updateVisibility() {
+        super.updateVisibility();
+        if (canUpdateGeoCacheRelatedResource()) {
+            showUpdateGeoCacheRelatedResourceButton();
+        }
+    }
+
+    @Override
+    protected void hideAllLifeCycleButtons() {
+        super.hideAllLifeCycleButtons();
+        updateGeoCacheRelatedResource.hide();
+    }
+
+    private void showUpdateGeoCacheRelatedResourceButton() {
+        if (canUpdateGeoCacheRelatedResource()) {
+            updateGeoCacheRelatedResource.show();
+        }
+    }
+
+    public HasClickHandlers getUpdateGeoCacheRelatedResource() {
+        return updateGeoCacheRelatedResource;
     }
 }
