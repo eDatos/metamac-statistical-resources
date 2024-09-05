@@ -453,36 +453,7 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}
-
-		Entity GeoCovVarElementCacheDatasetVersion {
-			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
-			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
-			!auditable
-			!optimisticLocking
-
-			Long id not nullable key;
-			String code databaseColumn="code" not nullable;
-			String urn databaseColumn="urn" not nullable;
-			- @InternationalString title cascade="persist,merge" fetch="eager" databaseColumn="title_fk" nullable;
-			- @ExternalItem variableElement cascade="all-delete-orphan" fetch="lazy" databaseColumn="variable_element_fk" not nullable;
-			String operationCode databaseColumn="operation_code";
-			String operationUrn databaseColumn="operation_urn";
-			- @InternationalString operationTitle cascade="persist,merge" fetch="eager" databaseColumn="operation_title_fk" nullable;
-			String htmlLink databaseColumn="htmlLink";
-			boolean isExternalSource databaseColumn="is_external_source" not nullable;
-			boolean isLastVersion databaseColumn="is_last_version" not nullable;
-			boolean isActivated databaseColumn="is_activated" not nullable;
-			Repository GeoCovVarElementCacheDatasetVersionRepository {
-				save;
-				delete;	
-				deleteAll();
-				findByCondition;
-				findByCondition(PagingParameter pagingParameter);
-				disabledByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
-				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
-			}
-		}
-
+    	}  	
+    
 	}
 }

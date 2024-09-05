@@ -27,13 +27,15 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeVal
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
@@ -423,20 +425,30 @@ public class RestDoMocks {
         return localisedStringDto;
     }
 
-    public GeoCovVarElementCacheDatasetVersion mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
+     public GeoCacheTerritoriesByGeoCacheResource mockGeoCacheTerritoriesByGeoCacheResource(GeoCacheResource geoCovVarElementCacheDatasetVersion, String variableElementId) {
+
+        GeoCacheTerritoriesByGeoCacheResource gGeoCacheTerritoriesByGeoCacheResource = new GeoCacheTerritoriesByGeoCacheResource();
+        gGeoCacheTerritoriesByGeoCacheResource.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variableX", variableElementId));
+        gGeoCacheTerritoriesByGeoCacheResource.setCacheResource(geoCovVarElementCacheDatasetVersion);
+        return gGeoCacheTerritoriesByGeoCacheResource;
+    }
+
+    public GeoCacheResource mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
+
         DatasetVersion dv = mockDatasetVersion(agencyId, resourceId, versionId);
 
-        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
+        GeoCacheResource geoCovVarElementCacheDatasetVersion = new GeoCacheResource();
         geoCovVarElementCacheDatasetVersion.setOperationUrn(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
         geoCovVarElementCacheDatasetVersion.setOperationCode(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
-        geoCovVarElementCacheDatasetVersion.setOperationTitle(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getTitle());
         geoCovVarElementCacheDatasetVersion.setCode(dv.getSiemacMetadataStatisticalResource().getCode());
         geoCovVarElementCacheDatasetVersion.setTitle(dv.getSiemacMetadataStatisticalResource().getTitle());
         geoCovVarElementCacheDatasetVersion.setIsExternalSource(isLastVersion);
-        geoCovVarElementCacheDatasetVersion.setIsExternalSource(true);
+        geoCovVarElementCacheDatasetVersion.setIsActivated(true);
         geoCovVarElementCacheDatasetVersion.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
         geoCovVarElementCacheDatasetVersion.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
-        geoCovVarElementCacheDatasetVersion.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variableX", variableElementId));
+        geoCovVarElementCacheDatasetVersion.setType(StatisticalResourceTypeEnum.DATASET.name());
+
+        geoCovVarElementCacheDatasetVersion.addTerritory(mockGeoCacheTerritoriesByGeoCacheResource(geoCovVarElementCacheDatasetVersion, variableElementId));
 
         return geoCovVarElementCacheDatasetVersion;
     }

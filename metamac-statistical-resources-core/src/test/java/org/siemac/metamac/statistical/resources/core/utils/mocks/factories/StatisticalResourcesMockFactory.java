@@ -10,7 +10,6 @@ import org.siemac.metamac.statistical.resources.core.common.domain.Translation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
@@ -135,8 +134,8 @@ public abstract class StatisticalResourcesMockFactory<EntityMock> extends MockFa
         MultidatasetMockFactory.getInstance().registerMock(id, multidataset);
     }
 
-    protected static void registerGeoCovVarElementCacheDatasetVersionMock(String id, GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion) {
-        GeoCovVarElementCacheDatasetVersionFactory.getInstance().registerMock(id, geoCovVarElementCacheDatasetVersion);
+    protected static void registerGeoCovVarElementCacheDatasetVersionMock(String id, GeoCacheResource geoCacheResource) {
+        GeoCovVarElementCacheDatasetVersionFactory.getInstance().registerMock(id, geoCacheResource);
     }
 
     protected static GeoCacheResource getGeoCovVarElementCacheDatasetVersionMock(String id) {
