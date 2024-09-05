@@ -19,9 +19,9 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class UpdateGeocoverageCacheJRelatedResourcesJob implements Job {
+public class UpdateGeocoverageCacheRelatedResourcesJob implements Job {
 
-    private static Logger      logger              = LoggerFactory.getLogger(UpdateGeocoverageCacheJRelatedResourcesJob.class);
+    private static Logger      logger              = LoggerFactory.getLogger(UpdateGeocoverageCacheRelatedResourcesJob.class);
 
     public static final String USER                = "user";
     public static final String RESOURCE_VERSION_ID = "versionId";
@@ -35,7 +35,7 @@ public class UpdateGeocoverageCacheJRelatedResourcesJob implements Job {
     /**
      * Quartz requires a public empty constructor so that the scheduler can instantiate the class whenever it needs.
      */
-    public UpdateGeocoverageCacheJRelatedResourcesJob() {
+    public UpdateGeocoverageCacheRelatedResourcesJob() {
         // without explicit initializations
     }
 
@@ -88,16 +88,16 @@ public class UpdateGeocoverageCacheJRelatedResourcesJob implements Job {
     private void manageExceptions(MetamacException e, ServiceContext ctx, TaskInfoResources taskInfoResource, boolean sendNotification, JobKey jobKey, String user, String taskName) {
         logger.error("UpdateGeocoverageCacheJob for related resource: the cache update job with key " + jobKey.getName() + " has failed", e);
         if (sendNotification) {
-            getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB, e);
+            getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_GEOGRAPHICAL_RELATED_CACHE_JOB, e);
         }
 
         try {
             getTaskServiceFacade().markTaskAsFailed(ctx, taskName, taskInfoResource.getVersionId(), taskInfoResource.getUrn(), e);
             logger.info("UpdateGeocoverageCacheJob: {} marked as error at {}", jobKey, new Date());
-            e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR, taskInfoResource.getVersionId()));
+            e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_RELATED_CACHE_JOB_ERROR, taskInfoResource.getVersionId()));
         } catch (MetamacException e1) {
             logger.error("UpdateGeocoverageCacheJob: the cache update job with key " + jobKey.getName() + " has failed and it can't marked as error", e1);
-            e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_JOB_ERROR_AND_CANT_MARK_AS_ERROR, taskInfoResource.getVersionId()));
+            e.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_RELATED_CACHE_JOB_ERROR_AND_CANT_MARK_AS_ERROR, taskInfoResource.getVersionId()));
         }
     }
 

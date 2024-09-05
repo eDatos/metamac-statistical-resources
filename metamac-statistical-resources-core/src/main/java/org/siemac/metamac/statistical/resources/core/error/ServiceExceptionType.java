@@ -420,6 +420,11 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR                         = create(
             "exception.resources.dataset_version.geocoverage.job_from_external_publication_with_errors");
 
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_RELATED_CACHE_JOB_ERROR_AND_CANT_MARK_AS_ERROR                           = create(
+            "exception.resources.related.geocoverage.job_error_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_RELATED_CACHE_JOB_ERROR                                                  = create(
+            "exception.resources.related.geocoverage.job_error");
+
     // Export
     public static final CommonServiceExceptionType DATASOURCE_EXPORT_ERROR                                                                     = create(
             "exception.resources.dataset.export.datasource");

@@ -124,7 +124,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImpo
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
-import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJRelatedResourcesJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
@@ -2265,14 +2265,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             checkExistTaskInResource(ctx, jobKey, resourceUrn);
 
             // @formatter:off
-            JobDetail job = newJob(UpdateGeocoverageCacheJRelatedResourcesJob.class)
+            JobDetail job = newJob(UpdateGeocoverageCacheRelatedResourcesJob.class)
                     .withIdentity(jobKey)
-                    .usingJobData(UpdateGeocoverageCacheJRelatedResourcesJob.RESOURCE_VERSION_ID, resourceVersionUrn)
-                    .usingJobData(UpdateGeocoverageCacheJRelatedResourcesJob.USER, ctx.getUserId())
-                    .usingJobData(UpdateGeocoverageCacheJRelatedResourcesJob.RESOURCE_URN, resourceUrn)
-                    .usingJobData(UpdateGeocoverageCacheJRelatedResourcesJob.RESOURCE_TYPE, taskInfoResources.getResourceType())
-                    .usingJobData(UpdateGeocoverageCacheJRelatedResourcesJob.TASK_NAME, taskName)
-                    .usingJobData(UpdateGeocoverageCacheJRelatedResourcesJob.SEND_NOTIFICATION, sendNotification)
+                    .usingJobData(UpdateGeocoverageCacheRelatedResourcesJob.RESOURCE_VERSION_ID, resourceVersionUrn)
+                    .usingJobData(UpdateGeocoverageCacheRelatedResourcesJob.USER, ctx.getUserId())
+                    .usingJobData(UpdateGeocoverageCacheRelatedResourcesJob.RESOURCE_URN, resourceUrn)
+                    .usingJobData(UpdateGeocoverageCacheRelatedResourcesJob.RESOURCE_TYPE, taskInfoResources.getResourceType())
+                    .usingJobData(UpdateGeocoverageCacheRelatedResourcesJob.TASK_NAME, taskName)
+                    .usingJobData(UpdateGeocoverageCacheRelatedResourcesJob.SEND_NOTIFICATION, sendNotification)
                     .requestRecovery()
                     .build();
             // @formatter:on

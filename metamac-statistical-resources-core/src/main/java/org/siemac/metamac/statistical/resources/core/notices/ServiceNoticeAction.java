@@ -25,4 +25,7 @@ public class ServiceNoticeAction {
     public static final String CREATE_REPLACE_DATASET_ERROR                                    = "notice_message.resources.action.create_replace_dataset.error";
     public static final String ASSIGN_ROLE_PERMISSIONS_DATASET_ERROR                           = "notice_message.resources.action.assign_role_permissions_dataset.error";
 
+    // GEOGRAPHICAL CACHE
+    public static final String UPDATE_GEOGRAPHICAL_RELATED_CACHE_JOB                 = "notice_message.resources.action.update_geographical_related_cache_job";
+
 }
