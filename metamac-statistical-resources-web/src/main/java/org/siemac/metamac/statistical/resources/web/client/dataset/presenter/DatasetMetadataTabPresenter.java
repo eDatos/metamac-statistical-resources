@@ -9,7 +9,6 @@ import java.util.List;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
-import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
@@ -91,7 +90,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
 
         void setDataset(DatasetVersionDto datasetDto);
 
-        void setMetadataVisualization(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions);
+        void setMetadataVisualization(DatasetVersionDto datasetDto);
 
         // metadata fill methods
         void setDatasetsForReplaces(GetDatasetVersionsResult result);
@@ -190,7 +189,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             @Override
             public void onWaitSuccess(GetDatasetVersionResult result) {
                 getView().setDataset(result.getDatasetVersionDto());
-                getView().setMetadataVisualization(result.getDatasetVersionDto().getHeadingDimensions(), result.getDatasetVersionDto().getStubDimensions());
+                getView().setMetadataVisualization(result.getDatasetVersionDto());
                 SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getDatasetVersionDto());
             }
         });
@@ -204,7 +203,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             public void onWaitSuccess(SaveDatasetVersionResult result) {
                 fireSuccessMessage(getMessages().datasetSaved());
                 getView().setDataset(result.getSavedDatasetVersion());
-
+                getView().setMetadataVisualization(result.getSavedDatasetVersion());
                 SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getSavedDatasetVersion());
             }
         });

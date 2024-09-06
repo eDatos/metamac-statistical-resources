@@ -36,19 +36,32 @@ public class VisualizationMetadataEditionForm extends GroupDynamicForm {
 
     public void setSiemacMetadataStatisticalResourceDto(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions) {
         ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS)).setVisualisationDimensions(headingDimensions, stubDimensions);
+        CustomCheckboxItem modifyDistributionDimension = (CustomCheckboxItem) getItem(MODIFY_DISTRIBUTION_DIMENSION);
+        if (checkDatasetDimensionsModified(stubDimensions) || checkDatasetDimensionsModified(headingDimensions)) {
+            modifyDistributionDimension.setValue(true);
+        }
+    }
+
+    private boolean checkDatasetDimensionsModified(List<RelatedResourceDto> relatedResources) {
+        for (RelatedResourceDto relatedResource : relatedResources) {
+            if (relatedResource.getId() != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public DatasetVersionDto getSiemacMetadataStatisticalResourceDto(DatasetVersionDto dto) {
         CustomCheckboxItem modifyDistributionDimension = (CustomCheckboxItem) getItem(MODIFY_DISTRIBUTION_DIMENSION);
+        if (dto.getStubDimensions() != null) {
+            dto.getStubDimensions().clear();
+        }
+        if (dto.getHeadingDimensions() != null) {
+            dto.getHeadingDimensions().clear();
+        }
         if (modifyDistributionDimension.getValueAsBoolean()) {
             DimensionsVisualisationItem dimensionVisualizationItem = ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS));
-            if (dto.getStubDimensions() != null) {
-                dto.getStubDimensions().clear();
-            }
             dto.getStubDimensions().addAll(dimensionVisualizationItem.getStubDimensions());
-            if (dto.getHeadingDimensions() != null) {
-                dto.getHeadingDimensions().clear();
-            }
             dto.getHeadingDimensions().addAll(dimensionVisualizationItem.getHeadingDimensions());
         }
         return dto;
@@ -56,11 +69,9 @@ public class VisualizationMetadataEditionForm extends GroupDynamicForm {
 
     private FormItemIfFunction getUpdateFrecuencyFormItemIfFunction() {
         return new FormItemIfFunction() {
-
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
-                Boolean isChecked = (Boolean)((CustomCheckboxItem) form.getItem(MODIFY_DISTRIBUTION_DIMENSION)).getValue();
-                return isChecked;
+                return (Boolean)((CustomCheckboxItem) form.getItem(MODIFY_DISTRIBUTION_DIMENSION)).getValue();
             }
         };
     }
