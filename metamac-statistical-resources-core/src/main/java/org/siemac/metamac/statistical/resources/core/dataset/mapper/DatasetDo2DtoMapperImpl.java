@@ -289,10 +289,10 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
             target.getHeadingDimensions().addAll(getDatasetDimension(source.getHeadingDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
             target.getStubDimensions().addAll(getDatasetDimension(source.getStubDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
         } else {
-            if (dsd.getStub() != null && dsd.getStub().getDimensions() != null) {
+            if (dsd != null && dsd.getStub() != null && dsd.getStub().getDimensions() != null) {
                 target.getStubDimensions().addAll(getDsdDimensions(dsd, dsd.getStub().getDimensions()));
             }
-            if (dsd.getHeading() != null || dsd.getHeading().getDimensions() != null) {
+            if (dsd != null && dsd.getHeading() != null && dsd.getHeading().getDimensions() != null) {
                 target.getHeadingDimensions().addAll(getDsdDimensions(dsd, dsd.getHeading().getDimensions()));
             }
         }
