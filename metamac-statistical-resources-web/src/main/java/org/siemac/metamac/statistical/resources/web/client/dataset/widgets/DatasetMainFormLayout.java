@@ -111,7 +111,7 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
     @Override
     protected void updateVisibility() {
         super.updateVisibility();
-        if (canUpdateGeocoverageCache()) { // este if tiene pinta de redundante
+        if (canUpdateGeocoverageCache()) {
             showUpdateGeocoverageCacheButton();
         }
         showCopyDatasetButton();
