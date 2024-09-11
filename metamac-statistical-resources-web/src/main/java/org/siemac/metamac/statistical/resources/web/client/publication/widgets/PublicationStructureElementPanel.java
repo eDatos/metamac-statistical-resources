@@ -281,6 +281,7 @@ public class PublicationStructureElementPanel extends VLayout {
         });
         
         editionForm.setFields(title, description, urn, resourceTypeToLink, dataset, query, multidataset, collection, url);
+        mainFormLayout.getEditionFormLayout().setHeight(300);
         mainFormLayout.addEditionCanvas(editionForm);
     }
 
