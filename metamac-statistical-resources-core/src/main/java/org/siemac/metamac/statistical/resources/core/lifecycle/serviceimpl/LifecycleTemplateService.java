@@ -279,7 +279,6 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         checkSendToPublishedLinkedStatisticalResource(resource, previousResource, exceptions);
 
         checkResourceMetadataAllActions(ctx, resource, exceptions);
-        //Todo: prueba para pipeline
         checkSendToPublishedResource(ctx, resource, exceptions);
 
         ExceptionUtils.throwIfException(exceptions);
