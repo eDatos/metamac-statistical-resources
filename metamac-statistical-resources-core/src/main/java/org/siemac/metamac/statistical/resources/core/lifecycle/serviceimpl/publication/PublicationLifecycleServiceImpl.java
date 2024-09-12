@@ -159,7 +159,7 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
                 } else if (cube.getMultidataset() != null) {
                     checkMultidatasetMustBePublishedAndVisibleBeforePublication(exceptionItems, cube.getMultidatasetUrn());
                 } else if (cube.getPublication() != null) {
-                    checkPublicationMustBePublishedAndVisibleBeforePublication(exceptionItems, cube.getMultidatasetUrn());
+                    checkPublicationMustBePublishedAndVisibleBeforePublication(exceptionItems, cube.getPublicationUrn());
                 }
             }
         }
