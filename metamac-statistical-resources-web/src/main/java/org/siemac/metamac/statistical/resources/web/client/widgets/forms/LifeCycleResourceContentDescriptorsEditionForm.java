@@ -22,6 +22,7 @@ public class LifeCycleResourceContentDescriptorsEditionForm extends GroupDynamic
 
             @Override
             protected boolean condition(Object value) {
+                //todo:prueba
                 return CommonUtils.isResourceInProductionValidationOrGreaterProcStatus(procStatus) ? description.getValue() != null : true;
             }
         });
