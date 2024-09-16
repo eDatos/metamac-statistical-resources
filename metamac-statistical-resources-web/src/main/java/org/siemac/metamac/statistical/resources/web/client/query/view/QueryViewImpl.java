@@ -34,6 +34,8 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.Nameabl
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.NameableResourceIdentifiersForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourceThematicContentClassifiersEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourceThematicContentClassifiersForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataDescriptorsForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgenciesPaginatedListResult;
@@ -212,6 +214,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
         private QueryResourceRelationDescriptorsForm                     resourceRelationDescriptorsForm;
         private LifeCycleResourceLifeCycleForm                           lifeCycleForm;
         private LifeCycleResourceVersionForm                             versionForm;
+        private VisualizationMetadataDescriptorsForm                     visualizationMetadataDescriptorsForm;
 
         // only creation
         private QueryIdentifiersCreationForm                             identifiersCreationForm;
@@ -222,6 +225,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
         private StatisticalResourceThematicContentClassifiersEditionForm thematicContentClassifiersEditionForm;
         private QueryProductionDescriptorsEditionForm                    productionDescriptorsEditionForm;
         private QueryResourceRelationDescriptorsForm                     resourceRelationDescriptorsEditionForm;
+        private VisualizationMetadataEditionForm                         visualizationMetadataEditionForm;
         private LifeCycleResourceLifeCycleForm                           lifeCycleEditionForm;
         private LifeCycleResourceVersionEditionForm                      versionEditionForm;
 
@@ -420,6 +424,8 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             contentDescriptorsForm = new LifeCycleResourceContentDescriptorsForm();
             productionDescriptorsForm = new QueryProductionDescriptorsForm();
             resourceRelationDescriptorsForm = new QueryResourceRelationDescriptorsForm();
+            visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
+            
             lifeCycleForm = new LifeCycleResourceLifeCycleForm();
             versionForm = new LifeCycleResourceVersionForm();
             mainFormLayout.addViewCanvas(identifiersForm);
@@ -427,6 +433,8 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             mainFormLayout.addViewCanvas(thematicContentClassifiersForm);
             mainFormLayout.addViewCanvas(productionDescriptorsForm);
             mainFormLayout.addViewCanvas(resourceRelationDescriptorsForm);
+            mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
+            
             mainFormLayout.addViewCanvas(lifeCycleForm);
             mainFormLayout.addViewCanvas(versionForm);
         }
@@ -438,6 +446,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             thematicContentClassifiersEditionForm = new StatisticalResourceThematicContentClassifiersEditionForm();
             productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm();
             resourceRelationDescriptorsEditionForm = new QueryResourceRelationDescriptorsForm();
+            visualizationMetadataEditionForm = new VisualizationMetadataEditionForm();
             lifeCycleEditionForm = new LifeCycleResourceLifeCycleForm();
             versionEditionForm = new LifeCycleResourceVersionEditionForm();
 
@@ -447,6 +456,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             mainFormLayout.addEditionCanvas(thematicContentClassifiersEditionForm);
             mainFormLayout.addEditionCanvas(productionDescriptorsEditionForm);
             mainFormLayout.addEditionCanvas(resourceRelationDescriptorsEditionForm);
+            mainFormLayout.addEditionCanvas(visualizationMetadataEditionForm);
             mainFormLayout.addEditionCanvas(lifeCycleEditionForm);
             mainFormLayout.addEditionCanvas(versionEditionForm);
         }
