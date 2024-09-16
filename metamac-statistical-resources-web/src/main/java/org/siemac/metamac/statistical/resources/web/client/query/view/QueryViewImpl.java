@@ -500,6 +500,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             // EDATOS-3113 WORKAROUND
 
             resourceRelationDescriptorsForm.setQueryDto(queryDto);
+            visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(queryDto.getHeadingDimensions(), queryDto.getStubDimensions());
             lifeCycleForm.setLifeCycleStatisticalResourceDto(queryDto);
             versionForm.setLifeCycleStatisticalResourceDto(queryDto);
         }
@@ -535,6 +536,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             lifeCycleEditionForm.setLifeCycleStatisticalResourceDto(queryVersionDto);
             lifeCycleEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
 
+            visualizationMetadataEditionForm.setSiemacMetadataStatisticalResourceDto(queryVersionDto.getHeadingDimensions(), queryVersionDto.getStubDimensions());
             versionEditionForm.setLifeCycleStatisticalResourceDto(queryVersionDto);
             versionEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
 
