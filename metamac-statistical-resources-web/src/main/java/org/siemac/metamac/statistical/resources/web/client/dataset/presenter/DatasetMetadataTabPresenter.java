@@ -174,7 +174,6 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
 
     @Override
     public void retrieveDataset(String datasetIdentifier) {
-        //aquí se está seteando el dataset
         final String urn = CommonUtils.generateDatasetUrn(datasetIdentifier);
         dispatcher.execute(new GetDatasetVersionAction(urn), new WaitingAsyncCallbackHandlingError<GetDatasetVersionResult>(this) {
 
