@@ -566,6 +566,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             queryVersionDto = (QueryVersionDto) contentDescriptorsEditionForm.getLifeCycleStatisticalResourceDto(queryVersionDto);
             queryVersionDto = productionDescriptorsEditionForm.getQueryDto(queryVersionDto);
             queryVersionDto = (QueryVersionDto) versionEditionForm.getLifeCycleStatisticalResourceDto(queryVersionDto);
+            queryVersionDto = visualizationMetadataEditionForm.getQueryVersionDto(queryVersionDto);
             return queryVersionDto;
         }
 

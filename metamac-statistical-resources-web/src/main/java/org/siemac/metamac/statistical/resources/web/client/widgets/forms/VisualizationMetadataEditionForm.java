@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.web.common.client.utils.FormItemUtils;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
@@ -52,6 +53,22 @@ public class VisualizationMetadataEditionForm extends GroupDynamicForm {
     }
 
     public DatasetVersionDto getSiemacMetadataStatisticalResourceDto(DatasetVersionDto dto) {
+        CustomCheckboxItem modifyDistributionDimension = (CustomCheckboxItem) getItem(MODIFY_DISTRIBUTION_DIMENSION);
+        if (dto.getStubDimensions() != null) {
+            dto.getStubDimensions().clear();
+        }
+        if (dto.getHeadingDimensions() != null) {
+            dto.getHeadingDimensions().clear();
+        }
+        if (modifyDistributionDimension.getValueAsBoolean()) {
+            DimensionsVisualisationItem dimensionVisualizationItem = ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS));
+            dto.getStubDimensions().addAll(dimensionVisualizationItem.getStubDimensions());
+            dto.getHeadingDimensions().addAll(dimensionVisualizationItem.getHeadingDimensions());
+        }
+        return dto;
+    }
+
+    public QueryVersionDto getQueryVersionDto(QueryVersionDto dto) {
         CustomCheckboxItem modifyDistributionDimension = (CustomCheckboxItem) getItem(MODIFY_DISTRIBUTION_DIMENSION);
         if (dto.getStubDimensions() != null) {
             dto.getStubDimensions().clear();
