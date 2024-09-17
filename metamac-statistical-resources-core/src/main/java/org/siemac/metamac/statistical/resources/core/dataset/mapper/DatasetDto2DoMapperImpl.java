@@ -16,6 +16,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableSta
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.mapper.BaseDto2DoMapperImpl;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.dataset.checks.DatasetMetadataEditionChecks;
@@ -24,7 +25,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficialityRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.exception.DatasetVersionNotFoundException;
