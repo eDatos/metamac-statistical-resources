@@ -384,15 +384,16 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, DatasetVersion datasetVersion) {
+    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
+            List<DimensionOrder> stubDimensions) {
         if (source == null) {
             return null;
         }
         DataStructureDefinition target = new DataStructureDefinition();
         toResourceExternalItemSrm(source, target, selectedLanguages);
         target.setHeading(
-                checkDatasetHaveHeadingAndStubDimensions(datasetVersion) ? toDimensionsIdByDataset(datasetVersion.getHeadingDimensions(), dataStructure) : toDimensionsId(dataStructure.getHeading()));
-        target.setStub(checkDatasetHaveHeadingAndStubDimensions(datasetVersion) ? toDimensionsIdByDataset(datasetVersion.getStubDimensions(), dataStructure) : toDimensionsId(dataStructure.getStub()));
+                checkDatasetHaveHeadingAndStubDimensions(headingDimensions, stubDimensions) ? toDimensionsIdByDataset(headingDimensions, dataStructure) : toDimensionsId(dataStructure.getHeading()));
+        target.setStub(checkDatasetHaveHeadingAndStubDimensions(headingDimensions, stubDimensions) ? toDimensionsIdByDataset(stubDimensions, dataStructure) : toDimensionsId(dataStructure.getStub()));
         target.setAutoOpen(dataStructure.isAutoOpen());
         target.setShowNullValuesByDefault(dataStructure.isShowNullValuesByDefault());
         target.setShowZeroValuesByDefault(dataStructure.isShowZeroValuesByDefault());
@@ -1544,9 +1545,10 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return targets;
     }
 
-    private boolean checkDatasetHaveHeadingAndStubDimensions(DatasetVersion datasetVersion) {
-        return ((datasetVersion.getStubDimensions() != null && !datasetVersion.getStubDimensions().isEmpty())
-                || (datasetVersion.getHeadingDimensions() != null && !datasetVersion.getHeadingDimensions().isEmpty()));
+    private boolean checkDatasetHaveHeadingAndStubDimensions(List<DimensionOrder> headingDimensions,
+            List<DimensionOrder> stubDimensions) {
+        return ((stubDimensions != null && !stubDimensions.isEmpty())
+                || (headingDimensions != null && !headingDimensions.isEmpty()));
     }
 
     private DimensionsId toDimensionsIdByDataset(List<DimensionOrder> dimensionsOrders, DataStructure dataStructure) {
