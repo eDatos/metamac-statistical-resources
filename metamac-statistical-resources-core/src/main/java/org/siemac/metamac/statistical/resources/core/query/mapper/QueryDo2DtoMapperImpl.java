@@ -170,7 +170,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
 
     private void setHeadingAndStubDimension(QueryVersionDto target, QueryVersion source) throws MetamacException {
         String dsdUrn = "";
-        if (source.getDataset().getVersions() != null && !source.getDataset().getVersions().isEmpty()) {
+        if (source.getDataset() != null && source.getDataset().getVersions() != null && !source.getDataset().getVersions().isEmpty()) {
             dsdUrn = source.getDataset().getVersions().get(0).getRelatedDsd().getUrn();
         }
         DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(dsdUrn);
