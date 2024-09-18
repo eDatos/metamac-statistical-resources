@@ -5,15 +5,19 @@
 <%@ page import="java.util.ResourceBundle" %>
 <%@ page import="org.apache.commons.lang.LocaleUtils" %>
 <%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%
     String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
     String appName = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("apps.api_catalog.name");
 %>
+<fmt:setLocale value="<%= locale %>"/>
+<fmt:setBundle basename="i18n.messages-swagger" var="i18n"/>
+<fmt:bundle basename="application"/>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title><%=appName %></title>
+  <title><fmt:message key="api.doc.title" bundle="${i18n}"/></title>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/typography.css" media='screen' rel='stylesheet' type='text/css'/>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/reset.css" media='screen' rel='stylesheet' type='text/css'/>
   <link href="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/css/screen.css" media='screen' rel='stylesheet' type='text/css'/>
