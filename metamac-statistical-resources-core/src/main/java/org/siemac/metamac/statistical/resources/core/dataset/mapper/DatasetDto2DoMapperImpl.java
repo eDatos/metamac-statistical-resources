@@ -1,8 +1,5 @@
 package org.siemac.metamac.statistical.resources.core.dataset.mapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;

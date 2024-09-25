@@ -60,6 +60,10 @@ public class SharedDatasetsSecurityUtils extends SharedSecurityUtils {
         return canModifyStatisticalResource(metamacPrincipal, operationCode, procStatus);
     }
 
+    public static boolean canCopyDataset(MetamacPrincipal metamacPrincipal, String operationCode) {
+        return isOperationAllowed(metamacPrincipal, operationCode, PRODUCTION_ROLES);
+    }
+
     public static boolean canFindDatasetsVersionsByCondition(MetamacPrincipal metamacPrincipal) {
         return isAnyStatisticalResourceRole(metamacPrincipal);
     }
