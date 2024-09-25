@@ -7,13 +7,16 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.ListUtils;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
+import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCanvasItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.DragAppearance;
 import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
+import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.Layout;
@@ -31,6 +34,8 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
 
     private List<RelatedResourceDto> dsdDimensions;
     private List<RelatedResourceDto> visualisationDimensions;
+    private CustomCheckboxItem       modifyDistributionDimension;
+    public static final String       MODIFY_DISTRIBUTION_DIMENSION = "dataset-mod-distribution";
 
     public DimensionsVisualisationItem(String name, String title, boolean editionMode) {
         super(name, title);
@@ -73,7 +78,6 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
 
             hLayout.addMember(dimensionsCanvas);
         }
-
         setCanvas(hLayout);
     }
 
@@ -113,7 +117,7 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
         if (editionMode) { // Dimensions list is only shown in the edition mode
             List<RelatedResourceDto> dimensionsToAdd = new ArrayList<RelatedResourceDto>();
             if (dsdDimensions != null && visualisationDimensions != null) {
-//                dimensionsToAdd = RelatedResourceUtils.substractLists(dsdDimensions, visualisationDimensions);
+                dimensionsToAdd = RelatedResourceUtils.substractLists(dsdDimensions, visualisationDimensions);
             }
             setDimensionsInStack(dimensionsStack, dimensionsToAdd, false);
         }
@@ -146,7 +150,13 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
     private class DimensionsVisualisationCanvas extends HLayout {
 
         public DimensionsVisualisationCanvas(boolean editionMode) {
+            // Creación de un DynamicForm y CheckboxItem
+            DynamicForm form = new DynamicForm();
+            form.setMargin(15);
+            modifyDistributionDimension = new CustomCheckboxItem(MODIFY_DISTRIBUTION_DIMENSION, getConstants().datasetModifyDistributionDimensions());
+            modifyDistributionDimension.setValue(false);
 
+            form.setFields(modifyDistributionDimension);
             headingDimensionsStack = new HStack(10);
             headingDimensionsStack.setHeight(60);
             headingDimensionsStack.setTitle(getConstants().datasetHeadingDimensions());
@@ -185,6 +195,7 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
             hLayout.setBackgroundColor("#dee6f3");
             hLayout.addMember(headingDimensionsStack);
 
+            addMember(form);
             addMember(vLayout);
             addMember(hLayout);
 
@@ -240,4 +251,13 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
             setContents(contents);
         }
     }
+
+    public CustomCheckboxItem getModifyDistributionDimension() {
+        return modifyDistributionDimension;
+    }
+
+    public void setModifyDistributionDimension(CustomCheckboxItem modifyDistributionDimension) {
+        this.modifyDistributionDimension = modifyDistributionDimension;
+    }
+
 }
