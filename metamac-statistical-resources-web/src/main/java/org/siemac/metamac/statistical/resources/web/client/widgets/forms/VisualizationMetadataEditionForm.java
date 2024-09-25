@@ -10,10 +10,6 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
 
-import com.smartgwt.client.widgets.form.DynamicForm;
-import com.smartgwt.client.widgets.form.FormItemIfFunction;
-import com.smartgwt.client.widgets.form.fields.FormItem;
-
 public class VisualizationMetadataEditionForm extends GroupDynamicForm {
 
     public static final String DIMENSIONS_VISUALISATIONS = "dataset-dim-codes";
@@ -64,7 +60,8 @@ public class VisualizationMetadataEditionForm extends GroupDynamicForm {
     }
 
     public QueryVersionDto getQueryVersionDto(QueryVersionDto dto) {
-        CustomCheckboxItem modifyDistributionDimension = (CustomCheckboxItem) getItem(MODIFY_DISTRIBUTION_DIMENSION);
+        DimensionsVisualisationItem dimensionVisualizationItem = ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS));
+        CustomCheckboxItem modifyDistributionDimension = dimensionVisualizationItem.getModifyDistributionDimension();
         if (dto.getStubDimensions() != null) {
             dto.getStubDimensions().clear();
         }
@@ -72,19 +69,9 @@ public class VisualizationMetadataEditionForm extends GroupDynamicForm {
             dto.getHeadingDimensions().clear();
         }
         if (modifyDistributionDimension.getValueAsBoolean()) {
-            DimensionsVisualisationItem dimensionVisualizationItem = ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS));
             dto.getStubDimensions().addAll(dimensionVisualizationItem.getStubDimensions());
             dto.getHeadingDimensions().addAll(dimensionVisualizationItem.getHeadingDimensions());
         }
         return dto;
-    }
-
-    private FormItemIfFunction getUpdateFrecuencyFormItemIfFunction() {
-        return new FormItemIfFunction() {
-            @Override
-            public boolean execute(FormItem item, Object value, DynamicForm form) {
-                return (Boolean)((CustomCheckboxItem) form.getItem(MODIFY_DISTRIBUTION_DIMENSION)).getValue();
-            }
-        };
     }
 }
