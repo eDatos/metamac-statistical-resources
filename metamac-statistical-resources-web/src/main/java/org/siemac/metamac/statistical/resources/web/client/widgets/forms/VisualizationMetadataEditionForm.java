@@ -13,25 +13,27 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxIt
 public class VisualizationMetadataEditionForm extends GroupDynamicForm {
 
     public static final String DIMENSIONS_VISUALISATIONS = "dataset-dim-codes";
-    public static final String MODIFY_DISTRIBUTION_DIMENSION = "dataset-mod-distribution";
 
     public VisualizationMetadataEditionForm(String groupTitle) {
         super(groupTitle);
     }
     public VisualizationMetadataEditionForm() {
         super(getConstants().datasetVisualisationMetadata());
-        DimensionsVisualisationItem dimensionCodesVisualisationItem = new DimensionsVisualisationItem(DIMENSIONS_VISUALISATIONS,
-                getConstants().dsdDimensionsVisualisation(), true);
-        setFields(dimensionCodesVisualisationItem);
     }
 
     public void setSiemacMetadataStatisticalResourceDto(List<RelatedResourceDto> headingDimensions, List<RelatedResourceDto> stubDimensions) {
-        DimensionsVisualisationItem dimensionVisualizationItem = ((DimensionsVisualisationItem) getItem(DIMENSIONS_VISUALISATIONS));
+
+        boolean checked = false;
+        if (checkDatasetDimensionsModified(stubDimensions) || checkDatasetDimensionsModified(headingDimensions)) {
+            checked = true;
+        }
+        DimensionsVisualisationItem dimensionVisualizationItem = new DimensionsVisualisationItem(DIMENSIONS_VISUALISATIONS,
+                getConstants().dsdDimensionsVisualisation(), checked);
+        setFields(dimensionVisualizationItem);
         dimensionVisualizationItem.setVisualisationDimensions(headingDimensions, stubDimensions);
         CustomCheckboxItem modifyDistributionDimension = dimensionVisualizationItem.getModifyDistributionDimension();
-        if (checkDatasetDimensionsModified(stubDimensions) || checkDatasetDimensionsModified(headingDimensions)) {
-            modifyDistributionDimension.setValue(true);
-        }
+        modifyDistributionDimension.setValue(checked);
+        
     }
 
     private boolean checkDatasetDimensionsModified(List<RelatedResourceDto> relatedResources) {

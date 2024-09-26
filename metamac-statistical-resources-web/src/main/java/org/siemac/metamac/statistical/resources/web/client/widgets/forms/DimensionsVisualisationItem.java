@@ -17,6 +17,8 @@ import com.smartgwt.client.types.VerticalAlignment;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.Label;
 import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.fields.events.ChangedEvent;
+import com.smartgwt.client.widgets.form.fields.events.ChangedHandler;
 import com.smartgwt.client.widgets.layout.HLayout;
 import com.smartgwt.client.widgets.layout.HStack;
 import com.smartgwt.client.widgets.layout.Layout;
@@ -25,17 +27,19 @@ import com.smartgwt.client.widgets.layout.VStack;
 
 public class DimensionsVisualisationItem extends CustomCanvasItem {
 
-    private boolean                  editionMode;
+    private boolean                       editionMode;
 
-    private VStack                   dimensionsStack;
+    private VStack                        dimensionsStack;
 
-    private HStack                   headingDimensionsStack;
-    private VStack                   stubDimensionsStack;
+    private HStack                        headingDimensionsStack;
+    private VStack                        stubDimensionsStack;
 
-    private List<RelatedResourceDto> dsdDimensions;
-    private List<RelatedResourceDto> visualisationDimensions;
-    private CustomCheckboxItem       modifyDistributionDimension;
-    public static final String       MODIFY_DISTRIBUTION_DIMENSION = "dataset-mod-distribution";
+    private List<RelatedResourceDto>      dsdDimensions;
+    private List<RelatedResourceDto>      visualisationDimensions;
+    private CustomCheckboxItem            modifyDistributionDimension;
+    private DimensionsVisualisationCanvas dimensionsVisualisationCanvas;
+    private HLayout                       principalLayout;
+    public static final String            MODIFY_DISTRIBUTION_DIMENSION = "dataset-mod-distribution";
 
     public DimensionsVisualisationItem(String name, String title, boolean editionMode) {
         super(name, title);
@@ -46,23 +50,35 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
             setTitleStyle("staticFormItemTitle");
         }
 
-        DimensionsVisualisationCanvas dimensionsVisualisationCanvas = new DimensionsVisualisationCanvas(editionMode);
+        DynamicForm form = new DynamicForm();
+        form.setMargin(15);
+        modifyDistributionDimension = new CustomCheckboxItem(MODIFY_DISTRIBUTION_DIMENSION, getConstants().datasetModifyDistributionDimensions());
+        modifyDistributionDimension.setValue(false);
+        form.setFields(modifyDistributionDimension);
+
+        dimensionsVisualisationCanvas = new DimensionsVisualisationCanvas(editionMode);
         dimensionsVisualisationCanvas.setBackgroundColor("#dee6f3");
+        dimensionsVisualisationCanvas.markForRedraw();
 
-        HLayout hLayout = new HLayout();
-        hLayout.setMembersMargin(15);
-        hLayout.addMember(dimensionsVisualisationCanvas);
-        hLayout.setBorder("1px solid #d1d3da");
-        hLayout.setAutoHeight();
-        hLayout.setAutoWidth();
+        principalLayout = new HLayout();
+        principalLayout.setMembersMargin(15);
+        principalLayout.addMember(form);
+        principalLayout.addMember(dimensionsVisualisationCanvas);
+        principalLayout.setBorder("1px solid #d1d3da");
+        principalLayout.setAutoHeight();
+        principalLayout.setAutoWidth();
 
-        if (editionMode) {
+        setDimensionStack(editionMode, principalLayout);
+        principalLayout.markForRedraw();
+        setCanvas(principalLayout);
+        addHandler(principalLayout);
+    }
 
+    private void setDimensionStack(boolean editionMode, HLayout principalLayout) {
+        if (editionMode && dimensionsStack == null) {
             // List of dimensions that are not in the heading o stub dimensions
-
             Canvas vDropLineProp = new Canvas();
             vDropLineProp.setBackgroundColor("#008BD0");
-
             dimensionsStack = new VStack(10);
             dimensionsStack.setHeight("*");
             dimensionsStack.setLayoutMargin(15);
@@ -76,9 +92,43 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
             dimensionsCanvas.setBackgroundColor("#d1d3da");
             dimensionsCanvas.addChild(dimensionsStack);
 
-            hLayout.addMember(dimensionsCanvas);
+            principalLayout.addMember(dimensionsCanvas);
         }
-        setCanvas(hLayout);
+    }
+
+    private void addHandler(final HLayout hLayout) {
+        modifyDistributionDimension.addChangedHandler(new ChangedHandler() {
+
+            @Override
+            public void onChanged(ChangedEvent event) {
+                Canvas[] headingDimensions = headingDimensionsStack.getMembers();
+                Canvas[] stubDimensions = stubDimensionsStack.getMembers();
+                boolean isChecked = (Boolean) event.getValue();
+                hLayout.removeMember(dimensionsVisualisationCanvas);
+                dimensionsVisualisationCanvas = new DimensionsVisualisationCanvas(isChecked);
+                dimensionsVisualisationCanvas.setBackgroundColor("#dee6f3");
+                for (Canvas headingDimension : headingDimensions) {
+                    headingDimension.setCanDragReposition(isChecked);
+                    headingDimension.setCanDrop(isChecked);
+                    headingDimensionsStack.addMember(headingDimension);
+                }
+                for (Canvas stubDimension : stubDimensions) {
+                    stubDimension.setCanDragReposition(isChecked);
+                    stubDimension.setCanDrop(isChecked);
+                    stubDimensionsStack.addMember(stubDimension);
+                }
+                hLayout.addMember(dimensionsVisualisationCanvas);
+                hLayout.markForRedraw();
+            }
+        });
+    }
+
+    public DimensionsVisualisationCanvas getDimensionsVisualisationCanvas() {
+        return dimensionsVisualisationCanvas;
+    }
+
+    public void setDimensionsVisualisationCanvas(DimensionsVisualisationCanvas dimensionsVisualisationCanvas) {
+        this.dimensionsVisualisationCanvas = dimensionsVisualisationCanvas;
     }
 
     public void setDimensions(List<RelatedResourceDto> dimensions) {
@@ -150,13 +200,6 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
     private class DimensionsVisualisationCanvas extends HLayout {
 
         public DimensionsVisualisationCanvas(boolean editionMode) {
-            // Creación de un DynamicForm y CheckboxItem
-            DynamicForm form = new DynamicForm();
-            form.setMargin(15);
-            modifyDistributionDimension = new CustomCheckboxItem(MODIFY_DISTRIBUTION_DIMENSION, getConstants().datasetModifyDistributionDimensions());
-            modifyDistributionDimension.setValue(false);
-
-            form.setFields(modifyDistributionDimension);
             headingDimensionsStack = new HStack(10);
             headingDimensionsStack.setHeight(60);
             headingDimensionsStack.setTitle(getConstants().datasetHeadingDimensions());
@@ -189,13 +232,14 @@ public class DimensionsVisualisationItem extends CustomCanvasItem {
             vLayout.setBackgroundColor("#dee6f3");
             vLayout.addMember(stubDimensionsStack);
             vLayout.setAlign(Alignment.CENTER);
+            vLayout.markForRedraw();
 
             HLayout hLayout = new HLayout();
             hLayout.addMember(new TitlePiece(getConstants().datasetHeadingDimensions()));
             hLayout.setBackgroundColor("#dee6f3");
             hLayout.addMember(headingDimensionsStack);
+            hLayout.markForRedraw();
 
-            addMember(form);
             addMember(vLayout);
             addMember(hLayout);
 
