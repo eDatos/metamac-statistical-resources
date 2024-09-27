@@ -216,14 +216,14 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().sendToProductionValidation(datasetVersionDto);
+                getUiHandlers().sendToProductionValidation(getDatasetVersionDto());
             }
         });
         mainFormLayout.getDiffusionValidationButton().addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().sendToDiffusionValidation(datasetVersionDto);
+                getUiHandlers().sendToDiffusionValidation(getDatasetVersionDto());
             }
         });
         mainFormLayout.getRejectValidationButton().addClickHandler(new ClickHandler() {
@@ -249,7 +249,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().publish(datasetVersionDto);
+                getUiHandlers().publish(getDatasetVersionDto());
             }
         });
 
@@ -279,7 +279,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
                     @Override
                     public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                         if (versionWindow.validateForm()) {
-                            getUiHandlers().version(datasetVersionDto, versionWindow.getSelectedVersion());
+                            getUiHandlers().version(getDatasetVersionDto(), versionWindow.getSelectedVersion());
                             versionWindow.destroy();
                         }
                     }
@@ -301,7 +301,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().copyDataset(datasetVersionDto);
+                getUiHandlers().copyDataset(getDatasetVersionDto());
             }
         });
 
@@ -435,7 +435,6 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         if (ProcStatusEnum.PUBLISHED.equals(datasetVersionDto.getProcStatus())) {
             getUiHandlers().retrieveMainCoveragesForDatasetVersion(datasetVersionDto.getUrn());
         }
-
         mainFormLayout.markForRedraw();
     }
 
@@ -444,6 +443,14 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         //Metadata visualization
         visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(datasetDto.getHeadingDimensions(), datasetDto.getStubDimensions());
         visualizationMetadataEditionForm.setSiemacMetadataStatisticalResourceDto(datasetDto.getHeadingDimensions(), datasetDto.getStubDimensions());
+        cleanMetadataVisualization();
+    }
+
+    private void cleanMetadataVisualization() {
+        if (datasetVersionDto.getHeadingDimensions() != null && datasetVersionDto.getStubDimensions() != null) {
+            datasetVersionDto.getHeadingDimensions().clear();
+            datasetVersionDto.getStubDimensions().clear();
+        }
     }
 
     private void setDatasetViewMode(DatasetVersionDto datasetDto) {

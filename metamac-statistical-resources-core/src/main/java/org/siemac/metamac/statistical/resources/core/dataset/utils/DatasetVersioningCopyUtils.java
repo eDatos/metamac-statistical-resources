@@ -10,6 +10,7 @@ import java.util.List;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.utils.CommonVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
@@ -139,6 +140,31 @@ public class DatasetVersioningCopyUtils extends CommonVersioningCopyUtils {
         target.setKeepAllData(source.isKeepAllData());
         target.setDataSourceType(source.getDataSourceType());
         target.setDateLastTimeDataImport(source.getDateLastTimeDataImport());
+        copyVisualizationMetadata(source, target);
+    }
+
+    private static void copyVisualizationMetadata(DatasetVersion source, DatasetVersion target) {
+        List<DimensionOrder> dimensionOrders = new ArrayList<>();
+        for (DimensionOrder dimensionOrder : source.getHeadingDimensions()) {
+            DimensionOrder dimensionOrderCopy = new DimensionOrder();
+            copyDimensionOrder(dimensionOrder, dimensionOrderCopy);
+            dimensionOrderCopy.setDatasetVersionHeading(target);
+            dimensionOrders.add(dimensionOrderCopy);
+        }
+        target.getHeadingDimensions().addAll(dimensionOrders);
+        dimensionOrders = new ArrayList<>();
+        for (DimensionOrder dimensionOrder : source.getStubDimensions()) {
+            DimensionOrder dimensionOrderCopy = new DimensionOrder();
+            copyDimensionOrder(dimensionOrder, dimensionOrderCopy);
+            dimensionOrderCopy.setDatasetVersionStub(target);
+            dimensionOrders.add(dimensionOrderCopy);
+        }
+        target.getStubDimensions().addAll(dimensionOrders);
+    }
+
+    private static void copyDimensionOrder(DimensionOrder source, DimensionOrder target) {
+        target.setDimOrder(source.getDimOrder());
+        target.setUrnDimComponentFk(source.getUrnDimComponentFk());
     }
 
     private static Collection<TemporalCode> copyListTemporalCode(List<TemporalCode> source) {
