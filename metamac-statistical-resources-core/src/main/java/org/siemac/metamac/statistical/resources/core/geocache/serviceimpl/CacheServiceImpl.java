@@ -29,6 +29,7 @@ import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheRes
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResourceProperties;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.validators.CacheServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.JaxiMapper;
@@ -62,6 +63,9 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
     @Autowired
     private SrmRestInternalService            srmRestInternalService;
+
+    @Autowired
+    private CacheServiceInvocationValidator   cacheServiceInvocationValidator;
 
     public CacheServiceImpl() {
     }
@@ -308,8 +312,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     public PagedResult<GeoCacheResource> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter) throws MetamacException {
 
         // Validations
-     //   datasetServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions, pagingParameter);
-        // TODO EDATOS-4587 PONER VALIDATOR A CacheServiceInvocationValidator
+        cacheServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions, pagingParameter);
 
         // Find
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
