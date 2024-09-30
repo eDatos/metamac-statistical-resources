@@ -144,22 +144,22 @@ public class DatasetVersioningCopyUtils extends CommonVersioningCopyUtils {
     }
 
     private static void copyVisualizationMetadata(DatasetVersion source, DatasetVersion target) {
-        List<DimensionOrder> dimensionOrders = new ArrayList<>();
-        for (DimensionOrder dimensionOrder : source.getHeadingDimensions()) {
-            DimensionOrder dimensionOrderCopy = new DimensionOrder();
-            copyDimensionOrder(dimensionOrder, dimensionOrderCopy);
-            dimensionOrderCopy.setDatasetVersionHeading(target);
-            dimensionOrders.add(dimensionOrderCopy);
+        target.getHeadingDimensions().addAll(getDimensionOrdersCopy(source.getHeadingDimensions(), target));
+        target.getStubDimensions().addAll(getDimensionOrdersCopy(source.getStubDimensions(), target));
+    }
+
+    private static List<DimensionOrder> getDimensionOrdersCopy(List<DimensionOrder> sources, DatasetVersion target) {
+        List<DimensionOrder> dimensionOrdersTarget = new ArrayList<>();
+        if (sources != null && !sources.isEmpty()) {
+            for (DimensionOrder source : sources) {
+                DimensionOrder dimensionOrderCopy = new DimensionOrder();
+                copyDimensionOrder(source, dimensionOrderCopy);
+                dimensionOrderCopy.setQueryVersionHeading(source.getQueryVersionHeading());
+                dimensionOrderCopy.setQueryVersionStub(source.getQueryVersionStub());
+                dimensionOrdersTarget.add(dimensionOrderCopy);
+            }
         }
-        target.getHeadingDimensions().addAll(dimensionOrders);
-        dimensionOrders = new ArrayList<>();
-        for (DimensionOrder dimensionOrder : source.getStubDimensions()) {
-            DimensionOrder dimensionOrderCopy = new DimensionOrder();
-            copyDimensionOrder(dimensionOrder, dimensionOrderCopy);
-            dimensionOrderCopy.setDatasetVersionStub(target);
-            dimensionOrders.add(dimensionOrderCopy);
-        }
-        target.getStubDimensions().addAll(dimensionOrders);
+        return dimensionOrdersTarget;
     }
 
     private static void copyDimensionOrder(DimensionOrder source, DimensionOrder target) {
