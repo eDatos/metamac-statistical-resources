@@ -68,7 +68,8 @@
              "CONCEPT",
              "DIMENSION",
              "STATISTICAL_OPERATION",
-             "VARIABLE_ELEMENT"
+             "VARIABLE_ELEMENT",
+             "DATASET"
         ]
     },  
     {

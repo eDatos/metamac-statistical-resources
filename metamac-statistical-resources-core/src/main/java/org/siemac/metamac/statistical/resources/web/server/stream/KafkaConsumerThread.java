@@ -139,11 +139,11 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
     }
 
     public void updateByKafkaMessage(ServiceContext ctx, SpecificRecordBase message, String recordKey) throws MetamacException {
-        if (message instanceof DatasetAvro) {
-            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+        if (message instanceof DatasetAvro || message instanceof PublicationAvro) {
+            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationCache(ctx, message);
         } else if (message instanceof CodelistAvro || message instanceof ConceptSchemeAvro) {
             statisticalResourcesServiceFacade.processSrmResourcesKafkaMessage(ctx, message);
-        }
+        } 
     }
 
     private ServiceContext createServiceContext(String logMessage) {

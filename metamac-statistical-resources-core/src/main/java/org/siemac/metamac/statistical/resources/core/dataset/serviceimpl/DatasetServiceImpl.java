@@ -98,8 +98,6 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.NextVersionType
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
@@ -148,7 +146,7 @@ import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import es.ibestat.jaxi.stream.messages.DatasetAvro;
-import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
+import es.ibestat.jaxi.stream.messages.PublicationAvro;
 
 /**
  * Implementation of DatasetService.
@@ -1540,13 +1538,14 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         updateAllExternalGeocoverageCache(ctx);
     }
 
-    private void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+    private void updateGeographicCoverageExternalPublicationCacheByResource(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
-        DatasetAvro jaxiDatasetVersionAvro = null;
+
         if (message instanceof DatasetAvro) {
-            jaxiDatasetVersionAvro = (DatasetAvro) message;
+            cacheService.updateDatasetExternalPublicationCache(ctx, (DatasetAvro) message);
+        } else if (message instanceof PublicationAvro) {
+            cacheService.updateCollectionExternalPublicationCache(ctx, (PublicationAvro) message);
         }
 
     if (!hasValidStatisticalOperation(jaxiDatasetVersionAvro)) {
@@ -1583,13 +1582,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+    public void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
 
         getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
 
             @Override
             protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                updateGeographicCoverageExternalPublicationCache(ctx, message);
+                updateGeographicCoverageExternalPublicationCacheByResource(ctx, message);
                 return null;
             }
         });

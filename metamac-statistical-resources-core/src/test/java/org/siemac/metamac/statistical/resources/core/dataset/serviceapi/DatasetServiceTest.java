@@ -2183,22 +2183,26 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
-        // TODO Auto-generated method stub
+        // NOTHING TO DO
 
     }
 
     @Override
     public void testUpdateAllGeographicCoverageVariableElementsCache() throws Exception {
-        // TODO Auto-generated method stub
+        // NOTHING TO DO
 
     }
 
     @Override
     public void testUpdateAllGeographicExternalCoverageVariableElementsCache() throws Exception {
-        // TODO Auto-generated method stub
+        // NOTHING TO DO
 
     }
 
+    public void testUpdateGeographicCoverageExternalPublicationCache() throws Exception {
+        // NOTHING TO DO
+    }
+    
     @Override
     @Test
     @MetamacMock(DATASET_VERSION_118_PUBLISHED_DATABASE_DATASET_NAME)

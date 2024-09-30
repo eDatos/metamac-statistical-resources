@@ -173,7 +173,7 @@ Application FacadeStatisticalResources {
     		// Other actions
     		void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
-    		void updateGeographicCoverageExternalPublicationVariableElementsCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
+    		void updateGeographicCoverageExternalPublicationCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException
     		void processSrmResourcesKafkaMessage(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
 
     		// Statistic officialities

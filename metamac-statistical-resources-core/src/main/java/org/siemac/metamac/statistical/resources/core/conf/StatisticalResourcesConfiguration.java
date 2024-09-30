@@ -44,4 +44,6 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public boolean retrieveTwitterSentEnable() throws MetamacException;
 
     public String retrieveTwitterAccesTokenSecret() throws MetamacException;
+    public String retrieveKafkaExternalCollectionPublicationMessagesGroup() throws MetamacException;
+
 }

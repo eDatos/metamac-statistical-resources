@@ -31,6 +31,9 @@ Application CacheStatisticalResources {
             @StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException;
             List<@GeoCacheResource> updateAllGeoCacheResourcesByUrn(String resourceUrn, String resourceVersionUrn);
             updateRelatedResourceByCacheResource(@GeoCacheResource newGeoCacheResource, List<@GeoCacheResource> geoCacheResourcesDisabled, List<@GeoCacheResource> geoCacheResourcesOldVersions);
+            @GeoCacheByRelatedResource updateGeoCacheByRelatedResource(PublicationAvro jaxiCollectionVersionAvro) throws MetamacException;
+            updateCollectionExternalPublicationCache(PublicationAvro jaxiPublicationVersionAvro) throws MetamacException;
+            updateDatasetExternalPublicationCache(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException
             
             "deletes"
             List<@GeoCacheResource> disabledResourceByUrn(String resourceUrn);
