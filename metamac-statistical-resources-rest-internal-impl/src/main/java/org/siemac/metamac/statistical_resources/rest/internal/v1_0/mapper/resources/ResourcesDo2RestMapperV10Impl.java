@@ -6,10 +6,12 @@ import java.util.Map;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResource;
@@ -78,14 +80,19 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         }
         ResourceWithStatisticalOperation target = new ResourceWithStatisticalOperation();
         target.setId(source.getCode());
-        target.setUrn(source.getUrn());
+        target.setUrn(getCollectionUrnWithoutVersion(source.getUrn()));
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
-        target.setKind(StatisticalResourcesRestInternalConstants.KIND_RESOURCE);
-        target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.DATASET.getName()));
+        target.setKind(StatisticalResourcesRestInternalConstants.KIND_COLLECTION);
+        target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.COLLECTION.getName()));
         target.setVisualizerHtmlLink(source.getHtmlLink());
         target.setStatisticalOperation(toStatisticalOperationResource(source.getOperationCode(), source.getOperationUrn(), operationTitles, selectedLanguages));
 
         return target;
+    }
+
+    private String getCollectionUrnWithoutVersion(String urn) {
+        String[] params = UrnUtils.splitUrnItem(urn, false);
+        return GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn(new String[]{params[0]}, params[1]);
     }
 
     private ResourceWithStatisticalOperation toResource(GeoCacheResource source, Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles,
@@ -97,12 +104,23 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         target.setId(source.getCode());
         target.setUrn(source.getUrn());
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
-        target.setKind(StatisticalResourcesRestInternalConstants.KIND_RESOURCE);
+        target.setKind(getKindRelatedResourceByResourceType(source.getType()));
         target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.DATASET.getName()));
         target.setVisualizerHtmlLink(source.getHtmlLink());
         target.setStatisticalOperation(toStatisticalOperationResource(source.getOperationCode(), source.getOperationUrn(), operationTitles, selectedLanguages));
 
         return target;
+    }
+
+    private String getKindRelatedResourceByResourceType(String type) {
+        StatisticalResourceTypeEnum typeResource = StatisticalResourceTypeEnum.valueOf(type);
+        if (StatisticalResourceTypeEnum.DATASET.equals(typeResource)) {
+            return StatisticalResourcesRestInternalConstants.KIND_DATASET;
+        } else if (StatisticalResourceTypeEnum.QUERY.equals(typeResource)) {
+            return StatisticalResourcesRestInternalConstants.KIND_QUERY;
+        } else {
+            return StatisticalResourcesRestInternalConstants.BLANK;
+        }
     }
 
     private ResourceStatisticalResourceBase toStatisticalOperationResource(String codeOperation, String urnOperation,
