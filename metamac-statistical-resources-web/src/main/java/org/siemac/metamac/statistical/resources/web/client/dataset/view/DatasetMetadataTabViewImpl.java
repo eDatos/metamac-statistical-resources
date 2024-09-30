@@ -239,7 +239,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
                     public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                         String reasonOfRejection = window.getReasonOfRejection();
                         window.markForDestroy();
-                        getUiHandlers().rejectValidation(datasetVersionDto, reasonOfRejection);
+                        getUiHandlers().rejectValidation(getDatasetVersionDto(), reasonOfRejection);
                     }
                 });
             }
