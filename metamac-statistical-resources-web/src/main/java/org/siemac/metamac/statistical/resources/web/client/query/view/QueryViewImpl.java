@@ -345,14 +345,14 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().sendToProductionValidation(queryVersionDto);
+                    getUiHandlers().sendToProductionValidation(getQuery());
                 }
             });
             mainFormLayout.getDiffusionValidationButton().addClickHandler(new ClickHandler() {
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().sendToDiffusionValidation(queryVersionDto);
+                    getUiHandlers().sendToDiffusionValidation(getQuery());
                 }
             });
             mainFormLayout.getRejectValidationButton().addClickHandler(new ClickHandler() {
@@ -368,7 +368,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                         public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                             String reasonOfRejection = window.getReasonOfRejection();
                             window.markForDestroy();
-                            getUiHandlers().rejectValidation(queryVersionDto, reasonOfRejection);
+                            getUiHandlers().rejectValidation(getQuery(), reasonOfRejection);
                         }
                     });
                 }
@@ -378,7 +378,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().publish(queryVersionDto);
+                    getUiHandlers().publish(getQuery());
                 }
             });
 
@@ -386,7 +386,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().resendStreamMessage(queryVersionDto);
+                    getUiHandlers().resendStreamMessage(getQuery());
                 }
             });
 
@@ -400,7 +400,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                         @Override
                         public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                             if (versionWindow.validateForm()) {
-                                getUiHandlers().version(queryVersionDto, versionWindow.getSelectedVersion());
+                                getUiHandlers().version(getQuery(), versionWindow.getSelectedVersion());
                                 versionWindow.destroy();
                             }
                         }
@@ -413,7 +413,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().previewData(queryVersionDto);
+                    getUiHandlers().previewData(getQuery());
                 }
             });
         }
