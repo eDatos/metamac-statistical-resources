@@ -12,6 +12,7 @@ import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -42,6 +43,8 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
+import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceAction;
+import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionAction;
@@ -399,6 +402,18 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
         }
     }
 
+    @Override
+    public void updateGeoCacheRelatedResources(QueryVersionDto queryVersionDto) {
+        dispatcher.execute(new UpdateGeoCacheRelatedResourceAction(queryVersionDto.getUrn(), StatisticalResourceTypeEnum.QUERY),
+                new WaitingAsyncCallbackHandlingError<UpdateGeoCacheRelatedResourceResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
+                        fireSuccessMessage(getMessages().queryUpdateGeoCacheBackgroundInProgress());
+                    }
+                });
+    }
+
     private void showMessageAfterResourceLifeCycleUpdate(UpdateQueryVersionProcStatusResult result, String message) {
         CommonUtils.showMessageAfterResourceLifeCycleUpdate(QueryPresenter.this, result.getNotificationException(), message);
     }
@@ -431,12 +446,14 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
 
     @Override
     public void retrieveTemporalCodesForField(int firstResult, int maxResults, String datasetUrn, MetamacWebCriteria webCriteria) {
-        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(firstResult, maxResults, datasetUrn, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
+        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(firstResult, maxResults, datasetUrn, webCriteria),
+                new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
 
-            @Override
-            public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
-                getView().setTemporalCodesForField(result);
-            }
-        });
+                    @Override
+                    public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
+                        getView().setTemporalCodesForField(result);
+                    }
+                });
     }
+
 }

@@ -52,6 +52,10 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
         // NOTHING
     }
 
+    public static void checkUpdateGeographicalCache(QueryVersion queryVersion, List<MetamacExceptionItem> exceptions) {
+        checkExistingQueryVersion(queryVersion, exceptions);
+    }
+
     public static void checkCreateQueryVersion(QueryVersion queryVersion, ExternalItem statisticalOperation, List<MetamacExceptionItem> exceptions) throws MetamacException {
         checkNewQueryVersion(queryVersion, exceptions);
     }
@@ -83,8 +87,8 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
         if (queryVersion.getLifeCycleStatisticalResource() != null) {
             // Check code
             StatisticalResourcesValidationUtils.checkMetadataRequired(queryVersion.getLifeCycleStatisticalResource().getCode(), ServiceExceptionParameters.QUERY_VERSION__CODE, exceptions);
-            StatisticalResourcesValidationUtils
-                    .checkSemanticIdentifierAsMetamacID(queryVersion.getLifeCycleStatisticalResource().getCode(), ServiceExceptionParameters.QUERY_VERSION__CODE, exceptions);
+            StatisticalResourcesValidationUtils.checkSemanticIdentifierAsMetamacID(queryVersion.getLifeCycleStatisticalResource().getCode(), ServiceExceptionParameters.QUERY_VERSION__CODE,
+                    exceptions);
         }
         checkQueryVersion(queryVersion, exceptions);
 

@@ -1,6 +1,9 @@
 import "classpath:/btdesign/metamac-statistical-resources-core-base.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-base.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-base-enums.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-publications.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-datasets.btdesign"
 
 Application CacheStatisticalResources { 
 	basePackage=unused
@@ -33,7 +36,10 @@ Application CacheStatisticalResources {
             updateRelatedResourceByCacheResource(@GeoCacheResource newGeoCacheResource, List<@GeoCacheResource> geoCacheResourcesDisabled, List<@GeoCacheResource> geoCacheResourcesOldVersions);
             @GeoCacheByRelatedResource updateGeoCacheByRelatedResource(PublicationAvro jaxiCollectionVersionAvro) throws MetamacException;
             updateCollectionExternalPublicationCache(PublicationAvro jaxiPublicationVersionAvro) throws MetamacException;
-            updateDatasetExternalPublicationCache(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException
+            updateDatasetExternalPublicationCache(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException;
+            processGeoCacheRelatedCollection(@PublicationVersion publicationVersion, boolean isLastVersionPublished, String urn) throws MetamacException;
+            processUpdateGeoCacheResource(@DatasetVersion datasetVersion, String geographicCoverageCodelistUrn, List<@ExternalItem> geographicCoverage,
+            boolean isLastVersionPublished) throws MetamacException;
             
             "deletes"
             List<@GeoCacheResource> disabledResourceByUrn(String resourceUrn);

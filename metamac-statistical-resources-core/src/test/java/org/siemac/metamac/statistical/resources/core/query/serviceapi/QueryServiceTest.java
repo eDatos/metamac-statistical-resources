@@ -1153,6 +1153,11 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
     }
 
     @Override
+    public void testUpdateGeographicalCache() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
     public void testFindPurposes() throws Exception {
         // no optimistic locking in this operation
 

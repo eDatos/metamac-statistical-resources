@@ -67,19 +67,15 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
-import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
-import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
-import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
@@ -97,13 +93,9 @@ import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetS
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
-import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
@@ -124,8 +116,8 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImpo
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
-import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
@@ -1249,51 +1241,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
-        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
-
-        // discard all variable elements present in the array to avoid duplicated or outdated data
-        List<GeoCacheResource> geoCacheResourcesDisabled = cacheService.disabledResourceByUrn(ctx, datasetVersionUrn);
 
         if (!isLastVersionPublished) {
             isLastVersionPublished = isLastVersionPublished(ctx, datasetVersionUrn);
         }
-        List<GeoCacheResource> geoCacheResourcesOldVersions = new ArrayList<>();
-        if (isLastVersionPublished) {
-            // disable old last version published version dataset.
-            geoCacheResourcesOldVersions = cacheService.updateAllGeoCacheResourcesByUrn(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), datasetVersionUrn);
-        }
 
-        if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
-        }
-
-        GeoCacheResource geoCacheResource = cacheService.updateGeoCacheResource(ctx, datasetVersion.getSiemacMetadataStatisticalResource(), datasetVersion.getLifeCycleStatisticalResource(),
-                StatisticalResourceTypeEnum.DATASET, isLastVersionPublished);
-
-        for (ExternalItem geoCoverage : geographicCoverage) {
-            CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
-
-                @Override
-                protected boolean eval(CodeResourceInternal code) {
-                    return StringUtils.equals(code.getUrn(), geoCoverage.getUrn());
-                }
-            });
-
-            if (code == null || code.getVariableElement() == null) {
-                logger.error("Could not find variable element for {}", geoCoverage.getUrn());
-                throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, geoCoverage.getUrn());
-            }
-
-            ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
-
-            GeoCacheTerritoriesByGeoCacheResource territories = new GeoCacheTerritoriesByGeoCacheResource();
-            territories.setVariableElement(territoryVariableElement);
-            geoCacheResource.addTerritory(territories);
-
-        }
-
-        // only when geoCacheResourcesDisabled is not empty must update related resource because geoCacheResource is the latest version published
-        cacheService.updateRelatedResourceByCacheResource(ctx, geoCacheResource, geoCacheResourcesDisabled, geoCacheResourcesOldVersions);
+        cacheService.processUpdateGeoCacheResource(ctx, datasetVersion, geographicCoverageCodelistUrn, geographicCoverage, isLastVersionPublished);
 
         logger.debug("Processing geographic coverage to create the cache correctly finished");
 
@@ -2316,6 +2269,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             processGeoCacheRelatedCollection(ctx, taskInfoResource);
 
+        } else if (StatisticalResourceTypeEnum.QUERY.equals(resourceType)) {
+            processGeoCacheRelatedCollection(ctx, taskInfoResource);
         }
 
         logger.debug("FINISHED - Processing updating geographic cache related resource task correctlY");
@@ -2333,25 +2288,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         // only it is necessary to save in cache last version of related resources.
         if (isLastVersionPublished) {
 
-            cacheService.deleteRelatedResourceOldVersions(ctx, taskInfoResource.getUrn());
+            cacheService.processGeoCacheRelatedCollection(ctx, publicationVersion, isLastVersionPublished, taskInfoResource.getUrn());
 
-            GeoCacheByRelatedResource geoCacheRelatedResource = cacheService.updateGeoCacheByRelatedResource(ctx, publicationVersion.getSiemacMetadataStatisticalResource(),
-                    publicationVersion.getLifeCycleStatisticalResource(), StatisticalResourceTypeEnum.COLLECTION, isLastVersionPublished);
-
-            List<String> urnCacheResourcesNotLinked = new ArrayList<>();
-            for (RelatedResource relatedResource : publicationVersion.getHasPart()) {
-                if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
-                    boolean inserted = cacheService.createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
-                    if (!inserted) {
-                        urnCacheResourcesNotLinked.add(relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
-                    }
-                }
-            }
-
-            if (!urnCacheResourcesNotLinked.isEmpty()) {
-                // TODO EDATOS-4587 MANDAR NOTIFICACIÓN CON LA LISTA DE RESOURCES QUE NO SE PUDIERON ASOCIAR. DE MOMENTO SE LANZA EXCEPTION
-                throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, taskInfoResource.getVersionId());
-            }
         } else {
             logger.info(
                     "> check is resource last version. The result was FALSE and the resource it  will not inserted in cache - Processing updating geographic cache related resource task - collections {}",

@@ -1378,6 +1378,10 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
             PublicationVersion publicationVersion = getPublicationService().retrievePublicationVersionByUrn(ctx, resourceUrn);
 
             getPublicationService().updateGeographicalCache(ctx, publicationVersion);
+        } else if (StatisticalResourceTypeEnum.QUERY.equals(resourceType)) {
+            QueryVersion queryVersion = getQueryService().retrieveQueryVersionByUrn(ctx, resourceUrn);
+
+            this.getQueryService().updateGeographicalCache(ctx, queryVersion);
         }
     }
 

@@ -7,6 +7,7 @@ import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatist
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 
 public abstract class ProcStatusValidator extends ProcStatusForActionsConstants {
 
@@ -47,6 +48,10 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
     // --------------------------------------------------------------------
     public static void checkQueryVersionCanBeEdited(HasLifecycle resource) throws MetamacException {
         ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForEditQueryVersion);
+    }
+
+    public static void checkStatisticalResourceStructureCanBeCached(QueryVersion resource) throws MetamacException {
+        ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForSendResourceToVersion);
     }
 
     // --------------------------------------------------------------------

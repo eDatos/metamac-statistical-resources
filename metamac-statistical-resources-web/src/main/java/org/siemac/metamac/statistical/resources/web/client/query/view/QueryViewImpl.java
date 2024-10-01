@@ -426,6 +426,17 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                     getUiHandlers().previewData(getQuery());
                 }
             });
+
+            // GEOGRAPHICAL CACHE
+
+            mainFormLayout.getUpdateGeoCacheRelatedResource().addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    getUiHandlers().updateGeoCacheRelatedResources(queryVersionDto);
+                }
+            });
+
         }
 
         private void createViewForm() {

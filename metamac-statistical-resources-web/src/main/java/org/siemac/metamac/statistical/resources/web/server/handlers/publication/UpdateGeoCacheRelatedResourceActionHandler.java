@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.publication;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceResult;
@@ -26,7 +25,7 @@ public class UpdateGeoCacheRelatedResourceActionHandler extends SecurityActionHa
     public UpdateGeoCacheRelatedResourceResult executeSecurityAction(UpdateGeoCacheRelatedResourceAction action) throws ActionException {
         try {
             if (action.getUrnResource() != null) {
-                statisticalResourcesServiceFacade.updateGeoCacheRelatedResource(ServiceContextHolder.getCurrentServiceContext(), action.getUrnResource(), StatisticalResourceTypeEnum.COLLECTION);
+                statisticalResourcesServiceFacade.updateGeoCacheRelatedResource(ServiceContextHolder.getCurrentServiceContext(), action.getUrnResource(), action.getResourceType());
             }
             return new UpdateGeoCacheRelatedResourceResult.Builder().build();
         } catch (MetamacException e) {

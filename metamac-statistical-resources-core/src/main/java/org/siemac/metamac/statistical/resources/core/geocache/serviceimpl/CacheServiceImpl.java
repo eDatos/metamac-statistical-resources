@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.core.geocache.serviceimpl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -12,15 +13,20 @@ import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
+import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElement;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
+import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
@@ -33,9 +39,13 @@ import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.validat
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.JaxiMapper;
+import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -51,12 +61,17 @@ import es.ibestat.jaxi.stream.messages.PublicationAvro;
 @Service("cacheService")
 public class CacheServiceImpl extends CacheServiceImplBase {
 
+    private static Logger                     logger = LoggerFactory.getLogger(CacheServiceImpl.class);
+
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
     private CommonDto2DoMapper                dto2DoMapper;
+
+    @Autowired
+    private RestMapper                        restMapper;
 
     @Autowired
     private NoticesRestInternalService        noticesRestInternalService;
@@ -87,6 +102,57 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     // CACHE RESOURCES
 
     @Override
+    public void processUpdateGeoCacheResource(ServiceContext ctx, DatasetVersion datasetVersion, String geographicCoverageCodelistUrn, List<ExternalItem> geographicCoverage,
+            boolean isLastVersionPublished) throws MetamacException {
+
+        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        // discard all variable elements present in the array to avoid duplicated or outdated data
+        List<GeoCacheResource> geoCacheResourcesDisabled = disabledResourceByUrn(ctx, datasetVersionUrn);
+
+        List<GeoCacheResource> geoCacheResourcesOldVersions = new ArrayList<>();
+        if (isLastVersionPublished) {
+            // disable old last version published version dataset.
+            geoCacheResourcesOldVersions = updateAllGeoCacheResourcesByUrn(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), datasetVersionUrn);
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
+        }
+
+        List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
+
+        GeoCacheResource geoCacheResource = updateGeoCacheResource(ctx, datasetVersion.getSiemacMetadataStatisticalResource(), datasetVersion.getLifeCycleStatisticalResource(),
+                StatisticalResourceTypeEnum.DATASET, isLastVersionPublished);
+
+        for (ExternalItem geoCoverage : geographicCoverage) {
+            CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
+
+                @Override
+                protected boolean eval(CodeResourceInternal code) {
+                    return StringUtils.equals(code.getUrn(), geoCoverage.getUrn());
+                }
+            });
+
+            if (code == null || code.getVariableElement() == null) {
+                logger.error("Could not find variable element for {}", geoCoverage.getUrn());
+                throw new MetamacException(ServiceExceptionType.GEOGRAPHICAL_COVERAGE_CODE_NOT_FOUND, geoCoverage.getUrn());
+            }
+
+            ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
+
+            GeoCacheTerritoriesByGeoCacheResource territories = new GeoCacheTerritoriesByGeoCacheResource();
+            territories.setVariableElement(territoryVariableElement);
+            geoCacheResource.addTerritory(territories);
+
+        }
+
+        // only when geoCacheResourcesDisabled is not empty must update related resource because geoCacheResource is the latest version published
+        updateRelatedResourceByCacheResource(ctx, geoCacheResource, geoCacheResourcesDisabled, geoCacheResourcesOldVersions);
+
+    }
+
+    @Override
     public GeoCacheResource updateGeoCacheResource(ServiceContext ctx, SiemacMetadataStatisticalResource metadataResource, LifeCycleStatisticalResource lifeCycleResource,
             StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException {
         GeoCacheResource geoCacheResource = new GeoCacheResource();
@@ -106,42 +172,6 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         geoCacheResource.setIsActivated(true);
 
         return this.getGeoCacheResourceRepository().save(geoCacheResource);
-    }
-
-    @Override
-    public GeoCacheResource updateGeoCacheExternalResource(ServiceContext ctx, DatasetAvro jaxiDatasetVersionAvro, InternationalString datasetTitle) {
-        GeoCacheResource geoCacheResource = new GeoCacheResource();
-
-        geoCacheResource.setCode(jaxiDatasetVersionAvro.getCode());
-        geoCacheResource.setUrn(jaxiDatasetVersionAvro.getUrn());
-        geoCacheResource.setTitle(datasetTitle);
-        geoCacheResource.setOperationCode(jaxiDatasetVersionAvro.getStatisticalOperation().getCode());
-        geoCacheResource.setOperationUrn(jaxiDatasetVersionAvro.getStatisticalOperation().getUrn());
-        geoCacheResource.setIsExternalSource(Boolean.TRUE);
-        geoCacheResource.setType(StatisticalResourceTypeEnum.DATASET.getName());
-        geoCacheResource.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
-        geoCacheResource.setIsLastVersion(true);
-        geoCacheResource.setIsActivated(true);
-        return getGeoCacheResourceRepository().save(geoCacheResource);
-    }
-
-    @Override
-    public GeoCacheByRelatedResource updateGeoCacheByRelatedResource(ServiceContext ctx, es.ibestat.jaxi.stream.messages.PublicationAvro jaxiCollectionVersionAvro) throws MetamacException {
-        GeoCacheByRelatedResource geoCacheByRelatedResource = new GeoCacheByRelatedResource();
-        InternationalString titleResource = JaxiMapper.getInternationalStringFromInternationalStringAvro(jaxiCollectionVersionAvro.getTitle());
-
-        geoCacheByRelatedResource.setCode(jaxiCollectionVersionAvro.getCode());
-        geoCacheByRelatedResource.setUrn(jaxiCollectionVersionAvro.getUrn());
-        geoCacheByRelatedResource.setTitle(titleResource);
-        geoCacheByRelatedResource.setOperationCode(jaxiCollectionVersionAvro.getStatisticalOperation().getCode());
-        geoCacheByRelatedResource.setOperationUrn(jaxiCollectionVersionAvro.getStatisticalOperation().getUrn());
-        geoCacheByRelatedResource.setIsExternalSource(Boolean.TRUE);
-        geoCacheByRelatedResource.setType(StatisticalResourceTypeEnum.COLLECTION.getName());
-        geoCacheByRelatedResource.setHtmlLink(jaxiCollectionVersionAvro.getHtmlLink());
-        geoCacheByRelatedResource.setIsLastVersion(true);
-        geoCacheByRelatedResource.setIsActivated(true);
-
-        return this.getGeoCacheByRelatedResourceRepository().save(geoCacheByRelatedResource);
     }
 
     @Override
@@ -330,29 +360,45 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
         return this.getGeoCacheByRelatedResourceRepository().findByCondition(conditions, pagingParameter);
     }  
-    
+  
     @Override
-    public void updateCollectionExternalPublicationCache(ServiceContext ctx, PublicationAvro jaxiPublicationVersionAvro) throws MetamacException {
-        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+    public  void processGeoCacheRelatedCollection(ServiceContext ctx, PublicationVersion publicationVersion, boolean isLastVersionPublished, String urn) throws MetamacException {
 
-        deleteRelatedResourceOldVersions(ctx, jaxiPublicationVersionAvro.getUrn());
+        cacheServiceInvocationValidator.checkProcessGeoCacheRelatedCollection(ctx, publicationVersion, isLastVersionPublished, urn);
 
-        if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiPublicationVersionAvro.getProcStatus())) {
+            deleteRelatedResourceOldVersions(ctx, urn);
 
-            GeoCacheByRelatedResource geoCacheRelatedResource = updateGeoCacheByRelatedResource(ctx, jaxiPublicationVersionAvro);
+            GeoCacheByRelatedResource geoCacheRelatedResource = updateGeoCacheByRelatedResource(ctx, publicationVersion.getSiemacMetadataStatisticalResource(),
+                    publicationVersion.getLifeCycleStatisticalResource(), StatisticalResourceTypeEnum.COLLECTION, isLastVersionPublished);
 
-            buildExternalItemFromJaxiExternalCollectionPublication(ctx, jaxiPublicationVersionAvro, geoCacheRelatedResource, exceptionItems);
 
-            if (!exceptionItems.isEmpty()) {
-                MetamacException metamacException = new MetamacException();
-                metamacException.getExceptionItems().addAll(exceptionItems);      
-                noticesRestInternalService.createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET, metamacException);
+            List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+            
+            for (RelatedResource relatedResource : publicationVersion.getHasPart()) {
+                if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
+                    boolean inserted = createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
+                    if (!inserted) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NOT_FOUND_ERROR, urn,
+                                relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn()));
+                    }
+                }
             }
 
+            sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET, exceptionItems);
+    }
+        
+    private void sendMessageException(String noticeAction, List<MetamacExceptionItem> exceptionItems) {
+        if (!exceptionItems.isEmpty()) {
+        MetamacException metamacException = new MetamacException();
+        metamacException.getExceptionItems().addAll(exceptionItems);
+        noticesRestInternalService.createErrorBackgroundNotification(noticeAction, metamacException);
         }
     }
     
-
+    // JAXI PUBLICATION
+    
+    // JAXI - DATASET
+    
     @Override
     public void updateDatasetExternalPublicationCache(ServiceContext ctx, DatasetAvro jaxiDatasetVersionAvro) throws MetamacException {
         List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
@@ -374,42 +420,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         }
     }
     
-    public void buildExternalItemFromJaxiExternalCollectionPublication(ServiceContext ctx, PublicationAvro jaxiCollectionVersionAvro, GeoCacheByRelatedResource geoCacheRelatedResource,
-            List<MetamacExceptionItem> exceptionItems) throws MetamacException {
-
-        if (jaxiCollectionVersionAvro.getResources() == null || jaxiCollectionVersionAvro.getResources().isEmpty()) {
-            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_NO_RESOURCES_ERROR, jaxiCollectionVersionAvro.getUrn()));
-            return;
-        }
-
-        for (ExternalItemAvro externalAvro : jaxiCollectionVersionAvro.getResources()) {
-            TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
-
-            if (externalAvro.getUrn() == null) {
-                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NULL_ERROR, jaxiCollectionVersionAvro.getUrn()));
-                continue;
-            }
-
-            if (TypeExternalArtefactsEnum.DATASET.equals(externalItemType)) {
-                try {
-
-                    boolean created = createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, externalAvro.getUrn());
-
-                    if (!created) {
-                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NOT_FOUND_ERROR, externalAvro.getUrn(),
-                                jaxiCollectionVersionAvro.getUrn()));
-                    }
-
-                } catch (Exception e) {
-                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_ERROR, externalAvro.getUrn(),
-                            jaxiCollectionVersionAvro.getUrn()));
-                }
-            }
-        }
-    }
-    
-
-    public void buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, GeoCacheResource geoCacheResource, 
+    private void buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, GeoCacheResource geoCacheResource, 
             List<MetamacExceptionItem> exceptionItems) throws MetamacException {
 
         for (ExternalItemAvro externalAvro : jaxiDatasetVersionAvro.getGeographicCoverage()) {
@@ -446,4 +457,95 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             }
         }
     }
+    
+    // JAXI - COLLECTIONS
+    
+    @Override
+    public void updateCollectionExternalPublicationCache(ServiceContext ctx, PublicationAvro jaxiPublicationVersionAvro) throws MetamacException {
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+
+        deleteRelatedResourceOldVersions(ctx, jaxiPublicationVersionAvro.getUrn());
+
+        if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiPublicationVersionAvro.getProcStatus())) {
+
+            GeoCacheByRelatedResource geoCacheRelatedResource = updateGeoCacheByRelatedResource(ctx, jaxiPublicationVersionAvro);
+
+            buildExternalItemFromJaxiExternalCollectionPublication(ctx, jaxiPublicationVersionAvro, geoCacheRelatedResource, exceptionItems);
+
+           sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET, exceptionItems);
+
+        }
+    }
+    
+    private void buildExternalItemFromJaxiExternalCollectionPublication(ServiceContext ctx, PublicationAvro jaxiCollectionVersionAvro, GeoCacheByRelatedResource geoCacheRelatedResource,
+            List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+
+        if (jaxiCollectionVersionAvro.getResources() == null || jaxiCollectionVersionAvro.getResources().isEmpty()) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_NO_RESOURCES_ERROR, jaxiCollectionVersionAvro.getUrn()));
+            return;
+        }
+
+        for (ExternalItemAvro externalAvro : jaxiCollectionVersionAvro.getResources()) {
+            TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
+
+            if (externalAvro.getUrn() == null) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NULL_ERROR, jaxiCollectionVersionAvro.getUrn()));
+                continue;
+            }
+
+            if (TypeExternalArtefactsEnum.DATASET.equals(externalItemType)) {
+                try {
+
+                    boolean created = createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, externalAvro.getUrn());
+
+                    if (!created) {
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NOT_FOUND_ERROR, externalAvro.getUrn(),
+                                jaxiCollectionVersionAvro.getUrn()));
+                    }
+
+                } catch (Exception e) {
+                    exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_ERROR, externalAvro.getUrn(),
+                            jaxiCollectionVersionAvro.getUrn()));
+                }
+            }
+        }
+    }
+    
+
+    @Override
+    public GeoCacheResource updateGeoCacheExternalResource(ServiceContext ctx, DatasetAvro jaxiDatasetVersionAvro, InternationalString datasetTitle) {
+        GeoCacheResource geoCacheResource = new GeoCacheResource();
+
+        geoCacheResource.setCode(jaxiDatasetVersionAvro.getCode());
+        geoCacheResource.setUrn(jaxiDatasetVersionAvro.getUrn());
+        geoCacheResource.setTitle(datasetTitle);
+        geoCacheResource.setOperationCode(jaxiDatasetVersionAvro.getStatisticalOperation().getCode());
+        geoCacheResource.setOperationUrn(jaxiDatasetVersionAvro.getStatisticalOperation().getUrn());
+        geoCacheResource.setIsExternalSource(Boolean.TRUE);
+        geoCacheResource.setType(StatisticalResourceTypeEnum.DATASET.getName());
+        geoCacheResource.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
+        geoCacheResource.setIsLastVersion(true);
+        geoCacheResource.setIsActivated(true);
+        return getGeoCacheResourceRepository().save(geoCacheResource);
+    }
+
+    @Override
+    public GeoCacheByRelatedResource updateGeoCacheByRelatedResource(ServiceContext ctx, es.ibestat.jaxi.stream.messages.PublicationAvro jaxiCollectionVersionAvro) throws MetamacException {
+        GeoCacheByRelatedResource geoCacheByRelatedResource = new GeoCacheByRelatedResource();
+        InternationalString titleResource = JaxiMapper.getInternationalStringFromInternationalStringAvro(jaxiCollectionVersionAvro.getTitle());
+
+        geoCacheByRelatedResource.setCode(jaxiCollectionVersionAvro.getCode());
+        geoCacheByRelatedResource.setUrn(jaxiCollectionVersionAvro.getUrn());
+        geoCacheByRelatedResource.setTitle(titleResource);
+        geoCacheByRelatedResource.setOperationCode(jaxiCollectionVersionAvro.getStatisticalOperation().getCode());
+        geoCacheByRelatedResource.setOperationUrn(jaxiCollectionVersionAvro.getStatisticalOperation().getUrn());
+        geoCacheByRelatedResource.setIsExternalSource(Boolean.TRUE);
+        geoCacheByRelatedResource.setType(StatisticalResourceTypeEnum.COLLECTION.getName());
+        geoCacheByRelatedResource.setHtmlLink(jaxiCollectionVersionAvro.getHtmlLink());
+        geoCacheByRelatedResource.setIsLastVersion(true);
+        geoCacheByRelatedResource.setIsActivated(true);
+
+        return this.getGeoCacheByRelatedResourceRepository().save(geoCacheByRelatedResource);
+    }
+    
 }

@@ -137,4 +137,16 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void testProcessGeoCacheRelatedCollection() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void testProcessUpdateGeoCacheResource() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }

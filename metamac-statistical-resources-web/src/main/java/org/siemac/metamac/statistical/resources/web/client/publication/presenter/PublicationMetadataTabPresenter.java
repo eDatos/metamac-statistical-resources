@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -318,13 +319,14 @@ public class PublicationMetadataTabPresenter
 
     @Override
     public void updateGeoCacheRelatedResources(PublicationVersionDto publication) {
-        dispatcher.execute(new UpdateGeoCacheRelatedResourceAction(publication.getUrn()), new WaitingAsyncCallbackHandlingError<UpdateGeoCacheRelatedResourceResult>(this) {
+        dispatcher.execute(new UpdateGeoCacheRelatedResourceAction(publication.getUrn(), StatisticalResourceTypeEnum.COLLECTION),
+                new WaitingAsyncCallbackHandlingError<UpdateGeoCacheRelatedResourceResult>(this) {
 
-            @Override
-            public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
-                fireSuccessMessage(getMessages().publicationUpdateGeoCacheBackgroundInProgress());
-            }
-        });
+                    @Override
+                    public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
+                        fireSuccessMessage(getMessages().publicationUpdateGeoCacheBackgroundInProgress());
+                    }
+                });
     }
 
     //
