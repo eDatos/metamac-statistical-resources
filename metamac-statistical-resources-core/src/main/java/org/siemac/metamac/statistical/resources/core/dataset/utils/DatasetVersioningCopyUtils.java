@@ -154,8 +154,12 @@ public class DatasetVersioningCopyUtils extends CommonVersioningCopyUtils {
             for (DimensionOrder source : sources) {
                 DimensionOrder dimensionOrderCopy = new DimensionOrder();
                 copyDimensionOrder(source, dimensionOrderCopy);
-                dimensionOrderCopy.setQueryVersionHeading(source.getQueryVersionHeading());
-                dimensionOrderCopy.setQueryVersionStub(source.getQueryVersionStub());
+                if (source.getDatasetVersionHeading() != null) {
+                    dimensionOrderCopy.setDatasetVersionHeading(target);
+                }
+                if (source.getDatasetVersionStub() != null) {
+                    dimensionOrderCopy.setDatasetVersionStub(target);
+                }
                 dimensionOrdersTarget.add(dimensionOrderCopy);
             }
         }

@@ -55,8 +55,12 @@ public class QueryVersioningCopyUtils {
             for (DimensionOrder source : sources) {
                 DimensionOrder dimensionOrderCopy = new DimensionOrder();
                 copyDimensionOrder(source, dimensionOrderCopy);
-                dimensionOrderCopy.setQueryVersionHeading(source.getQueryVersionHeading());
-                dimensionOrderCopy.setQueryVersionStub(source.getQueryVersionStub());
+                if (source.getQueryVersionHeading() != null) {
+                    dimensionOrderCopy.setQueryVersionHeading(target);
+                }
+                if (source.getQueryVersionStub() != null) {
+                    dimensionOrderCopy.setQueryVersionStub(target);
+                }
                 dimensionOrdersTarget.add(dimensionOrderCopy);
             }
         }
