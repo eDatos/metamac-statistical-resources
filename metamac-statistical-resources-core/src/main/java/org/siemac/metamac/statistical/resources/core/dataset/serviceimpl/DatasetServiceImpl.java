@@ -87,6 +87,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUpdateUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
@@ -491,6 +492,19 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         datasetVersion.setDatasetRepositoryId(datasetRepositoryDto.getDatasetId());
 
         return getDatasetVersionRepository().save(datasetVersion);
+    }
+
+    @Override
+    public DatasetVersion copyDatasetVersion(ServiceContext ctx, String urn) throws MetamacException {
+        // Find entity
+        DatasetVersion datasetVersion = getDatasetVersionRepository().retrieveByUrn(urn);
+        DatasetVersion datasetVersionCopy = DatasetVersioningCopyUtils.copyDatasetVersion(datasetVersion);
+        datasetVersionCopy.setVersion(null);
+        datasetVersionCopy.getSiemacMetadataStatisticalResource().setStatisticalOperation(null);
+        datasetVersionCopy.getSiemacMetadataStatisticalResource().setCreatedDate(null);
+        datasetVersionCopy.setDataset(null);
+        datasetVersionCopy.getDatasources().clear();
+        return createDatasetVersion(ctx, datasetVersionCopy, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
     }
 
     private DatasetRepositoryDto createDatasetRepository(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
@@ -1619,6 +1633,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
+        @Override
         public final T doInTransaction(TransactionStatus status) {
             try {
                 return doInMetamacTransaction(status);
@@ -2235,6 +2250,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     }
 
+    @Override
     public Long calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         Long tableSize = Long.valueOf(1);
         DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());

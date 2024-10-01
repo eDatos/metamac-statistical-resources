@@ -2172,6 +2172,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertEquals(Long.valueOf(27), tableSize);
     }
 
+    @Override
     public void testGetDatasetLastVersionPublishedByDatasetUrn() throws Exception {
         // NOTHING TO DO
     }
@@ -2215,5 +2216,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     @Test
     public void testExportDatasourcesTsv() throws Exception {
         // NOTHING TO DO
+    }
+
+    @Override
+    public void testCopyDatasetVersion() throws Exception {
+        // TODO Auto-generated method stub
+        
     }
 }
