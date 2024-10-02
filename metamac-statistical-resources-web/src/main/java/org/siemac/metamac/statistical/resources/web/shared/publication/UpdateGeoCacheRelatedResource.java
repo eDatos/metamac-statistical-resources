@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.shared.publication;
 
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 
 import com.gwtplatform.dispatch.annotation.GenDispatch;
@@ -11,9 +12,12 @@ import com.gwtplatform.dispatch.annotation.Out;
 public class UpdateGeoCacheRelatedResource {
 
     @In(1)
-    String              urnResource;
+    String                      urnResource;
 
-    @Out(2)
+    @In(2)
+    StatisticalResourceTypeEnum resourceType;
+
+    @Out(3)
     @Optional
-    MetamacWebException notificationException;
+    MetamacWebException         notificationException;
 }

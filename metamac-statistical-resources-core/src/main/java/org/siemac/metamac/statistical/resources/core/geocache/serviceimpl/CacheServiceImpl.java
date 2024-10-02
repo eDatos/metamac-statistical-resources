@@ -43,6 +43,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
+import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,29 +102,35 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
     // CACHE RESOURCES
 
+    /*
+     * lifeCycleStatisticalResource: Metadata associated to the resource.
+     * urnResource: resource base urn. For example for a datasetVersion it will be the dataset urn and not de datasetVersion urn. The same for Queries. It is the query urn
+     * geographicCoverage: Set of geographical code associated to the resource.
+     * isLastVersionPublished
+     */
     @Override
-    public void processUpdateGeoCacheResource(ServiceContext ctx, DatasetVersion datasetVersion, String geographicCoverageCodelistUrn, List<ExternalItem> geographicCoverage,
-            boolean isLastVersionPublished) throws MetamacException {
+    public void processUpdateGeoCacheResource(ServiceContext ctx, LifeCycleStatisticalResource lifeCycleStatisticalResource, String urnResource,
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum, List<ExternalItem> geographicCoverage, boolean isLastVersionPublished) throws MetamacException {
 
-        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        String resourceVersionUrn = lifeCycleStatisticalResource.getUrn();
 
         // discard all variable elements present in the array to avoid duplicated or outdated data
-        List<GeoCacheResource> geoCacheResourcesDisabled = disabledResourceByUrn(ctx, datasetVersionUrn);
+        List<GeoCacheResource> geoCacheResourcesDisabled = disabledResourceByUrn(ctx, resourceVersionUrn);
 
         List<GeoCacheResource> geoCacheResourcesOldVersions = new ArrayList<>();
         if (isLastVersionPublished) {
-            // disable old last version published version dataset.
-            geoCacheResourcesOldVersions = updateAllGeoCacheResourcesByUrn(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(), datasetVersionUrn);
+            // disable old last version published version.
+            geoCacheResourcesOldVersions = updateAllGeoCacheResourcesByUrn(ctx, urnResource, resourceVersionUrn);
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug(String.format("Processing geographic coverage to create the cache for datasetversionUrn: %s ", datasetVersionUrn));
+            logger.debug(String.format("Processing geographic coverage to create the cache for Urn: %s ", resourceVersionUrn));
         }
 
+        String geographicCoverageCodelistUrn = StatisticalResourcesExternalItemUtils.getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
 
-        GeoCacheResource geoCacheResource = updateGeoCacheResource(ctx, datasetVersion.getSiemacMetadataStatisticalResource(), datasetVersion.getLifeCycleStatisticalResource(),
-                StatisticalResourceTypeEnum.DATASET, isLastVersionPublished);
+        GeoCacheResource geoCacheResource = updateGeoCacheResource(ctx, lifeCycleStatisticalResource, statisticalResourceTypeEnum, isLastVersionPublished);
 
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
@@ -152,17 +159,16 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
     }
 
-    @Override
-    public GeoCacheResource updateGeoCacheResource(ServiceContext ctx, SiemacMetadataStatisticalResource metadataResource, LifeCycleStatisticalResource lifeCycleResource,
-            StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException {
+    private GeoCacheResource updateGeoCacheResource(ServiceContext ctx, LifeCycleStatisticalResource lifeCycleResource, StatisticalResourceTypeEnum type, boolean isLastVersionPublished)
+            throws MetamacException {
         GeoCacheResource geoCacheResource = new GeoCacheResource();
-        InternationalString titleResource = InternationalStringUtils.copy(metadataResource.getTitle());
+        InternationalString titleResource = InternationalStringUtils.copy(lifeCycleResource.getTitle());
 
-        geoCacheResource.setCode(metadataResource.getCode());
-        geoCacheResource.setUrn(metadataResource.getUrn());
+        geoCacheResource.setCode(lifeCycleResource.getCode());
+        geoCacheResource.setUrn(lifeCycleResource.getUrn());
         geoCacheResource.setTitle(titleResource);
-        geoCacheResource.setOperationCode(metadataResource.getStatisticalOperation().getCode());
-        geoCacheResource.setOperationUrn(metadataResource.getStatisticalOperation().getUrn());
+        geoCacheResource.setOperationCode(lifeCycleResource.getStatisticalOperation().getCode());
+        geoCacheResource.setOperationUrn(lifeCycleResource.getStatisticalOperation().getUrn());
         geoCacheResource.setIsExternalSource(Boolean.FALSE);
         geoCacheResource.setType(type.getName());
         String maintainer = lifeCycleResource.getMaintainer() != null ? lifeCycleResource.getMaintainer().getCode() : null;
@@ -547,5 +553,12 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
         return this.getGeoCacheByRelatedResourceRepository().save(geoCacheByRelatedResource);
     }
-    
+
+    @Override
+    public GeoCacheResource updateGeoCacheResource(ServiceContext ctx, SiemacMetadataStatisticalResource metadataResource, LifeCycleStatisticalResource lifeCycleResource,
+            StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

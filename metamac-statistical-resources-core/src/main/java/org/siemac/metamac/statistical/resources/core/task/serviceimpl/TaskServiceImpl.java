@@ -4,7 +4,6 @@ import static org.quartz.DateBuilder.futureDate;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
-import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnByDots;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForDatabaseImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForDuplicationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationAttributes;
@@ -67,6 +66,8 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
+import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
+import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
@@ -79,6 +80,8 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
+import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdComponentType;
+import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdDimension;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
@@ -124,6 +127,10 @@ import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService;
+import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
+import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.InternationalStringDo2AvroMapper;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
@@ -216,6 +223,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private PublicationService                publicationService;
+
+    @Autowired
+    private QueryService                      queryService;
 
     @Autowired
     private LifecycleService<DatasetVersion>  datasetLifecycleService;
@@ -1198,25 +1208,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         markTaskAsFinished(ctx, duplicationJobKey); // Finish the importation
     }
 
-    private String getCodelistFromCodeUrn(String urn) {
-        if (urn == null) {
-            return null;
-        }
-
-        // e.g.: urn:sdmx:org.sdmx.infomodel.codelist.Code=ISTAC:CL_AREA_ES70_DS_20111120(01.000).ES70 is converted to
-        // [urn:sdmx:org, sdmx, infomodel, codelist, Code=ISTAC:CL_AREA_ES70_DS_20111120(01.000), ES70]
-        // The use of LinkedList is because Arrays.asList returns a fixed-size list
-        List<String> splittedByDotUrn = new LinkedList<>(Arrays.asList(splitUrnByDots(urn)));
-
-        int lastElementIndex = splittedByDotUrn.size() - 1;
-        if (lastElementIndex >= 0) {
-            // remove the element corresponding to the code id
-            splittedByDotUrn.remove(lastElementIndex);
-        }
-
-        return String.join(".", splittedByDotUrn);
-    }
-
     @Override
     public void processUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
         // Validation
@@ -1229,6 +1220,26 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         logger.debug("Updating geocoverage cache for dataset {}", datasetVersionUrn);
+
+        List<ExternalItem> geographicCoverage = getGeographicCoverage(ctx, datasetVersion);
+
+        if (CollectionUtils.isEmpty(geographicCoverage)) {
+            return;
+        }
+
+        if (!isLastVersionPublished) {
+            isLastVersionPublished = isLastVersionPublished(ctx, datasetVersionUrn);
+        }
+
+        cacheService.processUpdateGeoCacheResource(ctx, datasetVersion.getLifeCycleStatisticalResource(), datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(),
+                StatisticalResourceTypeEnum.DATASET, geographicCoverage, isLastVersionPublished);
+
+        logger.debug("Processing geographic coverage to create the cache correctly finished");
+
+        markTaskAsFinished(ctx, jobKey);
+    }
+
+    private List<ExternalItem> getGeographicCoverage(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
         List<ExternalItem> geographicCoverage = datasetVersion.getGeographicCoverage();
 
         if (geographicCoverage.isEmpty()) {
@@ -1236,21 +1247,57 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             datasetService.updateGeographicCoverageFromSpatialAttribute(ctx, datasetVersion);
             if (geographicCoverage.isEmpty()) {
                 logger.debug("Dataset geographic coverage is empty");
-                return;
+            }
+        }
+        return geographicCoverage;
+    }
+
+    private List<ExternalItem> getGeographicCoverageForQuery(ServiceContext ctx, DatasetVersion datasetVersion, QueryVersion queryVersion) throws MetamacException {
+
+        if (!CollectionUtils.isEmpty(datasetVersion.getGeographicCoverage())) { // spatial dimension
+
+            DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
+            List<DsdDimension> dimensions = DsdProcessor.getDimensions(dsd);
+            String spatialDimensionName = null;
+            for (DsdDimension dimension : dimensions) {
+                if (DsdComponentType.SPATIAL.equals(dimension.getType())) {
+                    spatialDimensionName = dimension.getComponentId();
+                    break;
+                }
+            }
+
+            List<CodeItem> codes = new ArrayList<>();
+            for (QuerySelectionItem selection : queryVersion.getSelection()) {
+
+                if (spatialDimensionName != null && spatialDimensionName.equals(selection.getDimension())) {
+                    codes = selection.getCodes();
+                    break;
+                }
+            }
+
+            return getGeographicCoverageQueryFromDatasetCoverage(datasetVersion.getGeographicCoverage(), codes);
+        } else { // spatial attribute
+            return getGeographicCoverage(ctx, datasetVersion);
+        }
+
+    }
+
+    private List<ExternalItem> getGeographicCoverageQueryFromDatasetCoverage(List<ExternalItem> geoCoverageDataset, List<CodeItem> codesInQuery) {
+        List<ExternalItem> geographicCoverageQuery = new ArrayList<>();
+        for (ExternalItem geoCoverage : geoCoverageDataset) {
+            CodeItem code = MetamacCollectionUtils.find(codesInQuery, new MetamacPredicate<CodeItem>() {
+
+                @Override
+                protected boolean eval(CodeItem code) {
+                    return StringUtils.equals(code.getCode(), geoCoverage.getCode());
+                }
+            });
+            if (code != null) {
+                geographicCoverageQuery.add(geoCoverage);
             }
         }
 
-        String geographicCoverageCodelistUrn = getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
-
-        if (!isLastVersionPublished) {
-            isLastVersionPublished = isLastVersionPublished(ctx, datasetVersionUrn);
-        }
-
-        cacheService.processUpdateGeoCacheResource(ctx, datasetVersion, geographicCoverageCodelistUrn, geographicCoverage, isLastVersionPublished);
-
-        logger.debug("Processing geographic coverage to create the cache correctly finished");
-
-        markTaskAsFinished(ctx, jobKey);
+        return geographicCoverageQuery;
     }
 
     /*
@@ -2270,7 +2317,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processGeoCacheRelatedCollection(ctx, taskInfoResource);
 
         } else if (StatisticalResourceTypeEnum.QUERY.equals(resourceType)) {
-            processGeoCacheRelatedCollection(ctx, taskInfoResource);
+            processGeoCacheResourceQuery(ctx, taskInfoResource);
         }
 
         logger.debug("FINISHED - Processing updating geographic cache related resource task correctlY");
@@ -2299,8 +2346,40 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         logger.debug("> END Subprocess - Processing updating geographic cache related resource task - collections {}", taskInfoResource.getVersionId());
     }
 
+    private void processGeoCacheResourceQuery(ServiceContext ctx, TaskInfoResources taskInfoResource) throws MetamacException {
+        logger.debug("> START Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
+        QueryVersion queryVersion = queryService.retrieveQueryVersionByUrn(ctx, taskInfoResource.getVersionId());
+
+        boolean isLastVersionPublished = isQueryLastVersionPublished(ctx, queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn(),
+                queryVersion.getLifeCycleStatisticalResource().getUrn());
+
+        // only it is necessary to save in cache last version of related resources.
+        if (isLastVersionPublished) {
+
+            DatasetVersion datasetVersion = datasetService.retrieveLatestPublishedDatasetVersionByDatasetUrn(ctx, queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+
+            List<ExternalItem> geographicCoverage = getGeographicCoverageForQuery(ctx, datasetVersion, queryVersion);
+
+            if (CollectionUtils.isEmpty(geographicCoverage)) {
+                return;
+            }
+
+            cacheService.processUpdateGeoCacheResource(ctx, queryVersion.getLifeCycleStatisticalResource(), queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn(),
+                    StatisticalResourceTypeEnum.QUERY, geographicCoverage, isLastVersionPublished);
+
+        } else
+
+        {
+            logger.info(
+                    "> check is resource last version. The result was FALSE and the resource it  will not inserted in cache - Processing updating geographic cache related resource task - queries {}",
+                    taskInfoResource.getVersionId());
+        }
+
+        logger.debug("> END Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
+    }
+
     /*
-     * if cache is manually updated, dataset can be in draft and this version is lastversion. For this case, it is necessary to calculate if this dataset is last published version
+     * if cache is manually updated, collection can be in draft and this version is lastversion. For this case, it is necessary to calculate if this collection is last published version
      */
     private boolean isPublicationLastVersionPublished(ServiceContext ctx, String publicationVersionUrn) throws MetamacException {
         //
@@ -2309,5 +2388,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         String resourceId = params[1];
         PublicationVersion lastVersionPublication = publicationService.getPublicationLastVersionPublished(ctx, agencyId, resourceId);
         return lastVersionPublication != null && lastVersionPublication.getSiemacMetadataStatisticalResource().getUrn().equals(publicationVersionUrn);
+    }
+
+    /*
+     * if cache is manually updated, query can be in draft and this version is lastversion. For this case, it is necessary to calculate if this query is last published version
+     */
+    private boolean isQueryLastVersionPublished(ServiceContext ctx, String queryUrn, String queryVersionUrn) throws MetamacException {
+
+        QueryVersion lastVersionQuery = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(ctx, queryUrn);
+        return lastVersionQuery != null && lastVersionQuery.getLifeCycleStatisticalResource().getUrn().equals(queryVersionUrn);
     }
 }

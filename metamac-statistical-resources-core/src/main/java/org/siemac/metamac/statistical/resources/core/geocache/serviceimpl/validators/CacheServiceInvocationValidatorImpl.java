@@ -15,7 +15,6 @@ import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatis
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
@@ -107,10 +106,11 @@ public class CacheServiceInvocationValidatorImpl {
 
     }
 
-    public static void checkProcessUpdateGeoCacheResource(DatasetVersion datasetVersion, String geographicCoverageCodelistUrn, List<ExternalItem> geographicCoverage, boolean isLastVersionPublished,
-            List<MetamacExceptionItem> exceptions) {
-        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersion, ServiceExceptionParameters.PUBLICATION__VERSION, exceptions);
-        checkParameterRequired(geographicCoverageCodelistUrn, URN, exceptions);
+    public static void checkProcessUpdateGeoCacheResource(LifeCycleStatisticalResource lifeCycleResource, String urnResource, StatisticalResourceTypeEnum statisticalResourceTypeEnum,
+            List<ExternalItem> geographicCoverage, boolean isLastVersionPublished, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(lifeCycleResource, ServiceExceptionParameters.PUBLICATION__VERSION, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(geographicCoverage, ServiceExceptionParameters.CODE_DIMENSION__DATASET_VERSION__GEOGRAPHIC_COVERAGE, exceptions);
+        checkParameterRequired(urnResource, URN, exceptions);
 
     }
 

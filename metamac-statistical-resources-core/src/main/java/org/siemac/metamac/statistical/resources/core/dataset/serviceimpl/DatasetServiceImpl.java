@@ -1495,7 +1495,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateGeographicCoverageFromSpatialAttribute(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
-        DsdAttribute spatialAttribute = DsdProcessor.getSpatialAttributeFromDsd(srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn()));
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
+        DsdAttribute spatialAttribute = DsdProcessor.getSpatialAttributeFromDsd(dataStructure);
+
+        if (spatialAttribute == null) {
+            return;
+        }
+
         AttributeValue spatialAttributeValue = getSpatialAttributeValueFromDsdAttribute(datasetVersion, spatialAttribute);
 
         if (spatialAttributeValue != null) {
@@ -1510,6 +1516,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     }
                 }
             }
+        } else {
+            List<ExternalItem> codeItems = processExternalItemsCodeFromSpatialAttribute(datasetVersion, spatialAttribute);
+            datasetVersion.getGeographicCoverage().clear();
+            datasetVersion.getGeographicCoverage().addAll(codeItems);
         }
     }
 
@@ -2043,6 +2053,24 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     }
                 }
             }
+        }
+        return items;
+    }
+
+    private List<ExternalItem> processExternalItemsCodeFromSpatialAttribute(DatasetVersion resource, DsdAttribute spatialAttribute) throws MetamacException {
+        List<ExternalItem> items = new ArrayList<>();
+        List<CodeDimension> codes = filterCodesFromAttribute(resource, resource.getDatasetRepositoryId(), spatialAttribute.getComponentId());
+        List<String> codesIdentifiers = mapCodeDimensionsToCodeIdentifiers(codes);
+        List<ExternalItem> attributeItems = buildExternalItemsBasedOnCodeIdentifiers(codesIdentifiers, spatialAttribute);
+        // Avoid repeat items
+        for (ExternalItem item : attributeItems) {
+            if (!StatisticalResourcesCollectionUtils.isExternalItemInCollection(attributeItems, item)) {
+                items.add(item);
+            }
+        }
+
+        if (items.isEmpty()) {
+            items.addAll(attributeItems);
         }
         return items;
     }
