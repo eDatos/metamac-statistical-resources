@@ -7,7 +7,6 @@ import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
-import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.web.common.client.model.record.InternationalStringRecord;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.CustomRequiredValidator;
@@ -42,7 +41,7 @@ public class LifeCycleResourceContentDescriptorsEditionForm extends GroupDynamic
             @Override
             protected boolean condition(Object value) {
                 InternationalStringDto internationalString = FormUtils.getJsObjectAttributeAsTypedObject(description.getValue(), InternationalStringRecord.INTERNATIONAL_STRING_DTO);
-                return CommonUtils.isResourceInProductionValidationOrGreaterProcStatus(procStatus) && checkCurrentLanguage(internationalString);
+                return checkCurrentLanguage(internationalString);
             }
         });
         setValue(LifeCycleResourceDS.DESCRIPTION, lifeCycleStatisticalResourceDto.getDescription());
