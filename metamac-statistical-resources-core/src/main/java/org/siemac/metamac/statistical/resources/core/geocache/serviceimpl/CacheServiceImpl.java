@@ -381,16 +381,28 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
             
             for (RelatedResource relatedResource : publicationVersion.getHasPart()) {
-                if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
-                    boolean inserted = createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn());
-                    if (!inserted) {
-                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NOT_FOUND_ERROR, urn,
-                                relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn()));
-                    }
-                }
+                createRelatedResourceByCacheResourceByTypeAndUrn(ctx, geoCacheRelatedResource, urn, relatedResource, exceptionItems);
             }
 
             sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET, exceptionItems);
+    }
+    
+    private void createRelatedResourceByCacheResourceByTypeAndUrn(ServiceContext ctx, GeoCacheByRelatedResource geoCacheRelatedResource, String urn, RelatedResource relatedResource, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+        
+        String relatedResourceUrn = null;
+        
+        if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
+            relatedResourceUrn =  relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn();
+        } else     if (TypeRelatedResourceEnum.QUERY.equals(relatedResource.getType())) {
+            relatedResourceUrn =  relatedResource.getQuery().getIdentifiableStatisticalResource().getUrn();
+        } else {
+            return;
+        }
+        
+        boolean inserted = createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, relatedResourceUrn);
+        if (!inserted) {
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_RESOURCE_NOT_FOUND_ERROR, relatedResourceUrn, urn));
+        }
     }
         
     private void sendMessageException(String noticeAction, List<MetamacExceptionItem> exceptionItems) {
@@ -505,7 +517,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
                     boolean created = createRelatedResourceByCacheResourceByUrn(ctx, geoCacheRelatedResource, externalAvro.getUrn());
 
                     if (!created) {
-                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NOT_FOUND_ERROR, externalAvro.getUrn(),
+                        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_RESOURCE_NOT_FOUND_ERROR, externalAvro.getUrn(),
                                 jaxiCollectionVersionAvro.getUrn()));
                     }
 

@@ -37,9 +37,11 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensio
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.query.QueryLifecycleService;
@@ -202,6 +204,8 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         // Validations
         queryServiceInvocationValidator.checkUpdateQueryVersion(ctx, queryVersion);
 
+        checkNotTasksInProgress(ctx, queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn());
+
         // Check procStatus
         ProcStatusValidator.checkQueryVersionCanBeEdited(queryVersion);
 
@@ -217,7 +221,13 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         checkQueryCompatibility(ctx, queryVersion);
 
         // Repository operation
-        return getQueryVersionRepository().save(queryVersion);
+        QueryVersion queryVersionSaved = getQueryVersionRepository().save(queryVersion);
+
+        if (ProcStatusEnumUtils.isInAnyProcStatus(queryVersionSaved, ProcStatusEnum.PUBLISHED)) {
+            updateGeographicalCacheInJob(ctx, queryVersionSaved, true);
+        }
+
+        return queryVersionSaved;
 
     }
 

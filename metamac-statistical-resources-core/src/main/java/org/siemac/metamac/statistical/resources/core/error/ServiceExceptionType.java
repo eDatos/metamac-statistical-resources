@@ -442,8 +442,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NULL_ERROR                 = create(
             "exception.resources.geocoverage.kafka_external_collection_publication_dataset_null_error");
 
-    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NOT_FOUND_ERROR            = create(
-            "exception.resources.geocoverage.kafka_external_collection_publication_dataset_not_found_error");
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_RESOURCE_NOT_FOUND_ERROR           = create(
+            "exception.resources.geocoverage.kafka_external_collection_publication_resource_not_found_error");
 
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_ERROR                      = create(
             "exception.resources.geocoverage.kafka_external_collection_publication_dataset_error");

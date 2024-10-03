@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.util.shared.BooleanUtils;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
@@ -45,6 +46,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetAgencySch
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
+import org.siemac.metamac.web.common.client.widgets.InformationLabel;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
@@ -68,6 +70,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
     private QueryFormPanel            queryFormPanel;
 
     private WarningLabel              warningLabel;
+    private InformationLabel          informationLabel;
 
     @Inject
     public QueryViewImpl() {
@@ -90,6 +93,10 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
         panel = new VLayout();
         panel.setHeight100();
 
+        informationLabel = new InformationLabel();
+        informationLabel.setMargin(15);
+        informationLabel.setVisible(false);
+
         warningLabel = new WarningLabel();
         warningLabel.setVisible(false);
         warningLabel.setAlign(Alignment.CENTER);
@@ -100,6 +107,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
         subPanel.setOverflow(Overflow.SCROLL);
         subPanel.setMembersMargin(5);
         subPanel.addMember(versionsSectionStack);
+        subPanel.addMember(informationLabel);
         subPanel.addMember(warningLabel);
 
         queryFormPanel = new QueryFormPanel();
@@ -129,6 +137,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
     @Override
     public void showUnauthorizedResourceWarningMessage() {
+        clearInformationLabel();
         queryFormPanel.hide();
         setWarningLabelContents(getMessages().lifeCycleResourceRetrieveOperationNotAllowed(StatisticalResourcesWeb.getCurrentUser().getUserId()));
     }
@@ -136,6 +145,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
     @Override
     public void setQueryDto(QueryVersionDto queryDto) {
         clearWarningLabel();
+        setInformationLabelContents(queryDto);
         queryFormPanel.setQuery(queryDto);
         queryFormPanel.show();
     }
@@ -190,6 +200,22 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
     public void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result) {
         List<ExternalItemDto> externalItemsDtos = result.getTemporalGranularities();
         queryFormPanel.productionDescriptorsEditionForm.setCodesForTemporalGranularities(externalItemsDtos, result.getFirstResultOut(), result.getTotalResults());
+    }
+
+    @Override
+    public void setInformationLabelContents(QueryVersionDto queryVersionDto) {
+        if (BooleanUtils.isTrue(queryVersionDto.getIsTaskInBackground())) {
+            String message = getMessages().queryVersionInProcessInBackground();
+            informationLabel.setContents(message);
+            informationLabel.show();
+        } else {
+            clearInformationLabel();
+        }
+    }
+
+    private void clearInformationLabel() {
+        informationLabel.setContents(StringUtils.EMPTY);
+        informationLabel.hide();
     }
 
     private void setWarningLabelContents(String message) {

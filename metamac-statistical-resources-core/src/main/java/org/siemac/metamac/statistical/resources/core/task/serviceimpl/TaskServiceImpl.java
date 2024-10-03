@@ -131,7 +131,6 @@ import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
-import org.siemac.metamac.statistical.resources.core.stream.messages.mappers.InternationalStringDo2AvroMapper;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
@@ -1339,21 +1338,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         markTaskAsFinishedInTransaction(ctx, jobKey);
     }
 
-    public es.ibestat.jaxi.stream.messages.ExternalItemAvro do2Avro(ExternalItem source) {
-        es.ibestat.jaxi.stream.messages.ExternalItemAvro target = null;
-        if (source != null) {
-            try {
-                target = es.ibestat.jaxi.stream.messages.ExternalItemAvro.newBuilder().setCode(source.getCode()).setCodeNested(source.getCodeNested())
-                        .setTitle(InternationalStringDo2AvroMapper.do2Avro(source.getTitle())).setType(es.ibestat.jaxi.stream.messages.TypeExternalArtefactsEnumAvro.STATISTICAL_OPERATION)
-                        .setUrn(source.getUrn()).build();
-            } catch (Exception e) {
-                logger.error("ERROR CREANDO MENSAJE JAXI PUBLICATION", e);
-            }
-        }
-        return target;
-
-    }
-
     private void processRollbackDuplicationTask(ServiceContext ctx, Task task) throws MetamacException {
         markTaskAsFinished(ctx, task.getJob());
     }
@@ -1387,9 +1371,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public boolean existsTaskForResource(ServiceContext ctx, String resourceId) throws MetamacException {
         try {
             taskServiceInvocationValidator.checkExistsTaskForResource(ctx, resourceId);
-            boolean a = existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
-                    || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId);
-            return a;
+            return existImportationTaskInResource(ctx, resourceId) || existRecoveryImportationTaskInResource(ctx, resourceId) || existDuplicationTaskInResource(ctx, resourceId)
+                    || (existDatabaseImportationTaskInResource(ctx, resourceId)) || existUpdateGeocoverageCacheTaskInResource(ctx, resourceId)
+                    || existUpdateGeoCacheRelatedResourcesTaskInResource(ctx, resourceId);
+
         } catch (Exception e) {
             logger.error("existsTaskForResource ----", e);
         }
@@ -1456,7 +1441,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         taskServiceInvocationValidator.checkExistUpdateGeoCacheRelatedResourcesTaskInResource(ctx, resourceId);
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
-            return sched.checkExists(createJobKeyForUpdateGeocoverageCacheResource(resourceId));
+            return sched.checkExists(createJobKeyForUpdateGeoCacheRelatedResources(resourceId));
         } catch (SchedulerException e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
         }
@@ -2348,6 +2333,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private void processGeoCacheResourceQuery(ServiceContext ctx, TaskInfoResources taskInfoResource) throws MetamacException {
         logger.debug("> START Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
+
         QueryVersion queryVersion = queryService.retrieveQueryVersionByUrn(ctx, taskInfoResource.getVersionId());
 
         boolean isLastVersionPublished = isQueryLastVersionPublished(ctx, queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn(),

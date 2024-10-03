@@ -42,7 +42,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         targets.setKind(StatisticalResourcesRestInternalConstants.KIND_RESOURCES);
 
         // Pagination
-        String baseLink = toResourcesLink(TypeExternalArtefactsEnum.DATASET.getName());
+        String baseLink = toResourcesLink(TypeExternalArtefactsEnum.STATISTICAL_RESOURCES_RESOURCE.getName());
         SculptorCriteria2RestCriteria.toPagedResult(sources, targets, query, orderBy, limit, baseLink);
 
         Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles = statisticalOperationsRestInternalFacade.getOperationTitles(null);
@@ -83,7 +83,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         target.setUrn(getCollectionUrnWithoutVersion(source.getUrn()));
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
         target.setKind(StatisticalResourcesRestInternalConstants.KIND_COLLECTION);
-        target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.COLLECTION.getName()));
+        target.setSelfLink(toResourceSelfLink(source.getUrn(), TypeExternalArtefactsEnum.COLLECTION.getName()));
         target.setVisualizerHtmlLink(source.getHtmlLink());
         target.setStatisticalOperation(toStatisticalOperationResource(source.getOperationCode(), source.getOperationUrn(), operationTitles, selectedLanguages));
 
@@ -104,23 +104,30 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         target.setId(source.getCode());
         target.setUrn(source.getUrn());
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
-        target.setKind(getKindRelatedResourceByResourceType(source.getType()));
-        target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.DATASET.getName()));
+
+        getMetadataRelatedResourceByResourceType(target, source.getType(), source.getUrn());
+
         target.setVisualizerHtmlLink(source.getHtmlLink());
         target.setStatisticalOperation(toStatisticalOperationResource(source.getOperationCode(), source.getOperationUrn(), operationTitles, selectedLanguages));
 
         return target;
     }
 
-    private String getKindRelatedResourceByResourceType(String type) {
+    private void getMetadataRelatedResourceByResourceType(ResourceWithStatisticalOperation target, String type, String urnResource) {
         StatisticalResourceTypeEnum typeResource = StatisticalResourceTypeEnum.valueOf(type);
+        String kind = StatisticalResourcesRestInternalConstants.BLANK;
+        String typeExternalArtefact = StatisticalResourcesRestInternalConstants.BLANK;
         if (StatisticalResourceTypeEnum.DATASET.equals(typeResource)) {
-            return StatisticalResourcesRestInternalConstants.KIND_DATASET;
+            kind = StatisticalResourcesRestInternalConstants.KIND_DATASET;
+            typeExternalArtefact = TypeExternalArtefactsEnum.DATASET.getName();
         } else if (StatisticalResourceTypeEnum.QUERY.equals(typeResource)) {
-            return StatisticalResourcesRestInternalConstants.KIND_QUERY;
-        } else {
-            return StatisticalResourcesRestInternalConstants.BLANK;
+            kind = StatisticalResourcesRestInternalConstants.KIND_QUERY;
+            typeExternalArtefact = TypeExternalArtefactsEnum.QUERY.getName();
         }
+
+        target.setKind(kind);
+        target.setSelfLink(toResourceSelfLink(urnResource, typeExternalArtefact));
+
     }
 
     private ResourceStatisticalResourceBase toStatisticalOperationResource(String codeOperation, String urnOperation,
@@ -141,7 +148,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         return commonDo2RestMapper.toResourceLink(resourceSubpath, null, null, null);
     }
 
-    private ResourceLink toDatasetSelfLink(String urn, String typeResource) {
+    private ResourceLink toResourceSelfLink(String urn, String typeResource) {
         String[] params = UrnUtils.splitUrnItem(urn, false);
         String agencyId = params[0];
         String resourceId = params[1];

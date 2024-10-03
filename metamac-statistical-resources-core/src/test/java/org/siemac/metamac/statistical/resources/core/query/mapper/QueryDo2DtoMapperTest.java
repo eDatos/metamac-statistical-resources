@@ -9,7 +9,6 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_03_BASIC_ORDERED_02_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_05_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_15_PUBLISHED_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,7 +42,7 @@ public class QueryDo2DtoMapperTest extends StatisticalResourcesBaseTest {
     @MetamacMock(QUERY_VERSION_01_WITH_SELECTION_NAME)
     public void testQueryDo2Dto() throws MetamacException {
         QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME);
-        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(expected);
+        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(getServiceContextWithoutPrincipal(), expected);
         assertEqualsQueryVersion(expected, actual);
     }
 
@@ -51,7 +50,7 @@ public class QueryDo2DtoMapperTest extends StatisticalResourcesBaseTest {
     @MetamacMock(QUERY_VERSION_15_PUBLISHED_NAME)
     public void testQueryDo2DtoProcStatusPublishedVisible() throws MetamacException {
         QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_15_PUBLISHED_NAME);
-        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(expected);
+        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(getServiceContextWithoutPrincipal(), expected);
         assertEquals(ProcStatusEnum.PUBLISHED, actual.getProcStatus());
     }
 
@@ -64,7 +63,7 @@ public class QueryDo2DtoMapperTest extends StatisticalResourcesBaseTest {
         expected.add(queryVersionMockFactory.retrieveMock(QUERY_VERSION_05_BASIC_NAME));
         expected.add(queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME));
 
-        List<QueryVersionBaseDto> actual = queryDo2DtoMapper.queryVersionDoListToDtoList(expected);
+        List<QueryVersionBaseDto> actual = queryDo2DtoMapper.queryVersionDoListToDtoList(getServiceContextWithoutPrincipal(), expected);
 
         assertEquals(expected.size(), actual.size());
         assertEqualsQueryVersionDoAndDtoCollection(expected, actual);

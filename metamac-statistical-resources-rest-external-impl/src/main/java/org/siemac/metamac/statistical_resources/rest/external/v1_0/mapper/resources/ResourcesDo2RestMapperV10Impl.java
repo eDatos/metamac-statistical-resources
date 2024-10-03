@@ -42,7 +42,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_RESOURCES);
 
         // Pagination
-        String baseLink = toResourcesLink(TypeExternalArtefactsEnum.DATASET.getName()); // EDATOS-4587 SI SE PONE UN TIPO NUEVO.
+        String baseLink = toResourcesLink(TypeExternalArtefactsEnum.STATISTICAL_RESOURCES_RESOURCE.getName());
         SculptorCriteria2RestCriteria.toPagedResult(sources, targets, query, orderBy, limit, baseLink);
 
         Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles = statisticalOperationsRestExternalFacade.getOperationTitles(null);
@@ -55,7 +55,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
 
             ResourcesStatisticalResourceBase resources = new ResourcesStatisticalResourceBase();
 
-            if (source.getRelatedResources() != null) {
+            if (source != null && source.getRelatedResources() != null) {
                 for (GeoCacheResourcesByRelatedResource geoRelatedResourceByResource : source.getRelatedResources()) {
                     ResourceWithStatisticalOperation relatedResource = toResource(geoRelatedResourceByResource.getGeoCacheResource(), operationTitles, selectedLanguages);
                     resources.getResources().add(relatedResource);
@@ -102,23 +102,30 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         target.setId(source.getCode());
         target.setUrn(source.getUrn());
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
-        target.setKind(getKindRelatedResourceByResourceType(source.getType()));
-        target.setSelfLink(toResourceSelfLink(source.getUrn(), TypeExternalArtefactsEnum.DATASET.getName()));
+
+        getMetadataRelatedResourceByResourceType(target, source.getType(), source.getUrn());
+
         target.setVisualizerHtmlLink(source.getHtmlLink());
         target.setStatisticalOperation(toStatisticalOperationResource(source.getOperationCode(), source.getOperationUrn(), operationTitles, selectedLanguages));
 
         return target;
     }
 
-    private String getKindRelatedResourceByResourceType(String type) {
+    private void getMetadataRelatedResourceByResourceType(ResourceWithStatisticalOperation target, String type, String urnResource) {
         StatisticalResourceTypeEnum typeResource = StatisticalResourceTypeEnum.valueOf(type);
+        String kind = StatisticalResourcesRestExternalConstants.BLANK;
+        String typeExternalArtefact = StatisticalResourcesRestExternalConstants.BLANK;
         if (StatisticalResourceTypeEnum.DATASET.equals(typeResource)) {
-            return StatisticalResourcesRestExternalConstants.KIND_DATASET;
+            kind = StatisticalResourcesRestExternalConstants.KIND_DATASET;
+            typeExternalArtefact = TypeExternalArtefactsEnum.DATASET.getName();
         } else if (StatisticalResourceTypeEnum.QUERY.equals(typeResource)) {
-            return StatisticalResourcesRestExternalConstants.KIND_QUERY;
-        } else {
-            return StatisticalResourcesRestExternalConstants.BLANK;
+            kind = StatisticalResourcesRestExternalConstants.KIND_QUERY;
+            typeExternalArtefact = TypeExternalArtefactsEnum.QUERY.getName();
         }
+
+        target.setKind(kind);
+        target.setSelfLink(toResourceSelfLink(urnResource, typeExternalArtefact));
+
     }
 
     private ResourceStatisticalResourceBase toStatisticalOperationResource(String codeOperation, String urnOperation,

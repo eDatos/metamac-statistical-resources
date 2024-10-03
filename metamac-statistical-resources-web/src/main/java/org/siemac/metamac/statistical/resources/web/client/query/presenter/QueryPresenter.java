@@ -118,6 +118,8 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
         void showUnauthorizedResourceWarningMessage();
 
         void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result);
+
+        void setInformationLabelContents(QueryVersionDto queryVersionDto);
     }
 
     @Inject
@@ -403,13 +405,14 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
     }
 
     @Override
-    public void updateGeoCacheRelatedResources(QueryVersionDto queryVersionDto) {
+    public void updateGeoCacheRelatedResources(final QueryVersionDto queryVersionDto) {
         dispatcher.execute(new UpdateGeoCacheRelatedResourceAction(queryVersionDto.getUrn(), StatisticalResourceTypeEnum.QUERY),
                 new WaitingAsyncCallbackHandlingError<UpdateGeoCacheRelatedResourceResult>(this) {
 
                     @Override
                     public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
                         fireSuccessMessage(getMessages().queryUpdateGeoCacheBackgroundInProgress());
+                        retrieveQuery(queryVersionDto.getUrn());
                     }
                 });
     }
