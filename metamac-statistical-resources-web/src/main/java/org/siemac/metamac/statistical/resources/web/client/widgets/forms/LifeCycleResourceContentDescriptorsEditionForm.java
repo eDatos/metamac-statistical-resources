@@ -25,9 +25,11 @@ public class LifeCycleResourceContentDescriptorsEditionForm extends GroupDynamic
     }
 
     private boolean checkCurrentLanguage(InternationalStringDto internationalString) {
-        for (LocalisedStringDto localisedString : internationalString.getTexts()) {
-            if (localisedString.getLocale().equals(ApplicationEditionLanguages.getCurrentLocale())) {
-                return true;
+        if (internationalString != null) {
+            for (LocalisedStringDto localisedString : internationalString.getTexts()) {
+                if (ApplicationEditionLanguages.getCurrentLocale().equals(localisedString.getLocale())) {
+                    return true;
+                }
             }
         }
         return false;
