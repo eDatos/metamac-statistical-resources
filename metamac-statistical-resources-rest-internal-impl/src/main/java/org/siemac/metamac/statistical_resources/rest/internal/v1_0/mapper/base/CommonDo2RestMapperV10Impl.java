@@ -1618,7 +1618,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private DimensionsId toDimensionsId(org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionReferences sources) {
         if (sources == null) {
-            return null;
+            DimensionsId dimensionsId = new DimensionsId();
+            dimensionsId.setTotal(BigInteger.valueOf(0L));
+            return dimensionsId;
         }
         DimensionsId targets = new DimensionsId();
         for (String source : sources.getDimensions()) {
