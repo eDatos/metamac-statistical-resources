@@ -81,7 +81,7 @@ Application CacheStatisticalResources {
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			boolean isActivated databaseColumn="is_activated" not nullable;
 			
-			- Bag<@GeoCacheTerritoriesByGeoCacheResource> territories cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> cacheResource;
+			- Bag<@GeoCacheTerritoriesByGeoCacheResource> territories cascade="all-delete-orphan" fetch="lazy" <-> cacheResource;
 	
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
@@ -130,7 +130,7 @@ Application CacheStatisticalResources {
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			boolean isActivated databaseColumn="is_activated" not nullable;
 			
-			- Bag<@GeoCacheResourcesByRelatedResource> relatedResources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> geoCacheResourcesByRelated;
+			- Set<@GeoCacheResourcesByRelatedResource> relatedResources cascade="all-delete-orphan" fetch="lazy" <-> geoCacheResourcesByRelated;
 	
 		
 			"Last update to optimistic locking"

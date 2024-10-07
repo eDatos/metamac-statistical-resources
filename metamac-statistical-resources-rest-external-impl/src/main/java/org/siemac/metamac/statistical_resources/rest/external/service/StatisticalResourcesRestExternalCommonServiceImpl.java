@@ -179,8 +179,10 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
             conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).distinctRoot().build());
         }
 
-        // only activated records are available
-        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).buildSingle());
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class)
+                .withProperty(GeoCacheByRelatedResourceProperties.relatedResources().geoCacheResource().isLastVersion()).eq(true).buildSingle());
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class)
+                .withProperty(GeoCacheByRelatedResourceProperties.relatedResources().geoCacheResource().isActivated()).eq(true).buildSingle());
 
         // Find
         return cacheService.findGeoRelatedResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
