@@ -2,8 +2,8 @@ package org.siemac.metamac.statistical.resources.web.server.handlers.publication
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
-import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceAction;
-import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceResult;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceResult;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
 import org.siemac.metamac.web.common.server.handlers.SecurityActionHandler;
 import org.siemac.metamac.web.common.server.utils.WebExceptionUtils;

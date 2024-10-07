@@ -103,6 +103,7 @@ import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValues
 import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatabaseDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatasetCategorisationsAction;
@@ -183,7 +184,6 @@ import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublic
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetVersionsOfPublicationAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationStructureElementAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationVersionAction;
-import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdatePublicationStructureElementLocationAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdatePublicationVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.UpdatePublicationVersionsProcStatusAction;

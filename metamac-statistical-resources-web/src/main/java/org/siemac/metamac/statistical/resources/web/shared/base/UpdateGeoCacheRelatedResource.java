@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical.resources.web.shared.publication;
+package org.siemac.metamac.statistical.resources.web.shared.base;
 
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.web.common.shared.exception.MetamacWebException;

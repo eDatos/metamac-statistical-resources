@@ -26,6 +26,8 @@ import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMess
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageResult;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageResult;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceResult;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageResult;
@@ -43,8 +45,6 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
-import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceAction;
-import org.siemac.metamac.statistical.resources.web.shared.publication.UpdateGeoCacheRelatedResourceResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionAction;
