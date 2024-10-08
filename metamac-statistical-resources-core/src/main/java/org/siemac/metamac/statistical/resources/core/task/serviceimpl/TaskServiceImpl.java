@@ -103,7 +103,6 @@ import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheSe
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
-import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.AbstractImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.DatabaseDatasetPollingJob;
@@ -241,9 +240,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private DatabaseImportRepository          databaseImportRepository;
-
-    @Autowired
-    private RestMapper                        restMapper;
 
     @Autowired
     private NoticesRestInternalService        noticesRestInternalService;
@@ -2342,7 +2338,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         // only it is necessary to save in cache last version of related resources.
         if (isLastVersionPublished) {
 
-            DatasetVersion datasetVersion = datasetService.retrieveLatestPublishedDatasetVersionByDatasetUrn(ctx, queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+            DatasetVersion datasetVersion = datasetService.retrieveLatestPublishedDatasetVersionByDatasetUrn(ctx, getCurrentDatasetVersionInQuery(queryVersion));
+
+            if (datasetVersion == null) {
+                logger.info(
+                        "> get dataset associated to query. The dataset is null so the resource it  will not inserted in cache - Processing updating geographic cache related resource task - queries {}",
+                        taskInfoResource.getVersionId());
+                return;
+            }
 
             List<ExternalItem> geographicCoverage = getGeographicCoverageForQuery(ctx, datasetVersion, queryVersion);
 
@@ -2362,6 +2365,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         logger.debug("> END Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
+    }
+
+    private String getCurrentDatasetVersionInQuery(QueryVersion queryVersion) throws MetamacException {
+        if (queryVersion.getFixedDatasetVersion() != null && queryVersion.getFixedDatasetVersion().getDataset().getIdentifiableStatisticalResource() != null) {
+            return queryVersion.getFixedDatasetVersion().getDataset().getIdentifiableStatisticalResource().getUrn();
+        }
+        return queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
     }
 
     /*

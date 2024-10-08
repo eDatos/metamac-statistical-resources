@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
@@ -50,6 +51,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.PurposeReposit
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.validators.QueryServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
@@ -474,4 +476,20 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         return purposeRepository.findAll();
     }
 
+    public void updateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
+        queryServiceInvocationValidator.checkUpdateAllGeographicalCache(ctx);
+        List<QueryVersion> lastVersionPublicatedQueries = retrievePublishedLastVersionQueries();
+        for (QueryVersion queryVersion : lastVersionPublicatedQueries) {
+            updateGeographicalCacheInJob(ctx, queryVersion, false);
+        }
+
+    }
+
+    private List<QueryVersion> retrievePublishedLastVersionQueries() throws MetamacException {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus())
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().validTo()).isNull().distinctRoot().build();
+        return getQueryVersionRepository().findByCondition(criteria);
+
+    }
 }

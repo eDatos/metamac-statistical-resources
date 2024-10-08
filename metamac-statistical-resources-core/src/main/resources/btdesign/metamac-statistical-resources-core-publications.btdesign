@@ -69,9 +69,11 @@ Application PublicationsStatisticalResources {
 	    	@Cube updateCubeLocation(String cubeUrn, String parentChapterUrn, Long orderInLevel) throws MetamacException;
 	    	@Cube retrieveCube(String cubeUrn) throws MetamacException;
 	    	deleteCube(String cubeUrn) throws MetamacException;
-	    	
+	    		    	
 	   		// geographical coverage cache
     		updateGeographicalCache(@PublicationVersion publicationVersion) throws MetamacException;
+    		updateAllGeographicalCache() throws MetamacException;
+	    	updateAllExternalGeographicalCache() throws MetamacException;
 		}  
 
 

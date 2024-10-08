@@ -295,4 +295,12 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
     public static void checkUpdateGeographicalCache(PublicationVersion publicationVersion, List<MetamacExceptionItem> exceptions) {
         checkExistingPublicationVersion(publicationVersion, exceptions);
     }
+
+    public static void checkUpdateAllGeographicalCache(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
+    public static void checkUpdateAllExternalGeographicalCache(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
 }

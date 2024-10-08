@@ -957,4 +957,28 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         }
     }
 
+    @Override
+    public void updateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
+        publicationServiceInvocationValidator.checkUpdateAllGeographicalCache(ctx);
+        List<PublicationVersion> lastVersionPublicatedCollections = retrievePublishedLastVersionPublications();
+        for (PublicationVersion publicationVersion : lastVersionPublicatedCollections) {
+        updateGeographicalCacheInJob(ctx, publicationVersion, false);
+        }
+        
+    }
+    
+    private List<PublicationVersion> retrievePublishedLastVersionPublications() throws MetamacException {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(PublicationVersion.class).withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus())
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
+        return getPublicationVersionRepository().findByCondition(criteria);
+
+    }
+    
+    @Override
+    public void updateAllExternalGeographicalCache(ServiceContext ctx) throws MetamacException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

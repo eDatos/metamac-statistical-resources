@@ -56,6 +56,10 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
         checkExistingQueryVersion(queryVersion, exceptions);
     }
 
+    public static void checkUpdateAllGeographicalCache(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
     public static void checkCreateQueryVersion(QueryVersion queryVersion, ExternalItem statisticalOperation, List<MetamacExceptionItem> exceptions) throws MetamacException {
         checkNewQueryVersion(queryVersion, exceptions);
     }

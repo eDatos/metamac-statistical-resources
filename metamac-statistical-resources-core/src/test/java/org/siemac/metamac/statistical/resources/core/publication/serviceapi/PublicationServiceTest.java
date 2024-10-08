@@ -2580,11 +2580,25 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
     
      @Override
     public void testUpdateGeographicalCache() throws Exception {
-        // TODO 4587
+        // TODO EDATOS-4587
+
     }
 
     @Override
     public void testGetPublicationLastVersionPublished() throws Exception {
-        // TODO 4587
+        // TODO EDATOS-4587
+
+    }
+
+    @Override
+    public void testUpdateAllGeographicalCache() throws Exception {
+        // TODO EDATOS-4587
+
+    }
+
+    @Override
+    public void testUpdateAllExternalGeographicalCache() throws Exception {
+        // TODO EDATOS-4587
+
     }
 }
