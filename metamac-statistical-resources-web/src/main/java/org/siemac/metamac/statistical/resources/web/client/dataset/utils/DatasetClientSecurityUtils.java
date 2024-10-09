@@ -263,4 +263,8 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
         }
         return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
     }
+
+    public static boolean canCopyDataset(DatasetVersionDto datasetVersionDto) {
+        return SharedDatasetsSecurityUtils.canCopyDataset(getMetamacPrincipal(), getCurrentStatisticalOperationCode()) && BooleanUtils.isFalse(datasetVersionDto.getIsTaskInBackground());
+    }
 }

@@ -22,7 +22,7 @@ public interface DatasetMetadataTabUiHandlers extends DatasetMetadataCommonTabUi
     void saveDataset(DatasetVersionDto datasetDto);
 
     void deleteDatasetVersion(String urn);
-    void copyDataset(String urn);
+    void copyDataset(DatasetVersionDto dataset);
 
     // RELATED DATASETS
     void retrieveStatisticalOperationsForReplacesSelection();

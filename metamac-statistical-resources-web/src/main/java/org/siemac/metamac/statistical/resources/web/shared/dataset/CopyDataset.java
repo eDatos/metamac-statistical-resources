@@ -10,7 +10,7 @@ import com.gwtplatform.dispatch.annotation.Out;
 public class CopyDataset {
 
     @In(1)
-    String            urn;
+    DatasetVersionDto datasetVersion;
 
     @Out(1)
     DatasetVersionDto savedDatasetVersion;
