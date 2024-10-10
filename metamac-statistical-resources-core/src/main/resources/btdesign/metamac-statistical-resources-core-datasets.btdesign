@@ -269,6 +269,10 @@ Application DatasetsStatisticalResources {
 			- Bag<@Datasource> datasources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersion;
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
+			"Heading Dimensions"
+			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> datasetVersionHeading;
+			"Stub dimensions"
+			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> datasetVersionStub;
 			
 			Repository DatasetVersionRepository {
 				save;
@@ -439,8 +443,8 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}  	
-    	
+    	}
+
 		Entity GeoCovVarElementCacheDatasetVersion {
 			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
 			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
@@ -469,5 +473,6 @@ Application DatasetsStatisticalResources {
 				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 			}
 		}
+
 	}
 }

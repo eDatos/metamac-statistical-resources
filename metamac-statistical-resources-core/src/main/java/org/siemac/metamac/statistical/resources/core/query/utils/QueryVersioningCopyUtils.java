@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -40,6 +41,35 @@ public class QueryVersioningCopyUtils {
 
         target.getSelection().clear();
         target.getSelection().addAll(copyListQuerySelectionItem(source.getSelection(), target));
+        copyVisualizationMetadata(source, target);
+    }
+
+    private static void copyVisualizationMetadata(QueryVersion source, QueryVersion target) {
+        target.getHeadingDimensions().addAll(getDimensionOrdersCopy(source.getHeadingDimensions(), target));
+        target.getStubDimensions().addAll(getDimensionOrdersCopy(source.getStubDimensions(), target));
+    }
+
+    private static List<DimensionOrder> getDimensionOrdersCopy(List<DimensionOrder> sources, QueryVersion target) {
+        List<DimensionOrder> dimensionOrdersTarget = new ArrayList<>();
+        if (sources != null && !sources.isEmpty()) {
+            for (DimensionOrder source : sources) {
+                DimensionOrder dimensionOrderCopy = new DimensionOrder();
+                copyDimensionOrder(source, dimensionOrderCopy);
+                if (source.getQueryVersionHeading() != null) {
+                    dimensionOrderCopy.setQueryVersionHeading(target);
+                }
+                if (source.getQueryVersionStub() != null) {
+                    dimensionOrderCopy.setQueryVersionStub(target);
+                }
+                dimensionOrdersTarget.add(dimensionOrderCopy);
+            }
+        }
+        return dimensionOrdersTarget;
+    }
+
+    private static void copyDimensionOrder(DimensionOrder source, DimensionOrder target) {
+        target.setDimOrder(source.getDimOrder());
+        target.setUrnDimComponentFk(source.getUrnDimComponentFk());
     }
 
     private static List<QuerySelectionItem> copyListQuerySelectionItem(List<QuerySelectionItem> source, QueryVersion targetQueryVersion) {
