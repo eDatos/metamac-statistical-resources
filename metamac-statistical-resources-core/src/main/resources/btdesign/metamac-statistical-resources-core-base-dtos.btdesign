@@ -144,6 +144,10 @@ Application StatisticalResourcesDto {
 			//INTELLECTUAL PROPERTY DESCRIPTORS
 			Integer copyrightedDate;
 			- @InternationalStringDto accessRights;
+			
+			//METADATA VISUALISATION
+			- List<RelatedResourceDto> headingDimensions
+			- List<RelatedResourceDto> stubDimensions
 		}
 	}
 }
