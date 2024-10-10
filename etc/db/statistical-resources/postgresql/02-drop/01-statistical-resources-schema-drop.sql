@@ -105,6 +105,8 @@ DROP TABLE TB_EXTERNAL_ITEMS CASCADE;
 
 DROP TABLE TB_INTERNATIONAL_STRINGS CASCADE;
 
+DROP TABLE tb_m_dimension_orders CASCADE;
+
 
 -- Drop pk sequence
     
@@ -170,7 +172,7 @@ drop sequence SEQ_QUERY_SELECTION_ITEMS;
 drop sequence SEQ_CODE_ITEMS;
  	
 drop sequence SEQ_TASKS;
- 	
 
+DROP SEQUENCE seq_m_dimension_orders;
 
 	
