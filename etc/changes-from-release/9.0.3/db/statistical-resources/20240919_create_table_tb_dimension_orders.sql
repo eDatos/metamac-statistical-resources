@@ -1,3 +1,7 @@
+-- ---------------------------------------------------------------------------------------------------
+-- EDATOS-4605 Ampliar las opciones de visualización permitiendo configurar el orden de visualización de filas y columnas en los datasets y consultas
+-- ---------------------------------------------------------------------------------------------------
+
 CREATE TABLE tb_m_dimension_orders (
 	id int8 NOT NULL,
 	dim_order int4 NOT NULL,
@@ -15,5 +19,8 @@ CREATE TABLE tb_m_dimension_orders (
 	CONSTRAINT fk_tb_m_dimension_orders_query_version_heading_fk FOREIGN KEY (query_version_heading_fk) REFERENCES tb_queries_versions(id) ON DELETE CASCADE,
 	CONSTRAINT fk_tb_m_dimension_orders_query_version_stub_fk FOREIGN KEY (query_version_stub_fk) REFERENCES tb_queries_versions(id) ON DELETE CASCADE
 );
+COMMIT;
 
 CREATE sequence seq_m_dimension_orders;
+
+COMMIT;
