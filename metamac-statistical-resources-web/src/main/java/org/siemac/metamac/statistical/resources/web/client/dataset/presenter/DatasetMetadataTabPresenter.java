@@ -90,6 +90,8 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
 
         void setDataset(DatasetVersionDto datasetDto);
 
+        void setMetadataVisualization(DatasetVersionDto datasetDto);
+
         // metadata fill methods
         void setDatasetsForReplaces(GetDatasetVersionsResult result);
 
@@ -186,6 +188,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             @Override
             public void onWaitSuccess(GetDatasetVersionResult result) {
                 getView().setDataset(result.getDatasetVersionDto());
+                getView().setMetadataVisualization(result.getDatasetVersionDto());
                 SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getDatasetVersionDto());
             }
         });
@@ -199,7 +202,7 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
             public void onWaitSuccess(SaveDatasetVersionResult result) {
                 fireSuccessMessage(getMessages().datasetSaved());
                 getView().setDataset(result.getSavedDatasetVersion());
-
+                getView().setMetadataVisualization(result.getSavedDatasetVersion());
                 SetDatasetEvent.fire(DatasetMetadataTabPresenter.this, result.getSavedDatasetVersion());
             }
         });

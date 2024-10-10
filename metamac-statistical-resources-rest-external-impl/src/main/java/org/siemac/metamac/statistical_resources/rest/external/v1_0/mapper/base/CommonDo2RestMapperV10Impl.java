@@ -61,6 +61,7 @@ import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -383,14 +384,16 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages) {
+    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
+            List<DimensionOrder> stubDimensions) {
         if (source == null) {
             return null;
         }
         DataStructureDefinition target = new DataStructureDefinition();
         toResourceExternalItemSrm(source, target, selectedLanguages);
-        target.setHeading(toDimensionsId(dataStructure.getHeading()));
-        target.setStub(toDimensionsId(dataStructure.getStub()));
+        target.setHeading(
+                checkDatasetHaveHeadingAndStubDimensions(headingDimensions, stubDimensions) ? toDimensionsIdByDataset(headingDimensions, dataStructure) : toDimensionsId(dataStructure.getHeading()));
+        target.setStub(checkDatasetHaveHeadingAndStubDimensions(headingDimensions, stubDimensions) ? toDimensionsIdByDataset(stubDimensions, dataStructure) : toDimensionsId(dataStructure.getStub()));
         target.setAutoOpen(dataStructure.isAutoOpen());
         target.setShowNullValuesByDefault(dataStructure.isShowNullValuesByDefault());
         target.setShowZeroValuesByDefault(dataStructure.isShowZeroValuesByDefault());
@@ -1542,6 +1545,33 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         targets.setTotal(BigInteger.valueOf(targets.getDimensionIds().size()));
         return targets;
+    }
+
+    private boolean checkDatasetHaveHeadingAndStubDimensions(List<DimensionOrder> headingDimensions,
+            List<DimensionOrder> stubDimensions) {
+        return ((stubDimensions != null && !stubDimensions.isEmpty())
+                || (headingDimensions != null && !headingDimensions.isEmpty()));
+    }
+
+    private DimensionsId toDimensionsIdByDataset(List<DimensionOrder> dimensionsOrders, DataStructure dataStructure) {
+        if (dimensionsOrders == null) {
+            return null;
+        }
+        DimensionsId targets = new DimensionsId();
+        for (DimensionOrder source : dimensionsOrders) {
+            targets.getDimensionIds().add(getDimensionName(source.getUrnDimComponentFk(), dataStructure.getDataStructureComponents().getDimensions()));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getDimensionIds().size()));
+        return targets;
+    }
+
+    private String getDimensionName(String urn, org.siemac.metamac.rest.structural_resources.v1_0.domain.Dimensions dimensions) {
+        for (org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionBase dimension : dimensions.getDimensions()) {
+            if (dimension.getUrn().equals(urn)) {
+                return dimension.getId();
+            }
+        }
+        return "";
     }
 
     private void toCommonMetadata(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) {
