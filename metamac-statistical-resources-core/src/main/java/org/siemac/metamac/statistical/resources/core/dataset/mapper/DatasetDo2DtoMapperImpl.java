@@ -5,7 +5,10 @@ import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.statistical.resources.core.base.mapper.BaseDo2DtoMapperImpl;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
@@ -24,6 +27,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepre
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
+import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -36,6 +40,8 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
     @Autowired
     private DatasetVersionRepository datasetVersionRepository;
 
+    @Autowired
+    private SrmRestInternalService srmRestInternalService;
     // ---------------------------------------------------------------------------------------------------------
     // DATASOURCES
     // ---------------------------------------------------------------------------------------------------------
@@ -272,9 +278,72 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
 
         target.setViewCode(source.getDataset().getViewCode());
 
+        setHeadingAndStubDimension(target, source);
         return target;
     }
 
+    private void setHeadingAndStubDimension(DatasetVersionDto target, DatasetVersion source) throws MetamacException {
+        DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(target.getRelatedDsd().getUrn());
+        if (source.getStubDimensions() != null && !source.getStubDimensions().isEmpty()
+                || (source.getHeadingDimensions() != null && !source.getHeadingDimensions().isEmpty())) {
+            target.getHeadingDimensions().addAll(getDatasetDimension(source.getHeadingDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
+            target.getStubDimensions().addAll(getDatasetDimension(source.getStubDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
+        } else {
+            if (dsd != null && dsd.getStub() != null && dsd.getStub().getDimensions() != null) {
+                target.getStubDimensions().addAll(getDsdDimensions(dsd, dsd.getStub().getDimensions()));
+            }
+            if (dsd != null && dsd.getHeading() != null && dsd.getHeading().getDimensions() != null) {
+                target.getHeadingDimensions().addAll(getDsdDimensions(dsd, dsd.getHeading().getDimensions()));
+            }
+        }
+    }
+
+    private List<RelatedResourceDto> getDatasetDimension(List<DimensionOrder> dimensionsOrder, List<DimensionBase> dimensions) {
+        List<RelatedResourceDto> relatedResources = new ArrayList<>();
+        for (DimensionOrder dimensionOrder : dimensionsOrder) {
+            RelatedResourceDto relatedResource = new RelatedResourceDto();
+            DimensionBase dimensionBase = getDimensionByUrn(dimensionOrder.getUrnDimComponentFk(), dimensions);
+            relatedResource.setId(dimensionOrder.getId());
+            relatedResource.setCode(dimensionBase.getId());
+            relatedResource.setUrn(dimensionOrder.getUrnDimComponentFk());
+            relatedResources.add(relatedResource);
+        }
+        return relatedResources;
+    }
+
+    private List<RelatedResourceDto> getDsdDimensions(DataStructure dsd, List<String> dimensionsName) {
+        List<RelatedResourceDto> dimensions = new ArrayList<>();
+        List<DimensionBase> dimensionsBase = dsd.getDataStructureComponents().getDimensions().getDimensions();
+        for (String dimensionName : dimensionsName) {
+            DimensionBase dimensionBase = getDimensionByName(dimensionName, dimensionsBase);
+            if (dimensionBase != null) {
+                RelatedResourceDto target = new RelatedResourceDto();
+                target.setCode(dimensionBase.getId());
+                target.setUrn(dimensionBase.getUrn());
+                dimensions.add(target);
+            }
+        }
+
+        return dimensions;
+    }
+
+    private DimensionBase getDimensionByName(String dimensionName, List<DimensionBase> dimensions) {
+        for (DimensionBase dimensionBase : dimensions) {
+            if (dimensionBase.getId().equals(dimensionName)) {
+                return dimensionBase;
+            }
+        }
+        return null;
+    }
+
+    private DimensionBase getDimensionByUrn(String urn, List<DimensionBase> dimensions) {
+        for (DimensionBase dimensionBase : dimensions) {
+            if (dimensionBase.getUrn().equals(urn)) {
+                return dimensionBase;
+            }
+        }
+        return null;
+    }
     // ---------------------------------------------------------------------------------------------------------
     // STATISTIC OFFICIALITY
     // ---------------------------------------------------------------------------------------------------------
