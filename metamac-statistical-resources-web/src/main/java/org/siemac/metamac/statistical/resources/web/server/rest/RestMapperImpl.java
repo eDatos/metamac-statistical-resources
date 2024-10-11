@@ -187,7 +187,7 @@ public class RestMapperImpl implements RestMapper {
         if (resource != null) {
             resourceInternal.setId(resource.getCode());
             resourceInternal.setUrn(resource.getUrn());
-            resourceInternal.setKind(StatisticalResourcesRestConstants.KIND_DATASET);
+            resourceInternal.setKind(getKind(resourceType));
             resourceInternal.setName(toInternationalString(resource.getTitle()));
             resourceInternal.setManagementAppLink(commonDo2RestMapperV10.getInternalWebApplicationNavigation().buildResourceUrl(resource, resourceType));
             resourceInternal.setSelfLink(getResourceLink(resource, resourceType));
@@ -201,7 +201,7 @@ public class RestMapperImpl implements RestMapper {
         if (resource != null) {
             resourceInternal.setId(resource.getCode());
             resourceInternal.setUrn(resource.getUrn());
-            resourceInternal.setKind(StatisticalResourcesRestConstants.KIND_DATASET);
+            resourceInternal.setKind(getKind(resourceType));
             resourceInternal.setName(toInternationalString(resource.getTitle()));
             resourceInternal.setManagementAppLink(commonDo2RestMapperV10.getInternalWebApplicationNavigation().buildResourceUrl(resource, resourceType));
             resourceInternal.setSelfLink(getResourceLink(resource, resourceType));
@@ -209,6 +209,20 @@ public class RestMapperImpl implements RestMapper {
         return resourceInternal;
     }
 
+    private String getKind(StatisticalResourceTypeEnum resourceType) {
+        switch (resourceType) {
+            case DATASET:
+                return StatisticalResourcesRestConstants.KIND_DATASET;
+            case COLLECTION:
+                return StatisticalResourcesRestConstants.KIND_COLLECTION;
+            case QUERY:
+                return StatisticalResourcesRestConstants.KIND_QUERY;
+            case MULTIDATASET:
+                return StatisticalResourcesRestConstants.KIND_MULTIDATASET;
+            default:
+                throw new RuntimeException("Invalid value for statistical resource type " + resourceType);
+        }
+    }
     private ResourceLink getResourceLink(LifeCycleStatisticalResourceDto resource, StatisticalResourceTypeEnum resourceType) {
         switch (resourceType) {
             case DATASET:
