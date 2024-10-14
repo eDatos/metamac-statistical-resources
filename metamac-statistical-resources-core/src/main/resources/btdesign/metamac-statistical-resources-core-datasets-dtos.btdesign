@@ -69,6 +69,12 @@ Application DatasetsStatisticalResourcesDto {
 			
 			- @DataSourceTypeEnum dataSourceType;
 			JAVADATE dateLastTimeDataImport nullable;
+
+			"Visualisation metadata Heading, dimensions list ordered"
+			- List<@RelatedResourceDto> headingDimensions nullable;
+			
+			"Visualisation metadata Stub, dimensions list ordered"
+			- List<@RelatedResourceDto> stubDimensions nullable;
 		}
 
 		DataTransferObject DatasourceDto extends @IdentifiableStatisticalResourceDto {
