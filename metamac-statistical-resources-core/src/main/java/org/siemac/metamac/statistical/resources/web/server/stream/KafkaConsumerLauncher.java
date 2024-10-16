@@ -50,7 +50,6 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
-import org.siemac.metamac.statistical.resources.core.stream.custom.exception.NoOffsetStreamConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -214,11 +213,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         if (externalPublicationTopicName != null) {
             try (KafkaConsumer<String, PublicationAvro> consumer = createCustomCollectionConsumerFromCurrentOffset(externalPublicationTopicName, customMessage);) {
                 updateExternalPublication(statisticalResourcesConfiguration.retrieveKafkaExternalCollectionPublicationMessagesGroup(), externalPublicationTopicName, consumer, exceptionItems);
-            } catch (NoOffsetStreamConsumer e) {
-                noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_ERROR);
-            }
-
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error(e, e.getCause());
             } finally {
                 sendErrorNotification(exceptionItems, ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR,
@@ -234,8 +229,6 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         if (externalPublicationTopicName != null) {
             try (KafkaConsumer<String, DatasetAvro> consumer = createCustomDatasetConsumerFromCurrentOffset(externalPublicationTopicName, customMessage);) {
                 updateExternalPublication(statisticalResourcesConfiguration.retrieveKafkaExternalDatasetPublicationMessagesGroup(), externalPublicationTopicName, consumer, exceptionItems);
-            } catch (NoOffsetStreamConsumer e) {
-                noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
             } catch (Exception e) {
                 LOGGER.error(e, e.getCause());
             } finally {
@@ -248,7 +241,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     }
 
     private void updateExternalPublication(String externalPublicationTopicGroup, String externalPublicationTopicName, KafkaConsumer<String, ?> consumer, List<MetamacExceptionItem> exceptionItems)
-            throws MetamacException, NoOffsetStreamConsumer {
+            throws MetamacException {
         int it = 0;
         Long latestOffset = getLastConsumerOffset(externalPublicationTopicGroup);
 
