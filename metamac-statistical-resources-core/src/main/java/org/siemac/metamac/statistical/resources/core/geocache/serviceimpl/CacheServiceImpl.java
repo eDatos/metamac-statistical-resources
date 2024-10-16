@@ -9,6 +9,7 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBui
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -42,6 +43,9 @@ import org.siemac.metamac.statistical.resources.core.invocation.utils.JaxiMapper
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
+import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
+import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
@@ -82,6 +86,9 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
     @Autowired
     private CacheServiceInvocationValidator   cacheServiceInvocationValidator;
+
+    @Autowired
+    private TaskService                       taskService;
 
     public CacheServiceImpl() {
     }
@@ -572,5 +579,32 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         // TODO Auto-generated method stub
         return null;
     }
+    
+    @Override
+    public void updateAllGeographicExternalCoverageVariableElementsCache(ServiceContext ctx, List<StatisticalResourceTypeEnum> externalResourcesToUpdate) throws MetamacException {
+       
+        logger.info("Execution start - updateAllGeographicExternalCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+
+        for (StatisticalResourceTypeEnum resourceType : externalResourcesToUpdate) {
+            updateAllExternalGeocoverageCache(ctx, resourceType);
+            }
+
+        logger.info("Execution end - updateAllGeographicExternalCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+
+    }
+    
+    private void updateAllExternalGeocoverageCache(ServiceContext ctx, StatisticalResourceTypeEnum externalResourcesToUpdate) throws MetamacException {
+
+        String resource = JobUtil.createJobNameForUpdateExternalGeocoverageCache();
+
+        if (taskService.existUpdateExternalGeocoverageCacheTaskInResource(ctx)) {
+            throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, resource);
+        }
+
+        TaskInfoResources taskInfo = new TaskInfoResources();
+        taskInfo.setResourceType(externalResourcesToUpdate.getName());
+        taskService.planifyUpdateExternalGeocoverageCache(ctx, taskInfo);
+    }
+
 
 }

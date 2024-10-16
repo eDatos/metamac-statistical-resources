@@ -118,7 +118,6 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
-import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
@@ -1541,13 +1540,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         updateAllGeocoverageCache(ctx, datasetVersions);
     }
 
-    @Override
-    public void updateAllGeographicExternalCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
-        datasetServiceInvocationValidator.checkUpdateAllGeographicCoverageVariableElementsCache(ctx);
-
-        updateAllExternalGeocoverageCache(ctx);
-    }
-
     private void updateGeographicCoverageExternalPublicationCacheByResource(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
@@ -1651,18 +1643,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void updateAllExternalGeocoverageCache(ServiceContext ctx) throws MetamacException {
-
-        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
-
-            @Override
-            protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                updateExternalGeocoverageCache(ctx);
-                return null;
-            }
-        });
-    }
-
     abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
         @Override
@@ -1691,18 +1671,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDatasetVersionId(datasetVersionUrn);
         taskInfo.setDatasetUrn(datasetUrn);
         taskService.planifyUpdateGeocoverageCache(ctx, taskInfo, sendNotification);
-    }
-
-    private void updateExternalGeocoverageCache(ServiceContext ctx) throws MetamacException {
-
-        String resource = JobUtil.createJobNameForUpdateExternalGeocoverageCache();
-
-        if (getTaskService().existUpdateExternalGeocoverageCacheTaskInResource(ctx)) {
-            throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, resource);
-        }
-
-        TaskInfoDataset taskInfo = new TaskInfoDataset();
-        taskService.planifyUpdateExternalGeocoverageCache(ctx, taskInfo);
     }
 
     private void checkNotTasksInProgress(ServiceContext ctx, String datasetUrn) throws MetamacException {

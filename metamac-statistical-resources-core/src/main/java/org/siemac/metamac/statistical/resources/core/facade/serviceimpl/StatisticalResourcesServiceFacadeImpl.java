@@ -1333,23 +1333,37 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+    public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx, List<StatisticalResourceTypeEnum> resourcesToUpdate, List<StatisticalResourceTypeEnum> externalResourcesToUpdate)
+            throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
         logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
 
-        // Operate
-        getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+        updateAllGeographicCoverageVariableElementsCache(ctx, resourcesToUpdate);
 
         logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
 
-        logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+        getCacheService().updateAllGeographicExternalCoverageVariableElementsCache(ctx, externalResourcesToUpdate);
+    }
 
-        getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
-
-        logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
-
+    private void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx, List<StatisticalResourceTypeEnum> resourcesToUpdate) throws MetamacException {
+        for (StatisticalResourceTypeEnum resourceType : resourcesToUpdate) {
+            switch (resourceType) {
+                case DATASET:
+                    getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+                    break;
+                case QUERY:
+                    getQueryService().updateAllGeographicalCache(ctx);
+                    break;
+                case COLLECTION:
+                    getPublicationService().updateAllGeographicalCache(ctx);
+                    break;
+                default:
+                    throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_RESOURCE_NOT_FOUND, resourceType.getName()))
+                            .build();
+            }
+        }
     }
 
     @Override

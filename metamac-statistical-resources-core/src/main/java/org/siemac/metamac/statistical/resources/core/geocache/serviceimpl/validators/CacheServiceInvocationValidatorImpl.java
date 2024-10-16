@@ -114,6 +114,10 @@ public class CacheServiceInvocationValidatorImpl {
 
     }
 
+    public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<StatisticalResourceTypeEnum> externalResourcesToUpdate, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
     public static void checkFindResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }

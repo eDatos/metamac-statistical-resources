@@ -6,6 +6,7 @@ import "classpath:/btdesign/metamac-statistical-resources-core-tasks.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-datasets-enums.btdesign"
 import "classpath:/btdesign/metamac-core-common-enum.btdesign"
+
 import "classpath:/btdesign/metamac-statistical-resources-core-caches.btdesign"
 
 Application DatasetsStatisticalResources { 
@@ -124,7 +125,6 @@ Application DatasetsStatisticalResources {
     		// Geocoverage variable elements cache
     		void updateGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
-    		void updateAllGeographicExternalCoverageVariableElementsCache() throws MetamacException;
     		void updateGeographicCoverageExternalPublicationCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
 	
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;

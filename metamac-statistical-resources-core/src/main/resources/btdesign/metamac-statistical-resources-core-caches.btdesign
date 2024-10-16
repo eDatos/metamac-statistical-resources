@@ -40,6 +40,7 @@ Application CacheStatisticalResources {
             processGeoCacheRelatedCollection(@PublicationVersion publicationVersion, boolean isLastVersionPublished, String urn) throws MetamacException;
             processUpdateGeoCacheResource(@LifeCycleStatisticalResource lifeCycleResource, String urnResource, @StatisticalResourceTypeEnum statisticalResourceTypeEnum, List<@ExternalItem> geographicCoverage,
             boolean isLastVersionPublished) throws MetamacException;
+            updateAllGeographicExternalCoverageVariableElementsCache(List<@StatisticalResourceTypeEnum> externalResourcesToUpdate) throws MetamacException;
             
             "deletes"
             List<@GeoCacheResource> disabledResourceByUrn(String resourceUrn);

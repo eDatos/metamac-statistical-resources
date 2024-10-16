@@ -239,7 +239,7 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.TASK_RESOURCES_JOB_KEY, exceptions);
     }
 
-    public static void checkPlanifyUpdateExternalGeocoverageCache(TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+    public static void checkPlanifyUpdateExternalGeocoverageCache(TaskInfoResources taskInfoResources, List<MetamacExceptionItem> exceptions) {
         // NOTHING TO DO HERE
     }
 
@@ -252,7 +252,7 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(taskInfoDataset.getDatasetVersionId(), ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
     }
 
-    public static void checkProcessUpdateExternalGeocoverageCacheTask(String jobKey, TaskInfoDataset taskInfoDataset, List<MetamacExceptionItem> exceptions) {
+    public static void checkProcessUpdateExternalGeocoverageCacheTask(String jobKey, TaskInfoResources taskInfoResource, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_RESOURCES_JOB_KEY, exceptions);
     }
 

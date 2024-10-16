@@ -10,6 +10,7 @@ import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -31,6 +32,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
@@ -42,11 +44,13 @@ import org.siemac.metamac.sso.client.SsoClientConstants;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
+import org.siemac.metamac.statistical.resources.core.stream.custom.exception.NoOffsetStreamConsumer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -64,10 +68,11 @@ import net.sf.ehcache.CacheManager;
 @Component
 public class KafkaConsumerLauncher implements ApplicationListener<ContextRefreshedEvent> {
 
-    protected static final Log                LOGGER                                                    = LogFactory.getLog(KafkaConsumerLauncher.class);
+    protected static final Log                LOGGER                                                       = LogFactory.getLog(KafkaConsumerLauncher.class);
 
-    private static final String               MAX_POOL_MSG                                              = "We have set a poll of 1 message at most. This error can not be given.";
-
+    private static final String               MAX_POOL_MSG                                                 = "We have set a poll of 1 message at most. This error can not be given.";
+    private String                            externalDatasetPublicationTopicName;
+    private String                            externalCollectionPublicationTopicName;
     @Autowired
     private StatisticalResourcesConfiguration statisticalResourcesConfiguration;
 
@@ -88,6 +93,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private static final String               CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME             = "statistical_resources_consumer_jaxi_publication_1";
     private static final String               CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME       = "statistical_resources_consumer_codelist_publication_1";
     private static final String               CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME  = "statistical_resources_consumer_jaxi_collection_publication_1";
+    private static final String               CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_CUSTOM_MESSAGE_NAME = "statistical_resources_consumer_jaxi_collection_publication_2";
     private static final String               KAFKA_FAILED_CACHE_NAME                                   = "kafkaFailed";
 
     @Override
@@ -110,9 +116,9 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(ac, externalPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME));
                 }
                 
-                 externalPublicationTopicName = getExternalCollectionPublicationTopic();
-                if (externalPublicationTopicName != null && Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, externalPublicationTopicName))) {
-                futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalCollectionPublicationTopic(ac, externalPublicationTopicName, CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME));
+                externalCollectionPublicationTopicName = getExternalCollectionPublicationTopic();
+                if (externalCollectionPublicationTopicName != null && Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, externalCollectionPublicationTopicName))) {
+                futuresMap.put(CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalCollectionPublicationTopic(ac, externalCollectionPublicationTopicName, CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME));
                 }
                 
                 if (!futuresMap.isEmpty()) {
@@ -154,8 +160,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return null;
     }
 
-    private Long getLastConsumerOffset() throws MetamacException {
-        String externalPublicationTopicGroup = statisticalResourcesConfiguration.retrieveKafkaExternalDatasetPublicationMessagesGroup();
+    private Long getLastConsumerOffset(String externalPublicationTopicGroup) throws MetamacException {
 
         Properties properties = new Properties();
         properties.put(AdminClientConfig.REQUEST_TIMEOUT_MS_CONFIG, 10000);
@@ -189,28 +194,67 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return 0L;
     }
 
-    public void createCustomConsumer() throws MetamacException {
-        String externalPublicationTopicName = getExternalDatasetPublicationTopic();
-        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
+    public void createCustomConsumer(StatisticalResourceTypeEnum statisticalResourceTypeEnum) throws MetamacException {
+
+        switch (statisticalResourceTypeEnum) {
+            case COLLECTION:
+                createCollectionCustomConsumer(externalCollectionPublicationTopicName, CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_CUSTOM_MESSAGE_NAME);
+                break;
+            case DATASET:
+                createDatasetCustomConsumer(externalDatasetPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME);
+                break;
+            default:
+                throw new IllegalArgumentException("Kafka consumer for this resource is not available");
+
+        }
+    }
+
+    public void createCollectionCustomConsumer(String externalPublicationTopicName, String customMessage) throws MetamacException {
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
         if (externalPublicationTopicName != null) {
-            try (KafkaConsumer<String, DatasetAvro> consumer = createCustomConsumerFromCurrentOffset(externalPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME);) {
-                updateDatasetExternalPublication(externalPublicationTopicName, consumer, exceptionItems);
-            } catch (Exception e) {
+            try (KafkaConsumer<String, PublicationAvro> consumer = createCustomCollectionConsumerFromCurrentOffset(externalPublicationTopicName, customMessage);) {
+                updateExternalPublication(statisticalResourcesConfiguration.retrieveKafkaExternalCollectionPublicationMessagesGroup(), externalPublicationTopicName, consumer, exceptionItems);
+            } catch (NoOffsetStreamConsumer e) {
+                noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_ERROR);
+            }
+
+            catch (Exception e) {
                 LOGGER.error(e, e.getCause());
             } finally {
-                sendErrorNotification(exceptionItems);
+                sendErrorNotification(exceptionItems, ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR,
+                        ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET);
             }
 
         }
 
     }
 
-    private void updateDatasetExternalPublication(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+    public void createDatasetCustomConsumer(String externalPublicationTopicName, String customMessage) throws MetamacException {
+        List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+        if (externalPublicationTopicName != null) {
+            try (KafkaConsumer<String, DatasetAvro> consumer = createCustomDatasetConsumerFromCurrentOffset(externalPublicationTopicName, customMessage);) {
+                updateExternalPublication(statisticalResourcesConfiguration.retrieveKafkaExternalDatasetPublicationMessagesGroup(), externalPublicationTopicName, consumer, exceptionItems);
+            } catch (NoOffsetStreamConsumer e) {
+                noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
+            } catch (Exception e) {
+                LOGGER.error(e, e.getCause());
+            } finally {
+                sendErrorNotification(exceptionItems, ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR,
+                        ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET); // EDATOS-4587 TODO personalizar por tipo de recurso.
+            }
+
+        }
+
+    }
+
+    private void updateExternalPublication(String externalPublicationTopicGroup, String externalPublicationTopicName, KafkaConsumer<String, ?> consumer, List<MetamacExceptionItem> exceptionItems)
+            throws MetamacException, NoOffsetStreamConsumer {
         int it = 0;
-        Long latestOffset = getLastConsumerOffset();
+        Long latestOffset = getLastConsumerOffset(externalPublicationTopicGroup);
 
         if (latestOffset <= 0L) {
-            noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
+            // throw new NoOffsetStreamConsumer("Last consumer offset not found");
+            // TODO EDATOS-4587 enviar error igual que antes
         }
 
         externalPublicationConsumerConfig(externalPublicationTopicName, consumer);
@@ -220,7 +264,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
 
         while (keepOnReading) {
-            ConsumerRecords<String, DatasetAvro> records = consumer.poll(100);
+            ConsumerRecords<String, ?> records = consumer.poll(100);
 
             if (it > latestOffset) {
                 LOGGER.info("last consumer topic external publication iteration " + latestOffset);
@@ -237,10 +281,10 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
             if (!records.isEmpty()) {
 
                 // Process resources
-                ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
+                ConsumerRecord<String, ?> record = records.iterator().next();
 
                 if (record.offset() >= latestOffset - 1) {
-                    LOGGER.info("The dataset external publication update has finished correctly. Consumer topic external publication last offset " + latestOffset);
+                    LOGGER.info("The external publication update has finished correctly. Consumer topic external publication last offset " + latestOffset);
                     keepOnReading = false;
                 }
 
@@ -252,7 +296,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
     }
 
-    private void sendErrorNotification(List<MetamacExceptionItem> exceptionItems) {
+    private void sendErrorNotification(List<MetamacExceptionItem> exceptionItems, CommonServiceExceptionType principalMessage, String errorSubjectMessage) {
         if (!exceptionItems.isEmpty()) {
             MetamacException metamacException = new MetamacException();
             metamacException.getExceptionItems().addAll(exceptionItems);
@@ -261,7 +305,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
     }
 
-    private boolean removePendingOffsets(KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record, Map<Integer, Long> pendigOffsetsToCommit) {
+    private boolean removePendingOffsets(KafkaConsumer<String, ?> consumer, ConsumerRecord<String, ?> record, Map<Integer, Long> pendigOffsetsToCommit) {
         if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
             LOGGER.debug("The current message already processed successfully");
             if (commitSync(consumer, record)) {
@@ -273,7 +317,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return false;
     }
 
-    private void externalPublicationConsumerConfig(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer) {
+    private void externalPublicationConsumerConfig(String externalPublicationTopicName, KafkaConsumer<String, ?> consumer) {
         consumer.subscribe(Collections.singleton(externalPublicationTopicName), new ConsumerRebalanceListener() {
 
             @Override
@@ -287,8 +331,8 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         });
     }
 
-    private void callFacadeBusinessLogicUpdateCache(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record,
-            Map<Integer, Long> pendigOffsetsToCommit, List<MetamacExceptionItem> exceptions) {
+    private void callFacadeBusinessLogicUpdateCache(String externalPublicationTopicName, KafkaConsumer<String, ?> consumer, ConsumerRecord<String, ?> record, Map<Integer, Long> pendigOffsetsToCommit,
+            List<MetamacExceptionItem> exceptions) {
         StringBuilder logMessageBldr = new StringBuilder("Received message from Kafka -> Topic Name: ");
         // @formatter:off
         logMessageBldr
@@ -308,13 +352,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         try {
             ServiceContext serviceContext = createServiceContext(logMessage);
 
-            if (record.value() == null || record.value().getUrn() == null) {
-                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_DATASET_FROM_EXTERNAL_PUBLICATION_ERROR_STREAM_NO_VALID, record.key()));
-            } else {
-
-                statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationCache(serviceContext, record.value());
-                commitSync(consumer, record);
-            }
+            executeUpdateGeographicCoverageExternalPublicationCache(externalPublicationTopicName, serviceContext, consumer, record, exceptions);
 
         } catch (MetamacException e) {
             LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
@@ -327,7 +365,31 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
     }
 
-    private void removeFromErrorCacheMessagesIfNeccesary(ConsumerRecord<String, DatasetAvro> record) {
+    private void executeUpdateGeographicCoverageExternalPublicationCache(String externalPublicationTopicName, ServiceContext serviceContext, KafkaConsumer<String, ?> consumer,
+            ConsumerRecord<String, ?> record, List<MetamacExceptionItem> exceptions) throws MetamacException {
+
+        String urn = null;
+        SpecificRecordBase recordBase = null;
+        if (externalDatasetPublicationTopicName.equals(externalPublicationTopicName)) {
+            ConsumerRecord<String, DatasetAvro> datasetRecord = (ConsumerRecord<String, DatasetAvro>) record;
+            urn = datasetRecord.value() != null ? datasetRecord.value().getUrn() : null;
+            recordBase = datasetRecord.value();
+        } else if (externalCollectionPublicationTopicName.equals(externalPublicationTopicName)) {
+            ConsumerRecord<String, PublicationAvro> publicationRecord = (ConsumerRecord<String, PublicationAvro>) record;
+            urn = publicationRecord.value() != null ? publicationRecord.value().getUrn() : null;
+            recordBase = publicationRecord.value();
+        }
+
+        if (urn == null) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_RESOURCE_FROM_EXTERNAL_PUBLICATION_ERROR_STREAM_NO_VALID, record.key()));
+        } else {
+
+            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationCache(serviceContext, recordBase);
+            commitSync(consumer, record);
+        }
+    }
+
+    private void removeFromErrorCacheMessagesIfNeccesary(ConsumerRecord<String, ?> record) {
         if (kafkaFailedMessagesCache.isKeyInCache(record.key())) {
             kafkaFailedMessagesCache.remove(record.key());
         }
@@ -342,7 +404,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return serviceContext;
     }
 
-    private boolean commitSync(KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record) {
+    private boolean commitSync(KafkaConsumer<String, ?> consumer, ConsumerRecord<String, ?> record) {
         try {
             consumer.commitSync(Collections.singletonMap(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1)));
             LOGGER.debug("Commited message: " + record.partition() + " : " + record.offset());
@@ -353,16 +415,24 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return true;
     }
 
-    private KafkaConsumer<String, DatasetAvro> createCustomConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
-        KafkaConsumer<String, DatasetAvro> kafkaConsumer = new KafkaConsumer<>(getCustomonsumerProperties(clientId));
+    private KafkaConsumer<String, DatasetAvro> createCustomDatasetConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
+        KafkaConsumer<String, DatasetAvro> kafkaConsumer = new KafkaConsumer<>(
+                getCustomonsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomExternalDatasetPublicationMessagesGroup()));
         kafkaConsumer.subscribe(Collections.singletonList(topic));
         return kafkaConsumer;
     }
 
-    private Properties getCustomonsumerProperties(String clientId) throws MetamacException {
+    private KafkaConsumer<String, PublicationAvro> createCustomCollectionConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
+        KafkaConsumer<String, PublicationAvro> kafkaConsumer = new KafkaConsumer<>(
+                getCustomonsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomExternalCollectionPublicationMessagesGroup()));
+        kafkaConsumer.subscribe(Collections.singletonList(topic));
+        return kafkaConsumer;
+    }
+
+    private Properties getCustomonsumerProperties(String clientId, String group) throws MetamacException {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, statisticalResourcesConfiguration.retrieveKafkaCustomExternalDatasetPublicationMessagesGroup());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, group);
         props.put(ConsumerConfig.CLIENT_ID_CONFIG, clientId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, io.confluent.kafka.serializers.KafkaAvroDeserializer.class);
@@ -504,9 +574,8 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
         @Override
         public void run() {
-            String externalPublicationTopicName = getExternalDatasetPublicationTopic();
-            String externalCollectionPublicationTopicName = getExternalCollectionPublicationTopic();
-            if (externalPublicationTopicName != null || externalCollectionPublicationTopicName != null) {
+
+            if (externalDatasetPublicationTopicName != null || externalCollectionPublicationTopicName != null) {
                 while (alwaysWithDelay(1000)) {
 
                     for (Map.Entry<String, Future<?>> entry : futuresMap.entrySet()) {
@@ -516,7 +585,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                                 if (CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
 
                                     futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(
-                                            ApplicationContextProvider.getApplicationContext(), externalPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME));
+                                            ApplicationContextProvider.getApplicationContext(), externalDatasetPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME));
                                 }
 
                                 if (CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {

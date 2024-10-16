@@ -730,9 +730,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     @Override
-    public String planifyUpdateExternalGeocoverageCache(ServiceContext ctx, TaskInfoDataset taskInfoDataset) throws MetamacException {
+    public String planifyUpdateExternalGeocoverageCache(ServiceContext ctx, TaskInfoResources taskInfoResources) throws MetamacException {
         // Validation
-        taskServiceInvocationValidator.checkPlanifyUpdateExternalGeocoverageCache(ctx, taskInfoDataset);
+        taskServiceInvocationValidator.checkPlanifyUpdateExternalGeocoverageCache(ctx, taskInfoResources);
 
         String taskName = createJobNameForUpdateExternalGeocoverageCache();
 
@@ -748,6 +748,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .withIdentity(jobKey)
                     .usingJobData(UpdateExternalGeocoverageCacheJob.USER, ctx.getUserId())
                     .usingJobData(UpdateExternalGeocoverageCacheJob.TASK_NAME, taskName)
+                    .usingJobData(UpdateExternalGeocoverageCacheJob.RESOURCE_TYPE, taskInfoResources.getResourceType())
                     .requestRecovery()
                     .build();
             // @formatter:on
@@ -1321,15 +1322,26 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     @Override
-    public void processUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
+    public void processUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoResources taskInfoResource) throws MetamacException {
         // Validation
-        taskServiceInvocationValidator.checkProcessUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
+        taskServiceInvocationValidator.checkProcessUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoResource);
 
         logger.debug("Updating geocoverage cache for external datasets (nonexistent in database)");
 
-        streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
+        StatisticalResourceTypeEnum resourceType = StatisticalResourceTypeEnum.valueOf(taskInfoResource.getResourceType());
 
-        logger.debug("Processing geographic coverage for external datasets (nonexistent in database) to create the cache correctly finished");
+        if (StatisticalResourceTypeEnum.COLLECTION.equals(resourceType)) {
+            streamConsumerServiceFacade.updateGeographicalCacheExternalCollections(ctx);
+        } else if (StatisticalResourceTypeEnum.DATASET.equals(resourceType)) {
+            streamConsumerServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx);
+        } else {
+            throw new IllegalStateException("An unexpected  resource has been found to process update external geocoverage cache");
+        }
+
+        if (logger.isDebugEnabled()) {
+            logger.debug(String.format("Processing geographic coverage for external resources of type %s (nonexistent in database) to create the cache correctly finished",
+                    taskInfoResource.getResourceType() != null ? taskInfoResource.getResourceType() : " - "));
+        }
 
         markTaskAsFinishedInTransaction(ctx, jobKey);
     }

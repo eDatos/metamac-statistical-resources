@@ -1,6 +1,10 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.dataset;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheResult;
@@ -13,7 +17,9 @@ import org.springframework.stereotype.Component;
 import com.gwtplatform.dispatch.shared.ActionException;
 
 @Component
-public class UpdateGeographicCoverageVariableElementsCacheActionHandler extends SecurityActionHandler<UpdateGeographicCoverageVariableElementsCacheAction, UpdateGeographicCoverageVariableElementsCacheResult> {
+public class UpdateGeographicCoverageVariableElementsCacheActionHandler
+        extends
+            SecurityActionHandler<UpdateGeographicCoverageVariableElementsCacheAction, UpdateGeographicCoverageVariableElementsCacheResult> {
 
     @Autowired
     private StatisticalResourcesServiceFacade statisticalResourcesServiceFacade;
@@ -28,7 +34,9 @@ public class UpdateGeographicCoverageVariableElementsCacheActionHandler extends 
             if (action.getDatasetVersionDto() != null) {
                 statisticalResourcesServiceFacade.updateGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionDto().getUrn());
             } else {
-                statisticalResourcesServiceFacade.updateAllGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext());
+                List<StatisticalResourceTypeEnum> resourcesToUpdate = new ArrayList<>();
+                List<StatisticalResourceTypeEnum> externalResourcesToUpdate = new ArrayList<>();
+                statisticalResourcesServiceFacade.updateAllGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), resourcesToUpdate, externalResourcesToUpdate);
             }
             return new UpdateGeographicCoverageVariableElementsCacheResult.Builder().datasetVersionDto(action.getDatasetVersionDto()).build();
         } catch (MetamacException e) {

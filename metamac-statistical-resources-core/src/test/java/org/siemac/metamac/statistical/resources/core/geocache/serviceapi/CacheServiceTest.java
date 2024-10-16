@@ -149,4 +149,10 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
         // TODO Auto-generated method stub
 
     }
+
+    @Override
+    public void testUpdateAllGeographicExternalCoverageVariableElementsCache() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }

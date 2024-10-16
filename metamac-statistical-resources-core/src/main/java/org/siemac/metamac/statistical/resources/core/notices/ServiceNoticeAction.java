@@ -21,6 +21,7 @@ public class ServiceNoticeAction {
     public static final String RESOURCE_RECEIVED_FROM_KAFKA_ERROR                               = "notice_message.resources.action.received_from_kafka.error";
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET            = "notice_message.resources.action.update_geocoverage_cache_external_publication_variable_element_error";
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR              = "notice_message.resources.action.update_geocoverage_cache_get_messages_from_kafka.error";
+    public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_ERROR   = "notice_message.resources.action.update_geocoverage_cache_get_collection_messages_from_kafka.error";
 
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET = "notice_message.resources.action.update_geocoverage_cache_external_collection_publication_error";
 

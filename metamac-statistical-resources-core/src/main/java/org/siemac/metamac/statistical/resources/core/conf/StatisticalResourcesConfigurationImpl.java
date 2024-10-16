@@ -149,4 +149,9 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     public String retrieveKafkaExternalCollectionPublicationMessagesGroup() throws MetamacException {
         return STATISTICAL_RESOURCES_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP;
     }
+
+    @Override
+    public String retrieveKafkaCustomExternalCollectionPublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP;
+    }
 }

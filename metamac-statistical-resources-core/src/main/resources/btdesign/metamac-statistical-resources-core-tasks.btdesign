@@ -37,7 +37,7 @@ Application DatasetsStatisticalResources {
 			"Perform the update geographical coverage cache task"
     		executeUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the update geographical coverage cache task for external publications"
-    		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
     		"Perform the update geographical coverage cache for related resources task"
     		executeUpdateGeographicalCacheRelatedResourceTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
     		executeResendPublishedDatasetsKafkaMessageTask() throws MetamacException;
@@ -94,7 +94,7 @@ Application DatasetsStatisticalResources {
     		"Plannify a scheduled task to update the geographical coverage cache"
             String planifyUpdateGeocoverageCache(@TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException;
             "Plannify a scheduled task to update the geographical coverage cache for external datasets"
-            String planifyUpdateExternalGeocoverageCache(@TaskInfoDataset taskInfoDataset) throws MetamacException;
+            String planifyUpdateExternalGeocoverageCache(@TaskInfoResources taskInfoResources) throws MetamacException;
         	"Plannify a scheduled task to update the geographical cache for a related resources"
             String planifyUpdateGeographicalCacheRelatedResource(@TaskInfoResources taskInfoResources, boolean sendNotification) throws MetamacException;
     		    
@@ -102,7 +102,7 @@ Application DatasetsStatisticalResources {
             "Perform the geographical coverage cache update task"
     		processUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the geographical coverage cache update task for external datasets"
-    		processUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		processUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
     		"Perform the geographical coverage cache update task for related cache resource"
     		processUpdateGeographicalCacheRelatedResourceTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;        		
     		"Perform the geographic coverage cache clear task"

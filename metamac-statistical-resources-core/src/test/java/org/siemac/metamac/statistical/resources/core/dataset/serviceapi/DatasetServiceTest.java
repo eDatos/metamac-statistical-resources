@@ -2194,11 +2194,6 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     @Override
-    public void testUpdateAllGeographicExternalCoverageVariableElementsCache() throws Exception {
-        // NOTHING TO DO
-
-    }
-
     public void testUpdateGeographicCoverageExternalPublicationCache() throws Exception {
         // NOTHING TO DO
     }
