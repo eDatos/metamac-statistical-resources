@@ -2220,7 +2220,6 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
     @Override
     public void testCopyDatasetVersion() throws Exception {
-        // TODO Auto-generated method stub
-        
+        // NOTHING TO DO
     }
 }
