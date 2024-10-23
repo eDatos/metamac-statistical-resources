@@ -276,6 +276,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.task.error.update_external_geocoverage_cache_get_all_external_publication_messages_error");
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_GET_ALL_EXTERNAL_COLLECTIONS_PUBLICATION_MESSAGES_ERROR = create(
             "update_external_geocoverage_cache_get_all_external_collection_publication_messages_error");
+    public static final CommonServiceExceptionType TASKS_RELATED_IN_PROGRESS                                                                           = create(
+            "exception.resources.task.error.update_external_geocoverage_cache_task_related_in_progress");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                                                   = create("exception.resources.task.in_progress");
 
     // Dataset Importation

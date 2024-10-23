@@ -62,7 +62,9 @@ import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryProperties;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
+import org.siemac.metamac.statistical.resources.core.task.serviceimpl.TaskServiceImpl;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
+import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesUrnParserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -561,7 +563,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
 
     @Override
     public void updateGeographicalCache(ServiceContext ctx, PublicationVersion publicationVersion) throws MetamacException {
-        updateGeographicalCacheInJob(ctx, publicationVersion, true);
+        updateGeographicalCacheInJob(ctx, publicationVersion, true, false);
     }
 
     @Override
@@ -935,7 +937,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         return getPublicationRepository().findByCondition(conditions, pagingParameter);
     }
 
-    private void updateGeographicalCacheInJob(ServiceContext ctx, PublicationVersion publicationVersion, boolean sendNotification) throws MetamacException {
+    private void updateGeographicalCacheInJob(ServiceContext ctx, PublicationVersion publicationVersion, boolean sendNotification, boolean mustWaitForRelatedResourcesUpdate) throws MetamacException {
         ProcStatusValidator.checkStatisticalResourceStructureCanBeCached(publicationVersion);
 
         String publicationUrn = publicationVersion.getPublication().getIdentifiableStatisticalResource().getUrn();
@@ -947,6 +949,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         taskInfo.setVersionId(publicationVersionUrn);
         taskInfo.setUrn(publicationUrn);
         taskInfo.setResourceType(StatisticalResourceTypeEnum.COLLECTION.name());
+        taskInfo.setMustWaitForRelatedResourcesUpdate(mustWaitForRelatedResourcesUpdate);
         getTaskService().planifyUpdateGeographicalCacheRelatedResource(ctx, taskInfo, sendNotification);
 
     }
@@ -958,13 +961,25 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     }
 
     @Override
-    public void updateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
-        publicationServiceInvocationValidator.checkUpdateAllGeographicalCache(ctx);
-        List<PublicationVersion> lastVersionPublicatedCollections = retrievePublishedLastVersionPublications();
-        for (PublicationVersion publicationVersion : lastVersionPublicatedCollections) {
-        updateGeographicalCacheInJob(ctx, publicationVersion, false);
+    public void updateAllGeographicalCache(ServiceContext ctx, boolean mustWaitForRelatedResourcesUpdate) throws MetamacException {
+        publicationServiceInvocationValidator.checkUpdateAllGeographicalCache(ctx, mustWaitForRelatedResourcesUpdate);
+        
+        if (!mustWaitForRelatedResourcesUpdate && checkCanUpdateAllGeographicalCache(ctx)) {
+            mustWaitForRelatedResourcesUpdate = true;
         }
         
+        List<PublicationVersion> lastVersionPublicatedCollections = retrievePublishedLastVersionPublications();
+        for (PublicationVersion publicationVersion : lastVersionPublicatedCollections) {
+        updateGeographicalCacheInJob(ctx, publicationVersion, false, mustWaitForRelatedResourcesUpdate);
+        }
+        
+    }
+    
+    private boolean checkCanUpdateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
+        List<String> tasksName = new ArrayList<>();
+        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE);
+        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + StatisticalResourcesUrnParserUtils.getPrefixQueryUrn());
+        return getTaskService().existsGeoCacheTasksByTaskName(ctx, tasksName);
     }
     
     private List<PublicationVersion> retrievePublishedLastVersionPublications() throws MetamacException {

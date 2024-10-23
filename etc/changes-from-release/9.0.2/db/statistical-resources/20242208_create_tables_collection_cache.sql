@@ -1,5 +1,5 @@
 -- --------------------------------------------------------------------------------------------------
--- EDATOS-XXX - Añadir nivel de colecciones en eTerritorios
+-- EDATOS-4587 - Añadir nivel de colecciones en eTerritorios
 -- 
 -- Script que crea las tablas necesarias para añadir una caché de colecciones asociada a los datasets de la caché de territorios
 ---- Guardar los datos principales de las colecciones de EDATOS

@@ -16,6 +16,7 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String DB_DATA_VIEWS_ROLE                                  = "metamac.statistical_resources.bbbd.data_views_role";
     public static final String CRON_EXPRESSION_FOR_GEOGRAPHIC_COVERAGE_CACHE_CLEAR = "metamac.statistical_resources.geografic_coverage_cache_clear.cron_expression";
     public static final String CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE    = "metamac.statistical_resources.resend_dataset_kafka_message.cron_expression";
+    public static final String QUARTZ_TRIGGER_DELAY_FOR_GEOGRAPHIC_COVERAGE_CACHE  = "metamac.statistical_resources.geo_cache_update.quartz_scheduler";
 
     // DataSources
 

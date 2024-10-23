@@ -54,6 +54,7 @@ import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.quartz.impl.SchedulerRepository;
@@ -184,13 +185,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_JOB_DUPLICATION_DATA                   = "job_duplicationdata_";
     public static final String                PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE           = "job_update_geocoverage_cache_";
     public static final String                PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES = "job_update_geo_cache_related_resources";
-    public static final String                PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE  = "job_update_external_geocoverage_cache";
+    public static final String                PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE  = "job_update_external_geocoverage_cache_";
     public static final String                PREFIX_TRIGGER_IMPORT_DATA                    = "trigger_importdata_";
     public static final String                PREFIX_TRIGGER_RECOVERY_IMPORT_DATA           = "trigger_recoveryimportdata_";
     public static final String                GROUP_IMPORTATION                             = "importation";
     public static final String                GROUP_EXTERNAL_CACHE                          = "externalCacheUpdate";
     public static final String                PREFIX_JOB_IMPORT_ATTRIBUTES                  = "job_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
+    public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
 
     @Autowired
     private TaskServiceInvocationValidator    taskServiceInvocationValidator;
@@ -734,14 +736,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         // Validation
         taskServiceInvocationValidator.checkPlanifyUpdateExternalGeocoverageCache(ctx, taskInfoResources);
 
-        String taskName = createJobNameForUpdateExternalGeocoverageCache();
+        String taskName = createJobNameForUpdateExternalGeocoverageCache(taskInfoResources.getResourceType());
 
         // Job keys
-        JobKey jobKey = createJobKeyForUpdateExternalGeocoverageCacheResource();
-        TriggerKey triggerKey = createTriggerKeyForUpdateExternalGeocoverageCache();
+        JobKey jobKey = createJobKeyForUpdateExternalGeocoverageCacheResource(taskInfoResources.getResourceType());
+        TriggerKey triggerKey = createTriggerKeyForUpdateExternalGeocoverageCache(taskInfoResources.getResourceType());
 
         try {
-            checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ctx, jobKey);
+            checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ctx, jobKey, taskInfoResources.getResourceType());
 
             // @formatter:off
             JobDetail job = newJob(UpdateExternalGeocoverageCacheJob.class)
@@ -757,7 +759,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
             task.setExtensionPoint(taskName);
             createTask(ctx, task);
-            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withPriority(10).withSchedule(simpleSchedule()).build();
+
+            SimpleTrigger trigger = configureTrigger(triggerKey, taskInfoResources.isMustWaitForRelatedResourcesUpdate(), 10);
 
             try {
                 // Scheduler a duplication job
@@ -772,6 +775,16 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         return jobKey.getName();
+    }
+
+    private SimpleTrigger configureTrigger(TriggerKey triggerKey, boolean mustDelayExecution, int priority) throws MetamacException {
+        int triggerDateInSeconds = DEFAULT_QUARTZ_TRIGGER_DELAY;
+        if (mustDelayExecution) {
+            triggerDateInSeconds = configurationService.retrieveQuartzTriggerDelayForGeoCacheUpdate();
+        }
+
+        return newTrigger().withIdentity(triggerKey).startAt(futureDate(triggerDateInSeconds, IntervalUnit.SECOND)).withPriority(priority).withSchedule(simpleSchedule()).build();
+
     }
 
     private void checkExistTaskInResource(ServiceContext ctx, JobKey jobKey, String resourceUrn) throws MetamacException {
@@ -800,11 +813,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
-    private void checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ServiceContext ctx, JobKey jobKey) throws MetamacException {
+    private void checkExistTaskForUpdateExternalGeocoverageCacheResourceInResource(ServiceContext ctx, JobKey jobKey, String resourceType) throws MetamacException {
         checkSameJobNotExists(jobKey);
 
-        if (!createJobKeyForUpdateExternalGeocoverageCacheResource().equals(jobKey)) {
-            checkExistUpdateExternalGeocoverageCacheResource(ctx);
+        if (!createJobKeyForUpdateExternalGeocoverageCacheResource(resourceType).equals(jobKey)) {
+            checkExistUpdateExternalGeocoverageCacheResource(ctx, resourceType);
         }
     }
 
@@ -826,8 +839,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
-    private void checkExistUpdateExternalGeocoverageCacheResource(ServiceContext ctx) throws MetamacException {
-        if (existUpdateExternalGeocoverageCacheTaskInResource(ctx)) {
+    private void checkExistUpdateExternalGeocoverageCacheResource(ServiceContext ctx, String resourceType) throws MetamacException {
+        if (existUpdateExternalGeocoverageCacheTaskInResource(ctx, resourceType)) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_IN_PROCESS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
         }
     }
@@ -1456,11 +1469,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     @Override
-    public boolean existUpdateExternalGeocoverageCacheTaskInResource(ServiceContext ctx) throws MetamacException {
-        taskServiceInvocationValidator.checkExistUpdateExternalGeocoverageCacheTaskInResource(ctx);
+    public boolean existUpdateExternalGeocoverageCacheTaskInResource(ServiceContext ctx, String resourceType) throws MetamacException {
+        taskServiceInvocationValidator.checkExistUpdateExternalGeocoverageCacheTaskInResource(ctx, resourceType);
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
-            return sched.checkExists(createJobKeyForUpdateExternalGeocoverageCacheResource());
+            return sched.checkExists(createJobKeyForUpdateExternalGeocoverageCacheResource(resourceType));
         } catch (SchedulerException e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR).withMessageParameters(e.getMessage()).build();
         }
@@ -1652,8 +1665,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return new JobKey(createJobNameForUpdateGeoCacheRelatedResources(resourceId));
     }
 
-    private JobKey createJobKeyForUpdateExternalGeocoverageCacheResource() {
-        return new JobKey(createJobNameForUpdateExternalGeocoverageCache());
+    private JobKey createJobKeyForUpdateExternalGeocoverageCacheResource(String resourceType) {
+        return new JobKey(createJobNameForUpdateExternalGeocoverageCache(resourceType));
     }
 
     private TriggerKey createTriggerKeyForImportationDataset(String datasetId) {
@@ -1688,8 +1701,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return new TriggerKey(createJobNameForUpdateGeoCacheRelatedResources(datasetId));
     }
 
-    private TriggerKey createTriggerKeyForUpdateExternalGeocoverageCache() {
-        return new TriggerKey(createJobNameForUpdateExternalGeocoverageCache(), GROUP_EXTERNAL_CACHE);
+    private TriggerKey createTriggerKeyForUpdateExternalGeocoverageCache(String resourceType) {
+        return new TriggerKey(createJobNameForUpdateExternalGeocoverageCache(resourceType), GROUP_EXTERNAL_CACHE);
     }
 
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {
@@ -2275,7 +2288,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setExtensionPoint(resourceUrn);
             createTask(ctx, task);
 
-            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+            SimpleTrigger trigger = configureTrigger(triggerKey, taskInfoResources.isMustWaitForRelatedResourcesUpdate(), Trigger.DEFAULT_PRIORITY);
+
             scheduleUpdateGeographicalCacheRelatedResourceJob(jobKey, job, trigger);
 
         } catch (Exception e) {
@@ -2284,16 +2298,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         return jobKey.getName();
-    }
-
-    private void scheduleUpdateGeographicalCacheRelatedResourceJob(JobKey jobKey, JobDetail job, SimpleTrigger trigger) {
-        try {
-            // Scheduler a duplication job
-            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
-            sched.scheduleJob(job, trigger);
-        } catch (SchedulerException e) {
-            logger.error("planifyUpdateGeographicalCacheRelatedResource for related resources: the job with key " + jobKey.getName() + " has failed", e);
-        }
     }
 
     @Override
@@ -2317,6 +2321,38 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         markTaskAsFinished(ctx, jobKey);
 
+    }
+
+    @Override
+    public boolean existsGeoCacheTasksByTaskName(ServiceContext ctx, List<String> taskNames) throws MetamacException {
+        taskServiceInvocationValidator.checkExistsGeoCacheTasksByTaskName(ctx, taskNames);
+        for (String taskName : taskNames) {
+            try {
+                if (existsGeoCacheTasksByTaskName(ctx, taskName)) {
+                    return true;
+                }
+            } catch (Exception e) {
+                logger.info("some error occurred trying to retrieve the task with name starts with {}", taskName);
+            }
+        }
+        return false;
+    }
+
+    private boolean existsGeoCacheTasksByTaskName(ServiceContext ctx, String taskName) throws MetamacException {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Task.class).withProperty(TaskProperties.job()).like(taskName + "%").and().withProperty(TaskProperties.status())
+                .eq(TaskStatusTypeEnum.IN_PROGRESS).distinctRoot().build();
+        PagedResult<Task> tasks = findTasksByCondition(ctx, conditions, PagingParameter.pageAccess(1, 1));
+        return !tasks.getValues().isEmpty();
+    }
+
+    private void scheduleUpdateGeographicalCacheRelatedResourceJob(JobKey jobKey, JobDetail job, SimpleTrigger trigger) {
+        try {
+            // Scheduler a duplication job
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
+            sched.scheduleJob(job, trigger);
+        } catch (SchedulerException e) {
+            logger.error("planifyUpdateGeographicalCacheRelatedResource for related resources: the job with key " + jobKey.getName() + " has failed", e);
+        }
     }
 
     private void processGeoCacheRelatedCollection(ServiceContext ctx, TaskInfoResources taskInfoResource) throws MetamacException {

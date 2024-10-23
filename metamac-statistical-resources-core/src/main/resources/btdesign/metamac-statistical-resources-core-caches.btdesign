@@ -30,8 +30,6 @@ Application CacheStatisticalResources {
 			
 			"updates"
 			@GeoCacheResource updateGeoCacheExternalResource(DatasetAvro jaxiDatasetVersionAvro, @InternationalString datasetTitle)
-			@GeoCacheResource updateGeoCacheResource(@SiemacMetadataStatisticalResource metadataResource, @LifeCycleStatisticalResource lifeCycleResource,
-            @StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException;
             List<@GeoCacheResource> updateAllGeoCacheResourcesByUrn(String resourceUrn, String resourceVersionUrn);
             updateRelatedResourceByCacheResource(@GeoCacheResource newGeoCacheResource, List<@GeoCacheResource> geoCacheResourcesDisabled, List<@GeoCacheResource> geoCacheResourcesOldVersions);
             @GeoCacheByRelatedResource updateGeoCacheByRelatedResource(PublicationAvro jaxiCollectionVersionAvro) throws MetamacException;

@@ -139,6 +139,11 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     @Override
     public void scheduleResendKafkaDatasetMessageJob(ServiceContext ctx) {
         taskservice.scheduleResendKafkaDatasetMessageJob(ctx);
-
     }
+
+    @Override
+    public boolean existsGeoCacheTasksByTaskName(ServiceContext ctx, List<String> taskNames) throws MetamacException {
+        return taskservice.existsGeoCacheTasksByTaskName(ctx, taskNames);
+    }
+
 }

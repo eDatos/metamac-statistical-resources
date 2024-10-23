@@ -72,7 +72,7 @@ Application PublicationsStatisticalResources {
 	    		    	
 	   		// geographical coverage cache
     		updateGeographicalCache(@PublicationVersion publicationVersion) throws MetamacException;
-    		updateAllGeographicalCache() throws MetamacException;
+    		updateAllGeographicalCache(boolean mustWaitForRelatedResourcesUpdate) throws MetamacException;
 	    	updateAllExternalGeographicalCache() throws MetamacException;
 		}  
 

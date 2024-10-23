@@ -1,11 +1,11 @@
 package org.siemac.metamac.statistical.resources.core.utils.shared;
 
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CHAPTER_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_COLLECTION_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CUBE_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_DATASET_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_MULTIDATASET_PREFIX;
-import static org.siemac.metamac.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_QUERY_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CHAPTER_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_COLLECTION_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_CUBE_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_DATASET_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_MULTIDATASET_PREFIX;
+import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SIEMAC_CLASS_QUERY_PREFIX;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
@@ -52,6 +52,10 @@ public class StatisticalResourcesUrnParserUtils {
 
     public static boolean isQueryUrn(String urn) {
         return matches(URN_SIEMAC_CLASS_QUERY_PREFIX, UrnUtils.extractPrefix(urn));
+    }
+
+    public static String getPrefixQueryUrn() {
+        return URN_SIEMAC_CLASS_QUERY_PREFIX;
     }
 
     public static String getQueryVersionCodeFromUrnWithoutPrefix(String tripletIdentifier) {

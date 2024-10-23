@@ -217,7 +217,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 LOGGER.error(e, e.getCause());
             } finally {
                 sendErrorNotification(exceptionItems, ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR,
-                        ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET);
+                        ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION);
             }
 
         }
@@ -233,7 +233,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 LOGGER.error(e, e.getCause());
             } finally {
                 sendErrorNotification(exceptionItems, ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR,
-                        ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET); // EDATOS-4587 TODO personalizar por tipo de recurso.
+                        ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET);
             }
 
         }
@@ -246,8 +246,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         Long latestOffset = getLastConsumerOffset(externalPublicationTopicGroup);
 
         if (latestOffset <= 0L) {
-            // throw new NoOffsetStreamConsumer("Last consumer offset not found");
-            // TODO EDATOS-4587 enviar error igual que antes
+            noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(externalPublicationTopicName);
         }
 
         externalPublicationConsumerConfig(externalPublicationTopicName, consumer);

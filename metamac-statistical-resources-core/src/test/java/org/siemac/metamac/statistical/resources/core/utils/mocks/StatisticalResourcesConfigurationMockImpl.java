@@ -127,4 +127,9 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     public String retrieveKafkaCustomExternalCollectionPublicationMessagesGroup() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
+
+    @Override
+    public Integer retrieveQuartzTriggerDelayForGeoCacheUpdate() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
 }

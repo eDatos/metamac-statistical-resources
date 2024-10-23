@@ -70,6 +70,12 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
+    public Integer retrieveQuartzTriggerDelayForGeoCacheUpdate() throws MetamacException {
+        String delay = retrieveProperty(StatisticalResourcesConfigurationConstants.QUARTZ_TRIGGER_DELAY_FOR_GEOGRAPHIC_COVERAGE_CACHE);
+        return Integer.valueOf(delay);
+    }
+
+    @Override
     public String retrieveDbDataViewsRole() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DATA_VIEWS_ROLE);
     }

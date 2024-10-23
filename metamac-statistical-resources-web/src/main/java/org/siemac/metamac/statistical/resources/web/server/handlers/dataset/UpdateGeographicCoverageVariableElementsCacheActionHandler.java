@@ -1,10 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.dataset;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheResult;
@@ -34,9 +30,8 @@ public class UpdateGeographicCoverageVariableElementsCacheActionHandler
             if (action.getDatasetVersionDto() != null) {
                 statisticalResourcesServiceFacade.updateGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionDto().getUrn());
             } else {
-                List<StatisticalResourceTypeEnum> resourcesToUpdate = new ArrayList<>();
-                List<StatisticalResourceTypeEnum> externalResourcesToUpdate = new ArrayList<>();
-                statisticalResourcesServiceFacade.updateAllGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), resourcesToUpdate, externalResourcesToUpdate);
+                statisticalResourcesServiceFacade.updateAllGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), action.getResourcesToUpdate(),
+                        action.getExternalResourcesToUpdate());
             }
             return new UpdateGeographicCoverageVariableElementsCacheResult.Builder().datasetVersionDto(action.getDatasetVersionDto()).build();
         } catch (MetamacException e) {

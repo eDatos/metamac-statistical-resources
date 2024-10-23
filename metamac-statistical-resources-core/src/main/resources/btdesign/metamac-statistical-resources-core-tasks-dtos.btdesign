@@ -34,6 +34,7 @@ Application DatasetsStatisticalResourcesDto {
 			String urn;
 			"string associated to one of the StatisticalResourceTypeEnum value"
 			String resourceType; 
+			boolean mustWaitForRelatedResourcesUpdate;
  		}
 
 		DataTransferObject FileDescriptor {

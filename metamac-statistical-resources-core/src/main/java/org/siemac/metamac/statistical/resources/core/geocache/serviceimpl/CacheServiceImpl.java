@@ -45,6 +45,7 @@ import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
+import org.siemac.metamac.statistical.resources.core.task.serviceimpl.TaskServiceImpl;
 import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
@@ -91,20 +92,6 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     private TaskService                       taskService;
 
     public CacheServiceImpl() {
-    }
-
-    public String retrieveQueryVersionByUrn(ServiceContext ctx, String urn) throws MetamacException {
-
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("retrieveQueryVersionByUrn not implemented");
-
-    }
-
-    public String findQueryVersionByUrn(ServiceContext ctx, String urn) throws MetamacException {
-
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("findQueryVersionByUrn not implemented");
-
     }
 
     // CACHE RESOURCES
@@ -391,7 +378,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
                 createRelatedResourceByCacheResourceByTypeAndUrn(ctx, geoCacheRelatedResource, urn, relatedResource, exceptionItems);
             }
 
-            sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET, exceptionItems);
+            sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_COLLECTION_PUBLICATION, exceptionItems);
     }
     
     private void createRelatedResourceByCacheResourceByTypeAndUrn(ServiceContext ctx, GeoCacheByRelatedResource geoCacheRelatedResource, String urn, RelatedResource relatedResource, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
@@ -497,7 +484,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
             buildExternalItemFromJaxiExternalCollectionPublication(ctx, jaxiPublicationVersionAvro, geoCacheRelatedResource, exceptionItems);
 
-           sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET, exceptionItems);
+           sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION, exceptionItems);
 
         }
     }
@@ -572,37 +559,47 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
         return this.getGeoCacheByRelatedResourceRepository().save(geoCacheByRelatedResource);
     }
-
-    @Override
-    public GeoCacheResource updateGeoCacheResource(ServiceContext ctx, SiemacMetadataStatisticalResource metadataResource, LifeCycleStatisticalResource lifeCycleResource,
-            StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException {
-        // TODO Auto-generated method stub
-        return null;
-    }
     
     @Override
     public void updateAllGeographicExternalCoverageVariableElementsCache(ServiceContext ctx, List<StatisticalResourceTypeEnum> externalResourcesToUpdate) throws MetamacException {
        
-        logger.info("Execution start - updateAllGeographicExternalCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+        logger.info("Execution start - updateAllGeographicExternalCoverageVariableElementsCache - jaxi dataset : {} tipos de recursos seleccionados para  actualizar {}", new DateTime(), externalResourcesToUpdate.size());
 
+        if (checkCanUpdateGeographicalCache(ctx)) {
+        
         for (StatisticalResourceTypeEnum resourceType : externalResourcesToUpdate) {
-            updateAllExternalGeocoverageCache(ctx, resourceType);
+            boolean mustRunningWithDelay = false;
+            if (StatisticalResourceTypeEnum.COLLECTION.equals(resourceType) && externalResourcesToUpdate.contains(StatisticalResourceTypeEnum.DATASET)) {
+                mustRunningWithDelay = true;
             }
-
+                
+            updateAllExternalGeocoverageCache(ctx, resourceType, mustRunningWithDelay);
+            }
+        } else {
+            throw new MetamacException(ServiceExceptionType.TASKS_RELATED_IN_PROGRESS);
+        }
         logger.info("Execution end - updateAllGeographicExternalCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
 
     }
     
-    private void updateAllExternalGeocoverageCache(ServiceContext ctx, StatisticalResourceTypeEnum externalResourcesToUpdate) throws MetamacException {
+    private boolean checkCanUpdateGeographicalCache(ServiceContext ctx) throws MetamacException {
+        List<String> tasksName = new ArrayList<>();
+        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE); 
+        return !taskService.existsGeoCacheTasksByTaskName(ctx, tasksName);
+        }
+      
+    
+    private void updateAllExternalGeocoverageCache(ServiceContext ctx, StatisticalResourceTypeEnum externalResourcesToUpdate, boolean mustWaitForRelatedResourcesUpdate) throws MetamacException {
 
-        String resource = JobUtil.createJobNameForUpdateExternalGeocoverageCache();
+        String resource = JobUtil.createJobNameForUpdateExternalGeocoverageCache(externalResourcesToUpdate.getName());
 
-        if (taskService.existUpdateExternalGeocoverageCacheTaskInResource(ctx)) {
+        if (taskService.existUpdateExternalGeocoverageCacheTaskInResource(ctx, externalResourcesToUpdate.getName())) {
             throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, resource);
         }
 
         TaskInfoResources taskInfo = new TaskInfoResources();
         taskInfo.setResourceType(externalResourcesToUpdate.getName());
+        taskInfo.setMustWaitForRelatedResourcesUpdate(mustWaitForRelatedResourcesUpdate);
         taskService.planifyUpdateExternalGeocoverageCache(ctx, taskInfo);
     }
 

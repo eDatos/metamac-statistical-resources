@@ -210,4 +210,9 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testExistUpdateGeoCacheRelatedResourcesTaskInResource() throws Exception {
         // No test
     }
+
+    @Override
+    public void testExistsGeoCacheTasksByTaskName() throws Exception {
+        // No test
+    }
 }

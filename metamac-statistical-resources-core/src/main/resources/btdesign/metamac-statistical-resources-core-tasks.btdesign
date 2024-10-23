@@ -32,6 +32,7 @@ Application DatasetsStatisticalResources {
     		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset) throws MetamacException;
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
+			boolean existsGeoCacheTasksByTaskName(List<String> taskNames) throws MetamacException;
 			
 			// GEOGRAPHICAL CACHE 
 			"Perform the update geographical coverage cache task"
@@ -107,6 +108,7 @@ Application DatasetsStatisticalResources {
     		processUpdateGeographicalCacheRelatedResourceTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;        		
     		"Perform the geographic coverage cache clear task"
     		processGeographicCoverageCacheClearTask() throws MetamacException;
+    		boolean existsGeoCacheTasksByTaskName(List<String> taskNames) throws MetamacException;
     	
     		
  		
@@ -132,7 +134,7 @@ Application DatasetsStatisticalResources {
 			boolean existsTaskImportAttributes(String resourceId) throws MetamacException;
 			
 			"Check if exists a update geocoverage cache job task for external datasets"
-			boolean existUpdateExternalGeocoverageCacheTaskInResource() throws MetamacException;
+			boolean existUpdateExternalGeocoverageCacheTaskInResource(String resourceType) throws MetamacException;
 			
 			"Check if exists an db importation job task in the @param resourceId"
     		boolean existDatabaseImportationTaskInResource(String resourceId) throws MetamacException;

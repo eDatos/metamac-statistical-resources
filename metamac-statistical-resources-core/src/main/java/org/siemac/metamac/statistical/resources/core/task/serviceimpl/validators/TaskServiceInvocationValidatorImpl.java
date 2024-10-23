@@ -147,8 +147,8 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
     }
 
-    public static void checkExistUpdateExternalGeocoverageCacheTaskInResource(List<MetamacExceptionItem> exceptions) throws MetamacException {
-        // NOTHING TO DO HERE
+    public static void checkExistUpdateExternalGeocoverageCacheTaskInResource(String resourceType, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        StatisticalResourcesValidationUtils.checkParameterRequired(resourceType, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
     }
 
     public static void checkMarkTaskAsFinished(String job, List<MetamacExceptionItem> exceptions) {
@@ -262,5 +262,9 @@ public class TaskServiceInvocationValidatorImpl {
 
     public static void checkExistsTaskImportAttributes(String resourceId, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceId, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
+    }
+
+    public static void checkExistsGeoCacheTasksByTaskName(List<String> taskNames, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskNames, ServiceExceptionParameters.TASK__JOB, exceptions);
     }
 }

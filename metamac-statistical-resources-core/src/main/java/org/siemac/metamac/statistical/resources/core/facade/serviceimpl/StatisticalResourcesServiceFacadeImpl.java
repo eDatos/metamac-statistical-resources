@@ -1357,7 +1357,11 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
                     getQueryService().updateAllGeographicalCache(ctx);
                     break;
                 case COLLECTION:
-                    getPublicationService().updateAllGeographicalCache(ctx);
+                    boolean mustWait = false;
+                    if (resourcesToUpdate.contains(StatisticalResourceTypeEnum.DATASET) || resourcesToUpdate.contains(StatisticalResourceTypeEnum.QUERY)) {
+                        mustWait = true;
+                    }
+                    getPublicationService().updateAllGeographicalCache(ctx, mustWait);
                     break;
                 default:
                     throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_RESOURCE_NOT_FOUND, resourceType.getName()))
