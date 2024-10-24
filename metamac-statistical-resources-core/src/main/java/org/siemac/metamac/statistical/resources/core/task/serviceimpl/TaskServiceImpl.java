@@ -1233,6 +1233,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         List<ExternalItem> geographicCoverage = getGeographicCoverage(ctx, datasetVersion);
 
         if (CollectionUtils.isEmpty(geographicCoverage)) {
+            markTaskAsFinished(ctx, jobKey);
             return;
         }
 
