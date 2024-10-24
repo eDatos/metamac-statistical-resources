@@ -184,7 +184,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_JOB_RECOVERY_IMPORT_DATA               = "job_recoveryimportdata_";
     public static final String                PREFIX_JOB_DUPLICATION_DATA                   = "job_duplicationdata_";
     public static final String                PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE           = "job_update_geocoverage_cache_";
-    public static final String                PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES = "job_update_geo_cache_related_resources";
+    public static final String                PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES = "job_update_geo_cache_related_resources_";
     public static final String                PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE  = "job_update_external_geocoverage_cache_";
     public static final String                PREFIX_TRIGGER_IMPORT_DATA                    = "trigger_importdata_";
     public static final String                PREFIX_TRIGGER_RECOVERY_IMPORT_DATA           = "trigger_recoveryimportdata_";
