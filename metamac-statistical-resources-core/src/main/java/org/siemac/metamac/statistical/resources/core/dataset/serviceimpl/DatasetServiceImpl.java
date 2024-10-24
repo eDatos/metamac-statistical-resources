@@ -505,6 +505,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         datasetVersionCopy.setDataset(null);
         datasetVersionCopy.getDatasources().clear();
         copyCategorisations(ctx, datasetVersionCopy.getCategorisations());
+        datasetVersionCopy.getDimensionsCoverage().clear();
         return createDatasetVersion(ctx, datasetVersionCopy, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
     }
 
