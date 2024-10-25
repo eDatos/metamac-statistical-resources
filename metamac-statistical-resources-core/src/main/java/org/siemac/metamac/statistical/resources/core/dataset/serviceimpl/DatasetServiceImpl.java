@@ -504,7 +504,15 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         datasetVersionCopy.getSiemacMetadataStatisticalResource().setCreatedDate(null);
         datasetVersionCopy.setDataset(null);
         datasetVersionCopy.getDatasources().clear();
+        copyCategorisations(ctx, datasetVersionCopy.getCategorisations());
+        datasetVersionCopy.getDimensionsCoverage().clear();
         return createDatasetVersion(ctx, datasetVersionCopy, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
+    }
+
+    private void copyCategorisations(ServiceContext ctx, List<Categorisation> categorisations) throws MetamacException {
+        for (Categorisation categorisation : categorisations) {
+            initializeCategorisationMetadataForCreation(ctx, categorisation);
+        }
     }
 
     private DatasetRepositoryDto createDatasetRepository(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
