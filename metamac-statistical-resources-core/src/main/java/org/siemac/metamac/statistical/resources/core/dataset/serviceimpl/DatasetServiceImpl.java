@@ -587,10 +587,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
 
         checkDsdChanges(datasetVersion);
-        if (datasetVersion.isRelatedDsdChanged()) {
-            datasetVersion.getStubDimensions().clear();
-            datasetVersion.getHeadingDimensions().clear();
-        }
 
         // Check status
         ProcStatusValidator.checkStatisticalResourceCanBeEdited(datasetVersion);
@@ -655,6 +651,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         DatasetRepositoryDto datasetRepository = createDatasetRepository(ctx, resource);
         resource.setDatasetRepositoryId(datasetRepository.getDatasetId());
+        datasetVersion.getStubDimensions().clear();
+        datasetVersion.getHeadingDimensions().clear();
     }
 
     @Override
