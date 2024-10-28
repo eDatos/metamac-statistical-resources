@@ -603,6 +603,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void checkDsdChanges(DatasetVersion datasetVersion) throws MetamacException {
         if (datasetVersion.isRelatedDsdChanged()) {
+            datasetVersion.getStubDimensions().clear();
+            datasetVersion.getHeadingDimensions().clear();
             List<QueryVersion> queriesLinkedToDatasetVersion = queryVersionRepository.findLinkedToFixedDatasetVersion(datasetVersion.getId());
             List<QueryVersion> queriesLinkedToDataset = queryVersionRepository.findLinkedToDataset(datasetVersion.getDataset().getId());
             if (!queriesLinkedToDataset.isEmpty() || !queriesLinkedToDatasetVersion.isEmpty()) {
