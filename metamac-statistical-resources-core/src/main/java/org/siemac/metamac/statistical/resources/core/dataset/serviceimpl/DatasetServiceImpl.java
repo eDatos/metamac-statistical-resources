@@ -651,6 +651,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         DatasetRepositoryDto datasetRepository = createDatasetRepository(ctx, resource);
         resource.setDatasetRepositoryId(datasetRepository.getDatasetId());
+        resource.getStubDimensions().clear();
+        resource.getHeadingDimensions().clear();
     }
 
     @Override
