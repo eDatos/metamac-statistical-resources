@@ -119,11 +119,6 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     }
 
     @Override
-    public String retrieveKafkaTopicExternalCollectionPublication() throws MetamacException {
-        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
-    }
-
-    @Override
     public String retrieveKafkaCustomExternalCollectionPublicationMessagesGroup() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }

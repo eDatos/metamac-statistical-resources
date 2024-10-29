@@ -2,7 +2,7 @@ package org.siemac.metamac.statistical.resources.core.geocache.serviceapi;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory.GEO_COV_VAR_ELEMENT_CACHE_01;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_01;
 
 import java.util.List;
 
@@ -10,18 +10,29 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceRepository;
-import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Spring based transactional test with DbUnit support.
- */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:spring/statistical-resources/include/task-mockito.xml", "classpath:spring/statistical-resources/include/rest-services-mockito.xml",
+        "classpath:spring/statistical-resources/applicationContext-test.xml"})
+@TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
+@Transactional
 public class CacheServiceTest extends StatisticalResourcesBaseTest implements CacheServiceTestBase {
 
     @Autowired
@@ -29,6 +40,16 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
 
     @Autowired
     private GeoCacheResourceRepository geoCacheResourceRepository;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+    }
+
+    @After
+    public void after() {
+        Mockito.validateMockitoUsage();
+    }
 
     // TODO EDATOS-4587 VER TESTS
 
@@ -96,10 +117,10 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
     @Test
     @MetamacMock(GEO_COV_VAR_ELEMENT_CACHE_01)
     public void testFindResourcesByCondition() throws Exception {
-        GeoCacheResource actual = geoCovVarElementCacheDatasetVersionFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_01);
+        GeoCacheResource actual = geoCacheResourceFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_01);
 
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.territories().variableElement().code())
-                .eq(GeoCovVarElementCacheDatasetVersionFactory.VARIABLE_ELEMENT_01).orderBy(GeoCacheResourceProperties.code()).ascending().build();
+                .eq(GeoCacheResourceMockFactory.VARIABLE_ELEMENT_01).orderBy(GeoCacheResourceProperties.code()).ascending().build();
 
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
         PagedResult<GeoCacheResource> resourcesPagedResult = cacheService.findResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);

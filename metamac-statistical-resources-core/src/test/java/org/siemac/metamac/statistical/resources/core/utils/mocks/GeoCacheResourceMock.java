@@ -4,20 +4,18 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
 
-public class GeoCovVarElementCacheDatasetVersionMock extends GeoCacheResource {
+public class GeoCacheResourceMock extends GeoCacheResource {
 
     private static final long serialVersionUID = -289909094976654068L;
 
     private Integer           sequentialId;
 
-    public GeoCovVarElementCacheDatasetVersionMock() {
+    public GeoCacheResourceMock() {
+
     }
 
-    public static GeoCovVarElementCacheDatasetVersionMock buildBasicSingleVersionWithSequence(int sequenceId) {
-        GeoCovVarElementCacheDatasetVersionMock instance = new GeoCovVarElementCacheDatasetVersionMock();
-
-        // TODO EDATOS-4587 VER SI AÑADIR TABLAS AUXILIARES CON ELEMENTO VARIABLE
-
+    public static GeoCacheResourceMock buildBasicSingleVersionWithSequence(int sequenceId) {
+        GeoCacheResourceMock instance = new GeoCacheResourceMock();
         instance.setSequentialId(sequenceId);
         instance.setIsLastVersion(true);
         return instance;

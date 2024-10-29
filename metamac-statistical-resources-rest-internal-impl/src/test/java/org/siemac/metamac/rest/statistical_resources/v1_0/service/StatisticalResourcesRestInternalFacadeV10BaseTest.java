@@ -85,7 +85,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeVal
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
@@ -1141,41 +1140,40 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
 
     @SuppressWarnings("unchecked")
     private void mockFindGeoCovVarElementCacheDatasetVersionByCondition() throws MetamacException {
-        when(cacheService.findGeoRelatedResourcesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class)))
-                .thenAnswer(new Answer<PagedResult<GeoCovVarElementCacheDatasetVersion>>() {
+        when(cacheService.findGeoRelatedResourcesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class))).thenAnswer(new Answer<PagedResult<GeoCacheResource>>() {
 
-                    @Override
-                    public org.fornax.cartridges.sculptor.framework.domain.PagedResult<GeoCacheResource> answer(InvocationOnMock invocation) throws Throwable {
-                        List<ConditionalCriteria> conditions = (List<ConditionalCriteria>) invocation.getArguments()[1];
+            @Override
+            public org.fornax.cartridges.sculptor.framework.domain.PagedResult<GeoCacheResource> answer(InvocationOnMock invocation) throws Throwable {
+                List<ConditionalCriteria> conditions = (List<ConditionalCriteria>) invocation.getArguments()[1];
 
-                        String variableElementId = getVariableElementFromConditionalCriteria(conditions);
-                        Boolean isLastVersion = getIsLastVersionFromConditionalCriteria(conditions);
+                String variableElementId = getVariableElementFromConditionalCriteria(conditions);
+                Boolean isLastVersion = getIsLastVersionFromConditionalCriteria(conditions);
 
-                        if (variableElementId != null) {
-                            // Retrieve one
-                            GeoCacheResource geoCovVarElementCacheDatasetVersion = null;
+                if (variableElementId != null) {
+                    // Retrieve one
+                    GeoCacheResource geoCovVarElementCacheDatasetVersion = null;
 
-                            geoCovVarElementCacheDatasetVersion = restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, variableElementId, isLastVersion);
+                    geoCovVarElementCacheDatasetVersion = restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, variableElementId, isLastVersion);
 
-                            List<GeoCacheResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheResource>();
-                            if (geoCovVarElementCacheDatasetVersion != null) {
-                                geoCovVarElementCacheDatasetsVersion.add(geoCovVarElementCacheDatasetVersion);
-                            }
-                            return new PagedResult<GeoCacheResource>(geoCovVarElementCacheDatasetsVersion, 0, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size());
-                        } else {
-                            // any
-                            List<GeoCacheResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheResource>();
-                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, "variableElement01", true));
-                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_2, "variableElement01", true));
-                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_2, DATASET_1_CODE, VERSION_1, "variableElement01", true));
-                            geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_2_CODE, VERSION_1, "variableElement01", true));
+                    List<GeoCacheResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheResource>();
+                    if (geoCovVarElementCacheDatasetVersion != null) {
+                        geoCovVarElementCacheDatasetsVersion.add(geoCovVarElementCacheDatasetVersion);
+                    }
+                    return new PagedResult<GeoCacheResource>(geoCovVarElementCacheDatasetsVersion, 0, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size());
+                } else {
+                    // any
+                    List<GeoCacheResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheResource>();
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, "variableElement01", true));
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_1_CODE, VERSION_2, "variableElement01", true));
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_2, DATASET_1_CODE, VERSION_1, "variableElement01", true));
+                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockResources(AGENCY_1, DATASET_2_CODE, VERSION_1, "variableElement01", true));
 
-                            return new PagedResult<GeoCacheResource>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(),
-                                    geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
+                    return new PagedResult<GeoCacheResource>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(),
+                            geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
 
-                        }
-                    };
-                });
+                }
+            };
+        });
     }
 
     private void mockConstraintDataset() throws MetamacException {

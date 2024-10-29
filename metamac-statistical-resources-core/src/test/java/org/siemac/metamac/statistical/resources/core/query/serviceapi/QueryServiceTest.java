@@ -1154,7 +1154,7 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
 
     @Override
     public void testUpdateGeographicalCache() throws Exception {
-        // no optimistic locking in this operation
+        // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
     }
 
     @Override
@@ -1165,6 +1165,7 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
 
     @Override
     public void testUpdateAllGeographicalCache() throws Exception {
-        // no optimistic locking in this operation
+        // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
+
     }
 }

@@ -30,6 +30,7 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.TypeRelatedReso
 import org.siemac.metamac.statistical.resources.core.error.StatisticalResourcesCheckTranslationsTest;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesOptimisticLockingTest;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacadeTest;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheServiceTest;
 import org.siemac.metamac.statistical.resources.core.io.serviceapi.DataManipulateTest;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCheckerTest;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataCheckerTest;
@@ -64,7 +65,8 @@ import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesC
 
 // @formatter:off
 @RunWith(Suite.class)
-@Suite.SuiteClasses({StatisticalResourcesCheckTranslationsTest.class,
+@Suite.SuiteClasses({CacheServiceTest.class,
+                     StatisticalResourcesCheckTranslationsTest.class,
                      StatisticalResourcesServiceFacadeTest.class,  
                      StatisticalResourcesOptimisticLockingTest.class,
                      InternationalStringRepositoryTest.class,
@@ -122,7 +124,8 @@ import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesC
                      PublicationVersioningServiceTest.class,
                      QueryPublishingServiceTest.class,
                      QueryVersioningServiceTest.class,
-                     DataManipulateTest.class})
+                     DataManipulateTest.class
+                     })
 // @formatter:on
 public class StatisticalResourcesSuite {
 }

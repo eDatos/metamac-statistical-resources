@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithRelatedResources;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.slf4j.Logger;
@@ -45,14 +45,15 @@ public class StatisticalResourcesRestInternalFacadeV10ResourcesTest extends Stat
         String query = "IS_LAST_VERSION EQ 'true'";
         Resources resources = statisticalResourcesRestInternalFacadeClientXml.findResources(query, null, null, null, null);
 
-        ResourceWithStatisticalOperation resource = resources.getResources().get(0);
+        ResourceWithRelatedResources resource = resources.getResources().get(0);
 
-        assertEquals(DATASET_1_CODE, resource.getId());
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)", resource.getUrn());
-        assertEquals(StatisticalResourcesRestInternalConstants.KIND_RESOURCE, resource.getKind());
-        assertNotNull(resource.getStatisticalOperation());
-        assertEquals("http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=01.000#", resource.getVisualizerHtmlLink());
-        assertNotNull(resource.getStatisticalOperation().getId());
+        assertEquals(DATASET_1_CODE, resource.getMainResource().getId());
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)", resource.getMainResource().getUrn());
+        assertEquals(StatisticalResourcesRestInternalConstants.KIND_RESOURCE, resource.getMainResource().getKind());
+        assertNotNull(resource.getMainResource().getStatisticalOperation());
+        assertEquals("http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=01.000#",
+                resource.getMainResource().getVisualizerHtmlLink());
+        assertNotNull(resource.getMainResource().getStatisticalOperation().getId());
     }
 
     @Test
@@ -72,6 +73,6 @@ public class StatisticalResourcesRestInternalFacadeV10ResourcesTest extends Stat
         String query = "GEOCOV_VARELEM_ID EQ " + "'variableElement01'" + " AND IS_LAST_VERSION EQ 'true'";
         Resources resources = statisticalResourcesRestInternalFacadeClientXml.findResources(query, null, null, null, Arrays.asList("en"));
 
-        MetamacRestAsserts.assertEqualsInternationalString("es", "title-dataset1 en Espanol", "en", "title-dataset1 in English", resources.getResources().get(0).getName());
+        MetamacRestAsserts.assertEqualsInternationalString("es", "title-dataset1 en Espanol", "en", "title-dataset1 in English", resources.getResources().get(0).getMainResource().getName());
     }
 }

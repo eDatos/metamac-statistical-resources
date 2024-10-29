@@ -134,12 +134,16 @@ public abstract class StatisticalResourcesMockFactory<EntityMock> extends MockFa
         MultidatasetMockFactory.getInstance().registerMock(id, multidataset);
     }
 
-    protected static void registerGeoCovVarElementCacheDatasetVersionMock(String id, GeoCacheResource geoCacheResource) {
-        GeoCovVarElementCacheDatasetVersionFactory.getInstance().registerMock(id, geoCacheResource);
+    protected static void registerGeoCacheResourceMock(String id, GeoCacheResource geoCacheResource) {
+        GeoCacheResourceMockFactory.getInstance().registerMock(id, geoCacheResource);
     }
 
-    protected static GeoCacheResource getGeoCovVarElementCacheDatasetVersionMock(String id) {
-        return GeoCovVarElementCacheDatasetVersionFactory.getInstance().getMock(id);
+    protected static GeoCacheResource getGeoCacheResourceMock(String id) {
+        return GeoCacheResourceMockFactory.getInstance().getMock(id);
+    }
+
+    protected static MockDescriptor getGeoCacheResourceMockDescriptor(String id) {
+        return GeoCacheResourceMockFactory.getInstance().getMockWithDependencies(id);
     }
 
 }

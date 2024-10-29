@@ -255,6 +255,8 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
     public static final String                   PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL_NAME                                   = "PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL";
     public static final String                   PUBLICATION_VERSION_104_PUBLISHED_HAS_PART_MULTIDATASET_VERSION_102_FIRST_LEVEL_NAME                               = "PUBLICATION_VERSION_103_DRAFT_HAS_PART_MULTIDATASET_VERSION_101_FIRST_LEVEL";
 
+    public static final String                   PUBLICATION_VERSION_105_LAST_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS                                         = "PUBLICATION_VERSION_105_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS";
+
     private static PublicationVersionMockFactory instance                                                                                                           = null;
 
     private PublicationVersionMockFactory() {
@@ -286,6 +288,11 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
 
     private static MockDescriptor getPublicationVersion04ForPublication03AndLastVersion() {
         MockDescriptor pubMockDesc = getPublicationMockDescriptor(PublicationMockFactory.PUBLICATION_03_BASIC_WITH_2_PUBLICATION_VERSIONS_NAME);
+        return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME), pubMockDesc);
+    }
+
+    private static MockDescriptor getPublicationVersion105PublishedWithTwoPublishedVersions() {
+        MockDescriptor pubMockDesc = getPublicationMockDescriptor(PublicationMockFactory.PUBLICATION_08_BASIC_WITH_2_PUBLICATION_VERSIONS_PUBLISHED_NAME);
         return new MockDescriptor(getPublicationVersionMock(PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME), pubMockDesc);
     }
 
