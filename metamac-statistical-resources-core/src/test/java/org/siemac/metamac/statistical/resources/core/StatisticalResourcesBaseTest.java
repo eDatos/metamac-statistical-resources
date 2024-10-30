@@ -34,6 +34,7 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.Datas
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasourceMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DimensionRepresentationMappingMockFactory;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetCubeMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory;
@@ -85,7 +86,8 @@ public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
 
     protected StatisticOfficialityMockFactory               statisticOfficialityMockFactory           = StatisticOfficialityMockFactory.getInstance();
 
-    protected GeoCacheResourceMockFactory                       geoCacheResourceFactory                   = GeoCacheResourceMockFactory.getInstance();
+    protected GeoCacheResourceMockFactory                   geoCacheResourceFactory                   = GeoCacheResourceMockFactory.getInstance();
+    protected GeoCacheByRelatedResourceMockFactory          geoCacheByRelatedResourceFactory          = GeoCacheByRelatedResourceMockFactory.getInstance();
 
     @Rule
     public MockAnnotationRule                               mockRule                                  = new MockAnnotationRule();

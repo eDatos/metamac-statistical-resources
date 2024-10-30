@@ -35,12 +35,13 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedRes
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.GeoCacheResourceMock;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
@@ -346,31 +347,70 @@ public class RestDoMocks {
         return attributeDto;
     }
 
-    public GeoCacheTerritoriesByGeoCacheResource mockGeoCacheTerritoriesByGeoCacheResource(GeoCacheResource geoCovVarElementCacheDatasetVersion, String variableElementId) {
+    public GeoCacheByRelatedResource mockRelatedResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion,
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
 
-        GeoCacheTerritoriesByGeoCacheResource gGeoCacheTerritoriesByGeoCacheResource = new GeoCacheTerritoriesByGeoCacheResource();
-        gGeoCacheTerritoriesByGeoCacheResource.setVariableElement(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variableX", variableElementId));
-        gGeoCacheTerritoriesByGeoCacheResource.setCacheResource(geoCovVarElementCacheDatasetVersion);
-        return gGeoCacheTerritoriesByGeoCacheResource;
+        // EDATOS-4587
+
+        GeoCacheByRelatedResource geoCacheByRelatedResource = new GeoCacheByRelatedResource();
+
+        return geoCacheByRelatedResource;
     }
 
-    public GeoCacheResource mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
+    public GeoCacheResource mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion,
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
+
+        switch (statisticalResourceTypeEnum) {
+            case DATASET:
+                return mockGeoCacheResourceForDataset(agencyId, resourceId, versionId, variableElementId, isLastVersion);
+            case QUERY:
+                return mockGeoCacheResourceForQuery(agencyId, resourceId, versionId, variableElementId, isLastVersion);
+            default:
+                return null;
+        }
+    }
+
+    private GeoCacheResource mockGeoCacheResourceForDataset(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
         DatasetVersion dv = mockDatasetVersion(agencyId, resourceId, versionId);
 
-        GeoCacheResource geoCovVarElementCacheDatasetVersion = new GeoCacheResource();
-        geoCovVarElementCacheDatasetVersion.setOperationUrn(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-        geoCovVarElementCacheDatasetVersion.setOperationCode(dv.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
-        geoCovVarElementCacheDatasetVersion.setCode(dv.getSiemacMetadataStatisticalResource().getCode());
-        geoCovVarElementCacheDatasetVersion.setTitle(dv.getSiemacMetadataStatisticalResource().getTitle());
-        geoCovVarElementCacheDatasetVersion.setIsExternalSource(isLastVersion);
-        geoCovVarElementCacheDatasetVersion.setIsActivated(true);
-        geoCovVarElementCacheDatasetVersion.setUrn(dv.getSiemacMetadataStatisticalResource().getUrn());
-        geoCovVarElementCacheDatasetVersion.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(dv.getSiemacMetadataStatisticalResource().getUrn()));
-        geoCovVarElementCacheDatasetVersion.setType(StatisticalResourceTypeEnum.DATASET.name());
+        return mockGeoCacheResource(dv.getSiemacMetadataStatisticalResource(), StatisticalResourceTypeEnum.DATASET, variableElementId, isLastVersion);
 
-        geoCovVarElementCacheDatasetVersion.addTerritory(mockGeoCacheTerritoriesByGeoCacheResource(geoCovVarElementCacheDatasetVersion, variableElementId));
+    }
 
-        return geoCovVarElementCacheDatasetVersion;
+    private GeoCacheResource mockGeoCacheResourceForQuery(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion) {
+        QueryVersion dv = mockQueryVersion(agencyId, resourceId, versionId);
+
+        return mockGeoCacheResource(dv.getLifeCycleStatisticalResource(), StatisticalResourceTypeEnum.QUERY, variableElementId, isLastVersion);
+
+    }
+
+    public static GeoCacheResource mockGeoCacheResource(LifeCycleStatisticalResource lifeCycleStatisticalResource, StatisticalResourceTypeEnum statisticalResourceTypeEnum, String variableElementId,
+            Boolean isLastVersion) {
+
+        GeoCacheResource geoCacheResource = new GeoCacheResourceMock();
+        geoCacheResource.setType(statisticalResourceTypeEnum.getName());
+        geoCacheResource.setOperationCode(lifeCycleStatisticalResource.getStatisticalOperation().getCode());
+        geoCacheResource.setOperationUrn(lifeCycleStatisticalResource.getStatisticalOperation().getUrn());
+
+        geoCacheResource.setCode(lifeCycleStatisticalResource.getCode());
+        geoCacheResource.setIsExternalSource(false);
+        geoCacheResource.setUrn(lifeCycleStatisticalResource.getUrn());
+        geoCacheResource.setTitle(lifeCycleStatisticalResource.getTitle());
+        geoCacheResource.setHtmlLink(StatisticalResourcesPersistedDoMocks.getHtmlLink(lifeCycleStatisticalResource.getUrn(), statisticalResourceTypeEnum));
+
+        geoCacheResource.setIsActivated(true);
+        geoCacheResource.setIsLastVersion(isLastVersion);
+
+        geoCacheResource.setCreatedBy(StatisticalResourcesDoMocks.mockString(10));
+        geoCacheResource.setCreatedDate(StatisticalResourcesDoMocks.mockDateTime());
+        geoCacheResource.setLastUpdatedBy(StatisticalResourcesDoMocks.mockString(10));
+        geoCacheResource.setLastUpdated(StatisticalResourcesDoMocks.mockDateTime());
+
+        geoCacheResource.getTerritories().clear();
+        geoCacheResource.addTerritory(StatisticalResourcesPersistedDoMocks.mockVariableElementExternalItem("variable01", variableElementId));
+
+        return geoCacheResource;
+
     }
 
     private DatasetVersion mockDatasetVersionBasic(String agencyID, String resourceID, String version) {

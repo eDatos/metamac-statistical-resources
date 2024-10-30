@@ -51,7 +51,7 @@ public class ResourcesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl impleme
                 case STATISTICAL_OPERATION_URN:
                     return buildSculptorPropertyCriteria(GeoCacheResourceProperties.operationUrn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case GEOCOV_VARELEM_ID:
-                    return buildSculptorPropertyCriteria(GeoCacheResourceProperties.territories().variableElement().code(), PropertyTypeEnum.STRING, propertyRestriction);
+                    return buildSculptorPropertyCriteria(GeoCacheResourceProperties.territories().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 case IS_LAST_VERSION:
                     return buildSculptorPropertyCriteria(GeoCacheResourceProperties.isLastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 default:
@@ -91,8 +91,7 @@ public class ResourcesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl impleme
                 case STATISTICAL_OPERATION_URN:
                     return buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.operationUrn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case GEOCOV_VARELEM_ID:
-                    return buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.relatedResources().geoCacheResource().territories().variableElement().code(), PropertyTypeEnum.STRING,
-                            propertyRestriction);
+                    return buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.relatedResources().geoCacheResource().territories().code(), PropertyTypeEnum.STRING, propertyRestriction);
                 case IS_LAST_VERSION:
                     return buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.isLastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
                 default:

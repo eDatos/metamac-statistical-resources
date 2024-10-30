@@ -470,4 +470,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_RESOURCE_NOT_FOUND                                                         = create(
             "exception.resources.geocoverage.resource_not_found");
 
+    public static final CommonServiceExceptionType GEO_CACHE_RESOURCE_NOT_FOUND                                                                        = create(
+            "exception.resources.geo_cache_resource.resource_not_found");
+
 }

@@ -35,7 +35,6 @@ import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheRes
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResourceProperties;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheTerritoriesByGeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.validators.CacheServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
@@ -124,7 +123,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         String geographicCoverageCodelistUrn = StatisticalResourcesExternalItemUtils.getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
 
-        GeoCacheResource geoCacheResource = updateGeoCacheResource(ctx, lifeCycleStatisticalResource, statisticalResourceTypeEnum, isLastVersionPublished);
+        GeoCacheResource geoCacheResource = updateGeoCacheResource(lifeCycleStatisticalResource, statisticalResourceTypeEnum, isLastVersionPublished);
 
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
@@ -141,10 +140,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             }
 
             ExternalItem territoryVariableElement = restMapper.buildExternalItemFromResourceInternal(code.getVariableElement());
-
-            GeoCacheTerritoriesByGeoCacheResource territories = new GeoCacheTerritoriesByGeoCacheResource();
-            territories.setVariableElement(territoryVariableElement);
-            geoCacheResource.addTerritory(territories);
+            geoCacheResource.addTerritory(territoryVariableElement);
 
         }
 
@@ -153,8 +149,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
     }
 
-    private GeoCacheResource updateGeoCacheResource(ServiceContext ctx, LifeCycleStatisticalResource lifeCycleResource, StatisticalResourceTypeEnum type, boolean isLastVersionPublished)
-            throws MetamacException {
+    private GeoCacheResource updateGeoCacheResource(LifeCycleStatisticalResource lifeCycleResource, StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException {
         GeoCacheResource geoCacheResource = new GeoCacheResource();
         InternationalString titleResource = InternationalStringUtils.copy(lifeCycleResource.getTitle());
 
@@ -191,7 +186,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
     @Override
     public List<GeoCacheResource> disabledResourceByUrn(ServiceContext ctx, String resourceUrn) {
-        List<GeoCacheResource> geoCacheResources = retrieveGeoCacheResourceByUrnAndVersion(ctx, resourceUrn, false);
+        List<GeoCacheResource> geoCacheResources = retrieveGeoCacheResourceByUrnAndVersion(resourceUrn, false);
 
         if (geoCacheResources != null) {
             for (GeoCacheResource geoCacheResource : geoCacheResources) {
@@ -212,8 +207,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
                 .withProperty(GeoCacheResourceProperties.isLastVersion()).eq(Boolean.TRUE).withProperty(GeoCacheResourceProperties.isActivated()).eq(Boolean.TRUE).distinctRoot().build();
         // @formatter:off
 
-        List<GeoCacheResource> geoCacheResources = this.getGeoCacheResourceRepository().findByCondition(conditions);     
-        return geoCacheResources;
+        return this.getGeoCacheResourceRepository().findByCondition(conditions);     
     }
     
     private GeoCacheResource retrieveResourcesLastVersionByUrnAndVersion(String resourceUrn) {
@@ -229,7 +223,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     
     @Override
     public GeoCacheResource retrieveGeoCacheResourceByUrn(ServiceContext ctx, String resourceUrn) {
-       List<GeoCacheResource> geoCacheResources =  retrieveGeoCacheResourceByUrnAndVersion(ctx, resourceUrn, false);
+       List<GeoCacheResource> geoCacheResources =  retrieveGeoCacheResourceByUrnAndVersion(resourceUrn, false);
        if ( geoCacheResources != null && !geoCacheResources.isEmpty() && geoCacheResources.size() == 1) {
            return geoCacheResources.get(0);
        }
@@ -237,7 +231,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
     }
     
-    private List<GeoCacheResource> retrieveGeoCacheResourceByUrnAndVersion(ServiceContext ctx, String resourceUrn, boolean latestVersion) {
+    private List<GeoCacheResource> retrieveGeoCacheResourceByUrnAndVersion(String resourceUrn, boolean latestVersion) {
         
         
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.urn()).eq(resourceUrn).and()
@@ -439,11 +433,11 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             TypeExternalArtefactsEnum externalItemType = TypeExternalArtefactsEnum.valueOf(externalAvro.getType().name());
 
             if (TypeExternalArtefactsEnum.VARIABLE_ELEMENT.equals(externalItemType)) {
-                ExternalItem externalItem = new ExternalItem();
-                externalItem.setType(externalItemType);
+                ExternalItem territory = new ExternalItem();
+                territory.setType(externalItemType);
 
-                externalItem.setCode(externalAvro.getCode());
-                externalItem.setCodeNested(externalAvro.getCodeNested());
+                territory.setCode(externalAvro.getCode());
+                territory.setCodeNested(externalAvro.getCodeNested());
 
                 try {
 
@@ -454,17 +448,15 @@ public class CacheServiceImpl extends CacheServiceImplBase {
                     }
 
                     VariableElement variableElement = srmRestInternalService.retrieveVariableElement(externalAvro.getUrn());
-                    externalItem.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(externalItemType, variableElement.getSelfLink().getHref()));
-                    externalItem.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(externalItemType, variableElement.getManagementAppLink()));
+                    territory.setUri(dto2DoMapper.externalItemApiUrlDtoToDo(externalItemType, variableElement.getSelfLink().getHref()));
+                    territory.setManagementAppUrl(dto2DoMapper.externalItemWebAppUrlDtoToDo(externalItemType, variableElement.getManagementAppLink()));
                 } catch (Exception e) {
                     exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_VARIABLE_ELEMENT_ERROR, externalAvro.getUrn(),
                             jaxiDatasetVersionAvro.getUrn()));
                 }
 
-                externalItem.setUrn(externalAvro.getUrn());
-                externalItem.setTitle(JaxiMapper.getInternationalStringFromInternationalStringAvro(externalAvro.getTitle()));
-                GeoCacheTerritoriesByGeoCacheResource territory = new GeoCacheTerritoriesByGeoCacheResource();
-                territory.setVariableElement(externalItem);
+                territory.setUrn(externalAvro.getUrn());
+                territory.setTitle(JaxiMapper.getInternationalStringFromInternationalStringAvro(externalAvro.getTitle()));
                 geoCacheResource.addTerritory(territory);
             }
         }

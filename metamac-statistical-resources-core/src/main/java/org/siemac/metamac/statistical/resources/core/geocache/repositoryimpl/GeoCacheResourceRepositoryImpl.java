@@ -10,10 +10,17 @@ import java.util.Set;
 
 import javax.persistence.Query;
 
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
+import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -28,6 +35,7 @@ public class GeoCacheResourceRepositoryImpl extends GeoCacheResourceRepositoryBa
     public static final int MAX_SIZE_IN_CLAUSE = 5000;
 
     public GeoCacheResourceRepositoryImpl() {
+        // without impl
     }
 
     @Override
@@ -47,9 +55,13 @@ public class GeoCacheResourceRepositoryImpl extends GeoCacheResourceRepositoryBa
 
             variableElementId.add(getStringFromBigInteger((BigInteger) cols[1]));
 
-            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[2]));
+            if (cols[2] != null) {
+                internationalStrings.add(getStringFromBigInteger((BigInteger) cols[2]));
+            }
 
-            internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
+            if (cols[3] != null) {
+                internationalStrings.add(getStringFromBigInteger((BigInteger) cols[3]));
+            }
         }
 
         Session session = (Session) getEntityManager().getDelegate();
@@ -98,11 +110,27 @@ public class GeoCacheResourceRepositoryImpl extends GeoCacheResourceRepositoryBa
     }
 
     @Override
-    public List<GeoCacheResource> retrieveByResourceVersionUrn(String resourceVersionUrn) {
+    public GeoCacheResource retrieveByResourceVersionUrn(String resourceVersionUrn) throws MetamacException {
+        return retrieveByResourceVersionUrn(resourceVersionUrn, true);
+    }
 
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("retrieveByResourceVersionUrn not implemented");
+    @Override
+    public GeoCacheResource retrieveByResourceVersionUrn(String resourceVersionUrn, boolean filterOnlyActivated) throws MetamacException {
+        List<ConditionalCriteria> conditions = null;
+        if (filterOnlyActivated) {
+            conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.urn()).eq(resourceVersionUrn).and()
+                    .withProperty(GeoCacheResourceProperties.isActivated()).eq(Boolean.TRUE).orderBy(GeoCacheResourceProperties.code()).ascending().build();
+        } else {
+            conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.urn()).eq(resourceVersionUrn).build();
+        }
 
+        PagingParameter paging = PagingParameter.rowAccess(0, 1);
+        PagedResult<GeoCacheResource> result = findByCondition(conditions, paging);
+
+        if (result.getRowCount() == 0) {
+            throw new MetamacException(ServiceExceptionType.GEO_CACHE_RESOURCE_NOT_FOUND, resourceVersionUrn);
+        }
+        return result.getValues().get(0);
     }
 
     private void executeSqlStatement(Connection connection, String sb) throws SQLException {
