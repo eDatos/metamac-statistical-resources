@@ -434,10 +434,11 @@ public class QueryVersionMockFactory extends StatisticalResourcesMockFactory<Que
         return queryMock;
     }
 
-    public static QueryVersion getQueryVersionForCacheResource() {
+    public static QueryVersion getQueryVersionForCacheResource(boolean isLastVersion) {
 
         QueryVersionMock queryMock = buildQueryVersionMockSimple("Q01_geo_cache");
         queryMock.getLifeCycleStatisticalResource().setValidFrom(new DateTime().plusDays(2));
+        queryMock.getLifeCycleStatisticalResource().setLastVersion(isLastVersion);
         queryMock.setQuery(QueryMockFactory.generateQueryWithoutGeneratedVersion());
 
         Dataset dataset = DatasetMockFactory.createPublishedAndNotVisibleVersionsForDataset(1, new DateTime().plusDays(3));

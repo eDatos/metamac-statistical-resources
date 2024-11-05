@@ -14,7 +14,6 @@ import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCrite
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourcesByRelatedResource;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithRelatedResources;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
@@ -56,8 +55,8 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
             ResourcesWithStatisticalOperation resources = new ResourcesWithStatisticalOperation();
 
             if (source != null && source.getRelatedResources() != null) {
-                for (GeoCacheResourcesByRelatedResource geoRelatedResourceByResource : source.getRelatedResources()) {
-                    ResourceWithStatisticalOperation relatedResource = toResource(geoRelatedResourceByResource.getGeoCacheResource(), operationTitles, selectedLanguages);
+                for (GeoCacheResource geoCacheResource : source.getRelatedResources()) {
+                    ResourceWithStatisticalOperation relatedResource = toResource(geoCacheResource, operationTitles, selectedLanguages);
                     resources.getResources().add(relatedResource);
 
                 }

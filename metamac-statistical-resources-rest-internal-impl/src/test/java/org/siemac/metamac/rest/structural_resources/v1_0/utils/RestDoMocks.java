@@ -35,7 +35,6 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedRes
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
@@ -345,16 +344,6 @@ public class RestDoMocks {
         attributeDto.setAttributeId(attributeId);
         attributeDto.setValue(mockInternationalStringAttributeDto(value));
         return attributeDto;
-    }
-
-    public GeoCacheByRelatedResource mockRelatedResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion,
-            StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
-
-        // EDATOS-4587
-
-        GeoCacheByRelatedResource geoCacheByRelatedResource = new GeoCacheByRelatedResource();
-
-        return geoCacheByRelatedResource;
     }
 
     public GeoCacheResource mockResources(String agencyId, String resourceId, String versionId, String variableElementId, Boolean isLastVersion,

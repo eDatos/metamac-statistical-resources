@@ -5,6 +5,18 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.createPublishedAndDraftVersionsForDataset;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.createPublishedAndNotVisibleVersionsForDataset;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.createTwoPublishedVersionsForDataset;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory.GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_01_FOR_CACHE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory.GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_02_FOR_CACHE_PREVIOUS_VERSION;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory.GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_07;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_02_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_03_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_04_BY_RELATED_RESOURCE_QUERY;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_05_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_06_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_07_BY_RELATED_RESOURCE_QUERY;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_08_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_09_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_10_BY_RELATED_RESOURCE_QUERY;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME;
@@ -17,6 +29,9 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_30_V1_PUBLISHED_FOR_PUBLICATION_06_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_84_PUBLISHED_FOR_PUBLICATION_07_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_85_PREPARED_TO_PUBLISH_WITH_PREVIOUS_VERSION_EXTERNAL_ITEM_FULL_FOR_PUBLICATION_07_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_01;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02_PREVIOUS_VERSION;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.createChapterElementLevel;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.createDatasetCubeElementLevel;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.createPublicationVersionInStatus;
@@ -26,20 +41,27 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.createQueryCubeElementLevel;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryMockFactory.createPublishedQueryLinkedToDataset;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.siemac.edatos.core.common.util.GeneratorUrnUtils;
+import org.siemac.edatos.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MockProvider;
+import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.PublicationMock;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.PublicationVersionMock;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
 
 @MockProvider
@@ -61,6 +83,10 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
     public static final String            PUBLICATION_07_WITH_TWO_VERSIONS_LAST_ONE_READY_TO_PUBLISHED_NAME          = "PUBLICATION_07_WITH_TWO_VERSIONS_LAST_ONE_READY_TO_PUBLISHED";
 
     public static final String            PUBLICATION_08_BASIC_WITH_2_PUBLICATION_VERSIONS_PUBLISHED_NAME            = "PUBLICATION_08_BASIC_WITH_2_PUBLICATION_VERSIONS_PUBLISHED";
+
+    public static final String            PUBLICATION_09_BASIC_FOR_CACHE_RESOURCE_01                                 = "PUBLICATION_09_BASIC_FOR_CACHE_RESOURCE_01";
+
+    public static final String            PUBLICATION_10_BASIC_FOR_CACHE_RESOURCE_02                                 = "PUBLICATION_10_BASIC_FOR_CACHE_RESOURCE_02";
 
     private static PublicationMockFactory instance                                                                   = null;
 
@@ -265,6 +291,12 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
         Dataset datasetWithPublishedAndNotVisible = createPublishedAndNotVisibleVersionsForDataset(3, new DateTime().plusDays(3));
         Dataset datasetWithTwoPublishedVersions = createTwoPublishedVersionsForDataset(4);
 
+        GeoCacheResource geoCacheResource = GeoCacheResourceMockFactory.getGeoCacheResourceByDatasetVersion(datasetSingleVersionPublished.getVersions().get(0));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_02_BY_RELATED_RESOURCE, geoCacheResource);
+
+        GeoCacheResource geoCacheResourceLastPublishedVersion = GeoCacheResourceMockFactory.getGeoCacheResourceByDatasetVersion(datasetWithTwoPublishedVersions.getVersions().get(1));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_03_BY_RELATED_RESOURCE, geoCacheResourceLastPublishedVersion);
+
         List<Dataset> datasets = Arrays.asList(datasetSingleVersionPublished, datasetWithPublishedAndNotVisible, datasetWithTwoPublishedVersions);
 
         // queries
@@ -274,6 +306,9 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
         DatasetVersion datasetVersionLinkedToQuery = createDatasetVersionPublishedLastVersion(5, INIT_VERSION, new DateTime().minusDays(3));
         Query queryPublishedLinekdToDatasetVersion = QueryMockFactory.createPublishedQueryLinkedToDatasetVersion("Q02", datasetVersionLinkedToQuery,
                 datasetVersionLinkedToQuery.getSiemacMetadataStatisticalResource().getValidFrom());
+
+        GeoCacheResource geoCacheResourceQueryVersion = GeoCacheResourceMockFactory.getGeoCacheResourceByQueryVersion(queryPublishedLinekdToDatasetVersion.getVersions().get(0));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_04_BY_RELATED_RESOURCE_QUERY, geoCacheResourceQueryVersion);
 
         List<Query> queries = Arrays.asList(queryPublishedLinkedToDataset, queryPublishedLinekdToDatasetVersion);
 
@@ -285,7 +320,163 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
 
         publicationVersion02.getSiemacMetadataStatisticalResource().setReplacesVersion(StatisticalResourcesPersistedDoMocks.mockPublicationVersionRelated(publicationVersion01));
 
+        List<GeoCacheResource> relatedResources = new ArrayList<>();
+        relatedResources.add(geoCacheResource);
+        relatedResources.add(geoCacheResourceLastPublishedVersion);
+        relatedResources.add(geoCacheResourceQueryVersion);
+        GeoCacheByRelatedResource geoCacheByRelatedResource = GeoCacheByRelatedResourceMockFactory.getGeoCacheResourceMockForCollectionResource(publicationVersion02, relatedResources);
+        registerGeoCacheByRelatedResourceMock(GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_07, geoCacheByRelatedResource);
+
         return publicationVersion02.getPublication();
+    }
+
+    private static Publication getPublication09BasicForCacheResource01() {
+        int sequentialIdBase = 111111111;
+        PublicationMock publication = createPublicationToAddVersions(sequentialIdBase);
+
+        DateTime secondVersionPublishTime = new DateTime().plusDays(1);
+        PublicationVersion publicationVersion01 = createPublicationVersionPublishedPreviousVersion(publication, INIT_VERSION, new DateTime().minusDays(1), secondVersionPublishTime);
+        registerPublicationVersionMock(PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_01, publicationVersion01);
+
+        PublicationVersionMock publicationVersion02 = PublicationVersionMockFactory.buildPublicationVersionSimpleLastVersion(publication, SECOND_VERSION);
+
+        PublicationVersionMockFactory.fillOptionalExternalItems(publicationVersion02);
+
+        // datasets
+        Dataset datasetSingleVersionPublished = createDatasetVersionPublishedLastVersion(sequentialIdBase, INIT_VERSION, new DateTime().minusDays(3)).getDataset();
+        Dataset datasetWithPublishedAndDraft = createPublishedAndDraftVersionsForDataset(sequentialIdBase + 1);
+        Dataset datasetWithPublishedAndNotVisible = createPublishedAndNotVisibleVersionsForDataset(sequentialIdBase + 2, new DateTime().plusDays(3));
+        Dataset datasetWithTwoPublishedVersions = createTwoPublishedVersionsForDataset(sequentialIdBase + 3);
+
+        GeoCacheResource geoCacheResource = GeoCacheResourceMockFactory.getGeoCacheResourceByDatasetVersion(datasetSingleVersionPublished.getVersions().get(0));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_05_BY_RELATED_RESOURCE, geoCacheResource);
+
+        GeoCacheResource geoCacheResourceLastPublishedVersion = GeoCacheResourceMockFactory.getGeoCacheResourceByDatasetVersion(datasetWithTwoPublishedVersions.getVersions().get(1));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_06_BY_RELATED_RESOURCE, geoCacheResourceLastPublishedVersion);
+
+        List<Dataset> datasets = Arrays.asList(datasetSingleVersionPublished, datasetWithPublishedAndNotVisible, datasetWithTwoPublishedVersions);
+
+        // queries
+        Query queryPublishedLinkedToDataset = createPublishedQueryLinkedToDataset("Q01", datasetSingleVersionPublished,
+                datasetSingleVersionPublished.getVersions().get(0).getSiemacMetadataStatisticalResource().getValidFrom());
+
+        DatasetVersion datasetVersionLinkedToQuery = createDatasetVersionPublishedLastVersion(sequentialIdBase + 4, INIT_VERSION, new DateTime().minusDays(3));
+        Query queryPublishedLinekdToDatasetVersion = QueryMockFactory.createPublishedQueryLinkedToDatasetVersion("Q02", datasetVersionLinkedToQuery,
+                datasetVersionLinkedToQuery.getSiemacMetadataStatisticalResource().getValidFrom());
+
+        GeoCacheResource geoCacheResourceQueryVersion = GeoCacheResourceMockFactory.getGeoCacheResourceByQueryVersion(queryPublishedLinekdToDatasetVersion.getVersions().get(0));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_07_BY_RELATED_RESOURCE_QUERY, geoCacheResourceQueryVersion);
+
+        List<Query> queries = Arrays.asList(queryPublishedLinkedToDataset, queryPublishedLinekdToDatasetVersion);
+
+        PublicationVersionMockFactory.populatePublicationWithStructureWithCubesOnChapters(publicationVersion02, datasets, queries);
+
+        getStatisticalResourcesPersistedDoMocks().mockPublicationVersion(publicationVersion02);
+        prepareToPublished(publicationVersion02);
+        registerPublicationVersionMock(PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_01, publicationVersion02);
+
+        publicationVersion02.getSiemacMetadataStatisticalResource().setReplacesVersion(StatisticalResourcesPersistedDoMocks.mockPublicationVersionRelated(publicationVersion01));
+
+        List<GeoCacheResource> relatedResources = new ArrayList<>();
+        relatedResources.add(geoCacheResource);
+        relatedResources.add(geoCacheResourceLastPublishedVersion);
+        relatedResources.add(geoCacheResourceQueryVersion);
+        GeoCacheByRelatedResource geoCacheByRelatedResource = GeoCacheByRelatedResourceMockFactory.getGeoCacheResourceMockForCollectionResource(publicationVersion02, relatedResources);
+        registerGeoCacheByRelatedResourceMock(GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_01_FOR_CACHE, geoCacheByRelatedResource);
+
+        return publicationVersion02.getPublication();
+    }
+
+    private static Publication getPublication10BasicForCacheResource02() {
+        int sequentialIdBase = 111111121;
+        PublicationMock publication = createPublicationToAddVersions(sequentialIdBase);
+
+        DateTime secondVersionPublishTime = new DateTime().plusDays(1);
+        PublicationVersion publicationVersion01 = createPublicationVersionPublishedPreviousVersion(publication, INIT_VERSION, new DateTime().minusDays(1), secondVersionPublishTime);
+        registerPublicationVersionMock(PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02_PREVIOUS_VERSION, publicationVersion01);
+
+        GeoCacheByRelatedResource geoCacheByRelatedResource = GeoCacheByRelatedResourceMockFactory.getGeoCacheResourceMockForCollectionResource(publicationVersion01, new ArrayList<>());
+        registerGeoCacheByRelatedResourceMock(GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_02_FOR_CACHE_PREVIOUS_VERSION, geoCacheByRelatedResource);
+
+        PublicationVersionMock publicationVersion02 = PublicationVersionMockFactory.buildPublicationVersionSimpleLastVersion(publication, SECOND_VERSION);
+
+        PublicationVersionMockFactory.fillOptionalExternalItems(publicationVersion02);
+
+        // datasets
+        Dataset datasetSingleVersionPublished = createDatasetVersionPublishedLastVersion(sequentialIdBase, INIT_VERSION, new DateTime().minusDays(3)).getDataset();
+        Dataset datasetWithPublishedAndDraft = createPublishedAndDraftVersionsForDataset(sequentialIdBase + 1);
+        Dataset datasetWithPublishedAndNotVisible = createPublishedAndNotVisibleVersionsForDataset(sequentialIdBase + 2, new DateTime().plusDays(3));
+        Dataset datasetWithTwoPublishedVersions = createTwoPublishedVersionsForDataset(sequentialIdBase + 3);
+
+        List<Dataset> datasets = Arrays.asList(datasetSingleVersionPublished, datasetWithPublishedAndNotVisible, datasetWithTwoPublishedVersions);
+
+        setUrnToDataset(datasetSingleVersionPublished, datasetSingleVersionPublished.getVersions().get(0).getSiemacMetadataStatisticalResource().getUrn());
+        GeoCacheResource geoCacheResource = GeoCacheResourceMockFactory.getGeoCacheResourceByDatasetVersion(datasetSingleVersionPublished.getVersions().get(0));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_08_BY_RELATED_RESOURCE, geoCacheResource);
+
+        setUrnToDataset(datasetWithTwoPublishedVersions, datasetWithTwoPublishedVersions.getVersions().get(1).getSiemacMetadataStatisticalResource().getUrn());
+        GeoCacheResource geoCacheResourceLastPublishedVersion = GeoCacheResourceMockFactory.getGeoCacheResourceByDatasetVersion(datasetWithTwoPublishedVersions.getVersions().get(1));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_09_BY_RELATED_RESOURCE, geoCacheResourceLastPublishedVersion);
+
+        // queries
+        Query queryPublishedLinkedToDataset = createPublishedQueryLinkedToDataset("Q01", datasetSingleVersionPublished,
+                datasetSingleVersionPublished.getVersions().get(0).getSiemacMetadataStatisticalResource().getValidFrom());
+
+        DatasetVersion datasetVersionLinkedToQuery = createDatasetVersionPublishedLastVersion(sequentialIdBase + 4, INIT_VERSION, new DateTime().minusDays(3));
+        Query queryPublishedLinekdToDatasetVersion = QueryMockFactory.createPublishedQueryLinkedToDatasetVersion("Q02", datasetVersionLinkedToQuery,
+                datasetVersionLinkedToQuery.getSiemacMetadataStatisticalResource().getValidFrom());
+
+        List<Query> queries = Arrays.asList(queryPublishedLinkedToDataset, queryPublishedLinekdToDatasetVersion);
+
+        setUrnToQuery(queryPublishedLinekdToDatasetVersion, queryPublishedLinekdToDatasetVersion.getVersions().get(0).getLifeCycleStatisticalResource().getUrn());
+        GeoCacheResource geoCacheResourceQueryVersion = GeoCacheResourceMockFactory.getGeoCacheResourceByQueryVersion(queryPublishedLinekdToDatasetVersion.getVersions().get(0));
+        registerGeoCacheResourceMock(GEO_COV_VAR_ELEMENT_CACHE_10_BY_RELATED_RESOURCE_QUERY, geoCacheResourceQueryVersion);
+
+        PublicationVersionMockFactory.populatePublicationWithStructureWithCubesOnChapters(publicationVersion02, datasets, queries);
+
+        getStatisticalResourcesPersistedDoMocks().mockPublicationVersion(publicationVersion02);
+        prepareToPublished(publicationVersion02);
+        registerPublicationVersionMock(PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02, publicationVersion02);
+
+        publicationVersion02.getSiemacMetadataStatisticalResource().setReplacesVersion(StatisticalResourcesPersistedDoMocks.mockPublicationVersionRelated(publicationVersion01));
+
+        publicationVersion02.getHasPart().addAll(mockHasPart(datasets, queries));
+
+        return publicationVersion02.getPublication();
+    }
+
+    private static void setUrnToDataset(Dataset dataset, String urn) {
+        String[] urnMembers = UrnUtils.splitUrnItem(urn);
+        String urnDataset = GeneratorUrnUtils.generateSiemacStatisticalResourceDatasetUrn(new String[]{urnMembers[0]}, urnMembers[1]);
+        dataset.getIdentifiableStatisticalResource().setUrn(urnDataset);
+    }
+
+    private static void setUrnToQuery(Query query, String urn) {
+        String[] urnMembers = UrnUtils.splitUrnItem(urn);
+        String urnDataset = GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn(new String[]{urnMembers[0]}, urnMembers[1]);
+        query.getIdentifiableStatisticalResource().setUrn(urnDataset);
+    }
+
+    private static List<RelatedResource> mockHasPart(List<Dataset> datasets, List<Query> queries) {
+        List<RelatedResource> relatedResources = new ArrayList<>();
+
+        for (Dataset dataset : datasets) {
+            if (dataset.getIdentifiableStatisticalResource().getUrn() == null) {
+                setUrnToDataset(dataset, dataset.getVersions().get(0).getSiemacMetadataStatisticalResource().getUrn());
+            }
+
+            relatedResources.add(StatisticalResourcesDoMocks.mockDatasetRelated(dataset));
+        }
+
+        for (Query query : queries) {
+            if (query.getIdentifiableStatisticalResource().getUrn() == null) {
+                setUrnToQuery(query, query.getVersions().get(0).getLifeCycleStatisticalResource().getUrn());
+            }
+
+            relatedResources.add(StatisticalResourcesDoMocks.mockQueryRelated(query));
+        }
+
+        return relatedResources;
     }
 
     // Public builders

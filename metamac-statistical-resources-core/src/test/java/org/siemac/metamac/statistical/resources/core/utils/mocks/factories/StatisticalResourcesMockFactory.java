@@ -10,6 +10,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.Translation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
@@ -144,6 +145,18 @@ public abstract class StatisticalResourcesMockFactory<EntityMock> extends MockFa
 
     protected static MockDescriptor getGeoCacheResourceMockDescriptor(String id) {
         return GeoCacheResourceMockFactory.getInstance().getMockWithDependencies(id);
+    }
+
+    protected static void registerGeoCacheByRelatedResourceMock(String id, GeoCacheByRelatedResource geoCacheByRelatedResource) {
+        GeoCacheByRelatedResourceMockFactory.getInstance().registerMock(id, geoCacheByRelatedResource);
+    }
+
+    protected static GeoCacheByRelatedResource getGeoCacheByRelatedResourceMock(String id) {
+        return GeoCacheByRelatedResourceMockFactory.getInstance().getMock(id);
+    }
+
+    protected static MockDescriptor getGeoCacheByRelatedResourceMockDescriptor(String id) {
+        return GeoCacheByRelatedResourceMockFactory.getInstance().getMockWithDependencies(id);
     }
 
 }

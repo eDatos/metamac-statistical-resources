@@ -1,12 +1,24 @@
 package org.siemac.metamac.statistical.resources.core.geocache.serviceapi;
 
 import static org.junit.Assert.assertEquals;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory.GEO_CACHE_BY_RELATED_RESOURCE_01;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory.GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_01_FOR_CACHE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory.GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_02_FOR_CACHE_PREVIOUS_VERSION;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory.GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_07;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_01;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_08_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_09_BY_RELATED_RESOURCE;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_10_BY_RELATED_RESOURCE_QUERY;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_QUERY_RESOURCE_01;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_07_WITH_TWO_VERSIONS_LAST_ONE_READY_TO_PUBLISHED_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_09_BASIC_FOR_CACHE_RESOURCE_01;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationMockFactory.PUBLICATION_10_BASIC_FOR_CACHE_RESOURCE_02;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02_PREVIOUS_VERSION;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -32,6 +44,9 @@ import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheRes
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.mock.Mocks;
+import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.utils.asserts.GeoCacheAssertUtils;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks;
@@ -73,51 +88,119 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
 
     }
 
-    // TODO EDATOS-4587 VER TESTS
-
     @Override
-    public void testUpdateGeoCacheByRelatedResource() throws Exception {
-        // TODO Auto-generated method stub
+    @Test
+    @MetamacMock({PUBLICATION_07_WITH_TWO_VERSIONS_LAST_ONE_READY_TO_PUBLISHED_NAME, GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_07})
+    public void testFindGeoRelatedResourcesByCondition() throws Exception {
+
+        GeoCacheByRelatedResource geoCacheByRelatedResource = geoCacheByRelatedResourceFactory.retrieveMock(GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_07);
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class)
+                .withProperty(GeoCacheByRelatedResourceProperties.relatedResources().territories().code()).eq(GeoCacheResourceMockFactory.VARIABLE_ELEMENT_01)
+                .orderBy(GeoCacheByRelatedResourceProperties.code()).ascending().build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+        PagedResult<GeoCacheByRelatedResource> resourcesPagedResult = cacheService.findGeoRelatedResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(1, resourcesPagedResult.getTotalRows());
+
+        GeoCacheByRelatedResource collectionResult = resourcesPagedResult.getValues().get(0);
+
+        assertEquals(geoCacheByRelatedResource.getUrn(), collectionResult.getUrn());
+
+        assertEquals(3, collectionResult.getRelatedResources().size());
+
+        GeoCacheAssertUtils.assertEqualsArrayGeoCacheResource(collectionResult.getRelatedResources(), geoCacheByRelatedResource.getRelatedResources(), collectionResult.getUrn());
 
     }
 
-    @Override
-    public void testUpdateRelatedResourceByCacheResource() throws Exception {
-        // TODO Auto-generated method stub
+    @Test
+    @MetamacMock({PUBLICATION_07_WITH_TWO_VERSIONS_LAST_ONE_READY_TO_PUBLISHED_NAME, GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_07})
+    public void testFindGeoRelatedResourcesByUrn() throws Exception {
 
+        GeoCacheByRelatedResource geoCacheByRelatedResource = geoCacheByRelatedResourceFactory.retrieveMock(GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_07);
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.urn())
+                .eq(geoCacheByRelatedResource.getUrn()).and().withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, 1, true);
+        PagedResult<GeoCacheByRelatedResource> resourcesPagedResult = cacheService.findGeoRelatedResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(1, resourcesPagedResult.getTotalRows());
+
+        GeoCacheByRelatedResource collectionResult = resourcesPagedResult.getValues().get(0);
+
+        assertEquals(geoCacheByRelatedResource.getUrn(), collectionResult.getUrn());
     }
 
     @Override
-    public void testCreateRelatedResourceByCacheResourceByUrn() throws Exception {
-        // TODO Auto-generated method stub
+    @Test
+    @MetamacMock({PUBLICATION_09_BASIC_FOR_CACHE_RESOURCE_01, GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_01_FOR_CACHE})
+    public void testDeleteRelatedResourceOldVersions() throws Exception {
+
+        GeoCacheByRelatedResource geoCacheByRelatedResource = geoCacheByRelatedResourceFactory.retrieveMock(GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_01_FOR_CACHE);
+
+        cacheService.deleteRelatedResourceOldVersions(getServiceContextAdministrador(), geoCacheByRelatedResource.getUrn());
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.urn())
+                .eq(geoCacheByRelatedResource.getUrn()).and().withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, 1, true);
+        PagedResult<GeoCacheByRelatedResource> resourcesPagedResult = cacheService.findGeoRelatedResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(0, resourcesPagedResult.getTotalRows());
 
     }
 
     @Override
     @Test
-    @MetamacMock(GEO_CACHE_BY_RELATED_RESOURCE_01)
-    public void testFindGeoRelatedResourcesByCondition() throws Exception {
-        GeoCacheByRelatedResource expected = geoCacheByRelatedResourceFactory.retrieveMock(GEO_CACHE_BY_RELATED_RESOURCE_01);
-
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.urn()).eq(expected.getUrn())
-                .orderBy(GeoCacheByRelatedResourceProperties.code()).ascending().build();
-
-        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
-        PagedResult<GeoCacheByRelatedResource> resourcesPagedResult = cacheService.findGeoRelatedResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
-        assertEquals(1, resourcesPagedResult.getTotalRows());
-        assertEquals(expected.getUrn(), resourcesPagedResult.getValues().get(0).getUrn());
-
-    }
-
-    @Override
-    public void testDeleteRelatedResourceOldVersions() throws Exception {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
+    @MetamacMock({PUBLICATION_10_BASIC_FOR_CACHE_RESOURCE_02, PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02_PREVIOUS_VERSION, PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02,
+            GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_02_FOR_CACHE_PREVIOUS_VERSION, GEO_COV_VAR_ELEMENT_CACHE_08_BY_RELATED_RESOURCE, GEO_COV_VAR_ELEMENT_CACHE_09_BY_RELATED_RESOURCE,
+            GEO_COV_VAR_ELEMENT_CACHE_10_BY_RELATED_RESOURCE_QUERY})
     public void testProcessGeoCacheRelatedCollection() throws Exception {
-        // TODO Auto-generated method stub
+        Publication publication = publicationMockFactory.retrieveMock(PUBLICATION_10_BASIC_FOR_CACHE_RESOURCE_02);
+
+        PublicationVersion publicationVersionPrevious = publication.getVersions().get(0);
+
+        PublicationVersion publicationVersionLatest = publication.getVersions().get(1);
+
+        GeoCacheByRelatedResource geoCacheByRelatedResource = geoCacheByRelatedResourceFactory.retrieveMock(GEO_CACHE_BY_RELATED_RESOURCE_03_COLLECTION_02_FOR_CACHE_PREVIOUS_VERSION);
+
+        Set<GeoCacheResource> expectedGeoCacheResourceInLatestPublication = new HashSet<>();
+        expectedGeoCacheResourceInLatestPublication.add(geoCacheResourceFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_08_BY_RELATED_RESOURCE));
+        expectedGeoCacheResourceInLatestPublication.add(geoCacheResourceFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_09_BY_RELATED_RESOURCE));
+        expectedGeoCacheResourceInLatestPublication.add(geoCacheResourceFactory.retrieveMock(GEO_COV_VAR_ELEMENT_CACHE_10_BY_RELATED_RESOURCE_QUERY));
+
+        // cache for previous version
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.urn())
+                .eq(geoCacheByRelatedResource.getUrn()).and().withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, 1, true);
+        PagedResult<GeoCacheByRelatedResource> resourcesPagedResult = cacheService.findGeoRelatedResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(resourcesPagedResult.getValues().get(0).getUrn(), publicationVersionPrevious.getSiemacMetadataStatisticalResource().getUrn());
+
+        // cache for latest version. Test that is not in cache
+        conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.urn())
+                .eq(publicationVersionLatest.getSiemacMetadataStatisticalResource().getUrn()).and().withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).build();
+
+        resourcesPagedResult = cacheService.findGeoRelatedResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(0, resourcesPagedResult.getTotalRows());
+
+        // insert lastest version collection in cache
+        cacheService.processGeoCacheRelatedCollection(getServiceContextAdministrador(), publicationVersionLatest, true, publicationVersionLatest.getSiemacMetadataStatisticalResource().getUrn());
+
+        // cache for latest version. Test that is in cache now
+        conditions = ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.urn())
+                .eq(publicationVersionLatest.getSiemacMetadataStatisticalResource().getUrn()).and().withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).build();
+
+        resourcesPagedResult = cacheService.findGeoRelatedResourcesByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(1, resourcesPagedResult.getTotalRows());
+
+        GeoCacheAssertUtils.assertEqualsArrayGeoCacheResource(resourcesPagedResult.getValues().get(0).getRelatedResources(), expectedGeoCacheResourceInLatestPublication,
+                publicationVersionLatest.getSiemacMetadataStatisticalResource().getUrn());
 
     }
 

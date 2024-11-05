@@ -17,7 +17,6 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
-import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
@@ -93,11 +92,6 @@ public class CacheServiceInvocationValidatorImpl {
     public static void checkUpdateRelatedResourceByCacheResource(GeoCacheResource geoCacheResource, List<GeoCacheResource> geoCacheResourcesDisabled,
             List<GeoCacheResource> geoCacheResourcesOldVersions, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(geoCacheResource, ServiceExceptionParameters.GEO_CACHE_RESOURCE, exceptions);
-    }
-
-    public static void checkCreateRelatedResourceByCacheResourceByUrn(GeoCacheByRelatedResource geoCacheByRelatedResource, String resourceUrn, List<MetamacExceptionItem> exceptions) {
-        StatisticalResourcesValidationUtils.checkParameterRequired(geoCacheByRelatedResource, ServiceExceptionParameters.GEO_CACHE_RESOURCES_BY_RELATED_RESOURCE, exceptions);
-        checkParameterRequired(resourceUrn, URN, exceptions);
     }
 
     public static void checkProcessGeoCacheRelatedCollection(PublicationVersion publicationVersion, boolean isLastVersionPublished, String urn, List<MetamacExceptionItem> exceptions) {

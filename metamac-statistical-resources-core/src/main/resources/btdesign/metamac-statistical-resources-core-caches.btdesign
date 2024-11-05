@@ -24,15 +24,9 @@ Application CacheStatisticalResources {
 		
 			//CACHE RESOURCES
 			
-			"creation"
-			boolean createRelatedResourceByCacheResourceByUrn(@GeoCacheByRelatedResource geoCacheByRelatedResource, String resourceUrn) throws MetamacException;
-			
-			
 			"updates"
 			@GeoCacheResource updateGeoCacheExternalResource(DatasetAvro jaxiDatasetVersionAvro, @InternationalString datasetTitle)
             List<@GeoCacheResource> updateAllGeoCacheResourcesByUrn(String resourceUrn, String resourceVersionUrn);
-            updateRelatedResourceByCacheResource(@GeoCacheResource newGeoCacheResource, List<@GeoCacheResource> geoCacheResourcesDisabled, List<@GeoCacheResource> geoCacheResourcesOldVersions);
-            @GeoCacheByRelatedResource updateGeoCacheByRelatedResource(PublicationAvro jaxiCollectionVersionAvro) throws MetamacException;
             updateCollectionExternalPublicationCache(PublicationAvro jaxiPublicationVersionAvro) throws MetamacException;
             updateDatasetExternalPublicationCache(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException;
             processGeoCacheRelatedCollection(@PublicationVersion publicationVersion, boolean isLastVersionPublished, String urn) throws MetamacException;
@@ -50,13 +44,7 @@ Application CacheStatisticalResources {
             "Finds resource from cache by criteria"
             PagedResult<@GeoCacheResource> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
             PagedResult<@GeoCacheByRelatedResource> findGeoRelatedResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
-            
-            //RELATED RESOURCES
-            
-            "updates"
-            @GeoCacheByRelatedResource updateGeoCacheByRelatedResource(@SiemacMetadataStatisticalResource metadataResource, @LifeCycleStatisticalResource lifeCycleResource,
-            @StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException;            
-              
+        
 		}
 	    
 	    	
@@ -79,8 +67,8 @@ Application CacheStatisticalResources {
 			boolean isExternalSource databaseColumn="is_external_source" not nullable;
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			boolean isActivated databaseColumn="is_activated" not nullable;
-			
-			- Bag<@GeoCacheTerritoriesByGeoCacheResource> territories cascade="all-delete-orphan" fetch="lazy" <-> cacheResource;
+	
+			- Bag<@ExternalItem> territories cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_TERRITORIES_BY_GEO_CACHE_RESOURCE" databaseColumn="VARIABLE_ELEMENT_FK" databaseJoinColumn="geo_cache_resource_fk";
 	
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
@@ -92,27 +80,11 @@ Application CacheStatisticalResources {
 				findByCondition;
 				findByCondition(PagingParameter pagingParameter);
 				disabledByResourceVersionUrn(String resourceVersionUrn);
-				List<@GeoCacheResource> retrieveByResourceVersionUrn(String resourceVersionUrn) throws MetamacException;
+				@GeoCacheResource retrieveByResourceVersionUrn(String resourceVersionUrn) throws MetamacException;
+				@GeoCacheResource retrieveByResourceVersionUrn(String resourceVersionUrn, boolean filterOnlyActivated) throws MetamacException;
 			}
 		}
-		
-		Entity GeoCacheTerritoriesByGeoCacheResource {
-    		databaseTable="TB_TERRITORIES_BY_GEO_CACHE_RESOURCE"
-    		hint="idSequence=TERRITORIES_BY_GEO_CACHE_RESOURCE"
-    		!auditable
-			gap
-			
-			"Added explicitly to avoid that Sculptor generate UUID"
-			Long id key;
-			
-    		- @ExternalItem variableElement cascade="all-delete-orphan" fetch="lazy" databaseColumn="variable_element_fk" not nullable;
- 			- @GeoCacheResource cacheResource cascade="none" fetch="lazy" not nullable databaseColumn="GEO_CACHE_RESOURCE_FK" <-> territories;
-  
-     		Repository GeoCacheTerritoriesByGeoCacheResourceRepository {
-    		    findByCondition;
-    		}	
-    	}
-
+	
 	Entity GeoCacheByRelatedResource {
 			databaseTable="TB_GEO_CACHE_RELATED_RESOURCE"
 			hint="idSequence=GEO_CACHE_RELATED_RESOURCE"
@@ -129,9 +101,8 @@ Application CacheStatisticalResources {
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			boolean isActivated databaseColumn="is_activated" not nullable;
 			
-			- Set<@GeoCacheResourcesByRelatedResource> relatedResources cascade="all-delete-orphan" fetch="lazy" <-> geoCacheResourcesByRelated;
+			- Set<@GeoCacheResource> relatedResources cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE" databaseColumn="GEO_CACHE_RESOURCE_FK" databaseJoinColumn="GEO_CACHE_RELATED_RESOURCE_FK";
 	
-		
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
 
@@ -142,27 +113,6 @@ Application CacheStatisticalResources {
 				findByCondition(PagingParameter pagingParameter);
     			findByQuery;
     		}	
-    	}
-    	
-    	  Entity GeoCacheResourcesByRelatedResource { 
-    		databaseTable="TB_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE"
-    		hint="idSequence=GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE"
-    		!auditable
-			gap
-			
-    		"Added explicitly to avoid that Sculptor generate UUID"
-			Long id key;
-
-			- @GeoCacheByRelatedResource geoCacheResourcesByRelated cascade="none" fetch="lazy" not nullable databaseColumn="GEO_CACHE_RELATED_RESOURCE_FK" <-> relatedResources;
-    		- @GeoCacheResource geoCacheResource cascade="none" fetch="lazy" not nullable databaseColumn="GEO_CACHE_RESOURCE_FK";
-    	
-
-    		Repository GeoCacheResourcesByRelatedResourceRepository {
-    			delete;
-    			save;
-    		    findByCondition;
-    		}	
-    	}
-	    
+    	}	    
 	}
 }

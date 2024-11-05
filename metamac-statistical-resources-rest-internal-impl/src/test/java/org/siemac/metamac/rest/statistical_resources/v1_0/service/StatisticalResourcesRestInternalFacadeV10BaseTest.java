@@ -68,6 +68,7 @@ import org.siemac.metamac.rest.statistical_operations_internal.v1_0.domain.Opera
 import org.siemac.metamac.rest.statistical_resources.v1_0.mockito.MockitoMockConfig;
 import org.siemac.metamac.rest.structural_resources.v1_0.utils.CommonMetadataRestMocks;
 import org.siemac.metamac.rest.structural_resources.v1_0.utils.RestDoMocks;
+import org.siemac.metamac.rest.structural_resources.v1_0.utils.RestGeoCacheDoMocks;
 import org.siemac.metamac.rest.structural_resources.v1_0.utils.SrmRestMocks;
 import org.siemac.metamac.rest.structural_resources.v1_0.utils.StatisticalOperationsRestMocks;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Agency;
@@ -121,6 +122,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
     private static String                           apiEndpointv10;
 
     protected static RestDoMocks                    restDoMocks;
+    static RestGeoCacheDoMocks                      restGeoCacheDoMocks;
 
     private CacheService                            cacheService;
     private DatasetService                          datasetService;
@@ -151,6 +153,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         applicationContext = ApplicationContextProvider.getApplicationContext();
         StatisticalResourcesPersistedDoMocks statisticalResourcesPersistedDoMocks = StatisticalResourcesPersistedDoMocks.getInstance();
         restDoMocks = new RestDoMocks(statisticalResourcesPersistedDoMocks);
+        restGeoCacheDoMocks = new RestGeoCacheDoMocks(restDoMocks);
 
         // Rest clients
         // xml
@@ -1068,7 +1071,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         mockRetrieveConfigurationById();
 
         mockRetrieveStatisticalOperationById();
-        mockFindGeoCovVarElementCacheDatasetVersionByCondition();
+        mockFindGeoCacheByRelatedResourceByCondition();
         mockConstraintDataset();
     }
 
@@ -1142,7 +1145,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
     }
 
     @SuppressWarnings("unchecked")
-    private void mockFindGeoCovVarElementCacheDatasetVersionByCondition() throws MetamacException {
+    private void mockFindGeoCacheByRelatedResourceByCondition() throws MetamacException {
         when(cacheService.findGeoRelatedResourcesByCondition(any(ServiceContext.class), any(List.class), any(PagingParameter.class))).thenAnswer(new Answer<PagedResult<GeoCacheByRelatedResource>>() {
 
             @Override
@@ -1152,30 +1155,12 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
                 String variableElementId = getVariableElementFromConditionalCriteria(conditions);
                 Boolean isLastVersion = getIsLastVersionFromConditionalCriteria(conditions);
 
-                if (variableElementId != null) {
-                    // Retrieve one
-                    GeoCacheByRelatedResource geoCovVarElementCacheDatasetVersion = null;
+                List<GeoCacheByRelatedResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheByRelatedResource>();
+                geoCovVarElementCacheDatasetsVersion.add(restGeoCacheDoMocks.mockCacheByRelatedResources(AGENCY_1, COLLECTION_1_CODE, VERSION_1, StatisticalResourceTypeEnum.COLLECTION));
+                geoCovVarElementCacheDatasetsVersion.add(restGeoCacheDoMocks.mockCacheByRelatedResources(AGENCY_1, COLLECTION_2_CODE, VERSION_1, StatisticalResourceTypeEnum.COLLECTION));
+                return new PagedResult<GeoCacheByRelatedResource>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(),
+                        geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
 
-                    geoCovVarElementCacheDatasetVersion = restDoMocks.mockRelatedResources(AGENCY_1, DATASET_1_CODE, VERSION_1, variableElementId, isLastVersion, StatisticalResourceTypeEnum.DATASET);
-
-                    List<GeoCacheByRelatedResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheByRelatedResource>();
-                    if (geoCovVarElementCacheDatasetVersion != null) {
-                        geoCovVarElementCacheDatasetsVersion.add(geoCovVarElementCacheDatasetVersion);
-                    }
-                    return new PagedResult<GeoCacheByRelatedResource>(geoCovVarElementCacheDatasetsVersion, 0, geoCovVarElementCacheDatasetsVersion.size(),
-                            geoCovVarElementCacheDatasetsVersion.size());
-                } else {
-                    // any
-                    List<GeoCacheByRelatedResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheByRelatedResource>();
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockRelatedResources(AGENCY_1, DATASET_1_CODE, VERSION_1, "variableElement01", true, StatisticalResourceTypeEnum.DATASET));
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockRelatedResources(AGENCY_1, DATASET_1_CODE, VERSION_2, "variableElement01", true, StatisticalResourceTypeEnum.DATASET));
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockRelatedResources(AGENCY_2, DATASET_1_CODE, VERSION_1, "variableElement01", true, StatisticalResourceTypeEnum.DATASET));
-                    geoCovVarElementCacheDatasetsVersion.add(restDoMocks.mockRelatedResources(AGENCY_1, DATASET_2_CODE, VERSION_1, "variableElement01", true, StatisticalResourceTypeEnum.DATASET));
-
-                    return new PagedResult<GeoCacheByRelatedResource>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(),
-                            geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
-
-                }
             };
         });
     }

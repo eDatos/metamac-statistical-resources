@@ -257,6 +257,11 @@ public class PublicationVersionMockFactory extends StatisticalResourcesMockFacto
 
     public static final String                   PUBLICATION_VERSION_105_LAST_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS                                         = "PUBLICATION_VERSION_105_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS";
 
+    // only descriptor. it is not necessary implementation here.
+    public static final String                   PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_01_PREVIOUS_VERSION                                                     = "PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_01_PREVIOUS_VERSION";
+    public static final String                   PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_01                                                                      = "PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_01";
+    public static final String                   PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02_PREVIOUS_VERSION                                                     = "PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02_PREVIOUS_VERSION";
+    public static final String                   PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02                                                                      = "PUBLICATION_VERSION_FOR_GEOGRAPHICAL_CACHE_02";
     private static PublicationVersionMockFactory instance                                                                                                           = null;
 
     private PublicationVersionMockFactory() {

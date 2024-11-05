@@ -1,35 +1,30 @@
 package org.siemac.metamac.rest.statistical_resources.v1_0.service;
 
-import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.DATASET_1_CODE;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.COLLECTION_1_CODE;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.COLLECTION_2_CODE;
 
 import java.io.InputStream;
-import java.util.Arrays;
 
 import javax.ws.rs.core.Response.Status;
 
 import org.junit.Test;
-import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithRelatedResources;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class StatisticalResourcesRestExternalFacadeV10ResourcesTest extends StatisticalResourcesRestExternalFacadeV10BaseTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StatisticalResourcesRestExternalFacadeV10ResourcesTest.class);
-
     @Test
-    public void testFindResources() throws Exception {
+    public void testFindResources() {
         String query = "GEOCOV_VARELEM_ID EQ " + "'variableElement01'" + " AND IS_LAST_VERSION EQ 'true'";
         Resources resources = statisticalResourcesRestExternalFacadeClientXml.findResources(query, null, null, null, null);
 
-        assertEquals(4, resources.getResources().size());
+        assertEquals(2, resources.getResources().size());
         assertEquals(StatisticalResourcesRestExternalConstants.KIND_RESOURCES, resources.getKind());
     }
 
     @Test
-    public void testFindDatasetsXml() throws Exception {
+    public void testFindGeoCacheByRelatedREsourcesXml() throws Exception {
         String query = "GEOCOV_VARELEM_ID EQ " + "'variableElement01'" + " AND IS_LAST_VERSION EQ 'true'";
         String requestUri = getFindResourcesUri(query, null, null, "es");
         InputStream responseExpected = StatisticalResourcesRestExternalConstants.class.getResourceAsStream("/responses/resources/findResources.xml");
@@ -41,19 +36,38 @@ public class StatisticalResourcesRestExternalFacadeV10ResourcesTest extends Stat
     }
 
     @Test
-    public void testRetrieveResource() throws Exception {
+    public void testRetrieveResource() {
         String query = "IS_LAST_VERSION EQ 'true'";
         Resources resources = statisticalResourcesRestExternalFacadeClientXml.findResources(query, null, null, null, null);
 
+        assertEquals(2, resources.getResources().size());
+        assertEquals(StatisticalResourcesRestExternalConstants.KIND_RESOURCES, resources.getKind());
+
         ResourceWithRelatedResources resource = resources.getResources().get(0);
 
-        assertEquals(DATASET_1_CODE, resource.getMainResource().getId());
-        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)", resource.getMainResource().getUrn());
-        assertEquals(StatisticalResourcesRestExternalConstants.KIND_RESOURCE, resource.getMainResource().getKind());
+        assertEquals(COLLECTION_1_CODE, resource.getMainResource().getId());
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection1", resource.getMainResource().getUrn());
+
+        assertEquals(StatisticalResourcesRestExternalConstants.KIND_COLLECTION, resource.getMainResource().getKind());
         assertNotNull(resource.getMainResource().getStatisticalOperation());
-        assertEquals("http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=01.000#",
+        assertEquals(
+                "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=publication&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection1#",
+
                 resource.getMainResource().getVisualizerHtmlLink());
         assertNotNull(resource.getMainResource().getStatisticalOperation().getId());
+
+        resource = resources.getResources().get(1);
+
+        assertEquals(COLLECTION_2_CODE, resource.getMainResource().getId());
+        assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection2", resource.getMainResource().getUrn());
+
+        assertEquals(StatisticalResourcesRestExternalConstants.KIND_COLLECTION, resource.getMainResource().getKind());
+        assertNotNull(resource.getMainResource().getStatisticalOperation());
+        assertEquals(
+                "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=publication&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection2#",
+                resource.getMainResource().getVisualizerHtmlLink());
+        assertNotNull(resource.getMainResource().getStatisticalOperation().getId());
+
     }
 
     @Test
@@ -66,13 +80,5 @@ public class StatisticalResourcesRestExternalFacadeV10ResourcesTest extends Stat
             InputStream responseExpected = StatisticalResourcesRestExternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/resources/retrieveResource.id1.json");
             testRequestWithoutJaxbTransformation(requestUri, APPLICATION_JSON, Status.OK, responseExpected);
         }
-    }
-
-    @Test
-    public void testRetrieveResourceAnotherLanguage() throws Exception {
-        String query = "GEOCOV_VARELEM_ID EQ " + "'variableElement01'" + " AND IS_LAST_VERSION EQ 'true'";
-        Resources resources = statisticalResourcesRestExternalFacadeClientXml.findResources(query, null, null, null, Arrays.asList("en"));
-
-        MetamacRestAsserts.assertEqualsInternationalString("es", "title-dataset1 en Espanol", "en", "title-dataset1 in English", resources.getResources().get(0).getMainResource().getName());
     }
 }
