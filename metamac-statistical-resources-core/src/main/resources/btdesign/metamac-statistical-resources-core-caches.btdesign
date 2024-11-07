@@ -101,7 +101,7 @@ Application CacheStatisticalResources {
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			boolean isActivated databaseColumn="is_activated" not nullable;
 			
-			- Set<@GeoCacheResource> relatedResources cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE" databaseColumn="GEO_CACHE_RESOURCE_FK" databaseJoinColumn="GEO_CACHE_RELATED_RESOURCE_FK";
+			- Set<@GeoCacheResource> relatedResources cascade="none" fetch="lazy" databaseJoinTable="TB_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE" databaseColumn="GEO_CACHE_RESOURCE_FK" databaseJoinColumn="GEO_CACHE_RELATED_RESOURCE_FK";
 	
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;

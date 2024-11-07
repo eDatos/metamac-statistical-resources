@@ -46,6 +46,26 @@ inner join tb_geo_cache_resource tgcrr on c.urn = tgcrr.urn
 where c.is_activated = true;
 
 commit;
-  
+
+--PASO 3 Copia de seguridad de tabla antigua. tb_geocov_varelem_cache_datasets_versions.  
+/*
+Se realizará copia de seguridad de esta tabla para poder borrarla. Esta tabla debe ser borrada ya que se copiará tal cual a la nueva estructura sin crear nuevas entradas en la tabla tb_external_items para los elementos
+de variable asociados. Por tanto hay que borrarlos para que, si se borran en la nueva tabla no de problemas.
+*/
+
+--3.1 Exportar la tabla tb_geocov_varelem_cache_datasets_versions a CSV
+--3.1.1 Botón derecho sobre la tabla y "Exportar Data"
+-- 3.1.2 Seleccionar CSV
+-- 3.1.3 En la  pantalla de exportación, en "Exporting settings" al valor NULL string asignarle el valor null si no está así.
+-- 3.1.4 Asignar un nombre al archivo de salida donde se guardará el CSV
+
+--3.2 Misma operación con la tabla tb_External_items. Exportar la tabla tb_external_items a CSV
+--3.1.1 Botón derecho sobre la tabla y "Exportar Data"
+-- 3.1.2 Seleccionar CSV
+-- 3.1.3 En la  pantalla de exportación, en "Exporting settings" al valor NULL string asignarle el valor null si no está así.
+-- 3.1.4 Asignar un nombre al archivo de salida donde se guardará el CSV
+
+--PASO 4 Borrar tabla  tb_geocov_varelem_cache_datasets_versions
+drop table tb_geocov_varelem_cache_datasets_versions;
   
   
