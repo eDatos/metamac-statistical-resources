@@ -3902,6 +3902,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.query.description']}"
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.fields.description']}"
                }
             ],
             "responses":{

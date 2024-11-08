@@ -116,6 +116,10 @@ public class CacheServiceInvocationValidatorImpl {
         // NOTHING
     }
 
+    public static void checkFindResourcesByCondition(List<ConditionalCriteria> conditions, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
     public static void checkFindGeoRelatedResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }

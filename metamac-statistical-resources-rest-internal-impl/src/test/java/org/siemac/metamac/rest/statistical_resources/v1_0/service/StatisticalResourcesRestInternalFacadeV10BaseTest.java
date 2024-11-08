@@ -89,6 +89,8 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
 import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
@@ -212,7 +214,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         return uri;
     }
 
-    protected String getFindResourcesUri(String resourcePath, String agencyID, String resourceID, String query, String limit, String offset, String langs) throws Exception {
+    protected String getFindResourcesUri(String resourcePath, String agencyID, String resourceID, String query, String limit, String offset, String langs, String fields) throws Exception {
         String uri = RestUtils.createLink(baseApi, resourcePath);
         if (agencyID != null) {
             uri = RestUtils.createLink(uri, agencyID);
@@ -224,6 +226,11 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         uri = RestUtils.createLinkWithQueryParam(uri, RestConstants.PARAMETER_QUERY, RestUtils.encodeParameter(query));
         uri = RestUtils.createLinkWithQueryParam(uri, RestConstants.PARAMETER_LIMIT, RestUtils.encodeParameter(limit));
         uri = RestUtils.createLinkWithQueryParam(uri, RestConstants.PARAMETER_OFFSET, RestUtils.encodeParameter(offset));
+
+        if (fields != null) {
+            uri = RestUtils.createLinkWithQueryParam(uri, StatisticalResourcesRestInternalConstants.PARAMETER_FIELDS, RestUtils.encodeParameter(fields));
+        }
+
         return uri;
     }
 
@@ -959,16 +966,15 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         });
     }
 
-    private String getVariableElementFromConditionalCriteria(List<ConditionalCriteria> conditions) {
-        // can use PublicationVersionProperties or DatasetVersionProperties...
+    private String getGeoCacheResourceVariableElementFromConditionalCriteria(List<ConditionalCriteria> conditions) {
         ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Equal, GeoCacheResourceProperties.territories().code());
         return conditionalCriteria != null ? (String) conditionalCriteria.getFirstOperant() : null;
     }
 
-    private Boolean getIsLastVersionFromConditionalCriteria(List<ConditionalCriteria> conditions) {
-        // can use PublicationVersionProperties or DatasetVersionProperties...
-        ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Equal, GeoCacheResourceProperties.isLastVersion());
-        return conditionalCriteria != null ? (Boolean) conditionalCriteria.getFirstOperant() : null;
+    private String getVariableElementFromConditionalCriteria(List<ConditionalCriteria> conditions) {
+        ConditionalCriteria conditionalCriteria = ConditionalCriteriaUtils.getConditionalCriteriaByPropertyName(conditions, Operator.Equal,
+                GeoCacheByRelatedResourceProperties.relatedResources().territories().code());
+        return conditionalCriteria != null ? (String) conditionalCriteria.getFirstOperant() : null;
     }
 
     private String getAgencyIdFromConditionalCriteria(List<ConditionalCriteria> conditions) {
@@ -1153,13 +1159,29 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
                 List<ConditionalCriteria> conditions = (List<ConditionalCriteria>) invocation.getArguments()[1];
 
                 String variableElementId = getVariableElementFromConditionalCriteria(conditions);
-                Boolean isLastVersion = getIsLastVersionFromConditionalCriteria(conditions);
 
                 List<GeoCacheByRelatedResource> geoCovVarElementCacheDatasetsVersion = new ArrayList<GeoCacheByRelatedResource>();
                 geoCovVarElementCacheDatasetsVersion.add(restGeoCacheDoMocks.mockCacheByRelatedResources(AGENCY_1, COLLECTION_1_CODE, VERSION_1, StatisticalResourceTypeEnum.COLLECTION));
                 geoCovVarElementCacheDatasetsVersion.add(restGeoCacheDoMocks.mockCacheByRelatedResources(AGENCY_1, COLLECTION_2_CODE, VERSION_1, StatisticalResourceTypeEnum.COLLECTION));
                 return new PagedResult<GeoCacheByRelatedResource>(geoCovVarElementCacheDatasetsVersion, geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size(),
                         geoCovVarElementCacheDatasetsVersion.size(), geoCovVarElementCacheDatasetsVersion.size() * 10, 0);
+
+            };
+        });
+
+        when(cacheService.findResourcesByCondition(any(ServiceContext.class), any(List.class))).thenAnswer(new Answer<List<GeoCacheResource>>() {
+
+            @Override
+            public List<GeoCacheResource> answer(InvocationOnMock invocation) throws Throwable {
+                List<ConditionalCriteria> conditions = (List<ConditionalCriteria>) invocation.getArguments()[1];
+
+                String variableElementId = getGeoCacheResourceVariableElementFromConditionalCriteria(conditions);
+
+                if (RestGeoCacheDoMocks.VARIABLE_ELEMENT_1.equals(variableElementId)) {
+                    return restGeoCacheDoMocks.mockResourcesForRelatedResourcesWithVariableElement01();
+                }
+
+                return new ArrayList<>();
 
             };
         });

@@ -329,6 +329,19 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     }
 
     @Override
+    public List<GeoCacheResource> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions) throws MetamacException {
+
+        // Validations
+        cacheServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions);
+
+        // Find
+        conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
+
+        return this.getGeoCacheResourceRepository().findByCondition(conditions);
+
+    }
+    
+    @Override
     public PagedResult<GeoCacheByRelatedResource> findGeoRelatedResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
             throws MetamacException {
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);

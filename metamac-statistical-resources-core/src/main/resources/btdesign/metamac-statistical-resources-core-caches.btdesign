@@ -43,6 +43,7 @@ Application CacheStatisticalResources {
             @GeoCacheResource retrieveGeoCacheResourceByUrn(String resourceUrn);
             "Finds resource from cache by criteria"
             PagedResult<@GeoCacheResource> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+            List<@GeoCacheResource> findResourcesByCondition(List<ConditionalCriteria> conditions)  throws MetamacException;
             PagedResult<@GeoCacheByRelatedResource> findGeoRelatedResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
         
 		}

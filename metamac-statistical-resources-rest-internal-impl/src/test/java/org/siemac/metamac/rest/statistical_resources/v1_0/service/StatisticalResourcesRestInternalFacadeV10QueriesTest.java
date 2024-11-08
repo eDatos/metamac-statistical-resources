@@ -554,7 +554,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
     }
 
     public String getFindQueriesUri(String agencyID, String query, String limit, String offset, String langs) throws Exception {
-        return getFindResourcesUri(StatisticalResourcesRestInternalConstants.LINK_SUBPATH_QUERIES, agencyID, null, query, limit, offset, langs);
+        return getFindResourcesUri(StatisticalResourcesRestInternalConstants.LINK_SUBPATH_QUERIES, agencyID, null, query, limit, offset, langs, null);
     }
 
 }

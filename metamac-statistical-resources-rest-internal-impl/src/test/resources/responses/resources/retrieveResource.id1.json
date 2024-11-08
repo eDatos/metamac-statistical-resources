@@ -20,35 +20,12 @@
 				"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=publication&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection1#",
 				"statisticalOperation": {
 					"id": "collection1",
-					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=jsa23Oqba9",
+					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=NZzCVMzwf9",
 					"kind": "statisticalOperations#operation"
 				}
 			},
 			"relatedResources": {
 				"resource": [
-					{
-						"id": "query1",
-						"kind": "statisticalResources#query",
-						"name": {
-							"text": [
-								{
-									"value": "title-query1 en Espanol",
-									"lang": "es"
-								}
-							]
-						},
-						"selfLink": {
-							"kind": "statisticalResources#resource",
-							"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/query1/01.000#query"
-						},
-						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1(01.000)",
-						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=query&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1#",
-						"statisticalOperation": {
-							"id": "GK7EJ1fYtS",
-							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=GK7EJ1fYtS",
-							"kind": "statisticalOperations#operation"
-						}
-					},
 					{
 						"id": "dataset1",
 						"kind": "statisticalResources#dataset",
@@ -67,8 +44,31 @@
 						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)",
 						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=01.000#",
 						"statisticalOperation": {
-							"id": "lpnlevYB58",
-							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=lpnlevYB58",
+							"id": "QUtc4u4Fq6",
+							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=QUtc4u4Fq6",
+							"kind": "statisticalOperations#operation"
+						}
+					},
+					{
+						"id": "query1",
+						"kind": "statisticalResources#query",
+						"name": {
+							"text": [
+								{
+									"value": "title-query1 en Espanol",
+									"lang": "es"
+								}
+							]
+						},
+						"selfLink": {
+							"kind": "statisticalResources#resource",
+							"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/query1/01.000#query"
+						},
+						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1(01.000)",
+						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=query&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1#",
+						"statisticalOperation": {
+							"id": "pPpVhgwWmh",
+							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=pPpVhgwWmh",
 							"kind": "statisticalOperations#operation"
 						}
 					}
@@ -96,35 +96,12 @@
 				"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=publication&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection2#",
 				"statisticalOperation": {
 					"id": "collection2",
-					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=6KQ9Ix9wqX",
+					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=SwFH7UYcqA",
 					"kind": "statisticalOperations#operation"
 				}
 			},
 			"relatedResources": {
 				"resource": [
-					{
-						"id": "query2",
-						"kind": "statisticalResources#query",
-						"name": {
-							"text": [
-								{
-									"value": "title-query2 en Espanol",
-									"lang": "es"
-								}
-							]
-						},
-						"selfLink": {
-							"kind": "statisticalResources#resource",
-							"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/query2/01.000#query"
-						},
-						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query2(01.000)",
-						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=query&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query2#",
-						"statisticalOperation": {
-							"id": "ASn8d6su9q",
-							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=ASn8d6su9q",
-							"kind": "statisticalOperations#operation"
-						}
-					},
 					{
 						"id": "dataset2",
 						"kind": "statisticalResources#dataset",
@@ -143,8 +120,31 @@
 						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset2(01.000)",
 						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset2&version=01.000#",
 						"statisticalOperation": {
-							"id": "CJH68hI4iv",
-							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=CJH68hI4iv",
+							"id": "nkLRshONhH",
+							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=nkLRshONhH",
+							"kind": "statisticalOperations#operation"
+						}
+					},
+					{
+						"id": "query2",
+						"kind": "statisticalResources#query",
+						"name": {
+							"text": [
+								{
+									"value": "title-query2 en Espanol",
+									"lang": "es"
+								}
+							]
+						},
+						"selfLink": {
+							"kind": "statisticalResources#resource",
+							"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/query2/01.000#query"
+						},
+						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query2(01.000)",
+						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=query&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query2#",
+						"statisticalOperation": {
+							"id": "6Vn88iunUa",
+							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=6Vn88iunUa",
 							"kind": "statisticalOperations#operation"
 						}
 					}
@@ -157,5 +157,5 @@
 	"total": 20,
 	"limit": 25,
 	"offset": 2,
-	"selfLink": "http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' AND IS_LAST_VERSION EQ 'true'&limit=25&offset=2#statistical_resources_resource"
+	"selfLink": "http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' &limit=25&offset=2#statistical_resources_resource"
 }

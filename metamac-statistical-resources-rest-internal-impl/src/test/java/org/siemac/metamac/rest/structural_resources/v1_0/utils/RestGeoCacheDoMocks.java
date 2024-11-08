@@ -8,6 +8,7 @@ import static org.siemac.metamac.rest.statistical_resources.constants.RestTestCo
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.QUERY_2_CODE;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.VERSION_1;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +25,7 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.Stati
 
 public class RestGeoCacheDoMocks {
 
-    private static final String VARIABLE_ELEMENT_1 = "variableElement01";
+    public static final String  VARIABLE_ELEMENT_1 = "variableElement01";
     private static final String VARIABLE_ELEMENT_2 = "variableElement02";
     private static final String VARIABLE_ELEMENT_3 = "variableElement03";
     private static final String VARIABLE_ELEMENT_4 = "variableElement04";
@@ -71,6 +72,13 @@ public class RestGeoCacheDoMocks {
             return geoCacheByRelatedResource;
         }
 
+    }
+
+    public List<GeoCacheResource> mockResourcesForRelatedResourcesWithVariableElement01() {
+        List<GeoCacheResource> geoCacheResources = new ArrayList<GeoCacheResource>();
+        geoCacheResources.add(mockResources(AGENCY_1, DATASET_1_CODE, VERSION_1, Arrays.asList(VARIABLE_ELEMENT_1, VARIABLE_ELEMENT_2), true, StatisticalResourceTypeEnum.DATASET));
+        geoCacheResources.add(mockResources(AGENCY_1, DATASET_2_CODE, VERSION_1, Arrays.asList(VARIABLE_ELEMENT_1, VARIABLE_ELEMENT_4), true, StatisticalResourceTypeEnum.DATASET));
+        return geoCacheResources;
     }
 
     public GeoCacheResource mockResources(String agencyId, String resourceId, String versionId, List<String> variableElementsId, Boolean isLastVersion,

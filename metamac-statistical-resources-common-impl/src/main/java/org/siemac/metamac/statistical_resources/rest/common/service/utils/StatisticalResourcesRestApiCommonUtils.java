@@ -85,6 +85,7 @@ public class StatisticalResourcesRestApiCommonUtils {
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION);
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_DATASET_CONSTRAINTS);
+        validFields.add(StatisticalResourcesRestConstants.FIELD_EXCLUDE_RELATED_RESOURCES_WITHOUT_SELECTED_CRITERIA);
         return parseFields(fieldsParam, validFields);
     }
 

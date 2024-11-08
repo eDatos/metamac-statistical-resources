@@ -35,7 +35,8 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
     private StatisticalOperationsRestExternalFacade statisticalOperationsRestExternalFacade;
 
     @Override
-    public Resources toResources(PagedResult<GeoCacheByRelatedResource> sources, String query, String orderBy, Integer limit, List<String> selectedLanguages) throws RestException {
+    public Resources toResources(PagedResult<GeoCacheByRelatedResource> sources, String query, String orderBy, Integer limit, List<String> cacheResourcesUrnWithSelectedCriteria,
+            List<String> selectedLanguages) throws RestException {
 
         Resources targets = new Resources();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_RESOURCES);
@@ -49,25 +50,37 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         // Values
         for (GeoCacheByRelatedResource source : sources.getValues()) {
             ResourceWithRelatedResources resourceWithRelatedResources = new ResourceWithRelatedResources();
+
             ResourceWithStatisticalOperation mainResource = toResource(source, operationTitles, selectedLanguages);
             resourceWithRelatedResources.setMainResource(mainResource);
 
-            ResourcesWithStatisticalOperation resources = new ResourcesWithStatisticalOperation();
+            ResourcesWithStatisticalOperation resources = toRelatedResources(source, operationTitles, selectedLanguages, cacheResourcesUrnWithSelectedCriteria);
 
-            if (source != null && source.getRelatedResources() != null) {
-                for (GeoCacheResource geoCacheResource : source.getRelatedResources()) {
-                    ResourceWithStatisticalOperation relatedResource = toResource(geoCacheResource, operationTitles, selectedLanguages);
-                    resources.getResources().add(relatedResource);
-
-                }
-                resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
-
-            }
             resourceWithRelatedResources.setRelatedResources(resources);
 
             targets.getResources().add(resourceWithRelatedResources);
         }
         return targets;
+    }
+
+    private ResourcesWithStatisticalOperation toRelatedResources(GeoCacheByRelatedResource source, Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles,
+            List<String> selectedLanguages, List<String> cacheResourcesUrnWithTerritory) {
+        ResourcesWithStatisticalOperation resources = new ResourcesWithStatisticalOperation();
+
+        if (source != null && source.getRelatedResources() != null) {
+            for (GeoCacheResource geoCacheResource : source.getRelatedResources()) {
+                if (cacheResourcesUrnWithTerritory.isEmpty() || cacheResourcesUrnWithTerritory.contains(geoCacheResource.getUrn())) {
+
+                    ResourceWithStatisticalOperation relatedResource = toResource(geoCacheResource, operationTitles, selectedLanguages);
+                    resources.getResources().add(relatedResource);
+                }
+
+            }
+            resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
+
+        }
+
+        return resources;
     }
 
     private ResourceWithStatisticalOperation toResource(GeoCacheByRelatedResource source, Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles,

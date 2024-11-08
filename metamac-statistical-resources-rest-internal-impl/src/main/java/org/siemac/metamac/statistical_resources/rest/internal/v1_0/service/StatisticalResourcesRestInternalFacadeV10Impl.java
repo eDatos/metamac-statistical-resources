@@ -48,6 +48,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarEle
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
@@ -517,27 +518,45 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Resources findResources(String query, String orderBy, String limit, String offset, List<String> lang) {
-        return findRelatedResourcesCommon(query, orderBy, limit, offset, lang);
+    public Resources findResources(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
+        return findRelatedResourcesCommon(query, orderBy, limit, offset, lang, fields);
     }
 
-    private Resources findRelatedResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang) {
+    private Resources findRelatedResourcesCommon(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
         try {
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
 
-            SculptorCriteria sculptorCriteria = resourcesRest2DoMapper.getGeoCacheByRelatedResourceCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset, true);
-
+            SculptorCriteria sculptorCriteriaCacheByRelatedResources = resourcesRest2DoMapper.getGeoCacheByRelatedResourceCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset,
+                    true);
             // Find
-            PagedResult<GeoCacheByRelatedResource> entitiesPagedResult = commonService.findRelatedGeoResources(sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
+            PagedResult<GeoCacheByRelatedResource> entitiesPagedResult = commonService.findRelatedGeoResources(sculptorCriteriaCacheByRelatedResources.getConditions(),
+                    sculptorCriteriaCacheByRelatedResources.getPagingParameter());
+
+            List<String> cacheResourcesUrn = retrieveUrnResources(query, parsedFields);
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages);
+            return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteriaCacheByRelatedResources.getLimit(), selectedLanguages, cacheResourcesUrn);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
-    private Datasets findDatasetsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
+    private List<String> retrieveUrnResources(String query, Set<String> parsedFields) {
+        List<String> cacheResourcesUrn = new ArrayList<>();
+        if (parsedFields.contains(StatisticalResourcesRestConstants.FIELD_EXCLUDE_RELATED_RESOURCES_WITHOUT_SELECTED_CRITERIA)) {
+            SculptorCriteria sculptorCriteriaCacheResources = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, null, null, null);
+            List<GeoCacheResource> cacheResourcesResult = commonService.findResources(sculptorCriteriaCacheResources.getConditions());
+
+            for (GeoCacheResource geoCacheResource : cacheResourcesResult) {
+                cacheResourcesUrn.add(geoCacheResource.getUrn());
+            }
+
+        }
+
+        return cacheResourcesUrn;
+    }
+    Datasets findDatasetsCommon(String agencyID, String resourceID, String version, String query, String orderBy, String limit, String offset, List<String> lang, Set<String> parsedFields) {
         try {
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 

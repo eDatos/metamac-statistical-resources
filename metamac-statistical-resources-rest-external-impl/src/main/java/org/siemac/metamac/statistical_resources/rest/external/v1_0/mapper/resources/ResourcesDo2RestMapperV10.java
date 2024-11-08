@@ -9,5 +9,6 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 
 public interface ResourcesDo2RestMapperV10 {
 
-    public Resources toResources(PagedResult<GeoCacheByRelatedResource> sources, String query, String orderBy, Integer limit, List<String> selectedLanguages) throws RestException;
+    public Resources toResources(PagedResult<GeoCacheByRelatedResource> sources, String query, String orderBy, Integer limit, List<String> cacheResourcesUrnWithSelectedCriteria,
+            List<String> selectedLanguages) throws RestException;
 }

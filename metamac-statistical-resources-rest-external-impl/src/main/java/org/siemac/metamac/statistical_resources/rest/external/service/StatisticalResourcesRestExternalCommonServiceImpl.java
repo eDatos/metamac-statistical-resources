@@ -145,6 +145,28 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
 
     private PagedResult<GeoCacheResource> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
 
+        List<ConditionalCriteria> conditionalCriteria = addConditionalCriteriasToResources(conditionalCriteriaQuery);
+        // Find
+        return cacheService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
+    }
+
+    @Override
+    public List<GeoCacheResource> findResources(List<ConditionalCriteria> conditionalCriteria) {
+        try {
+            return findResourcesCommon(conditionalCriteria);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private List<GeoCacheResource> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery) throws MetamacException {
+
+        List<ConditionalCriteria> conditionalCriteria = addConditionalCriteriasToResources(conditionalCriteriaQuery);
+        // Find
+        return cacheService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria);
+    }
+
+    private List<ConditionalCriteria> addConditionalCriteriasToResources(List<ConditionalCriteria> conditionalCriteriaQuery) {
         // Criteria to find by criteria
         List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
         if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
@@ -153,11 +175,11 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
             conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).distinctRoot().build());
         }
 
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.isLastVersion()).eq(true).buildSingle());
         // only activated records are available
         conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.isActivated()).eq(true).buildSingle());
 
-        // Find
-        return cacheService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
+        return conditionalCriteria;
     }
 
     @Override
