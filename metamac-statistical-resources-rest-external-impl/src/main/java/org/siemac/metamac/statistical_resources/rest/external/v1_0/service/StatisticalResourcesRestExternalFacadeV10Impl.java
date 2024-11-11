@@ -1,20 +1,9 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
-import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResources;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResourcesListEndpoints;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -30,26 +19,23 @@ import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
-import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.*;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.*;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
@@ -65,9 +51,15 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resour
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResources;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResourcesListEndpoints;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
+
 @Service("statisticalResourcesRestExternalFacadeV10")
 public class StatisticalResourcesRestExternalFacadeV10Impl implements StatisticalResourcesV1_0 {
 
+    public static final String OPERATOR = "=";
     @Autowired
     private StatisticalResourcesRestExternalCommonService commonService;
 
@@ -334,13 +326,15 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            // Add condition for specific or default locale
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            sculptorCriteria.setOrderByCaseCondition(DatasetVersion.class, DatasetVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR);
+
             // Find
             PagedResult<DatasetVersion> entitiesPagedResult = commonService.findDatasetVersions(agencyID, resourceID, version, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Datasets datasets = datasetsDo2RestMapper.toDatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
-            return datasets;
+            return datasetsDo2RestMapper.toDatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -350,13 +344,15 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             SculptorCriteria sculptorCriteria = collectionsRest2DoMapper.getCollectionCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            // Add condition for specific or default locale
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            sculptorCriteria.setOrderByCaseCondition(PublicationVersion.class, PublicationVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR);
+
             // Find
             PagedResult<PublicationVersion> entitiesPagedResult = commonService.findPublicationVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Collections collections = collectionsDo2RestMapper.toCollections(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
-            return collections;
+            return collectionsDo2RestMapper.toCollections(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -366,11 +362,14 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             SculptorCriteria sculptorCriteria = queriesRest2DoMapper.getQueryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            // Add condition for specific or default locale
+            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            sculptorCriteria.setOrderByCaseCondition(QueryVersion.class, QueryVersionProperties.lifeCycleStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR);
+
             // Find
             PagedResult<QueryVersion> entitiesPagedResult = commonService.findQueryVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Queries queries = queriesDo2RestMapper.toQueries(entitiesPagedResult, agencyID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages, parsedFields);
             return queries;
         } catch (Exception e) {
@@ -469,8 +468,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     /**
-     * Throws response error, logging exception
-     * When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
+     * Throws response error, logging exception When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
      */
     private RestException manageExceptionResponse(Exception e) {
         RestException ex = manageException(e);
