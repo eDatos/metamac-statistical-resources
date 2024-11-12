@@ -310,6 +310,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         List<GeoCacheByRelatedResource> geoCacheByRelatedResourceToUpdate = findRelatedResourceByCacheResource(geoCacheResourceToChange.getId());           
         for (GeoCacheByRelatedResource geoCacheByRelatedResource: geoCacheByRelatedResourceToUpdate) {
             geoCacheByRelatedResource.addRelatedResource(newGeoCacheResource);
+            geoCacheByRelatedResource.removeRelatedResource(geoCacheResourceToChange);   
             this.getGeoCacheByRelatedResourceRepository().save(geoCacheByRelatedResource);
         }
     }

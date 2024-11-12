@@ -61,7 +61,7 @@ Application CacheStatisticalResources {
 			String code databaseColumn="code" not nullable;
 			String urn databaseColumn="urn" not nullable;
 			String type databaseColumn="type" not nullable;
-			- @InternationalString title cascade="persist,merge" fetch="eager" databaseColumn="title_fk" nullable;
+			- @InternationalString title cascade="all" fetch="lazy" databaseColumn="title_fk" nullable;
 			String operationCode databaseColumn="operation_code";
 			String operationUrn databaseColumn="operation_urn";
 			String htmlLink databaseColumn="htmlLink";
@@ -94,7 +94,7 @@ Application CacheStatisticalResources {
 			String code databaseColumn="code" not nullable;
 			String urn databaseColumn="urn" not nullable;
 			String type databaseColumn="type" not nullable;
-			- @InternationalString title cascade="persist,merge" fetch="eager" databaseColumn="title_fk" nullable;
+			- @InternationalString title cascade="all" fetch="lazy" databaseColumn="title_fk" nullable;
 			String operationCode databaseColumn="operation_code";
 			String operationUrn databaseColumn="operation_urn";
 			String htmlLink databaseColumn="htmlLink";

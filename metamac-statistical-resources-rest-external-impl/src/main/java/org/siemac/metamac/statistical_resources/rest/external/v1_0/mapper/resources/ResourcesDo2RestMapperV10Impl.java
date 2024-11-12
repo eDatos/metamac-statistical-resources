@@ -1,8 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources;
 
 import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
@@ -14,6 +16,7 @@ import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCrite
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithRelatedResources;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
@@ -36,7 +39,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
 
     @Override
     public Resources toResources(PagedResult<GeoCacheByRelatedResource> sources, String query, String orderBy, Integer limit, List<String> cacheResourcesUrnWithSelectedCriteria,
-            List<String> selectedLanguages) throws RestException {
+            List<String> selectedLanguages, Set<String> parsedFields) throws RestException {
 
         Resources targets = new Resources();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_RESOURCES);
@@ -45,7 +48,10 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         String baseLink = toResourcesLink(TypeExternalArtefactsEnum.STATISTICAL_RESOURCES_RESOURCE.getName());
         SculptorCriteria2RestCriteria.toPagedResult(sources, targets, query, orderBy, limit, baseLink);
 
-        Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles = statisticalOperationsRestExternalFacade.getOperationTitles(null);
+        Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles = new HashMap<>();
+        if (parsedFields.contains(StatisticalResourcesRestConstants.FIELD_INCLUDE_OPERATION_TITLE)) {
+            operationTitles = statisticalOperationsRestExternalFacade.getOperationTitles(null);
+        }
 
         // Values
         for (GeoCacheByRelatedResource source : sources.getValues()) {
@@ -146,8 +152,10 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         target.setId(codeOperation);
         target.setUrn(urnOperation);
 
-        org.siemac.metamac.rest.common.v1_0.domain.InternationalString operationTitle = operationTitles.get(codeOperation);
-        target.setName(operationTitle);
+        if (!operationTitles.isEmpty()) {
+            org.siemac.metamac.rest.common.v1_0.domain.InternationalString operationTitle = operationTitles.get(codeOperation);
+            target.setName(operationTitle);
+        }
 
         target.setKind(TypeExternalArtefactsEnum.STATISTICAL_OPERATION.getValue());
         return target;

@@ -1186,8 +1186,58 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.resources.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
       },
+    "ResourcesWithRelatedResources":{
+         "type":"object",
+         "title":"ResourcesWithRelatedResources",
+         "allOf":[       
+     			{
+               "$ref":"#/definitions/ListBase"
+            	},
+               "properties":{       
+                  "resource":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ResourcesWithRelatedResources.properties.resource.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourceWithRelatedResources"
+                     }
+                  }
+               }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
+      },      
+      "ResourceWithRelatedResources":{
+         "type":"object",
+         "title":"ResourceWithRelatedResources",
+         "allOf":[
+            {            
+            "properties":{
+                  "mainResource":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ResourceWithRelatedResources.properties.mainResource.description']}",
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                  },
+                  "relatedResource":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ResourceWithRelatedResources.properties.relatedResource.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourcesWithStatisticalOperation"
+                     }
+                  }
+               }
+             }  
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
+      },       
       "Data":{
          "type":"object",
          "title":"Data",
@@ -3913,7 +3963,8 @@
             "responses":{
                "200":{
                   "schema":{
-                     "$ref":"#/definitions/ResourcesWithStatisticalOperation"
+                     "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.200.schema.description']}",
+                     "$ref":"#/definitions/ResourcesWithRelatedResources"
                   },
                   "headers":{
 

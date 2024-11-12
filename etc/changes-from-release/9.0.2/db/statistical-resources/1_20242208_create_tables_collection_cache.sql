@@ -90,7 +90,7 @@ CREATE TABLE TB_TERRITORIES_BY_GEO_CACHE_RESOURCE (
 	CONSTRAINT pk_tb_territories_by_geo_cache_resource PRIMARY KEY (variable_element_fk, geo_cache_resource_fk)
 );
 
-CREATE INDEX pk_tb_territories_by_geo_cache_resource_variable_element_fk ON tb_territories_by_geo_cache_resource (variable_element_fk);
+CREATE INDEX pk_tb_territories_by_geo_cache_resource_geo_cache_resource_fk ON tb_territories_by_geo_cache_resource (geo_cache_resource_fk);
 ALTER TABLE tb_territories_by_geo_cache_resource ADD CONSTRAINT fk_tb_territories_by_geo_cache_resource_variable_element_fk FOREIGN KEY (variable_element_fk) REFERENCES tb_external_items(id);
 ALTER TABLE tb_territories_by_geo_cache_resource ADD CONSTRAINT fk_tb_territories_by_geo_cache_resource_tb_cache_col_fk FOREIGN KEY (geo_cache_resource_fk) REFERENCES tb_geo_cache_resource(id);
 

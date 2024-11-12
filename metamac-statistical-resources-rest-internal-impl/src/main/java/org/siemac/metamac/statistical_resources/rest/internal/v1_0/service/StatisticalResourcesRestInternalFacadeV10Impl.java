@@ -536,7 +536,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteriaCacheByRelatedResources.getLimit(), selectedLanguages, cacheResourcesUrn);
+            return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteriaCacheByRelatedResources.getLimit(), selectedLanguages, cacheResourcesUrn, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
         }
