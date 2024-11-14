@@ -43,7 +43,7 @@ public class StatisticalOperationsRestExternalFacadeImpl implements StatisticalO
             String limit = String.valueOf(maxResult);
             String offset = String.valueOf(firstResult);
             String orderBy = null;
-            return restApiLocator.getStatisticalOperationsV1_0().findOperations(query, orderBy, limit, offset);
+            return restApiLocator.getStatisticalOperationsV1_0().findOperations(query, orderBy, limit, offset, null);
         } catch (Exception e) {
             throw toRestException(e);
         }

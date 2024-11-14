@@ -71,6 +71,8 @@ public class MultidatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
             switch (propertyNameCriteria) {
                 case ID:
                     return MultidatasetVersionProperties.siemacMetadataStatisticalResource().code();
+                case NAME:
+                	return  MultidatasetVersionProperties.siemacMetadataStatisticalResource().title().texts().label();
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }

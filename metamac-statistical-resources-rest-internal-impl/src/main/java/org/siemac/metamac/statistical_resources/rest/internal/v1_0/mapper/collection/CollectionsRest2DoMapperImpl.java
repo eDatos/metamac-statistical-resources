@@ -71,6 +71,8 @@ public class CollectionsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imple
             switch (propertyNameCriteria) {
                 case ID:
                     return PublicationVersionProperties.siemacMetadataStatisticalResource().code();
+                case NAME:
+                    return PublicationVersionProperties.siemacMetadataStatisticalResource().title().texts().label();
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }
