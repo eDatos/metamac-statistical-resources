@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>9.0.4-SNAPSHOT</version>
+        <version>9.1.2-SNAPSHOT</version>
         <relativePath>metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 

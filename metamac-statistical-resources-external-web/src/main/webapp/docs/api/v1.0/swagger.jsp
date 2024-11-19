@@ -5,7 +5,7 @@
 <%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils"%>
 <%
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
-    
+
     MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale);
     pageContext.setAttribute("msg", messagesResource);
 
@@ -470,7 +470,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.Collections.description']}"
-      },  
+      },
       "Contact":{
          "type":"object",
          "title":"Contact",
@@ -687,7 +687,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.Multidatasets.description']}"
-      },      
+      },
       "EnumeratedDimensionValue":{
          "type":"object",
          "title":"EnumeratedDimensionValue",
@@ -750,7 +750,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValues.description']}"
-      },   
+      },
       "NonEnumeratedAttributeValue":{
          "type":"object",
          "title":"NonEnumeratedAttributeValue",
@@ -1159,7 +1159,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
-      },      
+      },
       "Data":{
          "type":"object",
          "title":"Data",
@@ -1300,7 +1300,7 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.stub.description']}",
                      "type":"array",
-                     "item": {                   
+                     "item": {
                         "$ref":"#/definitions/DimensionsId"
                      }
                   }

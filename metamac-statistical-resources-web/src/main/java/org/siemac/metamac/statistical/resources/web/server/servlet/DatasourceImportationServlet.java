@@ -32,6 +32,7 @@ import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
+import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.client.WebMessageExceptionsConstants;
@@ -267,6 +268,7 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
         if (StringUtils.isNotBlank(datasetVersionUrn)) {
             Map<String, String> dimensionMapping = buildDimensionsMappings(args);
             DatasetVersionDto datasetVersionDto = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(ServiceContextHolder.getCurrentServiceContext(), datasetVersionUrn);
+            cleanStubAndHeadingDsd(datasetVersionDto);
             statisticalResourcesServiceFacade.importDatasourcesInDatasetVersion(ServiceContextHolder.getCurrentServiceContext(), datasetVersionDto, fileUrls, dimensionMapping, storeDimensionsMapping,
                     new BasicVersionableStatisticalResourceDto());
         } else if (StringUtils.isNotBlank(statisticalOperationCode)) {
@@ -275,6 +277,23 @@ public class DatasourceImportationServlet extends BaseHttpServlet {
             if (exceptionsJobPlanifying != null) {
                 throw exceptionsJobPlanifying;
             }
+        }
+    }
+
+    private void cleanStubAndHeadingDsd(DatasetVersionDto datasetVersionDto) {
+        cleanRelatedDtoList(datasetVersionDto.getHeadingDimensions());
+        cleanRelatedDtoList(datasetVersionDto.getStubDimensions());
+    }
+
+    private void cleanRelatedDtoList(List<RelatedResourceDto> relatedResourcesDto) {
+        boolean checkDataVersionHasOwnHeadingAndStub = false;
+        for (RelatedResourceDto relatedResourceDto : relatedResourcesDto) {
+            if (relatedResourceDto.getId() == null) {
+                checkDataVersionHasOwnHeadingAndStub = true;
+            }
+        }
+        if (checkDataVersionHasOwnHeadingAndStub) {
+            relatedResourcesDto.clear();
         }
     }
 
