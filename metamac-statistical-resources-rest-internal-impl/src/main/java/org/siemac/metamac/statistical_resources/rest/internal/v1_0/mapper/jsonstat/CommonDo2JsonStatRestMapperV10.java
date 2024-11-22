@@ -30,7 +30,7 @@ public interface CommonDo2JsonStatRestMapperV10 {
     String getValueFromPosition(List<DimensionRepresentation> dimensions, List<String> values, int... position);
     List<String> getJsonStatId(Data data, DsdProcessorResult attributes);
     List<Long> toJsonStatSize(Data data, DsdProcessorResult dsdProcessorResult, Attributes attributes);
-    JsonStatExtension toJsonStatExtension(DatasetVersion source, String selectedLanguage);
+    JsonStatExtension toJsonStatExtension(DatasetVersion source, Dimensions dimensions, String selectedLanguage);
     Map<String, List<String>> toJsonStatRoles(DsdProcessorResult dsdProcessorResult) throws MetamacException;
     List<String> toJsonStatDatasetValues(Data data) throws Exception;
     String toI18nValue(InternationalString source, String selectedLanguage);

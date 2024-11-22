@@ -15,6 +15,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatCategory;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimensionExtension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatUnit;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
@@ -46,6 +47,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnume
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValues;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.slf4j.Logger;
@@ -569,7 +571,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     @Override
-    public JsonStatExtension toJsonStatExtension(DatasetVersion source, String selectedLanguage) {
+    public JsonStatExtension toJsonStatExtension(DatasetVersion source, Dimensions dimensions, String selectedLanguage) {
         JsonStatExtension extension = new JsonStatExtension();
         extension.setDatasetId(source.getSiemacMetadataStatisticalResource().getCode());
         extension.setDatasetUrn(source.getSiemacMetadataStatisticalResource().getUrn());
@@ -578,7 +580,37 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         extension.setPublishers(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getPublisher(), selectedLanguage));
         extension.setDataProviders(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getDataProvider(), selectedLanguage));
         extension.setDataProvidersAnnotations(toI18nValue(source.getSiemacMetadataStatisticalResource().getDataProviderAnnotations(), selectedLanguage));
+        extension.setDimension(toJsonStatDimensionExtensionMap(dimensions));
         return extension;
+    }
+
+    private Map<String, JsonStatDimensionExtension> toJsonStatDimensionExtensionMap(Dimensions dimensions) {
+        Map<String, JsonStatDimensionExtension> dimensionExtensions = new HashMap<>();
+
+        List<Dimension> geographicDimensions = findDimensions(dimensions, DimensionType.GEOGRAPHIC_DIMENSION);
+        for (Dimension geographicDimension : geographicDimensions) {
+            JsonStatDimensionExtension jsonStatDimensionExtension = toJsonStatEnumeratedDimensionExtensionGranularity(geographicDimension);
+            dimensionExtensions.put(geographicDimension.getId(), jsonStatDimensionExtension);
+        }
+
+
+        List<Dimension> temporalDimensions = findDimensions(dimensions, DimensionType.TIME_DIMENSION);
+        for (Dimension temporalDimension : temporalDimensions) {
+            JsonStatDimensionExtension jsonStatDimensionExtension = toJsonStatNonEnumeratedDimensionExtensionGranularity(temporalDimension);
+            dimensionExtensions.put(temporalDimension.getId(), jsonStatDimensionExtension);
+        }
+
+        return dimensionExtensions;
+    }
+
+    private List<Dimension> findDimensions(Dimensions dimensions, DimensionType type) {
+        List<Dimension> filteredDimensions = new ArrayList<>();
+        for (Dimension dimension : dimensions.getDimensions()) {
+            if (dimension.getType() == type) {
+                filteredDimensions.add(dimension);
+            }
+        }
+        return filteredDimensions;
     }
 
     private String joinExternalItemCodes(List<ExternalItem> externalItemList) {
@@ -592,6 +624,36 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             joiner.add(title);
         }
         return joiner.toString();
+    }
+
+    private JsonStatDimensionExtension toJsonStatEnumeratedDimensionExtensionGranularity(Dimension dimensions) {
+        if (!(dimensions.getDimensionValues() instanceof EnumeratedDimensionValues)) {
+            return null;
+        }
+
+        JsonStatDimensionExtension jsonStatDimensionExtension = new JsonStatDimensionExtension();
+        Map<String, String> geographicalGranularity = new HashMap<>();
+        for (EnumeratedDimensionValue dimValue : ((EnumeratedDimensionValues) dimensions.getDimensionValues()).getValues()) {
+            ResourceStatisticalResourceBase geographicGranularity = dimValue.getGeographicGranularity();
+            geographicalGranularity.put(dimValue.getId(), geographicGranularity.getId());
+        }
+        jsonStatDimensionExtension.setGeographicalGranularity(geographicalGranularity);
+        return jsonStatDimensionExtension;
+    }
+
+    private JsonStatDimensionExtension toJsonStatNonEnumeratedDimensionExtensionGranularity(Dimension dimensions) {
+        if (!(dimensions.getDimensionValues() instanceof NonEnumeratedDimensionValues)) {
+            return null;
+        }
+
+        JsonStatDimensionExtension jsonStatDimensionExtension = new JsonStatDimensionExtension();
+        Map<String, String> temporalGranularities = new HashMap<>();
+        for (NonEnumeratedDimensionValue dimValue : ((NonEnumeratedDimensionValues) dimensions.getDimensionValues()).getValues()) {
+            String temporalGranularity = dimValue.getTemporalGranularity();
+            temporalGranularities.put(dimValue.getId(), temporalGranularity);
+        }
+        jsonStatDimensionExtension.setTemporalGranularity(temporalGranularities);
+        return jsonStatDimensionExtension;
     }
 
     private String joinExternalItemTitles(List<ExternalItem> externalItemList, String selectedLanguage) {
