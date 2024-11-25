@@ -8,7 +8,7 @@ import java.util.Map;
 public class JsonStatDimensionExtension {
 
     private Map<String, String> temporalGranularity;
-    private Map<String, String> geographicalGranularity;
+    private Map<String, String> geographicGranularity;
 
     public Map<String, String> getTemporalGranularity() {
         return temporalGranularity;
@@ -18,11 +18,11 @@ public class JsonStatDimensionExtension {
         this.temporalGranularity = temporalGranularity;
     }
 
-    public Map<String, String> getGeographicalGranularity() {
-        return geographicalGranularity;
+    public Map<String, String> getGeographicGranularity() {
+        return geographicGranularity;
     }
 
-    public void setGeographicalGranularity(Map<String, String> geographicalGranularity) {
-        this.geographicalGranularity = geographicalGranularity;
+    public void setGeographicGranularity(Map<String, String> geographicGranularity) {
+        this.geographicGranularity = geographicGranularity;
     }
 }
