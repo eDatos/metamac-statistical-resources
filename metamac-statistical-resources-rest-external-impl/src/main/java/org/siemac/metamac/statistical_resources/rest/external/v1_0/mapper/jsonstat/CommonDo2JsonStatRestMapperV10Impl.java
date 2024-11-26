@@ -631,12 +631,12 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
 
         JsonStatDimensionExtension jsonStatDimensionExtension = new JsonStatDimensionExtension();
-        Map<String, String> geographicalGranularity = new HashMap<>();
+        Map<String, String> geographicGranularities = new HashMap<>();
         for (EnumeratedDimensionValue dimValue : ((EnumeratedDimensionValues) dimensions.getDimensionValues()).getValues()) {
             ResourceStatisticalResourceBase geographicGranularity = dimValue.getGeographicGranularity();
-            geographicalGranularity.put(dimValue.getId(), geographicGranularity.getId());
+            geographicGranularities.put(dimValue.getId(), geographicGranularity.getId());
         }
-        jsonStatDimensionExtension.setGeographicalGranularity(geographicalGranularity);
+        jsonStatDimensionExtension.setGeographicGranularity(geographicGranularities);
         return jsonStatDimensionExtension;
     }
 
