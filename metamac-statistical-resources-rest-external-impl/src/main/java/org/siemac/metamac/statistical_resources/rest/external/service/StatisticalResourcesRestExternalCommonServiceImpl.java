@@ -5,15 +5,23 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 import static org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants.SERVICE_CONTEXT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -64,13 +72,14 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
     private SrmRestExternalFacade srmRestExternalFacade;
 
     @Override
-    public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version) {
+    public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version, String granularity) {
         try {
             // Validations
             checkParameterNotWildcardAll(StatisticalResourcesRestExternalConstants.PARAMETER_AGENCY_ID, agencyID);
             checkParameterNotWildcardAll(StatisticalResourcesRestExternalConstants.PARAMETER_RESOURCE_ID, resourceID);
             checkParameterNotWildcardAll(StatisticalResourcesRestExternalConstants.PARAMETER_VERSION, version);
 
+            Map<String, List<String>> granularities = parseParamExpression(granularity);
             // Retrieve
             PagedResult<DatasetVersion> entitiesPagedResult = findDatasetVersionsCommon(agencyID, resourceID, version, null, pagingParameterOneResult);
             if (entitiesPagedResult.getValues().size() != 1) {
@@ -82,6 +91,58 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
         } catch (Exception e) {
             throw manageException(e);
         }
+    }
+
+    private String removeCapturing(String regex) {
+        return regex.replace("(?:", "(").replace("(", "(?:");
+    }
+
+    private Map<String, List<String>> parseParamExpression(String paramExpression) {
+        String AFTER_PATTERN_REGEX = "~after=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        String  LAST_PATTERN_REGEX  = "~last=(\\d+)";
+        String RANGE_PATTERN_REGEX = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");("
+                + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        Pattern PATTERN_DIMENSION   = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
+        String CODE                = removeCapturing(RANGE_PATTERN_REGEX) + "|" + removeCapturing(AFTER_PATTERN_REGEX) + "|" + removeCapturing(LAST_PATTERN_REGEX) + "|"
+                + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + "|" + removeCapturing(SDMXCommonRegExpV2_1.IDTYPE);
+        Pattern PATTERN_CODES       = Pattern.compile("^(" + CODE + ")$");
+        if (StringUtils.isBlank(paramExpression)) {
+            return MapUtils.EMPTY_MAP;
+        }
+
+        Matcher matcherDimension = PATTERN_DIMENSION.matcher(paramExpression);
+
+        Map<String, List<String>> selectedDimension = new HashMap<String, List<String>>();
+        while (matcherDimension.find()) {
+            String dimIdentifier = matcherDimension.group(1);
+            String codes = matcherDimension.group(2);
+
+            List<String> codeDimensions = selectedDimension.get(dimIdentifier);
+
+            if (codeDimensions == null) {
+                codeDimensions = new ArrayList<>();
+                selectedDimension.put(dimIdentifier, codeDimensions);
+            }
+
+            codeDimensions.addAll(parseCodes(PATTERN_CODES, codes));
+        }
+        return selectedDimension;
+    }
+
+    private List<String> parseCodes(Pattern patternCode, String codes) {
+        List<String> codeDimensions = new ArrayList<>();
+
+        if (!StringUtils.isBlank(codes)) {
+            List<String> splittedCodes = Arrays.asList(StringUtils.split(codes, "|"));
+
+            for (String splittedCode : splittedCodes) {
+                Matcher matcherCode = patternCode.matcher(splittedCode);
+                while (matcherCode.find()) {
+                    codeDimensions.add(matcherCode.group(1));
+                }
+            }
+        }
+        return codeDimensions;
     }
 
     @Override

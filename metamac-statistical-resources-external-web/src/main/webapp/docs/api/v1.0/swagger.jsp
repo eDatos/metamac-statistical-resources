@@ -3158,6 +3158,12 @@
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.representation.description']}"
                },
                {
+                  "name": "granularity",
+                  "in": "query",
+                  "type": "string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.granularity.description']}"
+               },
+               {
                   "name":"dim",
                   "in":"query",
                   "type":"string",
@@ -3175,6 +3181,7 @@
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.lang.description']}"
                }
+			   
             ],
             "responses":{
                "200":{

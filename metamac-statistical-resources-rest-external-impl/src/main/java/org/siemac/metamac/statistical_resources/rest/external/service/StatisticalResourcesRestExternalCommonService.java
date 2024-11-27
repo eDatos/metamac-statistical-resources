@@ -15,7 +15,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 public interface StatisticalResourcesRestExternalCommonService {
 
     public PagedResult<DatasetVersion> findDatasetVersions(String agencyID, String resourceID, String version, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
-    public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version);
+    public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version, String granularity);
     public ContentConstraint retrieveDatasetConstraintVersion(String datasetUrn);
     public Boolean checkDatasetVersion(String agencyID, String resourceID, String version);
     public DatasetVersion retrieveDatasetLastPublishedVersionByUrn(String urn);

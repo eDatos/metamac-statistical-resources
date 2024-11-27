@@ -117,9 +117,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Dataset retrieveDataset(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+    public Dataset retrieveDataset(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
-            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version, granularity);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
@@ -140,7 +140,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     @Override
     public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
         try {
-            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version, null);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
@@ -181,7 +181,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
         checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
 
-        DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+        DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version, null);
         Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
 
         List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion, lang);
