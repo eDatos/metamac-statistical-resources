@@ -4,6 +4,8 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import java.util.Map;
+
 @JsonSerialize(include = JsonSerialize.Inclusion.ALWAYS)
 public class JsonStatExtension {
 
@@ -14,6 +16,7 @@ public class JsonStatExtension {
     String publishers;
     String dataProviders;
     String dataProvidersAnnotations;
+    Map<String, JsonStatDimensionExtension> dimension;
 
     public String getDatasetId() {
         return datasetId;
@@ -69,6 +72,14 @@ public class JsonStatExtension {
 
     public void setDataProvidersAnnotations(String dataProvidersAnnotations) {
         this.dataProvidersAnnotations = dataProvidersAnnotations;
+    }
+
+    public Map<String, JsonStatDimensionExtension> getDimension() {
+        return dimension;
+    }
+
+    public void setDimension(Map<String, JsonStatDimensionExtension> dimension) {
+        this.dimension = dimension;
     }
 
     @Override
