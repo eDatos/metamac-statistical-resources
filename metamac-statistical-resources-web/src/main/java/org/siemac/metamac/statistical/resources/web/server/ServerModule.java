@@ -80,6 +80,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.publication.
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.GetPublicationStructureActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.GetPublicationVersionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.GetPublicationVersionsActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.publication.GetPublicationsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.GetVersionsOfPublicationActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.SavePublicationStructureElementActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.SavePublicationVersionActionHandler;
@@ -173,6 +174,7 @@ import org.siemac.metamac.statistical.resources.web.shared.publication.DeletePub
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationStructureAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationVersionsAction;
+import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetVersionsOfPublicationAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationStructureElementAction;
 import org.siemac.metamac.statistical.resources.web.shared.publication.SavePublicationVersionAction;
@@ -292,6 +294,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(UpdatePublicationStructureElementLocationAction.class, UpdatePublicationStructureElementLocationActionHandler.class);
         bindHandler(DeletePublicationStructureElementAction.class, DeletePublicationStructureElementActionHandler.class);
         bindHandler(GetVersionsOfPublicationAction.class, GetVersionsOfPublicationActionHandler.class);
+        bindHandler(GetPublicationsAction.class, GetPublicationsActionHandler.class);
 
         // QUERIES
         bindHandler(GetQueriesAction.class, GetQueriesActionHandler.class);

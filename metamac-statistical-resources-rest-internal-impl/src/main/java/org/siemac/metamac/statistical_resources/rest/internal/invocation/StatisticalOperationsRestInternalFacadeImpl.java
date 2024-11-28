@@ -44,7 +44,7 @@ public class StatisticalOperationsRestInternalFacadeImpl implements StatisticalO
             String limit = String.valueOf(maxResult);
             String offset = String.valueOf(firstResult);
             String orderBy = null;
-            return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().findOperations(query, orderBy, limit, offset);
+            return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().findOperations(query, orderBy, limit, offset, null);
         } catch (Exception e) {
             throw toRestException(e);
         }

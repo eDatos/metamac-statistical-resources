@@ -98,7 +98,17 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }
-    };
+    }
+
+    @Override
+    public DataStructure retrieveDsd (String dsdUrn) throws MetamacWebException {
+        try {
+            DataStructure structure = srmRestInternalService.retrieveDsdByUrn(dsdUrn);
+            return structure;
+        } catch (MetamacException e) {
+            throw WebExceptionUtils.createMetamacWebException(e);
+        }
+    }
 
     @Override
     public List<String> retrieveDsdDimensionsIds(String dsdUrn) throws MetamacWebException {

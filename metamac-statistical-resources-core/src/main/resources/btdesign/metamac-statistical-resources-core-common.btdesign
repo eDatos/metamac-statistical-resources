@@ -139,6 +139,31 @@ Application CommonStatisticalResources {
             	findByCondition;
             	@Translation findTranslationByCode(String code);
 			}
+		}
+		
+		
+    	Entity DimensionOrder {
+			databaseTable="TB_M_DIMENSION_ORDERS"
+			hint="idSequence=M_DIMENSION_ORDERS"
+			!auditable
+			
+			// Order
+			Integer dimOrder not nullable;
+			
+			String urnDimComponentFk not nullable;
+			
+			"Not null when dimension is in heading"
+			- @DatasetVersion datasetVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_heading_fk" <-> headingDimensions;
+
+			"Not null when dimension is in stub"
+			- @DatasetVersion datasetVersionStub cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_stub_fk" <-> stubDimensions;
+			
+			"Not null when dimension is in heading"
+			- @QueryVersion queryVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="query_version_heading_fk" <-> headingDimensions;
+
+			"Not null when dimension is in stub"
+			- @QueryVersion queryVersionStub cascade="none" fetch="lazy" nullable databaseColumn="query_version_stub_fk" <-> stubDimensions;
+			
 		} 
-	}    	
+	}
 }

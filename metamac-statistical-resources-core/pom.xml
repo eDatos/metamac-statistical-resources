@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>9.0.4-SNAPSHOT</version>
+        <version>10.1.1-SNAPSHOT</version>
         <relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 
@@ -185,12 +185,12 @@
             <version>${jsr250-api.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- PERSISTENCE -->
         <dependency>
-            <groupId>javax.persistence</groupId>
-            <artifactId>persistence-api</artifactId>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
             <version>${jpa.version}</version>
-            <!-- Add scope provided when deployed in jboss -->
-            <!-- <scope>provided</scope> -->
         </dependency>
 
         <!-- HIBERNATE -->

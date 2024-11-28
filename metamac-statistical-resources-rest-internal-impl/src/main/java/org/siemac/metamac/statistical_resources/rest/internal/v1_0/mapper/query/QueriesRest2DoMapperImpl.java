@@ -176,6 +176,8 @@ public class QueriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implement
             switch (propertyNameCriteria) {
                 case ID:
                     return QueryVersionProperties.lifeCycleStatisticalResource().code();
+                case NAME:
+                    return QueryVersionProperties.lifeCycleStatisticalResource().title().texts().label();
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }

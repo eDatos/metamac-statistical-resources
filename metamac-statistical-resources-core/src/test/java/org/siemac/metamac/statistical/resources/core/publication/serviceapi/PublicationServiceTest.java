@@ -73,9 +73,11 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Chapter;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
+import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
@@ -2011,6 +2013,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNotNull(expected.getQuery());
         assertNull(expected.getMultidataset());
         assertNull(expected.getUrl());
+        assertNull(expected.getPublication());
 
         expected.setQuery(null);
         expected.setMultidataset(expectedMultidataset);
@@ -2022,6 +2025,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(actual.getQuery());
         assertNull(actual.getUrl());
         assertNotNull(actual.getMultidataset());
+        assertNull(actual.getPublication());
         assertEqualsMultidataset(expectedMultidataset, actual.getMultidataset());
     }
 
@@ -2038,6 +2042,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNotNull(expected.getQuery());
         assertNull(expected.getMultidataset());
         assertNull(expected.getUrl());
+        assertNull(expected.getPublication());
 
         expected.setQuery(null);
         expected.setUrl(expectedUrl);
@@ -2048,6 +2053,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(actual.getDataset());
         assertNull(actual.getQuery());
         assertNull(actual.getMultidataset());
+        assertNull(actual.getPublication());
         assertEquals(expectedUrl, actual.getUrl());
     }
     
@@ -2554,5 +2560,21 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_98_TO_DELETE_WITH_PREVIOUS_VERSION_NAME);
 
         publicationService.deletePublicationVersion(getServiceContextAdministrador(), publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
+    }
+
+    @Override
+    public void testFindPublicationsByCondition() throws Exception {
+        Publication result = publicationMockFactory.retrieveMock(PUBLICATION_02_BASIC_WITH_GENERATED_VERSION_NAME);
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Multidataset.class).withProperty(MultidatasetProperties.identifiableStatisticalResource().code())
+                .eq(result.getIdentifiableStatisticalResource().getCode()).build();
+
+        PagingParameter pagingParameter = PagingParameter.rowAccess(0, Integer.MAX_VALUE, true);
+
+        PagedResult<Publication> publications = publicationService.findPublicationsByCondition(getServiceContextWithoutPrincipal(), conditions, pagingParameter);
+
+        assertEquals(1, publications.getTotalRows());
+        assertEquals(result.getIdentifiableStatisticalResource().getUrn(), publications.getValues().get(0).getIdentifiableStatisticalResource().getUrn());
+        
     }
 }
