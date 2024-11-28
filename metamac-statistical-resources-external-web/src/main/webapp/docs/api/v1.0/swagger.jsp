@@ -422,6 +422,12 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.collectionNode.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
+                  },
+                  "table": {
+                     "$ref":"#/definitions/Table"
+                  },
+                  "chapter": {
+                     "$ref":"#/definitions/Chapter"
                   }
                }
             }
@@ -641,6 +647,10 @@
          "type":"object",
          "title":"MultidatasetNode",
          "properties":{
+            "identifier":{
+               "description":"${msg['api.doc.swagger.definitions.multidatasetNode.properties.identifier.description']}",
+               "type":"string"
+            },
             "description":{
                "description":"${msg['api.doc.swagger.definitions.multidatasetNode.properties.description.description']}",
                "$ref":"#/definitions/InternationalString"
@@ -2525,7 +2535,14 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.table.properties.query.description']}",
                      "$ref":"#/definitions/Resource"
-                  }
+                  },
+                  "multidataset":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.table.properties.multidataset.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
                }
             }
          ],
