@@ -423,11 +423,22 @@
                      "description":"${msg['api.doc.swagger.definitions.collectionNode.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
-                  "table": {
-                     "$ref":"#/definitions/Table"
+                  <%-- Swagger 2.0 no permite reflejar adecuadamente la herencia porque tampoco se puede utilizar discriminador --%>
+                  "dataset": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
                   },
-                  "chapter": {
-                     "$ref":"#/definitions/Chapter"
+                  "query": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "multidataset": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "nodes": {
+                     "description": "${msg['api.doc.swagger.definitions.chapter.only.description']}",
+                     "$ref":"#/definitions/CollectionNodes"
                   }
                }
             }
