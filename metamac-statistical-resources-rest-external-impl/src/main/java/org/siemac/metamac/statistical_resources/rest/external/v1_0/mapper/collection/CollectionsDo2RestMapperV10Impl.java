@@ -289,6 +289,9 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastVersion(source.getMultidatasetUrn());
                 target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null));
+            } else if (source.getPublication() != null) {
+                PublicationVersion publicationVersion = publicationVersionRepository.retrieveLastVersion(source.getPublicationUrn());
+                target.setPublication(toResource(publicationVersion, selectedLanguages, null));
             } else if (source.getUrl() != null) {
                 target.setUrl(toResource(source.getUrl(), selectedLanguages));
             }
@@ -302,6 +305,9 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastPublishedVersion(source.getMultidatasetUrn());
                 target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null));
+            } else if (source.getPublication() != null) {
+                PublicationVersion publicationVersion = publicationVersionRepository.retrieveLastPublishedVersion(source.getPublicationUrn());
+                target.setPublication(toResource(publicationVersion, selectedLanguages, null));
             } else if (source.getUrl() != null) {
                 target.setUrl(toResource(source.getUrl(), selectedLanguages));
             }

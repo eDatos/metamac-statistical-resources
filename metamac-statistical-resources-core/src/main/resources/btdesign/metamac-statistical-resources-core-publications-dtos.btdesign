@@ -51,6 +51,9 @@ Application PublicationsStatisticalResourcesDto {
 			
 			"Multidataset"
 			String multidatasetUrn;
+
+			"Collection"
+			String collectionUrn
 			
 			"Url"
 			String url;

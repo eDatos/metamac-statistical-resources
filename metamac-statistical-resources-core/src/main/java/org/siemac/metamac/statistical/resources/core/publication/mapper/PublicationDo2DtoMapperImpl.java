@@ -263,6 +263,7 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
         target.setQueryUrn(source.getQueryUrn());
         target.setDatasetUrn(source.getDatasetUrn());
         target.setMultidatasetUrn(source.getMultidatasetUrn());
+        target.setCollectionUrn(source.getPublicationUrn());
         target.setUrl(source.getUrl());
         return target;
     }
