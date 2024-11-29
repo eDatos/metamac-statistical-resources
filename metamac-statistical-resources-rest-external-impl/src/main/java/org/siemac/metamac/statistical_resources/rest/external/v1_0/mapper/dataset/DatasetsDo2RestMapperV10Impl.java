@@ -4,17 +4,24 @@ import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isTemporalDimension;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
@@ -131,10 +138,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     @Override
-    public Dataset toDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields) throws Exception {
+    public Dataset toDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields, String granularity) throws Exception {
         if (source == null) {
             return null;
         }
+        Map<String, List<String>> granularities = parseParamExpression(granularity);
         Dataset target = new Dataset();
         target.setKind(StatisticalResourcesRestExternalConstants.KIND_DATASET);
         target.setId(source.getSiemacMetadataStatisticalResource().getCode());
@@ -173,6 +181,59 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         }
 
         return target;
+    }
+
+    private Map<String, List<String>> parseParamExpression(String paramExpression) {
+        String AFTER_PATTERN_REGEX = "~after=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        String  LAST_PATTERN_REGEX  = "~last=(\\d+)";
+        String RANGE_PATTERN_REGEX = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");("
+                + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        Pattern PATTERN_DIMENSION   = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
+        String CODE                = removeCapturing(RANGE_PATTERN_REGEX) + "|" + removeCapturing(AFTER_PATTERN_REGEX) + "|" + removeCapturing(LAST_PATTERN_REGEX) + "|"
+                + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + "|" + removeCapturing(SDMXCommonRegExpV2_1.IDTYPE);
+        Pattern PATTERN_CODES       = Pattern.compile("^(" + CODE + ")$");
+        if (StringUtils.isBlank(paramExpression)) {
+            return MapUtils.EMPTY_MAP;
+        }
+
+        Matcher matcherDimension = PATTERN_DIMENSION.matcher(paramExpression);
+
+        Map<String, List<String>> selectedDimension = new HashMap<String, List<String>>();
+        while (matcherDimension.find()) {
+            String dimIdentifier = matcherDimension.group(1);
+            String codes = matcherDimension.group(2);
+
+            List<String> codeDimensions = selectedDimension.get(dimIdentifier);
+
+            if (codeDimensions == null) {
+                codeDimensions = new ArrayList<>();
+                selectedDimension.put(dimIdentifier, codeDimensions);
+            }
+
+            codeDimensions.addAll(parseCodes(PATTERN_CODES, codes));
+        }
+        return selectedDimension;
+    }
+
+    private List<String> parseCodes(Pattern patternCode, String codes) {
+        List<String> codeDimensions = new ArrayList<>();
+
+        if (!StringUtils.isBlank(codes)) {
+            List<String> splittedCodes = Arrays.asList(StringUtils.split(codes, "|"));
+
+            for (String splittedCode : splittedCodes) {
+                Matcher matcherCode = patternCode.matcher(splittedCode);
+                while (matcherCode.find()) {
+                    codeDimensions.add(matcherCode.group(1));
+                }
+            }
+        }
+        return codeDimensions;
+    }
+
+
+    private String removeCapturing(String regex) {
+        return regex.replace("(?:", "(").replace("(", "(?:");
     }
 
     public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
