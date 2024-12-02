@@ -37,8 +37,6 @@
     <import resource="classpath:/spring/error-beans-advice.xml" />
     <import resource="classpath:/spring/general-beans-advice.xml" />
 
-	<!-- Listener to check failed jobs -->
-	<bean id="sdmxContextInitialized" class="org.siemac.metamac.statistical.resources.core.SdmxContextInitialized"/>
 
     <!-- import additional spring configuration files -->
 
