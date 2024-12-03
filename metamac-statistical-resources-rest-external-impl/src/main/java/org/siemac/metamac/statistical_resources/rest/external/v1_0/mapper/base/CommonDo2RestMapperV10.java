@@ -44,7 +44,7 @@ public interface CommonDo2RestMapperV10 {
     public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
             List<DimensionOrder> stubDimensions);
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,
-            Set<String> fields, List<ExternalItem> externalItems) throws MetamacException;
+            Set<String> fields, List<ExternalItem> temporalGranularities, List<ExternalItem> geographicalGranularities) throws MetamacException;
     public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages) throws MetamacException;
 
     public Resource toResource(Resource source, List<String> selectedLanguages);

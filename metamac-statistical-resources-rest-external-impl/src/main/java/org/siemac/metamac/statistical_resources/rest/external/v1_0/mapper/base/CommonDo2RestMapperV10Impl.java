@@ -406,7 +406,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
      */
     @Override
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,
-            Set<String> fields, List<ExternalItem> externalItems) throws MetamacException {
+            Set<String> fields, List<ExternalItem> temporalGranularities, List<ExternalItem> geographicalGranularities) throws MetamacException {
 
         List<DsdDimension> sources = dsdProcessorResult.getDimensions();
         if (CollectionUtils.isEmpty(sources)) {
@@ -441,7 +441,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             if (effectiveDimensionValuesToDataByDimension != null) {
                 effectiveDimensionValuesToData = effectiveDimensionValuesToDataByDimension.get(dimensionId);
             }
-            Dimension target = toDimension(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, externalItems);
+            Dimension target = toDimension(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, temporalGranularities, geographicalGranularities);
             targets.getDimensions().add(target);
         }
         targets.setTotal(BigInteger.valueOf(targets.getDimensions().size()));
@@ -823,7 +823,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private Dimension toDimension(String datasetVersionUrn, DataStructure dataStructure, DsdDimension source, DimensionVisualisation dimensionVisualisation,
-            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields, List<ExternalItem> externalItems) throws MetamacException {
+            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields, List<ExternalItem> temporalGranularities, List<ExternalItem> geographicalGranularities) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -834,12 +834,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setPluralName(source.getPluralName());
 
         // Dimension values
-        target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, externalItems));
+        target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, temporalGranularities, geographicalGranularities));
         return target;
     }
 
     private DimensionValues toDimensionValues(String datasetVersionUrn, DataStructure dataStructure, DsdDimension dimension, DimensionVisualisation dimensionVisualisation,
-            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields, List<ExternalItem> externalItems) throws MetamacException {
+            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields, List<ExternalItem> temporalGranularities, List<ExternalItem> geographicalGranularities) throws MetamacException {
         if (dimension == null) {
             return null;
         }
@@ -855,13 +855,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         DimensionValues targets = null;
         if (dimension.getCodelistRepresentationUrn() != null) {
             targets = toEnumeratedDimensionValuesFromCodelist(coveragesById, dimension.getCodelistRepresentationUrn(), dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages,
-                    dimension, fields);
+                    dimension, fields, geographicalGranularities);
         } else if (dimension.getConceptSchemeRepresentationUrn() != null) {
             targets = toEnumeratedDimensionValuesFromConceptScheme(coveragesById, dataStructure, dimension.getType(), dimension.getConceptSchemeRepresentationUrn(), effectiveDimensionValuesToData,
                     selectedLanguages, fields);
         } else if (dimension.getTextFormatRepresentation() != null) {
             targets = toNonEnumeratedDimensionValuesFromTextFormatType(coverages, dimension.getTextFormatRepresentation(), dimension.getType(), effectiveDimensionValuesToData, selectedLanguages,
-                    dimension.getComponentId(), externalItems);
+                    dimension.getComponentId(), temporalGranularities);
         } else {
             logger.error("Dimension definition unsupported for dimension: " + dimension.getComponentId());
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -872,7 +872,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private EnumeratedDimensionValues toEnumeratedDimensionValuesFromCodelist(Map<String, CodeDimension> coveragesById, String codelistUrn, DimensionVisualisation dimensionVisualisation,
-            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, DsdDimension dimension, Set<String> fields) throws MetamacException {
+            List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, DsdDimension dimension, Set<String> fields, List<ExternalItem> geographicalGranularities) throws MetamacException {
         if (codelistUrn == null) {
             return null;
         }
@@ -895,9 +895,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                     SrmRestConstants.FIELD_INCLUDE_OPENNES + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_ORDER + description); // note: srm api returns codes in order
         }
 
+        List<String> geographicGranularitiesCodes = getGranularitiesCodes(geographicalGranularities);
         for (CodeResource code : codes.getCodes()) {
             String id = code.getId();
             boolean skip = false;
+            
             if (effectiveDimensionValuesToData != null) {
                 // note: all values in effectiveDimensionValuesToData are always in coverages
                 if (!effectiveDimensionValuesToData.contains(id)) {
@@ -914,10 +916,25 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 updateParentsReplacedToVisualisationWithNotEffectiveDimensionValue(parentsReplacedToVisualisation, code);
                 continue;
             }
+            if (!checkCodeDimensionsInGeographicalGranularities(code, geographicGranularitiesCodes, dimension)) {
+                continue;
+            }
             targets.getValues().add(toEnumeratedDimensionValue(code, parentsReplacedToVisualisation, selectedLanguages));
         }
         targets.setTotal(BigInteger.valueOf(targets.getValues().size()));
         return targets;
+    }
+
+    private boolean checkCodeDimensionsInGeographicalGranularities(CodeResource source, List<String> geographicGranularities, DsdDimension dimension) throws MetamacException {
+        if (!DsdComponentType.SPATIAL.equals(dimension.getType()) || geographicGranularities == null || geographicGranularities.isEmpty()) {
+            return true;
+        }
+        if (source.getVariableElement() != null && source.getVariableElement() instanceof VariableElementResource) {
+            ItemResource geographicalGranularity = ((VariableElementResource) source.getVariableElement()).getGeographicalGranularity();
+            return geographicGranularities.contains(geographicalGranularity.getId());
+        }
+        
+        return true;
     }
 
     private EnumeratedDimensionValues toEnumeratedDimensionValuesFromConceptScheme(Map<String, CodeDimension> coveragesById, DataStructure dataStructure, DsdComponentType dimensionType,
@@ -997,7 +1014,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             DatasetVersionUtils.sortTemporalCodeDimensions(coverages);
         }
 
-        List<String> temporalGranularities = getTemporalGranularities(externalItems);
+        List<String> temporalGranularities = getGranularitiesCodes(externalItems);
         for (CodeDimension coverage : coverages) {
             if (!checkCodeDimensionsInTemporalGranularities(coverage, temporalGranularities, dimensionId)
                     || (effectiveDimensionValuesToData != null && !effectiveDimensionValuesToData.contains(coverage.getIdentifier()))) {
@@ -1010,7 +1027,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return targets;
     }
 
-    private List<String> getTemporalGranularities(List<ExternalItem> externalItems) {
+    private List<String> getGranularitiesCodes(List<ExternalItem> externalItems) {
         if (externalItems == null) {
             return new ArrayList<String>();
         }
