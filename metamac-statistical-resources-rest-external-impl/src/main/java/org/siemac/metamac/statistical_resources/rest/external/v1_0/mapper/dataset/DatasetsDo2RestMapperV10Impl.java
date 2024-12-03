@@ -157,22 +157,34 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.DATASET, source.getLifeCycleStatisticalResource(), configurationService, false));
         DsdProcessorResult dsdProcessorResult = null;
+        Dimensions dimensions = null;
+        List<ExternalItem> temporalGranularitiesFilter = null;
+        List<ExternalItem> geographicalGranularitiesFilter = null;
 
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
-
+        Map<String, List<String>> granularities = parseParamExpression(granularity);
         if (includeMetadata || includeData) {
             dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
+            temporalGranularitiesFilter = getTemporalGranularitiesFiter(granularities);
+            geographicalGranularitiesFilter = getGeographicGranularitiesFilter(granularities, dsdProcessorResult);
         }
+
+        if (includeMetadata || (includeData && (temporalGranularitiesFilter != null && !temporalGranularitiesFilter.isEmpty())
+                || (geographicalGranularitiesFilter != null && !geographicalGranularitiesFilter.isEmpty()))) {
+
+            dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, fields, temporalGranularitiesFilter,
+                    geographicalGranularitiesFilter);
+        }
+
         if (includeMetadata) {
-            Map<String, List<String>> granularities = parseParamExpression(granularity);
             boolean includeConstraint = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_DATASET_CONSTRAINTS);
             ConstraintDimensionRepresentations constraintDimensionRepresentations = null;
             if (includeConstraint) {
                 constraintDimensionRepresentations = commonDo2RestMapper.processDatasetConstraint(source.getSiemacMetadataStatisticalResource().getUrn());
             }
 
-            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, fields, granularities));
+            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, fields, dimensions));
 
         }
         if (includeData) {
@@ -188,13 +200,12 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
     private Map<String, List<String>> parseParamExpression(String paramExpression) {
         String AFTER_PATTERN_REGEX = "~after=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
-        String  LAST_PATTERN_REGEX  = "~last=(\\d+)";
-        String RANGE_PATTERN_REGEX = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");("
-                + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
-        Pattern PATTERN_DIMENSION   = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
-        String CODE                = removeCapturing(RANGE_PATTERN_REGEX) + "|" + removeCapturing(AFTER_PATTERN_REGEX) + "|" + removeCapturing(LAST_PATTERN_REGEX) + "|"
+        String LAST_PATTERN_REGEX = "~last=(\\d+)";
+        String RANGE_PATTERN_REGEX = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        Pattern PATTERN_DIMENSION = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
+        String CODE = removeCapturing(RANGE_PATTERN_REGEX) + "|" + removeCapturing(AFTER_PATTERN_REGEX) + "|" + removeCapturing(LAST_PATTERN_REGEX) + "|"
                 + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + "|" + removeCapturing(SDMXCommonRegExpV2_1.IDTYPE);
-        Pattern PATTERN_CODES       = Pattern.compile("^(" + CODE + ")$");
+        Pattern PATTERN_CODES = Pattern.compile("^(" + CODE + ")$");
         if (StringUtils.isBlank(paramExpression)) {
             return MapUtils.EMPTY_MAP;
         }
@@ -233,7 +244,6 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         }
         return codeDimensions;
     }
-
 
     private String removeCapturing(String regex) {
         return regex.replace("(?:", "(").replace("(", "(?:");
@@ -321,16 +331,14 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     private DatasetMetadata toDatasetMetadata(DatasetVersion source, DsdProcessorResult dsdProcessorResult, ConstraintDimensionRepresentations constraintDimensionRepresentations,
-            List<String> selectedLanguages, Set<String> fields, Map<String, List<String>> granularities) throws MetamacException {
+            List<String> selectedLanguages, Set<String> fields, Dimensions dimensions) throws MetamacException {
         if (source == null) {
             return null;
         }
-        List<ExternalItem> temporaGranularitiesFilter = getTemporalGranularitiesFiter(granularities);
-        List<ExternalItem> geographicalGranularitiesFilter = getGeographicGranularitiesFilter(granularities, dsdProcessorResult);
         DatasetMetadata target = new DatasetMetadata();
         target.setRelatedDsd(commonDo2RestMapper.toDataStructureDefinition(source.getRelatedDsd(), dsdProcessorResult.getDataStructure(), selectedLanguages, source.getHeadingDimensions(),
                 source.getStubDimensions()));
-        target.setDimensions(commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, fields, temporaGranularitiesFilter, geographicalGranularitiesFilter));
+        target.setDimensions(dimensions);
         target.setAttributes(commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages));
         target.setConstraints(constraintDimensionRepresentations);
         target.setGeographicCoverages(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getGeographicCoverage(), selectedLanguages));
