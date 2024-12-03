@@ -14,6 +14,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedRes
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
+import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 
@@ -26,6 +27,7 @@ public final class PublicationsUtils {
         Map<String, Dataset> datasetsByUrn = new HashMap<>();
         Map<String, Query> queriesByUrn = new HashMap<>();
         Map<String, Multidataset> multidatasetByUrn = new HashMap<>();
+        Map<String, Publication> publicationByUrn = new HashMap<>();
 
         for (ElementLevel elementLevel : resource.getChildrenAllLevels()) {
             if (elementLevel.isCube()) {
@@ -36,6 +38,8 @@ public final class PublicationsUtils {
                     queriesByUrn.put(cube.getQueryUrn(), cube.getQuery());
                 } else if (cube.getMultidataset() != null) {
                     multidatasetByUrn.put(cube.getMultidatasetUrn(), cube.getMultidataset());
+                } else if (cube.getPublication() != null) {
+                    publicationByUrn.put(cube.getPublicationUrn(), cube.getPublication());
                 } 
             }
         }
@@ -44,6 +48,7 @@ public final class PublicationsUtils {
         resources.addAll(buildRelatedResourcesForDatasets(datasetsByUrn.values()));
         resources.addAll(buildRelatedResourcesForQueries(queriesByUrn.values()));
         resources.addAll(buildRelatedResourcesForMultidatasets(multidatasetByUrn.values()));
+        resources.addAll(buildRelatedResourcesForPublications(publicationByUrn.values()));
         
         return resources;
     }
@@ -71,9 +76,23 @@ public final class PublicationsUtils {
         return resources;
     }
 
+    private static Collection<RelatedResource> buildRelatedResourcesForPublications(Collection<Publication> publications) {
+        Set<RelatedResource> resources = new HashSet<>();
+        for (Publication publication : publications) {
+            resources.add(buildRelatedResourceForPublication(publication));
+        }
+        return resources;
+    }
+
     private static RelatedResource buildRelatedResourceForMultidataset(Multidataset multidataset) {
         RelatedResource resource = new RelatedResource(TypeRelatedResourceEnum.MULTIDATASET);
         resource.setMultidataset(multidataset);
+        return resource;
+    }
+
+    private static RelatedResource buildRelatedResourceForPublication(Publication publication) {
+        RelatedResource resource = new RelatedResource(TypeRelatedResourceEnum.PUBLICATION);
+        resource.setPublication(publication);
         return resource;
     }
 

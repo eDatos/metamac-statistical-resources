@@ -37,4 +37,8 @@ public class Cube extends CubeBase {
     public String getMultidatasetUrn() {
         return super.getMultidataset() != null ? super.getMultidataset().getIdentifiableStatisticalResource().getUrn() : null;
     }
+
+    public String getPublicationUrn() {
+        return super.getPublication() != null ? super.getPublication().getIdentifiableStatisticalResource().getUrn() : null;
+    }
 }
