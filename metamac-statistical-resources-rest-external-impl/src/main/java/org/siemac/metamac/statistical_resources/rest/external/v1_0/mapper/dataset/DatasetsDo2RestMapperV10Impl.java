@@ -67,7 +67,6 @@ import org.siemac.metamac.statistical_resources.rest.external.exception.RestServ
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdComponentType;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DimensionValueByIdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat.CommonDo2JsonStatRestMapperV10;
@@ -191,7 +190,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
                 constraintDimensionRepresentations = commonDo2RestMapper.processDatasetConstraint(source.getSiemacMetadataStatisticalResource().getUrn());
             }
 
-            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, dimensions));
+            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, fields, dimensions));
 
         }
         if (includeData) {
@@ -206,20 +205,20 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     private Map<String, List<String>> parseParamExpression(String paramExpression) {
-        String AFTER_PATTERN_REGEX = "~after=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
-        String LAST_PATTERN_REGEX = "~last=(\\d+)";
-        String RANGE_PATTERN_REGEX = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
-        Pattern PATTERN_DIMENSION = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
-        String CODE = removeCapturing(RANGE_PATTERN_REGEX) + "|" + removeCapturing(AFTER_PATTERN_REGEX) + "|" + removeCapturing(LAST_PATTERN_REGEX) + "|"
+        String afterPatternRegex = "~after=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        String lastPatternRegex = "~last=(\\d+)";
+        String rangePatternRegex = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        Pattern patternDimension = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
+        String code = removeCapturing(rangePatternRegex) + "|" + removeCapturing(afterPatternRegex) + "|" + removeCapturing(lastPatternRegex) + "|"
                 + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + "|" + removeCapturing(SDMXCommonRegExpV2_1.IDTYPE);
-        Pattern PATTERN_CODES = Pattern.compile("^(" + CODE + ")$");
+        Pattern patternCodes = Pattern.compile("^(" + code + ")$");
         if (StringUtils.isBlank(paramExpression)) {
             return MapUtils.EMPTY_MAP;
         }
 
-        Matcher matcherDimension = PATTERN_DIMENSION.matcher(paramExpression);
+        Matcher matcherDimension = patternDimension.matcher(paramExpression);
 
-        Map<String, List<String>> selectedDimension = new HashMap<String, List<String>>();
+        Map<String, List<String>> selectedDimension = new HashMap<>();
         while (matcherDimension.find()) {
             String dimIdentifier = matcherDimension.group(1);
             String codes = matcherDimension.group(2);
@@ -231,7 +230,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
                 selectedDimension.put(dimIdentifier, codeDimensions);
             }
 
-            codeDimensions.addAll(parseCodes(PATTERN_CODES, codes));
+            codeDimensions.addAll(parseCodes(patternCodes, codes));
         }
         return selectedDimension;
     }
@@ -265,22 +264,17 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (source == null) {
             return null;
         }
-        DimensionValueByIdDimension dimensionValuesIds = null;
-        if (dimensions != null) {
-            dimensionValuesIds = new DimensionValueByIdDimension();
-            for (Dimension dimension : dimensions.getDimensions()) {
-                if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
-                    dimensionValuesIds.setTemporalDimensionId(dimension.getId());
-                    dimensionValuesIds.setTemporalDimensionValuesIds(getTemporalDimensionsValuesIds(dimension));
-                }
-                if (DimensionType.GEOGRAPHIC_DIMENSION.equals(dimension.getType())) {
-                    dimensionValuesIds.setGeographicDimensionId(dimension.getId());
-                    dimensionValuesIds.setGeographicDimensionValuesIds(getGeographicDimensionsValuesIds(dimension));
-                }
+        Map<String, List<String>> dimensionsValues = new HashMap<>();
+        for (Dimension dimension : dimensions.getDimensions()) {
+            if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
+                dimensionsValues.put(dimension.getId(), getTemporalDimensionsValuesIds(dimension));
+            }
+            if (DimensionType.GEOGRAPHIC_DIMENSION.equals(dimension.getType())) {
+                dimensionsValues.put(dimension.getId(), getGeographicDimensionsValuesIds(dimension));
             }
         }
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
-        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, dimensionValuesIds);
+        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, dimensionsValues);
     }
 
     private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
@@ -378,7 +372,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     private DatasetMetadata toDatasetMetadata(DatasetVersion source, DsdProcessorResult dsdProcessorResult, ConstraintDimensionRepresentations constraintDimensionRepresentations,
-            List<String> selectedLanguages, Dimensions dimensions) throws MetamacException {
+            List<String> selectedLanguages, Set<String> fields, Dimensions dimensions) throws MetamacException {
         if (source == null) {
             return null;
         }
