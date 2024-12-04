@@ -53,19 +53,19 @@ public interface StatisticalResourcesV1_0 {
     @Produces("text/tab-separated-values")
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     Response retrieveDatasetTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
-            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
     @GET
     @Produces("text/csv")
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     Response retrieveDatasetCSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
-            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
     @GET
     @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     Response retrieveDatasetXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
-            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
     @Produces({"application/jsonstat+json"})
     @Path("datasets/{agencyID}/{resourceID}/{version}")
