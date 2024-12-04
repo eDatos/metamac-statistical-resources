@@ -33,6 +33,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DimensionValueByIdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 
 public interface CommonDo2RestMapperV10 {
@@ -40,7 +41,8 @@ public interface CommonDo2RestMapperV10 {
     public DsdProcessorResult processDataStructure(String urn) throws MetamacException;
     public ConstraintDimensionRepresentations processDatasetConstraint(String datasetUrn) throws MetamacException;
     public void toMetadataStatisticalResource(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) throws MetamacException;
-    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception;
+    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages,
+            DimensionValueByIdDimension dimensionValuesIds) throws Exception;
     public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
             List<DimensionOrder> stubDimensions);
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,

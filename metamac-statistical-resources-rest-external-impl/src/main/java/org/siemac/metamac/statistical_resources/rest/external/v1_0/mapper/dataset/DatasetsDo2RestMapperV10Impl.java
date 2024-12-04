@@ -52,7 +52,13 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribut
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionType;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.EnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
@@ -61,6 +67,7 @@ import org.siemac.metamac.statistical_resources.rest.external.exception.RestServ
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdComponentType;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DimensionValueByIdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat.CommonDo2JsonStatRestMapperV10;
@@ -184,11 +191,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
                 constraintDimensionRepresentations = commonDo2RestMapper.processDatasetConstraint(source.getSiemacMetadataStatisticalResource().getUrn());
             }
 
-            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, fields, dimensions));
+            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, dimensions));
 
         }
         if (includeData) {
-            target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
+            target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions));
         }
         boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
         if (includeKeywords) {
@@ -250,12 +257,52 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
+        return toDatasetData(source, dsdProcessorResult, dimensionValuesSelected, selectedLanguages, null);
+    }
+
+    public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, Dimensions dimensions) throws Exception {
 
         if (source == null) {
             return null;
         }
+        DimensionValueByIdDimension dimensionValuesIds = null;
+        if (dimensions != null) {
+            dimensionValuesIds = new DimensionValueByIdDimension();
+            for (Dimension dimension : dimensions.getDimensions()) {
+                if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
+                    dimensionValuesIds.setTemporalDimensionId(dimension.getId());
+                    dimensionValuesIds.setTemporalDimensionValuesIds(getTemporalDimensionsValuesIds(dimension));
+                }
+                if (DimensionType.GEOGRAPHIC_DIMENSION.equals(dimension.getType())) {
+                    dimensionValuesIds.setGeographicDimensionId(dimension.getId());
+                    dimensionValuesIds.setGeographicDimensionValuesIds(getGeographicDimensionsValuesIds(dimension));
+                }
+            }
+        }
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
-        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages);
+        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, dimensionValuesIds);
+    }
+
+    private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
+        List<String> dimensionsValuesIds = new ArrayList<>();
+        NonEnumeratedDimensionValues dimensionValues = ((NonEnumeratedDimensionValues) dimension.getDimensionValues());
+        if (dimensionValues != null) {
+            for (NonEnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
+                dimensionsValuesIds.add(dimensionValue.getId());
+            }
+        }
+        return dimensionsValuesIds;
+    }
+
+    private List<String> getGeographicDimensionsValuesIds(Dimension dimension) {
+        List<String> dimensionsValuesIds = new ArrayList<>();
+        EnumeratedDimensionValues dimensionValues = ((EnumeratedDimensionValues) dimension.getDimensionValues());
+        if (dimensionValues != null) {
+            for (EnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
+                dimensionsValuesIds.add(dimensionValue.getId());
+            }
+        }
+        return dimensionsValuesIds;
     }
 
     public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
@@ -331,7 +378,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     private DatasetMetadata toDatasetMetadata(DatasetVersion source, DsdProcessorResult dsdProcessorResult, ConstraintDimensionRepresentations constraintDimensionRepresentations,
-            List<String> selectedLanguages, Set<String> fields, Dimensions dimensions) throws MetamacException {
+            List<String> selectedLanguages, Dimensions dimensions) throws MetamacException {
         if (source == null) {
             return null;
         }

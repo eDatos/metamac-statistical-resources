@@ -138,6 +138,7 @@ import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdE
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdComponentType;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.LookupUtil;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DimensionValueByIdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -151,6 +152,7 @@ import org.springframework.stereotype.Component;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceBasicDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceObservationDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
@@ -355,7 +357,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
+    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages,
+            DimensionValueByIdDimension dimensionValuesIds) throws Exception {
         if (source == null) {
             return null;
         }
@@ -363,7 +366,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         try {
             // Filter codes
             List<String> datasetDimensions = datasetService.retrieveDatasetVersionDimensionsIds(SERVICE_CONTEXT, source.getSiemacMetadataStatisticalResource().getUrn());
-            Map<String, List<String>> dimensionsCodesSelectedEffective = buildDimensionsSelectedWithValues(source, dimensionValuesSelected, datasetDimensions);
+            Map<String, List<String>> dimensionsCodesSelectedEffective = modifyDimensionsCodesSelected(buildDimensionsSelectedWithValues(source, dimensionValuesSelected, datasetDimensions),
+                    dimensionValuesIds);
 
             // Transform data
             // Dimensions
@@ -371,7 +375,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             // Observations and attributes
             target.setAttributes(new DataAttributes());
             toDataAttributesWithDatasetAndDimensionAttachmenteLevel(dsdProcessorResult, source.getDatasetRepositoryId(), datasetDimensions, dimensionsCodesSelectedEffective, target.getAttributes());
-            toDataObservationsAndAttributeWithObservationAttachmentLevel(source, dsdProcessorResult, datasetDimensions, dimensionValuesSelected, dimensionsCodesSelectedEffective, target);
+            toDataObservationsAndAttributeWithObservationAttachmentLevel(source, dsdProcessorResult, datasetDimensions, dimensionValuesSelected, dimensionsCodesSelectedEffective, target,dimensionValuesIds);
             if (CollectionUtils.isEmpty(target.getAttributes().getAttributes())) {
                 target.setAttributes(null);
             } else {
@@ -381,6 +385,24 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             StatisticalResourcesRestImplCommonUtils.handleException(e);
         }
         return target;
+    }
+
+    private Map<String, List<String>> modifyDimensionsCodesSelected(Map<String, List<String>> dimensionsCodesSelectedEffective, DimensionValueByIdDimension dimensionValuesIds) {
+        if (dimensionValuesIds == null) {
+            return dimensionsCodesSelectedEffective;
+        }
+
+        Map<String, List<String>> dimensionsCodesSelectedEffectiveFinal = new HashMap<String, List<String>>();
+        for (Map.Entry<String, List<String>> entry : dimensionsCodesSelectedEffective.entrySet()) {
+            if (entry.getKey().equals(dimensionValuesIds.getTemporalDimensionId())) {
+                dimensionsCodesSelectedEffectiveFinal.put(dimensionValuesIds.getTemporalDimensionId(), dimensionValuesIds.getTemporalDimensionValuesIds());
+            } else if (entry.getKey().equals(dimensionValuesIds.getGeographicDimensionId())) {
+                dimensionsCodesSelectedEffectiveFinal.put(dimensionValuesIds.getGeographicDimensionId(), dimensionValuesIds.getGeographicDimensionValuesIds());
+            } else {
+                dimensionsCodesSelectedEffectiveFinal.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return dimensionsCodesSelectedEffectiveFinal;
     }
 
     @Override
@@ -1434,7 +1456,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
      * Retrieve observations of selected codes
      */
     private void toDataObservationsAndAttributeWithObservationAttachmentLevel(DatasetVersion source, DsdProcessorResult dsdProcessorResult, List<String> dimensions,
-            Map<String, List<String>> dimensionsSelected, Map<String, List<String>> dimensionsCodesSelectedEffective, Data target) throws Exception {
+            Map<String, List<String>> dimensionsSelected, Map<String, List<String>> dimensionsCodesSelectedEffective, Data target, DimensionValueByIdDimension dimensionValuesIds) throws Exception {
 
         if (MapUtils.isEmpty(dimensionsCodesSelectedEffective)) {
             return;
@@ -1442,7 +1464,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
         // Search observations and attributes in repository
         List<ConditionDimensionDto> conditions = generateConditions(dimensionsSelected);
-        Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions);
+        Map<String, ObservationExtendedDto> observations = dimensionValuesIds == null
+                ? datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions)
+                : getObservationsFiltered(datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions), dimensionValuesIds);
 
         // Build data (observations and attribute in observation attachment level)
         int dataSize = calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
@@ -1465,6 +1489,28 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 }
             }
         }
+    }
+
+    private Map<String, ObservationExtendedDto> getObservationsFiltered(Map<String, ObservationExtendedDto> observations, DimensionValueByIdDimension dimensionValuesIds) {
+        Map<String, ObservationExtendedDto> observationsFiltered = new HashMap<String, ObservationExtendedDto>();
+        for (Map.Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
+            boolean checkTemporalId = false;
+            boolean checkGreographicId = false;
+            for (CodeDimensionDto codeDimension : entry.getValue().getCodesDimension()) {
+                if (dimensionValuesIds != null && codeDimension.getDimensionId().equals(dimensionValuesIds.getGeographicDimensionId())
+                        && dimensionValuesIds.getGeographicDimensionValuesIds().contains(codeDimension.getCodeDimensionId())) {
+                    checkGreographicId = true;
+                }
+                if (dimensionValuesIds != null && codeDimension.getDimensionId().equals(dimensionValuesIds.getTemporalDimensionId())
+                        && dimensionValuesIds.getTemporalDimensionValuesIds().contains(codeDimension.getCodeDimensionId())) {
+                    checkTemporalId = true;
+                }
+                if (checkGreographicId && checkTemporalId) {
+                    observationsFiltered.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return observationsFiltered;
     }
 
     private void toDataAttributesWithDatasetAndDimensionAttachmenteLevel(DsdProcessorResult dsdProcessorResult, String datasetRepositoryId, List<String> datasetDimensionsOrdered,
