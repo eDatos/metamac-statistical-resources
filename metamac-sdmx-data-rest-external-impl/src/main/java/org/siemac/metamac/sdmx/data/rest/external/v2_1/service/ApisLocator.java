@@ -5,6 +5,7 @@ import org.apache.cxf.jaxrs.client.WebClient;
 import org.sdmx.resources.sdmxml.schemas.v2_1.message.Structure;
 import org.sdmx.resources.sdmxml.schemas.v2_1.structure.DataStructureType;
 import org.sdmx.resources.sdmxml.schemas.v2_1.structure.DataStructuresType;
+import org.siemac.edatos.core.common.constants.CoreCommonConstants;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.sdmx.data.rest.external.conf.DataConfigurationConstants;
@@ -27,16 +28,16 @@ public class ApisLocator {
 
     private SdmxSrmRestExternalFacadeV21      sdmxSrmRestExternalFacadeV21 = null;
 
-    private SdmxSrmRestExternalFacadeV21 getSdmxSrmRestExternalFacadeV21() {
+    private SdmxSrmRestExternalFacadeV21 getSdmxSrmRestExternalFacadeV21() throws MetamacException {
 
         if (sdmxSrmRestExternalFacadeV21 == null) {
             String baseApi = configurationService.getProperties().getProperty(DataConfigurationConstants.ENDPOINT_SDMX_SRM_EXTERNAL_API);
             sdmxSrmRestExternalFacadeV21 = JAXRSClientFactory.create(baseApi, SdmxSrmRestExternalFacadeV21.class, null, true); // true to do thread safe
         }
-
+        String apiKey = configurationService.retrieveStatisticalResourcesApiKey();
         // reset thread context
         WebClient.client(sdmxSrmRestExternalFacadeV21).reset();
-        WebClient.client(sdmxSrmRestExternalFacadeV21).accept("application/xml");
+        WebClient.client(sdmxSrmRestExternalFacadeV21).accept("application/xml").header(CoreCommonConstants.API_KEY_PARAMETER, apiKey);
 
         return sdmxSrmRestExternalFacadeV21;
     }
