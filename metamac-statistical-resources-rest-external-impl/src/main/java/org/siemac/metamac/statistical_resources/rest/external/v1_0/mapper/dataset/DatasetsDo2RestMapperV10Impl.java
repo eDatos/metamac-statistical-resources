@@ -67,6 +67,7 @@ import org.siemac.metamac.statistical_resources.rest.external.exception.RestServ
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdComponentType;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DimensionValueByIdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.jsonstat.CommonDo2JsonStatRestMapperV10;
@@ -264,17 +265,22 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (source == null) {
             return null;
         }
-        Map<String, List<String>> dimensionsValues = new HashMap<>();
-        for (Dimension dimension : dimensions.getDimensions()) {
-            if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
-                dimensionsValues.put(dimension.getId(), getTemporalDimensionsValuesIds(dimension));
-            }
-            if (DimensionType.GEOGRAPHIC_DIMENSION.equals(dimension.getType())) {
-                dimensionsValues.put(dimension.getId(), getGeographicDimensionsValuesIds(dimension));
+        DimensionValueByIdDimension dimensionValuesIds = null;
+        if (dimensions != null) {
+            dimensionValuesIds = new DimensionValueByIdDimension();
+            for (Dimension dimension : dimensions.getDimensions()) {
+                if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
+                    dimensionValuesIds.setTemporalDimensionId(dimension.getId());
+                    dimensionValuesIds.setTemporalDimensionValuesIds(getTemporalDimensionsValuesIds(dimension));
+                }
+                if (DimensionType.GEOGRAPHIC_DIMENSION.equals(dimension.getType())) {
+                    dimensionValuesIds.setGeographicDimensionId(dimension.getId());
+                    dimensionValuesIds.setGeographicDimensionValuesIds(getGeographicDimensionsValuesIds(dimension));
+                }
             }
         }
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
-        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, dimensionsValues);
+        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, dimensionValuesIds);
     }
 
     private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
