@@ -21,7 +21,7 @@ public interface DatasetsDo2RestMapperV10 {
 
     public Datasets toDatasets(PagedResult<DatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
             Set<String> parsedFields) throws MetamacException;
-    public Dataset toDataset(DatasetVersion source, Map<String, List<String>> dimensions, List<String> selectedLanguages, Set<String> fields) throws Exception;
+    public Dataset toDataset(DatasetVersion source, Map<String, List<String>> dimensions, List<String> selectedLanguages, Set<String> fields, String granularity) throws Exception;
     public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimension, String selectedLanguages, Set<String> parsedFields) throws Exception;
     public ResourceLink toDatasetSelfLink(LifeCycleStatisticalResourceDto source);
     public ResourceLink toDatasetSelfLink(LifeCycleStatisticalResourceBaseDto source);
