@@ -8,6 +8,7 @@ import static org.siemac.metamac.statistical_resources.rest.external.Statistical
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.core.Response;
@@ -26,6 +29,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
+import org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1;
 import org.siemac.metamac.core.common.enume.domain.IstacTimeGranularityEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.time.IstacTimeUtils;
@@ -1978,5 +1982,98 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.getUrls().addAll(source.getUrls());
         target.getEmails().addAll(source.getEmails());
         return target;
+    }
+
+    @Override
+    public Map<String, List<String>> parseParamExpression(String paramExpression) {
+        String afterPatternRegex = "~after=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        String lastPatternRegex = "~last=(\\d+)";
+        String rangePatternRegex = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
+        Pattern patternDimension = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
+        String code = removeCapturing(rangePatternRegex) + "|" + removeCapturing(afterPatternRegex) + "|" + removeCapturing(lastPatternRegex) + "|"
+                + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + "|" + removeCapturing(SDMXCommonRegExpV2_1.IDTYPE);
+        Pattern patternCodes = Pattern.compile("^(" + code + ")$");
+        if (StringUtils.isBlank(paramExpression)) {
+            return MapUtils.EMPTY_MAP;
+        }
+
+        Matcher matcherDimension = patternDimension.matcher(paramExpression);
+
+        Map<String, List<String>> selectedDimension = new HashMap<>();
+        while (matcherDimension.find()) {
+            String dimIdentifier = matcherDimension.group(1);
+            String codes = matcherDimension.group(2);
+
+            List<String> codeDimensions = selectedDimension.get(dimIdentifier);
+
+            if (codeDimensions == null) {
+                codeDimensions = new ArrayList<>();
+                selectedDimension.put(dimIdentifier, codeDimensions);
+            }
+
+            codeDimensions.addAll(parseCodes(patternCodes, codes));
+        }
+        return selectedDimension;
+    }
+
+    private List<String> parseCodes(Pattern patternCode, String codes) {
+        List<String> codeDimensions = new ArrayList<>();
+
+        if (!StringUtils.isBlank(codes)) {
+            List<String> splittedCodes = Arrays.asList(StringUtils.split(codes, "|"));
+
+            for (String splittedCode : splittedCodes) {
+                Matcher matcherCode = patternCode.matcher(splittedCode);
+                while (matcherCode.find()) {
+                    codeDimensions.add(matcherCode.group(1));
+                }
+            }
+        }
+        return codeDimensions;
+    }
+
+    private String removeCapturing(String regex) {
+        return regex.replace("(?:", "(").replace("(", "(?:");
+    }
+
+    @Override
+    public List<ExternalItem> getTemporalGranularitiesFiter(Map<String, List<String>> granularities) {
+        List<ExternalItem> temporalGranularitiesFilter = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : granularities.entrySet()) {
+            if ("TIME_PERIOD".equals(entry.getKey())) {
+                temporalGranularitiesFilter = getExternalItemByCodeMap(entry);
+            }
+        }
+        return temporalGranularitiesFilter;
+    }
+
+    private List<ExternalItem> getExternalItemByCodeMap(Map.Entry<String, List<String>> entry) {
+        List<ExternalItem> externalItems = new ArrayList<>();
+        for (String granularity : entry.getValue()) {
+            ExternalItem externalItem = new ExternalItem();
+            externalItem.setCode(granularity);
+            externalItems.add(externalItem);
+        }
+        return externalItems;
+    }
+
+    @Override
+    public List<ExternalItem> getGeographicGranularitiesFilter(Map<String, List<String>> granularities, DsdProcessorResult dsdProcessorResult) {
+        List<ExternalItem> geographicalGranularitiesFilter = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : granularities.entrySet()) {
+            if (checkCorrectCodeDimension(dsdProcessorResult, entry.getKey())) {
+                geographicalGranularitiesFilter = getExternalItemByCodeMap(entry);
+            }
+        }
+        return geographicalGranularitiesFilter;
+    }
+
+    private boolean checkCorrectCodeDimension(DsdProcessorResult dsdProcessorResult, String code) {
+        for (DsdDimension source : dsdProcessorResult.getDimensions()) {
+            if (code.equals(source.getComponentId()) && DsdComponentType.SPATIAL.equals(source.getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -5,23 +5,17 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
-import org.siemac.edatos.core.common.constants.shared.SDMXCommonRegExpV2_1;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.ChildLinks;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
@@ -64,8 +58,6 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
-import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdComponentType;
-import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DimensionValueByIdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
@@ -170,11 +162,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
-        Map<String, List<String>> granularities = parseParamExpression(granularity);
+        Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
         if (includeMetadata || includeData) {
             dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-            temporalGranularitiesFilter = getTemporalGranularitiesFiter(granularities);
-            geographicalGranularitiesFilter = getGeographicGranularitiesFilter(granularities, dsdProcessorResult);
+            temporalGranularitiesFilter = commonDo2RestMapper.getTemporalGranularitiesFiter(granularities);
+            geographicalGranularitiesFilter = commonDo2RestMapper.getGeographicGranularitiesFilter(granularities, dsdProcessorResult);
         }
 
         if (includeMetadata || (includeData && (temporalGranularitiesFilter != null && !temporalGranularitiesFilter.isEmpty())
@@ -191,7 +183,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
                 constraintDimensionRepresentations = commonDo2RestMapper.processDatasetConstraint(source.getSiemacMetadataStatisticalResource().getUrn());
             }
 
-            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, fields, dimensions));
+            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, dimensions));
 
         }
         if (includeData) {
@@ -205,56 +197,6 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-    private Map<String, List<String>> parseParamExpression(String paramExpression) {
-        String afterPatternRegex = "~after=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
-        String lastPatternRegex = "~last=(\\d+)";
-        String rangePatternRegex = "~range=(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ");(" + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + ")";
-        Pattern patternDimension = Pattern.compile("(\\w+)\\[((" + "[^\\]]" + ")+)\\]");
-        String code = removeCapturing(rangePatternRegex) + "|" + removeCapturing(afterPatternRegex) + "|" + removeCapturing(lastPatternRegex) + "|"
-                + removeCapturing(SDMXCommonRegExpV2_1.OBSERVATIONAL_TIME_PERIOD) + "|" + removeCapturing(SDMXCommonRegExpV2_1.IDTYPE);
-        Pattern patternCodes = Pattern.compile("^(" + code + ")$");
-        if (StringUtils.isBlank(paramExpression)) {
-            return MapUtils.EMPTY_MAP;
-        }
-
-        Matcher matcherDimension = patternDimension.matcher(paramExpression);
-
-        Map<String, List<String>> selectedDimension = new HashMap<>();
-        while (matcherDimension.find()) {
-            String dimIdentifier = matcherDimension.group(1);
-            String codes = matcherDimension.group(2);
-
-            List<String> codeDimensions = selectedDimension.get(dimIdentifier);
-
-            if (codeDimensions == null) {
-                codeDimensions = new ArrayList<>();
-                selectedDimension.put(dimIdentifier, codeDimensions);
-            }
-
-            codeDimensions.addAll(parseCodes(patternCodes, codes));
-        }
-        return selectedDimension;
-    }
-
-    private List<String> parseCodes(Pattern patternCode, String codes) {
-        List<String> codeDimensions = new ArrayList<>();
-
-        if (!StringUtils.isBlank(codes)) {
-            List<String> splittedCodes = Arrays.asList(StringUtils.split(codes, "|"));
-
-            for (String splittedCode : splittedCodes) {
-                Matcher matcherCode = patternCode.matcher(splittedCode);
-                while (matcherCode.find()) {
-                    codeDimensions.add(matcherCode.group(1));
-                }
-            }
-        }
-        return codeDimensions;
-    }
-
-    private String removeCapturing(String regex) {
-        return regex.replace("(?:", "(").replace("(", "(?:");
-    }
 
     public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
         return toDatasetData(source, dsdProcessorResult, dimensionValuesSelected, selectedLanguages, null);
@@ -378,7 +320,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     private DatasetMetadata toDatasetMetadata(DatasetVersion source, DsdProcessorResult dsdProcessorResult, ConstraintDimensionRepresentations constraintDimensionRepresentations,
-            List<String> selectedLanguages, Set<String> fields, Dimensions dimensions) throws MetamacException {
+            List<String> selectedLanguages, Dimensions dimensions) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -415,45 +357,6 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         // StatisticalResource and other
         commonDo2RestMapper.toMetadataStatisticalResource(source.getSiemacMetadataStatisticalResource(), target, selectedLanguages);
         return target;
-    }
-
-    private List<ExternalItem> getGeographicGranularitiesFilter(Map<String, List<String>> granularities, DsdProcessorResult dsdProcessorResult) {
-        List<ExternalItem> geographicalGranularitiesFilter = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry : granularities.entrySet()) {
-            if (checkCorrectCodeDimension(dsdProcessorResult, entry.getKey())) {
-                geographicalGranularitiesFilter = getExternalItemByCodeMap(entry);
-            }
-        }
-        return geographicalGranularitiesFilter;
-    }
-
-    private boolean checkCorrectCodeDimension(DsdProcessorResult dsdProcessorResult, String code) {
-        for (DsdDimension source : dsdProcessorResult.getDimensions()) {
-            if (code.equals(source.getComponentId()) && DsdComponentType.SPATIAL.equals(source.getType())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private List<ExternalItem> getTemporalGranularitiesFiter(Map<String, List<String>> granularities) {
-        List<ExternalItem> temporalGranularitiesFilter = new ArrayList<>();
-        for (Map.Entry<String, List<String>> entry : granularities.entrySet()) {
-            if ("TIME_PERIOD".equals(entry.getKey())) {
-                temporalGranularitiesFilter = getExternalItemByCodeMap(entry);
-            }
-        }
-        return temporalGranularitiesFilter;
-    }
-
-    private List<ExternalItem> getExternalItemByCodeMap(Map.Entry<String, List<String>> entry) {
-        List<ExternalItem> externalItems = new ArrayList<>();
-        for (String granularity : entry.getValue()) {
-            ExternalItem externalItem = new ExternalItem();
-            externalItem.setCode(granularity);
-            externalItems.add(externalItem);
-        }
-        return externalItems;
     }
 
     private ResourcesStatisticalResourceBase toDatasetIsRequiredBy(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {

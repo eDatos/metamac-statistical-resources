@@ -83,4 +83,8 @@ public interface CommonDo2RestMapperV10 {
     public Concept toConcept(String urn);
 
     public RestException buildRestException(String message);
+    public Map<String, List<String>> parseParamExpression(String paramExpression);
+    public List<ExternalItem> getTemporalGranularitiesFiter(Map<String, List<String>> granularities);
+    public List<ExternalItem> getGeographicGranularitiesFilter(Map<String, List<String>> granularities, DsdProcessorResult dsdProcessorResult);
+    
 }
