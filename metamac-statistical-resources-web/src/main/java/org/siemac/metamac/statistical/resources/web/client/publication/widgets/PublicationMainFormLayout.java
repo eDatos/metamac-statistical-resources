@@ -77,11 +77,6 @@ public class PublicationMainFormLayout extends LifecycleMainFormLayout {
         return PublicationClientSecurityUtils.canPreviewDataPublicationVersion(publicationVersionDto);
     }
 
-    @Override
-    protected boolean canShowCopyButton() {
-        return false;
-    }
-
     private boolean canUpdateGeoCacheRelatedResource() {
         return PublicationClientSecurityUtils.canUpdateGeoCacheRelatedResource(publicationVersionDto);
     }
