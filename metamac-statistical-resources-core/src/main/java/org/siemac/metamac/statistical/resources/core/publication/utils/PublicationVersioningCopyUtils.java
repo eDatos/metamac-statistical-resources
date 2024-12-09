@@ -86,6 +86,7 @@ public class PublicationVersioningCopyUtils {
         target.setQuery(source.getQuery());
         target.setDataset(source.getDataset());
         target.setMultidataset(source.getMultidataset());
+        target.setPublication(source.getPublication());
         target.setUrl(source.getUrl());
 
         return target;
