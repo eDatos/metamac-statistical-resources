@@ -73,36 +73,25 @@ CREATE INDEX pk_tb_geo_cache_related_resource_title_fk ON tb_geo_cache_related_r
 CREATE sequence SEQ_GEO_CACHE_RELATED_RESOURCE;
 
 --TABLE tb_geo_cache_resource_by_related_resource
-CREATE TABLE tb_geo_cache_resource_by_related_resource (
-	id int8 NOT NULL,
-	version int8,
+CREATE TABLE TB_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE (
 	geo_cache_resource_fk int8 NOT NULL,
 	geo_cache_related_resource_fk int8 NOT NULL,
-	CONSTRAINT pk_tb_geo_cache_resource_by_related_resource PRIMARY KEY (id)
+	CONSTRAINT pk_tb_geo_cache_resource_by_related_resource PRIMARY KEY (geo_cache_resource_fk, geo_cache_related_resource_fk)
 );
 
-CREATE UNIQUE INDEX ix_tb_geo_cache_resource_by_related_resource ON tb_geo_cache_resource_by_related_resource (geo_cache_related_resource_fk, geo_cache_resource_fk);
-CREATE INDEX ix_2_tb_geo_cache_resource_by_related_resource ON tb_geo_cache_resource_by_related_resource (geo_cache_resource_fk);
+CREATE INDEX ix_tb_geo_cache_resource_by_related_resource ON tb_geo_cache_resource_by_related_resource (geo_cache_resource_fk);
 ALTER TABLE tb_geo_cache_resource_by_related_resource ADD CONSTRAINT fk_tb_geo_cache_resource_related_resource_geo_cache_res_fk FOREIGN KEY (geo_cache_resource_fk) REFERENCES tb_geo_cache_resource(id);
 ALTER TABLE tb_geo_cache_resource_by_related_resource ADD CONSTRAINT fk_tb_geo_cache_resource_by_related_resource_tb_cache_col_fk FOREIGN KEY (geo_cache_related_resource_fk) REFERENCES tb_geo_cache_related_resource(id);
 
-CREATE sequence SEQ_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE;
-
 --TABLE tb_territories_by_geo_cache_resource
 CREATE TABLE TB_TERRITORIES_BY_GEO_CACHE_RESOURCE (
-	id int8 NOT NULL,
-	version int8,
 	variable_element_fk int8 NOT NULL,
 	geo_cache_resource_fk int8 NOT NULL,
-	CONSTRAINT pk_tb_territories_by_geo_cache_resource PRIMARY KEY (id)
+	CONSTRAINT pk_tb_territories_by_geo_cache_resource PRIMARY KEY (variable_element_fk, geo_cache_resource_fk)
 );
 
-CREATE UNIQUE INDEX ix_tb_territories_by_geo_cache_resource ON tb_territories_by_geo_cache_resource (variable_element_fk,geo_cache_resource_fk);
-CREATE INDEX ix_2_tb_territories_by_geo_cache_resource ON tb_territories_by_geo_cache_resource (geo_cache_resource_fk);
+CREATE INDEX pk_tb_territories_by_geo_cache_resource_geo_cache_resource_fk ON tb_territories_by_geo_cache_resource (geo_cache_resource_fk);
 ALTER TABLE tb_territories_by_geo_cache_resource ADD CONSTRAINT fk_tb_territories_by_geo_cache_resource_variable_element_fk FOREIGN KEY (variable_element_fk) REFERENCES tb_external_items(id);
 ALTER TABLE tb_territories_by_geo_cache_resource ADD CONSTRAINT fk_tb_territories_by_geo_cache_resource_tb_cache_col_fk FOREIGN KEY (geo_cache_resource_fk) REFERENCES tb_geo_cache_resource(id);
-
-CREATE sequence SEQ_TERRITORIES_BY_GEO_CACHE_RESOURCE;
-
 
 commit;

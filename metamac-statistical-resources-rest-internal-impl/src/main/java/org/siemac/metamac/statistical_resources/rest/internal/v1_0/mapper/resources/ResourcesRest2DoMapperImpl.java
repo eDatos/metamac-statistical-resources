@@ -1,10 +1,16 @@
 package org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.resources;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryPropertyRestriction;
+import org.siemac.metamac.rest.common.query.domain.OperationTypeEnum;
 import org.siemac.metamac.rest.exception.RestException;
+import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteria;
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaBase;
+import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaDisjunction;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
@@ -21,6 +27,7 @@ public class ResourcesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl impleme
 
     private RestCriteria2SculptorCriteria<GeoCacheResource>          resourcesCriteriaMapper                = null;
     private RestCriteria2SculptorCriteria<GeoCacheByRelatedResource> geoCacheRelatedResourcesCriteriaMapper = null;
+    private List<String>                                             complexResourcesId                     = new ArrayList<>();
 
     public ResourcesRest2DoMapperImpl() {
         resourcesCriteriaMapper = new RestCriteria2SculptorCriteria<GeoCacheResource>(GeoCacheResource.class, ResourcesCriteriaPropertyOrder.class, ResourcesCriteriaPropertyRestriction.class,
@@ -36,7 +43,8 @@ public class ResourcesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl impleme
     }
 
     @Override
-    public RestCriteria2SculptorCriteria<GeoCacheByRelatedResource> getGeoCacheByRelatedResourceCriteriaMapper() {
+    public RestCriteria2SculptorCriteria<GeoCacheByRelatedResource> getGeoCacheByRelatedResourceCriteriaMapper(List<String> complexResourcesId) {
+        this.complexResourcesId = complexResourcesId;
         return geoCacheRelatedResourcesCriteriaMapper;
     }
 
@@ -91,10 +99,27 @@ public class ResourcesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl impleme
                 case STATISTICAL_OPERATION_URN:
                     return buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.operationUrn(), PropertyTypeEnum.STRING, propertyRestriction);
                 case GEOCOV_VARELEM_ID:
-                    return buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.relatedResources().territories().code(), PropertyTypeEnum.STRING, propertyRestriction);
+                    SculptorPropertyCriteria relatedResources = buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.relatedResources().territories().code(), PropertyTypeEnum.STRING,
+                            propertyRestriction);
+
+                    if (complexResourcesId.isEmpty()) {
+                        return relatedResources;
+                    } else {
+                        return buildComplexResourcesSculptorPropertyCriteria(propertyRestriction, relatedResources);
+                    }
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }
+        }
+
+        private SculptorPropertyCriteriaBase buildComplexResourcesSculptorPropertyCriteria(MetamacRestQueryPropertyRestriction propertyRestriction, SculptorPropertyCriteria relatedResources) {
+            propertyRestriction.setOperationType(OperationTypeEnum.IN);
+            propertyRestriction.setValue(null);
+            propertyRestriction.addValuesToValueList(complexResourcesId);
+            SculptorPropertyCriteria relatedComplexResources = buildSculptorPropertyCriteria(GeoCacheByRelatedResourceProperties.relatedResources().urn(), PropertyTypeEnum.STRING,
+                    propertyRestriction);
+
+            return new SculptorPropertyCriteriaDisjunction(relatedResources, relatedComplexResources);
         }
 
         @SuppressWarnings("rawtypes")

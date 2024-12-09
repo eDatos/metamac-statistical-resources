@@ -24,6 +24,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
@@ -169,15 +170,17 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
     }
 
     @Override
-    public PagedResult<GeoCacheByRelatedResource> findRelatedGeoResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
+    public PagedResult<GeoCacheByRelatedResource> findRelatedGeoResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter,
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
         try {
-            return findRelatedGeoResourcesCommon(conditionalCriteria, pagingParameter);
+            return findRelatedGeoResourcesCommon(conditionalCriteria, pagingParameter, statisticalResourceTypeEnum);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
 
-    private PagedResult<GeoCacheByRelatedResource> findRelatedGeoResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
+    private PagedResult<GeoCacheByRelatedResource> findRelatedGeoResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter,
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum) throws MetamacException {
 
         // Criteria to find by criteria
         List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
@@ -187,9 +190,18 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
             conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).distinctRoot().build());
         }
 
-        // only activated records are available
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.type())
+                .eq(statisticalResourceTypeEnum.getName()).buildSingle());
         conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).buildSingle());
 
+        if (StatisticalResourceTypeEnum.COLLECTION.equals(statisticalResourceTypeEnum)) {
+            // only collections need to retrieve their resources. Others do not need them. The performance will be better if they do not check these filters because the lazy related resources object
+            // will not be activated.
+            conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.relatedResources().isLastVersion())
+                    .eq(true).buildSingle());
+            conditionalCriteria.add(
+                    ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.relatedResources().isActivated()).eq(true).buildSingle());
+        }
         // Find
         return cacheService.findGeoRelatedResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
     }

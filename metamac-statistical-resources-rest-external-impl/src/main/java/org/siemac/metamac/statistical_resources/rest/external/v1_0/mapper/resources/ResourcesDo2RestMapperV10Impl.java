@@ -139,6 +139,9 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         } else if (StatisticalResourceTypeEnum.QUERY.equals(typeResource)) {
             kind = StatisticalResourcesRestExternalConstants.KIND_QUERY;
             typeExternalArtefact = TypeExternalArtefactsEnum.QUERY.getName();
+        } else if (StatisticalResourceTypeEnum.MULTIDATASET.equals(typeResource)) {
+            kind = StatisticalResourcesRestExternalConstants.KIND_MULTIDATASET;
+            typeExternalArtefact = TypeExternalArtefactsEnum.MULTIDATASET.getName();
         }
 
         target.setKind(kind);

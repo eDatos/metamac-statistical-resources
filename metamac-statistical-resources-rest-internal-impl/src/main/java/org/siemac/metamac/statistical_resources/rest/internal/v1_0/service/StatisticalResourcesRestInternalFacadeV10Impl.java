@@ -47,6 +47,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -526,13 +527,15 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         try {
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
 
-            SculptorCriteria sculptorCriteriaCacheByRelatedResources = resourcesRest2DoMapper.getGeoCacheByRelatedResourceCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset,
-                    true);
+            List<String> complexResourcesUrn = findComplexRelatedResourcesCommon(query, orderBy, limit, offset);
+
+            SculptorCriteria sculptorCriteriaCacheByRelatedResources = resourcesRest2DoMapper.getGeoCacheByRelatedResourceCriteriaMapper(complexResourcesUrn).restCriteriaToSculptorCriteria(query,
+                    orderBy, limit, offset, true);
             // Find
             PagedResult<GeoCacheByRelatedResource> entitiesPagedResult = commonService.findRelatedGeoResources(sculptorCriteriaCacheByRelatedResources.getConditions(),
-                    sculptorCriteriaCacheByRelatedResources.getPagingParameter());
+                    sculptorCriteriaCacheByRelatedResources.getPagingParameter(), StatisticalResourceTypeEnum.COLLECTION);
 
-            List<String> cacheResourcesUrn = retrieveUrnResources(query, parsedFields);
+            List<String> cacheResourcesUrn = retrieveUrnResources(query, parsedFields, complexResourcesUrn);
 
             // Transform
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
@@ -542,7 +545,28 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
     }
 
-    private List<String> retrieveUrnResources(String query, Set<String> parsedFields) {
+    private List<String> findComplexRelatedResourcesCommon(String query, String orderBy, String limit, String offset) {
+        try {
+
+            List<String> complexResourcesUrn = new ArrayList<>();
+            SculptorCriteria sculptorCriteriaCacheByRelatedResources = resourcesRest2DoMapper.getGeoCacheByRelatedResourceCriteriaMapper(new ArrayList<>()).restCriteriaToSculptorCriteria(query, null,
+                    null, null, true);
+            // Find
+            PagedResult<GeoCacheByRelatedResource> complexResources = commonService.findRelatedGeoResources(sculptorCriteriaCacheByRelatedResources.getConditions(),
+                    sculptorCriteriaCacheByRelatedResources.getPagingParameter(), StatisticalResourceTypeEnum.MULTIDATASET);
+
+            for (GeoCacheByRelatedResource complexResource : complexResources.getValues()) {
+                complexResourcesUrn.add(complexResource.getUrn());
+            }
+
+            return complexResourcesUrn;
+
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private List<String> retrieveUrnResources(String query, Set<String> parsedFields, List<String> complexResourcesUrn) {
         List<String> cacheResourcesUrn = new ArrayList<>();
         if (parsedFields.contains(StatisticalResourcesRestConstants.FIELD_EXCLUDE_RELATED_RESOURCES_WITHOUT_SELECTED_CRITERIA)) {
             SculptorCriteria sculptorCriteriaCacheResources = resourcesRest2DoMapper.getResourcesCriteriaMapper().restCriteriaToSculptorCriteria(query, null, null, null);
@@ -551,6 +575,8 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             for (GeoCacheResource geoCacheResource : cacheResourcesResult) {
                 cacheResourcesUrn.add(geoCacheResource.getUrn());
             }
+
+            cacheResourcesUrn.addAll(complexResourcesUrn);
 
         }
 
