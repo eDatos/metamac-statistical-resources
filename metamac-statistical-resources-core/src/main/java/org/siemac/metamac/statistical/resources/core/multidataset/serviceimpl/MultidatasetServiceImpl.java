@@ -40,6 +40,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.validators.MultidatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.multidataset.utils.MultidatasetCubeComparator;
+import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -189,6 +190,35 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
             getMultidatasetVersionRepository().delete(multidatasetVersion);
         }
 
+    }
+
+    @Override
+    public void updateGeographicalCache(ServiceContext ctx, MultidatasetVersion multidatasetVersion) throws MetamacException {
+        updateGeographicalCacheInJob(ctx, multidatasetVersion, true, false);
+    }
+
+    private void updateGeographicalCacheInJob(ServiceContext ctx, MultidatasetVersion multidatasetVersion, boolean sendNotification, boolean mustWaitForRelatedResourcesUpdate)
+            throws MetamacException {
+        ProcStatusValidator.checkStatisticalResourceStructureCanBeCached(multidatasetVersion);
+
+        String multidatasetUrn = multidatasetVersion.getMultidataset().getIdentifiableStatisticalResource().getUrn();
+        String multidatasetVersionUrn = multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        checkNotTasksInProgress(ctx, multidatasetVersionUrn);
+
+        TaskInfoResources taskInfo = new TaskInfoResources();
+        taskInfo.setVersionId(multidatasetVersionUrn);
+        taskInfo.setUrn(multidatasetUrn);
+        taskInfo.setResourceType(StatisticalResourceTypeEnum.COLLECTION.name());
+        taskInfo.setMustWaitForRelatedResourcesUpdate(mustWaitForRelatedResourcesUpdate);
+        getTaskService().planifyUpdateGeographicalCacheRelatedResource(ctx, taskInfo, sendNotification);
+
+    }
+
+    private void checkNotTasksInProgress(ServiceContext ctx, String multidatasetUrn) throws MetamacException {
+        if (getTaskService().existsTaskForResource(ctx, multidatasetUrn)) {
+            throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, multidatasetUrn);
+        }
     }
 
     private void updateReplacedVersionIsReplacedByVersion(MultidatasetVersion multidatasetVersion) {

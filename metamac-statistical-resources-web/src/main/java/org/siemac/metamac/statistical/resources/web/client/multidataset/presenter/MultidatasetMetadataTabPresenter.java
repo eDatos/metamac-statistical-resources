@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -24,6 +25,8 @@ import org.siemac.metamac.statistical.resources.web.client.events.ShowUnauthoriz
 import org.siemac.metamac.statistical.resources.web.client.multidataset.view.handlers.MultidatasetMetadataTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceResult;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.MultidatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.VersionableStatisticalResourceWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
@@ -311,6 +314,18 @@ public class MultidatasetMetadataTabPresenter
                 getView().setStatisticalOperationsForReplacesSelection(result.getOperationsList(), StatisticalResourcesDefaults.getSelectedStatisticalOperation());
             }
         });
+    }
+
+    @Override
+    public void updateGeoCacheRelatedResources(MultidatasetVersionDto publication) {
+        dispatcher.execute(new UpdateGeoCacheRelatedResourceAction(publication.getUrn(), StatisticalResourceTypeEnum.MULTIDATASET),
+                new WaitingAsyncCallbackHandlingError<UpdateGeoCacheRelatedResourceResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
+                        fireSuccessMessage(getMessages().publicationUpdateGeoCacheBackgroundInProgress());
+                    }
+                });
     }
 
     //

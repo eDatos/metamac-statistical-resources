@@ -21,6 +21,8 @@ Application MultidatasetsStatisticalResources {
 			> @MultidatasetRepository
 			> @MultidatasetVersionRepository
 			> @MultidatasetCubeRepository
+			> @TaskService
+		    > @CacheService
 			
 			// Multidatasets
 	    	"Creates multidataset version"
@@ -49,6 +51,10 @@ Application MultidatasetsStatisticalResources {
             @MultidatasetCube updateMultidatasetCubeLocation(String cubeUrn, Long orderInMultidataset) throws MetamacException;
             @MultidatasetCube retrieveMultidatasetCube(String cubeUrn) throws MetamacException;
             deleteMultidatasetCube(String cubeUrn) throws MetamacException;
+            
+            // geographical coverage cache
+    		updateGeographicalCache(@MultidatasetVersion multidataset) throws MetamacException;
+    		updateAllGeographicalCache(boolean mustWaitForRelatedResourcesUpdate) throws MetamacException;
 		}  
 
 

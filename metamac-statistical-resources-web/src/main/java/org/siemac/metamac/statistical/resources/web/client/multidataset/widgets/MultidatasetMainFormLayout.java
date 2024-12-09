@@ -3,10 +3,14 @@ package org.siemac.metamac.statistical.resources.web.client.multidataset.widgets
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.LifecycleMainFormLayout;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.utils.MultidatasetClientSecurityUtils;
+import org.siemac.metamac.web.common.client.widgets.MainFormLayoutButton;
+
+import com.smartgwt.client.widgets.events.HasClickHandlers;
 
 public class MultidatasetMainFormLayout extends LifecycleMainFormLayout {
 
     private MultidatasetVersionDto multidatasetVersionDto;
+    private MainFormLayoutButton   updateGeoCacheRelatedResource;
 
     public MultidatasetMainFormLayout() {
         super();
@@ -62,5 +66,33 @@ public class MultidatasetMainFormLayout extends LifecycleMainFormLayout {
     @Override
     protected boolean canPreviewData() {
         return MultidatasetClientSecurityUtils.canPreviewDataMultidatasetVersion(multidatasetVersionDto);
+    }
+
+    private boolean canUpdateGeoCacheRelatedResource() {
+        return MultidatasetClientSecurityUtils.canUpdateGeoCacheRelatedResource(multidatasetVersionDto);
+    }
+
+    @Override
+    protected void updateVisibility() {
+        super.updateVisibility();
+        if (canUpdateGeoCacheRelatedResource()) {
+            showUpdateGeoCacheRelatedResourceButton();
+        }
+    }
+
+    @Override
+    protected void hideAllLifeCycleButtons() {
+        super.hideAllLifeCycleButtons();
+        updateGeoCacheRelatedResource.hide();
+    }
+
+    private void showUpdateGeoCacheRelatedResourceButton() {
+        if (canUpdateGeoCacheRelatedResource()) {
+            updateGeoCacheRelatedResource.show();
+        }
+    }
+
+    public HasClickHandlers getUpdateGeoCacheRelatedResource() {
+        return updateGeoCacheRelatedResource;
     }
 }
