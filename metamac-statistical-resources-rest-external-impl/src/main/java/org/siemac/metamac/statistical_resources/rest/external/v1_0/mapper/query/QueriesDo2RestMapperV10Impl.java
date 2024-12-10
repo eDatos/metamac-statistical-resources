@@ -37,6 +37,7 @@ import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTyp
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
@@ -53,7 +54,6 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
-import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DimensionValueByIdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -128,23 +128,22 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
             
             Dimensions dimensions = null;
-            List<ExternalItem> temporalGranularitiesFilter = null;
-            List<ExternalItem> geographicalGranularitiesFilter = null;
+            DimensionsFilter dimensionsFilter = new DimensionsFilter();
             Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
 
             if (includeMetadata || includeData || includeKeywords) {
                 relatedDatasetEffective = getQueryRelatedDatasetVersionEffective(source);
                 dsdProcessorResult = commonDo2RestMapper.processDataStructure(relatedDatasetEffective.getRelatedDsd().getUrn());
-                temporalGranularitiesFilter = commonDo2RestMapper.getTemporalGranularitiesFiter(granularities);
-                geographicalGranularitiesFilter = commonDo2RestMapper.getGeographicGranularitiesFilter(granularities, dsdProcessorResult);
+                dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
+                dimensionsFilter.setTemporalDimensionValuesQueriesIds(getTemporalGranularities(source.getTemporalGranularities()));
             }
-            if (includeMetadata || (includeData && (temporalGranularitiesFilter != null && !temporalGranularitiesFilter.isEmpty())
-                    || (geographicalGranularitiesFilter != null && !geographicalGranularitiesFilter.isEmpty())
-                    || (source.getTemporalGranularities() != null && !source.getTemporalGranularities().isEmpty()))) {
+            if (includeMetadata || (includeData && (dimensionsFilter.getTemporalDimensionValuesIds() != null && !dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())
+                    || (dimensionsFilter.getGeographicDimensionValuesIds() != null && !(dimensionsFilter.getGeographicDimensionValuesIds().isEmpty())
+                    || (source.getTemporalGranularities() != null && !source.getTemporalGranularities().isEmpty())))) {
                 Map<String, List<String>> effectiveDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, relatedDatasetEffective);
-                temporalGranularitiesFilter.addAll(source.getTemporalGranularities());
+                
                 dimensions = commonDo2RestMapper.toDimensions(relatedDatasetEffective.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, effectiveDimensionValuesToDataByDimension,
-                        selectedLanguages, null, temporalGranularitiesFilter, geographicalGranularitiesFilter);
+                        selectedLanguages, null, dimensionsFilter);
             }
             if (includeMetadata) {
                 target.setMetadata(toQueryMetadata(source, relatedDatasetEffective, dsdProcessorResult, selectedLanguages, dimensions));
@@ -170,8 +169,10 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
             Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages, null);
     
+            DimensionsFilter dimensionsFilter = new DimensionsFilter();
+            dimensionsFilter.setTemporalDimensionValuesIds(getTemporalGranularities(source.getTemporalGranularities()));
             Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
-                    calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null, source.getTemporalGranularities(), null);
+                    calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null, dimensionsFilter);
             Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
     
             // ********************************************
@@ -193,6 +194,17 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(datasetVersion, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
     
             return target;
+    }
+
+    private List<String> getTemporalGranularities(List<ExternalItem> temporalGranularities) {
+        if (temporalGranularities == null || temporalGranularities.isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<String> temporalGranularitiesCodes = new ArrayList<>();
+        for (ExternalItem temporalGranularity : temporalGranularities) {
+            temporalGranularitiesCodes.add(temporalGranularity.getCode());
+        }
+        return temporalGranularitiesCodes;
     }
 
     public DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
@@ -349,17 +361,17 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         if (source == null) {
             return null;
         }
-        DimensionValueByIdDimension dimensionValuesIds = null;
+        DimensionsFilter dimensionsFilter = null;
         if (dimensions != null) {
-            dimensionValuesIds = new DimensionValueByIdDimension();
+            dimensionsFilter = new DimensionsFilter();
             for (Dimension dimension : dimensions.getDimensions()) {
                 if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
-                    dimensionValuesIds.setTemporalDimensionId(dimension.getId());
-                    dimensionValuesIds.setTemporalDimensionValuesIds(getTemporalDimensionsValuesIds(dimension));
+                    dimensionsFilter.setTemporalDimensionId(dimension.getId());
+                    dimensionsFilter.setTemporalDimensionValuesIds(getTemporalDimensionsValuesIds(dimension));
                 }
                 if (DimensionType.GEOGRAPHIC_DIMENSION.equals(dimension.getType())) {
-                    dimensionValuesIds.setGeographicDimensionId(dimension.getId());
-                    dimensionValuesIds.setGeographicDimensionValuesIds(getGeographicDimensionsValuesIds(dimension));
+                    dimensionsFilter.setGeographicDimensionId(dimension.getId());
+                    dimensionsFilter.setGeographicDimensionValuesIds(getGeographicDimensionsValuesIds(dimension));
                 }
             }
         }
@@ -367,7 +379,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveSelectionValues(selectedDimensions, effectiveQueryDimensionValuesToDataByDimension);
         Map<String, List<String>> effectiveDimensionValuesToDataByDimension = StatisticalResourcesRestImplCommonUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension,
                 effectiveSelectionValues);
-        return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages, dimensionValuesIds);
+        return commonDo2RestMapper.toData(datasetVersion, dsdProcessorResult, effectiveDimensionValuesToDataByDimension, selectedLanguages, dimensionsFilter);
     }
 
     private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
