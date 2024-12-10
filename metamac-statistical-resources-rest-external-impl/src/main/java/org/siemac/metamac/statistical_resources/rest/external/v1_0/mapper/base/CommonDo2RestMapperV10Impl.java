@@ -1052,18 +1052,23 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private boolean checkCodeDimensionsInTemporalGranularities(CodeDimension codeDimension, DimensionsFilter dimensionsFilter, String dimensionId) throws MetamacException {
-        if (!"TIME_PERIOD".equals(dimensionId) || (dimensionsFilter.getTemporalDimensionValuesQueriesIds() == null
-                || dimensionsFilter.getTemporalDimensionValuesQueriesIds().isEmpty() && dimensionsFilter.getTemporalDimensionValuesIds() == null
-                || dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())) {
+        if (!"TIME_PERIOD".equals(dimensionId) || ((dimensionsFilter.getTemporalDimensionValuesQueriesIds() == null || dimensionsFilter.getTemporalDimensionValuesQueriesIds().isEmpty())
+                && (dimensionsFilter.getTemporalDimensionValuesIds() == null || dimensionsFilter.getTemporalDimensionValuesIds().isEmpty()))) {
+            return true;
+        }  
+        IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
+        if (dimensionsFilter.getTemporalDimensionValuesQueriesIds() != null && dimensionsFilter.getTemporalDimensionValuesQueriesIds().contains(istacTimeGranularityCodeEnum.getLabel())
+                && (dimensionsFilter.getTemporalDimensionValuesIds() == null || dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())) {
             return true;
         }
-        IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
-        return dimensionsFilter.getTemporalDimensionValuesQueriesIds().contains(istacTimeGranularityCodeEnum.getLabel())
-                && dimensionsFilter.getTemporalDimensionValuesIds().contains(istacTimeGranularityCodeEnum.getLabel())
-                || dimensionsFilter.getTemporalDimensionValuesQueriesIds().contains(istacTimeGranularityCodeEnum.getLabel())
-                        && (dimensionsFilter.getTemporalDimensionValuesIds() == null || dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())
-                || dimensionsFilter.getTemporalDimensionValuesIds().contains(istacTimeGranularityCodeEnum.getLabel())
-                        && (dimensionsFilter.getTemporalDimensionValuesQueriesIds() == null || dimensionsFilter.getTemporalDimensionValuesQueriesIds().isEmpty());
+
+        if (dimensionsFilter.getTemporalDimensionValuesIds() != null && dimensionsFilter.getTemporalDimensionValuesIds().contains(istacTimeGranularityCodeEnum.getLabel())
+                        && (dimensionsFilter.getTemporalDimensionValuesQueriesIds() == null || dimensionsFilter.getTemporalDimensionValuesQueriesIds().isEmpty())) {
+            return true;
+        }
+        return dimensionsFilter.getTemporalDimensionValuesQueriesIds() != null && dimensionsFilter.getTemporalDimensionValuesIds() != null
+                && dimensionsFilter.getTemporalDimensionValuesQueriesIds().contains(istacTimeGranularityCodeEnum.getLabel())
+                && dimensionsFilter.getTemporalDimensionValuesIds().contains(istacTimeGranularityCodeEnum.getLabel());
     }
 
     private EnumeratedDimensionValue toEnumeratedDimensionValue(CodeResource source, Map<String, String> parentsReplacedToVisualisation, List<String> selectedLanguages) throws MetamacException {
