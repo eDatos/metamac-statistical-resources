@@ -84,4 +84,8 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
     public static void checkStatisticalResourceStructureCanBeEdited(MultidatasetVersion resource) throws MetamacException {
         ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForEditMultidatasetStructure);
     }
+
+    public static void checkStatisticalResourceStructureCanBeCached(MultidatasetVersion resource) throws MetamacException {
+        ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForSendResourceToVersion);
+    }
 }

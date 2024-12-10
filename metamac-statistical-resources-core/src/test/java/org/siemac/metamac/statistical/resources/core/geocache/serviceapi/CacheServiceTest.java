@@ -317,4 +317,10 @@ public class CacheServiceTest extends StatisticalResourcesBaseTest implements Ca
         // no test
 
     }
+
+    @Override
+    public void testProcessGeoCacheRelatedMultidataset() throws Exception {
+        // no test
+
+    }
 }

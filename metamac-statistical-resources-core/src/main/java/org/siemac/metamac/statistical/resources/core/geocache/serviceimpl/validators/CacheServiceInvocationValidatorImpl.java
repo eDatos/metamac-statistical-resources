@@ -18,6 +18,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.International
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
 
@@ -96,6 +97,12 @@ public class CacheServiceInvocationValidatorImpl {
 
     public static void checkProcessGeoCacheRelatedCollection(PublicationVersion publicationVersion, boolean isLastVersionPublished, String urn, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(publicationVersion, ServiceExceptionParameters.PUBLICATION__VERSION, exceptions);
+        checkParameterRequired(urn, URN, exceptions);
+
+    }
+
+    public static void checkProcessGeoCacheRelatedMultidataset(MultidatasetVersion multidatasetVersion, boolean isLastVersionPublished, String urn, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(multidatasetVersion, ServiceExceptionParameters.PUBLICATION__VERSION, exceptions);
         checkParameterRequired(urn, URN, exceptions);
 
     }

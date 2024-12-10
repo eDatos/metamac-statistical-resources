@@ -123,6 +123,8 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocov
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
+import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
@@ -226,6 +228,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private QueryService                      queryService;
+
+    @Autowired
+    private MultidatasetService               multidatasetService;
 
     @Autowired
     private LifecycleService<DatasetVersion>  datasetLifecycleService;
@@ -2314,6 +2319,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             processGeoCacheRelatedCollection(ctx, taskInfoResource);
 
+        } else if (StatisticalResourceTypeEnum.MULTIDATASET.equals(resourceType)) {
+            processGeoCacheRelatedMultidataset(ctx, taskInfoResource);
         } else if (StatisticalResourceTypeEnum.QUERY.equals(resourceType)) {
             processGeoCacheResourceQuery(ctx, taskInfoResource);
         }
@@ -2376,6 +2383,26 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         logger.debug("> END Subprocess - Processing updating geographic cache related resource task - collections {}", taskInfoResource.getVersionId());
     }
 
+    private void processGeoCacheRelatedMultidataset(ServiceContext ctx, TaskInfoResources taskInfoResource) throws MetamacException {
+        logger.debug("> START Subprocess - Processing updating geographic cache related resource task - multidatasets {}", taskInfoResource.getVersionId());
+        MultidatasetVersion multidatasetVersion = multidatasetService.retrieveMultidatasetVersionByUrn(ctx, taskInfoResource.getVersionId());
+
+        boolean isLastVersionPublished = isMultidatasetLastVersionPublished(ctx, taskInfoResource.getUrn());
+
+        // only it is necessary to save in cache last version of related resources.
+        if (isLastVersionPublished) {
+
+            cacheService.processGeoCacheRelatedMultidataset(ctx, multidatasetVersion, isLastVersionPublished, taskInfoResource.getUrn());
+
+        } else {
+            logger.info(
+                    "> check is resource last version. The result was FALSE and the resource it  will not inserted in cache - Processing updating geographic cache related resource task - multidataset {}",
+                    taskInfoResource.getVersionId());
+        }
+
+        logger.debug("> END Subprocess - Processing updating geographic cache related resource task - multidataset {}", taskInfoResource.getVersionId());
+    }
+
     private void processGeoCacheResourceQuery(ServiceContext ctx, TaskInfoResources taskInfoResource) throws MetamacException {
         logger.debug("> START Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
 
@@ -2433,6 +2460,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         String resourceId = params[1];
         PublicationVersion lastVersionPublication = publicationService.getPublicationLastVersionPublished(ctx, agencyId, resourceId);
         return lastVersionPublication != null && lastVersionPublication.getSiemacMetadataStatisticalResource().getUrn().equals(publicationVersionUrn);
+    }
+
+    /*
+     * if cache is manually updated, multidataset can be in draft and this version is lastversion. For this case, it is necessary to calculate if this multidataset is last published version
+     */
+    private boolean isMultidatasetLastVersionPublished(ServiceContext ctx, String multidatasetVersionUrn) throws MetamacException {
+        MultidatasetVersion lastVersionMultidataset = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(ctx, multidatasetVersionUrn);
+        return lastVersionMultidataset != null && lastVersionMultidataset.getSiemacMetadataStatisticalResource().getUrn().equals(multidatasetVersionUrn);
     }
 
     /*

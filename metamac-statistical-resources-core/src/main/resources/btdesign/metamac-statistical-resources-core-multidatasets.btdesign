@@ -6,6 +6,8 @@ import "classpath:/btdesign/metamac-statistical-resources-core-datasets.btdesign
 import "classpath:/btdesign/metamac-statistical-resources-core-queries.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
 import "classpath:/btdesign/metamac-core-common-enum.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-tasks-dtos.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-tasks.btdesign"
 
 Application MultidatasetsStatisticalResources {
 	basePackage=unused
@@ -16,7 +18,7 @@ Application MultidatasetsStatisticalResources {
 		// ----------------------------------------------------------------
 		// 							SERVICES
 		// ----------------------------------------------------------------
-		
+
 		Service MultidatasetService {
 			> @MultidatasetRepository
 			> @MultidatasetVersionRepository
@@ -53,7 +55,7 @@ Application MultidatasetsStatisticalResources {
             deleteMultidatasetCube(String cubeUrn) throws MetamacException;
             
             // geographical coverage cache
-    		updateGeographicalCache(@MultidatasetVersion multidataset) throws MetamacException;
+    		updateGeographicalCache(@MultidatasetVersion multidatasetVersion) throws MetamacException;
     		updateAllGeographicalCache(boolean mustWaitForRelatedResourcesUpdate) throws MetamacException;
 		}  
 

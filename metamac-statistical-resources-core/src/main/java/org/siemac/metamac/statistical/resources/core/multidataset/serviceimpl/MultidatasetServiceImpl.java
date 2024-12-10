@@ -14,6 +14,7 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
@@ -32,16 +33,20 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceRepository;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multidataset;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.validators.MultidatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.multidataset.utils.MultidatasetCubeComparator;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
+import org.siemac.metamac.statistical.resources.core.task.serviceimpl.TaskServiceImpl;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
+import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesUrnParserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -209,7 +214,7 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
         TaskInfoResources taskInfo = new TaskInfoResources();
         taskInfo.setVersionId(multidatasetVersionUrn);
         taskInfo.setUrn(multidatasetUrn);
-        taskInfo.setResourceType(StatisticalResourceTypeEnum.COLLECTION.name());
+        taskInfo.setResourceType(StatisticalResourceTypeEnum.MULTIDATASET.name());
         taskInfo.setMustWaitForRelatedResourcesUpdate(mustWaitForRelatedResourcesUpdate);
         getTaskService().planifyUpdateGeographicalCacheRelatedResource(ctx, taskInfo, sendNotification);
 
@@ -219,6 +224,37 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
         if (getTaskService().existsTaskForResource(ctx, multidatasetUrn)) {
             throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, multidatasetUrn);
         }
+    }
+
+    @Override
+    public void updateAllGeographicalCache(ServiceContext ctx, boolean mustWaitForRelatedResourcesUpdate) throws MetamacException {
+        multidatasetServiceInvocationValidator.checkUpdateAllGeographicalCache(ctx, mustWaitForRelatedResourcesUpdate);
+
+        if (!mustWaitForRelatedResourcesUpdate && checkCanUpdateAllGeographicalCache(ctx)) {
+            mustWaitForRelatedResourcesUpdate = true;
+        }
+
+        List<MultidatasetVersion> lastVersionMultidataset = retrievePublishedLastVersionMultidatasets();
+        for (MultidatasetVersion multidatasetVersion : lastVersionMultidataset) {
+            updateGeographicalCacheInJob(ctx, multidatasetVersion, false, mustWaitForRelatedResourcesUpdate);
+        }
+
+    }
+
+    private boolean checkCanUpdateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
+        List<String> tasksName = new ArrayList<>();
+        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE);
+        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + StatisticalResourcesUrnParserUtils.getPrefixQueryUrn()); // TODO EDATOS-4587
+        return getTaskService().existsGeoCacheTasksByTaskName(ctx, tasksName);
+    }
+
+    private List<MultidatasetVersion> retrievePublishedLastVersionMultidatasets() throws MetamacException {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(MultidatasetVersion.class)
+                .withProperty(MultidatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).and()
+                .withProperty(MultidatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
+        return getMultidatasetVersionRepository().findByCondition(criteria);
+
     }
 
     private void updateReplacedVersionIsReplacedByVersion(MultidatasetVersion multidatasetVersion) {

@@ -38,6 +38,8 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesR
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.JaxiMapper;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
@@ -365,24 +367,60 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
             
             for (RelatedResource relatedResource : publicationVersion.getHasPart()) {
-                createRelatedResourceByCacheResourceByTypeAndUrn(ctx, geoCacheRelatedResource, urn, relatedResource, exceptionItems);
+                createRelatedResourceByCacheResourceByTypeAndUrn(geoCacheRelatedResource, urn, getRelatedResourceUrnFromRelatedResource(relatedResource), exceptionItems);
             }
 
             sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_COLLECTION_PUBLICATION, exceptionItems);
     }
     
-    private void createRelatedResourceByCacheResourceByTypeAndUrn(ServiceContext ctx, GeoCacheByRelatedResource geoCacheRelatedResource, String urn, RelatedResource relatedResource, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
-        
-        String relatedResourceUrn = null;
-        
-        if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
-            relatedResourceUrn =  relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn();
-        } else     if (TypeRelatedResourceEnum.QUERY.equals(relatedResource.getType())) {
-            relatedResourceUrn =  relatedResource.getQuery().getIdentifiableStatisticalResource().getUrn();
-        } else {
-            return;
+    
+    @Override
+    public  void processGeoCacheRelatedMultidataset(ServiceContext ctx, MultidatasetVersion multidatasetVersion, boolean isLastVersionPublished, String urn) throws MetamacException {
+
+        cacheServiceInvocationValidator.checkProcessGeoCacheRelatedMultidataset(ctx, multidatasetVersion, isLastVersionPublished, urn);
+
+            deleteRelatedResourceOldVersions(ctx, urn);
+
+            GeoCacheByRelatedResource geoCacheRelatedResource = updateGeoCacheByRelatedResource(multidatasetVersion.getSiemacMetadataStatisticalResource(),
+                    multidatasetVersion.getLifeCycleStatisticalResource(), StatisticalResourceTypeEnum.MULTIDATASET, isLastVersionPublished);
+
+
+            List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
+            
+
+            for (MultidatasetCube relatedResource : multidatasetVersion.getCubes()) {
+                createRelatedResourceByCacheResourceByTypeAndUrn(geoCacheRelatedResource, urn, getRelatedResourceUrnFromMultidatasetCube(relatedResource), exceptionItems);
+            }
+
+            sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_COLLECTION_PUBLICATION, exceptionItems); // TODO EDATOS-4587
+    }
+    
+    private String getRelatedResourceUrnFromMultidatasetCube(MultidatasetCube relatedResource) {
+        if (!StringUtils.isBlank(relatedResource.getDatasetUrn())) {
+            return relatedResource.getDatasetUrn();
+        } else if (!StringUtils.isBlank(relatedResource.getQueryUrn())) {
+            return relatedResource.getQueryUrn();
         }
-   
+        return null;
+        
+    }
+    
+    private String getRelatedResourceUrnFromRelatedResource(RelatedResource relatedResource) {
+        if (TypeRelatedResourceEnum.DATASET.equals(relatedResource.getType())) {
+            return  relatedResource.getDataset().getIdentifiableStatisticalResource().getUrn();
+        } else     if (TypeRelatedResourceEnum.QUERY.equals(relatedResource.getType())) {
+            return  relatedResource.getQuery().getIdentifiableStatisticalResource().getUrn();
+        }  else     if (TypeRelatedResourceEnum.MULTIDATASET.equals(relatedResource.getType())) {
+            return  relatedResource.getMultidataset().getIdentifiableStatisticalResource().getUrn();
+        } else {
+            return null;
+        }
+        
+    }
+    
+    private void createRelatedResourceByCacheResourceByTypeAndUrn(GeoCacheByRelatedResource geoCacheRelatedResource, String urn, String relatedResourceUrn, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+        
+      
         GeoCacheResource geoCacheResource = retrieveResourcesLastVersionByUrnAndVersion(relatedResourceUrn);
         
         if (geoCacheResource == null) {

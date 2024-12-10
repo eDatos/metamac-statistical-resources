@@ -1,8 +1,11 @@
 package org.siemac.metamac.statistical.resources.web.client.multidataset.widgets;
 
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.LifecycleMainFormLayout;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.utils.MultidatasetClientSecurityUtils;
+import org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.widgets.MainFormLayoutButton;
 
 import com.smartgwt.client.widgets.events.HasClickHandlers;
@@ -14,10 +17,17 @@ public class MultidatasetMainFormLayout extends LifecycleMainFormLayout {
 
     public MultidatasetMainFormLayout() {
         super();
+        createButtonsForToolStrip();
     }
 
     public MultidatasetMainFormLayout(boolean canEdit) {
         super(canEdit);
+        createButtonsForToolStrip();
+    }
+
+    private void createButtonsForToolStrip() {
+        updateGeoCacheRelatedResource = new MainFormLayoutButton(getConstants().updateGeographicCoverageVariableElementsCache(), GlobalResources.RESOURCE.reload().getURL());
+        toolStrip.addButton(updateGeoCacheRelatedResource);
     }
 
     public void setMultidatasetVersion(MultidatasetVersionDto multidatasetVersionDto) {

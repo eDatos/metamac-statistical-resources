@@ -1348,6 +1348,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     private void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx, List<StatisticalResourceTypeEnum> resourcesToUpdate) throws MetamacException {
+
+        boolean mustWait = resourcesToUpdate.contains(StatisticalResourceTypeEnum.DATASET) || resourcesToUpdate.contains(StatisticalResourceTypeEnum.QUERY);
+
         for (StatisticalResourceTypeEnum resourceType : resourcesToUpdate) {
             switch (resourceType) {
                 case DATASET:
@@ -1356,11 +1359,11 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
                 case QUERY:
                     getQueryService().updateAllGeographicalCache(ctx);
                     break;
+                case MULTIDATASET:
+                    getMultidatasetService().updateAllGeographicalCache(ctx, mustWait);
+                    break;
                 case COLLECTION:
-                    boolean mustWait = false;
-                    if (resourcesToUpdate.contains(StatisticalResourceTypeEnum.DATASET) || resourcesToUpdate.contains(StatisticalResourceTypeEnum.QUERY)) {
-                        mustWait = true;
-                    }
+                    mustWait = mustWait || resourcesToUpdate.contains(StatisticalResourceTypeEnum.MULTIDATASET);
                     getPublicationService().updateAllGeographicalCache(ctx, mustWait);
                     break;
                 default:
@@ -1394,10 +1397,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         if (StatisticalResourceTypeEnum.COLLECTION.equals(resourceType)) {
             PublicationVersion publicationVersion = getPublicationService().retrievePublicationVersionByUrn(ctx, resourceUrn);
-
             getPublicationService().updateGeographicalCache(ctx, publicationVersion);
-        }
-        if (StatisticalResourceTypeEnum.MULTIDATASET.equals(resourceType)) {
+        } else if (StatisticalResourceTypeEnum.MULTIDATASET.equals(resourceType)) {
             MultidatasetVersion multidatasetVersion = getMultidatasetService().retrieveMultidatasetVersionByUrn(ctx, resourceUrn);
             getMultidatasetService().updateGeographicalCache(ctx, multidatasetVersion);
         } else if (StatisticalResourceTypeEnum.QUERY.equals(resourceType)) {
