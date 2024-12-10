@@ -29,7 +29,6 @@ import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCrite
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.DatasetMetadata;
-import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -100,7 +99,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
         Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages, true, null);
 
-        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields, null, null);
+        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields, null);
         Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
 
         // ********************************************
@@ -163,24 +162,21 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
         DsdProcessorResult dsdProcessorResult = null;
         Dimensions dimensions = null;
-        List<ExternalItem> temporalGranularitiesFilter = null;
-        List<ExternalItem> geographicalGranularitiesFilter = null;
+        DimensionsFilter dimensionsFilter = new DimensionsFilter();
         Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
 
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
         if (includeMetadata || includeData) {
             dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-            temporalGranularitiesFilter = commonDo2RestMapper.getTemporalGranularitiesFiter(granularities);
-            geographicalGranularitiesFilter = commonDo2RestMapper.getGeographicGranularitiesFilter(granularities, dsdProcessorResult);
+            dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
         }
         boolean includeConstraint = containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_DATASET_CONSTRAINTS);
 
-        if (includeMetadata || (includeData && (temporalGranularitiesFilter != null && !temporalGranularitiesFilter.isEmpty())
-                || (geographicalGranularitiesFilter != null && !geographicalGranularitiesFilter.isEmpty()))) {
+        if (includeMetadata || (includeData && (dimensionsFilter.getTemporalDimensionValuesIds() != null && !dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())
+                || (dimensionsFilter.getGeographicDimensionValuesIds() != null && !dimensionsFilter.getGeographicDimensionValuesIds().isEmpty()))) {
 
-            dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, fields, temporalGranularitiesFilter,
-                    geographicalGranularitiesFilter);
+            dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, fields, dimensionsFilter);
         }
 
         if (includeMetadata) {

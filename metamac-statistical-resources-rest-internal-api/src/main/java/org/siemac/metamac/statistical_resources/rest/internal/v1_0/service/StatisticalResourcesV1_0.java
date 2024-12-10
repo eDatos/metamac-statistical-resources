@@ -105,7 +105,7 @@ public interface StatisticalResourcesV1_0 {
     @Produces({"application/xml", "application/json"})
     @Path("queries/{agencyID}/{resourceID}")
     Query retrieveQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
-            @QueryParam("dim") String dim, @QueryParam("representation") String representation);
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
     @Produces({"application/jsonstat+json"})
     @Path("queries/{agencyID}/{resourceID}")
