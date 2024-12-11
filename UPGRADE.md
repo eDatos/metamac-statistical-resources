@@ -8,8 +8,8 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 9.0.3 a 9.1.0
-* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/9.0.3/db]
+## 10.1.0 a 10.2.0
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.1.0/db]
 
 ## 8.4.0 a 9.0.0
 * **BREAKING CHANGE.** Se quita el formato XLS ya que es un formato con bastantes limitaciones y no se debe usar. Se usa XLSX

@@ -30,6 +30,10 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         StatisticalResourcesValidationUtils.checkParameterRequired(statisticalOperation, ServiceExceptionParameters.STATISTICAL_OPERATION, exceptions);
     }
 
+    public static void checkFindPublicationsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
+        //NOTHING
+    }
+
     public static void checkUpdatePublicationVersion(PublicationVersion publicationVersion, List<MetamacExceptionItem> exceptions) throws MetamacException {
         checkExistingPublicationVersion(publicationVersion, exceptions);
     }
@@ -240,6 +244,9 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
             StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getMultidatasetUrn(), ServiceExceptionParameters.CUBE__MULTIDATASET__URN, exceptions);
         }
         
+        if (cube.getPublication() != null) {
+            StatisticalResourcesValidationUtils.checkMetadataRequired(cube.getPublicationUrn(), ServiceExceptionParameters.CUBE__PUBLICATION__URN, exceptions);
+        }
         if (cube.getUrl() != null) {
             ValidationUtils.validateUrl(cube.getUrl(), ServiceExceptionParameters.CUBE_URL, exceptions);
         }
@@ -263,6 +270,10 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
         }
 
         if (cube.getMultidataset() != null) {
+            numberOfRelatedResourceTypes++;
+        }
+
+        if (cube.getPublication() != null) {
             numberOfRelatedResourceTypes++;
         }
 

@@ -84,6 +84,8 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationa
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
@@ -183,6 +185,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     @Autowired
     private MultidatasetService                     multidatasetService;
+
+    @Autowired
+    private PublicationService                     publicationService;
 
     @Autowired
     private TranslationService                      translationService;
@@ -803,6 +808,10 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 MultidatasetVersion multidatasetVersion = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(SERVICE_CONTEXT,
                         source.getMultidataset().getIdentifiableStatisticalResource().getUrn());
                 return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null);
+            case PUBLICATION:
+                PublicationVersion publicationVersion = publicationService.retrieveLatestPublishedPublicationVersionByPublicationUrn(SERVICE_CONTEXT,
+                        source.getPublication().getIdentifiableStatisticalResource().getUrn());
+                return collectionsDo2RestMapper.toResource(publicationVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);

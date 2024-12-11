@@ -11,6 +11,7 @@ import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesW
 import org.siemac.metamac.statistical.resources.web.client.publication.view.handlers.PublicationStructureTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.shared.utils.ImportableResourceTypeEnum;
+import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.widgets.ImportResourceWindow;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
@@ -55,6 +56,9 @@ public class ImportPublicationStructureWindow extends ImportResourceWindow {
 
             CustomSelectItem languageItem = new CustomSelectItem(UPLOAD_PARAM_LANGUAGE, getConstants().publicationStructureImportationLanguage());
             languageItem.setValueMap(CommonUtils.getEditionLanguagesHashMap());
+            if (ApplicationEditionLanguages.getLocales() != null && !ApplicationEditionLanguages.getLocales().isEmpty()) {
+                languageItem.setDefaultValue(ApplicationEditionLanguages.getLocales().get(0));
+            }
             languageItem.setWidth(50);
 
             addFieldsInThePenultimePosition(resourceTypeItem, publicationVersionUrnItem, languageItem);
