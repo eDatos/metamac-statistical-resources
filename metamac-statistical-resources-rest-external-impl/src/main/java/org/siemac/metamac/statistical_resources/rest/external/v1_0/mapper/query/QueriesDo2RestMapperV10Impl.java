@@ -158,7 +158,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             }
 
     @Override
-    public JsonStatData toJsonStatQuery(QueryVersion source, DatasetVersion datasetVersion, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields)
+    public JsonStatData toJsonStatQuery(QueryVersion source, DatasetVersion datasetVersion, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields,
+            String granularity)
             throws Exception {
             if (source == null) {
                 return null;
@@ -167,12 +168,13 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
     
             DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
-            Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages, null);
+            Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
+            DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
     
-            DimensionsFilter dimensionsFilter = new DimensionsFilter();
             dimensionsFilter.setTemporalDimensionValuesIds(getTemporalGranularities(source.getTemporalGranularities()));
             Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
                     calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null, dimensionsFilter);
+            Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions);
             Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
     
             // ********************************************
