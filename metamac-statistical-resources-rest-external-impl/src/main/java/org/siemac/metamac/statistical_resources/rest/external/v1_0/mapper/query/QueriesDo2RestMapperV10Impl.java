@@ -171,7 +171,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
             DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
     
-            dimensionsFilter.setTemporalDimensionValuesIds(getTemporalGranularities(source.getTemporalGranularities()));
+            dimensionsFilter.setTemporalDimensionValuesQueriesIds(getTemporalGranularities(source.getTemporalGranularities()));
             Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
                     calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null, dimensionsFilter);
             Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions);
