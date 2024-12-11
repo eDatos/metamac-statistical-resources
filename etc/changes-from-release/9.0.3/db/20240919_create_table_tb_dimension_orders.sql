@@ -15,7 +15,7 @@ CREATE TABLE tb_m_dimension_orders (
 	CONSTRAINT pk_tb_m_dimension_orders PRIMARY KEY (id),
 	CONSTRAINT uq_tb_m_dimension_orders UNIQUE (uuid),
 	CONSTRAINT fk_tb_m_dimension_orders_dataset_version_heading_fk FOREIGN KEY (dataset_version_heading_fk) REFERENCES tb_datasets_versions(id) ON DELETE CASCADE,
-	CONSTRAINT fk_tb_m_dimension_orders_dataset_version_stub_fk FOREIGN KEY (dataset_version_stub_fk) REFERENCES tb_datasets_versions(id) ON DELETE cascade
+	CONSTRAINT fk_tb_m_dimension_orders_dataset_version_stub_fk FOREIGN KEY (dataset_version_stub_fk) REFERENCES tb_datasets_versions(id) ON DELETE cascade,
 	CONSTRAINT fk_tb_m_dimension_orders_query_version_heading_fk FOREIGN KEY (query_version_heading_fk) REFERENCES tb_queries_versions(id) ON DELETE CASCADE,
 	CONSTRAINT fk_tb_m_dimension_orders_query_version_stub_fk FOREIGN KEY (query_version_stub_fk) REFERENCES tb_queries_versions(id) ON DELETE CASCADE
 );
