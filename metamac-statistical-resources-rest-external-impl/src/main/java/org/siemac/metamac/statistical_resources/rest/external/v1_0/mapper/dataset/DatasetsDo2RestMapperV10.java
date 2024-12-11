@@ -22,5 +22,5 @@ public interface DatasetsDo2RestMapperV10 {
     public ResourceWithStatisticalOperation toResource(DatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
     public ResourceStatisticalResourceBase toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages) throws MetamacException;
     public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
-    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception;
+    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields, String granularity) throws Exception;
 }

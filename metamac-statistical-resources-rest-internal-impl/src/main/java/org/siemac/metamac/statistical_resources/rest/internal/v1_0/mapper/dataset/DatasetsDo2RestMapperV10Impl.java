@@ -89,17 +89,19 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     private static final Logger               logger = LoggerFactory.getLogger(DatasetsDo2RestMapperV10.class);
 
     @Override
-    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
+    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields, String granularity) throws Exception {
         if (source == null) {
             return null;
         }
 
+        DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
+        Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
+        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
         List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
 
-        DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages, true, null);
+        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields, dimensionsFilter);
+        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages, true, dimensions);
 
-        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields, null);
         Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
 
         // ********************************************

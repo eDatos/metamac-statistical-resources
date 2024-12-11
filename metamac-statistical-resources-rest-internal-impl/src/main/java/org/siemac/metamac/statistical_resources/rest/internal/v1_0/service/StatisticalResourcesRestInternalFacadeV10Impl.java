@@ -144,13 +144,13 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation) {
+    public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-            return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguage, parsedFields);
+            return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguage, parsedFields, granularity);
         } catch (Exception e) {
             throw manageException(e);
         }
@@ -276,14 +276,14 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation) {
+    public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             DatasetVersion datasetVersion = commonService.retrieveDatasetLastVersionByUrn(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
-            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, datasetVersion, dimensions, selectedLanguage, parsedFields);
+            return queriesDo2RestMapper.toJsonStatQuery(queryVersion, datasetVersion, dimensions, selectedLanguage, parsedFields, granularity);
         } catch (Exception e) {
             throw manageException(e);
         }
