@@ -159,8 +159,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
 
     @Override
     public JsonStatData toJsonStatQuery(QueryVersion source, DatasetVersion datasetVersion, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields,
-            String granularity)
-            throws Exception {
+            String granularity) throws Exception {
             if (source == null) {
                 return null;
             }
