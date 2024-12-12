@@ -117,6 +117,7 @@
 	      <c:param name="appName" value="<%= appName %>" />
 	      <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
 	      <c:param name="appId" value="statistical-resources-external"/>
+	      <c:param name="appVersion" value="<%= appVersion %>" />
 	   </c:import>
 	</c:if>
 	

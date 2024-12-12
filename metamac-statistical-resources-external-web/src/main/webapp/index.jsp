@@ -13,6 +13,7 @@
     String appName = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("apps.api_catalog.name");
     MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale, "i18n.messages-swagger");
     pageContext.setAttribute("msg", messagesResource);
+    String appVersion = ResourceBundle.getBundle("application").getString("app.version");
 %>
 <html>
 <head>
@@ -32,6 +33,7 @@
        <c:import charEncoding="UTF-8" url="${apiStyleHeaderUrl}">
           <c:param name="appName" value="<%= appName %>" />
           <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
+          <c:param name="appVersion" value="<%= appVersion %>" />
        </c:import>
     </c:if>
     
