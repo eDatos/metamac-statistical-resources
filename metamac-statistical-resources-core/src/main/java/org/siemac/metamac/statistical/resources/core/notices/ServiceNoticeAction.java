@@ -25,6 +25,7 @@ public class ServiceNoticeAction {
 
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION       = "notice_message.resources.action.update_geocoverage_cache_external_collection_publication_error";
     public static final String UPDATE_GEOCOVERAGE_CACHE_COLLECTION_PUBLICATION                = "notice_message.resources.action.update_geocoverage_cache_collection_publication_error";
+    public static final String UPDATE_GEOCOVERAGE_CACHE_MULTIDATASET_PUBLICATION              = "notice_message.resources.action.update_geocoverage_cache_multidataset_publication_error";
 
     public static final String CREATE_REPLACE_DATASET_ERROR                                   = "notice_message.resources.action.create_replace_dataset.error";
     public static final String ASSIGN_ROLE_PERMISSIONS_DATASET_ERROR                          = "notice_message.resources.action.assign_role_permissions_dataset.error";

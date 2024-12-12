@@ -80,6 +80,10 @@ public class StatisticalResourcesUrnParserUtils {
         return StatisticalResourcesUrnUtils.splitMultidatasetUrnWithoutPrefix(tripletIdentifier)[1];
     }
 
+    public static String getPrefixMultidatasetUrn() {
+        return URN_SIEMAC_CLASS_MULTIDATASET_PREFIX;
+    }
+
     // Generic methods
 
     protected static boolean matches(String prefix, String urn) {

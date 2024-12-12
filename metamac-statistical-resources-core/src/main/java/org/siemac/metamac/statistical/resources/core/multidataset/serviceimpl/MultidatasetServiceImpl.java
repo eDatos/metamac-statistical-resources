@@ -244,7 +244,7 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
     private boolean checkCanUpdateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
         List<String> tasksName = new ArrayList<>();
         tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE);
-        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + StatisticalResourcesUrnParserUtils.getPrefixQueryUrn()); // TODO EDATOS-4587
+        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + StatisticalResourcesUrnParserUtils.getPrefixQueryUrn());
         return getTaskService().existsGeoCacheTasksByTaskName(ctx, tasksName);
     }
 

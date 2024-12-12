@@ -383,8 +383,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     }
 
     private Publication retrievePublicationByCode(ServiceContext ctx, String code, int lineNumber) throws MetamacException {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Publication.class).withProperty(PublicationProperties.identifiableStatisticalResource().code()).eq(code)
-                .build();
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(Publication.class).withProperty(PublicationProperties.identifiableStatisticalResource().code()).eq(code).build();
         PagingParameter pagingParameter = PagingParameter.rowAccess(0, 1, true);
         PagedResult<Publication> publications = findPublicationsByCondition(ctx, conditions, pagingParameter);
         if (publications.getTotalRows() > 0) {
@@ -979,6 +978,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         List<String> tasksName = new ArrayList<>();
         tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE);
         tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + StatisticalResourcesUrnParserUtils.getPrefixQueryUrn());
+        tasksName.add(TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + StatisticalResourcesUrnParserUtils.getPrefixMultidatasetUrn());
         return getTaskService().existsGeoCacheTasksByTaskName(ctx, tasksName);
     }
     

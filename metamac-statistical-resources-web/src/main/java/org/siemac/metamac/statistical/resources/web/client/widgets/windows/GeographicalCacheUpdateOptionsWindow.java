@@ -28,7 +28,7 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class GeographicalCacheUpdateOptionsWindow extends Window {
 
     protected static final int             FORM_ITEM_CUSTOM_WIDTH  = 450;
-    protected static final int             FORM_ITEM_CUSTOM_HEIGTH = 270;
+    protected static final int             FORM_ITEM_CUSTOM_HEIGTH = 290;
 
     protected ToolStripButton              updateCacheButton;
     protected ToolStripButton              cancelUpdateButton;
@@ -117,6 +117,7 @@ public class GeographicalCacheUpdateOptionsWindow extends Window {
 
         private static final String FIELD_DATASET             = "dataset-geo-cache-resource";
         private static final String FIELD_QUERY               = "query-geo-cache-resource";
+        private static final String FIELD_MULTIDATASET        = "multidataset-geo-cache-resource";
         private static final String FIELD_COLLECTION          = "collection-geo-cache-resource";
         private static final String FIELD_EXTERNAL_DATASET    = "external-dataset-geo-cache-resource";
         private static final String FIELD_EXTERNAL_COLLECTION = "external-collection-geo-cache-resource";
@@ -129,9 +130,11 @@ public class GeographicalCacheUpdateOptionsWindow extends Window {
 
             CustomCheckboxItem queries = new CustomCheckboxItem(FIELD_QUERY, getConstants().geoCacheQueryReload());
 
+            CustomCheckboxItem multidatasets = new CustomCheckboxItem(FIELD_MULTIDATASET, getConstants().geoCacheMultidatasetReload());
+
             CustomCheckboxItem collections = new CustomCheckboxItem(FIELD_COLLECTION, getConstants().geoCacheCollectionReload());
 
-            setFields(datasets, queries, collections);
+            setFields(datasets, queries, multidatasets, collections);
 
             if (CommonUtils.getExternalDatasetTopicName() != null) {
                 CustomCheckboxItem externalDatasets = new CustomCheckboxItem(FIELD_EXTERNAL_DATASET, getConstants().geoCacheJaxiDatasetReload());
@@ -151,8 +154,8 @@ public class GeographicalCacheUpdateOptionsWindow extends Window {
 
         @Override
         public boolean validate() {
-            return isOptionSelected(FIELD_DATASET) || isOptionSelected(FIELD_QUERY) || isOptionSelected(FIELD_COLLECTION) || isOptionSelected(FIELD_EXTERNAL_DATASET)
-                    || isOptionSelected(FIELD_EXTERNAL_COLLECTION);
+            return isOptionSelected(FIELD_DATASET) || isOptionSelected(FIELD_QUERY) || isOptionSelected(FIELD_MULTIDATASET) || isOptionSelected(FIELD_COLLECTION)
+                    || isOptionSelected(FIELD_EXTERNAL_DATASET) || isOptionSelected(FIELD_EXTERNAL_COLLECTION);
         }
 
         public List<StatisticalResourceTypeEnum> getStatisticalResourcesSelectedOptions(boolean isExternalResources) {
@@ -165,6 +168,10 @@ public class GeographicalCacheUpdateOptionsWindow extends Window {
 
                 if (isOptionSelected(FIELD_QUERY)) {
                     resources.add(StatisticalResourceTypeEnum.QUERY);
+                }
+
+                if (isOptionSelected(FIELD_MULTIDATASET)) {
+                    resources.add(StatisticalResourceTypeEnum.MULTIDATASET);
                 }
 
                 if (isOptionSelected(FIELD_COLLECTION)) {

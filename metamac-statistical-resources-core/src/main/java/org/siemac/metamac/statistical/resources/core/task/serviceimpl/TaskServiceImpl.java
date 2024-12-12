@@ -765,7 +765,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setExtensionPoint(taskName);
             createTask(ctx, task);
 
-            SimpleTrigger trigger = configureTrigger(triggerKey, taskInfoResources.isMustWaitForRelatedResourcesUpdate(), 10);
+            SimpleTrigger trigger = configureTrigger(triggerKey, taskInfoResources.isMustWaitForRelatedResourcesUpdate(), getIsMinimumPriorityByResourceType(taskInfoResources), 10);
 
             try {
                 // Scheduler a duplication job
@@ -782,10 +782,20 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return jobKey.getName();
     }
 
-    private SimpleTrigger configureTrigger(TriggerKey triggerKey, boolean mustDelayExecution, int priority) throws MetamacException {
+    // collections must wait for all their resources. Resources like multidatasets are complex too and must wait for datasets and queries job. So multidatasets have a delay. Collections must be
+    // delayed for the executions of multidatasets job.
+    private boolean getIsMinimumPriorityByResourceType(TaskInfoResources taskInfoResources) {
+        return StatisticalResourceTypeEnum.COLLECTION.getName().equals(taskInfoResources.getResourceType());
+    }
+
+    private SimpleTrigger configureTrigger(TriggerKey triggerKey, boolean mustDelayExecution, boolean isMinimumPriority, int priority) throws MetamacException {
         int triggerDateInSeconds = DEFAULT_QUARTZ_TRIGGER_DELAY;
         if (mustDelayExecution) {
             triggerDateInSeconds = configurationService.retrieveQuartzTriggerDelayForGeoCacheUpdate();
+            if (isMinimumPriority) {
+                triggerDateInSeconds *= 2;
+                priority *= 2;
+            }
         }
 
         return newTrigger().withIdentity(triggerKey).startAt(futureDate(triggerDateInSeconds, IntervalUnit.SECOND)).withPriority(priority).withSchedule(simpleSchedule()).build();
@@ -2294,7 +2304,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setExtensionPoint(resourceUrn);
             createTask(ctx, task);
 
-            SimpleTrigger trigger = configureTrigger(triggerKey, taskInfoResources.isMustWaitForRelatedResourcesUpdate(), Trigger.DEFAULT_PRIORITY);
+            SimpleTrigger trigger = configureTrigger(triggerKey, taskInfoResources.isMustWaitForRelatedResourcesUpdate(), getIsMinimumPriorityByResourceType(taskInfoResources),
+                    Trigger.DEFAULT_PRIORITY);
 
             scheduleUpdateGeographicalCacheRelatedResourceJob(jobKey, job, trigger);
 
@@ -2387,12 +2398,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         logger.debug("> START Subprocess - Processing updating geographic cache related resource task - multidatasets {}", taskInfoResource.getVersionId());
         MultidatasetVersion multidatasetVersion = multidatasetService.retrieveMultidatasetVersionByUrn(ctx, taskInfoResource.getVersionId());
 
-        boolean isLastVersionPublished = isMultidatasetLastVersionPublished(ctx, taskInfoResource.getUrn());
+        MultidatasetVersion lastVersionMultidataset = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(ctx, taskInfoResource.getUrn());
+        boolean isLastVersionPublished = lastVersionMultidataset != null && lastVersionMultidataset.getSiemacMetadataStatisticalResource().getUrn().equals(taskInfoResource.getVersionId());
 
         // only it is necessary to save in cache last version of related resources.
         if (isLastVersionPublished) {
 
             cacheService.processGeoCacheRelatedMultidataset(ctx, multidatasetVersion, isLastVersionPublished, taskInfoResource.getUrn());
+            cacheService.processUpdateGeoCacheResource(ctx, lastVersionMultidataset.getLifeCycleStatisticalResource(),
+                    lastVersionMultidataset.getMultidataset().getIdentifiableStatisticalResource().getUrn(), StatisticalResourceTypeEnum.MULTIDATASET, new ArrayList<>(), isLastVersionPublished);
 
         } else {
             logger.info(

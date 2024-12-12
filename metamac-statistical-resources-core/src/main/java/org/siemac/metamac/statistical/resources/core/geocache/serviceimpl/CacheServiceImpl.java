@@ -120,10 +120,26 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             logger.debug(String.format("Processing geographic coverage to create the cache for Urn: %s ", resourceVersionUrn));
         }
 
+        GeoCacheResource geoCacheResource = updateGeoCacheResource(lifeCycleStatisticalResource, statisticalResourceTypeEnum, isLastVersionPublished);
+
+        if (!StatisticalResourceTypeEnum.MULTIDATASET.equals(statisticalResourceTypeEnum)) {
+            processUpdateGeoCacheResourceTerritories(geographicCoverage, geoCacheResource);
+        }
+
+        // only when geoCacheResourcesDisabled is not empty must update related resource because geoCacheResource is the latest version published
+        updateRelatedResourceByCacheResource(geoCacheResource, geoCacheResourcesDisabled, geoCacheResourcesOldVersions);
+
+    }
+
+    private void processUpdateGeoCacheResourceTerritories(List<ExternalItem> geographicCoverage, GeoCacheResource geoCacheResource) throws MetamacException {
+
+        if (geographicCoverage == null || geographicCoverage.isEmpty()) {
+            logger.error("Geo cache resource without geographical coverage: {}", geoCacheResource.getUrn());
+            return;
+        }
+
         String geographicCoverageCodelistUrn = StatisticalResourcesExternalItemUtils.getCodelistFromCodeUrn(geographicCoverage.get(0).getUrn());
         List<CodeResourceInternal> codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(geographicCoverageCodelistUrn).getCodes();
-
-        GeoCacheResource geoCacheResource = updateGeoCacheResource(lifeCycleStatisticalResource, statisticalResourceTypeEnum, isLastVersionPublished);
 
         for (ExternalItem geoCoverage : geographicCoverage) {
             CodeResourceInternal code = MetamacCollectionUtils.find(codes, new MetamacPredicate<CodeResourceInternal>() {
@@ -143,10 +159,6 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             geoCacheResource.addTerritory(territoryVariableElement);
 
         }
-
-        // only when geoCacheResourcesDisabled is not empty must update related resource because geoCacheResource is the latest version published
-        updateRelatedResourceByCacheResource(geoCacheResource, geoCacheResourcesDisabled, geoCacheResourcesOldVersions);
-
     }
 
     private GeoCacheResource updateGeoCacheResource(LifeCycleStatisticalResource lifeCycleResource, StatisticalResourceTypeEnum type, boolean isLastVersionPublished) throws MetamacException {
@@ -392,7 +404,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
                 createRelatedResourceByCacheResourceByTypeAndUrn(geoCacheRelatedResource, urn, getRelatedResourceUrnFromMultidatasetCube(relatedResource), exceptionItems);
             }
 
-            sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_COLLECTION_PUBLICATION, exceptionItems); // TODO EDATOS-4587
+            sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_MULTIDATASET_PUBLICATION, exceptionItems); 
     }
     
     private String getRelatedResourceUrnFromMultidatasetCube(MultidatasetCube relatedResource) {
@@ -418,7 +430,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         
     }
     
-    private void createRelatedResourceByCacheResourceByTypeAndUrn(GeoCacheByRelatedResource geoCacheRelatedResource, String urn, String relatedResourceUrn, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+    private void createRelatedResourceByCacheResourceByTypeAndUrn(GeoCacheByRelatedResource geoCacheRelatedResource, String urn, String relatedResourceUrn, List<MetamacExceptionItem> exceptionItems) {
         
       
         GeoCacheResource geoCacheResource = retrieveResourcesLastVersionByUrnAndVersion(relatedResourceUrn);
@@ -511,15 +523,15 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
             GeoCacheByRelatedResource geoCacheRelatedResource = updateGeoCacheByRelatedResource(jaxiPublicationVersionAvro);
 
-            buildExternalItemFromJaxiExternalCollectionPublication(ctx, jaxiPublicationVersionAvro, geoCacheRelatedResource, exceptionItems);
+            buildExternalItemFromJaxiExternalCollectionPublication(jaxiPublicationVersionAvro, geoCacheRelatedResource, exceptionItems);
 
            sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION, exceptionItems);
 
         }
     }
     
-    private void buildExternalItemFromJaxiExternalCollectionPublication(ServiceContext ctx, PublicationAvro jaxiCollectionVersionAvro, GeoCacheByRelatedResource geoCacheRelatedResource,
-            List<MetamacExceptionItem> exceptionItems) throws MetamacException {
+    private void buildExternalItemFromJaxiExternalCollectionPublication(PublicationAvro jaxiCollectionVersionAvro, GeoCacheByRelatedResource geoCacheRelatedResource,
+            List<MetamacExceptionItem> exceptionItems) {
 
         if (jaxiCollectionVersionAvro.getResources() == null || jaxiCollectionVersionAvro.getResources().isEmpty()) {
             exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_NO_RESOURCES_ERROR, jaxiCollectionVersionAvro.getUrn()));
@@ -574,7 +586,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     }
 
     
-    private GeoCacheByRelatedResource updateGeoCacheByRelatedResource(es.ibestat.jaxi.stream.messages.PublicationAvro jaxiCollectionVersionAvro) throws MetamacException {
+    private GeoCacheByRelatedResource updateGeoCacheByRelatedResource(es.ibestat.jaxi.stream.messages.PublicationAvro jaxiCollectionVersionAvro) {
         GeoCacheByRelatedResource geoCacheByRelatedResource = new GeoCacheByRelatedResource();
         InternationalString titleResource = JaxiMapper.getInternationalStringFromInternationalStringAvro(jaxiCollectionVersionAvro.getTitle());
 
