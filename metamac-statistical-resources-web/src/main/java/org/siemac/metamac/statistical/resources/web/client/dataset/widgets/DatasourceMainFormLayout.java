@@ -4,7 +4,6 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
-import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesVersionSharedUtils;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
@@ -54,7 +53,7 @@ public class DatasourceMainFormLayout extends MainFormLayout {
         setDatasetVersionDtoEditionMode(datasetVersionDto);
 
         setCanDelete(Boolean.FALSE);
-        setCanEdit(StatisticalResourcesVersionSharedUtils.isInitialVersion(datasetVersionDto.getVersionLogic()) && DatasetClientSecurityUtils.canUpdateDatasetVersion(datasetVersionDto));
+        setCanEdit(DatasetClientSecurityUtils.canUpdateDatasetVersion(datasetVersionDto));
     }
 
     public DatasetDatasourcesTabUiHandlers getUiHandlers() {

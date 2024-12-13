@@ -216,7 +216,7 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
      * Check that only 'data source type' metadata can be update if there are no data sources configured, it's the initial version and it's not published
      */
     private void checkCanUpdateDataSourceTypeMetadata(DatasetVersionDto source, DatasetVersion target) throws MetamacException {
-        if (hasDataSourceTypeMetadataChanged(source, target) && (hasDatasetConfiguredDataSources(target) || isNotDatasetVersionInitialVersion(target) || isDatasetVersionPublished(target))) {
+        if (hasDataSourceTypeMetadataChanged(source, target) && (hasDatasetConfiguredDataSources(target) || isDatasetVersionPublished(target))) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.DATASET_VERSION_CANT_ALTER_DATA_SOURCE_TYPE).build();
         }
     }

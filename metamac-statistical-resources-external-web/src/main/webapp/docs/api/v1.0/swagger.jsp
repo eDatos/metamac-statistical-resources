@@ -1,12 +1,11 @@
 <%@ page pageEncoding="UTF-8"%>
 <%@ page import="org.siemac.metamac.core.common.util.swagger.SwaggerUtils"%>
 <%@ page import="java.util.ResourceBundle"%>
-<%@ page import="org.siemac.metamac.statistical.resources.web.external.MessagesResourceBundle"%>
+<%@ page import="org.siemac.metamac.core.common.util.MessagesResourceBundle"%>
 <%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils"%>
 <%
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
-
-    MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale);
+    MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale, "i18n.messages-swagger");
     pageContext.setAttribute("msg", messagesResource);
 
 %>
@@ -15,7 +14,7 @@
    "info":{
       "description":"${msg['api.doc.swagger.info.description']}",
       "version":"1.0",
-      "title":"API de recursos estadísticos v1.0"
+      "title":"${msg['api.doc.swagger.title']}"
    },
    "host":"<%=SwaggerUtils.getApiBaseURLForSwagger()%>",
    "schemes":[
@@ -23,24 +22,24 @@
    ],
    "tags":[
       {
-         "name":"${msg['api.doc.swagger.tags.Cubos.name']}",
-         "description":"${msg['api.doc.swagger.tags.Cubos.description']}"
+         "name":"${msg['api.doc.swagger.tags.datasets.name']}",
+         "description":"${msg['api.doc.swagger.tags.datasets.description']}"
       },
       {
-         "name":"${msg['api.doc.swagger.tags.Publicaciones.name']}",
-         "description":"${msg['api.doc.swagger.tags.Publicaciones.description']}"
+         "name":"${msg['api.doc.swagger.tags.collections.name']}",
+         "description":"${msg['api.doc.swagger.tags.collections.description']}"
       },
       {
-         "name":"${msg['api.doc.swagger.tags.Consultas.name']}",
-         "description":"${msg['api.doc.swagger.tags.Consultas.description']}"
+         "name":"${msg['api.doc.swagger.tags.queries.name']}",
+         "description":"${msg['api.doc.swagger.tags.queries.description']}"
       },
       {
-         "name":"${msg['api.doc.swagger.tags.Multidatasets.name']}",
-         "description":"${msg['api.doc.swagger.tags.Multidatasets.description']}"
+         "name":"${msg['api.doc.swagger.tags.multidatasets.name']}",
+         "description":"${msg['api.doc.swagger.tags.multidatasets.description']}"
       },
       {
-         "name":"${msg['api.doc.swagger.tags.Utilidades.name']}",
-         "description":"${msg['api.doc.swagger.tags.Utilidades.description']}"
+         "name":"${msg['api.doc.swagger.tags.utilities.name']}",
+         "description":"${msg['api.doc.swagger.tags.utilities.description']}"
       }
    ],
    "definitions":{
@@ -54,48 +53,48 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.attachmentLevel.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attribute.properties.attachmentLevel.description']}",
                      "$ref":"#/definitions/AttributeAttachmentLevelType"
                   },
                   "attributeValues":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.attributeValues.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attribute.properties.attributeValues.description']}",
                      "$ref":"#/definitions/AttributeValues"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.dimensions.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attribute.properties.dimensions.description']}",
                      "$ref":"#/definitions/AttributeDimensions"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attribute.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attribute.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attribute.properties.type.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attribute.properties.type.description']}",
                      "$ref":"#/definitions/ComponentType"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Attribute.description']}"
+         "description":"${msg['api.doc.swagger.definitions.attribute.description']}"
       },
       "AttributeAttachmentLevelType":{
          "type":"string",
@@ -105,7 +104,7 @@
             "DIMENSION",
             "PRIMARY_MEASURE"
          ],
-         "description":"${msg['api.doc.swagger.definitions.AttributeAttachmentLevelType.description']}"
+         "description":"${msg['api.doc.swagger.definitions.attributeAttachmentLevelType.description']}"
       },
       "AttributeDimension":{
          "type":"object",
@@ -117,20 +116,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.AttributeDimension.properties.dimensionId.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attributeDimension.properties.dimensionId.description']}",
                      "type":"string"
                   },
                   "values":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.AttributeDimension.properties.values.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attributeDimension.properties.values.description']}",
                      "$ref":"#/definitions/AttributeValues"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.AttributeDimension.description']}"
+         "description":"${msg['api.doc.swagger.definitions.attributeDimension.description']}"
       },
       "AttributeDimensions":{
          "type":"object",
@@ -143,14 +142,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.AttributeDimensions.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attributeDimensions.properties.total.description']}",
                      "type":"number"
                   },
                   "dimension":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.AttributeDimensions.properties.dimension.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attributeDimensions.properties.dimension.description']}",
                      "type":"array",
                      "items":{
                        "$ref":"#/definitions/AttributeDimension"
@@ -159,12 +158,12 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.AttributeDimensions.description']}"
+         "description":"${msg['api.doc.swagger.definitions.attributeDimensions.description']}"
       },
       "AttributeValues":{
          "type":"object",
          "title":"AttributeValues",
-         "description":"${msg['api.doc.swagger.definitions.AttributeValues.description']}"
+         "description":"${msg['api.doc.swagger.definitions.attributeValues.description']}"
       },
       "Attributes":{
          "type":"object",
@@ -177,14 +176,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attributes.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attributes.properties.total.description']}",
                      "type":"number"
                   },
                   "attribute":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Attributes.properties.attribute.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.attributes.properties.attribute.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/Attribute"
@@ -193,7 +192,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Attributes.description']}"
+         "description":"${msg['api.doc.swagger.definitions.attributes.description']}"
       },
       "Chapter":{
          "type":"object",
@@ -205,13 +204,13 @@
             {
                "properties":{
                   "nodes":{
-                     "description":"${msg['api.doc.swagger.definitions.Chapter.properties.nodes.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.chapter.properties.nodes.description']}",
                      "$ref":"#/definitions/CollectionNodes"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Chapter.description']}"
+         "description":"${msg['api.doc.swagger.definitions.chapter.description']}"
       },
       "CodeRepresentation":{
          "type":"object",
@@ -224,7 +223,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentation.properties.code.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.codeRepresentation.properties.code.description']}",
                      "type":"string"
                   },
                   "index":{
@@ -232,13 +231,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentation.properties.index.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.codeRepresentation.properties.index.description']}",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CodeRepresentation.description']}"
+         "description":"${msg['api.doc.swagger.definitions.codeRepresentation.description']}"
       },
       "CodeRepresentations":{
          "type":"object",
@@ -251,14 +250,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentations.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.codeRepresentations.properties.total.description']}",
                      "type":"number"
                   },
                   "representation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CodeRepresentations.properties.representation.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.codeRepresentations.properties.representation.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/CodeRepresentation"
@@ -267,7 +266,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CodeRepresentations.description']}"
+         "description":"${msg['api.doc.swagger.definitions.codeRepresentations.description']}"
       },
       "Collection":{
          "type":"object",
@@ -280,90 +279,90 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.kind.description']}",
                      "type":"string"
                   },
                   "childLinks":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.childLinks.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.childLinks.description']}",
                      "$ref":"#/definitions/ChildLinks"
                   },
                   "data":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.data.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.data.description']}",
                      "$ref":"#/definitions/CollectionData"
                   },
                   "description":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.description.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.id.description']}",
                      "type":"string"
                   },
                   "metadata":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.metadata.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.metadata.description']}",
                      "$ref":"#/definitions/CollectionMetadata"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "parentLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.parentLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.parentLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "selectedLanguages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.selectedLanguages.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.selectedLanguages.description']}",
                      "$ref":"#/definitions/SelectedLanguages"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.selfLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.urn.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.urn.description']}",
                      "type":"string"
                   },
                   "visualizerHtmlLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collection.properties.visualizerHtmlLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collection.properties.visualizerHtmlLink.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Collection.description']}"
+         "description":"${msg['api.doc.swagger.definitions.collection.description']}"
       },
       "CollectionData":{
          "type":"object",
@@ -375,13 +374,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CollectionData.properties.nodes.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collectionData.properties.nodes.description']}",
                      "$ref":"#/definitions/CollectionNodes"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CollectionData.description']}"
+         "description":"${msg['api.doc.swagger.definitions.collectionData.description']}"
       },
       "CollectionMetadata":{
          "type":"object",
@@ -396,13 +395,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CollectionMetadata.properties.formatExtentResources.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collectionMetadata.properties.formatExtentResources.description']}",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CollectionMetadata.description']}"
+         "description":"${msg['api.doc.swagger.definitions.collectionMetadata.description']}"
       },
       "CollectionNode":{
          "type":"object",
@@ -414,20 +413,37 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CollectionNode.properties.description.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collectionNode.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CollectionNode.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collectionNode.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
+                  },
+                  <%-- Swagger 2.0 no permite reflejar adecuadamente la herencia porque tampoco se puede utilizar discriminador --%>
+                  "dataset": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "query": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "multidataset": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "nodes": {
+                     "description": "${msg['api.doc.swagger.definitions.chapter.only.description']}",
+                     "$ref":"#/definitions/CollectionNodes"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CollectionNode.description']}"
+         "description":"${msg['api.doc.swagger.definitions.collectionNode.description']}"
       },
       "CollectionNodes":{
          "type":"object",
@@ -439,13 +455,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.CollectionNodes.properties.node.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collectionNodes.properties.node.description']}",
                      "$ref":"#/definitions/CollectionNode"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.CollectionNodes.description']}"
+         "description":"${msg['api.doc.swagger.definitions.collectionNodes.description']}"
       },
       "Collections":{
          "type":"object",
@@ -460,7 +476,7 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Collections.properties.collection.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.collections.properties.collection.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/ResourceWithStatisticalOperation"
@@ -469,37 +485,37 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Collections.description']}"
-      },
+         "description":"${msg['api.doc.swagger.definitions.collections.description']}"
+      },  
       "Contact":{
          "type":"object",
          "title":"Contact",
          "properties":{
             "id":{
-               "description":"${msg['api.doc.swagger.definitions.Contact.properties.id.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contact.properties.id.description']}",
                "type":"string"
             },
             "name":{
-               "description":"${msg['api.doc.swagger.definitions.Contact.properties.name.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contact.properties.name.description']}",
                "$ref":"#/definitions/InternationalString"
             },
             "organisationUnit":{
-               "description":"${msg['api.doc.swagger.definitions.Contact.properties.organisationUnit.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contact.properties.organisationUnit.description']}",
                "$ref":"#/definitions/InternationalString"
             },
             "responsibility":{
-               "description":"${msg['api.doc.swagger.definitions.Contact.properties.responsibility.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contact.properties.responsibility.description']}",
                "$ref":"#/definitions/InternationalString"
             },
             "telephones":{
-               "description":"${msg['api.doc.swagger.definitions.Contact.properties.telephones.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contact.properties.telephones.description']}",
                "type":"array",
                "items":{
                   "type":"string"
                }
             },
             "faxes":{
-               "description":"${msg['api.doc.swagger.definitions.Contact.properties.faxes.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contact.properties.faxes.description']}",
                "type":"array",
                "items":{
                   "type":"string"
@@ -512,32 +528,32 @@
                }
             },
             "emails":{
-               "description":"${msg['api.doc.swagger.definitions.Contact.properties.emails.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contact.properties.emails.description']}",
                "type":"array",
                "items":{
                   "type":"string"
                }
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.Contact.description']}"
+         "description":"${msg['api.doc.swagger.definitions.contact.description']}"
       },
       "Contacts":{
          "type":"object",
          "title":"Contacts",
          "properties":{
             "dimension":{
-               "description":"${msg['api.doc.swagger.definitions.Contacts.properties.dimension.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contacts.properties.dimension.description']}",
                "type":"array",
                "items":{
                   "$ref":"#/definitions/Contact"
                }
             },
             "total":{
-               "description":"${msg['api.doc.swagger.definitions.Contacts.properties.total.description']}",
+               "description":"${msg['api.doc.swagger.definitions.contacts.properties.total.description']}",
                "type":"number"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.Contacts.description']}"
+         "description":"${msg['api.doc.swagger.definitions.contacts.description']}"
       },
       "ComponentType":{
          "type":"string",
@@ -548,73 +564,73 @@
             "TEMPORAL",
             "MEASURE"
          ],
-         "description":"${msg['api.doc.swagger.definitions.ComponentType.description']}"
+         "description":"${msg['api.doc.swagger.definitions.componentType.description']}"
       },
       "Multidataset":{
          "type":"object",
          "title":"Multidataset",
          "properties":{
             "childLinks":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.childLinks.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.childLinks.description']}",
                "$ref":"#/definitions/ChildLinks"
             },
             "data":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.data.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.data.description']}",
                "$ref":"#/definitions/MultidatasetData"
             },
             "description":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.description.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.description.description']}",
                "$ref":"#/definitions/InternationalString"
             },
             "id":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.id.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.id.description']}",
                "type":"string"
             },
             "kind":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.kind.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.kind.description']}",
                "type":"string"
             },
             "metadata":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.metadata.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.metadata.description']}",
                "$ref":"#/definitions/MultidatasetMetadata"
             },
             "name":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.name.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.name.description']}",
                "$ref":"#/definitions/InternationalString"
             },
             "parentLink":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.parentLink.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.parentLink.description']}",
                "$ref":"#/definitions/ResourceLink"
             },
             "selectedLanguages":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.selectedLanguages.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.selectedLanguages.description']}",
                "$ref":"#/definitions/SelectedLanguages"
             },
             "selfLink":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.selfLink.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.selfLink.description']}",
                "$ref":"#/definitions/ResourceLink"
             },
             "urn":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.urn.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.urn.description']}",
                "type":"string"
             },
             "visualizerHtmlLink":{
-               "description":"${msg['api.doc.swagger.definitions.Multidataset.properties.visualizerHtmlLink.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidataset.properties.visualizerHtmlLink.description']}",
                "type":"string"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.Multidataset.description']}"
+         "description":"${msg['api.doc.swagger.definitions.multidataset.description']}"
       },
       "MultidatasetData":{
          "type":"object",
          "title":"MultidatasetData",
          "properties":{
             "nodes":{
-               "description":"${msg['api.doc.swagger.definitions.MultidatasetData.properties.nodes.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidatasetData.properties.nodes.description']}",
                "$ref":"#/definitions/MultidatasetNodes"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.MultidatasetData.description']}"
+         "description":"${msg['api.doc.swagger.definitions.multidatasetData.description']}"
       },
       "MultidatasetMetadata":{
          "type":"object",
@@ -626,46 +642,50 @@
             {
                "properties":{
                   "formatExtentResources":{
-                     "description":"${msg['api.doc.swagger.definitions.MultidatasetMetadata.properties.formatExtentResources.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.multidatasetMetadata.properties.formatExtentResources.description']}",
                      "type":"number"
                   },
                   "filteringDimension":{
-                     "description":"${msg['api.doc.swagger.definitions.MultidatasetMetadata.properties.filteringDimension.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.multidatasetMetadata.properties.filteringDimension.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }                 
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.MultidatasetMetadata.description']}"
+         "description":"${msg['api.doc.swagger.definitions.multidatasetMetadata.description']}"
       },
       "MultidatasetNode":{
          "type":"object",
          "title":"MultidatasetNode",
          "properties":{
+            "identifier":{
+               "description":"${msg['api.doc.swagger.definitions.multidatasetNode.properties.identifier.description']}",
+               "type":"string"
+            },
             "description":{
-               "description":"${msg['api.doc.swagger.definitions.MultidatasetNode.properties.description.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidatasetNode.properties.description.description']}",
                "$ref":"#/definitions/InternationalString"
             },
             "name":{
-               "description":"${msg['api.doc.swagger.definitions.MultidatasetNode.properties.name.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidatasetNode.properties.name.description']}",
                "$ref":"#/definitions/InternationalString"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.MultidatasetNode.description']}"
+         "description":"${msg['api.doc.swagger.definitions.multidatasetNode.description']}"
       },
       "MultidatasetNodes":{
          "type":"object",
          "title":"MultidatasetNodes",
          "properties":{
             "node":{
-               "description":"${msg['api.doc.swagger.definitions.MultidatasetNodes.properties.node.description']}",
+               "description":"${msg['api.doc.swagger.definitions.multidatasetNodes.properties.node.description']}",
                "type":"array",
                "items":{
                   "$ref":"#/definitions/MultidatasetNode"
                }
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.MultidatasetNodes.description']}"
+         "description":"${msg['api.doc.swagger.definitions.multidatasetNodes.description']}"
       },
       "Multidatasets":{
          "type":"object",
@@ -677,7 +697,7 @@
             {
                "properties":{
                   "multidataset":{
-                     "description":"${msg['api.doc.swagger.definitions.Multidatasets.properties.multidataset.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.multidatasets.properties.multidataset.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/ResourceWithStatisticalOperation"
@@ -686,8 +706,8 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Multidatasets.description']}"
-      },
+         "description":"${msg['api.doc.swagger.definitions.multidatasets.description']}"
+      },      
       "EnumeratedDimensionValue":{
          "type":"object",
          "title":"EnumeratedDimensionValue",
@@ -698,33 +718,33 @@
             {
                "properties":{
                	  "geographicGranularity":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.geographicGranularity.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValue.properties.geographicGranularity.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "measureQuantity":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.measureQuantity.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValue.properties.measureQuantity.description']}",
                      "$ref":"#/definitions/MeasureQuantity"
                   },
                   "open":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.open.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValue.properties.open.description']}",
                      "type":"boolean"
                   },
                   "showDecimalsPrecision":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.showDecimalsPrecision.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValue.properties.showDecimalsPrecision.description']}",
                      "type":"number"
                   },
                   "variableElement":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.variableElement.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValue.properties.variableElement.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "visualisationParent":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.properties.visualisationParent.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValue.properties.visualisationParent.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValue.description']}"
+         "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValue.description']}"
       },
       "EnumeratedDimensionValues":{
          "type":"object",
@@ -736,11 +756,11 @@
             {
                "properties":{
                   "total":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValues.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValues.properties.total.description']}",
                      "type":"number"
                   },
                   "value":{
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValues.properties.value.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValues.properties.value.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/EnumeratedDimensionValue"
@@ -749,22 +769,22 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.EnumeratedDimensionValues.description']}"
-      },
+         "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValues.description']}"
+      },   
       "NonEnumeratedAttributeValue":{
          "type":"object",
          "title":"NonEnumeratedAttributeValue",
          "properties":{
             "id":{
-               "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValue.properties.id.description']}",
+               "description":"${msg['api.doc.swagger.definitions.nonEnumeratedAttributeValue.properties.id.description']}",
                "type":"string"
             },
             "name":{
-               "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValue.properties.name.description']}",
+               "description":"${msg['api.doc.swagger.definitions.nonEnumeratedAttributeValue.properties.name.description']}",
                "$ref":"#/definitions/InternationalString"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValue.description']}"
+         "description":"${msg['api.doc.swagger.definitions.nonEnumeratedAttributeValue.description']}"
       },
       "NonEnumeratedAttributeValues":{
          "type":"object",
@@ -776,11 +796,11 @@
             {
                "properties":{
                   "total":{
-                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValues.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.nonEnumeratedAttributeValues.properties.total.description']}",
                      "type":"number"
                   },
                   "value":{
-                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValues.properties.value.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.nonEnumeratedAttributeValues.properties.value.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/NonEnumeratedAttributeValue"
@@ -789,7 +809,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedAttributeValues.description']}"
+         "description":"${msg['api.doc.swagger.definitions.nonEnumeratedAttributeValues.description']}"
       },
       "MultidatasetTable":{
          "type":"object",
@@ -801,17 +821,17 @@
             {
                "properties":{
                   "dataset":{
-                     "description":"${msg['api.doc.swagger.definitions.MultidatasetTable.properties.dataset.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.multidatasetTable.properties.dataset.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "query":{
-                     "description":"${msg['api.doc.swagger.definitions.MultidatasetTable.properties.query.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.multidatasetTable.properties.query.description']}",
                      "$ref":"#/definitions/Resource"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.MultidatasetTable.description']}"
+         "description":"${msg['api.doc.swagger.definitions.multidatasetTable.description']}"
       },
       "ChildLinks":{
          "type":"object",
@@ -824,7 +844,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ChildLinks.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.childLinks.properties.total.description']}",
                      "type":"number"
                   },
                   "childLink":{
@@ -832,7 +852,7 @@
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
                      "type":"array",
-                     "description":"${msg['api.doc.swagger.definitions.ChildLinks.properties.childLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.childLinks.properties.childLink.description']}",
                      "items":{
                         "$ref":"#/definitions/ResourceLink"
                      }
@@ -840,7 +860,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.ChildLinks.description']}"
+         "description":"${msg['api.doc.swagger.definitions.childLinks.description']}"
       },
       "InternationalString":{
          "type":"object",
@@ -852,7 +872,7 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.InternationalString.properties.text.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.internationalString.properties.text.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/LocalisedString"
@@ -861,7 +881,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.InternationalString.description']}"
+         "description":"${msg['api.doc.swagger.definitions.internationalString.description']}"
       },
       "Item":{
          "type":"object",
@@ -873,20 +893,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Item.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.item.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Item.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.item.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Item.description']}"
+         "description":"${msg['api.doc.swagger.definitions.item.description']}"
       },
       "Items":{
          "type":"object",
@@ -899,14 +919,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Items.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.items.properties.total.description']}",
                      "type":"number"
                   },
                   "item":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Items.properties.item.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.items.properties.item.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/Item"
@@ -915,7 +935,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Items.description']}"
+         "description":"${msg['api.doc.swagger.definitions.items.description']}"
       },
       "ListBase":{
          "type":"object",
@@ -928,7 +948,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.firstLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.firstLink.description']}",
                      "type":"string"
                   },
                   "kind":{
@@ -936,7 +956,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.kind.description']}",
                      "type":"string"
                   },
                   "lastLink":{
@@ -944,7 +964,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.lastLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.lastLink.description']}",
                      "type":"string"
                   },
                   "limit":{
@@ -952,7 +972,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.limit.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.limit.description']}",
                      "type":"number"
                   },
                   "nextLink":{
@@ -960,7 +980,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.nextLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.nextLink.description']}",
                      "type":"string"
                   },
                   "offset":{
@@ -968,7 +988,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.offset.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.offset.description']}",
                      "type":"number"
                   },
                   "previousLink":{
@@ -976,7 +996,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.previousLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.previousLink.description']}",
                      "type":"string"
                   },
                   "selfLink":{
@@ -984,7 +1004,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.selfLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.selfLink.description']}",
                      "type":"string"
                   },
                   "total":{
@@ -992,13 +1012,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ListBase.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.listBase.properties.total.description']}",
                      "type":"number"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.ListBase.description']}"
+         "description":"${msg['api.doc.swagger.definitions.listBase.description']}"
       },
       "LocalisedString":{
          "type":"object",
@@ -1011,20 +1031,20 @@
                         "attribute":true,
                         "namespace":"http://www.w3.org/XML/1998/namespace"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.lang.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.localisedString.properties.lang.description']}",
                      "type":"string"
                   },
                   "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.LocalisedString.properties.value.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.localisedString.properties.value.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.LocalisedString.description']}"
+         "description":"${msg['api.doc.swagger.definitions.localisedString.description']}"
       },
       "Resource":{
          "type":"object",
@@ -1037,55 +1057,55 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resource.properties.kind.description']}",
                      "type":"string"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resource.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resource.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "nestedId":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.nestedId.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resource.properties.nestedId.description']}",
                      "type":"string"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.selfLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resource.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.urn.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resource.properties.urn.description']}",
                      "type":"string"
                   },
                   "visualizerHtmlLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resource.properties.visualizerHtmlLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resource.properties.visualizerHtmlLink.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Resource.description']}"
+         "description":"${msg['api.doc.swagger.definitions.resource.description']}"
       },
       "ResourceLink":{
          "type":"object",
@@ -1098,7 +1118,7 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ResourceLink.properties.href.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resourceLink.properties.href.description']}",
                      "type":"string"
                   },
                   "kind":{
@@ -1106,13 +1126,13 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ResourceLink.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resourceLink.properties.kind.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.ResourceLink.description']}"
+         "description":"${msg['api.doc.swagger.definitions.resourceLink.description']}"
       },
       "ResourceWithStatisticalOperation":{
          "type":"object",
@@ -1124,7 +1144,7 @@
             {
                "properties":{
                   "statisticalOperation":{
-                     "description":"${msg['api.doc.swagger.definitions.ResourceWithStatisticalOperation.properties.statisticalOperation.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resourceWithStatisticalOperation.properties.statisticalOperation.description']}",
                      "$ref":"#/definitions/Resource"
                   }
                }
@@ -1142,14 +1162,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resources.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resources.properties.total.description']}",
                      "type":"number"
                   },
                   "resource":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Resources.properties.resource.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resources.properties.resource.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/Resource"
@@ -1158,8 +1178,8 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
-      },
+         "description":"${msg['api.doc.swagger.definitions.resources.description']}"
+      },      
       "Data":{
          "type":"object",
          "title":"Data",
@@ -1170,27 +1190,27 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Data.properties.attributes.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.data.properties.attributes.description']}",
                      "$ref":"#/definitions/DataAttributes"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Data.properties.dimensions.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.data.properties.dimensions.description']}",
                      "$ref":"#/definitions/DimensionRepresentations"
                   },
                   "observations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Data.properties.observations.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.data.properties.observations.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Data.description']}"
+         "description":"${msg['api.doc.swagger.definitions.data.description']}"
       },
       "DataAttribute":{
          "type":"object",
@@ -1203,20 +1223,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataAttribute.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.id.description']}",
                      "type":"string"
                   },
                   "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataAttribute.properties.value.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.value.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.DataAttribute.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dataAttribute.description']}"
       },
       "DataAttributes":{
          "type":"object",
@@ -1229,14 +1249,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataAttributes.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataAttributes.properties.total.description']}",
                      "type":"number"
                   },
                   "attribute":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataAttributes.properties.attribute.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataAttributes.properties.attribute.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/DataAttribute"
@@ -1245,7 +1265,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.DataAttributes.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dataAttributes.description']}"
       },
       "DataStructureDefinition":{
          "type":"object",
@@ -1260,28 +1280,28 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.autoOpen.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.properties.autoOpen.description']}",
                      "type":"boolean"
                   },
                   "showNullValuesByDefault":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.showNullValuesByDefault.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.properties.showNullValuesByDefault.description']}",
                      "type":"boolean"
                   },
                   "showZeroValuesByDefault":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.showZeroValuesByDefault.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.properties.showZeroValuesByDefault.description']}",
                      "type":"boolean"
                   },
                   "heading":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.heading.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.properties.heading.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/DimensionsId"
@@ -1291,23 +1311,23 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.showDecimals.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.properties.showDecimals.description']}",
                      "type":"number"
                   },
                   "stub":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.properties.stub.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.properties.stub.description']}",
                      "type":"array",
-                     "item": {
+                     "items": {
                         "$ref":"#/definitions/DimensionsId"
                      }
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.DataStructureDefinition.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dataStructureDefinition.description']}"
       },
       "Dataset":{
          "type":"object",
@@ -1320,90 +1340,90 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.kind.description']}",
                      "type":"string"
                   },
                   "childLinks":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.childLinks.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.childLinks.description']}",
                      "$ref":"#/definitions/ChildLinks"
                   },
                   "data":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.data.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.data.description']}",
                      "$ref":"#/definitions/Data"
                   },
                   "description":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.description.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.id.description']}",
                      "type":"string"
                   },
                   "metadata":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.metadata.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.metadata.description']}",
                      "$ref":"#/definitions/DatasetMetadata"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "parentLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.parentLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.parentLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "selectedLanguages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.selectedLanguages.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.selectedLanguages.description']}",
                      "$ref":"#/definitions/SelectedLanguages"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.selfLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.urn.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.urn.description']}",
                      "type":"string"
                   },
                   "visualizerHtmlLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dataset.properties.visualizerHtmlLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dataset.properties.visualizerHtmlLink.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Dataset.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dataset.description']}"
       },
       "DatasetMetadata":{
          "type":"object",
@@ -1418,174 +1438,174 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.attributes.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.attributes.description']}",
                      "$ref":"#/definitions/Attributes"
                   },
                   "bibliographicCitation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.bibliographicCitation.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.bibliographicCitation.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "dateEnd":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateEnd.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.dateEnd.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "dateNextUpdate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateNextUpdate.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.dateNextUpdate.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "dateStart":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dateStart.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.dateStart.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.dimensions.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.dimensions.description']}",
                      "$ref":"#/definitions/Dimensions"
                   },
                   "formatExtentDimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.formatExtentDimensions.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.formatExtentDimensions.description']}",
                      "type":"number"
                   },
                   "formatExtentObservations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.formatExtentObservations.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.formatExtentObservations.description']}",
                      "type":"number"
                   },
                   "formatExtentTableSize":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.formatExtentTableSize.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.formatExtentTableSize.description']}",
                      "type":"number"
                   },
                   "geographicCoverages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.geographicCoverages.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.geographicCoverages.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "geographicGranularities":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.geographicGranularities.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.geographicGranularities.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "isReplacedByVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.isReplacedByVersion.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.isReplacedByVersion.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "isRequiredBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.isRequiredBy.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.isRequiredBy.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "keepAllData":{
                   	 "xml":{
 						      "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.keepAllData.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.keepAllData.description']}",
                      "type":"boolean"
                   },
                   "measureCoverages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.measureCoverages.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.measureCoverages.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "relatedDsd":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.relatedDsd.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.relatedDsd.description']}",
                      "$ref":"#/definitions/DataStructureDefinition"
                   },
                   "replacesVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.replacesVersion.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.replacesVersion.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticOfficiality":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.statisticOfficiality.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.statisticOfficiality.description']}",
                      "$ref":"#/definitions/Item"
                   },
                   "statisticalUnit":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.statisticalUnit.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.statisticalUnit.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "subjectAreas":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.subjectAreas.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.subjectAreas.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "temporalCoverages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.temporalCoverages.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.temporalCoverages.description']}",
                      "$ref":"#/definitions/Items"
                   },
                   "temporalGranularities":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.temporalGranularities.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.temporalGranularities.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "updateFrequency":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.updateFrequency.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.updateFrequency.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                    "constraints":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.properties.constraints.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.datasetMetadata.properties.constraints.description']}",
                      "$ref":"#/definitions/ConstraintDimensionRepresentations"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.DatasetMetadata.description']}"
+         "description":"${msg['api.doc.swagger.definitions.datasetMetadata.description']}"
       },
       "Datasets":{
          "type":"object",
@@ -1600,8 +1620,8 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Datasets.properties.dataset.description']}",
-                     "type": "array",
+                     "description":"${msg['api.doc.swagger.definitions.datasets.properties.dataset.description']}",
+                     "type":"array",
                      "items":{
                         "$ref":"#/definitions/ResourceWithStatisticalOperation"
                      }
@@ -1609,7 +1629,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Datasets.description']}"
+         "description":"${msg['api.doc.swagger.definitions.datasets.description']}"
       },
       "Dimension":{
          "type":"object",
@@ -1621,48 +1641,48 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.dimensionValues.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.dimensionValues.description']}",
                      "$ref":"#/definitions/DimensionValues"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.type.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.type.description']}",
                      "$ref":"#/definitions/DimensionType"
                   },
                   "variable":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.variable.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.variable.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "pluralName":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimension.properties.pluralName.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.pluralName.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Dimension.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dimension.description']}"
       },
       "DimensionRepresentation":{
          "type":"object",
@@ -1674,20 +1694,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentation.properties.dimensionId.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensionRepresentation.properties.dimensionId.description']}",
                      "type":"string"
                   },
                   "representations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentation.properties.representations.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensionRepresentation.properties.representations.description']}",
                      "$ref":"#/definitions/CodeRepresentations"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.DimensionRepresentation.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dimensionRepresentation.description']}"
       },
       "DimensionRepresentations":{
          "type":"object",
@@ -1700,14 +1720,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentations.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensionRepresentations.properties.total.description']}",
                      "type":"number"
                   },
                   "dimension":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DimensionRepresentations.properties.dimension.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensionRepresentations.properties.dimension.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/DimensionRepresentation"
@@ -1716,7 +1736,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.DimensionRepresentations.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dimensionRepresentations.description']}"
       },
       "DimensionType":{
          "type":"string",
@@ -1727,12 +1747,12 @@
             "GEOGRAPHIC_DIMENSION",
             "DIMENSION"
          ],
-         "description":"${msg['api.doc.swagger.definitions.DimensionType.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dimensionType.description']}"
       },
       "DimensionValues":{
          "type":"object",
          "title":"DimensionValues",
-         "description":"${msg['api.doc.swagger.definitions.DimensionValues.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dimensionValues.description']}"
       },
       "Dimensions":{
          "type":"object",
@@ -1745,14 +1765,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimensions.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensions.properties.total.description']}",
                      "type":"number"
                   },
                   "dimension":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Dimensions.properties.dimension.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensions.properties.dimension.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/Dimension"
@@ -1761,7 +1781,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Dimensions.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dimensions.description']}"
       },
       "DimensionsId":{
          "type":"object",
@@ -1774,20 +1794,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DimensionsId.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensionsId.properties.total.description']}",
                      "type":"number"
                   },
                   "dimensionId":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.DimensionsId.properties.dimensionId.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.dimensionsId.properties.dimensionId.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.DimensionsId.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dimensionsId.description']}"
       },
       "EnumeratedAttributeValue":{
          "type":"object",
@@ -1802,13 +1822,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValue.properties.measureQuantity.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedAttributeValue.properties.measureQuantity.description']}",
                      "$ref":"#/definitions/MeasureQuantity"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValue.description']}"
+         "description":"${msg['api.doc.swagger.definitions.enumeratedAttributeValue.description']}"
       },
       "EnumeratedAttributeValues":{
          "type":"object",
@@ -1824,14 +1844,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValues.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedAttributeValues.properties.total.description']}",
                      "type":"number"
                   },
                   "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValues.properties.value.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.enumeratedAttributeValues.properties.value.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/EnumeratedAttributeValue"
@@ -1840,7 +1860,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.EnumeratedAttributeValues.description']}"
+         "description":"${msg['api.doc.swagger.definitions.enumeratedAttributeValues.description']}"
       },
       "ItemResource":{
          "type":"object",
@@ -1855,13 +1875,13 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.ItemResource.properties.parent.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.itemResource.properties.parent.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.ItemResource.description']}"
+         "description":"${msg['api.doc.swagger.definitions.itemResource.description']}"
       },
       "MeasureQuantity":{
          "type":"object",
@@ -1873,20 +1893,20 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.MeasureQuantity.properties.unitCode.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.measureQuantity.properties.unitCode.description']}",
                      "$ref":"#/definitions/ItemResource"
                   },
                   "unitMultiplier":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.MeasureQuantity.properties.unitMultiplier.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.measureQuantity.properties.unitMultiplier.description']}",
                      "$ref":"#/definitions/ItemResource"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.MeasureQuantity.description']}"
+         "description":"${msg['api.doc.swagger.definitions.measureQuantity.description']}"
       },
       "NextVersionType":{
          "type":"string",
@@ -1896,7 +1916,7 @@
             "NON_SCHEDULED_UPDATE",
             "SCHEDULED_UPDATE"
          ],
-         "description":"${msg['api.doc.swagger.definitions.NextVersionType.description']}"
+         "description":"${msg['api.doc.swagger.definitions.nextVersionType.description']}"
       },
       "NonEnumeratedDimensionValue":{
          "type":"object",
@@ -1908,24 +1928,24 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.nonEnumeratedDimensionValue.properties.id.description']}",
                      "type":"string"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.nonEnumeratedDimensionValue.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "temporalGranularity":{
-                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.properties.temporalGranularity.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.nonEnumeratedDimensionValue.properties.temporalGranularity.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValue.description']}"
+         "description":"${msg['api.doc.swagger.definitions.nonEnumeratedDimensionValue.description']}"
       },
       "NonEnumeratedDimensionValues":{
          "type":"object",
@@ -1941,20 +1961,20 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValues.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.nonEnumeratedDimensionValues.properties.total.description']}",
                      "type":"number"
                   },
                   "value":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValues.properties.value.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.nonEnumeratedDimensionValues.properties.value.description']}",
                      "$ref":"#/definitions/NonEnumeratedDimensionValue"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.NonEnumeratedDimensionValues.description']}"
+         "description":"${msg['api.doc.swagger.definitions.nonEnumeratedDimensionValues.description']}"
       },
       "Organisation":{
          "type":"object",
@@ -1966,13 +1986,13 @@
             {
                "properties":{
                   "contacts":{
-                     "description":"${msg['api.doc.swagger.definitions.Organisation.properties.contacts.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.organisation.properties.contacts.description']}",
                      "$ref":"#/definitions/Contacts"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Organisation.description']}"
+         "description":"${msg['api.doc.swagger.definitions.organisation.description']}"
       },
       "Queries":{
          "type":"object",
@@ -1987,7 +2007,7 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Queries.properties.query.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queries.properties.query.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/ResourceWithStatisticalOperation"
@@ -1996,7 +2016,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Queries.description']}"
+         "description":"${msg['api.doc.swagger.definitions.queries.description']}"
       },
       "Query":{
          "type":"object",
@@ -2009,83 +2029,83 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.kind.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.kind.description']}",
                      "type":"string"
                   },
                   "childLinks":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.childLinks.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.childLinks.description']}",
                      "$ref":"#/definitions/ChildLinks"
                   },
                   "data":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.data.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.data.description']}",
                      "$ref":"#/definitions/Data"
                   },
                   "description":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.description.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.description.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "id":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.id.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.id.description']}",
                      "type":"string"
                   },
                   "metadata":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.metadata.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.metadata.description']}",
                      "$ref":"#/definitions/QueryMetadata"
                   },
                   "name":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.name.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.name.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "parentLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.parentLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.parentLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "selectedLanguages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.selectedLanguages.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.selectedLanguages.description']}",
                      "$ref":"#/definitions/SelectedLanguages"
                   },
                   "selfLink":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.selfLink.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.selfLink.description']}",
                      "$ref":"#/definitions/ResourceLink"
                   },
                   "urn":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Query.properties.urn.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.query.properties.urn.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Query.description']}"
+         "description":"${msg['api.doc.swagger.definitions.query.description']}"
       },
       "QueryMetadata":{
          "type":"object",
@@ -2097,97 +2117,97 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.attributes.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.attributes.description']}",
                      "$ref":"#/definitions/Attributes"
                   },
                   "dimensions":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.dimensions.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.dimensions.description']}",
                      "$ref":"#/definitions/Dimensions"
                   },
                   "isPartOf":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.isPartOf.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.isPartOf.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "latestDataNumber":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.latestDataNumber.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.latestDataNumber.description']}",
                      "type":"number"
                   },
                   "maintainer":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.maintainer.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.maintainer.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "relatedDataset":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.relatedDataset.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.relatedDataset.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "relatedDsd":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.relatedDsd.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.relatedDsd.description']}",
                      "$ref":"#/definitions/DataStructureDefinition"
                   },
                   "requires":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.requires.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.requires.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.statisticalOperation.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.statisticalOperation.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "status":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.status.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.status.description']}",
                      "$ref":"#/definitions/QueryStatus"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.type.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.type.description']}",
                      "$ref":"#/definitions/QueryType"
                   },
                   "validFrom":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.validFrom.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.validFrom.description']}",
                      "type":"string"
                   },
                   "validTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.QueryMetadata.properties.validTo.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.queryMetadata.properties.validTo.description']}",
                      "type":"string"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.QueryMetadata.description']}"
+         "description":"${msg['api.doc.swagger.definitions.queryMetadata.description']}"
       },
       "QueryStatus":{
          "type":"string",
@@ -2196,7 +2216,7 @@
             "ACTIVE",
             "DISCONTINUED"
          ],
-         "description":"${msg['api.doc.swagger.definitions.QueryStatus.description']}"
+         "description":"${msg['api.doc.swagger.definitions.queryStatus.description']}"
       },
       "QueryType":{
          "type":"string",
@@ -2206,7 +2226,7 @@
             "LATEST_DATA",
             "FIXED"
          ],
-         "description":"${msg['api.doc.swagger.definitions.QueryType.description']}"
+         "description":"${msg['api.doc.swagger.definitions.queryType.description']}"
       },
       "SelectedLanguages":{
          "type":"object",
@@ -2219,14 +2239,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.SelectedLanguages.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.selectedLanguages.properties.total.description']}",
                      "type":"number"
                   },
                   "language":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.SelectedLanguages.properties.language.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.selectedLanguages.properties.language.description']}",
                      "type":"array",
                      "items":{
                         "type":"string"
@@ -2235,7 +2255,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.SelectedLanguages.description']}"
+         "description":"${msg['api.doc.swagger.definitions.selectedLanguages.description']}"
       },
       "StatisticalResource":{
          "type":"object",
@@ -2247,251 +2267,251 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.abstract.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.abstract.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "accessRights":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.accessRights.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.accessRights.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "conformsTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.conformsTo.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.conformsTo.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "contributors":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.contributors.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.contributors.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "copyrightDate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.copyrightDate.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.copyrightDate.description']}",
                      "type":"number"
                   },
                   "createdDate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.createdDate.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.createdDate.description']}",
                      "type":"string"
                   },
                   "creator":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.creator.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.creator.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "hasPart":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.hasPart.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.hasPart.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "isPartOf":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.isPartOf.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.isPartOf.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "isReplacedBy":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.isReplacedBy.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.isReplacedBy.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "keywords":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.keywords.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.keywords.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "language":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.language.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.language.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "languages":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.languages.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.languages.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "lastUpdate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.lastUpdate.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.lastUpdate.description']}",
                      "type":"string"
                   },
                   "license":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.license.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.license.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "maintainer":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.maintainer.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.maintainer.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "mediators":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.mediators.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.mediators.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "newnessUntilDate":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.newnessUntilDate.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.newnessUntilDate.description']}",
                      "type":"string"
                   },
                   "nextVersion":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.nextVersion.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.nextVersion.description']}",
                      "$ref":"#/definitions/NextVersionType"
                   },
                   "publisherContributors":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.publisherContributors.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.publisherContributors.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "publishers":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.publishers.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.publishers.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "replaces":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.replaces.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.replaces.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "rightsHolder":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.rightsHolder.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.rightsHolder.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticalOperation":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.statisticalOperation.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.statisticalOperation.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "statisticalOperationInstances":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.statisticalOperationInstances.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.statisticalOperationInstances.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "subtitle":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.subtitle.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.subtitle.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "titleAlternative":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.titleAlternative.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.titleAlternative.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "type":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.type.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.type.description']}",
                      "$ref":"#/definitions/StatisticalResourceType"
                   },
                   "validFrom":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.validFrom.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.validFrom.description']}",
                      "type":"string"
                   },
                   "validTo":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.validTo.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.validTo.description']}",
                      "type":"string"
                   },
                   "version":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.version.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.version.description']}",
                      "type":"string"
                   },
                   "versionRationale":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.versionRationale.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.versionRationale.description']}",
                      "$ref":"#/definitions/InternationalString"
                   },
                   "versionRationaleTypes":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.versionRationaleTypes.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.versionRationaleTypes.description']}",
                      "$ref":"#/definitions/VersionRationaleTypes"
                   },
                   "dataProviders":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.dataProviders.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.dataProviders.description']}",
                      "$ref":"#/definitions/Resources"
                   },
                   "dataProviderAnnotations":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.StatisticalResource.properties.dataProviderAnnotations.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.dataProviderAnnotations.description']}",
                      "$ref":"#/definitions/InternationalString"
                   }
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.StatisticalResource.description']}"
+         "description":"${msg['api.doc.swagger.definitions.statisticalResource.description']}"
       },
       "StatisticalResourceType":{
          "type":"string",
@@ -2502,7 +2522,7 @@
             "QUERY",
             "MULTIDATASET"
          ],
-         "description":"${msg['api.doc.swagger.definitions.StatisticalResourceType.description']}"
+         "description":"${msg['api.doc.swagger.definitions.statisticalResourceType.description']}"
       },
       "Table":{
          "type":"object",
@@ -2517,20 +2537,27 @@
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Table.properties.dataset.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.table.properties.dataset.description']}",
                      "$ref":"#/definitions/Resource"
                   },
                   "query":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.Table.properties.query.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.table.properties.query.description']}",
                      "$ref":"#/definitions/Resource"
-                  }
+                  },
+                  "multidataset":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.table.properties.multidataset.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.Table.description']}"
+         "description":"${msg['api.doc.swagger.definitions.table.description']}"
       },
       "VersionRationaleType":{
          "type":"string",
@@ -2547,7 +2574,7 @@
             "MINOR_SERIES_UPDATE",
             "MINOR_OTHER"
          ],
-         "description":"${msg['api.doc.swagger.definitions.VersionRationaleType.description']}"
+         "description":"${msg['api.doc.swagger.definitions.versionRationaleType.description']}"
       },
       "VersionRationaleTypes":{
          "type":"object",
@@ -2560,14 +2587,14 @@
                         "attribute":true,
                         "namespace":""
                      },
-                     "description":"${msg['api.doc.swagger.definitions.VersionRationaleTypes.properties.total.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.versionRationaleTypes.properties.total.description']}",
                      "type":"number"
                   },
                   "versionRationaleType":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
-                     "description":"${msg['api.doc.swagger.definitions.VersionRationaleTypes.properties.versionRationaleType.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.versionRationaleTypes.properties.versionRationaleType.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/VersionRationaleType"
@@ -2576,7 +2603,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.VersionRationaleTypes.description']}"
+         "description":"${msg['api.doc.swagger.definitions.versionRationaleTypes.description']}"
       },
       "ResourcesWithStatisticalOperation":{
          "type":"object",
@@ -2588,7 +2615,7 @@
             {
                "properties":{
                   "resource":{
-                     "description":"${msg['api.doc.swagger.definitions.ResourcesWithStatisticalOperation.properties.resource.description']}",
+                     "description":"${msg['api.doc.swagger.definitions.resourcesWithStatisticalOperation.properties.resource.description']}",
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/ResourceWithStatisticalOperation"
@@ -2597,84 +2624,84 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.ResourcesWithStatisticalOperation.description']}"
+         "description":"${msg['api.doc.swagger.definitions.resourcesWithStatisticalOperation.description']}"
       },
       "ConstraintCodeRepresentation":{
          "type":"object",
          "title":"ConstraintCodeRepresentation",
          "properties":{
             "code":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentation.properties.code.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintCodeRepresentation.properties.code.description']}",
                "type":"string"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentation.description']}"
+         "description":"${msg['api.doc.swagger.definitions.constraintCodeRepresentation.description']}"
       },
       "ConstraintCodeRepresentations":{
          "type":"object",
          "title":"ConstraintCodeRepresentations",
          "properties":{
             "representation":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentations.properties.representation.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintCodeRepresentations.properties.representation.description']}",
                "type":"array",
                "items":{
                   "$ref":"#/definitions/ConstraintCodeRepresentation"
                }
             },
             "total":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentations.properties.total.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintCodeRepresentations.properties.total.description']}",
                "type":"number"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.ConstraintCodeRepresentations.description']}"
+         "description":"${msg['api.doc.swagger.definitions.constraintCodeRepresentations.description']}"
       },
       "ConstraintDimensionRepresentation":{
          "type":"object",
          "title":"ConstraintDimensionRepresentation",
          "properties":{
             "dimensionId":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentation.properties.dimensionId.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentation.properties.dimensionId.description']}",
                "type":"string"
             },
             "representations":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentation.properties.representations.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentation.properties.representations.description']}",
                "$ref":"#/definitions/ConstraintCodeRepresentations"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentation.description']}"
+         "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentation.description']}"
       },
       "ConstraintDimensionRepresentations":{
          "type":"object",
          "title":"ConstraintDimensionRepresentations",
          "properties":{
          	"id":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.id.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentations.properties.id.description']}",
                "type":"string"
             },
             "urn":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.urn.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentations.properties.urn.description']}",
                "type":"string"
             },
             "dimensions":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.dimensions.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentations.properties.dimensions.description']}",
                "type":"array",
                "items":{
                   "$ref":"#/definitions/ConstraintDimensionRepresentation"
                }
             },
             "total":{
-               "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.properties.total.description']}",
+               "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentations.properties.total.description']}",
                "type":"number"
             }
          },
-         "description":"${msg['api.doc.swagger.definitions.ConstraintDimensionRepresentations.description']}"
+         "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentations.description']}"
       }
    },
    "paths":{
       "/v1.0/collections":{
          "get":{
             "tags":[
-               "Publicaciones estadísticas"
+               "${msg['api.doc.swagger.tags.collections.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.description']}",
             "operationId":"resource__v1.0_collections_findCollections_GET",
@@ -2723,7 +2750,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collections"
                   },
                   "headers":{
@@ -2746,7 +2772,7 @@
       "/v1.0/collections/{agencyID}":{
          "get":{
             "tags":[
-               "Publicaciones estadísticas"
+               "${msg['api.doc.swagger.tags.collections.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.description']}",
             "operationId":"resource__v1.0_collections__agencyID__findCollections_GET",
@@ -2759,7 +2785,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"lang",
@@ -2801,7 +2828,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collections"
                   },
                   "headers":{
@@ -2824,7 +2850,7 @@
       "/v1.0/collections/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Publicaciones estadísticas"
+               "${msg['api.doc.swagger.tags.collections.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_collections__agencyID___resourceID__retrieveCollection_GET",
@@ -2837,13 +2863,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required":true
                },
                {
                   "name":"fields",
@@ -2861,7 +2889,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.collections.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Collection"
                   },
                   "headers":{
@@ -2887,7 +2914,7 @@
       "/v1.0/datasets":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.datasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.description']}",
             "operationId":"resource__v1.0_datasets_findDatasets_GET",
@@ -2900,7 +2927,8 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.lang.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.lang.description']}",
+                  "required":true
                },
                {
                   "name":"limit",
@@ -2936,7 +2964,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -2959,7 +2986,7 @@
       "/v1.0/datasets/{agencyID}":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.datasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID__findDatasets_GET",
@@ -2972,7 +2999,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"lang",
@@ -3014,7 +3042,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -3037,7 +3064,7 @@
       "/v1.0/datasets/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.datasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID__findDatasets_GET",
@@ -3050,13 +3077,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required":true
                },
                {
                   "name":"lang",
@@ -3098,7 +3127,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Datasets"
                   },
                   "headers":{
@@ -3121,7 +3149,7 @@
       "/v1.0/datasets/{agencyID}/{resourceID}/{version}":{
          "get":{
             "tags":[
-               "Cubos estadísticos"
+               "${msg['api.doc.swagger.tags.datasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_GET",
@@ -3137,19 +3165,22 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.resourceID.description']}",
+                  "required":true
                },
                {
                   "name":"version",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.version.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.version.description']}",
+                  "required":true
                },
                {
                   "name":"representation",
@@ -3186,7 +3217,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Dataset"
                   },
                   "headers":{
@@ -3212,7 +3242,7 @@
       "/v1.0/queries":{
          "get":{
             "tags":[
-               "Consultas estadísticas"
+               "${msg['api.doc.swagger.tags.queries.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.description']}",
             "operationId":"resource__v1.0_queries_findQueries_GET",
@@ -3261,7 +3291,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Queries"
                   },
                   "headers":{
@@ -3284,7 +3313,7 @@
       "/v1.0/queries/{agencyID}":{
          "get":{
             "tags":[
-               "Consultas estadísticas"
+               "${msg['api.doc.swagger.tags.queries.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.description']}",
             "operationId":"resource__v1.0_queries__agencyID__findQueries_GET",
@@ -3297,7 +3326,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"lang",
@@ -3339,7 +3369,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Queries"
                   },
                   "headers":{
@@ -3362,7 +3391,7 @@
       "/v1.0/queries/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Consultas estadísticas"
+               "${msg['api.doc.swagger.tags.queries.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_queries__agencyID___resourceID__retrieveQuery_GET",
@@ -3376,13 +3405,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required":true
                },
                {
                   "name":"representation",
@@ -3418,7 +3449,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Query"
                   },
                   "headers":{
@@ -3444,7 +3474,7 @@
        "/v1.0/multidatasets":{
          "get":{
             "tags":[
-               "Multidatasets estadísticos"
+               "${msg['api.doc.swagger.tags.multidatasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.description']}",
             "operationId":"resource__v1.0_multidatasets_findMultidatasets_GET",
@@ -3493,7 +3523,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidatasets"
                   },
                   "headers":{
@@ -3516,7 +3545,7 @@
       "/v1.0/multidatasets/{agencyID}":{
          "get":{
             "tags":[
-                "Multidatasets estadísticos"
+               "${msg['api.doc.swagger.tags.multidatasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.description']}",
             "operationId":"resource__v1.0_multidatasets__agencyID__findMultidatasets_GET",
@@ -3529,7 +3558,8 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"lang",
@@ -3571,7 +3601,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidatasets"
                   },
                   "headers":{
@@ -3594,7 +3623,7 @@
       "/v1.0/multidatasets/{agencyID}/{resourceID}":{
          "get":{
             "tags":[
-               "Multidatasets estadísticos"
+               "${msg['api.doc.swagger.tags.multidatasets.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.description']}",
             "operationId":"resource__v1.0_multidatasets__agencyID___resourceID__retrieveMultidataset_GET",
@@ -3607,13 +3636,15 @@
                   "name":"agencyID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.agencyID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.agencyID.description']}",
+                  "required":true
                },
                {
                   "name":"resourceID",
                   "in":"path",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.resourceID.description']}"
+                  "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.parameters.resourceID.description']}",
+                  "required":true
                },
                {
                   "name":"fields",
@@ -3631,7 +3662,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.multidatasets.agencyID.resourceID.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/Multidataset"
                   },
                   "headers":{
@@ -3657,7 +3687,7 @@
       "/v1.0/resources":{
          "get":{
             "tags":[
-               "Utilidades"
+               "${msg['api.doc.swagger.tags.utilities.name']}"
             ],
             "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.description']}",
             "operationId":"resource__v1.0_resources_findResources_GET",
@@ -3700,7 +3730,6 @@
             "responses":{
                "200":{
                   "schema":{
-                     "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.200.schema.description']}",
                      "$ref":"#/definitions/ResourcesWithStatisticalOperation"
                   },
                   "headers":{
