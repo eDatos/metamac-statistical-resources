@@ -2189,10 +2189,25 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
             if (checkCorrectCodeDimension(dsdProcessorResult, entry.getKey(), DsdComponentType.TEMPORAL)) {
                 dimensionsFilter.setTemporalDimensionId(entry.getKey());
-                dimensionsFilter.setTemporalDimensionValuesIds(entry.getValue());
+                dimensionsFilter.setTemporalDimensionValuesIds(getTemporalGranularitiesCodes(entry.getValue()));
             }
         }
         return dimensionsFilter;
+    }
+
+    private List<String> getTemporalGranularitiesCodes(List<String> temporalGranularities) {
+        List<String> temporalGranularitiesCodes = new ArrayList<>();
+            for (String temporalGranularity : temporalGranularities) {
+                try {
+                    StringUtils.isNotBlank(temporalGranularity);
+                    IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeGranularityCodeEnum.valueOf(temporalGranularity);
+                    temporalGranularitiesCodes.add(istacTimeGranularityCodeEnum.getLabel());
+                } catch (Exception e) {
+                    temporalGranularitiesCodes.add(temporalGranularity);
+                }
+            }
+            
+        return temporalGranularitiesCodes;
     }
 
     private boolean checkCorrectCodeDimension(DsdProcessorResult dsdProcessorResult, String code, DsdComponentType type) {

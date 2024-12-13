@@ -2077,16 +2077,40 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     public DimensionsFilter getDimensionsFilter(Map<String, List<String>> granularities, DsdProcessorResult dsdProcessorResult) {
         DimensionsFilter dimensionsFilter = new DimensionsFilter();
         for (Map.Entry<String, List<String>> entry : granularities.entrySet()) {
-            if (checkCorrectCodeGeographicalDimension(dsdProcessorResult, entry.getKey())) {
+            if (checkCorrectCodeDimension(dsdProcessorResult, entry.getKey(), DsdComponentType.SPATIAL)) {
                 dimensionsFilter.setGeographicDimensionId(entry.getKey());
                 dimensionsFilter.setGeographicDimensionValuesIds(entry.getValue());
             }
-            if (checkCorrectCodeTemporalDimension(dsdProcessorResult, entry.getKey())) {
+            if (checkCorrectCodeDimension(dsdProcessorResult, entry.getKey(), DsdComponentType.TEMPORAL)) {
                 dimensionsFilter.setTemporalDimensionId(entry.getKey());
-                dimensionsFilter.setTemporalDimensionValuesIds(entry.getValue());
+                dimensionsFilter.setTemporalDimensionValuesIds(getTemporalGranularitiesCodes(entry.getValue()));
             }
         }
         return dimensionsFilter;
+    }
+
+    private List<String> getTemporalGranularitiesCodes(List<String> temporalGranularities) {
+        List<String> temporalGranularitiesCodes = new ArrayList<>();
+            for (String temporalGranularity : temporalGranularities) {
+                try {
+                    StringUtils.isNotBlank(temporalGranularity);
+                    IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeGranularityCodeEnum.valueOf(temporalGranularity);
+                    temporalGranularitiesCodes.add(istacTimeGranularityCodeEnum.getLabel());
+                } catch (Exception e) {
+                    temporalGranularitiesCodes.add(temporalGranularity);
+                }
+            }
+            
+        return temporalGranularitiesCodes;
+    }
+
+    private boolean checkCorrectCodeDimension(DsdProcessorResult dsdProcessorResult, String code, DsdComponentType type) {
+        for (DsdDimension source : dsdProcessorResult.getDimensions()) {
+            if (code.equals(source.getComponentId()) && type.equals(source.getType())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -2103,15 +2127,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private boolean checkCorrectCodeGeographicalDimension(DsdProcessorResult dsdProcessorResult, String code) {
         for (DsdDimension source : dsdProcessorResult.getDimensions()) {
             if (code.equals(source.getComponentId()) && DsdComponentType.SPATIAL.equals(source.getType())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean checkCorrectCodeTemporalDimension(DsdProcessorResult dsdProcessorResult, String code) {
-        for (DsdDimension source : dsdProcessorResult.getDimensions()) {
-            if (code.equals(source.getComponentId()) && DsdComponentType.TEMPORAL.equals(source.getType())) {
                 return true;
             }
         }
