@@ -1615,14 +1615,14 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private Map<String, ObservationExtendedDto> getObservationsFiltered(Map<String, ObservationExtendedDto> observations, DimensionsFilter dimensionsFilter) {
         Map<String, ObservationExtendedDto> observationsFiltered = new HashMap<String, ObservationExtendedDto>();
         for (Map.Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
-            boolean checkTemporalId = false;
-            boolean checkGreographicId = false;
+            boolean checkTemporalId = !checkHaveDimension(entry.getValue().getCodesDimension(), dimensionsFilter.getTemporalDimensionId());
+            boolean checkGreographicId = !checkHaveDimension(entry.getValue().getCodesDimension(), dimensionsFilter.getGeographicDimensionId());
             for (CodeDimensionDto codeDimension : entry.getValue().getCodesDimension()) {
-                if (dimensionsFilter != null && codeDimension.getDimensionId().equals(dimensionsFilter.getGeographicDimensionId())
+                if (dimensionsFilter != null && codeDimension.getDimensionId().equals(dimensionsFilter.getGeographicDimensionId()) && dimensionsFilter.getGeographicDimensionValuesIds() != null
                         && dimensionsFilter.getGeographicDimensionValuesIds().contains(codeDimension.getCodeDimensionId())) {
                     checkGreographicId = true;
                 }
-                if (dimensionsFilter != null && codeDimension.getDimensionId().equals(dimensionsFilter.getTemporalDimensionId())
+                if (dimensionsFilter != null && codeDimension.getDimensionId().equals(dimensionsFilter.getTemporalDimensionId()) && dimensionsFilter.getTemporalDimensionValuesIds() != null
                         && dimensionsFilter.getTemporalDimensionValuesIds().contains(codeDimension.getCodeDimensionId())) {
                     checkTemporalId = true;
                 }
@@ -1632,6 +1632,15 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
         }
         return observationsFiltered;
+    }
+
+    private boolean checkHaveDimension(List<CodeDimensionDto>codesDimension, String dimensionId) {
+        for (CodeDimensionDto codeDimension : codesDimension) {
+            if (codeDimension.getDimensionId().equals(dimensionId)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void toDataAttributesWithDatasetAndDimensionAttachmenteLevel(DsdProcessorResult dsdProcessorResult, String datasetRepositoryId, List<String> datasetDimensionsOrdered,
