@@ -396,6 +396,48 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return target;
     }
 
+    @Override
+    public DimensionsFilter getDimensionFilter(Dimensions dimensions) {
+        DimensionsFilter dimensionsFilter = null;
+        if (dimensions != null) {
+            dimensionsFilter = new DimensionsFilter();
+            for (Dimension dimension : dimensions.getDimensions()) {
+                if (DimensionType.TIME_DIMENSION.equals(dimension.getType())) {
+                    dimensionsFilter.setTemporalDimensionId(dimension.getId());
+                    dimensionsFilter.setTemporalDimensionValuesIds(getTemporalDimensionsValuesIds(dimension));
+                }
+                if (DimensionType.GEOGRAPHIC_DIMENSION.equals(dimension.getType())) {
+                    dimensionsFilter.setGeographicDimensionId(dimension.getId());
+                    dimensionsFilter.setGeographicDimensionValuesIds(getGeographicDimensionsValuesIds(dimension));
+                }
+            }
+        }
+        return dimensionsFilter;
+    }
+
+
+    private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
+        List<String> dimensionsValuesIds = new ArrayList<>();
+        NonEnumeratedDimensionValues dimensionValues = ((NonEnumeratedDimensionValues) dimension.getDimensionValues());
+        if (dimensionValues != null) {
+            for (NonEnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
+                dimensionsValuesIds.add(dimensionValue.getId());
+            }
+        }
+        return dimensionsValuesIds;
+    }
+
+    private List<String> getGeographicDimensionsValuesIds(Dimension dimension) {
+        List<String> dimensionsValuesIds = new ArrayList<>();
+        EnumeratedDimensionValues dimensionValues = ((EnumeratedDimensionValues) dimension.getDimensionValues());
+        if (dimensionValues != null) {
+            for (EnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
+                dimensionsValuesIds.add(dimensionValue.getId());
+            }
+        }
+        return dimensionsValuesIds;
+    }
+
     private Map<String, List<String>> modifyDimensionsCodesSelected(Map<String, List<String>> dimensionsCodesSelectedEffective, DimensionsFilter dimensionsFilter) {
         if (dimensionsFilter == null) {
             return dimensionsCodesSelectedEffective;
