@@ -35,7 +35,8 @@
             "VARIABLE",
             "VARIABLE_ELEMENT",
             "CATEGORY_ELEMENT",
-            "CODELIST_RESTRICTION"
+            "CODELIST_RESTRICTION",
+            "STATISTICAL_RESOURCES_RESOURCE"
         ]
     }
     
