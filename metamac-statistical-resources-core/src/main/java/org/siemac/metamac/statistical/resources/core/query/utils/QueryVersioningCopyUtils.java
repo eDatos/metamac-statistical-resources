@@ -41,6 +41,7 @@ public class QueryVersioningCopyUtils {
 
         target.getSelection().clear();
         target.getSelection().addAll(copyListQuerySelectionItem(source.getSelection(), target));
+        target.getTemporalGranularities().addAll(source.getTemporalGranularities());
         copyVisualizationMetadata(source, target);
     }
 
