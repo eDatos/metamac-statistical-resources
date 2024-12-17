@@ -9,6 +9,7 @@ import static org.siemac.edatos.core.common.constants.shared.UrnConstants.URN_SI
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 
 public class StatisticalResourcesUrnParserUtils {
 
@@ -85,6 +86,21 @@ public class StatisticalResourcesUrnParserUtils {
     }
 
     // Generic methods
+
+    public static StatisticalResourceTypeEnum getResourceType(String resourceUrn) {
+
+        if (StatisticalResourcesUrnParserUtils.isQueryUrn(resourceUrn)) {
+            return StatisticalResourceTypeEnum.QUERY;
+        } else if (StatisticalResourcesUrnParserUtils.isPublicationUrn(resourceUrn)) {
+            return StatisticalResourceTypeEnum.COLLECTION;
+        } else if (StatisticalResourcesUrnParserUtils.isMultidatasetUrn(resourceUrn)) {
+            return StatisticalResourceTypeEnum.MULTIDATASET;
+        }
+        if (StatisticalResourcesUrnParserUtils.isDatasetUrn(resourceUrn)) {
+            return StatisticalResourceTypeEnum.DATASET;
+        }
+        return null;
+    }
 
     protected static boolean matches(String prefix, String urn) {
         if (StringUtils.isBlank(prefix)) {

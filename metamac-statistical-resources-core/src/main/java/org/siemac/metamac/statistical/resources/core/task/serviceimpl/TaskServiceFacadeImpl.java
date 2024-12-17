@@ -146,4 +146,10 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
         return taskservice.existsGeoCacheTasksByTaskName(ctx, taskNames);
     }
 
+    @Override
+    public void executeRecoveryGeographicalCacheTask(ServiceContext ctx, String recoveryJobKey, TaskInfoResources taskInfoResource) throws MetamacException {
+        taskservice.processRetryGeographicalCacheTask(ctx, recoveryJobKey, taskInfoResource);
+
+    }
+
 }

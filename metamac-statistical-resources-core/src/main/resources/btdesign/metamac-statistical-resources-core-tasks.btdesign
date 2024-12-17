@@ -48,6 +48,7 @@ Application DatasetsStatisticalResources {
 			scheduleGeographicCoverageCacheClearJob();	
 			"Schedule resend published dataset kafka message job"
 			scheduleResendKafkaDatasetMessageJob();
+			executeRecoveryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource) throws MetamacException; 
 			
 			
 			"Send error notification for database importation task"
@@ -98,7 +99,7 @@ Application DatasetsStatisticalResources {
             String planifyUpdateExternalGeocoverageCache(@TaskInfoResources taskInfoResources) throws MetamacException;
         	"Plannify a scheduled task to update the geographical cache for a related resources"
             String planifyUpdateGeographicalCacheRelatedResource(@TaskInfoResources taskInfoResources, boolean sendNotification) throws MetamacException;
-    		    
+                		    
             //process
             "Perform the geographical coverage cache update task"
     		processUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
@@ -108,9 +109,10 @@ Application DatasetsStatisticalResources {
     		processUpdateGeographicalCacheRelatedResourceTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;        		
     		"Perform the geographic coverage cache clear task"
     		processGeographicCoverageCacheClearTask() throws MetamacException;
-    		boolean existsGeoCacheTasksByTaskName(List<String> taskNames) throws MetamacException;
-    	
-    		
+    		"Perform a rollback in a importation task"
+    		processRetryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource);
+    	    		
+    		boolean existsGeoCacheTasksByTaskName(List<String> taskNames) throws MetamacException;    		
  		
      		"Check if exists any kind of job task in the @param resourceId"
     		boolean existsTaskForResource(String resourceId) throws MetamacException;

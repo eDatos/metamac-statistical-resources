@@ -8,6 +8,7 @@ import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.c
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForDuplicationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationAttributes;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForImportationResource;
+import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryGeographicalCache;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationAttributes;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForRecoveryImportationResource;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateExternalGeocoverageCache;
@@ -115,6 +116,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatase
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateCsvDataService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulatePxDataService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateSdmx21DataCallbackImpl;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryGeographicalCacheResourceJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportAttributesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
@@ -147,6 +149,7 @@ import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
+import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesUrnParserUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -194,6 +197,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                GROUP_EXTERNAL_CACHE                          = "externalCacheUpdate";
     public static final String                PREFIX_JOB_IMPORT_ATTRIBUTES                  = "job_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
+    public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
     public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
 
     @Autowired
@@ -1191,6 +1195,56 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     @Override
+    public void processRetryGeographicalCacheTask(ServiceContext ctx, String recoveryJobKey, TaskInfoResources taskInfoResource) {
+        Task task = null;
+        try {
+
+            if (StatisticalResourceTypeEnum.DATASET.getName().equals(taskInfoResource.getResourceType())) {
+                processRetryGeographicalCacheDatasetTask(ctx, taskInfoResource);
+
+            } else {
+                task = retrieveTaskByJob(ctx, createJobKeyForUpdateGeoCacheRelatedResources(taskInfoResource.getVersionId()).getName());
+
+                if (task == null || task.getJob().isEmpty()) {
+                    return;
+                }
+
+                taskInfoResource.setUrn(task.getExtensionPoint());
+
+                if (StatisticalResourceTypeEnum.QUERY.getName().equals(taskInfoResource.getResourceType())) {
+                    processGeoCacheResourceQuery(ctx, taskInfoResource);
+                } else if (StatisticalResourceTypeEnum.MULTIDATASET.getName().equals(taskInfoResource.getResourceType())) {
+                    processGeoCacheRelatedMultidataset(ctx, taskInfoResource);
+                } else if (StatisticalResourceTypeEnum.COLLECTION.getName().equals(taskInfoResource.getResourceType())) {
+                    processGeoCacheRelatedCollection(ctx, taskInfoResource);
+                }
+
+            }
+
+            logger.info("Deleting geographical cache recovery task starting");
+            getTaskRepository().delete(task);
+            logger.info("Deleting geographical cache recovery task finished");
+        } catch (MetamacException e) {
+            logger.error("Error while perform a recovery in geographical cache entry", e);
+        }
+
+    }
+
+    private void processRetryGeographicalCacheDatasetTask(ServiceContext ctx, TaskInfoResources taskInfoResource) throws MetamacException {
+        Task task = null;
+        task = retrieveTaskByJob(ctx, createJobKeyForUpdateGeocoverageCacheResource(taskInfoResource.getVersionId()).getName());
+
+        if (task == null || task.getJob().isEmpty()) {
+            return;
+        }
+
+        TaskInfoDataset taskInfoDataset = new TaskInfoDataset();
+        taskInfoDataset.setDatasetVersionId(taskInfoResource.getVersionId());
+        taskInfoDataset.setDatasetUrn(taskInfoResource.getUrn());
+        processUpdateGeocoverageCacheTask(ctx, task.getJob(), taskInfoDataset);
+    }
+
+    @Override
     public void processRollbackImportationAttributesTask(ServiceContext ctx, String recoveryJobKey, TaskInfoDataset taskInfoDataset) {
         Task task = null;
         try {
@@ -1540,7 +1594,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     @Override
     public void markTasksAsFailedOnApplicationStartup(ServiceContext ctx, String jobKey) throws MetamacException {
         Task task = retrieveTaskByJob(ctx, jobKey);
-        // Plannify a recovery job
+        // Schedule a recovery job
         if (jobKey.startsWith(PREFIX_JOB_IMPORT_DATA)) {
             String datasetVersionUrn = extractDatasetVersionUrnFromImportationDatasetJobKey(jobKey);
 
@@ -1550,10 +1604,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             processRollbackDuplicationTaskOnApplicationStartup(ctx, task);
         } else if (jobKey.startsWith(PREFIX_JOB_DATABASE_IMPORT_DATA)) {
             processRollbackDatabaseImportTask(ctx, task.getJob());
-        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
-            processRollbackUpdateGeocoverageCacheTask(ctx, task.getJob());
-        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES)) {
-            processRollbackUpdateGeoCacheRelatedResourcesTask(ctx, task.getJob());
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE) || jobKey.startsWith(PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES)) {
+            markGeographicalCacheTasksAsFailedOnApplicationStartup(ctx, jobKey, task);
         } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE)) {
             processRollbackUpdateExternalPublicationGeocoverageCacheTask(ctx, task.getJob());
         } else if (jobKey.startsWith(PREFIX_JOB_IMPORT_ATTRIBUTES)) {
@@ -1563,10 +1615,62 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
+    private void markGeographicalCacheTasksAsFailedOnApplicationStartup(ServiceContext ctx, String jobKey, Task task) throws MetamacException {
+        if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE)) {
+            String datasetVersionUrn = extractDatasetVersionUrnFromUpdateGeocoverageCacheJobKey(jobKey);
+            setTaskToFailed(ctx, task);
+            planifyRecoveryGeographicalCache(ctx, datasetVersionUrn, StatisticalResourceTypeEnum.DATASET);
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES)) {
+            String resourceUrn = extractUrnFromUpdateGeoCacheRelatedResourceJobKey(jobKey);
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum = StatisticalResourcesUrnParserUtils.getResourceType(resourceUrn);
+            if (statisticalResourceTypeEnum != null) {
+                setTaskToFailed(ctx, task);
+                planifyRecoveryGeographicalCache(ctx, resourceUrn, StatisticalResourcesUrnParserUtils.getResourceType(resourceUrn));
+            }
+        }
+    }
+
+    private synchronized String planifyRecoveryGeographicalCache(ServiceContext ctx, String urnResource, StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
+
+        TaskInfoResources taskInfoResources = new TaskInfoResources();
+        taskInfoResources.setUrn(urnResource);
+        taskInfoResources.setVersionId(urnResource);
+        taskInfoResources.setResourceType(statisticalResourceTypeEnum.getName());
+
+        // Job keys
+        JobKey recoveryGeoCacheJobKey = createJobKeyForRecoveryGeographicalCache(taskInfoResources.getUrn());
+        TriggerKey recoveryGeoCacheTriggerKey = createTriggerKeyForRecoveryGeographicalCache(taskInfoResources.getUrn());
+
+        // Scheduler an importation job
+        Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME); // get a reference to a scheduler
+
+        // put triggers in group named after the cluster node instance just to distinguish (in logging) what was scheduled from where
+        // @formatter:off
+        JobDetail recoveryImportJob = newJob(RecoveryGeographicalCacheResourceJob.class)
+                                        .withIdentity(recoveryGeoCacheJobKey)
+                                        .usingJobData(RecoveryGeographicalCacheResourceJob.RESOURCE_VERSION_ID, taskInfoResources.getVersionId())
+                                        .usingJobData(RecoveryImportDatasetJob.USER, ctx.getUserId())
+                                        .usingJobData(RecoveryGeographicalCacheResourceJob.SEND_NOTIFICATION, true)
+                                        .usingJobData(RecoveryGeographicalCacheResourceJob.RESOURCE_URN, taskInfoResources.getUrn())
+                                        .usingJobData(RecoveryGeographicalCacheResourceJob.RESOURCE_TYPE, taskInfoResources.getResourceType())
+                                        .requestRecovery()
+                                        .build();
+        // @formatter:on
+
+        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryGeoCacheTriggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+
+        try {
+            sched.scheduleJob(recoveryImportJob, recoveryImportTrigger);
+        } catch (SchedulerException e) {
+            logger.error("PlannifyRecoveryGeoCache: the recovery geo cache entry with key " + recoveryGeoCacheJobKey.getName() + " has failed", e);
+        }
+
+        return recoveryGeoCacheJobKey.getName();
+    }
+
     private TaskInfoDataset setDatasetDataToPlanifyRecovery(ServiceContext ctx, Task task, String datasetVersionUrn) throws MetamacException {
         // Update
-        task.setStatus(TaskStatusTypeEnum.FAILED);
-        updateTask(ctx, task);
+        setTaskToFailed(ctx, task);
 
         String datasetUrn = retrieveDatasetUrn(ctx, datasetVersionUrn);
 
@@ -1574,6 +1678,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         recoveryTaskInfo.setDatasetVersionId(datasetVersionUrn);
         recoveryTaskInfo.setDatasetUrn(datasetUrn);
         return recoveryTaskInfo;
+    }
+
+    private void setTaskToFailed(ServiceContext ctx, Task task) throws MetamacException {
+        // Update
+        task.setStatus(TaskStatusTypeEnum.FAILED);
+        updateTask(ctx, task);
     }
 
     private void processRollbackUpdateGeocoverageCacheTask(ServiceContext ctx, String jobKey) throws MetamacException {
@@ -1669,6 +1779,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return new JobKey(createJobNameForRecoveryImportationAttributes(resourceId), GROUP_IMPORTATION);
     }
 
+    private JobKey createJobKeyForRecoveryGeographicalCache(String resourceId) {
+        return new JobKey(createJobNameForRecoveryGeographicalCache(resourceId), GROUP_IMPORTATION);
+    }
+
     private JobKey createJobKeyForDuplicationResource(String resourceId) {
         return new JobKey(createJobNameForDuplicationResource(resourceId), GROUP_IMPORTATION);
     }
@@ -1703,6 +1817,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private TriggerKey createTriggerKeyForRecoveryImportationAttributes(String datasetId) {
         return new TriggerKey(createJobNameForRecoveryImportationAttributes(datasetId), GROUP_IMPORTATION);
+    }
+
+    private TriggerKey createTriggerKeyForRecoveryGeographicalCache(String datasetId) {
+        return new TriggerKey(createJobNameForRecoveryGeographicalCache(datasetId), GROUP_IMPORTATION);
     }
 
     private TriggerKey createTriggerKeyForDuplicationDataset(String datasetId) {
@@ -2474,14 +2592,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         String resourceId = params[1];
         PublicationVersion lastVersionPublication = publicationService.getPublicationLastVersionPublished(ctx, agencyId, resourceId);
         return lastVersionPublication != null && lastVersionPublication.getSiemacMetadataStatisticalResource().getUrn().equals(publicationVersionUrn);
-    }
-
-    /*
-     * if cache is manually updated, multidataset can be in draft and this version is lastversion. For this case, it is necessary to calculate if this multidataset is last published version
-     */
-    private boolean isMultidatasetLastVersionPublished(ServiceContext ctx, String multidatasetVersionUrn) throws MetamacException {
-        MultidatasetVersion lastVersionMultidataset = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(ctx, multidatasetVersionUrn);
-        return lastVersionMultidataset != null && lastVersionMultidataset.getSiemacMetadataStatisticalResource().getUrn().equals(multidatasetVersionUrn);
     }
 
     /*

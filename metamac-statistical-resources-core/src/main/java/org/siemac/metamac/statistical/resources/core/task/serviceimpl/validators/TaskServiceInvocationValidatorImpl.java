@@ -267,4 +267,8 @@ public class TaskServiceInvocationValidatorImpl {
     public static void checkExistsGeoCacheTasksByTaskName(List<String> taskNames, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(taskNames, ServiceExceptionParameters.TASK__JOB, exceptions);
     }
+
+    public static void checkProcessRetryGeographicalCacheTask(String jobKey, TaskInfoResources taskInfoResource, List<MetamacExceptionItem> exceptions) throws MetamacException {
+        StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_RESOURCES_JOB_KEY, exceptions);
+    }
 }
