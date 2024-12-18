@@ -74,7 +74,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQuery() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, null, null);
 
         assertEquals(QUERY_1_CODE, query.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
