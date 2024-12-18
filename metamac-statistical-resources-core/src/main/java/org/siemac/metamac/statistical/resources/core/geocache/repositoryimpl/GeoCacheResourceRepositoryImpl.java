@@ -53,7 +53,9 @@ public class GeoCacheResourceRepositoryImpl extends GeoCacheResourceRepositoryBa
 
             geoCacheResourceIds.add(getStringFromBigInteger((BigInteger) cols[0]));
 
-            variableElementId.add(getStringFromBigInteger((BigInteger) cols[1]));
+            if (cols[1] != null) {
+                variableElementId.add(getStringFromBigInteger((BigInteger) cols[1]));
+            }
 
             if (cols[2] != null) {
                 internationalStrings.add(getStringFromBigInteger((BigInteger) cols[2]));
@@ -170,14 +172,15 @@ public class GeoCacheResourceRepositoryImpl extends GeoCacheResourceRepositoryBa
         return sqlSentence + "(" + String.join(", ", partialParametersIn) + ")";
     }
 
+    // multidatasets do not have territories so the join must be "left"
     private List<Object> findNoActivatedElements() {
 
         //@formatter:off
           Query query = getEntityManager().createNativeQuery(
                   "SELECT a.id, t.variable_element_fk, a.title_fk, b.title_fk as variable_element_title_fk "
                 + "FROM tb_geo_cache_resource a "
-                + "INNER JOIN tb_territories_by_geo_cache_resource t ON t.geo_cache_resource_fk = a.id "
-                + "INNER JOIN tb_external_items b ON t.variable_element_fk = b.id "
+                + "LEFT JOIN tb_territories_by_geo_cache_resource t ON t.geo_cache_resource_fk = a.id "
+                + "LEFT JOIN tb_external_items b ON t.variable_element_fk = b.id "
                 + "WHERE  a.IS_ACTIVATED = false");
           //@formatter:on
         return query.getResultList();

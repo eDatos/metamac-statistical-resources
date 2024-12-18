@@ -77,7 +77,8 @@ public class RecoveryGeographicalCacheResourceJob implements Job {
         } finally {
             if (sendNotification) {
                 MetamacException metamacException = MetamacExceptionBuilder.builder().withPrincipalException(ServiceExceptionType.TASKS_ERROR_SERVER_DOWN, jobKey).build();
-                getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.CANCEL_IN_PROGRESS_TASKS_WHILE_SERVER_SHUTDOWN, metamacException);
+                // user null to send administrators.
+                getNoticesRestInternalService().createErrorBackgroundNotification(null, ServiceNoticeAction.CANCEL_IN_PROGRESS_TASKS_WHILE_SERVER_SHUTDOWN, metamacException);
             }
         }
     }

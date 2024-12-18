@@ -195,6 +195,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_TRIGGER_RECOVERY_IMPORT_DATA           = "trigger_recoveryimportdata_";
     public static final String                GROUP_IMPORTATION                             = "importation";
     public static final String                GROUP_EXTERNAL_CACHE                          = "externalCacheUpdate";
+    public static final String                GROUP_GEOGRAPHICAL_CACHE                      = "geographicalCache";
     public static final String                PREFIX_JOB_IMPORT_ATTRIBUTES                  = "job_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
@@ -1656,8 +1657,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                                         .requestRecovery()
                                         .build();
         // @formatter:on
-
-        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryGeoCacheTriggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+        // Delay to wait the server load all apps in startup.
+        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryGeoCacheTriggerKey).startAt(futureDate(600, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
 
         try {
             sched.scheduleJob(recoveryImportJob, recoveryImportTrigger);
@@ -1780,7 +1781,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private JobKey createJobKeyForRecoveryGeographicalCache(String resourceId) {
-        return new JobKey(createJobNameForRecoveryGeographicalCache(resourceId), GROUP_IMPORTATION);
+        return new JobKey(createJobNameForRecoveryGeographicalCache(resourceId), GROUP_GEOGRAPHICAL_CACHE);
     }
 
     private JobKey createJobKeyForDuplicationResource(String resourceId) {
@@ -1820,7 +1821,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private TriggerKey createTriggerKeyForRecoveryGeographicalCache(String datasetId) {
-        return new TriggerKey(createJobNameForRecoveryGeographicalCache(datasetId), GROUP_IMPORTATION);
+        return new TriggerKey(createJobNameForRecoveryGeographicalCache(datasetId), GROUP_GEOGRAPHICAL_CACHE);
     }
 
     private TriggerKey createTriggerKeyForDuplicationDataset(String datasetId) {

@@ -8,6 +8,12 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 10.X.0 a 10.X.X
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.1.0/db]
+
+* Se añade nuevo topic JAXI_COLLECTIONS_PUBLICATIONS para recibir los mensajes con los metadatos de publicaciones (colecciones) de JAXI. El schema-registry se ha guardado en la siguiente ruta [etc/kafka/JAXI_COLLECTIONS_PUBLICATIONS-value.json] No es necesario crearlo manualmente. Al llegar el primer mensaje al topic se crea automáticamente.
+
+
 ## 10.19.0 a 10.20.0
 
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
@@ -110,6 +116,7 @@ Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orde
 
 ## 9.0.3 a 9.1.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/9.0.3/db]
+     
 
 ## 8.4.0 a 9.0.0
 * **BREAKING CHANGE.** Se quita el formato XLS ya que es un formato con bastantes limitaciones y no se debe usar. Se usa XLSX
