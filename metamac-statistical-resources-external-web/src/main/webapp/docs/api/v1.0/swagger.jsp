@@ -2927,8 +2927,7 @@
                   "name":"lang",
                   "in":"query",
                   "type":"string",
-                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.lang.description']}",
-                  "required":true
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.get.parameters.lang.description']}"
                },
                {
                   "name":"limit",
