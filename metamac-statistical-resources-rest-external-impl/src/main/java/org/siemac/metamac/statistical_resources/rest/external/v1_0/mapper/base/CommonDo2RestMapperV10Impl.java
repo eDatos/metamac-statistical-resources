@@ -443,10 +443,10 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             return dimensionsCodesSelectedEffective;
         }
 
-        Map<String, List<String>> dimensionsCodesSelectedEffectiveFinal = new HashMap<String, List<String>>();
+        Map<String, List<String>> dimensionsCodesSelectedEffectiveFinal = new HashMap<>();
         for (Map.Entry<String, List<String>> entry : dimensionsCodesSelectedEffective.entrySet()) {
             if (entry.getKey().equals(dimensionsFilter.getTemporalDimensionId())) {
-                dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getTemporalDimensionId(), dimensionsFilter.getTemporalDimensionValuesIds());
+                dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getTemporalDimensionId(), oderDimensionValues(dimensionsFilter.getTemporalDimensionValuesIds(), entry.getValue()));
             } else if (entry.getKey().equals(dimensionsFilter.getGeographicDimensionId())) {
                 dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getGeographicDimensionId(), dimensionsFilter.getGeographicDimensionValuesIds());
             } else {
@@ -454,6 +454,16 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
         }
         return dimensionsCodesSelectedEffectiveFinal;
+    }
+
+    private List<String> oderDimensionValues(List<String> dimensionFilterDimensionValues, List<String> dimensionsCodesSelectedEffectiveDimensionsValues) {
+        List<String> dimensionsValuesOrdered = new ArrayList<>();
+        for (String dimensionsCodesSelectedEffectiveDimensionsValue : dimensionsCodesSelectedEffectiveDimensionsValues) {
+            if (dimensionFilterDimensionValues.contains(dimensionsCodesSelectedEffectiveDimensionsValue)) {
+                dimensionsValuesOrdered.add(dimensionsCodesSelectedEffectiveDimensionsValue);
+            }
+        }
+        return dimensionsValuesOrdered;
     }
 
     @Override
