@@ -1,5 +1,11 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base;
 
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.escapeValueToData;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
+import static org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants.KEY_DIMENSIONS_SEPARATOR;
+import static org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants.SERVICE_CONTEXT;
+
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -135,10 +141,10 @@ import org.siemac.metamac.statistical_resources.rest.external.invocation.CommonM
 import org.siemac.metamac.statistical_resources.rest.external.invocation.SrmRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.StatisticalOperationsRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor;
-import org.siemac.metamac.statistical_resources.rest.external.service.utils.LookupUtil;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdAttribute;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdComponentType;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
+import org.siemac.metamac.statistical_resources.rest.external.service.utils.LookupUtil;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
