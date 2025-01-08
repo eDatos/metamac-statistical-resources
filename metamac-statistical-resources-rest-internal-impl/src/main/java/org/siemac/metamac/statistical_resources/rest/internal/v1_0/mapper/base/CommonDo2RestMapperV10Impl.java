@@ -476,12 +476,22 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             if (entry.getKey().equals(dimensionsFilter.getTemporalDimensionId())) {
                 dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getTemporalDimensionId(), oderDimensionValues(dimensionsFilter.getTemporalDimensionValuesIds(), entry.getValue()));
             } else if (entry.getKey().equals(dimensionsFilter.getGeographicDimensionId())) {
-                dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getGeographicDimensionId(), dimensionsFilter.getGeographicDimensionValuesIds());
+                dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getGeographicDimensionId(), filterGeographicDimensionsId(dimensionsFilter.getGeographicDimensionValuesIds(), entry.getValue()));
             } else {
                 dimensionsCodesSelectedEffectiveFinal.put(entry.getKey(), entry.getValue());
             }
         }
         return dimensionsCodesSelectedEffectiveFinal;
+    }
+
+    private List<String> filterGeographicDimensionsId(List<String> dimensionFilterGeographicDimensionsIds, List<String> dimensionsCodesSelectedEffective) {
+        List<String> geographicDimensionsIDFiltred = new ArrayList<>();
+        for (String dimensionFilterGeographicDimensionsId : dimensionFilterGeographicDimensionsIds) {
+            if (dimensionsCodesSelectedEffective.contains(dimensionFilterGeographicDimensionsId)) {
+                geographicDimensionsIDFiltred.add(dimensionFilterGeographicDimensionsId);
+            }
+        }
+        return geographicDimensionsIDFiltred;
     }
 
     private List<String> oderDimensionValues(List<String> dimensionFilterDimensionValues, List<String> dimensionsCodesSelectedEffectiveDimensionsValues) {
