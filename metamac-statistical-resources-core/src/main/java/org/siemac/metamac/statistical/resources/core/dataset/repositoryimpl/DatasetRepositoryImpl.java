@@ -48,13 +48,13 @@ public class DatasetRepositoryImpl extends DatasetRepositoryBase {
                         "from Dataset ds " + 
                         "join ds.versions version " + 
                         "join version.datasources datasource " + 
-                        "where datasource.sourceName = :sourceNameExpr";
+                        "where lower(datasource.sourceName) = :sourceNameExpr";
         // @formatter:on
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put("sourceNameExpr", sourceName);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("sourceNameExpr", sourceName.toLowerCase());
         List<Dataset> result = findByQuery(query, parameters);
 
-        if (result.size() == 0) {
+        if (result.isEmpty()) {
             return null;
         }
         return result.get(0).getIdentifiableStatisticalResource().getUrn();
