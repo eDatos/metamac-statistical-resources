@@ -61,6 +61,7 @@ import org.siemac.metamac.rest.utils.RestUtils;
 import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -79,6 +80,8 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationa
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
@@ -176,6 +179,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     @Autowired
     private MultidatasetService                     multidatasetService;
+
+    @Autowired
+    private PublicationService                     publicationService;
 
     @Autowired
     private TranslationService                      translationService;
@@ -383,14 +389,16 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages) {
+    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
+            List<DimensionOrder> stubDimensions) {
         if (source == null) {
             return null;
         }
         DataStructureDefinition target = new DataStructureDefinition();
         toResourceExternalItemSrm(source, target, selectedLanguages);
-        target.setHeading(toDimensionsId(dataStructure.getHeading()));
-        target.setStub(toDimensionsId(dataStructure.getStub()));
+        target.setHeading(
+                checkDatasetHaveHeadingAndStubDimensions(headingDimensions, stubDimensions) ? toDimensionsIdByDataset(headingDimensions, dataStructure) : toDimensionsId(dataStructure.getHeading()));
+        target.setStub(checkDatasetHaveHeadingAndStubDimensions(headingDimensions, stubDimensions) ? toDimensionsIdByDataset(stubDimensions, dataStructure) : toDimensionsId(dataStructure.getStub()));
         target.setAutoOpen(dataStructure.isAutoOpen());
         target.setShowNullValuesByDefault(dataStructure.isShowNullValuesByDefault());
         target.setShowZeroValuesByDefault(dataStructure.isShowZeroValuesByDefault());
@@ -774,6 +782,10 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 MultidatasetVersion multidatasetVersion = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(SERVICE_CONTEXT,
                         source.getMultidataset().getIdentifiableStatisticalResource().getUrn());
                 return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null);
+            case PUBLICATION:
+                PublicationVersion publicationVersion = publicationService.retrieveLatestPublishedPublicationVersionByPublicationUrn(SERVICE_CONTEXT,
+                        source.getPublication().getIdentifiableStatisticalResource().getUrn());
+                return collectionsDo2RestMapper.toResource(publicationVersion, selectedLanguages, null);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -1532,7 +1544,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private DimensionsId toDimensionsId(org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionReferences sources) {
         if (sources == null) {
-            return null;
+            DimensionsId dimensionsId = new DimensionsId();
+            dimensionsId.setTotal(BigInteger.valueOf(0L));
+            return dimensionsId;
         }
         DimensionsId targets = new DimensionsId();
         for (String source : sources.getDimensions()) {
@@ -1540,6 +1554,33 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         targets.setTotal(BigInteger.valueOf(targets.getDimensionIds().size()));
         return targets;
+    }
+
+    private boolean checkDatasetHaveHeadingAndStubDimensions(List<DimensionOrder> headingDimensions,
+            List<DimensionOrder> stubDimensions) {
+        return ((stubDimensions != null && !stubDimensions.isEmpty())
+                || (headingDimensions != null && !headingDimensions.isEmpty()));
+    }
+
+    private DimensionsId toDimensionsIdByDataset(List<DimensionOrder> dimensionsOrders, DataStructure dataStructure) {
+        if (dimensionsOrders == null) {
+            return null;
+        }
+        DimensionsId targets = new DimensionsId();
+        for (DimensionOrder source : dimensionsOrders) {
+            targets.getDimensionIds().add(getDimensionName(source.getUrnDimComponentFk(), dataStructure.getDataStructureComponents().getDimensions()));
+        }
+        targets.setTotal(BigInteger.valueOf(targets.getDimensionIds().size()));
+        return targets;
+    }
+
+    private String getDimensionName(String urn, org.siemac.metamac.rest.structural_resources.v1_0.domain.Dimensions dimensions) {
+        for (org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionBase dimension : dimensions.getDimensions()) {
+            if (dimension.getUrn().equals(urn)) {
+                return dimension.getId();
+            }
+        }
+        return "";
     }
 
     private void toCommonMetadata(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) {

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 		<artifactId>metamac-statistical-resources-parent</artifactId>
-		<version>9.0.4-SNAPSHOT</version>
+		<version>10.3.2-SNAPSHOT</version>
 		<relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
 	</parent>
 
@@ -64,5 +64,39 @@
 
 	<build>
 		<finalName>statistical-resources-${project.version}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-resources</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/classes</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>application.properties</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                    <filtering>false</filtering>
+                                    <excludes>
+                                        <exclude>application.properties</exclude>
+                                    </excludes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
 	</build>
 </project>

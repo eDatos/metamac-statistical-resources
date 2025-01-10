@@ -40,6 +40,8 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacM
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataPublicationDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataDescriptorsForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionMainCoveragesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
@@ -71,6 +73,8 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
     private DatasetClassDescriptorsForm                              classDescriptorsForm;
     private DatasetResourceRelationDescriptorsForm                   resourceRelationDescriptorsForm;
     private DatasetPublicationDescriptorsForm                        publicationDescriptorsForm;
+    private VisualizationMetadataDescriptorsForm                     visualizationMetadataDescriptorsForm;
+    private VisualizationMetadataEditionForm                         visualizationMetadataEditionForm;
     private LifeCycleResourceLifeCycleForm                           lifeCycleForm;
     private DatasetVersionForm                                       versionForm;
     private SiemacMetadataIntellectualPropertyDescriptorsForm        intellectualPropertyDescriptorsForm;
@@ -157,6 +161,10 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
                 publicationDescriptorsForm.setTranslationsShowed(translationsShowed);
                 publicationDescriptorsEditionForm.setTranslationsShowed(translationsShowed);
 
+                // Visualization metadata descriptors
+                visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
+                mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
+
                 lifeCycleForm.setTranslationsShowed(translationsShowed);
                 lifeCycleEditionForm.setTranslationsShowed(translationsShowed);
 
@@ -209,14 +217,14 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().sendToProductionValidation(datasetVersionDto);
+                getUiHandlers().sendToProductionValidation(getDatasetVersionDto());
             }
         });
         mainFormLayout.getDiffusionValidationButton().addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().sendToDiffusionValidation(datasetVersionDto);
+                getUiHandlers().sendToDiffusionValidation(getDatasetVersionDto());
             }
         });
         mainFormLayout.getRejectValidationButton().addClickHandler(new ClickHandler() {
@@ -232,7 +240,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
                     public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                         String reasonOfRejection = window.getReasonOfRejection();
                         window.markForDestroy();
-                        getUiHandlers().rejectValidation(datasetVersionDto, reasonOfRejection);
+                        getUiHandlers().rejectValidation(getDatasetVersionDto(), reasonOfRejection);
                     }
                 });
             }
@@ -242,7 +250,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().publish(datasetVersionDto);
+                getUiHandlers().publish(getDatasetVersionDto());
             }
         });
 
@@ -272,7 +280,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
                     @Override
                     public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                         if (versionWindow.validateForm()) {
-                            getUiHandlers().version(datasetVersionDto, versionWindow.getSelectedVersion());
+                            getUiHandlers().version(getDatasetVersionDto(), versionWindow.getSelectedVersion());
                             versionWindow.destroy();
                         }
                     }
@@ -294,7 +302,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
-                getUiHandlers().copyDataset(datasetVersionDto);
+                getUiHandlers().copyDataset(getDatasetVersionDto());
             }
         });
 
@@ -343,6 +351,10 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         // Publication descriptors
         publicationDescriptorsForm = new DatasetPublicationDescriptorsForm();
         mainFormLayout.addViewCanvas(publicationDescriptorsForm);
+
+        // Visualization metadata descriptors
+        visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
+        mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
 
         // Life cycle
         lifeCycleForm = new LifeCycleResourceLifeCycleForm();
@@ -394,6 +406,10 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         publicationDescriptorsEditionForm = new DatasetPublicationDescriptorsEditionForm();
         mainFormLayout.addEditionCanvas(publicationDescriptorsEditionForm);
 
+        // Visualization metadata descriptors
+        visualizationMetadataEditionForm = new VisualizationMetadataEditionForm();
+        mainFormLayout.addEditionCanvas(visualizationMetadataEditionForm);
+
         // Life cycle
         lifeCycleEditionForm = new LifeCycleResourceLifeCycleForm();
         mainFormLayout.addEditionCanvas(lifeCycleEditionForm);
@@ -420,8 +436,22 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
         if (ProcStatusEnum.PUBLISHED.equals(datasetVersionDto.getProcStatus())) {
             getUiHandlers().retrieveMainCoveragesForDatasetVersion(datasetVersionDto.getUrn());
         }
-
         mainFormLayout.markForRedraw();
+    }
+
+    @Override
+    public void setMetadataVisualization(DatasetVersionDto datasetDto) {
+        //Metadata visualization
+        visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(datasetDto.getHeadingDimensions(), datasetDto.getStubDimensions());
+        visualizationMetadataEditionForm.setSiemacMetadataStatisticalResourceDto(datasetDto.getHeadingDimensions(), datasetDto.getStubDimensions());
+        cleanMetadataVisualization();
+    }
+
+    private void cleanMetadataVisualization() {
+        if (datasetVersionDto.getHeadingDimensions() != null && datasetVersionDto.getStubDimensions() != null) {
+            datasetVersionDto.getHeadingDimensions().clear();
+            datasetVersionDto.getStubDimensions().clear();
+        }
     }
 
     private void setDatasetViewMode(DatasetVersionDto datasetDto) {
@@ -549,6 +579,8 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
         // Intellectual property descriptors
         datasetVersionDto = (DatasetVersionDto) intellectualPropertyDescriptorsEditionForm.getSiemacMetadataStatisticalResourceDto(datasetVersionDto);
+
+        datasetVersionDto = visualizationMetadataEditionForm.getSiemacMetadataStatisticalResourceDto(datasetVersionDto);
 
         return datasetVersionDto;
     }

@@ -9,5 +9,5 @@
 	<entry key="metamac.statistical_resources.data_import.cron_expression">0 0 0 * * ?</entry>
 	
 	<entry key="metamac.statistical_resources.bbbd.data_views_role">STAT_RESOURCES_DATA_ROLE_TEST</entry>
-
+    <entry key="metamac.statistical_resources.rest.api_key">niQPxZJ656do4NhiptWLsz1DFFzyKvSAbamyrWsq8FC</entry>
 </properties>
