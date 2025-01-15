@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.server.listener;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskServiceFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class JobsSchedulerListener implements ApplicationListener<ContextRefresh
         schedulingDatabaseDatasetPollingJob();
         schedulingGeographicCoverageCacheClearJob();
         schedulingResendKafkaDatasetMessageJob();
+        markAllInProgressTaskToFailed();
     }
 
     private void schedulingDatabaseDatasetPollingJob() {
@@ -40,4 +42,13 @@ public class JobsSchedulerListener implements ApplicationListener<ContextRefresh
         taskServiceFacade.scheduleResendKafkaDatasetMessageJob(ctx);
     }
 
+    private void markAllInProgressTaskToFailed() {
+        ServiceContext ctx = new ServiceContext("Metamac", "Tasks", "Metamac");
+        try {
+            logger.info("Launching markAllInProgressTaskToFailed in order to recover all failed and in progress tasks");
+            taskServiceFacade.markAllInProgressTaskToFailed(ctx);
+        } catch (MetamacException e) {
+            logger.error("Impossible to mark old jobs with running state to failed state.", e);
+        }
+    }
 }
