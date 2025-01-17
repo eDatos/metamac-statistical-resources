@@ -1200,6 +1200,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         Task task = null;
         try {
 
+            logger.info("Starting geographical cache recovery task starting for {}", taskInfoResource.getUrn());
+
             if (StatisticalResourceTypeEnum.DATASET.getName().equals(taskInfoResource.getResourceType())) {
                 processRetryGeographicalCacheDatasetTask(ctx, taskInfoResource);
 
@@ -1222,9 +1224,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
             }
 
-            logger.info("Deleting geographical cache recovery task starting");
             getTaskRepository().delete(task);
-            logger.info("Deleting geographical cache recovery task finished");
+
+            logger.info("End geographical cache recovery task  for {} ", taskInfoResource.getUrn());
         } catch (MetamacException e) {
             logger.error("Error while perform a recovery in geographical cache entry", e);
         }
@@ -1631,7 +1633,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
-    private synchronized String planifyRecoveryGeographicalCache(ServiceContext ctx, String urnResource, StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
+    private synchronized String planifyRecoveryGeographicalCache(ServiceContext ctx, String urnResource, StatisticalResourceTypeEnum statisticalResourceTypeEnum) throws MetamacException {
+
+        int triggerDateInSeconds = configurationService.retrieveQuartzTriggerDelayForRecoveryGeoCache();
 
         TaskInfoResources taskInfoResources = new TaskInfoResources();
         taskInfoResources.setUrn(urnResource);
@@ -1651,14 +1655,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                                         .withIdentity(recoveryGeoCacheJobKey)
                                         .usingJobData(RecoveryGeographicalCacheResourceJob.RESOURCE_VERSION_ID, taskInfoResources.getVersionId())
                                         .usingJobData(RecoveryImportDatasetJob.USER, ctx.getUserId())
-                                        .usingJobData(RecoveryGeographicalCacheResourceJob.SEND_NOTIFICATION, true)
+                                        .usingJobData(RecoveryGeographicalCacheResourceJob.SEND_NOTIFICATION, false)
                                         .usingJobData(RecoveryGeographicalCacheResourceJob.RESOURCE_URN, taskInfoResources.getUrn())
                                         .usingJobData(RecoveryGeographicalCacheResourceJob.RESOURCE_TYPE, taskInfoResources.getResourceType())
                                         .requestRecovery()
                                         .build();
         // @formatter:on
         // Delay to wait the server load all apps in startup.
-        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryGeoCacheTriggerKey).startAt(futureDate(600, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryGeoCacheTriggerKey).startAt(futureDate(triggerDateInSeconds, IntervalUnit.SECOND)).withSchedule(simpleSchedule())
+                .build();
 
         try {
             sched.scheduleJob(recoveryImportJob, recoveryImportTrigger);

@@ -23,6 +23,8 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
 
     public Integer retrieveQuartzTriggerDelayForGeoCacheUpdate() throws MetamacException;
 
+    public Integer retrieveQuartzTriggerDelayForRecoveryGeoCache() throws MetamacException;
+
     public boolean retriveDatabaseDatasetImportJobIsEnabled();
 
     public String retrieveDbDataViewsRole() throws MetamacException;
