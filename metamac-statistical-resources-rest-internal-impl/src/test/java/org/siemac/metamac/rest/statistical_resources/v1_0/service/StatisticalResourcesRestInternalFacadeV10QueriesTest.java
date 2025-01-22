@@ -74,7 +74,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQuery() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, null, null);
 
         assertEquals(QUERY_1_CODE, query.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
@@ -116,7 +116,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
     @Test
     public void testRetrieveQueryWithDimensions() throws Exception {
         {
-            Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, buildDimParamsForQuery_1(), null);
+            Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, buildDimParamsForQuery_1(), null, null);
 
             assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
 
@@ -134,7 +134,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
             assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR)[0], "421");
         }
         {
-            Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, buildRepresentationsParamsForQuery_1());
+            Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, defaultLanguages, null, null, buildRepresentationsParamsForQuery_1(), null);
 
             assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query1", query.getUrn());
 
@@ -175,7 +175,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryWithDatasetGlobal() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, defaultLanguages, null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, defaultLanguages, null, null, null, null);
 
         assertEquals(QUERY_2_CODE, query.getId());
         assertEquals("urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=agency1:query2", query.getUrn());
@@ -184,7 +184,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryAnotherLanguage() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, Arrays.asList("en"), null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, Arrays.asList("en"), null, null, null, null);
 
         MetamacRestAsserts.assertEqualsInternationalString("es", "title-query1 en Espanol", "en", "title-query1 in English", query.getName());
     }
@@ -213,7 +213,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryFixed() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, null, null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_1_CODE, null, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -308,7 +308,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryFixedChangingParentVisualisations() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_4_CODE, null, null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_4_CODE, null, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -377,7 +377,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryAutoincremental() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, null, null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_2_CODE, null, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -429,7 +429,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
 
     @Test
     public void testRetrieveQueryLatestData() throws Exception {
-        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_3_CODE, null, null, null, null);
+        Query query = statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(AGENCY_1, QUERY_3_CODE, null, null, null, null, null);
 
         // Metadata
         assertEquals(4, query.getMetadata().getDimensions().getDimensions().size());
@@ -479,7 +479,7 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
         String agencyID = AGENCY_1;
         String resourceID = NOT_EXISTS;
         try {
-            statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(agencyID, resourceID, null, null, null, null);
+            statisticalResourcesRestInternalFacadeClientXml.retrieveQuery(agencyID, resourceID, null, null, null, null, null);
         } catch (ServerWebApplicationException e) {
             assertEquals(Status.NOT_FOUND.getStatusCode(), e.getStatus());
 
