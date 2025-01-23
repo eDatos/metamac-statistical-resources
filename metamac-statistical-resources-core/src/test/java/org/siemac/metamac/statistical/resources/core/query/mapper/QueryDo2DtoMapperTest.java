@@ -42,7 +42,7 @@ public class QueryDo2DtoMapperTest extends StatisticalResourcesBaseTest {
     @MetamacMock(QUERY_VERSION_01_WITH_SELECTION_NAME)
     public void testQueryDo2Dto() throws MetamacException {
         QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME);
-        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(getServiceContextWithoutPrincipal(), expected);
+        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(expected);
         assertEqualsQueryVersion(expected, actual);
     }
 
@@ -50,7 +50,7 @@ public class QueryDo2DtoMapperTest extends StatisticalResourcesBaseTest {
     @MetamacMock(QUERY_VERSION_15_PUBLISHED_NAME)
     public void testQueryDo2DtoProcStatusPublishedVisible() throws MetamacException {
         QueryVersion expected = queryVersionMockFactory.retrieveMock(QUERY_VERSION_15_PUBLISHED_NAME);
-        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(getServiceContextWithoutPrincipal(), expected);
+        QueryVersionDto actual = queryDo2DtoMapper.queryVersionDoToDto(expected);
         assertEquals(ProcStatusEnum.PUBLISHED, actual.getProcStatus());
     }
 

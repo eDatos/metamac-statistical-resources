@@ -39,7 +39,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
     private DatasetVersionRepository datasetVersionRepository;
 
     @Autowired
-    private SrmRestInternalService srmRestInternalService;
+    private SrmRestInternalService   srmRestInternalService;
 
     @Autowired
     private TaskService              taskService;
@@ -82,12 +82,12 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
     }
 
     @Override
-    public QueryVersionDto queryVersionDoToDto(ServiceContext ctx, QueryVersion source) throws MetamacException {
+    public QueryVersionDto queryVersionDoToDto(QueryVersion source) throws MetamacException {
         if (source == null) {
             return null;
         }
         QueryVersionDto target = new QueryVersionDto();
-        queryVersionDoToDto(ctx, source, target);
+        queryVersionDoToDto(source, target);
         return target;
     }
 
@@ -139,7 +139,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
 
         return target;
     }
-    private QueryVersionDto queryVersionDoToDto(ServiceContext ctx, QueryVersion source, QueryVersionDto target) throws MetamacException {
+    private QueryVersionDto queryVersionDoToDto(QueryVersion source, QueryVersionDto target) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -191,10 +191,9 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         }
 
         DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(dsdUrn);
-        if (source.getStubDimensions() != null && !source.getStubDimensions().isEmpty()
-                || (source.getHeadingDimensions() != null && !source.getHeadingDimensions().isEmpty())) {
-            target.getHeadingDimensions().addAll(getDatasetDimension(source.getHeadingDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
-            target.getStubDimensions().addAll(getDatasetDimension(source.getStubDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
+        if (source.getStubDimensions() != null && !source.getStubDimensions().isEmpty() || (source.getHeadingDimensions() != null && !source.getHeadingDimensions().isEmpty())) {
+            target.getHeadingDimensions().addAll(getDatasetDimension(source.getHeadingDimensions(), dsd.getDataStructureComponents().getDimensions().getDimensions()));
+            target.getStubDimensions().addAll(getDatasetDimension(source.getStubDimensions(), dsd.getDataStructureComponents().getDimensions().getDimensions()));
         } else {
             if (dsd != null && dsd.getStub() != null && dsd.getStub().getDimensions() != null) {
                 target.getStubDimensions().addAll(getDsdDimensions(dsd, dsd.getStub().getDimensions()));
@@ -242,7 +241,6 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         }
         return null;
     }
-
 
     private DimensionBase getDimensionByUrn(String urn, List<DimensionBase> dimensions) {
         for (DimensionBase dimensionBase : dimensions) {

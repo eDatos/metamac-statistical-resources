@@ -17,7 +17,7 @@ public interface QueryDo2DtoMapper {
     public RelatedResourceDto queryVersionDoToQueryRelatedResourceDto(QueryVersion source) throws MetamacException;
 
     // Query version
-    public QueryVersionDto queryVersionDoToDto(ServiceContext ctx, QueryVersion source) throws MetamacException;
+    public QueryVersionDto queryVersionDoToDto(QueryVersion source) throws MetamacException;
     public QueryVersionBaseDto queryVersionDoToBaseDto(ServiceContext ctx, QueryVersion item) throws MetamacException;
     public List<QueryVersionBaseDto> queryVersionDoListToDtoList(ServiceContext ctx, List<QueryVersion> sources) throws MetamacException;
     public List<PurposeDto> purposeDoListToDtoList(List<Purpose> sources) throws MetamacException;

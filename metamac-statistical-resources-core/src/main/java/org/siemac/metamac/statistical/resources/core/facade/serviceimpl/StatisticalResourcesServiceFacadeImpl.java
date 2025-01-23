@@ -312,7 +312,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         QueriesSecurityUtils.canRetrieveQueryVersionByUrn(ctx, queryVersion);
 
         // Transform
-        QueryVersionDto queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(ctx, queryVersion);
+        QueryVersionDto queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
         queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
 
         return queryVersionDto;
@@ -346,7 +346,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         }
 
         // Transform
-        QueryVersionDto queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(ctx, query);
+        QueryVersionDto queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(query);
         return queryVersionDto;
     }
 
@@ -359,7 +359,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         QueryVersion query = getQueryService().retrieveLatestPublishedQueryVersionByQueryUrn(ctx, queryUrn);
 
         // Transform
-        QueryVersionDto queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(ctx, query);
+        QueryVersionDto queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(query);
         return queryVersionDto;
     }
 
@@ -390,7 +390,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         queryVersion = getQueryService().createQueryVersion(ctx, queryVersion, statisticalOperation);
 
         // Transform to DTO
-        queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(ctx, queryVersion);
+        queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
 
         return queryVersionDto;
     }
@@ -407,7 +407,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         queryVersion = getQueryService().updateQueryVersion(ctx, queryVersion);
 
         // Transform to Dto
-        queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(ctx, queryVersion);
+        queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
         queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
 
         return queryVersionDto;
