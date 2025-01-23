@@ -989,11 +989,4 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         return getPublicationVersionRepository().findByCondition(criteria);
 
     }
-    
-    @Override
-    public void updateAllExternalGeographicalCache(ServiceContext ctx) throws MetamacException {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

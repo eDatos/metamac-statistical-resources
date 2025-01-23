@@ -2577,10 +2577,10 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
 
         assertEquals(1, publications.getTotalRows());
         assertEquals(result.getIdentifiableStatisticalResource().getUrn(), publications.getValues().get(0).getIdentifiableStatisticalResource().getUrn());
-        
+
     }
-    
-     @Override
+
+    @Override
     public void testUpdateGeographicalCache() throws Exception {
         // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
 
@@ -2602,12 +2602,6 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
     @Override
     public void testUpdateAllGeographicalCache() throws Exception {
         // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
-
-    }
-
-    @Override
-    public void testUpdateAllExternalGeographicalCache() throws Exception {
-        // NOTHING TO DO
 
     }
 }
