@@ -182,6 +182,7 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
 
             @Override
             public void onClick(ClickEvent event) {
+                contentDescriptorsEditionForm.validate();
                 if (identifiersEditionForm.validate(false) && contentDescriptorsEditionForm.validate(false) && commonMetadataEditionForm.validate(false)
                         && productionDescriptorsEditionForm.validate(false) && classDescriptorsEditionForm.validate(false) && versionEditionForm.validate(false)
                         && resourceRelationDescriptorsEditionForm.validate(false) && publicationDescriptorsEditionForm.validate(false) && thematicContentClassifiersEditionForm.validate(false)
