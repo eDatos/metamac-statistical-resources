@@ -39,6 +39,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOff
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
+import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
@@ -77,7 +78,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     private static final Logger               logger = LoggerFactory.getLogger(DatasetsDo2RestMapperV10.class);
 
     @Override
-    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields) throws Exception {
+    public JsonStatData toJsonStatDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, String selectedLanguage, Set<String> parsedFields, String granularity) throws Exception {
         if (source == null) {
             return null;
         }
@@ -85,9 +86,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
 
         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
-        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages);
+        Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
+        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
+        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields, dimensionsFilter);
+        Data data = toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions);
 
-        Dimensions dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, parsedFields, null);
         Attributes attributes = commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
 
         // ********************************************
@@ -131,7 +134,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     @Override
-    public Dataset toDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields) throws Exception {
+    public Dataset toDataset(DatasetVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields, String granularity) throws Exception {
         if (source == null) {
             return null;
         }
@@ -147,13 +150,22 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.DATASET, source.getLifeCycleStatisticalResource(), configurationService, false));
         DsdProcessorResult dsdProcessorResult = null;
-
+        Dimensions dimensions = null;
+        DimensionsFilter dimensionsFilter = new DimensionsFilter();
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
-
+        Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
         if (includeMetadata || includeData) {
             dsdProcessorResult = commonDo2RestMapper.processDataStructure(source.getRelatedDsd().getUrn());
+            dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
         }
+
+        if (includeMetadata || (includeData && (dimensionsFilter.getTemporalDimensionValuesIds() != null && !dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())
+                || (dimensionsFilter.getGeographicDimensionValuesIds() != null && !dimensionsFilter.getGeographicDimensionValuesIds().isEmpty()))) {
+
+            dimensions = commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, fields, dimensionsFilter);
+        }
+
         if (includeMetadata) {
             boolean includeConstraint = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_DATASET_CONSTRAINTS);
             ConstraintDimensionRepresentations constraintDimensionRepresentations = null;
@@ -161,11 +173,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
                 constraintDimensionRepresentations = commonDo2RestMapper.processDatasetConstraint(source.getSiemacMetadataStatisticalResource().getUrn());
             }
 
-            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, fields));
+            target.setMetadata(toDatasetMetadata(source, dsdProcessorResult, constraintDimensionRepresentations, selectedLanguages, dimensions));
 
         }
         if (includeData) {
-            target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages));
+            target.setData(toDatasetData(source, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions));
         }
         boolean includeKeywords = containsField(fields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_KEYWORDS);
         if (includeKeywords) {
@@ -175,13 +187,19 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
+
     public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
+        return toDatasetData(source, dsdProcessorResult, dimensionValuesSelected, selectedLanguages, null);
+    }
+
+    public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, Dimensions dimensions) throws Exception {
 
         if (source == null) {
             return null;
         }
+        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionFilter(dimensions);
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
-        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages);
+        return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, dimensionsFilter);
     }
 
     public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
@@ -257,14 +275,14 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     private DatasetMetadata toDatasetMetadata(DatasetVersion source, DsdProcessorResult dsdProcessorResult, ConstraintDimensionRepresentations constraintDimensionRepresentations,
-            List<String> selectedLanguages, Set<String> fields) throws MetamacException {
+            List<String> selectedLanguages, Dimensions dimensions) throws MetamacException {
         if (source == null) {
             return null;
         }
         DatasetMetadata target = new DatasetMetadata();
         target.setRelatedDsd(commonDo2RestMapper.toDataStructureDefinition(source.getRelatedDsd(), dsdProcessorResult.getDataStructure(), selectedLanguages, source.getHeadingDimensions(),
                 source.getStubDimensions()));
-        target.setDimensions(commonDo2RestMapper.toDimensions(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, null, selectedLanguages, fields, null));
+        target.setDimensions(dimensions);
         target.setAttributes(commonDo2RestMapper.toAttributes(source.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages));
         target.setConstraints(constraintDimensionRepresentations);
         target.setGeographicCoverages(commonDo2RestMapper.toResourcesExternalItemsSrm(source.getGeographicCoverage(), selectedLanguages));
