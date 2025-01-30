@@ -88,17 +88,17 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.publication_version.must_have_at_least_one_cube");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_CHAPTER_MUST_HAVE_AT_LEAST_ONE_CUBE                                             = create(
             "exception.resources.publication_version.chapter_must_have_at_least_one_cube");
-    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_MULTIDATASET_PUBLICATION_OR_URL         = create(
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_MULTIDATASET_PUBLICATION_OR_URL                 = create(
             "exception.resources.publication_version.cube_must_link_to_dataset_query_or_multidataset_or_publication_url");
-    public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_DATASET                                         = create(
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_DATASET                                                 = create(
             "exception.resources.publication_version.linked_to_dataset_with_no_published_version");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_QUERY                                                   = create(
             "exception.resources.publication_version.linked_to_query_not_published");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_MULTIDATASET                                            = create(
             "exception.resources.publication_version.linked_to_multidataset_not_published");
-    public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_PUBLICATION                                     = create(
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_PUBLICATION                                             = create(
             "exception.resources.publication_version.linked_to_collection_not_published");
-    public static final CommonServiceExceptionType PUBLICATION_VERSION_CANT_BE_DELETED                                                         = create(
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_CANT_BE_DELETED                                                                 = create(
             "exception.resources.publication_version.cant_be_deleted");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_IS_REPLACED_BY_OTHER_RESOURCE                                                   = create(
             "exception.resources.publication_version.is_replaced_by_other_publication");
@@ -457,6 +457,9 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
 
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_RESOURCE_NOT_FOUND_ERROR                   = create(
             "exception.resources.geocoverage.kafka_external_collection_publication_resource_not_found_error");
+
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_RESOURCE_PUBLICATION_RESOURCE_NOT_FOUND_ERROR                              = create(
+            "exception.resources.geocoverage.resource_publication_resource_not_found_error");
 
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_ERROR                              = create(
             "exception.resources.geocoverage.kafka_external_collection_publication_dataset_error");

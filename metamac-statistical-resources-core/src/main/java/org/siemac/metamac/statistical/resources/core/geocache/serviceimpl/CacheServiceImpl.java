@@ -436,7 +436,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         GeoCacheResource geoCacheResource = retrieveResourcesLastVersionByUrnAndVersion(relatedResourceUrn);
         
         if (geoCacheResource == null) {
-            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_RESOURCE_NOT_FOUND_ERROR, relatedResourceUrn, urn));
+            exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_RESOURCE_PUBLICATION_RESOURCE_NOT_FOUND_ERROR, relatedResourceUrn, urn));
         } else {
             geoCacheRelatedResource.addRelatedResource(geoCacheResource);
         }

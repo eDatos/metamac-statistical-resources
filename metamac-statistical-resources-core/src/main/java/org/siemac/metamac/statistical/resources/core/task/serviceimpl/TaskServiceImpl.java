@@ -1348,6 +1348,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 }
             }
 
+            if (spatialDimensionName == null && datasetVersion.getGeographicCoverage().size() == 1) { // dataset with spatial attribute
+                return datasetVersion.getGeographicCoverage();
+            }
+
             List<CodeItem> codes = new ArrayList<>();
             for (QuerySelectionItem selection : queryVersion.getSelection()) {
 
@@ -1358,7 +1362,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
 
             return getGeographicCoverageQueryFromDatasetCoverage(datasetVersion.getGeographicCoverage(), codes);
-        } else { // spatial attribute
+        } else { // trying to recover information from spatial attribute
             return getGeographicCoverage(ctx, datasetVersion);
         }
 
