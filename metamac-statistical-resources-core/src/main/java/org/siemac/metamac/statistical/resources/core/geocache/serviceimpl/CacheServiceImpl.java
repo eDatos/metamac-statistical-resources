@@ -102,7 +102,7 @@ public class CacheServiceImpl extends CacheServiceImplBase {
      * isLastVersionPublished
      */
     @Override
-    public void processUpdateGeoCacheResource(ServiceContext ctx, LifeCycleStatisticalResource lifeCycleStatisticalResource, String urnResource,
+    public GeoCacheResource processUpdateGeoCacheResource(ServiceContext ctx, LifeCycleStatisticalResource lifeCycleStatisticalResource, String urnResource,
             StatisticalResourceTypeEnum statisticalResourceTypeEnum, List<ExternalItem> geographicCoverage, boolean isLastVersionPublished) throws MetamacException {
 
         String resourceVersionUrn = lifeCycleStatisticalResource.getUrn();
@@ -128,6 +128,8 @@ public class CacheServiceImpl extends CacheServiceImplBase {
 
         // only when geoCacheResourcesDisabled is not empty must update related resource because geoCacheResource is the latest version published
         updateRelatedResourceByCacheResource(geoCacheResource, geoCacheResourcesDisabled, geoCacheResourcesOldVersions);
+
+        return geoCacheResource;
 
     }
 
@@ -646,4 +648,5 @@ public class CacheServiceImpl extends CacheServiceImplBase {
         taskInfo.setMustWaitForRelatedResourcesUpdate(mustWaitForRelatedResourcesUpdate);
         taskService.planifyUpdateExternalGeocoverageCache(ctx, taskInfo);
     }
+
 }

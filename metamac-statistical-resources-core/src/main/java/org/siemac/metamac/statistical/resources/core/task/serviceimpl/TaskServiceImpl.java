@@ -134,6 +134,7 @@ import org.siemac.metamac.statistical.resources.core.publication.serviceapi.Publ
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamConsumerServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
@@ -249,6 +250,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private DatasetVersionRepository          datasetVersionRepository;
+
+    @Autowired
+    private QueryVersionRepository            queryVersionRepository;
 
     @Autowired
     private DatabaseImportRepository          databaseImportRepository;
@@ -1316,9 +1320,26 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         cacheService.processUpdateGeoCacheResource(ctx, datasetVersion.getLifeCycleStatisticalResource(), datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn(),
                 StatisticalResourceTypeEnum.DATASET, geographicCoverage, isLastVersionPublished);
 
+        updateQueriesByDataset(ctx, datasetVersion);
+
         logger.debug("Processing geographic coverage to create the cache correctly finished");
 
         markTaskAsFinished(ctx, jobKey);
+    }
+
+    /*
+     * In case the geographical measure was an attribute, a new version of a dataset has the possibility of changing the geographical value.
+     * if queries are associated to this dataset,the new value will be associated to the query. So the query cache must be updated to keep in mind this case in the territory value.
+     */
+    private void updateQueriesByDataset(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
+        if (datasetVersion.getDataset().getId() != null) {
+            List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(datasetVersion.getDataset().getId());
+
+            for (QueryVersion query : queriesDataset) {
+                updateGeoCacheResourceQuery(ctx, query.getLifeCycleStatisticalResource().getUrn());
+            }
+        }
+
     }
 
     private List<ExternalItem> getGeographicCoverage(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
@@ -2548,7 +2569,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private void processGeoCacheResourceQuery(ServiceContext ctx, TaskInfoResources taskInfoResource) throws MetamacException {
         logger.debug("> START Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
 
-        QueryVersion queryVersion = queryService.retrieveQueryVersionByUrn(ctx, taskInfoResource.getVersionId());
+        updateGeoCacheResourceQuery(ctx, taskInfoResource.getVersionId());
+
+        logger.debug("> END Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
+    }
+
+    private void updateGeoCacheResourceQuery(ServiceContext ctx, String queryVersionUrn) throws MetamacException {
+
+        QueryVersion queryVersion = queryService.retrieveQueryVersionByUrn(ctx, queryVersionUrn);
 
         boolean isLastVersionPublished = isQueryLastVersionPublished(ctx, queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn(),
                 queryVersion.getLifeCycleStatisticalResource().getUrn());
@@ -2561,7 +2589,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             if (datasetVersion == null) {
                 logger.info(
                         "> get dataset associated to query. The dataset is null so the resource it  will not inserted in cache - Processing updating geographic cache related resource task - queries {}",
-                        taskInfoResource.getVersionId());
+                        queryVersionUrn);
                 return;
             }
 
@@ -2579,10 +2607,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         {
             logger.info(
                     "> check is resource last version. The result was FALSE and the resource it  will not inserted in cache - Processing updating geographic cache related resource task - queries {}",
-                    taskInfoResource.getVersionId());
+                    queryVersionUrn);
         }
-
-        logger.debug("> END Subprocess - Processing updating geographic cache resource task - queries {}", taskInfoResource.getVersionId());
     }
 
     private String getCurrentDatasetVersionInQuery(QueryVersion queryVersion) throws MetamacException {
