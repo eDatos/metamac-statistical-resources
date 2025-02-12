@@ -12,9 +12,9 @@ CREATE TABLE tb_purposes (
 commit;
 CREATE INDEX pk_tb_purposes_description_fk ON tb_purposes USING btree (description_fk);
 commit;
-alter table tb_stat_resources add column purpose_fk int8 null;
+alter table tb_queries_versions add column purpose_fk int8 null;
 commit;
-alter table tb_stat_resources add CONSTRAINT fk_tb_datasets_versions_purpose_fk FOREIGN KEY (purpose_fk) REFERENCES tb_purposes(id) deferrable;
+alter table tb_queries_versions add CONSTRAINT fk_tb_queries_versions_purpose_fk FOREIGN KEY (purpose_fk) REFERENCES tb_purposes(id) deferrable;
 commit;
 INSERT INTO tb_purposes
 (id, identifier, "version", description_fk)
