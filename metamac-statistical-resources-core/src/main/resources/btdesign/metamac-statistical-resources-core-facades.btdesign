@@ -174,7 +174,9 @@ Application FacadeStatisticalResources {
 
     		// Statistic officialities
     		List<@StatisticOfficialityDto> findStatisticOfficialities() throws MetamacException;
-
+    		
+    		// Purposes
+			List<@PurposeDto> findPurposes() throws MetamacException;
 			// CATEGORISATIONS
     		"Creates categorisation"
     		@CategorisationDto createCategorisation(String datasetVersionUrn, @CategorisationDto categorisationDto) throws MetamacException;

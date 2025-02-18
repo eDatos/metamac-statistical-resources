@@ -2042,4 +2042,10 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
         
     }
+
+    @Override
+    public void testFindPurposes() throws Exception {
+     // no optimistic locking in this operation
+        
+    }
 }

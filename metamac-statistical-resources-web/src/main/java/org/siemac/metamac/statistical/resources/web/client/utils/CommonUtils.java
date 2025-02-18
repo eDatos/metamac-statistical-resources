@@ -545,12 +545,13 @@ public class CommonUtils {
         return StringUtils.EMPTY;
     }
 
-    public static void setPurpoes(List<PurposeDto> purposes) {
+    public static void setPurposes(List<PurposeDto> purposes) {
         CommonUtils.purposesMap = new HashMap<String, PurposeDto>();
         for (PurposeDto purpose : purposes) {
             CommonUtils.purposesMap.put(purpose.getIdentifier(), purpose);
         }
     }
+
     // -----------------------------------------------------------------------------------------
     // TEMPORAL CODES
     // -----------------------------------------------------------------------------------------

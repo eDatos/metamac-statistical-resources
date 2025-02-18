@@ -57,6 +57,7 @@ public class StatisticalResourcesWeb extends MetamacSecurityEntryPoint {
             @Override
             public void onSuccess(GetInitialValuesResult result) {
                 CommonUtils.setStatisticOfficialities(result.getStatisticOfficialities());
+                CommonUtils.setPurposes(result.getPurposesDto());
                 StatisticalResourcesDefaults.defaultAgency = result.getAgency();
                 StatisticalResourcesDefaults.defaultLanguage = result.getDefaultLanguage();
                 loadApplication();

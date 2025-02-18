@@ -8,16 +8,15 @@ import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
-import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.server.rest.SrmRestInternalFacade;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesResult;
 import org.siemac.metamac.web.common.server.ServiceContextHolder;
 import org.siemac.metamac.web.common.server.handlers.SecurityActionHandler;
 import org.siemac.metamac.web.common.server.utils.WebExceptionUtils;
-import org.siemac.metamac.web.common.shared.exception.MetamacWebException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -50,6 +49,8 @@ public class GetInitialValuesActionHandler extends SecurityActionHandler<GetInit
 
             List<StatisticOfficialityDto> statisticOfficialities = statisticalResourcesServiceFacade.findStatisticOfficialities(ServiceContextHolder.getCurrentServiceContext());
 
+            //Purposes
+            List<PurposeDto> purposes = statisticalResourcesServiceFacade.findPurposes(ServiceContextHolder.getCurrentServiceContext());
             // Default agency
 
             ExternalItemDto defaultAgency = null;
@@ -74,7 +75,7 @@ public class GetInitialValuesActionHandler extends SecurityActionHandler<GetInit
             	log.log(Level.WARNING, "Error retrieving application OPTIONAL Default Code Language Urn", e);
 	        }
 
-            return new GetInitialValuesResult(statisticOfficialities, defaultAgency, defaultLanguage);
+            return new GetInitialValuesResult(statisticOfficialities, defaultAgency, defaultLanguage, purposes);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);
         }

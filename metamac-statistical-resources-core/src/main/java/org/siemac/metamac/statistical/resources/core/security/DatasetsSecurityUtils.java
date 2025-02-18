@@ -174,6 +174,12 @@ public class DatasetsSecurityUtils extends SecurityUtils {
         }
     }
 
+    public static void canFindPurposes(ServiceContext ctx) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canFindPurposes(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
     public static void canImportDatasourcesInDatasetVersion(ServiceContext ctx, String operationCode) throws MetamacException {
         if (!SharedDatasetsSecurityUtils.canImportDatasourcesInDatasetVersion(getMetamacPrincipal(ctx), operationCode)) {
             throwExceptionIfOperationNotAllowed(ctx);

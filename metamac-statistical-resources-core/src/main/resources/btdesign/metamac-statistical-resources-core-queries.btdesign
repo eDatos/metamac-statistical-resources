@@ -41,6 +41,8 @@ Application QueriesStatisticalResources {
     		// Queries
     		"Finds queries by criteria"
     		List<@Query> findQueriesByCondition(List<ConditionalCriteria> conditions)  throws MetamacException;
+    		// Purposes
+    		List<@Purpose> findPurposes() throws MetamacException;
 		}  
 
 
