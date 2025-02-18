@@ -88,6 +88,12 @@ Application DatasetsStatisticalResourcesDto {
             - @InternationalStringDto description nullable;
         }
 
+		"Dto for Purposes"
+        DataTransferObject PurposeDto extends @IdentityDto {
+            String identifier;
+            - @InternationalStringDto description nullable;
+        }
+
 		"Dto for temporal code"
         DataTransferObject TemporalCodeDto {
             String identifier;

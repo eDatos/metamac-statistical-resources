@@ -23,6 +23,7 @@ import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueD
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.TemporalCodeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
@@ -61,6 +62,7 @@ public class CommonUtils {
     private static String                               metamacPortalBaseUrl;
     private static Integer                              maxNumberOfUpdatedDatasetInGroup;
     private static Map<String, StatisticOfficialityDto> statisticOfficialitiesMap;
+    private static Map<String, PurposeDto> purposesMap;
 
     // -----------------------------------------------------------------------------------------
     // DATASET CONSTRAINTS
@@ -521,7 +523,34 @@ public class CommonUtils {
             CommonUtils.statisticOfficialitiesMap.put(officiality.getIdentifier(), officiality);
         }
     }
+    
+    // -----------------------------------------------------------------------------------------
+    // PURPOSES
+    // -----------------------------------------------------------------------------------------
+    public static LinkedHashMap<String, String> getPurposesHashMap() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        map.put("", "");
+        if (purposesMap != null) {
+            for (Entry<String, PurposeDto> entry : purposesMap.entrySet()) {
+                map.put(entry.getKey(), getPurposeName(entry.getValue()));
+            }
+        }
+        return map;
+    }
 
+    public static String getPurposeName(PurposeDto purposeDto) {
+        if (purposeDto != null) {
+            return CommonWebUtils.getElementName(purposeDto.getIdentifier(), purposeDto.getDescription());
+        }
+        return StringUtils.EMPTY;
+    }
+
+    public static void setPurpoes(List<PurposeDto> purposes) {
+        CommonUtils.purposesMap = new HashMap<String, PurposeDto>();
+        for (PurposeDto purpose : purposes) {
+            CommonUtils.purposesMap.put(purpose.getIdentifier(), purpose);
+        }
+    }
     // -----------------------------------------------------------------------------------------
     // TEMPORAL CODES
     // -----------------------------------------------------------------------------------------

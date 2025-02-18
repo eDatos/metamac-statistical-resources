@@ -159,7 +159,7 @@ Application QueriesStatisticalResources {
 
 		"Purposes"
     	Entity Purpose {
-    		databaseTable="TB_PURPOSE"
+    		databaseTable="TB_PURPOSES"
     		hint="idSequence=PURPOSES"
     		!auditable
 
