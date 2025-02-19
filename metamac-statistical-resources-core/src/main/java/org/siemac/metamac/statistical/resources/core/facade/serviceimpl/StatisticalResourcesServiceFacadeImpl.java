@@ -114,7 +114,9 @@ import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.Query
 import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.QuerySculptorCriteria2MetamacCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.QueryVersionMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.QueryVersionSculptorCriteria2MetamacCriteriaMapper;
+import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.Purpose;
+import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
@@ -137,6 +139,8 @@ import org.springframework.stereotype.Service;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 /**
@@ -392,19 +396,49 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public QueryVersionDto updateQueryVersion(ServiceContext ctx, QueryVersionDto queryVersionDto) throws MetamacException {
-        // Security
-        QueriesSecurityUtils.canUpdateQueryVersion(ctx, queryVersionDto);
+        try {
+            // Security
+            QueriesSecurityUtils.canUpdateQueryVersion(ctx, queryVersionDto);
 
-        // Transform
-        QueryVersion queryVersion = queryDto2DoMapper.queryVersionDtoToDo(queryVersionDto);
+            // Transform
+            QueryVersion queryVersion = queryDto2DoMapper.queryVersionDtoToDo(queryVersionDto);
 
-        // Update
-        queryVersion = getQueryService().updateQueryVersion(ctx, queryVersion);
+            List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
+            DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(queryVersion);
+            Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
 
-        // Transform to Dto
-        queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
-        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
-        return queryVersionDto;
+            // Update
+            queryVersion = getQueryService().updateQueryVersion(ctx, queryVersion);
+
+            // Transform to Dto
+            queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
+            queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
+
+            return queryVersionDto;
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.CONSTRAINTS_UPDATE_CHECK_EXISTING_OBSERVATIONS, queryVersionDto.getCode());
+        }
+    }
+
+    private DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
+        if (source.getFixedDatasetVersion() != null) {
+            return source.getFixedDatasetVersion();
+        } else {
+            return datasetVersionRepository.retrieveLastVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
+        }
+    }
+
+    private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
+        List<ConditionDimensionDto> conditionDimensionDtos = new ArrayList<ConditionDimensionDto>();
+        for (QuerySelectionItem querySelectionItem : querySelectionItems) {
+            ConditionDimensionDto conditionDimensionDto = new ConditionDimensionDto();
+            conditionDimensionDto.setDimensionId(querySelectionItem.getDimension());
+            for (CodeItem codeItem : querySelectionItem.getCodes()) {
+                conditionDimensionDto.getCodesDimension().add(codeItem.getCode());
+            }
+            conditionDimensionDtos.add(conditionDimensionDto);
+        }
+        return conditionDimensionDtos;
     }
 
     @Override
