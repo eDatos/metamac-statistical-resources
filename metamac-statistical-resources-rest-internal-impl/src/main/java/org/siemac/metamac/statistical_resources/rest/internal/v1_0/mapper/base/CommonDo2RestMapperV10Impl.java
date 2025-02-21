@@ -98,6 +98,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
+import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
@@ -348,10 +349,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         if (source == null) {
             return;
         }
+        ExternalRestObjectsMapper externalRestObjectsMapper = new ExternalRestObjectsMapper();
+
         target.setLanguage(toResourceExternalItemSrm(source.getLanguage(), selectedLanguages));
         target.setLanguages(toResourcesExternalItemsSrm(source.getLanguages(), selectedLanguages));
-        target.setStatisticalOperation(toResourceExternalItemStatisticalOperations(source.getStatisticalOperation(), selectedLanguages));
-        target.setStatisticalOperationInstances(toResourcesExternalItemsStatisticalOperations(source.getStatisticalOperationInstances(), selectedLanguages));
+        target.setStatisticalOperation(toResourceExternalItemStatisticalOperations(source.getStatisticalOperation(), selectedLanguages, externalRestObjectsMapper));
+        target.setStatisticalOperationInstances(toResourcesExternalItemsStatisticalOperations(source.getStatisticalOperationInstances(), selectedLanguages, externalRestObjectsMapper));
         target.setSubtitle(toInternationalString(source.getSubtitle(), selectedLanguages));
         target.setTitleAlternative(toInternationalString(source.getTitleAlternative(), selectedLanguages));
         target.setAbstract(toInternationalString(source.getAbstractLogic(), selectedLanguages));
@@ -390,14 +393,14 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, DimensionsFilter dimensionsFilter) throws Exception {
+    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages,
+            DimensionsFilter dimensionsFilter) throws Exception {
         return toData(source, dsdProcessorResult, dimensionValuesSelected, selectedLanguages, true, dimensionsFilter);
     }
 
     @Override
     public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, boolean checkNoData,
-            DimensionsFilter dimensionsFilter)
-            throws Exception {
+            DimensionsFilter dimensionsFilter) throws Exception {
         if (source == null) {
             return null;
         }
@@ -405,7 +408,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         try {
             // Filter codes
             List<String> datasetDimensions = datasetService.retrieveDatasetVersionDimensionsIds(SERVICE_CONTEXT, source.getSiemacMetadataStatisticalResource().getUrn());
-            Map<String, List<String>> dimensionsCodesSelectedEffective = modifyDimensionsCodesSelected(buildDimensionsSelectedWithValues(source, dimensionValuesSelected, datasetDimensions), dimensionsFilter);
+            Map<String, List<String>> dimensionsCodesSelectedEffective = modifyDimensionsCodesSelected(buildDimensionsSelectedWithValues(source, dimensionValuesSelected, datasetDimensions),
+                    dimensionsFilter);
 
             // Transform data
             // Dimensions
@@ -413,7 +417,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             // Observations and attributes
             target.setAttributes(new DataAttributes());
             toDataAttributesWithDatasetAndDimensionAttachmenteLevel(dsdProcessorResult, source.getDatasetRepositoryId(), datasetDimensions, dimensionsCodesSelectedEffective, target.getAttributes());
-            toDataObservationsAndAttributeWithObservationAttachmentLevel(source, dsdProcessorResult, datasetDimensions, dimensionValuesSelected, dimensionsCodesSelectedEffective, target, dimensionsFilter);
+            toDataObservationsAndAttributeWithObservationAttachmentLevel(source, dsdProcessorResult, datasetDimensions, dimensionValuesSelected, dimensionsCodesSelectedEffective, target,
+                    dimensionsFilter);
             if (CollectionUtils.isEmpty(target.getAttributes().getAttributes())) {
                 target.setAttributes(null);
             } else {
@@ -476,7 +481,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             if (entry.getKey().equals(dimensionsFilter.getTemporalDimensionId())) {
                 dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getTemporalDimensionId(), oderDimensionValues(dimensionsFilter.getTemporalDimensionValuesIds(), entry.getValue()));
             } else if (entry.getKey().equals(dimensionsFilter.getGeographicDimensionId())) {
-                dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getGeographicDimensionId(), filterGeographicDimensionsId(dimensionsFilter.getGeographicDimensionValuesIds(), entry.getValue()));
+                dimensionsCodesSelectedEffectiveFinal.put(dimensionsFilter.getGeographicDimensionId(),
+                        filterGeographicDimensionsId(dimensionsFilter.getGeographicDimensionValuesIds(), entry.getValue()));
             } else {
                 dimensionsCodesSelectedEffectiveFinal.put(entry.getKey(), entry.getValue());
             }
@@ -529,8 +535,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private boolean checkDatasetHaveHeadingAndStubDimensions(List<DimensionOrder> headingDimensions, List<DimensionOrder> stubDimensions) {
-        return ((stubDimensions != null && !stubDimensions.isEmpty())
-                || (headingDimensions != null && !headingDimensions.isEmpty()));
+        return ((stubDimensions != null && !stubDimensions.isEmpty()) || (headingDimensions != null && !headingDimensions.isEmpty()));
     }
 
     private DimensionsId toDimensionsIdByDataset(List<DimensionOrder> dimensionsOrders, DataStructure dataStructure) {
@@ -655,25 +660,25 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceStatisticalResourceBase toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages) {
+    public ResourceStatisticalResourceBase toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages, ExternalRestObjectsMapper externalRestObjectsMapper) {
         if (source == null) {
             return null;
         }
         ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
         toResourceExternalItem(source, statisticalOperationsApiInternalEndpoint, statisticalOperationsWebApplication, target, selectedLanguages);
-        updateNameForNonVersionableResource(target, source);
+        updateNameForNonVersionableResource(target, source, externalRestObjectsMapper);
         return target;
     }
 
-    private void updateNameForNonVersionableResource(ResourceStatisticalResourceBase target, ExternalItem source) {
+    private void updateNameForNonVersionableResource(ResourceStatisticalResourceBase target, ExternalItem source, ExternalRestObjectsMapper externalRestObjectsMapper) {
         switch (source.getType()) {
             case STATISTICAL_OPERATION:
-                target.setName(getUpdatedStatisticalOperationName(source.getCode()));
+                target.setName(getUpdatedStatisticalOperationName(source.getCode(), externalRestObjectsMapper));
                 break;
             case STATISTICAL_OPERATION_INSTANCE:
                 String identifier = UrnUtils.removePrefix(source.getUrn());
                 String[] parts = UrnUtils.splitUrnByDots(identifier);
-                target.setName(getUpdatedStatisticalOperationInstanceName(parts[0], parts[1]));
+                target.setName(getUpdatedStatisticalOperationInstanceName(parts[0], parts[1], externalRestObjectsMapper));
                 break;
             default:
                 break;
@@ -681,13 +686,14 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     @Override
-    public ResourcesStatisticalResourceBase toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages) {
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages,
+            ExternalRestObjectsMapper externalRestObjectsMapper) {
         if (CollectionUtils.isEmpty(sources)) {
             return null;
         }
         ResourcesStatisticalResourceBase targets = new ResourcesStatisticalResourceBase();
         for (ExternalItem source : sources) {
-            ResourceStatisticalResourceBase target = toResourceExternalItemStatisticalOperations(source, selectedLanguages);
+            ResourceStatisticalResourceBase target = toResourceExternalItemStatisticalOperations(source, selectedLanguages, externalRestObjectsMapper);
             targets.getResources().add(target);
         }
         targets.setTotal(BigInteger.valueOf(targets.getResources().size()));
@@ -926,27 +932,30 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         if (source == null) {
             return null;
         }
+
+        ExternalRestObjectsMapper externalRestObjectsMapper = new ExternalRestObjectsMapper();
+
         switch (source.getType()) {
             case DATASET_VERSION:
-                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages, null);
+                return datasetsDo2RestMapper.toResource(source.getDatasetVersion(), selectedLanguages, null, externalRestObjectsMapper);
             case QUERY_VERSION:
-                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages, null);
+                return queriesDo2RestMapper.toResource(source.getQueryVersion(), selectedLanguages, null, externalRestObjectsMapper);
             case PUBLICATION_VERSION:
-                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages, null);
+                return collectionsDo2RestMapper.toResource(source.getPublicationVersion(), selectedLanguages, null, externalRestObjectsMapper);
             case DATASET:
                 DatasetVersion datasetVersion = datasetService.retrieveLatestDatasetVersionByDatasetUrn(SERVICE_CONTEXT, source.getDataset().getIdentifiableStatisticalResource().getUrn());
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getQuery().getIdentifiableStatisticalResource().getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null, externalRestObjectsMapper);
             case MULTIDATASET:
                 MultidatasetVersion multidatasetVersion = multidatasetService.retrieveLatestPublishedMultidatasetVersionByMultidatasetUrn(SERVICE_CONTEXT,
                         source.getMultidataset().getIdentifiableStatisticalResource().getUrn());
-                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null);
+                return multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null, externalRestObjectsMapper);
             case PUBLICATION:
                 PublicationVersion publicationVersion = publicationService.retrieveLatestPublishedPublicationVersionByPublicationUrn(SERVICE_CONTEXT,
                         source.getPublication().getIdentifiableStatisticalResource().getUrn());
-                return collectionsDo2RestMapper.toResource(publicationVersion, selectedLanguages, null);
+                return collectionsDo2RestMapper.toResource(publicationVersion, selectedLanguages, null, externalRestObjectsMapper);
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -973,7 +982,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 return datasetsDo2RestMapper.toResourceAsLatest(datasetVersion, selectedLanguages);
             case QUERY:
                 QueryVersion queryVersion = queryService.retrieveLatestPublishedQueryVersionByQueryUrn(SERVICE_CONTEXT, source.getUrn());
-                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null);
+                return queriesDo2RestMapper.toResource(queryVersion, selectedLanguages, null, new ExternalRestObjectsMapper());
             default:
                 logger.error("RelatedResource unsupported: " + source.getType());
                 org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
@@ -1140,7 +1149,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             ItemResourceInternal geographicalGranularity = ((VariableElementResourceInternal) source.getVariableElement()).getGeographicalGranularity();
             return geographicGranularities.contains(geographicalGranularity.getId());
         }
-        
+
         return true;
     }
 
@@ -1220,7 +1229,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         if (!"TIME_PERIOD".equals(dimensionId) || ((dimensionsFilter.getTemporalDimensionValuesQueriesIds() == null || dimensionsFilter.getTemporalDimensionValuesQueriesIds().isEmpty())
                 && (dimensionsFilter.getTemporalDimensionValuesIds() == null || dimensionsFilter.getTemporalDimensionValuesIds().isEmpty()))) {
             return true;
-        }  
+        }
         IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
         if (dimensionsFilter.getTemporalDimensionValuesQueriesIds() != null && dimensionsFilter.getTemporalDimensionValuesQueriesIds().contains(istacTimeGranularityCodeEnum.getLabel())
                 && (dimensionsFilter.getTemporalDimensionValuesIds() == null || dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())) {
@@ -1228,7 +1237,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
 
         if (dimensionsFilter.getTemporalDimensionValuesIds() != null && dimensionsFilter.getTemporalDimensionValuesIds().contains(istacTimeGranularityCodeEnum.getLabel())
-                        && (dimensionsFilter.getTemporalDimensionValuesQueriesIds() == null || dimensionsFilter.getTemporalDimensionValuesQueriesIds().isEmpty())) {
+                && (dimensionsFilter.getTemporalDimensionValuesQueriesIds() == null || dimensionsFilter.getTemporalDimensionValuesQueriesIds().isEmpty())) {
             return true;
         }
         return dimensionsFilter.getTemporalDimensionValuesQueriesIds() != null && dimensionsFilter.getTemporalDimensionValuesIds() != null
@@ -1695,7 +1704,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return observationsFiltered;
     }
 
-    private boolean checkHaveDimension(List<CodeDimensionDto>codesDimension, String dimensionId) {
+    private boolean checkHaveDimension(List<CodeDimensionDto> codesDimension, String dimensionId) {
         for (CodeDimensionDto codeDimension : codesDimension) {
             if (codeDimension.getDimensionId().equals(dimensionId)) {
                 return true;
@@ -2076,14 +2085,42 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return dataSize;
     }
 
-    private InternationalString getUpdatedStatisticalOperationName(String operationCode) {
-        Operation operation = statisticalOperationsRestInternalFacade.retrieveOperation(operationCode);
-        return operation != null ? operation.getName() : null;
+    private InternationalString getUpdatedStatisticalOperationName(String operationCode, ExternalRestObjectsMapper externalRestObjectsMapper) {
+
+        InternationalString operationTitle = externalRestObjectsMapper.getOperationTitlesByCode().get(operationCode);
+
+        if (operationTitle == null) {
+
+            Operation operation = statisticalOperationsRestInternalFacade.retrieveOperation(operationCode);
+            if (operation != null) {
+                externalRestObjectsMapper.getOperationTitlesByCode().put(operationCode, operation.getName());
+                return operation.getName();
+
+            }
+            return null;
+        }
+
+        return operationTitle;
+
     }
 
-    private InternationalString getUpdatedStatisticalOperationInstanceName(String operationId, String instanceId) {
-        Instance instance = statisticalOperationsRestInternalFacade.retrieveInstanceById(operationId, instanceId);
-        return instance != null ? instance.getName() : null;
+    private InternationalString getUpdatedStatisticalOperationInstanceName(String operationId, String instanceId, ExternalRestObjectsMapper externalRestObjectsMapper) {
+
+        String keyInstance = operationId + " - " + instanceId;
+        InternationalString operationInstanceTitle = externalRestObjectsMapper.getOperationInstancesTitlesByCode().get(keyInstance);
+
+        if (operationInstanceTitle == null) {
+
+            Instance instance = statisticalOperationsRestInternalFacade.retrieveInstanceById(operationId, instanceId);
+            if (instance != null) {
+                externalRestObjectsMapper.getOperationInstancesTitlesByCode().put(keyInstance, instance.getName());
+                return instance.getName();
+
+            }
+            return null;
+        }
+
+        return operationInstanceTitle;
     }
 
     /*** SRM **/
@@ -2258,16 +2295,16 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private List<String> getTemporalGranularitiesCodes(List<String> temporalGranularities) {
         List<String> temporalGranularitiesCodes = new ArrayList<>();
-            for (String temporalGranularity : temporalGranularities) {
-                try {
-                    StringUtils.isNotBlank(temporalGranularity);
-                    IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeGranularityCodeEnum.valueOf(temporalGranularity);
-                    temporalGranularitiesCodes.add(istacTimeGranularityCodeEnum.getLabel());
-                } catch (Exception e) {
-                    temporalGranularitiesCodes.add(temporalGranularity);
-                }
+        for (String temporalGranularity : temporalGranularities) {
+            try {
+                StringUtils.isNotBlank(temporalGranularity);
+                IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeGranularityCodeEnum.valueOf(temporalGranularity);
+                temporalGranularitiesCodes.add(istacTimeGranularityCodeEnum.getLabel());
+            } catch (Exception e) {
+                temporalGranularitiesCodes.add(temporalGranularity);
             }
-            
+        }
+
         return temporalGranularitiesCodes;
     }
 
