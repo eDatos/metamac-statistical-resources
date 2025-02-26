@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
+import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.common.utils.CommonVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -41,8 +43,16 @@ public class QueryVersioningCopyUtils {
 
         target.getSelection().clear();
         target.getSelection().addAll(copyListQuerySelectionItem(source.getSelection(), target));
-        target.getTemporalGranularities().addAll(source.getTemporalGranularities());
+        target.getTemporalGranularities().addAll(copyTemporalGranularities(source));
         copyVisualizationMetadata(source, target);
+    }
+
+    private static List<ExternalItem> copyTemporalGranularities(QueryVersion queryVersion) {
+        List<ExternalItem> temporalGranularitiesCopy = new ArrayList<>();
+        for (ExternalItem temporalGranularity : queryVersion.getTemporalGranularities()) {
+            temporalGranularitiesCopy.add(CommonVersioningCopyUtils.copyExternalItem(temporalGranularity));
+        }
+        return temporalGranularitiesCopy;
     }
 
     private static void copyVisualizationMetadata(QueryVersion source, QueryVersion target) {
