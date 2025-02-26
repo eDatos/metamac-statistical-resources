@@ -11,6 +11,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResour
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
+import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 
@@ -21,6 +22,7 @@ public interface MultidatasetsDo2RestMapperV10 {
     public Multidataset toMultidataset(MultidatasetVersion source, List<String> selectedLanguages, Set<String> fields) throws Exception;
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceDto source);
     public ResourceLink toMultidatasetSelfLink(LifeCycleStatisticalResourceBaseDto source);
-    public ResourceStatisticalResourceBase toResource(MultidatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException;
+    public ResourceStatisticalResourceBase toResource(MultidatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields, ExternalRestObjectsMapper externalRestObjectsMapper)
+            throws MetamacException;
     public ResourceStatisticalResourceBase toResource(RelatedResourceResult source, List<String> selectedLanguages) throws MetamacException;
 }

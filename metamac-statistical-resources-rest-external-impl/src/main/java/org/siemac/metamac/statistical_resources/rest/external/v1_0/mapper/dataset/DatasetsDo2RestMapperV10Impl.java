@@ -40,6 +40,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
+import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
@@ -125,9 +126,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         String baseLink = toDatasetsLink(agencyID, resourceID, null);
         SculptorCriteria2RestCriteria.toPagedResult(sources, targets, query, orderBy, limit, baseLink);
 
+        ExternalRestObjectsMapper externalRestObjectsMapper = new ExternalRestObjectsMapper();
+
         // Values
         for (DatasetVersion source : sources.getValues()) {
-            ResourceWithStatisticalOperation target = toResource(source, selectedLanguages, parsedFields);
+            ResourceWithStatisticalOperation target = toResource(source, selectedLanguages, parsedFields, externalRestObjectsMapper);
             targets.getDatasets().add(target);
         }
         return targets;
@@ -187,12 +190,12 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return target;
     }
 
-
     public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception {
         return toDatasetData(source, dsdProcessorResult, dimensionValuesSelected, selectedLanguages, null);
     }
 
-    public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, Dimensions dimensions) throws Exception {
+    public Data toDatasetData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, Dimensions dimensions)
+            throws Exception {
 
         if (source == null) {
             return null;
@@ -219,13 +222,14 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
     }
 
     @Override
-    public ResourceWithStatisticalOperation toResource(DatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException {
-        return toResource(source, false, selectedLanguages, parsedFields);
+    public ResourceWithStatisticalOperation toResource(DatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields, ExternalRestObjectsMapper externalRestObjectsMapper)
+            throws MetamacException {
+        return toResource(source, false, selectedLanguages, parsedFields, externalRestObjectsMapper);
     }
 
     @Override
     public ResourceStatisticalResourceBase toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
-        return toResource(source, true, selectedLanguages, null);
+        return toResource(source, true, selectedLanguages, null, new ExternalRestObjectsMapper());
     }
 
     @Override
@@ -256,7 +260,8 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         return HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, configurationService, false);
     }
 
-    private ResourceWithStatisticalOperation toResource(DatasetVersion source, boolean asLatest, List<String> selectedLanguages, Set<String> parsedFields) throws MetamacException {
+    private ResourceWithStatisticalOperation toResource(DatasetVersion source, boolean asLatest, List<String> selectedLanguages, Set<String> parsedFields,
+            ExternalRestObjectsMapper externalRestObjectsMapper) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -268,7 +273,8 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         target.setName(commonDo2RestMapper.toInternationalString(source.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguages));
         boolean includeStatisticalOperation = containsField(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
         if (includeStatisticalOperation) {
-            target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages));
+            target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages,
+                    externalRestObjectsMapper));
         }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.DATASET, source.getLifeCycleStatisticalResource(), configurationService, asLatest));
         return target;
