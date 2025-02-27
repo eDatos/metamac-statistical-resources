@@ -3,7 +3,7 @@ package org.siemac.metamac.statistical.resources.web.shared.base;
 import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
-import org.siemac.metamac.statistical.resources.core.dto.datasets.PurposeDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 
 import com.gwtplatform.dispatch.annotation.GenDispatch;

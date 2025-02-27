@@ -23,9 +23,9 @@ import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueD
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
-import org.siemac.metamac.statistical.resources.core.dto.datasets.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.TemporalCodeDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.constraint.domain.KeyPartTypeEnum;
@@ -536,6 +536,10 @@ public class CommonUtils {
             }
         }
         return map;
+    }
+
+    public static PurposeDto getPurpose(String identifier) {
+        return purposesMap.get(identifier);
     }
 
     public static String getPurposeName(PurposeDto purposeDto) {

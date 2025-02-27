@@ -17,16 +17,20 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItemRepository;
+import org.siemac.metamac.statistical.resources.core.query.domain.Purpose;
+import org.siemac.metamac.statistical.resources.core.query.domain.PurposeRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItemRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical.resources.core.query.exception.PurposeNotFoundException;
 import org.siemac.metamac.statistical.resources.core.query.exception.QueryVersionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -45,6 +49,9 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
     @Autowired
     private CodeItemRepository           codeItemRepository;
+
+    @Autowired
+    private PurposeRepository purposeRepository;
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
@@ -131,9 +138,21 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         }
         target.getHeadingDimensions().addAll(getHeadingDimension(source.getHeadingDimensions(), target));
         target.getStubDimensions().addAll(getStubDimension(source.getStubDimensions(), target));
+        target.setPurposes(purposeDtoToDo(source.getPurpose()));
         return target;
     }
 
+    public Purpose purposeDtoToDo(PurposeDto source) throws MetamacException {
+        if (source == null) {
+            return null;
+        }
+
+        try {
+            return purposeRepository.findById(source.getId());
+        } catch (PurposeNotFoundException e) {
+            throw new MetamacException(ServiceExceptionType.STATISTIC_OFFICIALITY_NOT_FOUND, source.getId());
+        }
+    }
 
     private List<DimensionOrder> getHeadingDimension(List<RelatedResourceDto> relatedResources, QueryVersion target) {
         target.getHeadingDimensions().clear();

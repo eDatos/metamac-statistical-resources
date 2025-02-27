@@ -27,6 +27,7 @@ Application QueriesStatisticalResourcesDto {
 			//METADATA VISUALISATION
 			- List<RelatedResourceDto> headingDimensions
 			- List<RelatedResourceDto> stubDimensions
+			- @PurposeDto purpose
 		}
 		
 		DataTransferObject SelectionItemDto {
@@ -38,5 +39,10 @@ Application QueriesStatisticalResourcesDto {
 			String code required;
 			String title required;
 		}
+				"Dto for purposes"
+        DataTransferObject PurposeDto extends @IdentityDto {
+            String identifier;
+            - @InternationalStringDto description nullable;
+        }
 	}
 }

@@ -156,6 +156,7 @@ public class NewQueryWindow extends CustomWindow {
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularitie(queryDto);
+        queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         return queryDto;
     }
 
