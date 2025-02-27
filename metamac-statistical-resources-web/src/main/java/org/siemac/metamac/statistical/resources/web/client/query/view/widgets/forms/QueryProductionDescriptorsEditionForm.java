@@ -119,7 +119,13 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                 QueryProductionDescriptorsEditionForm.this.markForRedraw();
             }
         });
+
+        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        purposeTypeSelectorItem.setRequired(true);
+        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
+
         fields.add(typeSelectorItem);
+        fields.add(purposeTypeSelectorItem);
         return fields;
     }
 
@@ -230,20 +236,24 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
     public void setQueryDto(QueryVersionDto queryDto) {
 
-        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, (SearchRelatedResourceLinkItem) getItem(QueryDS.RELATED_DATASET_VERSION));
+        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, getItem(QueryDS.RELATED_DATASET_VERSION));
         setValue(LifeCycleResourceDS.MAINTAINER, queryDto.getMaintainer());
         setValue(LifeCycleResourceDS.MAINTAINER_VIEW, queryDto.getMaintainer());
 
         String typeStr = queryDto.getType() != null ? queryDto.getType().name() : null;
         setValue(QueryDS.TYPE, typeStr);
+        String purposeType = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : null;
+        setValue(QueryDS.PURPOSE_TYPE, purposeType);
 
         dtoSelection = queryDto.getSelection();
+
         if (queryDto.getRelatedDatasetVersion() != null) {
             retrieveDimensionsForDataset(queryDto.getRelatedDatasetVersion().getUrn());
         }
 
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
+        setValue(QueryDS.PURPOSE_TYPE, CommonUtils.getPurposeName(queryDto.getPurpose()));
         this.queryDto = queryDto;
     }
 
@@ -273,6 +283,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularities(queryDto);
+        queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         return queryDto;
     }
 
@@ -298,7 +309,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     // *******************************************************
 
     private void setSelectedDataset(RelatedResourceDto datasetResource) {
-        QueryRelatedDatasetUtils.setRelatedDataset(datasetResource, (SearchRelatedResourceLinkItem) getItem(QueryDS.RELATED_DATASET_VERSION));
+        QueryRelatedDatasetUtils.setRelatedDataset(datasetResource, getItem(QueryDS.RELATED_DATASET_VERSION));
 
         // Get dimensions
         if (datasetResource != null) {

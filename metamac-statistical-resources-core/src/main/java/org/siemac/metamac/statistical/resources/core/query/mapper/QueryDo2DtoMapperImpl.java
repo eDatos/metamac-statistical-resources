@@ -14,8 +14,8 @@ import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResour
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
-import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
@@ -167,6 +167,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         target.getIsPartOf().clear();
         target.getIsPartOf().addAll(relatedResourceResultCollectionToDtoCollection(isPartOf));
         setHeadingAndStubDimension(target, source);
+        target.setPurpose(purposeDo2Dto(source.getPurposes()));
         return target;
     }
 

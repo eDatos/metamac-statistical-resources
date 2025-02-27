@@ -49,6 +49,8 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         ViewTextItem type = new ViewTextItem(QueryDS.TYPE, getConstants().queryType());
         fields.add(type);
 
+        ViewTextItem purposeType = new ViewTextItem(QueryDS.PURPOSE_TYPE, getConstants().queryType());
+        fields.add(purposeType);
         return fields;
     }
 
@@ -92,12 +94,13 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
             }
         }
 
-        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, (RelatedResourceLinkItem) getItem(QueryDS.RELATED_DATASET_VERSION));
+        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, getItem(QueryDS.RELATED_DATASET_VERSION));
 
         setValue(QueryDS.MAINTAINER, queryDto.getMaintainer());
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
         setValue(QueryDS.TYPE, CommonUtils.getQueryTypeName(queryDto));
+        setValue(QueryDS.PURPOSE_TYPE, CommonUtils.getPurposeName(queryDto.getPurpose()));
         if (isLatestData) {
             setValue(QueryDS.LATEST_N_DATA, queryDto.getLatestDataNumber());
         }
