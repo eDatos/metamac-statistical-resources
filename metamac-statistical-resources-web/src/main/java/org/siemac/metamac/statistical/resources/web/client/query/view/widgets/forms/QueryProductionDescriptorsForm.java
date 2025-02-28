@@ -49,7 +49,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         ViewTextItem type = new ViewTextItem(QueryDS.TYPE, getConstants().queryType());
         fields.add(type);
 
-        ViewTextItem purposeType = new ViewTextItem(QueryDS.PURPOSE_TYPE, getConstants().queryType());
+        ViewTextItem purposeType = new ViewTextItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
         fields.add(purposeType);
         return fields;
     }

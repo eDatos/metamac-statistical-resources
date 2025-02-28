@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -35,27 +36,34 @@ import org.siemac.metamac.statistical.resources.core.query.exception.QueryVersio
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
+import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+
 @org.springframework.stereotype.Component("queryDto2DoMapper")
 public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements QueryDto2DoMapper {
 
     @Autowired
-    private QueryVersionRepository       queryVersionRepository;
+    private QueryVersionRepository           queryVersionRepository;
 
     @Autowired
-    private DatasetVersionRepository     datasetVersionRepository;
+    private DatasetVersionRepository         datasetVersionRepository;
 
     @Autowired
-    private QuerySelectionItemRepository querySelectionItemRepository;
+    private QuerySelectionItemRepository     querySelectionItemRepository;
 
     @Autowired
-    private CodeItemRepository           codeItemRepository;
+    private CodeItemRepository               codeItemRepository;
 
     @Autowired
-    private PurposeRepository purposeRepository;
+    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
+
+    @Autowired
+    private PurposeRepository                purposeRepository;
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
-    private CommonDto2DoMapper           dto2DoMapper;
+    private CommonDto2DoMapper               dto2DoMapper;
 
     @Override
     public void checkOptimisticLocking(QueryVersionBaseDto source) throws MetamacException {
@@ -77,7 +85,6 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         if (source == null) {
             return null;
         }
-
         // If exists, retrieves existing entity. Otherwise, creates new entity.
         QueryVersion target = null;
         if (source.getId() == null) {
@@ -93,8 +100,41 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         }
 
         queryVersionDtoToDo(source, target);
+        try {
+            List<ConditionDimensionDto> conditions = generateConditions(target.getSelection());
+            DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(target);
+            Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
+            if (observations.size() > 1 && "SOCIAL_NETWORK".equals(source.getPurpose().getIdentifier())) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
+                        .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
+        } catch (ApplicationException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withMessageParameters(source.getUrn()).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
 
         return target;
+    }
+
+
+    private DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
+        if (source.getFixedDatasetVersion() != null) {
+            return source.getFixedDatasetVersion();
+        } else {
+            return datasetVersionRepository.retrieveLastVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
+        }
+    }
+
+    private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
+        List<ConditionDimensionDto> conditionDimensionDtos = new ArrayList<ConditionDimensionDto>();
+        for (QuerySelectionItem querySelectionItem : querySelectionItems) {
+            ConditionDimensionDto conditionDimensionDto = new ConditionDimensionDto();
+            conditionDimensionDto.setDimensionId(querySelectionItem.getDimension());
+            for (CodeItem codeItem : querySelectionItem.getCodes()) {
+                conditionDimensionDto.getCodesDimension().add(codeItem.getCode());
+            }
+            conditionDimensionDtos.add(conditionDimensionDto);
+        }
+        return conditionDimensionDtos;
     }
 
     private QueryVersion queryVersionDtoToDo(QueryVersionDto source, QueryVersion target) throws MetamacException {
