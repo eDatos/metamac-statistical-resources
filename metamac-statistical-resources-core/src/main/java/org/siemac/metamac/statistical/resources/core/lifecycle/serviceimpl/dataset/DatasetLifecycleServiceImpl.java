@@ -5,6 +5,8 @@ import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceE
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +34,8 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
+import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
+import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
@@ -44,8 +48,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.signature.TwitterCredentials;
 
 @Service("datasetLifecycleService")
 public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<DatasetVersion> {
@@ -348,12 +356,45 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             for (QueryVersion queryVersion : queriesDataset) {
                 sendNewVersionPublishedStreamMessage(ctx, queryVersion);
             }
-
+            postTweet(queriesDataset, resource);
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
+        } catch (ApplicationException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 
+    private void postTweet(List<QueryVersion> queriesDataset, DatasetVersion resource) throws ApplicationException {
+        for (QueryVersion queryVersion : queriesDataset) {
+            if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
+                List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
+                Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
+                // remember that we have to update the x page for the application to be read and write
+                TwitterClient twitterClient = new TwitterClient(
+                        TwitterCredentials.builder().accessToken("1573655122349105152-xKNPWehR4LlLYFp2SngfXuSDIjC21K").accessTokenSecret("mPI2rkrXpYXuxb7TuPWc6hgmf20fBTvW6NNMS0YBjAg3a")
+                                .apiKey("9WQ5Lj7sVjxwVWuqBNQ3cuP3O").apiSecretKey("PJutJC6Z4YDUYRHfQtApGZ0Tfes0Ha9fXjAmXvdvhWFfASCp74").build());
+                for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
+                    twitterClient.postTweet("Variación interanual de apartamentos turísticos: " + entry.getValue().getPrimaryMeasure());
+                }
+                
+                
+            }
+        }
+    }
+
+    private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
+        List<ConditionDimensionDto> conditionDimensionDtos = new ArrayList<ConditionDimensionDto>();
+        for (QuerySelectionItem querySelectionItem : querySelectionItems) {
+            ConditionDimensionDto conditionDimensionDto = new ConditionDimensionDto();
+            conditionDimensionDto.setDimensionId(querySelectionItem.getDimension());
+            for (CodeItem codeItem : querySelectionItem.getCodes()) {
+                conditionDimensionDto.getCodesDimension().add(codeItem.getCode());
+            }
+            conditionDimensionDtos.add(conditionDimensionDto);
+        }
+        return conditionDimensionDtos;
+    }
     protected void sendNewVersionPublishedStreamMessage(ServiceContext ctx, QueryVersion version) {
         try {
             streamMessagingServiceFacade.sendNewVersionPublished(version);
