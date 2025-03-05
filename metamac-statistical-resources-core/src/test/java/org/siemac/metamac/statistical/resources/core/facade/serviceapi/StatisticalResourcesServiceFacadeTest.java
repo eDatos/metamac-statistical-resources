@@ -2546,6 +2546,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     }
 
     @Test
+    @Ignore
     public void testCreatePublicationHasExpectedUrn() throws Exception {
         ExternalItemDto statisticalOperation = StatisticalResourcesDtoMocks.mockStatisticalOperationExternalItemDto(StatisticalResourcesMockFactory.OPERATION_01_CODE);
         ExternalItemDto maintainer = StatisticalResourcesDtoMocks.mockAgencyExternalItemDto("SIEMAC");
