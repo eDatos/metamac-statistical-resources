@@ -374,14 +374,25 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                     TwitterClient twitterClient = new TwitterClient(
                             TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                     .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
-                    for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
-                        twitterClient.postTweet("Variación interanual de apartamentos turísticos: " + entry.getValue().getPrimaryMeasure());
+                    List<String> xPublications = getXPublications(observations, queryVersion);
+                    for (String xPublication : xPublications) {
+                        twitterClient.postTweet(xPublication);
                     }
                 }
             }
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error finding observations for dataset " + resource.getDatasetRepositoryId());
         }
+    }
+
+    private List<String> getXPublications(Map<String, ObservationExtendedDto> observations, QueryVersion query) {
+        List<String> messages = new ArrayList<>();
+        for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
+            for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
+                messages.add(localisedString.getLabel().replace("{dato}", entry.getValue().getPrimaryMeasure()));
+            }
+        }
+        return messages;
     }
 
     private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
