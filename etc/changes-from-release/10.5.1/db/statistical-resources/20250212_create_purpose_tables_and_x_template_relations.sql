@@ -23,3 +23,8 @@ INSERT INTO tb_purposes
 (id, identifier, "version", description_fk)
 VALUES(2, 'DATA_FILTER', 0, NULL);
 commit;
+
+alter table tb_queries_versions add column x_templates_fk int8 null;
+commit;
+alter table tb_queries_versions add CONSTRAINT fk_tb_queries_versions_x_templates_fk FOREIGN KEY (x_templates_fk) REFERENCES tb_international_strings(id) deferrable;
+commit;

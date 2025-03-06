@@ -138,6 +138,7 @@ Application QueriesStatisticalResources {
 			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> queryVersionStub;
 			//Social_network/data_filter
 			- @Purpose purposes nullable databaseColumn="PURPOSE_FK" cascade="none";
+			- @InternationalString xTemplate nullable databaseColumn="X_TEMPLATES_FK" cascade="all"
 			
 			Repository QueryVersionRepository {
 				save;

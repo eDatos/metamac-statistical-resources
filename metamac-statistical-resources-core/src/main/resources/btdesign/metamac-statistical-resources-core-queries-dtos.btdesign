@@ -28,6 +28,7 @@ Application QueriesStatisticalResourcesDto {
 			- List<RelatedResourceDto> headingDimensions
 			- List<RelatedResourceDto> stubDimensions
 			- @PurposeDto purpose
+			- @InternationalStringDto xTemplateDto
 		}
 		
 		DataTransferObject SelectionItemDto {
@@ -39,7 +40,7 @@ Application QueriesStatisticalResourcesDto {
 			String code required;
 			String title required;
 		}
-				"Dto for purposes"
+		"Dto for purposes"
         DataTransferObject PurposeDto extends @IdentityDto {
             String identifier;
             - @InternationalStringDto description nullable;

@@ -45,6 +45,7 @@ import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginat
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmItemLinkItemWithSchemeFilterItem;
 import org.siemac.metamac.web.common.client.widgets.windows.search.SearchMultipleExternalItemPaginatedWindow;
@@ -123,8 +124,11 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
         purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
 
+        MultiLanguageRichTextEditorItem xTemplate = new MultiLanguageRichTextEditorItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate(), true);
+
         fields.add(typeSelectorItem);
         fields.add(purposeTypeSelectorItem);
+        fields.add(xTemplate);
         return fields;
     }
 
@@ -253,6 +257,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
         setValue(QueryDS.PURPOSE_TYPE, CommonUtils.getPurposeName(queryDto.getPurpose()));
+        setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
         this.queryDto = queryDto;
     }
 
@@ -283,6 +288,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularities(queryDto);
         queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
+        queryDto.setXTemplateDto(getValueAsInternationalStringDto(QueryDS.X_TEMPLATE));
         return queryDto;
     }
 

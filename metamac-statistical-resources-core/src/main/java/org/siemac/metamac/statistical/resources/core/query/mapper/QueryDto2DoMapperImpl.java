@@ -121,7 +121,6 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         }
     }
 
-
     private DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
         if (source.getFixedDatasetVersion() != null) {
             return source.getFixedDatasetVersion();
@@ -185,10 +184,11 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         target.getHeadingDimensions().addAll(getHeadingDimension(source.getHeadingDimensions(), target));
         target.getStubDimensions().addAll(getStubDimension(source.getStubDimensions(), target));
         target.setPurposes(purposeDtoToDo(source.getPurpose()));
+        target.setXTemplate(internationalStringDtoToDo(source.getXTemplateDto(), target.getXTemplate(), ServiceExceptionParameters.QUERY_VERSION));
         return target;
     }
 
-    public Purpose purposeDtoToDo(PurposeDto source) throws MetamacException {
+    private Purpose purposeDtoToDo(PurposeDto source) throws MetamacException {
         if (source == null) {
             return null;
         }

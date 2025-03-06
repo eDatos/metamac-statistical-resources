@@ -17,6 +17,7 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceLinkItem;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.ExternalItemListItem;
 
@@ -51,6 +52,8 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
         ViewTextItem purposeType = new ViewTextItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
         fields.add(purposeType);
+        ViewMultiLanguageTextItem twitterTemplate = new ViewMultiLanguageTextItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+        fields.add(twitterTemplate);
         return fields;
     }
 
@@ -101,6 +104,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
         setValue(QueryDS.TYPE, CommonUtils.getQueryTypeName(queryDto));
         setValue(QueryDS.PURPOSE_TYPE, CommonUtils.getPurposeName(queryDto.getPurpose()));
+        setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
         if (isLatestData) {
             setValue(QueryDS.LATEST_N_DATA, queryDto.getLatestDataNumber());
         }
