@@ -346,7 +346,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     }
 
     @Override
-    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, DatasetVersion resource) {
+    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         try {
             streamMessagingServiceFacade.sendNewVersionPublished(resource);
 
@@ -356,30 +356,31 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             for (QueryVersion queryVersion : queriesDataset) {
                 sendNewVersionPublishedStreamMessage(ctx, queryVersion);
             }
-            postTweet(queriesDataset, resource);
+            if (configurationService.retrieveTwitterAccessToken() != null) {
+                postTweet(queriesDataset, resource);
+            }
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
-        } catch (ApplicationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
 
-    private void postTweet(List<QueryVersion> queriesDataset, DatasetVersion resource) throws ApplicationException {
-        for (QueryVersion queryVersion : queriesDataset) {
-            if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
-                List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
-                Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
-                // remember that we have to update the x page for the application to be read and write
-                TwitterClient twitterClient = new TwitterClient(
-                        TwitterCredentials.builder().accessToken("1573655122349105152-xKNPWehR4LlLYFp2SngfXuSDIjC21K").accessTokenSecret("mPI2rkrXpYXuxb7TuPWc6hgmf20fBTvW6NNMS0YBjAg3a")
-                                .apiKey("9WQ5Lj7sVjxwVWuqBNQ3cuP3O").apiSecretKey("PJutJC6Z4YDUYRHfQtApGZ0Tfes0Ha9fXjAmXvdvhWFfASCp74").build());
-                for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
-                    twitterClient.postTweet("Variación interanual de apartamentos turísticos: " + entry.getValue().getPrimaryMeasure());
+    private void postTweet(List<QueryVersion> queriesDataset, DatasetVersion resource) throws MetamacException {
+        try {
+            for (QueryVersion queryVersion : queriesDataset) {
+                if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
+                    List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
+                    Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
+                    // remember that we have to update the x page for the application to be read and write
+                    TwitterClient twitterClient = new TwitterClient(
+                            TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
+                                    .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+                    for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
+                        twitterClient.postTweet("Variación interanual de apartamentos turísticos: " + entry.getValue().getPrimaryMeasure());
+                    }
                 }
-                
-                
             }
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error finding observations for dataset " + resource.getDatasetRepositoryId());
         }
     }
 

@@ -71,6 +71,42 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
+    public String retrieveTwitterApiKey() throws MetamacException {
+        try {
+            return retrieveProperty(StatisticalResourcesConfigurationConstants.TWITTER_API_KEY);
+        } catch (MetamacException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String retrieveTwitterApiSecretKey() throws MetamacException {
+        try {
+            return retrieveProperty(StatisticalResourcesConfigurationConstants.TWITTER_API_SECRET_KEY);
+        } catch (MetamacException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String retrieveTwitterAccessToken() throws MetamacException {
+        try {
+            return retrieveProperty(StatisticalResourcesConfigurationConstants.TWITTER_ACCES_TOKEN);
+        } catch (MetamacException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String retrieveTwitterAccesTokenSecret() throws MetamacException {
+        try {
+            return retrieveProperty(StatisticalResourcesConfigurationConstants.TWITTER_ACCES_TOKEN_SECRET);
+        } catch (MetamacException e) {
+            return null;
+        }
+    }
+
+    @Override
     public String retrieveKafkaExternalDatasetPublicationMessagesGroup() throws MetamacException {
         return STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP;
     }

@@ -31,4 +31,11 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
 
     public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException;
 
+    public String retrieveTwitterApiKey() throws MetamacException;
+
+    public String retrieveTwitterApiSecretKey() throws MetamacException;
+
+    public String retrieveTwitterAccessToken() throws MetamacException;
+
+    public String retrieveTwitterAccesTokenSecret() throws MetamacException;
 }

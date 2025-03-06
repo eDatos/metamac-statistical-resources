@@ -16,7 +16,7 @@ public interface LifecycleService<E extends Object> {
 
     E versioning(ServiceContext ctx, String urn, VersionTypeEnum versionType) throws MetamacException;
 
-    void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, E resource);
+    void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, E resource)  throws MetamacException;
 
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException;
 }
