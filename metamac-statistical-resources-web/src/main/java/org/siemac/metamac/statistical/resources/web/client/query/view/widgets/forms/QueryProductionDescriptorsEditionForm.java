@@ -121,7 +121,6 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         });
 
         CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
-        purposeTypeSelectorItem.setRequired(true);
         purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
 
         fields.add(typeSelectorItem);

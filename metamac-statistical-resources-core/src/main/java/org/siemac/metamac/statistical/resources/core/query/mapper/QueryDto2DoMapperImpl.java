@@ -101,6 +101,16 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
         queryVersionDtoToDo(source, target);
         try {
+            checkPurpose(source, target);
+        } catch (ApplicationException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withMessageParameters(source.getUrn()).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
+
+        return target;
+    }
+
+    private void checkPurpose(QueryVersionDto source, QueryVersion target) throws MetamacException, ApplicationException {
+        if (source.getPurpose() != null) {
             List<ConditionDimensionDto> conditions = generateConditions(target.getSelection());
             DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(target);
             Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
@@ -108,11 +118,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
                         .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
-        } catch (ApplicationException e) {
-            throw MetamacExceptionBuilder.builder().withCause(e).withMessageParameters(source.getUrn()).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
         }
-
-        return target;
     }
 
 
