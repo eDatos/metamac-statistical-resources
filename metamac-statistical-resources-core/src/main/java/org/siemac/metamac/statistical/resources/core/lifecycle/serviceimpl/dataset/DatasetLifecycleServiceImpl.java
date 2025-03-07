@@ -374,10 +374,8 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                     TwitterClient twitterClient = new TwitterClient(
                             TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                     .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
-                    List<String> xPublications = getXPublications(observations, queryVersion);
-                    for (String xPublication : xPublications) {
-                        twitterClient.postTweet(xPublication);
-                    }
+                    String xPublication = getXPublication(observations, queryVersion);
+                    twitterClient.postTweet(xPublication);
                 }
             }
         } catch (ApplicationException e) {
@@ -385,16 +383,27 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         }
     }
 
-    private List<String> getXPublications(Map<String, ObservationExtendedDto> observations, QueryVersion query) {
-        List<String> messages = new ArrayList<>();
-        if (query.getXTemplate() != null) {
-            for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
-                for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
-                    messages.add(localisedString.getLabel().replace("{dato}", entry.getValue().getPrimaryMeasure()));
-                }
+    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query) throws MetamacException {
+        if (observations.size() > 1) {
+            throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + query.getLifeCycleStatisticalResource().getCode());
+        }
+
+        if (query.getXTemplate() != null && !observations.isEmpty()) {
+            // Get the only entry in the map
+            Entry<String, ObservationExtendedDto> entry = observations.entrySet().iterator().next();
+
+            return setMessageLanguageDefault(query, entry);
+        }
+        return "";
+    }
+
+    private String setMessageLanguageDefault(QueryVersion query,  Entry<String, ObservationExtendedDto> entry) throws MetamacException {
+        for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
+            if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
+                return localisedString.getLabel().replace("{dato}", entry.getValue().getPrimaryMeasure());
             }
         }
-        return messages;
+        return "";
     }
 
     private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
