@@ -387,9 +387,11 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     private List<String> getXPublications(Map<String, ObservationExtendedDto> observations, QueryVersion query) {
         List<String> messages = new ArrayList<>();
-        for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
-            for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
-                messages.add(localisedString.getLabel().replace("{dato}", entry.getValue().getPrimaryMeasure()));
+        if (query.getXTemplate() != null) {
+            for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
+                for (Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
+                    messages.add(localisedString.getLabel().replace("{dato}", entry.getValue().getPrimaryMeasure()));
+                }
             }
         }
         return messages;
