@@ -29,12 +29,48 @@
 -- GRANT USAGE ON TYPES TO metamac_statistical_resources_bd, metamac_statistical_resources_data_bd,
 --                      metamac_statistical_resources_own_bd, metamac_statistical_resources_data_own_bd;
 -- 
--- -- Check the current search_path
--- -- SHOW search_path;
--- 
--- ALTER DATABASE metamac_statistical_resources_bd SET search_path TO FILL_CURRENT_SEARCH_PATH, extensions;
--- ALTER DATABASE metamac_statistical_resources_data_bd SET search_path TO FILL_CURRENT_SEARCH_PATH, extensions;
--- 
+-- -- Include future extensions
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
+-- GRANT EXECUTE ON FUNCTIONS TO metamac_statistical_resources_bd, metamac_statistical_resources_own_bd;
+--
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
+-- GRANT USAGE ON TYPES TO metamac_statistical_resources_bd, metamac_statistical_resources_own_bd;
+--
+-- DO $$
+-- DECLARE
+-- current_search_path TEXT;
+-- BEGIN
+--     -- Obtén el search_path actual
+-- SELECT current_setting('search_path') INTO current_search_path;
+--
+-- -- Genera el nuevo search_path y actualiza la base de datos
+-- EXECUTE format('ALTER DATABASE "metamac_statistical_resources_bd" SET search_path = %s, extensions', current_search_path
+--         );
+-- END $$;
+--
+-- GRANT USAGE ON SCHEMA extensions TO public;
+-- GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA extensions TO metamac_statistical_resources_data_bd, metamac_statistical_resources_data_own_bd;
+--
+-- -- Include future extensions
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
+-- GRANT EXECUTE ON FUNCTIONS TO metamac_statistical_resources_bd, metamac_statistical_resources_data_own_bd;
+--
+-- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
+-- GRANT USAGE ON TYPES TO metamac_statistical_resources_data_bd, metamac_statistical_resources_data_own_bd;
+--
+-- DO $$
+-- DECLARE
+-- current_search_path TEXT;
+-- BEGIN
+--     -- Obtén el search_path actual
+-- SELECT current_setting('search_path') INTO current_search_path;
+--
+-- -- Genera el nuevo search_path y actualiza la base de datos
+-- EXECUTE format('ALTER DATABASE "metamac_statistical_resources_data_bd" SET search_path = %s, extensions', current_search_path
+--         );
+-- END $$;
+--
+--
 -- ------------------------------------------------------------------------------------------------------------------------
 -- -- DEMO, PRE & PRO ISTAC
 -- ------------------------------------------------------------------------------------------------------------------------
