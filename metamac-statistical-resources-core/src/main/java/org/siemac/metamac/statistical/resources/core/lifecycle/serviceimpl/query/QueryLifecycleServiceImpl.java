@@ -231,7 +231,7 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
     }
 
     @Override
-    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, QueryVersion resource) throws MetamacException{
+    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, QueryVersion resource) {
         try {
             streamMessagingServiceFacade.sendNewVersionPublished(resource);
         } catch (MetamacException e) {

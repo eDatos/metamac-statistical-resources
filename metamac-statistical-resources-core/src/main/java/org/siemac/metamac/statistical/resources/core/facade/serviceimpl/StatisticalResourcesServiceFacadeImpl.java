@@ -1188,7 +1188,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         List<Purpose> purposes = getQueryService().findPurposes(ctx);
 
         // transform
-        return queryDo2DtoMapper.puposeDoListToDtoList(purposes);
+        return queryDo2DtoMapper.purposeDoListToDtoList(purposes);
     }
 
     @Override

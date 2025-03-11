@@ -196,7 +196,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         try {
             return purposeRepository.findById(source.getId());
         } catch (PurposeNotFoundException e) {
-            throw new MetamacException(ServiceExceptionType.STATISTIC_OFFICIALITY_NOT_FOUND, source.getId());
+            throw new MetamacException(ServiceExceptionType.PURPOSE_NOT_FOUND, source.getId());
         }
     }
 

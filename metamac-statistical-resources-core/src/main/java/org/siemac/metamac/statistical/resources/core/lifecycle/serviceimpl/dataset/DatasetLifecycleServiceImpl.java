@@ -346,7 +346,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     }
 
     @Override
-    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
+    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, DatasetVersion resource) {
         try {
             streamMessagingServiceFacade.sendNewVersionPublished(resource);
 
@@ -378,7 +378,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                     twitterClient.postTweet(xPublication);
                 }
             }
-        } catch (ApplicationException e) {
+        } catch (Exception e) {
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error finding observations for dataset " + resource.getDatasetRepositoryId());
         }
     }

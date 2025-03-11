@@ -231,7 +231,7 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
     }
 
     @Override
-    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, MultidatasetVersion resource)  throws MetamacException {
+    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, MultidatasetVersion resource) {
         // TODO METAMAC-2715 - Realizar la notificación a Kafka de los recursos Multidataset
     }
 

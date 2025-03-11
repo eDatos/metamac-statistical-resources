@@ -19,7 +19,7 @@ public interface QueryDo2DtoMapper {
     public QueryVersionDto queryVersionDoToDto(QueryVersion source) throws MetamacException;
     public QueryVersionBaseDto queryVersionDoToBaseDto(QueryVersion item) throws MetamacException;
     public List<QueryVersionBaseDto> queryVersionDoListToDtoList(List<QueryVersion> sources) throws MetamacException;
-    public List<PurposeDto> puposeDoListToDtoList(List<Purpose> sources) throws MetamacException;
+    public List<PurposeDto> purposeDoListToDtoList(List<Purpose> sources) throws MetamacException;
     public PurposeDto purposeDo2Dto(Purpose source);
 
 }

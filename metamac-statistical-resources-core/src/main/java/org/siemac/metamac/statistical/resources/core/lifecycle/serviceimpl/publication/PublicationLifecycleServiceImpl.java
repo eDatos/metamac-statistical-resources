@@ -281,7 +281,7 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
     }
 
     @Override
-    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, PublicationVersion resource) throws MetamacException{
+    public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, PublicationVersion resource) {
         try {
             streamMessagingServiceFacade.sendNewVersionPublished(resource);
         } catch (MetamacException e) {

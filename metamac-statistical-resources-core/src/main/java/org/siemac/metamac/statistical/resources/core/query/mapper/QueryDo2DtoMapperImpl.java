@@ -276,7 +276,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
     }
 
     @Override
-    public List<PurposeDto> puposeDoListToDtoList(List<Purpose> sources) throws MetamacException {
+    public List<PurposeDto> purposeDoListToDtoList(List<Purpose> sources) throws MetamacException {
         List<PurposeDto> targets = new ArrayList<>();
         
         for (Purpose source : sources) {
