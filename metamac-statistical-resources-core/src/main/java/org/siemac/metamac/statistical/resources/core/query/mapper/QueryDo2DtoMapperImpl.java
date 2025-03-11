@@ -177,6 +177,11 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         if (source.getDataset() != null && source.getDataset().getVersions() != null && !source.getDataset().getVersions().isEmpty()) {
             dsdUrn = source.getDataset().getVersions().get(0).getRelatedDsd().getUrn();
         }
+
+        if (dsdUrn.isEmpty() && source.getFixedDatasetVersion() != null && source.getFixedDatasetVersion().getRelatedDsd() != null) {
+            dsdUrn = source.getFixedDatasetVersion().getRelatedDsd().getUrn();
+        }
+
         DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(dsdUrn);
         if (source.getStubDimensions() != null && !source.getStubDimensions().isEmpty()
                 || (source.getHeadingDimensions() != null && !source.getHeadingDimensions().isEmpty())) {
