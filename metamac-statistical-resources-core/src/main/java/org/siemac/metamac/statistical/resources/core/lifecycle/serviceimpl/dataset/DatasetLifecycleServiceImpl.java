@@ -20,6 +20,7 @@ import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
+import org.siemac.metamac.statistical.resources.core.common.utils.PortalWebCoreUtils;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
@@ -355,35 +356,33 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
             for (QueryVersion queryVersion : queriesDataset) {
                 sendNewVersionPublishedStreamMessage(ctx, queryVersion);
-            }
-            if (configurationService.retrieveTwitterAccessToken() != null) {
-                postTweet(queriesDataset, resource);
+                if (configurationService.retrieveTwitterAccessToken() != null) {
+                    postTweet(queryVersion, resource);
+                }
             }
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
     }
 
-    private void postTweet(List<QueryVersion> queriesDataset, DatasetVersion resource) throws MetamacException {
+    private void postTweet(QueryVersion queryVersion, DatasetVersion resource) throws MetamacException {
         try {
-            for (QueryVersion queryVersion : queriesDataset) {
-                if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
-                    List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
-                    Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
-                    // remember that we have to update the x page for the application to be read and write
-                    TwitterClient twitterClient = new TwitterClient(
-                            TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
-                                    .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
-                    String xPublication = getXPublication(observations, queryVersion);
-                    twitterClient.postTweet(xPublication);
-                }
+            if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
+                List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
+                Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
+                // remember that we have to update the x page for the application to be read and write
+                TwitterClient twitterClient = new TwitterClient(
+                        TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
+                                .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+                String xPublication = getXPublication(observations, queryVersion, resource);
+                twitterClient.postTweet(xPublication);
             }
         } catch (Exception e) {
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error finding observations for dataset " + resource.getDatasetRepositoryId());
         }
     }
 
-    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query) throws MetamacException {
+    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query, DatasetVersion resource) throws MetamacException {
         if (observations.size() > 1) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + query.getLifeCycleStatisticalResource().getCode());
         }
@@ -392,15 +391,17 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             // Get the only entry in the map
             Entry<String, ObservationExtendedDto> entry = observations.entrySet().iterator().next();
 
-            return setMessageLanguageDefault(query, entry);
+            return setMessageLanguageDefault(query, entry, resource);
         }
         return "";
     }
 
-    private String setMessageLanguageDefault(QueryVersion query,  Entry<String, ObservationExtendedDto> entry) throws MetamacException {
+    private String setMessageLanguageDefault(QueryVersion query,  Entry<String, ObservationExtendedDto> entry, DatasetVersion resource) throws MetamacException {
         for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
             if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
-                return localisedString.getLabel().replace("{dato}", entry.getValue().getPrimaryMeasure());
+                String portalBaseUrl = configurationService.findProperty("metamac.portal.web.internal.visualizer");
+                String url = entry.getValue().getPrimaryMeasure() + ": " +PortalWebCoreUtils.buildDatasetVersionUrl(resource, portalBaseUrl);
+                return localisedString.getLabel().replace("{datos}", url);
             }
         }
         return "";
@@ -418,6 +419,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         }
         return conditionDimensionDtos;
     }
+
     protected void sendNewVersionPublishedStreamMessage(ServiceContext ctx, QueryVersion version) {
         try {
             streamMessagingServiceFacade.sendNewVersionPublished(version);

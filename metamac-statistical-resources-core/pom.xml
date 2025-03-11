@@ -23,7 +23,7 @@
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
-		    <version>${com-fasterxml-jackson-core.version}</version> <!-- Asegúrate de que sea compatible con tu framework -->
+		    <version>${com-fasterxml-jackson-core.version}</version>
 		</dependency>
         <!-- METAMAC -->
         <dependency>
