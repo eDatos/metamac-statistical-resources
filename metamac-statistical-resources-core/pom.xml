@@ -18,12 +18,12 @@
 		<dependency>
 		    <groupId>io.github.redouane59.twitter</groupId>
 		    <artifactId>twittered</artifactId>
-		    <version>2.23</version>
+		    <version>${io-github-redouane59-twitter.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.fasterxml.jackson.core</groupId>
 		    <artifactId>jackson-databind</artifactId>
-		    <version>2.15.0</version> <!-- Asegúrate de que sea compatible con tu framework -->
+		    <version>${com-fasterxml-jackson-core.version}</version> <!-- Asegúrate de que sea compatible con tu framework -->
 		</dependency>
         <!-- METAMAC -->
         <dependency>
