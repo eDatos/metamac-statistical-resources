@@ -97,6 +97,7 @@ Application BaseStatisticalResources {
 			gap
 
 			- @ProcStatusEnum procStatus nullable;
+			- @XStreamStatusEnum xStreamStatus nullable;
 			
 			DateTimeTZ creationDate nullable;
 			String creationUser nullable;

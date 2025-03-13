@@ -2040,12 +2040,18 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     @Override
     public void testRetrieveExternalItemsByDatasetUrn() throws Exception {
         // no optimistic locking in this operation
-        
+
     }
 
     @Override
     public void testFindPurposes() throws Exception {
-     // no optimistic locking in this operation
-        
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testResendPublishedDatasetVersionXMessage() throws Exception {
+        // no optimistic locking in this operation
+
     }
 }

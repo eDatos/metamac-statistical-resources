@@ -1054,6 +1054,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Send to publish and retrieve
         datasetVersion = datasetLifecycleService.sendToPublished(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
 
+        datasetLifecycleService.checkTwitterPostActivatedAndPostTwit(ctx, datasetVersion);
         // Transform
         datasetVersionDto = datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersion);
 
@@ -2580,5 +2581,20 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
 
+    }
+
+    @Override
+    public DatasetVersionDto resendPublishedDatasetVersionXMessage(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+     // Retrieve Dataset
+        DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(datasetVersionUrn);
+
+        // Security
+        DatasetsSecurityUtils.canResendPublishedDatasetVersionStreamMessage(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+
+        // Send x message
+        datasetLifecycleService.checkTwitterPostActivatedAndPostTwit(ctx, datasetVersion);
+
+        // Transform
+        return datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersion);
     }
 }

@@ -139,6 +139,7 @@ Application FacadeStatisticalResources {
     		@DatasetVersionDto publishDatasetVersion(@DatasetVersionDto datasetVersionDto) throws MetamacException;
     		@DatasetVersionBaseDto publishDatasetVersion(@DatasetVersionBaseDto datasetVersionDto) throws MetamacException;
     		@DatasetVersionBaseDto resendPublishedDatasetVersionStreamMessage(String datasetVersionUrn) throws MetamacException;
+    		@DatasetVersionDto resendPublishedDatasetVersionXMessage(String datasetVersionUrn) throws MetamacException;
     		"Creates a new version of a dataset, copying metadata from version with provided urn"
     		@DatasetVersionDto versioningDatasetVersion(@DatasetVersionDto datasetVersionDto, @VersionTypeEnum versionType) throws MetamacException;
     		@DatasetVersionBaseDto versioningDatasetVersion(@DatasetVersionBaseDto datasetVersionDto, @VersionTypeEnum versionType) throws MetamacException;

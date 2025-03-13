@@ -14,6 +14,7 @@ public interface DatasetMetadataTabUiHandlers extends DatasetMetadataCommonTabUi
     void publish(DatasetVersionDto dataset);
     void version(DatasetVersionDto dataset, VersionTypeEnum versionType);
     void resendStreamMessage(DatasetVersionDto dataset);
+    void resendXMessage(DatasetVersionDto dataset);
     void updateGeocoverageCache(DatasetVersionDto dataset);
 
     void previewData(DatasetVersionDto datasetVersionDto);

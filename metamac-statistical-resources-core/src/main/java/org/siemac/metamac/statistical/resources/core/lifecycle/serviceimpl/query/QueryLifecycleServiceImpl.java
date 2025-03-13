@@ -244,4 +244,9 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
         // ONLY FOR DATASETS
     }
 
+    @Override
+    public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, QueryVersion resource) {
+        // ONLY FOR DATASETS
+    }
+
 }

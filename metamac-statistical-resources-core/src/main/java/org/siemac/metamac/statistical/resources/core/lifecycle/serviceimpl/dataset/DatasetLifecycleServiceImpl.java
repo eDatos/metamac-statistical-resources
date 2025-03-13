@@ -29,6 +29,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
+import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -356,30 +357,41 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
             for (QueryVersion queryVersion : queriesDataset) {
                 sendNewVersionPublishedStreamMessage(ctx, queryVersion);
-                if (configurationService.retrieveTwitterAccessToken() != null) {
-                    postTweet(queryVersion, resource);
-                }
             }
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
     }
 
-    private void postTweet(QueryVersion queryVersion, DatasetVersion resource) throws MetamacException {
+    @Override
+    public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, DatasetVersion resource) {
         try {
-            if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
-                List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
-                Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
-                // remember that we have to update the x page for the application to be read and write
-                TwitterClient twitterClient = new TwitterClient(
-                        TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
-                                .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
-                String xPublication = getXPublication(observations, queryVersion, resource);
-                twitterClient.postTweet(xPublication);
+            if (configurationService.retrieveTwitterAccessToken() == null) {
+                return;
             }
+            List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(resource.getDataset().getId());
+            for (QueryVersion queryVersion : queriesDataset) {
+                if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
+                    List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
+                    Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
+                    // remember that we have to update the x page for the application to be read and write
+                    TwitterClient twitterClient = new TwitterClient(
+                            TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
+                                    .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+                    String xPublication = getXPublication(observations, queryVersion, resource);
+                    twitterClient.postTweet(xPublication);
+                }
+            }
+            updateXStreamStatus(resource, XStreamStatusEnum.SENT);
         } catch (Exception e) {
-            throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error finding observations for dataset " + resource.getDatasetRepositoryId());
+            createXMessageSentNotification(ctx, resource);
+            updateXStreamStatus(resource, XStreamStatusEnum.FAILED);
         }
+    }
+
+    private void updateXStreamStatus(DatasetVersion resource, XStreamStatusEnum status) {
+        resource.getSiemacMetadataStatisticalResource().setXStreamStatus(status);
+        saveResource(resource);
     }
 
     private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query, DatasetVersion resource) throws MetamacException {

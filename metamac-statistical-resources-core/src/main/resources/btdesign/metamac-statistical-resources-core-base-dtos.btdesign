@@ -63,6 +63,7 @@ Application StatisticalResourcesDto {
 
 		DataTransferObject LifeCycleStatisticalResourceDto extends @VersionableStatisticalResourceDto {
 			- @ProcStatusEnum procStatus;
+			- @XStreamStatusEnum xStreamStatus nullable;
 			
 			JAVADATE creationDate;
 			String creationUser;

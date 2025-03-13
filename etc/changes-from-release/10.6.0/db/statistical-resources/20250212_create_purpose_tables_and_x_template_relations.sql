@@ -44,3 +44,6 @@ INSERT INTO TB_INTERNATIONAL_STRINGS (ID, VERSION) values (nextval('seq_i18nstrs
 INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), 'Filtro de datos', 'es', currval('seq_i18nstrs'), 1);
 insert into TB_PURPOSES(ID,IDENTIFIER,VERSION,DESCRIPTION_FK) values (nextval('SEQ_PURPOSES'),'DATA_FILTER',0, currval('seq_i18nstrs'));
 commit;
+
+alter table tb_stat_resources add column X_Stream_Status varchar(255) null;
+commit

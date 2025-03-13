@@ -15,6 +15,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     private MainFormLayoutButton rejectValidation;
     private MainFormLayoutButton publish;
     private MainFormLayoutButton resendStreamMessage;
+    private MainFormLayoutButton resendXMessage;
     private MainFormLayoutButton versioning;
     private MainFormLayoutButton preview;
 
@@ -36,6 +37,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         rejectValidation = new MainFormLayoutButton(getConstants().lifeCycleRejectValidation(), GlobalResources.RESOURCE.reject().getURL());
         publish = new MainFormLayoutButton(getConstants().lifeCyclePublish(), GlobalResources.RESOURCE.publish().getURL());
         resendStreamMessage = new MainFormLayoutButton(getConstants().lifeCycleReSendStreamMessage(), GlobalResources.RESOURCE.reload().getURL());
+        resendXMessage = new MainFormLayoutButton("Reenviar X", GlobalResources.RESOURCE.reload().getURL());
         versioning = new MainFormLayoutButton(getConstants().lifeCycleVersioning(), GlobalResources.RESOURCE.version().getURL());
         preview = new MainFormLayoutButton(getConstants().actionPreviewData(), GlobalResources.RESOURCE.preview().getURL());
 
@@ -44,6 +46,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         toolStrip.addButton(rejectValidation);
         toolStrip.addButton(publish);
         toolStrip.addButton(resendStreamMessage);
+        toolStrip.addButton(resendXMessage);
         toolStrip.addButton(versioning);
         toolStrip.addButton(preview);
     }
@@ -83,6 +86,9 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         if (canResendStreamMessage()) {
             showResendStreamMessageButton();
         }
+        if (canResendXMessage()) {
+            showResendXMessageButton();
+        }
         if (canVersion() && lastVersion) {
             showVersioningButton();
         }
@@ -96,6 +102,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         rejectValidation.hide();
         publish.hide();
         resendStreamMessage.hide();
+        resendXMessage.hide();
         versioning.hide();
         preview.hide();
     }
@@ -127,6 +134,12 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     private void showResendStreamMessageButton() {
         if (canResendStreamMessage()) {
             resendStreamMessage.show();
+        }
+    }
+
+    private void showResendXMessageButton() {
+        if (canResendXMessage()) {
+            resendXMessage.show();
         }
     }
 
@@ -162,6 +175,10 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         return resendStreamMessage;
     }
 
+    public HasClickHandlers getResendXMessageButton() {
+        return resendXMessage;
+    }
+
     public HasClickHandlers getVersioningButton() {
         return versioning;
     }
@@ -183,6 +200,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
     protected abstract boolean canRejectValidation();
     protected abstract boolean canPublish();
     protected abstract boolean canResendStreamMessage();
+    protected abstract boolean canResendXMessage();
     protected abstract boolean canVersion();
     protected abstract boolean canPreviewData();
 }
