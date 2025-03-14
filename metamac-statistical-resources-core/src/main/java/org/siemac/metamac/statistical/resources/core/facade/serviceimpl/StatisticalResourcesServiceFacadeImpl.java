@@ -2589,7 +2589,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(datasetVersionUrn);
 
         // Security
-        DatasetsSecurityUtils.canResendPublishedDatasetVersionStreamMessage(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+        DatasetsSecurityUtils.canResendPublishedDatasetVersionXMessage(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
 
         // Send x message
         datasetLifecycleService.checkTwitterPostActivatedAndPostTwit(ctx, datasetVersion);

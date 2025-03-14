@@ -37,7 +37,7 @@ public abstract class LifecycleMainFormLayout extends InternationalMainFormLayou
         rejectValidation = new MainFormLayoutButton(getConstants().lifeCycleRejectValidation(), GlobalResources.RESOURCE.reject().getURL());
         publish = new MainFormLayoutButton(getConstants().lifeCyclePublish(), GlobalResources.RESOURCE.publish().getURL());
         resendStreamMessage = new MainFormLayoutButton(getConstants().lifeCycleReSendStreamMessage(), GlobalResources.RESOURCE.reload().getURL());
-        resendXMessage = new MainFormLayoutButton("Reenviar X", GlobalResources.RESOURCE.reload().getURL());
+        resendXMessage = new MainFormLayoutButton(getConstants().lifeCycleReSendXMessage(), GlobalResources.RESOURCE.reload().getURL());
         versioning = new MainFormLayoutButton(getConstants().lifeCycleVersioning(), GlobalResources.RESOURCE.version().getURL());
         preview = new MainFormLayoutButton(getConstants().actionPreviewData(), GlobalResources.RESOURCE.preview().getURL());
 
