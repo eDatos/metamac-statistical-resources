@@ -149,6 +149,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
             record.setStatisticOfficiality(getLocalisedString(datasetVersionBaseDto.getStatisticOfficiality().getDescription()));
         }
         record.setDatasetVersionBaseDto(datasetVersionBaseDto);
+        record.setXPublicationStatus(CommonUtils.getXStatusIcon(datasetVersionBaseDto.getXSTreamStatus()));
         return record;
     }
 

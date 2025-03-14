@@ -58,6 +58,7 @@ Application StatisticalResourcesDto {
 			String publicationUser;
 			String maintainerCodeNested;
 			- @StreamMessageStatusEnum publicationStreamStatus;
+			- @XStreamStatusEnum xSTreamStatus;
 			Boolean lastVersion;
 		}
 

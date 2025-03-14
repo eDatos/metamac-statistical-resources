@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.client.dataset.widgets;
 
+import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
+
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
@@ -11,6 +13,8 @@ import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleRes
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 
+import com.smartgwt.client.types.Alignment;
+import com.smartgwt.client.types.ListGridFieldType;
 import com.smartgwt.client.types.SortDirection;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -28,7 +32,14 @@ public class DatasetVersionsSectionStack extends SiemacMetadataResourceSectionSt
     }
 
     private void initDatasetVersionsSectionStack() {
-        setListGridFields();
+        setExtraListGridFields(getPublicationXStatusGrid());
+    }
+
+    private ListGridField getPublicationXStatusGrid() {
+        ListGridField publicationXStatus = new ListGridField(LifeCycleResourceDS.PUBLICATION_X_STATUS, getConstants().publicationXStatus());
+        publicationXStatus.setType(ListGridFieldType.IMAGE);
+        publicationXStatus.setAlign(Alignment.CENTER);
+        return publicationXStatus;
     }
 
     private boolean existDatasetVersion(String urn) {
