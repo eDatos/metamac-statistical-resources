@@ -28,7 +28,7 @@ alter table tb_queries_versions add column x_templates_fk int8 null;
 commit;
 alter table tb_queries_versions add CONSTRAINT fk_tb_queries_versions_x_templates_fk FOREIGN KEY (x_templates_fk) REFERENCES tb_international_strings(id) deferrable;
 
-CREATE SEQUENCE metamac_statistical_resources_bd.seq_purposes
+CREATE SEQUENCE seq_purposes
 	INCREMENT BY 1
 	MINVALUE 1
 	MAXVALUE 9223372036854775807

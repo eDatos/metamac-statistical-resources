@@ -9,6 +9,7 @@ public class LifeCycleResourceDS extends VersionableResourceDS {
     // LIFE CYCLE
     public static final String PROC_STATUS                = "lc-proc-status";
     public static final String PUBLICATION_STREAM_STATUS  = "lc-publication-stream-status";
+    public static final String PUBLICATION_X_STATUS       = "lc-publication-x-status";
     public static final String CREATION_DATE              = "lc-creat-date";
     public static final String CREATION_USER              = "lc-creat-user";
     public static final String PRODUCTION_VALIDATION_DATE = "lc-prod-val-date";

@@ -37,6 +37,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
@@ -238,6 +239,21 @@ public class CommonUtils {
         } else if (StreamMessageStatusEnum.PENDING.equals(status)) {
             icon.setSrc(GlobalResources.RESOURCE.warn().getURL());
         } else if (StreamMessageStatusEnum.SENT.equals(status)) {
+            icon.setSrc(GlobalResources.RESOURCE.success().getURL());
+        }
+
+        return icon;
+    }
+
+    public static FormItemIcon getXStatusIcon(XStreamStatusEnum status) {
+        if (status == null) {
+            return null;
+        }
+
+        FormItemIcon icon = new FormItemIcon();
+        if (XStreamStatusEnum.FAILED.equals(status)) {
+            icon.setSrc(GlobalResources.RESOURCE.errorSmart().getURL());
+        } else if (XStreamStatusEnum.SENT.equals(status)) {
             icon.setSrc(GlobalResources.RESOURCE.success().getURL());
         }
 
