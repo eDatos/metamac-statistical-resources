@@ -489,7 +489,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE, taskInfoDataset.getVersionRationale());
-        String datasetVersionCode = getDataversionCode(taskInfoDataset);
         JobBuilder jobBuilder = 
                 newJob().withIdentity(jobKey)
                     .usingJobData(AbstractImportDatasetJob.FILE_PATHS, filePaths.toString())
@@ -510,7 +509,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(AbstractImportDatasetJob.DATASET_AUTOMATIC_LIFE_CICLE, taskInfoDataset.getDatasetAutomaticLifeCicle())
                     .usingJobData(AbstractImportDatasetJob.TASK_NAME, taskName)
                     .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId())
-                    .usingJobData(AbstractImportDatasetJob.DATASET_CODE, datasetVersionCode)
+                    .usingJobData(AbstractImportDatasetJob.DATASET_CODE, taskInfoDataset.getDatasetVersionCode())
                     .usingJobData(jobDataMap);
         // @formatter:on
 
@@ -529,17 +528,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         return jobBuilder.requestRecovery().build();
-    }
-
-    private String getDataversionCode(TaskInfoDataset taskInfoDataset) {
-        String datasetVersionCode = "";
-        try {
-            DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(taskInfoDataset.getDatasetVersionId());
-            datasetVersionCode = datasetVersion.getSiemacMetadataStatisticalResource().getCode();
-        } catch (MetamacException e) {
-            logger.error(e.getMessage());
-        }
-        return datasetVersionCode;
     }
 
     private JobDetail createImportAttributesJob(ServiceContext serviceContext, JobKey jobKey, StringBuilder filePaths, StringBuilder fileNames, StringBuilder fileFormats,
