@@ -31,8 +31,8 @@ public class ImportDatasetJob extends AbstractImportDatasetJob {
     }
 
     @Override
-    protected void sendSuccessNotification(String fileNames, String user) {
-        getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_JOB_OK, fileNames);
+    protected void sendSuccessNotification(String fileNames, String user, String datasetVersionCode) {
+        getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_JOB_OK, fileNames, datasetVersionCode);
     }
 
     @Override

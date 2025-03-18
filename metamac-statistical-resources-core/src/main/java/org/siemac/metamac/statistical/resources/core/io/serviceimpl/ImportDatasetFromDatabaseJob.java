@@ -47,7 +47,7 @@ public class ImportDatasetFromDatabaseJob extends AbstractImportDatasetJob {
     }
 
     @Override
-    protected void sendSuccessNotification(String fileNames, String user) {
+    protected void sendSuccessNotification(String fileNames, String user, String datasetVersionCode) {
         // This dataset import is invoked from a continuous job, it's not necessary notification to user when the process goes OK
     }
 
