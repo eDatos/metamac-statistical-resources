@@ -1971,12 +1971,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 } else {
                     logger.debug("There are no new observations in table {} for dataset {}", tableName, datasetVersionUrn);
                 }
+            } catch (MetamacException e) {
+                logger.error("An unexpected error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
+                sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, e);
             } catch (Exception e) {
                 logger.error("An unexpected error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
             }
         }
     }
-    
+
     private void checkTableExists(String tableName, String datasetVersionUrn) throws MetamacException {
         if (!databaseImportRepository.checkTableExists(tableName)) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TABLE_NOT_EXIST).withMessageParameters(tableName, datasetVersionUrn).build();
@@ -2118,6 +2121,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     
     abstract class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
+        @Override
         public final T doInTransaction(TransactionStatus status) {
             try {
                 return doInMetamacTransaction(status);
