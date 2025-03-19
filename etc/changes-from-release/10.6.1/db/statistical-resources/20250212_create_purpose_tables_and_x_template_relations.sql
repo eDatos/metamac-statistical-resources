@@ -16,13 +16,6 @@ alter table tb_queries_versions add column purpose_fk int8 null;
 commit;
 alter table tb_queries_versions add CONSTRAINT fk_tb_queries_versions_purpose_fk FOREIGN KEY (purpose_fk) REFERENCES tb_purposes(id) deferrable;
 commit;
-INSERT INTO tb_purposes
-(id, identifier, "version", description_fk)
-VALUES(1, 'SOCIAL_NETWORK', 0, NULL);
-INSERT INTO tb_purposes
-(id, identifier, "version", description_fk)
-VALUES(2, 'DATA_FILTER', 0, NULL);
-commit;
 
 alter table tb_queries_versions add column x_templates_fk int8 null;
 commit;
