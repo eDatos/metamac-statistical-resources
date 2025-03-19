@@ -108,7 +108,7 @@ public class DatasetInGroupMetadataTabViewImpl extends StatisticalResourceMetada
     private void createEditionForm() {
 
         // Content descriptors form
-        contentDescriptorsEditionForm = new DatasetContentDescriptorsEditionForm(true);
+        contentDescriptorsEditionForm = new DatasetContentDescriptorsEditionForm(true, false);
         mainFormLayout.addEditionCanvas(contentDescriptorsEditionForm);
 
         // Common metadata
