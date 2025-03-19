@@ -46,8 +46,8 @@ public class DatasetContentDescriptorsEditionForm extends SiemacMetadataContentD
         init(false);
     }
 
-    public DatasetContentDescriptorsEditionForm(boolean isMultipleUpdate) {
-        super();
+    public DatasetContentDescriptorsEditionForm(boolean isMultipleUpdate, boolean isMultilanguageRichTextEditorRequired) {
+        super(isMultilanguageRichTextEditorRequired);
         init(isMultipleUpdate);
     }
 
