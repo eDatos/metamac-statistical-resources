@@ -114,7 +114,7 @@ public class DatasetsSecurityUtils extends SecurityUtils {
         }
     }
 
-    public static void canResendPublishedDatasetVersionXMessage(ServiceContext ctx, String operationCode) throws MetamacException {
+    public static void canResendPublishedQueryVersionXMessage(ServiceContext ctx, String operationCode) throws MetamacException {
         if (!SharedDatasetsSecurityUtils.canPublishDataset(getMetamacPrincipal(ctx), operationCode)) {
             throwExceptionIfOperationNotAllowed(ctx);
         }

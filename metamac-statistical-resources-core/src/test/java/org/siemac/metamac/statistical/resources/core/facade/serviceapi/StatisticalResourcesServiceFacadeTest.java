@@ -4347,7 +4347,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     }
 
     @Override
-    public void testResendPublishedDatasetVersionXMessage() throws Exception {
+    public void testResendPublishedQueryVersionXMessage() throws Exception {
      // // Without test in facade
         
     }

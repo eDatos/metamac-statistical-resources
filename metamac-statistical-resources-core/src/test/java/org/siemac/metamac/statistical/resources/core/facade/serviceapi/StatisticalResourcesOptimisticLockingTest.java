@@ -2050,7 +2050,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     }
 
     @Override
-    public void testResendPublishedDatasetVersionXMessage() throws Exception {
+    public void testResendPublishedQueryVersionXMessage() throws Exception {
         // no optimistic locking in this operation
 
     }

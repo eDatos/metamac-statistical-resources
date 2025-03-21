@@ -481,6 +481,15 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         }
     }
 
+    protected void createXMessageSentNotification(ServiceContext ctx, QueryVersion version) {
+        if (version.getLifeCycleStatisticalResource().getXStreamStatus() != XStreamStatusEnum.SENT) {
+            String userId = ctx.getUserId();
+            String messageCode = ServiceNoticeAction.X_MESSAGE_SEND;
+            String messageText = ServiceNoticeMessage.X_MESSAGE_SEND_ERROR;
+            noticesRestInternalService.createErrorOnStreamMessagingService(userId, messageCode, version, messageText, (Serializable[]) null);
+        }
+    }
+
     protected void createStreamMessageResendSentSomeNotifications(MetamacException exceptions) {
         // only for administrator users
         noticesRestInternalService.createErrorBackgroundNotification(null, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_DATASETS_MESSGES, exceptions);
