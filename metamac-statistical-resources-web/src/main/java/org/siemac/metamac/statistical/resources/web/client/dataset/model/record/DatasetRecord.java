@@ -3,7 +3,6 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.model.record
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.record.SiemacMetadataRecord;
@@ -34,10 +33,6 @@ public class DatasetRecord extends SiemacMetadataRecord {
     @Override
     public ProcStatusEnum getProcStatusEnum() {
         return getDatasetVersionBaseDto().getProcStatus();
-    }
-
-    public XStreamStatusEnum getProcXEnum() {
-        return getDatasetVersionBaseDto().getXSTreamStatus();
     }
 
     public void setXPublicationStatus(FormItemIcon formItemIcon) {

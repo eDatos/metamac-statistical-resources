@@ -390,6 +390,13 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                 }
             });
 
+            mainFormLayout.getResendXMessageButton().addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    getUiHandlers().resendXMessage(queryVersionDto);
+                }
+            });
             mainFormLayout.getVersioningButton().addClickHandler(new ClickHandler() {
 
                 @Override

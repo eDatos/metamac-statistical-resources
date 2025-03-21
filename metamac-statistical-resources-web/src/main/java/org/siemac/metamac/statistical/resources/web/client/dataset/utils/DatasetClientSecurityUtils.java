@@ -5,7 +5,6 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.Categorisation
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.LifecycleClientSecurityUtils;
 
@@ -96,11 +95,7 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
     }
 
     public static boolean canResendXMessageDatasetVersion(DatasetVersionDto dto) {
-        if (!dto.getLastVersion() || (dto.getXStreamStatus() != null && XStreamStatusEnum.SENT.equals( dto.getXStreamStatus()))) {
-            return false;
-        }
-
-        return canResendXMessageDatasetVersion(dto.getProcStatus(), dto.getIsTaskInBackground());
+        return false;
     }
 
     public static boolean canVersionDataset(DatasetVersionDto dto) {
@@ -154,17 +149,6 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
     }
 
     private static boolean canResendStreamMessageDatasetVersion(ProcStatusEnum procStatus, Boolean isTaskInBackground) {
-        if (BooleanUtils.isTrue(isTaskInBackground)) {
-            return false;
-        }
-        if (!canResendStreamMessage(procStatus)) {
-            return false;
-        }
-
-        return SharedDatasetsSecurityUtils.canPublishDataset(getMetamacPrincipal(), getCurrentStatisticalOperationCode());
-    }
-
-    private static boolean canResendXMessageDatasetVersion(ProcStatusEnum procStatus, Boolean isTaskInBackground) {
         if (BooleanUtils.isTrue(isTaskInBackground)) {
             return false;
         }

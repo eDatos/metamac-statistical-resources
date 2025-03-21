@@ -262,14 +262,6 @@ public class DatasetMetadataTabViewImpl extends StatisticalResourceMetadataBaseV
             }
         });
 
-        mainFormLayout.getResendXMessageButton().addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                getUiHandlers().resendXMessage(datasetVersionDto);
-            }
-        });
-
         mainFormLayout.getUpdateGeocoverageCache().addClickHandler(new ClickHandler() {
 
             @Override

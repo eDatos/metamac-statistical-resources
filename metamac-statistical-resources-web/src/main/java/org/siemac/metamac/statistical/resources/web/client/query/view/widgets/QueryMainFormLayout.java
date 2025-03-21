@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.client.query.view.widgets;
 
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.LifecycleMainFormLayout;
 import org.siemac.metamac.statistical.resources.web.client.query.utils.QueryClientSecurityUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
@@ -62,6 +63,14 @@ public class QueryMainFormLayout extends LifecycleMainFormLayout {
 
     @Override
     protected boolean canResendXMessage() {
-        return false;
+        if (!queryVersionDto.getLastVersion() || (queryVersionDto.getXStreamStatus() != null && XStreamStatusEnum.SENT.equals( queryVersionDto.getXStreamStatus()))) {
+            return false;
+        }
+
+        return canResendXMessageDatasetVersion();
+    }
+
+    private boolean canResendXMessageDatasetVersion() {
+        return QueryClientSecurityUtils.canResendStreamMessageQueryVersion(queryVersionDto);
     }
 }

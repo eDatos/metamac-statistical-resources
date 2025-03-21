@@ -73,7 +73,7 @@ public class DatasetMainFormLayout extends LifecycleMainFormLayout {
 
     @Override
     protected boolean canResendXMessage() {
-        return DatasetClientSecurityUtils.canResendXMessageDatasetVersion(datasetVersionDto);
+        return false;
     }
 
     private boolean canUpdateGeocoverageCache() {

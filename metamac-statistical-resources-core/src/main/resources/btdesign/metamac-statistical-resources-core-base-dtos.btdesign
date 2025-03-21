@@ -23,10 +23,12 @@ Application StatisticalResourcesDto {
 		DataTransferObject IdentifiableStatisticalResourceDto extends @StatisticalResourceDto {
 			String code;
 			String urn;
+			- @XStreamStatusEnum xStreamStatus nullable;
 		}
 		
 		DataTransferObject NameableStatisticalResourceBaseDto extends @IdentifiableStatisticalResourceDto {
 			- @InternationalStringDto title;
+			- @XStreamStatusEnum xStreamStatus nullable;
 		}
 		
 		DataTransferObject NameableStatisticalResourceDto extends @IdentifiableStatisticalResourceDto {
@@ -58,13 +60,11 @@ Application StatisticalResourcesDto {
 			String publicationUser;
 			String maintainerCodeNested;
 			- @StreamMessageStatusEnum publicationStreamStatus;
-			- @XStreamStatusEnum xSTreamStatus;
 			Boolean lastVersion;
 		}
 
 		DataTransferObject LifeCycleStatisticalResourceDto extends @VersionableStatisticalResourceDto {
 			- @ProcStatusEnum procStatus;
-			- @XStreamStatusEnum xStreamStatus nullable;
 			
 			JAVADATE creationDate;
 			String creationUser;
