@@ -15,7 +15,15 @@ import com.smartgwt.client.widgets.form.fields.FormItemIcon;
 public class SiemacMetadataContentDescriptorsEditionForm extends LifeCycleResourceContentDescriptorsEditionForm {
 
     public SiemacMetadataContentDescriptorsEditionForm() {
+        addMultilanguagesFields();
+    }
 
+    public SiemacMetadataContentDescriptorsEditionForm(boolean isMultilanguageRichTextEditorRequired) {
+        super(isMultilanguageRichTextEditorRequired);
+        addMultilanguagesFields();
+    }
+
+    private void addMultilanguagesFields() {
         MultiLanguageTextItem subtitle = new MultiLanguageTextItem(SiemacMetadataDS.SUBTITLE, getConstants().siemacMetadataStatisticalResourceSubtitle());
         MultiLanguageTextItem titleAlternative = new MultiLanguageTextItem(SiemacMetadataDS.TITLE_ALTERNATIVE, getConstants().siemacMetadataStatisticalResourceTitleAlternative());
         MultiLanguageRichTextEditorItem abstractLogic = new MultiLanguageRichTextEditorItem(SiemacMetadataDS.ABSTRACT, getConstants().siemacMetadataStatisticalResourceAbstractLogic());
