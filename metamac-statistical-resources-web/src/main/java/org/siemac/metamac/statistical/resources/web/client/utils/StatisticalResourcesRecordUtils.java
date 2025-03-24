@@ -296,6 +296,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         record.setStatus(CommonUtils.getQueryStatusName(queryDto));
         record.setType(CommonUtils.getQueryTypeName(queryDto));
         record.setQueryVersionBaseDto(queryDto);
+        record.setXPublicationStatus(CommonUtils.getXStatusIcon(queryDto.getXStreamStatus()));
         return record;
     }
 

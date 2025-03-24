@@ -28,7 +28,6 @@ Application StatisticalResourcesDto {
 		
 		DataTransferObject NameableStatisticalResourceBaseDto extends @IdentifiableStatisticalResourceDto {
 			- @InternationalStringDto title;
-			- @XStreamStatusEnum xStreamStatus nullable;
 		}
 		
 		DataTransferObject NameableStatisticalResourceDto extends @IdentifiableStatisticalResourceDto {

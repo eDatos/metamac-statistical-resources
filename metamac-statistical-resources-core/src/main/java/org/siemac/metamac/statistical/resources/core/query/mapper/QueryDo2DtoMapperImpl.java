@@ -128,6 +128,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         // Identity
         target.setId(source.getId());
         target.setVersion(source.getVersion());
+        target.setXStreamStatus(source.getLifeCycleStatisticalResource().getXStreamStatus());
 
         return target;
     }
