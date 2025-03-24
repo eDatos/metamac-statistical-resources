@@ -267,7 +267,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
-        setValue(QueryDS.PURPOSE_TYPE, queryDto.getPurpose().getIdentifier());
+        String purpose = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : "";
+        setValue(QueryDS.PURPOSE_TYPE, purpose);
         setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
         this.queryDto = queryDto;
     }

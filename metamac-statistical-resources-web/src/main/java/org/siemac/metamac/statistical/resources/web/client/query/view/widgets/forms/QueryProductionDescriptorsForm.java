@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
@@ -16,11 +17,14 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.Navigat
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.CodeItemListItem;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceLinkItem;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.ExternalItemListItem;
 
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm {
@@ -53,6 +57,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         ViewTextItem purposeType = new ViewTextItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
         fields.add(purposeType);
         ViewMultiLanguageTextItem twitterTemplate = new ViewMultiLanguageTextItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+        twitterTemplate.setShowIfCondition(getXTemplateTextItem());
         fields.add(twitterTemplate);
         return fields;
     }
@@ -133,5 +138,16 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
     private boolean isTemporalDimension(String dimensionId) {
         return StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId);
+    }
+
+    private FormItemIfFunction getXTemplateTextItem() {
+        return new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
+                return purpose != null && "SOCIAL_NETWORK".equals(purpose.getIdentifier());
+            }
+        };
     }
 }
