@@ -15,9 +15,9 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DatasetB
 
 public class ExportResourceAccessToPlainText {
 
-    public void exportResourceAccessToPlainText(ResourceAccess resourceAccess, String format, OutputStream os) throws MetamacException {
+    public void exportResourceAccessToPlainText(ResourceAccess resourceAccess, String format, OutputStream os, boolean isTransposed) throws MetamacException {
         try {
-            PlainTextExporter exporter = new PlainTextExporter(resourceAccess, format);
+            PlainTextExporter exporter = new PlainTextExporter(resourceAccess, format, isTransposed);
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(os);
         } catch (Exception e) {
             throw ExceptionUtils.manageException(e);

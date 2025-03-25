@@ -53,7 +53,7 @@ public interface StatisticalResourcesV1_0 {
     @Produces("text/tab-separated-values")
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     Response retrieveDatasetTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
-            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+            @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity, boolean isTransposed);
 
     @GET
     @Produces("text/csv")

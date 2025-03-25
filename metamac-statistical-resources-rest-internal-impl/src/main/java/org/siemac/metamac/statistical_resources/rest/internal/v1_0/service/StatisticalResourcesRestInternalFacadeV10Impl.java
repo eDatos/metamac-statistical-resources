@@ -157,31 +157,31 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity);
+    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity, boolean isTransposed) {
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity, isTransposed);
     }
 
     @Override
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "csv", granularity);
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "csv", granularity, false);
     }
 
     @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity);
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity, false);
     }
 
-    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity) {
+    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity, boolean isTransposed) {
         try {
 
-            return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity);
+            return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity, isTransposed);
 
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
     }
 
-    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity)
+    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity, boolean isTransposed)
             throws Exception {
 
         Set<String> parsedFields = parseFieldsStatisticalResources(fields);
@@ -206,7 +206,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
 
             final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
-            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
+            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations, isTransposed);
 
             return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
                     .header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();

@@ -71,42 +71,42 @@ import org.springframework.stereotype.Service;
 @Service("statisticalResourcesRestExternalFacadeV10")
 public class StatisticalResourcesRestExternalFacadeV10Impl implements StatisticalResourcesV1_0 {
 
-    public static final String OPERATOR = "=";
+    public static final String                                        OPERATOR = "=";
     @Autowired
-    private StatisticalResourcesRestExternalCommonService commonService;
+    private             StatisticalResourcesRestExternalCommonService commonService;
 
     @Autowired
-    private DatasetsDo2RestMapperV10                      datasetsDo2RestMapper;
+    private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
 
     @Autowired
-    private DatasetsRest2DoMapper                         datasetsRest2DoMapper;
+    private DatasetsRest2DoMapper datasetsRest2DoMapper;
 
     @Autowired
-    private CollectionsDo2RestMapperV10                   collectionsDo2RestMapper;
+    private CollectionsDo2RestMapperV10 collectionsDo2RestMapper;
 
     @Autowired
-    private CollectionsRest2DoMapper                      collectionsRest2DoMapper;
+    private CollectionsRest2DoMapper collectionsRest2DoMapper;
 
     @Autowired
-    private QueriesDo2RestMapperV10                       queriesDo2RestMapper;
+    private QueriesDo2RestMapperV10 queriesDo2RestMapper;
 
     @Autowired
-    private QueriesRest2DoMapper                          queriesRest2DoMapper;
+    private QueriesRest2DoMapper queriesRest2DoMapper;
 
     @Autowired
-    private MultidatasetsDo2RestMapperV10                 multidatasetsDo2RestMapper;
+    private MultidatasetsDo2RestMapperV10 multidatasetsDo2RestMapper;
 
     @Autowired
-    private MultidatasetsRest2DoMapper                    multidatasetsRest2DoMapper;
+    private MultidatasetsRest2DoMapper multidatasetsRest2DoMapper;
 
     @Autowired
-    private StatisticalResourcesConfiguration             configurationService;
+    private StatisticalResourcesConfiguration configurationService;
 
     @Autowired
-    private ResourcesRest2DoMapper                        resourcesRest2DoMapper;
+    private ResourcesRest2DoMapper resourcesRest2DoMapper;
 
     @Autowired
-    private ResourcesDo2RestMapperV10                     resourcesDo2RestMapper;
+    private ResourcesDo2RestMapperV10 resourcesDo2RestMapper;
 
     @Override
     public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
@@ -163,8 +163,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity);
+    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity, boolean isTransposed) {
+        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity, isTransposed);
     }
 
     @Override
@@ -177,7 +177,17 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity);
     }
 
-    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity) {
+    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
+            String granularity, boolean isTransposed) {
+        try {
+            return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity, isTransposed);
+        } catch (Exception e) {
+            throw manageExceptionResponse(e);
+        }
+    }
+
+    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
+            String granularity) {
         try {
             return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity);
         } catch (Exception e) {
@@ -185,7 +195,12 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
     }
 
-    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity)
+    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
+            String granularity) throws Exception {
+        return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity, false);
+    }
+
+    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity, boolean isTransposed)
             throws Exception {
 
         Set<String> parsedFields = parseFieldsStatisticalResources(fields);
@@ -212,7 +227,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
-            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
+            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations, isTransposed);
 
             return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
                     .header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
