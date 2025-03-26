@@ -75,6 +75,8 @@ import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
 public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDynamicForm {
 
+    private static final String SOCIAL_NETWORK = "SOCIAL_NETWORK";
+
     private QueryUiHandlers                                          uiHandlers;
 
     private SearchSingleDatasetVersionRelatedResourcePaginatedWindow searchDatasetWindow;
@@ -88,6 +90,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
     private QueryVersionDto                                          queryDto;
     private SearchMultiExternalItem                                  temporalGranularitiesItem;
+    private MultiLanguageRichTextEditorItem                          xTemplate;
 
     public QueryProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
@@ -96,15 +99,43 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setFields(fields.toArray(new FormItem[fields.size()]));
     }
 
+    public QueryProductionDescriptorsEditionForm(QueryVersionDto queryVersionDto) {
+        super(getConstants().formProductionDescriptors());
+
+        List<FormItem> fields = createComponents(queryVersionDto);
+        
+        setFields(fields.toArray(new FormItem[fields.size()]));
+    }
+
     private List<FormItem> createComponents() {
         List<FormItem> fields = new ArrayList<FormItem>();
 
+        createMaintainersAndSearchDataset(fields);
+        CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
+        fields.add(purposeTypeSelectorItem);
+        fields.add(xTemplate);
+        
+        return fields;
+    }
+
+    private List<FormItem> createComponents(QueryVersionDto queryVersionDto) {
+        List<FormItem> fields = new ArrayList<FormItem>();
+
+        createMaintainersAndSearchDataset(fields);
+        CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
+        xTemplate.setRequired(queryVersionDto.getPurpose() != null && SOCIAL_NETWORK.equals(queryVersionDto.getPurpose().getIdentifier()));
+        fields.add(purposeTypeSelectorItem);
+        fields.add(xTemplate);
+        
+        return fields;
+    }
+    
+    private void createMaintainersAndSearchDataset(List<FormItem> fields) {
         maintainerItem = createMaintainerItem();
         maintainerItem.setShowIfCondition(getFormItemIfFunctionEditionMode());
         fields.add(maintainerItem);
 
-        ExternalItemLinkItem maintainerViewItem = new ExternalItemLinkItem(SiemacMetadataDS.MAINTAINER_VIEW, getConstants().siemacMetadataStatisticalResourceMaintainer());
-        maintainerViewItem.setShowIfCondition(getFormItemIfFunctionViewMode());
+        ExternalItemLinkItem maintainerViewItem = createMaintainerViewItem();
         fields.add(maintainerViewItem);
 
         SearchRelatedResourceLinkItem searchDatasetItem = createQueryDatasetItem();
@@ -113,9 +144,45 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         ViewTextItem status = new ViewTextItem(QueryDS.STATUS, getConstants().queryStatus());
         fields.add(status);
 
+        CustomSelectItem typeSelectorItem = createTypeSelector();
+
+        fields.add(typeSelectorItem);
+    }
+
+    private CustomSelectItem createPurposeAndXTemplate() {
+        CustomSelectItem purposeTypeSelectorItem = createPurposeTypeSelector();
+
+        createXTemplate();
+        return purposeTypeSelectorItem;
+    }
+
+    private void createXTemplate() {
+        xTemplate = new MultiLanguageRichTextEditorItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+        xTemplate.setShowIfCondition(getXTemplateTextItem());
+    }
+
+    private CustomSelectItem createPurposeTypeSelector() {
+        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
+        purposeTypeSelectorItem.addChangedHandler(new ChangedHandler() {
+
+            @Override
+            public void onChanged(ChangedEvent event) {
+                xTemplate.setRequired(true);
+                PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
+                if (purpose == null || !SOCIAL_NETWORK.equals(purpose.getIdentifier())) {
+                    xTemplate.clearValue();
+                    xTemplate.setRequired(false);
+                }
+                QueryProductionDescriptorsEditionForm.this.markForRedraw();
+            }
+        });
+        return purposeTypeSelectorItem;
+    }
+
+    private CustomSelectItem createTypeSelector() {
         CustomSelectItem typeSelectorItem = new CustomSelectItem(QueryDS.TYPE, getConstants().queryType());
         typeSelectorItem.setValueMap(CommonUtils.getQueryTypeHashMap());
-        typeSelectorItem.setRequired(true);
         typeSelectorItem.addChangedHandler(new ChangedHandler() {
 
             @Override
@@ -123,24 +190,13 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                 QueryProductionDescriptorsEditionForm.this.markForRedraw();
             }
         });
+        return typeSelectorItem;
+    }
 
-        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
-        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
-        purposeTypeSelectorItem.addChangedHandler(new ChangedHandler() {
-
-            @Override
-            public void onChanged(ChangedEvent event) {
-                QueryProductionDescriptorsEditionForm.this.markForRedraw();
-            }
-        });
-
-        MultiLanguageRichTextEditorItem xTemplate = new MultiLanguageRichTextEditorItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate(), true);
-        xTemplate.setShowIfCondition(getXTemplateTextItem());
-        xTemplate.setValidators(getXTemplateRequiredIfValidator());
-        fields.add(typeSelectorItem);
-        fields.add(purposeTypeSelectorItem);
-        fields.add(xTemplate);
-        return fields;
+    private ExternalItemLinkItem createMaintainerViewItem() {
+        ExternalItemLinkItem maintainerViewItem = new ExternalItemLinkItem(SiemacMetadataDS.MAINTAINER_VIEW, getConstants().siemacMetadataStatisticalResourceMaintainer());
+        maintainerViewItem.setShowIfCondition(getFormItemIfFunctionViewMode());
+        return maintainerViewItem;
     }
 
     private SearchMultiExternalItem createTemporalGranularitiesItem(final String datasetUrn) {
@@ -629,7 +685,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
-                return purpose != null && "SOCIAL_NETWORK".equals(purpose.getIdentifier());
+                return purpose != null && SOCIAL_NETWORK.equals(purpose.getIdentifier());
             }
         };
     }

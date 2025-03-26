@@ -553,7 +553,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
             // WORKAROUND, this form is continuously rebuilt
             mainFormLayout.removeEditionCanvas(productionDescriptorsEditionForm);
-            productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm();
+            productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm(queryVersionDto);
             productionDescriptorsEditionForm.setUiHandlers(getUiHandlers());
             productionDescriptorsEditionForm.setQueryDto(queryVersionDto);
             productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
@@ -587,6 +587,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             }
 
         }
+
         private QueryVersionDto getQuery() {
             if (isCreationMode()) {
                 queryVersionDto = (QueryVersionDto) identifiersCreationForm.getNameableStatisticalResourceDto(queryVersionDto);

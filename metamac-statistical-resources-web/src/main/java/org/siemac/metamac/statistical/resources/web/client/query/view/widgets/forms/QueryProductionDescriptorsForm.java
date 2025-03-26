@@ -17,7 +17,6 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.Navigat
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.CodeItemListItem;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceLinkItem;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
@@ -29,6 +28,7 @@ import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm {
 
+    private static final String SOCIAL_NETWORK = "SOCIAL_NETWORK";
     private BaseUiHandlers                    uiHandlers;
 
     public QueryProductionDescriptorsForm() {
@@ -145,8 +145,9 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
-                PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
-                return purpose != null && "SOCIAL_NETWORK".equals(purpose.getIdentifier());
+                String purpose = ((ViewTextItem) getItem(QueryDS.PURPOSE_TYPE)).getValue().toString();
+                PurposeDto purposeDto = CommonUtils.getPurpose(purpose.split(" ") != null ? purpose.split(" ")[0] : "");
+                return purposeDto != null && SOCIAL_NETWORK.equals(purposeDto.getIdentifier());
             }
         };
     }
