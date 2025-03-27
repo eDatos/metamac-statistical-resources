@@ -40,6 +40,7 @@ import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.dto.tweet.Tweet;
 import io.github.redouane59.twitter.signature.TwitterCredentials;
 
 @Service("queryLifecycleService")
@@ -279,7 +280,12 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
                         TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                 .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
                 String xPublication = getXPublication(observations, resource, lastDatasetVersion);
-                twitterClient.postTweet(xPublication);
+                Tweet tweet = twitterClient.postTweet(xPublication);
+                if (tweet.getText() == null) {
+                    createXMessageSentNotification(ctx, resource);
+                    updateXStreamStatus(resource, XStreamStatusEnum.FAILED);
+                    return;
+                }
             }
             updateXStreamStatus(resource, XStreamStatusEnum.SENT);
         } catch (Exception e) {
