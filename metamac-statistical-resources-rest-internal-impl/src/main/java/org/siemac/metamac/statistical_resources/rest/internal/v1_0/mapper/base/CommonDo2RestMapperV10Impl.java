@@ -138,8 +138,6 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnume
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Organisation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ProcStatusType;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.RelatedDimensionVisualisation;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.RelatedDimensionVisualisations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
@@ -533,29 +531,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setShowNullValuesByDefault(dataStructure.isShowNullValuesByDefault());
         target.setShowZeroValuesByDefault(dataStructure.isShowZeroValuesByDefault());
         target.setShowDecimals(dataStructure.getShowDecimals());
-        target.setDimensionVisualisations(toRelatedDimensionVisualisations(dataStructure));
         return target;
-    }
-
-    private RelatedDimensionVisualisations toRelatedDimensionVisualisations(DataStructure dataStructure) {
-        RelatedDimensionVisualisations dimensionVisualisations = new RelatedDimensionVisualisations();
-
-        for (DimensionVisualisation dsdDimensionVisualisation : dataStructure.getDimensionVisualisations().getDimensionVisualisations()) {
-            dimensionVisualisations.getDimensionVisualisations().add(toRelatedDimensionVisualisation(dsdDimensionVisualisation));
-        }
-
-        dimensionVisualisations.setTotal(BigInteger.valueOf(dimensionVisualisations.getDimensionVisualisations().size()));
-
-        return dimensionVisualisations;
-    }
-
-    private RelatedDimensionVisualisation toRelatedDimensionVisualisation(DimensionVisualisation dsdDimensionVisualisation) {
-        RelatedDimensionVisualisation relatedDimensionVisualisation = new RelatedDimensionVisualisation();
-
-        relatedDimensionVisualisation.setDimension(dsdDimensionVisualisation.getDimension());
-        relatedDimensionVisualisation.setDisplayCode(dsdDimensionVisualisation.isDisplayCode());
-
-        return relatedDimensionVisualisation;
     }
 
     private boolean checkDatasetHaveHeadingAndStubDimensions(List<DimensionOrder> headingDimensions, List<DimensionOrder> stubDimensions) {
@@ -1074,6 +1050,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
         target.setPluralName(source.getPluralName());
+        target.setShowCode(dimensionVisualisation != null ? dimensionVisualisation.isShowCode() : null);
 
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, dimensionsFilter));
