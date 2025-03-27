@@ -130,6 +130,8 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnume
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Organisation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.RelatedDimensionVisualisation;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.RelatedDimensionVisualisations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
@@ -496,7 +498,28 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setShowNullValuesByDefault(dataStructure.isShowNullValuesByDefault());
         target.setShowZeroValuesByDefault(dataStructure.isShowZeroValuesByDefault());
         target.setShowDecimals(dataStructure.getShowDecimals());
+        target.setDimensionVisualisations(toDimensionVisualisations(dataStructure));
         return target;
+    }
+
+    private RelatedDimensionVisualisations toDimensionVisualisations(DataStructure dataStructure) {
+        RelatedDimensionVisualisations dimensionVisualisations = new RelatedDimensionVisualisations();
+
+        for (DimensionVisualisation dsdDimensionVisualisation : dataStructure.getDimensionVisualisations().getDimensionVisualisations()) {
+            dimensionVisualisations.getDimensionVisualisations().add(toDimensionVisualisation(dsdDimensionVisualisation));
+        }
+
+        dimensionVisualisations.setTotal(BigInteger.valueOf(dimensionVisualisations.getDimensionVisualisations().size()));
+        return dimensionVisualisations;
+    }
+
+    private RelatedDimensionVisualisation toDimensionVisualisation(DimensionVisualisation dsdDimensionVisualisation) {
+        RelatedDimensionVisualisation relatedDimensionVisualisation = new RelatedDimensionVisualisation();
+
+        relatedDimensionVisualisation.setDimension(dsdDimensionVisualisation.getDimension());
+        relatedDimensionVisualisation.setDisplayCode(dsdDimensionVisualisation.isDisplayCode());
+
+        return relatedDimensionVisualisation;
     }
 
     /**
@@ -938,6 +961,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
         target.setPluralName(source.getPluralName());
+        target.setShowCode(null);// TODO EDATOS-4926
 
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, dimensionsFilter));
