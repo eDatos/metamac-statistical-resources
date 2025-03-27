@@ -12,9 +12,18 @@ public class LifeCycleResourceContentDescriptorsEditionForm extends GroupDynamic
 
     protected ProcStatusEnum procStatus;
 
+    public LifeCycleResourceContentDescriptorsEditionForm(Boolean isMultilanguageRichTextEditorRequired) {
+        super(getConstants().formContentDescriptors());
+        initMultilanguageRichTextEditorItem(isMultilanguageRichTextEditorRequired);
+    }
+
     public LifeCycleResourceContentDescriptorsEditionForm() {
         super(getConstants().formContentDescriptors());
-        final MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(LifeCycleResourceDS.DESCRIPTION, getConstants().nameableStatisticalResourceDescription(), true);
+        initMultilanguageRichTextEditorItem(true);
+    }
+
+    private void initMultilanguageRichTextEditorItem(Boolean isRequired) {
+        final MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(LifeCycleResourceDS.DESCRIPTION, getConstants().nameableStatisticalResourceDescription(), isRequired);
         setFields(description);
     }
 
