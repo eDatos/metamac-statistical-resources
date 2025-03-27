@@ -55,6 +55,7 @@ import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.dto.tweet.Tweet;
 import io.github.redouane59.twitter.signature.TwitterCredentials;
 
 @Service("datasetLifecycleService")
@@ -365,12 +366,19 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Override
     public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, DatasetVersion resource) {
+        List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(resource.getDataset().getId());
         try {
             if (configurationService.retrieveTwitterAccessToken() == null) {
                 return;
             }
-            List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(resource.getDataset().getId());
+        } catch (MetamacException e) {
             for (QueryVersion queryVersion : queriesDataset) {
+                createXMessageSentNotification(ctx, resource);
+                updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
+            }
+        }
+        for (QueryVersion queryVersion : queriesDataset) {
+            try {
                 if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
                     List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
                     Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
@@ -379,19 +387,24 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                             TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                     .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
                     String xPublication = getXPublication(observations, queryVersion, resource);
-                    twitterClient.postTweet(xPublication);
+                    Tweet tweet = twitterClient.postTweet(xPublication);
+                    if (tweet.getText() == null) {
+                        createXMessageSentNotification(ctx, resource);
+                        updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
+                        return;
+                    }
+                    updateXStreamStatus(queryVersion, XStreamStatusEnum.SENT);
                 }
+            } catch (Exception e) {
+                createXMessageSentNotification(ctx, resource);
+                updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             }
-            updateXStreamStatus(resource, XStreamStatusEnum.SENT);
-        } catch (Exception e) {
-            createXMessageSentNotification(ctx, resource);
-            updateXStreamStatus(resource, XStreamStatusEnum.FAILED);
         }
     }
 
-    private void updateXStreamStatus(DatasetVersion resource, XStreamStatusEnum status) {
-        resource.getSiemacMetadataStatisticalResource().setXStreamStatus(status);
-        saveResource(resource);
+    private void updateXStreamStatus(QueryVersion resource, XStreamStatusEnum status) {
+        resource.getLifeCycleStatisticalResource().setXStreamStatus(status);
+        queryVersionRepository.save(resource);
     }
 
     private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query, DatasetVersion resource) throws MetamacException {
@@ -408,11 +421,11 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         return "";
     }
 
-    private String setMessageLanguageDefault(QueryVersion query,  Entry<String, ObservationExtendedDto> entry, DatasetVersion resource) throws MetamacException {
+    private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry, DatasetVersion resource) throws MetamacException {
         for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
             if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
                 String portalBaseUrl = configurationService.findProperty("metamac.portal.web.internal.visualizer");
-                String url = entry.getValue().getPrimaryMeasure() + ": " +PortalWebCoreUtils.buildDatasetVersionUrl(resource, portalBaseUrl);
+                String url = entry.getValue().getPrimaryMeasure() + ": " + PortalWebCoreUtils.buildDatasetVersionUrl(resource, portalBaseUrl);
                 return localisedString.getLabel().replace("{datos}", url);
             }
         }

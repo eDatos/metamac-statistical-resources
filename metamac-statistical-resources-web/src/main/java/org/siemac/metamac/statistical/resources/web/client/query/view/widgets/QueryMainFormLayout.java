@@ -63,7 +63,7 @@ public class QueryMainFormLayout extends LifecycleMainFormLayout {
 
     @Override
     protected boolean canResendXMessage() {
-        if (!queryVersionDto.getLastVersion() || (queryVersionDto.getXStreamStatus() != null && XStreamStatusEnum.SENT.equals( queryVersionDto.getXStreamStatus()))) {
+        if (Boolean.FALSE.equals(queryVersionDto.getLastVersion()) || (queryVersionDto.getXStreamStatus() == null || XStreamStatusEnum.SENT.equals(queryVersionDto.getXStreamStatus()))) {
             return false;
         }
 
