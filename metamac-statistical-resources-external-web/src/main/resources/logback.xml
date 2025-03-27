@@ -13,6 +13,17 @@
         </encoder>
     </appender>
 
+    <!-- Uncomment to show SQL parameters -->
+    <!-- <logger name="org.hibernate.SQL" level="DEBUG" /> -->
+    <!-- <logger name="org.hibernate.type" level="TRACE" /> -->
+
+    <!-- Avoid logging warning Unable to proxy method ... -->
+    <logger name="org.springframework.aop.framework.Cglib2AopProxy" level="ERROR" />
+
+    <logger name="statistical-resources" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
         <appender-ref ref="FILE" />
