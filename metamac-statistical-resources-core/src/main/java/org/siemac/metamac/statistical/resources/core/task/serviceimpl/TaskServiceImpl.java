@@ -1971,8 +1971,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 } else {
                     logger.debug("There are no new observations in table {} for dataset {}", tableName, datasetVersionUrn);
                 }
+                sendDatabaseImportationSuccessNotification(ctx, datasetVersion, tableName);
             } catch (MetamacException e) {
-                logger.error("An unexpected error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
+                logger.error("An MetamacException error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
                 sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, e);
             } catch (Exception e) {
                 logger.error("An unexpected error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
@@ -2105,7 +2106,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             boolean storeDimensionRepresentationMapping) throws MetamacException {
         datasetService.importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
     }
-    
+
+    private void sendDatabaseImportationSuccessNotification(ServiceContext ctx, DatasetVersion datasetVersion, String dataTable) {
+        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable);
+    }
+
     @Override
     public void sendDatabaseImportationErrorNotification(ServiceContext ctx, String datasetVersionUrn, MetamacException metamacException) {
         try {
