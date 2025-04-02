@@ -2108,7 +2108,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void sendDatabaseImportationSuccessNotification(ServiceContext ctx, DatasetVersion datasetVersion, String dataTable) {
-        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable);
+        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable);
     }
 
     @Override
