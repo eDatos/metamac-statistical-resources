@@ -13,7 +13,6 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Code;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
@@ -92,7 +91,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
         for (String dimensionId : source.getCodesByDimension().keySet()) {
             List<CodeItemDto> codeItems = new ArrayList<CodeItemDto>();
             for (String codeDimIdentifier : source.getCodesByDimension().get(dimensionId)) {
-                    codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionIdAndIdentifier(datasetVersionId, dimensionId, codeDimIdentifier)));
+                codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionIdAndIdentifier(datasetVersionId, dimensionId, codeDimIdentifier)));
             }
             target.put(dimensionId, codeItems);
         }
