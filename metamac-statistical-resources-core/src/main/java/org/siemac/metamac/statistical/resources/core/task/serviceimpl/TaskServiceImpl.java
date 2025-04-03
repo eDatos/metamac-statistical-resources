@@ -1967,11 +1967,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, new HashMap<>(), Boolean.FALSE);
 
                     logger.info("Planned a database import for dataset {} generated file: {} ", datasetVersionUrn, csvFile.getName());
-
+                    sendDatabaseImportationSuccessNotification(ctx, datasetVersion, tableName);
                 } else {
                     logger.debug("There are no new observations in table {} for dataset {}", tableName, datasetVersionUrn);
                 }
-                sendDatabaseImportationSuccessNotification(ctx, datasetVersion, tableName);
             } catch (MetamacException e) {
                 logger.error("An MetamacException error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
                 sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, e);
