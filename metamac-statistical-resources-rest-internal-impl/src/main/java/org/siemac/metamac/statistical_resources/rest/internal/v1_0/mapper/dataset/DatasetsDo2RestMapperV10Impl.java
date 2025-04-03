@@ -201,8 +201,9 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (source == null) {
             return null;
         }
-        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionFilter(dimensions);
+        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getMeasureDimensionFilter(dimensions); //Filter for measure dimensions
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
+        //pasar dimensions toData filtrado solo medida enum de medida cuando es el tsv extendido
         return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, checkEmptyData, dimensionsFilter);
     }
 

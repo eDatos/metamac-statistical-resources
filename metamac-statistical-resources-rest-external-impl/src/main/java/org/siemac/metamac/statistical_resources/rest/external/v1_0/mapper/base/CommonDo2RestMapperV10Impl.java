@@ -419,6 +419,10 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
         return dimensionsFilter;
     }
+    @Override
+    public DimensionsFilter getMeasureDimensionFilter(Dimensions dimensions) {
+        return null;
+    }
 
     private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
         List<String> dimensionsValuesIds = new ArrayList<>();
@@ -938,7 +942,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
         target.setPluralName(source.getPluralName());
-        target.setShowCode(dimensionVisualisation != null && dimensionVisualisation.isShowCode());
+        //TODO restaurar
+        target.setShowCode(false); //dimensionVisualisation != null && dimensionVisualisation.isShowCode());
 
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, dimensionsFilter));

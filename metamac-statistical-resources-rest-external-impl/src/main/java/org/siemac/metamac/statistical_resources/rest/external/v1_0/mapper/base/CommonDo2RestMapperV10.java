@@ -45,6 +45,7 @@ public interface CommonDo2RestMapperV10 {
     public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages,
             DimensionsFilter dimensionsFilter) throws Exception;
     public DimensionsFilter getDimensionFilter(Dimensions dimensions);
+    public DimensionsFilter getMeasureDimensionFilter(Dimensions dimensions);
     public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
             List<DimensionOrder> stubDimensions);
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,

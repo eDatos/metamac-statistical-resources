@@ -449,6 +449,21 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return dimensionsFilter;
     }
 
+    @Override
+    public DimensionsFilter getMeasureDimensionFilter(Dimensions dimensions) {
+        DimensionsFilter dimensionsFilter = null;
+        if (dimensions != null) {
+            dimensionsFilter = new DimensionsFilter();
+            for (Dimension dimension : dimensions.getDimensions()) {
+                if (DimensionType.MEASURE_DIMENSION.equals(dimension.getType())) {
+                    dimensionsFilter.setTemporalDimensionId(dimension.getId());
+                    dimensionsFilter.setTemporalDimensionValuesIds(getMeasureDimensionsValuesIds(dimension));
+                }
+            }
+        }
+        return dimensionsFilter;
+    }
+
     private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
         List<String> dimensionsValuesIds = new ArrayList<>();
         NonEnumeratedDimensionValues dimensionValues = ((NonEnumeratedDimensionValues) dimension.getDimensionValues());
@@ -461,6 +476,17 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private List<String> getGeographicDimensionsValuesIds(Dimension dimension) {
+        List<String> dimensionsValuesIds = new ArrayList<>();
+        EnumeratedDimensionValues dimensionValues = ((EnumeratedDimensionValues) dimension.getDimensionValues());
+        if (dimensionValues != null) {
+            for (EnumeratedDimensionValue dimensionValue : dimensionValues.getValues()) {
+                dimensionsValuesIds.add(dimensionValue.getId());
+            }
+        }
+        return dimensionsValuesIds;
+    }
+
+    private List<String> getMeasureDimensionsValuesIds(Dimension dimension) {
         List<String> dimensionsValuesIds = new ArrayList<>();
         EnumeratedDimensionValues dimensionValues = ((EnumeratedDimensionValues) dimension.getDimensionValues());
         if (dimensionValues != null) {

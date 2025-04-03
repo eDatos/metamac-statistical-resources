@@ -1,5 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
+import es.gobcan.istac.edatos.dataset.repository.domain.DatasetEntity;
+import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
+import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResources;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResourcesListEndpoints;
@@ -48,11 +53,7 @@ import org.siemac.metamac.statistical_resources.rest.common.StatisticalResources
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.*;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
@@ -74,6 +75,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     public static final String                                        OPERATOR = "=";
     @Autowired
     private             StatisticalResourcesRestExternalCommonService commonService;
+
+    @Autowired
+    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
 
     @Autowired
     private DatasetsDo2RestMapperV10 datasetsDo2RestMapper;
@@ -180,7 +184,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
             String granularity, boolean isTransposed) {
         try {
-            return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity, isTransposed);
+             return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity, isTransposed);
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
@@ -214,6 +218,42 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion, lang);
 
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields, granularity);
+
+        if (isTransposed) {
+            //Dataset tiene dimensions.getDimensions().get(0).getType(); para extraer los type measure
+            //Extraer dimensiones que son del tipo measure
+            List<Dimension> allDimensions = dataset.getMetadata().getDimensions().getDimensions();
+            List<String> measureDimensionsList = new ArrayList<>();
+
+            for (Dimension dimension : allDimensions) {
+                if (dimension.getType().equals(DimensionType.MEASURE_DIMENSION)) {
+                    measureDimensionsList.add(dimension.getId());
+                }
+            }
+
+            //Buscar representations -> code es el nombre de la dimensión
+            List<DimensionRepresentation> dimensionsList = dataset.getData().getDimensions().getDimensions();
+            List<String> representationCode = new ArrayList<>();
+            String dimensionName = "";
+
+            for (DimensionRepresentation dimensionRepresentation : dimensionsList) {
+                if (measureDimensionsList.contains(dimensionRepresentation.getDimensionId())) {
+                    List<CodeRepresentation> representations = dimensionRepresentation.getRepresentations().getRepresentations();
+                    dimensionName = dimensionRepresentation.getDimensionId();
+                    for (CodeRepresentation codeRepresentation : representations) {
+                        representationCode.add(codeRepresentation.getCode());
+                    }
+                }
+            }
+
+            //Llamada a la librería que hace la query nativa
+            // TODO
+
+            Map<String, ObservationExtendedDto> transposedObservationsExtendedByDimensions =
+                    datasetRepositoriesServiceFacade.findTransposedObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(),
+                    new ArrayList<ConditionDimensionDto>(), dimensionName, representationCode);
+
+        }
 
         ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
 

@@ -6,9 +6,11 @@ public class DimensionsFilter {
 
     private String       temporalDimensionId;
     private String       geographicDimensionId;
+    private String       measureDimensionId;
     private List<String> temporalDimensionValuesIds;
     private List<String> temporalDimensionValuesQueriesIds;
     private List<String> geographicDimensionValuesIds;
+    private List<String> measureDimensionValuesIds;
 
     public String getTemporalDimensionId() {
         return temporalDimensionId;

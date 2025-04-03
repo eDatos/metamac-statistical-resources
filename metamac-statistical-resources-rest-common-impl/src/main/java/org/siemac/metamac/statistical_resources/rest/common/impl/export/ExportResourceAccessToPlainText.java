@@ -17,7 +17,7 @@ public class ExportResourceAccessToPlainText {
 
     public void exportResourceAccessToPlainText(ResourceAccess resourceAccess, String format, OutputStream os, boolean isTransposed) throws MetamacException {
         try {
-            PlainTextExporter exporter = new PlainTextExporter(resourceAccess, format, isTransposed);
+            PlainTextExporter exporter = new PlainTextExporter(resourceAccess, format);
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(os);
         } catch (Exception e) {
             throw ExceptionUtils.manageException(e);

@@ -26,17 +26,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.utils.InternalWe
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataStructureDefinition;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NextVersionType;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ProcStatusType;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
-import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.*;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
 
 public interface CommonDo2RestMapperV10 {
@@ -51,6 +41,7 @@ public interface CommonDo2RestMapperV10 {
     public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, boolean checkNoData,
             DimensionsFilter dimensionsFilter) throws Exception;
     public DimensionsFilter getDimensionFilter(Dimensions dimensions);
+    public DimensionsFilter getMeasureDimensionFilter(Dimensions dimensions);
     public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
             List<DimensionOrder> stubDimensions);
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,
