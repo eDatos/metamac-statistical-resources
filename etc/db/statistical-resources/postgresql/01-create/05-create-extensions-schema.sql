@@ -10,31 +10,12 @@
 -- 
 -- -- Make sure metamac_structural_resources_bd and metamac_structural_resources_own_bd can use everything in the extensions schema
 -- GRANT USAGE ON SCHEMA extensions TO public;
--- GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA extensions TO metamac_statistical_resources_bd, metamac_statistical_resources_data_bd,
---                      metamac_statistical_resources_own_bd, metamac_statistical_resources_data_own_bd;
+-- GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA extensions TO metamac_statistical_resources_bd, metamac_statistical_resources_own_bd;
 -- 
--- -- Include future extensions
--- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
--- GRANT EXECUTE ON FUNCTIONS TO metamac_statistical_resources_bd, metamac_statistical_resources_data_bd,
---                      metamac_statistical_resources_own_bd, metamac_statistical_resources_data_own_bd;
--- 
--- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
--- GRANT USAGE ON TYPES TO metamac_statistical_resources_bd, metamac_statistical_resources_data_bd,
---                      metamac_statistical_resources_own_bd, metamac_statistical_resources_data_own_bd;
--- 
--- -- Include future extensions
--- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
--- GRANT EXECUTE ON FUNCTIONS TO metamac_statistical_resources_bd, metamac_statistical_resources_data_bd,
---                      metamac_statistical_resources_own_bd, metamac_statistical_resources_data_own_bd;
---
--- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
--- GRANT USAGE ON TYPES TO metamac_statistical_resources_bd, metamac_statistical_resources_data_bd,
---                      metamac_statistical_resources_own_bd, metamac_statistical_resources_data_own_bd;
---
 -- -- Include future extensions
 -- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
 -- GRANT EXECUTE ON FUNCTIONS TO metamac_statistical_resources_bd, metamac_statistical_resources_own_bd;
---
+-- 
 -- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
 -- GRANT USAGE ON TYPES TO metamac_statistical_resources_bd, metamac_statistical_resources_own_bd;
 --
@@ -50,23 +31,31 @@
 --         );
 -- END $$;
 --
+
+--CREATE SCHEMA extensions;
+--
+---- Extension 'unaccent' needs to be created, a superuser or user with create privilege should execute the following:
+---- (unaccent is a trusted extension)
+---- Make sure indicators_bd and indicators_own_bd can use everything in the extensions schema
+-- CREATE extension unaccent WITH SCHEMA extensions;
+
+-- -- Make sure metamac_structural_resources_bd and metamac_statistical_resources_own_bd can use everything in the extensions schema
 -- GRANT USAGE ON SCHEMA extensions TO public;
 -- GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA extensions TO metamac_statistical_resources_data_bd, metamac_statistical_resources_data_own_bd;
 --
 -- -- Include future extensions
 -- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
--- GRANT EXECUTE ON FUNCTIONS TO metamac_statistical_resources_bd, metamac_statistical_resources_data_own_bd;
+-- GRANT EXECUTE ON FUNCTIONS TO  metamac_statistical_resources_data_bd, metamac_statistical_resources_data_own_bd;
 --
 -- ALTER DEFAULT PRIVILEGES IN SCHEMA extensions
 -- GRANT USAGE ON TYPES TO metamac_statistical_resources_data_bd, metamac_statistical_resources_data_own_bd;
---
+    
 -- DO $$
 -- DECLARE
 -- current_search_path TEXT;
 -- BEGIN
 --     -- Obtén el search_path actual
 -- SELECT current_setting('search_path') INTO current_search_path;
---
 -- -- Genera el nuevo search_path y actualiza la base de datos
 -- EXECUTE format('ALTER DATABASE "metamac_statistical_resources_data_bd" SET search_path = %s, extensions', current_search_path
 --         );
@@ -103,7 +92,13 @@
 -- EXECUTE format('ALTER DATABASE "istac_statistical_resources_bd" SET search_path = %s, extensions', current_search_path
 --         );
 -- END $$;
--- 
+-- --CREATE SCHEMA extensions;
+-- --
+-- ---- Extension 'unaccent' needs to be created, a superuser or user with create privilege should execute the following:
+-- ---- (unaccent is a trusted extension)
+-- ---- Make sure indicators_bd and indicators_own_bd can use everything in the extensions schema
+-- -- CREATE extension unaccent WITH SCHEMA extensions;
+
 -- GRANT USAGE ON SCHEMA extensions TO public;
 -- GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA extensions TO istac_statistical_resources_data_bd, istac_statistical_resources_data_own_bd;
 -- 
