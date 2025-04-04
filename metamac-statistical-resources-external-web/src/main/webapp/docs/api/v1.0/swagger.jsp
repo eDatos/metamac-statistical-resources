@@ -1678,6 +1678,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.dimension.properties.pluralName.description']}",
                      "$ref":"#/definitions/InternationalString"
+                  },
+                  "showCode":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.showCode.description']}",
+                     "type":"boolean"
                   }
                }
             }
