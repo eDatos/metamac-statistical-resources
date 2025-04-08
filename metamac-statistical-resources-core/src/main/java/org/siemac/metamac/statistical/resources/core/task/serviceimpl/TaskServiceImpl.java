@@ -69,6 +69,7 @@ import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
 import org.siemac.metamac.core.common.util.predicates.MetamacPredicate;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.rest.notices.v1_0.domain.enume.MetamacRolesEnum;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribute;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
@@ -453,7 +454,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         String datasetVersionUrn = extractDatasetVersionUrnFromDatabaseImportationDatasetJobKey(jobKey);
         DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
-        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB,
+        getNoticesRestInternalService().createDatabaseBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB,
                 ServiceNoticeMessage.DATABASE_IMPORT_DATASET_JOB_DETECTED, datasetVersionUrn);
 
         markTaskAsFinished(ctx, jobKey);
@@ -1967,13 +1968,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, new HashMap<>(), Boolean.FALSE);
 
                     logger.info("Planned a database import for dataset {} generated file: {} ", datasetVersionUrn, csvFile.getName());
-                    sendDatabaseImportationSuccessNotification(ctx, datasetVersion, tableName);
+                    sendDatabaseImportationSuccessNotification(datasetVersion, tableName, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
                 } else {
                     logger.debug("There are no new observations in table {} for dataset {}", tableName, datasetVersionUrn);
                 }
             } catch (MetamacException e) {
                 logger.error("An MetamacException error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
-                sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, e);
+                sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, e, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
             } catch (Exception e) {
                 logger.error("An unexpected error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
             }
@@ -2106,8 +2107,20 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         datasetService.importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
     }
 
-    private void sendDatabaseImportationSuccessNotification(ServiceContext ctx, DatasetVersion datasetVersion, String dataTable) {
-        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable);
+    private void sendDatabaseImportationSuccessNotification(DatasetVersion datasetVersion, String dataTable, MetamacRolesEnum... aValue) {
+        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable, aValue);
+    }
+
+    private void sendDatabaseImportationErrorNotification(ServiceContext ctx, String datasetVersionUrn, MetamacException metamacException,MetamacRolesEnum... aValue) {
+        try {
+            taskServiceInvocationValidator.checkSendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, metamacException);
+
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+            getNoticesRestInternalService().createDatabaseImportErrorBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, metamacException, aValue);
+        } catch (MetamacException e) {
+            // If an error occurred sending the notification, it must be logged but it mustn't be threw to avoid generate more additional noise to the previous error
+            logger.error("Error sending database importation error notification:", e);
+        }        
     }
 
     @Override
