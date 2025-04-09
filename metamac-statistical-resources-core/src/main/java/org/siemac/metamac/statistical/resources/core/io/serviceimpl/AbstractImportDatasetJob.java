@@ -67,7 +67,7 @@ public abstract class AbstractImportDatasetJob implements Job {
     protected abstract void sendSuccessNotification(String fileNames, String user, String datasetVersionCode);
     protected abstract void sendErrorNotification(MetamacException metamacException);
     protected abstract void executeImportTask(ServiceContext serviceContext, String jobName, TaskInfoDataset taskInfoDataset) throws MetamacException;
-    protected abstract void processImportJobError(String taskName, String fileNames, MetamacException metamacException);
+    protected abstract void processImportJobError(String taskName, String fileNames, String datasetVersionCode, MetamacException metamacException);
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
@@ -134,15 +134,15 @@ public abstract class AbstractImportDatasetJob implements Job {
             MetamacException metamacException = MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(ExceptionHelper.excMessage(e))
                     .build();
 
-            processImportJobError(taskName, fileNames, metamacException);
+            processImportJobError(taskName, fileNames, datasetVersionCode, metamacException);
         } catch (MetamacException e) {
             logger.error("The importation with key {} has failed", jobKey.getName(), e);
-            processImportJobError(taskName, fileNames, e);
+            processImportJobError(taskName, fileNames, datasetVersionCode, e);
         } catch (Exception e) {
             logger.error("Unexpected error in the importation with key {}", jobKey.getName(), e);
             MetamacException metamacException = MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(ExceptionHelper.excMessage(e))
                     .build();
-            processImportJobError(taskName, fileNames, metamacException);
+            processImportJobError(taskName, fileNames, datasetVersionCode, metamacException);
         }
     }
 
