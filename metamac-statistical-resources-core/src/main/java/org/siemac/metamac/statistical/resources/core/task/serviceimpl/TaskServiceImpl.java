@@ -2107,16 +2107,16 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         datasetService.importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
     }
 
-    private void sendDatabaseImportationSuccessNotification(DatasetVersion datasetVersion, String dataTable, MetamacRolesEnum... aValue) {
-        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable, aValue);
+    private void sendDatabaseImportationSuccessNotification(DatasetVersion datasetVersion, String dataTable, MetamacRolesEnum... roles) {
+        getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable, roles);
     }
 
-    private void sendDatabaseImportationErrorNotification(ServiceContext ctx, String datasetVersionUrn, MetamacException metamacException,MetamacRolesEnum... aValue) {
+    private void sendDatabaseImportationErrorNotification(ServiceContext ctx, String datasetVersionUrn, MetamacException metamacException,MetamacRolesEnum... roles) {
         try {
             taskServiceInvocationValidator.checkSendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, metamacException);
 
             DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
-            getNoticesRestInternalService().createDatabaseImportErrorBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, metamacException, aValue);
+            getNoticesRestInternalService().createDatabaseImportErrorBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, metamacException, roles);
         } catch (MetamacException e) {
             // If an error occurred sending the notification, it must be logged but it mustn't be threw to avoid generate more additional noise to the previous error
             logger.error("Error sending database importation error notification:", e);

@@ -121,7 +121,7 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     }
 
     @Override
-    public void createDatabaseImportErrorBackgroundNotification(DatasetVersion datasetVersion, String actionCode, MetamacException exception, MetamacRolesEnum... aValue) {
+    public void createDatabaseImportErrorBackgroundNotification(DatasetVersion datasetVersion, String actionCode, MetamacException exception, MetamacRolesEnum... roles) {
         try {
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
 
@@ -132,7 +132,7 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             ResourceInternal resourceInternal = restMapper.generateResourceInternal(datasetVersion);
             Message message = MessageBuilder.message().withText(localisedMessage).withResources(resourceInternal).build();
 
-            createDatabaseImportBackgroundNotification(locale, datasetVersion, actionCode, message, aValue);
+            createDatabaseImportBackgroundNotification(locale, datasetVersion, actionCode, message, roles);
         } catch (MetamacException e) {
             logger.error("Error creating createDatabaseImportErrorBackgroundNotification:", e);
         }
@@ -166,13 +166,13 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
     }
 
     @Override
-    public void createDatabaseImportSuccessBackgroundNotification(DatasetVersion datasetVersion, String actionCode, String successMessageCode, String tableName, MetamacRolesEnum... aValue) {
+    public void createDatabaseImportSuccessBackgroundNotification(DatasetVersion datasetVersion, String actionCode, String successMessageCode, String tableName, MetamacRolesEnum... roles) {
         try {
             Locale locale = configurationService.retrieveLanguageDefaultLocale();
             ResourceInternal resourceInternal = restMapper.generateResourceInternal(datasetVersion);
             Message message = createMessage(locale, Arrays.asList(resourceInternal), successMessageCode, tableName);
 
-            createDatabaseImportBackgroundNotification(locale, datasetVersion, actionCode, message, aValue);
+            createDatabaseImportBackgroundNotification(locale, datasetVersion, actionCode, message, roles);
         } catch (MetamacException e) {
             logger.error("Error creating createDatabaseImportSuccessBackgroundNotification:", e);
         }
@@ -274,7 +274,7 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
         }
     }
 
-    private void createDatabaseImportBackgroundNotification(Locale locale, DatasetVersion datasetVersion, String actionCode, Message message, MetamacRolesEnum... aValue) throws MetamacException {
+    private void createDatabaseImportBackgroundNotification(Locale locale, DatasetVersion datasetVersion, String actionCode, Message message, MetamacRolesEnum... roles) throws MetamacException {
         try {
             String subject = LocaleUtil.getMessageForCode(actionCode, locale);
             String sendingApp = MetamacApplicationsEnum.GESTOR_RECURSOS_ESTADISTICOS.getName();
@@ -283,7 +283,7 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             sendNotice(NoticeBuilder.notification()
                     .withMessages(message)
                     .withSendingApplication(sendingApp)
-                    .withRoles(aValue)
+                    .withRoles(roles)
                     .withSubject(subject)
                     .withApplications(sendingApp)
                     .withStatisticalOperations(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn())
