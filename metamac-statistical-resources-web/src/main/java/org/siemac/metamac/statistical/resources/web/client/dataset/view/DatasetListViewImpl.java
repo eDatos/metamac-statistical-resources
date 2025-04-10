@@ -112,7 +112,12 @@ public class DatasetListViewImpl extends StatisticalResourceUpdateMultipleResour
     @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
+        resetVisibilityButtonsByOperation();
+    }
+
+    private void resetVisibilityButtonsByOperation() {
         importDatasourcesButton.setVisible(DatasetClientSecurityUtils.canImportDatasourcesInStatisticalOperation());
+        this.newButton.setVisible(canCreate());
     }
 
     @Override
