@@ -7,7 +7,7 @@
 #
 # A continuación podremos construir la imagen ejecutando siempre desde el directorio raíz del proyecto:
 #
-# docker build -f dockerfiles/statistical-resources-external/Dockerfile -t statistical-resources-external:<version> .
+# docker build -f dockerfiles/statistical-resources-external/Dockerfile.external -t statistical-resources-external:<version> .
 #
 # Para ejecutar un contenedor asociado a esta imagen:
 # docker run -i --rm -p 8080:8080 statistical-resources-external:<version>
