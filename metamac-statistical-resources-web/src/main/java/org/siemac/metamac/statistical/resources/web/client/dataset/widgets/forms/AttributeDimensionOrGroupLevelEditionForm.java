@@ -84,7 +84,7 @@ public class AttributeDimensionOrGroupLevelEditionForm extends AttributeDimensio
         // Code dimensions
         Map<String, List<CodeItemDto>> codeItems = ((DimensionCoverageValuesSelectionItem) getItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES)).getSelectedCodeDimensions();
         dsdAttributeInstanceDto.setCodeDimensions(codeItems);
-
+        // TODO EDATOS-4945
         // Value
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (getItem(DsdAttributeInstanceDS.VALUE) instanceof CustomTextItem) {

@@ -8,6 +8,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.AttributeRepresentationTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.DsdAttributeInstanceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.DatasetAttibuteUtils;
@@ -39,6 +40,15 @@ public class AttributeDatasetLevelEditionForm extends AttributeBaseForm {
         this.dsdAttributeInstanceDto = dsdAttributeInstanceDto;
         this.dsdAttributeDto = dsdAttributeDto;
 
+        if (AttributeRepresentationTypeEnum.TEXT_FORMAT.equals(dsdAttributeDto.getAttributeRepresentation().getRepresentationType() && dsdAttributeInstanceDto.g)
+
+        ) {
+
+            buildTextItemNonEnumeratedRepresentationForm(dsdAttributeInstanceDto);
+        }
+    }
+
+    private void buildTextItemNonEnumeratedRepresentationForm(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
         value.setValidators(DatasetAttibuteUtils.getDatasetLevelAttibuteValueLengthValidator());
 
@@ -49,7 +59,7 @@ public class AttributeDatasetLevelEditionForm extends AttributeBaseForm {
     }
 
     public DsdAttributeInstanceDto getDsdAttributeInstanceDto() {
-
+        // TODO EDATOS-4945
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (getItem(DsdAttributeInstanceDS.VALUE) instanceof CustomTextItem) {
             attributeValueDto.setStringValue(getValueAsString(DsdAttributeInstanceDS.VALUE));

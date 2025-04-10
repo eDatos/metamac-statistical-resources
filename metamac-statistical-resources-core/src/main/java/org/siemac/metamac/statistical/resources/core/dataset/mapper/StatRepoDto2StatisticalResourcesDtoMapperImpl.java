@@ -28,11 +28,10 @@ import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDto2StatisticalResourcesDtoMapper {
 
     @Autowired
-    private SrmRestInternalService srmRestInternalService;
+    private SrmRestInternalService  srmRestInternalService;
 
-   @Autowired
-   private CodeDimensionRepository codeDimensionRepository;
-
+    @Autowired
+    private CodeDimensionRepository codeDimensionRepository;
 
     @Override
     public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(Long datasetVersionId, DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
@@ -54,6 +53,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
     }
 
     private AttributeValueDto attributeInstanceValue2AttributeValueDto(DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
+        // TODO EDATOS-4945 ver aquí si se aborda atributos a nivel de observación
         String attrValue = source.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (dsdAttribute.getCodelistRepresentationUrn() != null) {

@@ -101,6 +101,7 @@ public class CsvAttributesParser {
 
     private void csvToDsdAttributeInstanceDto(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<CodeDimension>> codeDimensions,
             Map<String, List<ExternalItemDto>> externalItemsAttributeId) throws MetamacException {
+        // TODO EDATOS-4945
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         setAttribute(dsdAttributeInstanceDto, line, externalItemsAttributeId, attributeValueDto);
         setCodeDimensions(dsdAttributeInstanceDto, line, codeDimensions);
@@ -108,6 +109,7 @@ public class CsvAttributesParser {
 
     private DsdAttributeInstanceDto csvToDsdCreateAttributeInstanceDto(String[] line, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId)
             throws MetamacException {
+        // TODO EDATOS-4945
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         DsdAttributeInstanceDto dsdAttributeInstanceDto = new DsdAttributeInstanceDto();
         dsdAttributeInstanceDto.setAttributeId(line[COLUMN_ID_ATRIBUTTE]);
