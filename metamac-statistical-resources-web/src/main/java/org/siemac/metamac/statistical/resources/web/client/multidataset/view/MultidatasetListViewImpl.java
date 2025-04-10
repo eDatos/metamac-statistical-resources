@@ -83,6 +83,13 @@ public class MultidatasetListViewImpl extends StatisticalResourceBaseListViewImp
     @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
+        resetVisibilityButtonsByOperation();
+    }
+
+    private void resetVisibilityButtonsByOperation() {
+        if (this.newButton != null) {
+            this.newButton.setVisible(canCreate());
+        }
     }
 
     @Override

@@ -117,7 +117,9 @@ public class DatasetListViewImpl extends StatisticalResourceUpdateMultipleResour
 
     private void resetVisibilityButtonsByOperation() {
         importDatasourcesButton.setVisible(DatasetClientSecurityUtils.canImportDatasourcesInStatisticalOperation());
-        this.newButton.setVisible(canCreate());
+        if (this.newButton != null) {
+            this.newButton.setVisible(canCreate());
+        }
     }
 
     @Override
