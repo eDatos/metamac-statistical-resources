@@ -43,12 +43,12 @@ public class CodeDimensionRepositoryImpl extends CodeDimensionRepositoryBase {
         parameters.put("dimensionId", dimensionId);
         parameters.put("datasetVersionId", datasetVersionId);
         parameters.put("codeDimIdentifier", codeDimIdentifier);
-
-        return findByQuery(
+        List<CodeDimension> codeDimensions = findByQuery(
                 "from CodeDimension code " +
                         "where code.dsdComponentId = :dimensionId " +
                         "and code.datasetVersion.id = :datasetVersionId " +
                         "and code.identifier = :codeDimIdentifier",
-                parameters).get(0).getTitle();
+                parameters);
+        return codeDimensions != null && !codeDimensions.isEmpty() ? codeDimensions.get(0).getTitle() : "";
     }
 }
