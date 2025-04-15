@@ -600,7 +600,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
         queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
-        return queryVersionDto; 
+        return queryVersionDto;
     }
 
     @Override
@@ -1251,9 +1251,14 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         AttributeInstanceDto attributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper.dsdAttributeInstanceDtoToAttributeInstanceDto(dsdAttributeInstanceDto);
-
-        // Update attribute
-        AttributeInstanceDto attributeInstanceUpdated = getDatasetService().updateAttributeInstance(ctx, datasetVersionUrn, attributeInstanceDto);
+        AttributeInstanceDto attributeInstanceUpdated = null;
+        try {
+            // Update attribute
+            attributeInstanceUpdated = getDatasetService().updateAttributeInstance(ctx, datasetVersionUrn, attributeInstanceDto);
+        } catch (Exception e) {
+            logger.error("errror actualizndo: ", e);
+            return null;
+        }
 
         if (attributeInstanceUpdated != null) {
             DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceUpdated.getAttributeId());

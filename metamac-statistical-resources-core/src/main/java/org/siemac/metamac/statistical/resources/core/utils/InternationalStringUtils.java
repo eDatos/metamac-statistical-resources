@@ -2,6 +2,8 @@ package org.siemac.metamac.statistical.resources.core.utils;
 
 import java.util.List;
 
+import org.siemac.metamac.core.common.dto.InternationalStringDto;
+import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
 
@@ -48,6 +50,36 @@ public class InternationalStringUtils {
             return commonInternationalString;
         }
         return null;
+    }
+
+    public static InternationalString getCommonInternationalStringFromDatasetRepositoryInternationalStringDto(
+            es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto internationalStringDto) {
+        if (internationalStringDto != null) {
+            InternationalString commonInternationalString = new InternationalString();
+            for (es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto repositoryLocalisedStringDto : internationalStringDto.getTexts()) {
+                LocalisedString commonLocalisedString = new LocalisedString();
+                commonLocalisedString.setLocale(repositoryLocalisedStringDto.getLocale());
+                commonLocalisedString.setLabel(repositoryLocalisedStringDto.getLabel());
+                commonInternationalString.addText(commonLocalisedString);
+            }
+            return commonInternationalString;
+        }
+        return null;
+    }
+
+    public static es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto buildDatasetRepositoryInternationalStringDtoFromCommonInternationalStringDto(
+            InternationalStringDto internationalStringDto) {
+        if (!internationalStringDto.hasTexts()) {
+            return null;
+        }
+        es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto datasetRepositoryInternationalStringDto = new es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto();
+        for (LocalisedStringDto locale : internationalStringDto.getTexts()) {
+            es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto localised = new es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto();
+            localised.setLabel(locale.getLabel());
+            localised.setLocale(locale.getLocale());
+            datasetRepositoryInternationalStringDto.addText(localised);
+        }
+        return datasetRepositoryInternationalStringDto;
     }
 
 }

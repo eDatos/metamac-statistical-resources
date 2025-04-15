@@ -62,6 +62,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
             attributeValueDto.setExternalItemValue(retrieveConceptExternalItem(dsdAttribute.getConceptSchemeRepresentationUrn(), attrValue));
         } else {
             attributeValueDto.setStringValue(attrValue);
+            // attributeValueDto.setInternationalStringValue(source.getValue()); pasar a core-common international string
         }
         return attributeValueDto;
     }
