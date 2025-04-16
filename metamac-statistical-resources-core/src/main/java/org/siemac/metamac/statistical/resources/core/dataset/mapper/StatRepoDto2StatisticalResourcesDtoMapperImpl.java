@@ -18,6 +18,8 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValue
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.utils.AttributesUtils;
+import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,16 +55,16 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
     }
 
     private AttributeValueDto attributeInstanceValue2AttributeValueDto(DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
-        // TODO EDATOS-4945 ver aquí si se aborda atributos a nivel de observación
         String attrValue = source.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (dsdAttribute.getCodelistRepresentationUrn() != null) {
             attributeValueDto.setExternalItemValue(retrieveCodeExternalItem(dsdAttribute.getCodelistRepresentationUrn(), attrValue));
         } else if (dsdAttribute.getConceptSchemeRepresentationUrn() != null) {
             attributeValueDto.setExternalItemValue(retrieveConceptExternalItem(dsdAttribute.getConceptSchemeRepresentationUrn(), attrValue));
+        } else if (AttributesUtils.isMultilingualAttributeTextFormatType(dsdAttribute)) {
+            attributeValueDto.setInternationalStringValue(InternationalStringUtils.getCommonInternationalStringDtoFromDatasetRepositoryInternationalStringDto(source.getValue()));
         } else {
             attributeValueDto.setStringValue(attrValue);
-            // attributeValueDto.setInternationalStringValue(source.getValue()); pasar a core-common international string
         }
         return attributeValueDto;
     }

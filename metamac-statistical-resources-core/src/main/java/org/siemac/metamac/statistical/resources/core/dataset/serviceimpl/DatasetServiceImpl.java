@@ -1788,7 +1788,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             if (isTextFormatAttributeMultilingual(dsdAttribute)) {
                 // TODO-EDATOS-4945 ¿Devolver un list en vez de un único international?
                 temporalAttributeValues
-                        .setInternationalStringValue(statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId()));
+                        .setInternationalStringValues(statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId()));
                 temporalAttributeValues.setMultilingualValue(true);
             } else {
                 temporalAttributeValues.setValues(statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId(),

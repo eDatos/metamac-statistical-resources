@@ -16,7 +16,9 @@ public class TemporalAttributeValues {
     }
 
     public TemporalAttributeValues(List<String> values) {
-        this.values.addAll(values);
+        if (values != null && !values.isEmpty()) {
+            this.values.addAll(values);
+        }
     }
 
     public List<String> getValues() {
@@ -27,7 +29,10 @@ public class TemporalAttributeValues {
     }
 
     public void setInternationalStringValue(InternationalStringDto internationalStringValue) {
-        this.internationalStringValues.add(internationalStringValue);
+
+        if (internationalStringValue != null) {
+            this.internationalStringValues.add(internationalStringValue);
+        }
     }
 
     public List<InternationalStringDto> getInternationalStringValues() {

@@ -67,6 +67,21 @@ public class InternationalStringUtils {
         return null;
     }
 
+    public static InternationalStringDto getCommonInternationalStringDtoFromDatasetRepositoryInternationalStringDto(
+            es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto internationalStringDto) {
+        if (internationalStringDto == null || internationalStringDto.getTexts().isEmpty()) {
+            return null;
+        }
+        InternationalStringDto datasetRepositoryInternationalStringDto = new InternationalStringDto();
+        for (es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto locale : internationalStringDto.getTexts()) {
+            LocalisedStringDto localised = new LocalisedStringDto();
+            localised.setLabel(locale.getLabel());
+            localised.setLocale(locale.getLocale());
+            datasetRepositoryInternationalStringDto.addText(localised);
+        }
+        return datasetRepositoryInternationalStringDto;
+    }
+
     public static es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto buildDatasetRepositoryInternationalStringDtoFromCommonInternationalStringDto(
             InternationalStringDto internationalStringDto) {
         if (!internationalStringDto.hasTexts()) {

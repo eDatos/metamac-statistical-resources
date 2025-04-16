@@ -72,7 +72,6 @@ public class AttributeDatasetLevelEditionForm extends AttributeBaseForm {
     }
 
     public DsdAttributeInstanceDto getDsdAttributeInstanceDto() {
-        // TODO EDATOS-4945 Ver si vale lo que se ha hecho más abajo
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (getItem(DsdAttributeInstanceDS.VALUE) instanceof CustomTextItem) {
             attributeValueDto.setStringValue(getValueAsString(DsdAttributeInstanceDS.VALUE));

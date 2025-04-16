@@ -33,6 +33,8 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
     public AttributeMainFormLayout() {
         setCanEdit(true);
 
+        bindMainFormLayoutEvents();
+
         // DATASET LEVEL FORMS
 
         attributeDatasetLevelForm = new AttributeDatasetLevelForm();
@@ -73,13 +75,17 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
 
             @Override
             public void onClick(ClickEvent event) {
-                boolean translationsShowed = getTranslateToolStripButton().isSelected();
-                attributeDatasetLevelForm.setTranslationsShowed(translationsShowed);
-                attributeDatasetLevelEditionForm.setTranslationsShowed(translationsShowed);
-                attributeDimensionOrGroupLevelForm.setTranslationsShowed(translationsShowed);
-                attributeDimensionOrGroupLevelEditionForm.setTranslationsShowed(translationsShowed);
+                setTranslation();
             }
         });
+    }
+
+    private void setTranslation() {
+        boolean translationsShowed = getTranslateToolStripButton().isSelected();
+        attributeDatasetLevelForm.setTranslationsShowed(translationsShowed);
+        attributeDatasetLevelEditionForm.setTranslationsShowed(translationsShowed);
+        attributeDimensionOrGroupLevelForm.setTranslationsShowed(translationsShowed);
+        attributeDimensionOrGroupLevelEditionForm.setTranslationsShowed(translationsShowed);
     }
 
     public boolean isCreateMode() {
@@ -115,7 +121,10 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
         canDelete = canDeleteBck;
 
         if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
-            bindMainFormLayoutEvents();
+            getTranslateToolStripButton().show();
+            setTranslation();
+        } else {
+            getTranslateToolStripButton().hide();
         }
     }
 
