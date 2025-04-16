@@ -21,7 +21,7 @@
     <!-- Metamac environment configuration -->
  	<bean id="configurationService" class="org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfigurationImpl">
         <property name="systemConfigurationFile">
-            <value>classpath:metamac/environment.xml</value>
+            <value>${STATISTICAL_RESOURCES_CONF_PATH:classpath:metamac/environment.xml}</value>
         </property>
     </bean>
     
