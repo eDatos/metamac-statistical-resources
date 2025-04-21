@@ -81,11 +81,13 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
     }
 
     private void setTranslation() {
-        boolean translationsShowed = getTranslateToolStripButton().isSelected();
-        attributeDatasetLevelForm.setTranslationsShowed(translationsShowed);
-        attributeDatasetLevelEditionForm.setTranslationsShowed(translationsShowed);
-        attributeDimensionOrGroupLevelForm.setTranslationsShowed(translationsShowed);
-        attributeDimensionOrGroupLevelEditionForm.setTranslationsShowed(translationsShowed);
+        if (getTranslateToolStripButton().isVisible()) {
+            boolean translationsShowed = Boolean.TRUE.equals(getTranslateToolStripButton().isSelected());
+            attributeDatasetLevelForm.setTranslationsShowed(translationsShowed);
+            attributeDatasetLevelEditionForm.setTranslationsShowed(translationsShowed);
+            attributeDimensionOrGroupLevelForm.setTranslationsShowed(translationsShowed);
+            attributeDimensionOrGroupLevelEditionForm.setTranslationsShowed(translationsShowed);
+        }
     }
 
     public boolean isCreateMode() {
@@ -126,6 +128,7 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
         } else {
             getTranslateToolStripButton().hide();
         }
+
     }
 
     private void showDatasetLevelForm(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
