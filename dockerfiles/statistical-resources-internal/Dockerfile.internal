@@ -26,6 +26,7 @@ RUN mkdir -p /data/edatos/statistical-resources/conf
 
 COPY dockerfiles/statistical-resources-internal/conf/*.xml /data/edatos/statistical-resources/conf/
 COPY metamac-statistical-resources-web/target/*.war /usr/local/tomcat/webapps/statistical-resources-internal.war
+COPY dockerfiles/server.xml /usr/local/tomcat/conf/
 
 ENV LANG='es_ES.UTF-8'
 ENV STATISTICAL_RESOURCES_CONF_PATH='file:/data/edatos/statistical-resources/conf/environment.xml'
