@@ -83,6 +83,13 @@ public class PublicationListViewImpl extends StatisticalResourceBaseListViewImpl
     @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
+        resetVisibilityButtonsByOperation();
+    }
+
+    private void resetVisibilityButtonsByOperation() {
+        if (this.newButton != null) {
+            this.newButton.setVisible(canCreate());
+        }
     }
 
     @Override
