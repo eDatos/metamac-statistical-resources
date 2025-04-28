@@ -97,4 +97,13 @@ public class InternationalStringUtils {
         return datasetRepositoryInternationalStringDto;
     }
 
+    public static LocalisedStringDto createCommonLocalisedStringDto(String locale, String label, Boolean isUnmodifiable) {
+        LocalisedStringDto localisedStringDto = new LocalisedStringDto();
+        localisedStringDto.setLocale(locale);
+        localisedStringDto.setLabel(label);
+        localisedStringDto.setIsUnmodifiable(isUnmodifiable);
+        return localisedStringDto;
+
+    }
+
 }

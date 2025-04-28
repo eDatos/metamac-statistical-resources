@@ -99,7 +99,7 @@ public class NoticesRestInternalServiceImpl implements NoticesRestInternalServic
             localisedMessage = ERROR + " - " + localisedMessage;
 
             createBackgroundNotification(actionCode, localisedMessage, user);
-            logger.info("Sending errorBackgroundNotification for user " + user);
+            logger.info(user != null ? ("Sending errorBackgroundNotification for user " + user) : "Sending errorBackgroundNotification for rol administradores");
         } catch (MetamacException e) {
             logger.error("Error creating createErrorBackgroundNotification:", e);
         }

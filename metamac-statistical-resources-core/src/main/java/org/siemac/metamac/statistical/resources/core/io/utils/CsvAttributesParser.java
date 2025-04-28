@@ -11,35 +11,44 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.dto.InternationalStringDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 
 import au.com.bytecode.opencsv.CSVReader;
 
 public class CsvAttributesParser {
 
-    private CSVReader                  csvReader               = null;
-    private String[]                   headers                 = null;
-    private static final int           COLUMN_ID_ATRIBUTTE     = 0;
-    private static final int           COLUMN_DIMENSION_NAME   = 1;
-    private static final int           COLUMN_DIMENSION_VALUES = 2;
-    private static final int           COLUMN_ATTRIBUTE_VALUE  = 3;
-    private List<String>               idsDimensions           = new ArrayList<>();
-    private List<String>               idsAttributes           = new ArrayList<>();
-    private List<MetamacExceptionItem> exceptions              = new ArrayList<>();
+    private CSVReader                  csvReader                                 = null;
+    private String[]                   headers                                   = null;
+    List<String>                       validLanguages                            = new ArrayList<>();
+    private static final int           COLUMN_ID_ATRIBUTTE                       = 0;
+    private static final int           COLUMN_DIMENSION_NAME                     = 1;
+    private static final int           COLUMN_DIMENSION_VALUES                   = 2;
+    private static final int           COLUMN_ATTRIBUTE_VALUE                    = 3;
+    public static final String         TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
+    private List<String>               idsDimensions                             = new ArrayList<>();
+    private List<String>               idsAttributes                             = new ArrayList<>();
+    private Map<String, Boolean>       isMultilingualByIdAttribute               = new HashMap<>();
+    private List<MetamacExceptionItem> exceptions                                = new ArrayList<>();
 
-    public CsvAttributesParser(InputStream pxStream, String charsetName, char separator, DataStructure dataStructure) throws Exception {
+    public CsvAttributesParser(InputStream pxStream, String charsetName, char separator, DataStructure dataStructure, List<String> validLanguages) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
         csvReader = new CSVReader(bufferedReader, separator);
         headers = readDefinition(csvReader);
+        if (validLanguages != null) {
+            this.validLanguages = validLanguages;
+        }
         initializeIdsDsdDimensions(dataStructure);
         initializeIdsDsdAttributes(dataStructure);
     }
@@ -50,9 +59,15 @@ public class CsvAttributesParser {
         }
     }
 
+    private boolean isAttributeMultilingual(AttributeBase base) {
+        return base.getLocalRepresentation() != null && base.getLocalRepresentation().getTextFormat() != null && base.getLocalRepresentation().getTextFormat().getTextType() != null
+                && DataType.INTERNATIONAL_STRING.equals(base.getLocalRepresentation().getTextFormat().getTextType());
+    }
+
     private void initializeIdsDsdAttributes(DataStructure dataStructure) {
         for (AttributeBase base : dataStructure.getDataStructureComponents().getAttributes().getAttributes()) {
             idsAttributes.add(base.getId());
+            isMultilingualByIdAttribute.put(base.getId(), isAttributeMultilingual(base));
         }
     }
 
@@ -101,7 +116,6 @@ public class CsvAttributesParser {
 
     private void csvToDsdAttributeInstanceDto(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<CodeDimension>> codeDimensions,
             Map<String, List<ExternalItemDto>> externalItemsAttributeId) throws MetamacException {
-        // TODO EDATOS-4945
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         setAttribute(dsdAttributeInstanceDto, line, externalItemsAttributeId, attributeValueDto);
         setCodeDimensions(dsdAttributeInstanceDto, line, codeDimensions);
@@ -109,7 +123,6 @@ public class CsvAttributesParser {
 
     private DsdAttributeInstanceDto csvToDsdCreateAttributeInstanceDto(String[] line, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId)
             throws MetamacException {
-        // TODO EDATOS-4945
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         DsdAttributeInstanceDto dsdAttributeInstanceDto = new DsdAttributeInstanceDto();
         dsdAttributeInstanceDto.setAttributeId(line[COLUMN_ID_ATRIBUTTE]);
@@ -129,10 +142,57 @@ public class CsvAttributesParser {
     private void setAttribute(DsdAttributeInstanceDto dsdAttributeInstanceDto, String[] line, Map<String, List<ExternalItemDto>> externalItemsAttributeId, AttributeValueDto attributeValueDto) {
         ExternalItemDto externalItem = getExternalItemDto(line[COLUMN_ATTRIBUTE_VALUE], dsdAttributeInstanceDto.getAttributeId(), externalItemsAttributeId);
         if (externalItem == null && checkAttributeExternalItemDefinition(dsdAttributeInstanceDto.getAttributeId(), externalItemsAttributeId)) {
-            attributeValueDto.setStringValue(line[COLUMN_ATTRIBUTE_VALUE]);
+            if (Boolean.TRUE.equals(this.isMultilingualByIdAttribute.get(dsdAttributeInstanceDto.getAttributeId()))) {
+                attributeValueDto.setInternationalStringValue(retrieveInternationalStringAttributeValues(line, dsdAttributeInstanceDto.getAttributeId()));
+            } else {
+                attributeValueDto.setStringValue(line[COLUMN_ATTRIBUTE_VALUE]);
+            }
+
         }
         attributeValueDto.setExternalItemValue(externalItem);
         dsdAttributeInstanceDto.setValue(attributeValueDto);
+    }
+
+    private InternationalStringDto retrieveInternationalStringAttributeValues(String[] line, String idAttribute) {
+
+        InternationalStringDto attributeValue = new InternationalStringDto();
+        List<String> locales = new ArrayList<>();
+        if (headers.length != line.length) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_INVALID_HEADER_OR_ATTRIBUTE_INFO, idAttribute));
+        }
+
+        for (int i = COLUMN_ATTRIBUTE_VALUE; i < line.length; i++) {
+            if (!StringUtils.isBlank(line[i])) {
+                String[] columnSplited = StringUtils.splitPreserveAllTokens(this.headers[i], TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR);
+
+                if (i == COLUMN_ATTRIBUTE_VALUE && !checkMultilingualHeader(columnSplited, idAttribute)) {
+                    return attributeValue;
+                }
+
+                if (locales.contains(columnSplited[1])) {
+                    exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_DUPLICATE_LANGUAGE, idAttribute));
+                    return attributeValue;
+                }
+
+                attributeValue.addText(InternationalStringUtils.createCommonLocalisedStringDto(columnSplited[1], line[i], false));
+                locales.add(columnSplited[1]);
+            }
+        }
+
+        return attributeValue;
+    }
+
+    private boolean checkMultilingualHeader(String[] headerMultilingualValue, String idAttribute) {
+        if (headerMultilingualValue == null || headerMultilingualValue.length != 2 || StringUtils.isBlank(headerMultilingualValue[1])) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER, idAttribute));
+            return false;
+        }
+
+        if (!this.validLanguages.contains(headerMultilingualValue[1])) {
+            exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_INVALID_LANGUAGE, idAttribute));
+            return false;
+        }
+        return true;
     }
 
     private boolean checkAttributeExternalItemDefinition(String attributeId, Map<String, List<ExternalItemDto>> externalItemsAttributeId) {
