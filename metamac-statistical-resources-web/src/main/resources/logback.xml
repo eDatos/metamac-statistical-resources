@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration>
 <configuration>
+    <turboFilter class="org.siemac.edatos.core.common.util.ExpiringDuplicateMessageFilter">
+        <allowedRepetitions>5</allowedRepetitions>
+        <cacheSize>500</cacheSize>
+        <expireAfterWriteSeconds>900</expireAfterWriteSeconds>
+    </turboFilter>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -13,6 +18,10 @@
 
     <!-- Avoid logging warning Unable to proxy method ... -->
     <logger name="org.springframework.aop.framework.Cglib2AopProxy" level="ERROR" />
+
+    <logger name="statistical-resources" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>

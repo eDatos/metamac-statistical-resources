@@ -486,7 +486,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.collections.description']}"
-      },  
+      },
       "Contact":{
          "type":"object",
          "title":"Contact",
@@ -648,7 +648,7 @@
                   "filteringDimension":{
                      "description":"${msg['api.doc.swagger.definitions.multidatasetMetadata.properties.filteringDimension.description']}",
                      "$ref":"#/definitions/InternationalString"
-                  }                 
+                  }
                }
             }
          ],
@@ -707,7 +707,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.multidatasets.description']}"
-      },      
+      },
       "EnumeratedDimensionValue":{
          "type":"object",
          "title":"EnumeratedDimensionValue",
@@ -770,7 +770,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.enumeratedDimensionValues.description']}"
-      },   
+      },
       "NonEnumeratedAttributeValue":{
          "type":"object",
          "title":"NonEnumeratedAttributeValue",
@@ -1179,7 +1179,7 @@
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.resources.description']}"
-      },      
+      },
       "Data":{
          "type":"object",
          "title":"Data",
@@ -1678,6 +1678,13 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.dimension.properties.pluralName.description']}",
                      "$ref":"#/definitions/InternationalString"
+                  },
+                  "showCode":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.dimension.properties.showCode.description']}",
+                     "type":"boolean"
                   }
                }
             }
@@ -3153,11 +3160,7 @@
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_GET",
             "produces":[
-               "application/json",
-               "application/xml",
                "application/jsonstat+json",
-               "text/tab-separated-values",
-               "text/csv"
             ],
             "parameters":[
                {
@@ -3211,7 +3214,7 @@
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.lang.description']}"
                }
-			   
+
             ],
             "responses":{
                "200":{
@@ -3236,8 +3239,107 @@
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.503.description']}"
                }
             }
-         }
-      },
+         },
+         "post":{
+            "tags":[
+               "${msg['api.doc.swagger.tags.datasets.name']}"
+            ],
+            "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
+            "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_POST",
+            "produces":[
+               "application/json",
+               "application/xml",
+               "application/jsonstat+json",
+               "text/tab-separated-values",
+               "text/csv"
+            ],
+            "parameters":[
+               {
+                  "name": "jsonBody",
+                  "in": "body",
+                  "schema":{
+                     "$ref": "#/definitions/Exportation"
+                  },
+                  "description": "${msg['api.doc.swagger.paths.any.post.parameters.jsonBody']}"
+               },
+
+               {
+                  "name":"agencyID",
+                  "in":"path",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.agencyID.description']}",
+                  "required":true
+               },
+               {
+                  "name":"resourceID",
+                  "in":"path",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.resourceID.description']}",
+                  "required":true
+               },
+               {
+                  "name":"version",
+                  "in":"path",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.version.description']}",
+                  "required":true
+               },
+               {
+                  "name":"representation",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.representation.description']}"
+               },
+               {
+                  "name": "granularity",
+                  "in": "query",
+                  "type": "string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.granularity.description']}"
+               },
+               {
+                  "name":"dim",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.dim.description']}"
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.fields.description']}"
+               },
+               {
+                  "name":"lang",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.lang.description']}"
+               }
+               ],
+               "responses":{
+                  "200":{
+                  "schema":{
+                  "$ref":"#/definitions/Dataset"
+               },
+               "headers":{
+
+               },
+               "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.description']}"
+               },
+               "404":{
+                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.404.description']}"
+               },
+               "406":{
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.406.description']}"
+               },
+               "500":{
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.500.description']}"
+               },
+               "503":{
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.503.description']}"
+               }
+               }
+            }
+         },
       "/v1.0/queries":{
          "get":{
             "tags":[

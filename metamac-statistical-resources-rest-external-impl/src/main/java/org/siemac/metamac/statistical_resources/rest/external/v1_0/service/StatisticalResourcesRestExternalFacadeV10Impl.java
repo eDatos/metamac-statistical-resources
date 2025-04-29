@@ -68,6 +68,8 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resour
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.*;
+
 @Service("statisticalResourcesRestExternalFacadeV10")
 public class StatisticalResourcesRestExternalFacadeV10Impl implements StatisticalResourcesV1_0 {
 
@@ -150,6 +152,26 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    public JsonStatData retrieveDatasetJsonStat(Exportation exportationBody, String agencyID, String resourceID, String version, List<String> lang, String fields, String granularity) {
+
+        try {
+            DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+            String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
+
+            //Parse body for dimensions
+            String dimensionSelection = toStatisticalResourcesApiRepresentationParameter(exportationBody);
+
+            Map<String, List<String>> dimensions = parseDimensionExpression(dimensionSelection, exportationBody.toString());
+
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+
+            return datasetsDo2RestMapper.toJsonStatDataset(datasetVersion, dimensions, selectedLanguage, parsedFields, granularity);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
     public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
@@ -183,6 +205,50 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
+    }
+
+    private static String toStatisticalResourcesApiRepresentationParameter(Exportation exportationBody) {
+        if (exportationBody == null) {
+            return null;
+        }
+        org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.Selection datasetSelection = exportationBody.getSelection();
+        if (datasetSelection == null || datasetSelection.getDimensions() == null || datasetSelection.getDimensions().getDimensions() == null) {
+            return null;
+        }
+        List<org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.SelectionDimension> dimensions = datasetSelection.getDimensions().getDimensions();
+
+        StringBuilder sb = new StringBuilder();
+        for (org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.SelectionDimension dimension : dimensions) {
+            sb.append(dimension.getDimensionId());
+            sb.append("[");
+
+            if (dimension.getDimensionFilters() != null) {
+                DimensionFilters dimensionFilters = dimension.getDimensionFilters();
+                if (dimensionFilters.getAfter() != null) {
+                    sb.append("~after=").append(dimensionFilters.getAfter()).append("|");
+                }
+                if (dimensionFilters.getLast() != null) {
+                    sb.append("~last=").append(dimensionFilters.getLast()).append("|");
+                }
+                if (dimensionFilters.getRange() != null) {
+                    sb.append("~range=").append(dimensionFilters.getRange().getStart()).append(";").append(dimensionFilters.getRange().getEnd()).append("|");
+                }
+            }
+            if (dimension.getDimensionValues() != null && dimension.getDimensionValues().getDimensionValues() != null && dimension.getDimensionValues().getDimensionValues().size() > 0) {
+                sb.append(StringUtils.join(dimension.getDimensionValues().getDimensionValues(), "|"));
+            }
+            if ('|' == sb.charAt(sb.length() - 1)) {
+                sb.deleteCharAt(sb.length() - 1); // delete last |
+            }
+
+            sb.append("]");
+            sb.append(":");
+        }
+        if (':' == sb.charAt(sb.length() - 1)) {
+            sb.deleteCharAt(sb.length() - 1); // delete last :
+        }
+
+        return sb.toString();
     }
 
     private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity)
