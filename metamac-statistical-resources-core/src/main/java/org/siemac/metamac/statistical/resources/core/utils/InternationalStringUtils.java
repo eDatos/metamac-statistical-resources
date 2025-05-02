@@ -106,4 +106,30 @@ public class InternationalStringUtils {
 
     }
 
+    public static es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto copy(es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto source, boolean scapeData) {
+        if (source == null) {
+            return null;
+        }
+        es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto target = new es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto();
+
+        for (es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto sourceLocalisedString : source.getTexts()) {
+            es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto targetLocalisedString = copy(sourceLocalisedString, scapeData);
+            if (targetLocalisedString != null) {
+                target.addText(targetLocalisedString);
+            }
+        }
+
+        return target;
+    }
+
+    public static es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto copy(es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto source, boolean scapeData) {
+        if (source == null) {
+            return null;
+        }
+        es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto target = new es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto();
+        target.setLabel(scapeData ? AttributesUtils.escapeValueToData(source.getLabel()) : source.getLabel());
+        target.setLocale(source.getLocale());
+        return target;
+    }
+
 }

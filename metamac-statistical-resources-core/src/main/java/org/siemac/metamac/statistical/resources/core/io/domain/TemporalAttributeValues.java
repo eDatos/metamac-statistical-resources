@@ -28,6 +28,12 @@ public class TemporalAttributeValues {
         this.values = values;
     }
 
+    public void setValues(String value) {
+        if (value != null) {
+            this.values.add(value);
+        }
+    }
+
     public void setInternationalStringValue(InternationalStringDto internationalStringValue) {
 
         if (internationalStringValue != null) {
