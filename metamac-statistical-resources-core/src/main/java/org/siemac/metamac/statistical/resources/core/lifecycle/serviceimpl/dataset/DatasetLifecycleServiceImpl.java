@@ -370,7 +370,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, DatasetVersion resource) {
         List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(resource.getDataset().getId());
         try {
-            if (configurationService.retrieveTwitterAccessToken() == null || !checkVersionRationaleTypeEnum(resource)) {
+            if (!configurationService.retrieveTwitterSentEnable() || !checkVersionRationaleTypeEnum(resource)) {
                 return;
             }
         } catch (MetamacException e) {

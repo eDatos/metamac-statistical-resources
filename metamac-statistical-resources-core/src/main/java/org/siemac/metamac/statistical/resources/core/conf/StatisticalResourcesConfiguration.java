@@ -37,5 +37,7 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
 
     public String retrieveTwitterAccessToken() throws MetamacException;
 
+    public boolean retrieveTwitterSentEnable() throws MetamacException;
+
     public String retrieveTwitterAccesTokenSecret() throws MetamacException;
 }

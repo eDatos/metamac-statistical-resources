@@ -98,6 +98,16 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
+    public boolean retrieveTwitterSentEnable() throws MetamacException {
+        try {
+            String property = retrieveProperty(StatisticalResourcesConfigurationConstants.TWITTER_SENT_ENABLE);
+            return Boolean.valueOf(property);
+        } catch (MetamacException e) {
+            return false;
+        }
+    }
+
+    @Override
     public String retrieveTwitterAccesTokenSecret() throws MetamacException {
         try {
             return retrieveProperty(StatisticalResourcesConfigurationConstants.TWITTER_ACCES_TOKEN_SECRET);

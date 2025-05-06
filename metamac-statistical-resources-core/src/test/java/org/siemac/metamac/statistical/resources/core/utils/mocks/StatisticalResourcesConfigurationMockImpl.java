@@ -97,4 +97,9 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     public String retrieveTwitterAccesTokenSecret() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
+
+    @Override
+    public boolean retrieveTwitterSentEnable() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
 }
