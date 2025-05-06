@@ -268,7 +268,7 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
     @Override
     public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, QueryVersion resource) {
         try {
-            if (configurationService.retrieveTwitterAccessToken() == null) {
+            if (!configurationService.retrieveTwitterSentEnable()) {
                 return;
             }
             if (resource.getPurposes() != null && "SOCIAL_NETWORK".equals(resource.getPurposes().getIdentifier())) {
