@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema version="1.0"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="qualified"
+	targetNamespace="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
+	xmlns:tns="http://www.siemac.org/metamac/rest/statistical-resources-internal/v1.0/domain"
+	xmlns:common="http://www.siemac.org/metamac/rest/common/v1.0/domain">
+
+	<xs:import
+		namespace="http://www.siemac.org/metamac/rest/common/v1.0/domain"
+		schemaLocation="metamac-rest-api:metamac-rest-common-domain-v1.0.xsd" />
+
+	<xs:complexType name="Exportation">
+		<xs:sequence>
+			<xs:element name="selection" type="tns:Selection" minOccurs="1" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Selection">
+		<xs:sequence>
+			<xs:element name="dimensions" type="tns:SelectionDimensions" minOccurs="1" />
+			<xs:element name="attributes" type="tns:SelectionAttributes" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SelectionDimensions">
+		<xs:complexContent>
+			<xs:extension base="common:ListBase">
+				<xs:sequence>
+					<xs:element name="dimension" type="tns:SelectionDimension" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SelectionDimension">
+		<xs:sequence>
+			<xs:element name="dimensionId" type="xs:string" minOccurs="1" />
+			<xs:element name="dimensionValues" type="tns:DimensionValues" minOccurs="0" /> <!--  opcional, devuelve todo si no se especifica -->
+			<xs:element name="dimensionFilters" type="tns:DimensionFilters" minOccurs="0" /> <!-- opcional -->
+			<xs:element name="labelVisualisationMode" type="tns:LabelVisualisationMode" minOccurs="0" /> <!--  opcional, se rellena como LABEL_CODE si no se especifica -->
+			<xs:element name="position" type="xs:int" minOccurs="0" /> <!--  opcional, se rellena desde el dsd si no se especifica -->
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="DimensionValues">
+		<xs:complexContent>
+			<xs:extension base="common:ListBase">
+				<xs:sequence>
+					<xs:element name="dimensionValue" type="xs:string" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="DimensionFilters">
+		<xs:sequence>
+			<xs:element name="range" type="tns:Range" minOccurs="0" />
+			<xs:element name="last" type="xs:int" minOccurs="0" />
+			<xs:element name="after" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="Range">
+		<xs:sequence>
+			<xs:element name="start" type="xs:string" minOccurs="0" />
+			<xs:element name="end" type="xs:string" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="SelectionAttributes">
+		<xs:complexContent>
+			<xs:extension base="common:ListBase">
+				<xs:sequence>
+					<xs:element name="attribute" type="tns:SelectionAttribute" minOccurs="0" maxOccurs="unbounded" />
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+
+	<xs:complexType name="SelectionAttribute">
+		<xs:sequence>
+			<xs:element name="attributeId" type="xs:string" minOccurs="1" />
+			<xs:element name="labelVisualisationMode" type="tns:LabelVisualisationMode" minOccurs="0" />
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:simpleType name="LabelVisualisationMode">
+		<xs:restriction base="xs:token">
+			<xs:enumeration value="CODE" />
+			<xs:enumeration value="LABEL" />
+			<xs:enumeration value="CODE_AND_LABEL" />
+		</xs:restriction>
+	</xs:simpleType>
+
+	<!-- Elements -->
+	<xs:element name="exportation" type="tns:Exportation" />
+
+</xs:schema>
