@@ -17,6 +17,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
@@ -29,6 +30,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
+import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
@@ -368,7 +370,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, DatasetVersion resource) {
         List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(resource.getDataset().getId());
         try {
-            if (configurationService.retrieveTwitterAccessToken() == null) {
+            if (configurationService.retrieveTwitterAccessToken() == null || !checkVersionRationaleTypeEnum(resource)) {
                 return;
             }
         } catch (MetamacException e) {
@@ -400,6 +402,17 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                 updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             }
         }
+    }
+
+    private boolean checkVersionRationaleTypeEnum(DatasetVersion resource) {
+        if (resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes() != null && !resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes().isEmpty()) {
+            for (VersionRationaleType versionRationaleType : resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes()) {
+                if (VersionRationaleTypeEnum.MINOR_DATA_UPDATE.equals(versionRationaleType.getValue()) || VersionRationaleTypeEnum.MINOR_SERIES_UPDATE.equals(versionRationaleType.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void updateXStreamStatus(QueryVersion resource, XStreamStatusEnum status) {
