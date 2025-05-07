@@ -1730,6 +1730,10 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         DataProcessorForAttributeWithDimensionAttachmentLevel dataProcessor = getDataProcessorForAttributeWithDimensionAttachmentLevel(attributeId, attributeDimensions, datasetDimensionsOrdered,
                 dimensionsCodesSelectedEffective, datasetId);
 
+        if (dataProcessor == null) {
+            return temporalAttributeValues;
+        }
+
         if (isMultilingualAttribute) {
             temporalAttributeValues.setInternationalStringValues(dataProcessor.getDataMultilingualAttributeForResponse());
             temporalAttributeValues.setMultilingualValue(true);
