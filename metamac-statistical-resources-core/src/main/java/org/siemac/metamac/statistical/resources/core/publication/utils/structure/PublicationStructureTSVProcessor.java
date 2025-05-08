@@ -273,6 +273,8 @@ public class PublicationStructureTSVProcessor {
             relatedResourceType = StatisticalResourceTypeEnum.QUERY;
         } else if (StatisticalResourceTypeEnum.MULTIDATASET.toString().equals(type)) {
             relatedResourceType = StatisticalResourceTypeEnum.MULTIDATASET;
+        } else if (StatisticalResourceTypeEnum.COLLECTION.toString().equals(type)) {
+            relatedResourceType = StatisticalResourceTypeEnum.COLLECTION;
         } else if (StatisticalResourceTypeEnum.URL.toString().equals(type)) {
             relatedResourceType = StatisticalResourceTypeEnum.URL;
         }

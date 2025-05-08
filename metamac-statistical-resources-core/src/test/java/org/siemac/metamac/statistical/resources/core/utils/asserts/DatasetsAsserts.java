@@ -172,6 +172,14 @@ public class DatasetsAsserts extends BaseAsserts {
         }
     }
 
+    public static void assertEqualsDatasetVersionInGroup(DatasetVersion expected, DatasetVersion actual) throws MetamacException {
+        if ((expected != null && actual == null) || (expected == null && actual != null)) {
+            fail("The expected datasetVersion and the actual are not equals");
+        } else if (expected != null && actual != null) {
+            assertEqualsDatasetVersionUpdateInGroup(expected, actual);
+        }
+    }
+
     public static void assertEqualsDatasetVersionNotChecksDataset(DatasetVersion expected, DatasetVersion actual) throws MetamacException {
         if ((expected != null && actual == null) || (expected == null && actual != null)) {
             fail("The expected datasetVersion and the actual are not equals");
@@ -187,6 +195,16 @@ public class DatasetsAsserts extends BaseAsserts {
 
         if (!datasetChecked) {
             assertEqualsDataset(expected.getDataset(), actual.getDataset());
+        }
+    }
+
+    private static void assertEqualsDatasetVersionUpdateInGroup(DatasetVersion expected, DatasetVersion actual) throws MetamacException {
+        assertEqualsSiemacMetadataStatisticalResourceUpdateInGroup(expected.getSiemacMetadataStatisticalResource(), actual.getSiemacMetadataStatisticalResource());
+
+        assertEqualsDatasetVersionMetadataUpdateInGroup(expected, actual);
+
+        for (int i = 0; i < expected.getCategorisations().size(); i++) {
+            assertEqualsCategorisationUpdateDatasetInGroup(expected.getCategorisations().get(i), actual.getCategorisations().get(i));
         }
     }
 
@@ -232,6 +250,19 @@ public class DatasetsAsserts extends BaseAsserts {
         assertEqualsInternationalString(expected.getBibliographicCitation(), actual.getBibliographicCitation());
 
         assertEquals(expected.isKeepAllData(), actual.isKeepAllData());
+
+    }
+
+    private static void assertEqualsDatasetVersionMetadataUpdateInGroup(DatasetVersion expected, DatasetVersion actual) {
+        assertEqualsExternalItemCollection(expected.getGeographicCoverage(), actual.getGeographicCoverage());
+        assertEqualsTemporalCodeCollection(expected.getTemporalCoverage(), actual.getTemporalCoverage());
+        assertEqualsExternalItemCollection(expected.getMeasureCoverage(), actual.getMeasureCoverage());
+        assertEqualsExternalItemCollection(expected.getGeographicGranularities(), actual.getGeographicGranularities());
+        assertEqualsExternalItemCollection(expected.getTemporalGranularities(), actual.getTemporalGranularities());
+        assertEqualsExternalItem(expected.getUpdateFrequency(), actual.getUpdateFrequency());
+
+        assertEquals(expected.getDateNextUpdate(), actual.getDateNextUpdate());
+        assertEqualsStatisticOfficiality(expected.getStatisticOfficiality(), actual.getStatisticOfficiality());
 
     }
 
@@ -467,6 +498,15 @@ public class DatasetsAsserts extends BaseAsserts {
     // -----------------------------------------------------------------
     // CATEGORISATION: DO & DO
     // -----------------------------------------------------------------
+
+    public static void assertEqualsCategorisationUpdateDatasetInGroup(Categorisation expected, Categorisation actual) throws MetamacException {
+        assertEqualsNullability(expected, actual);
+        if (expected == null) {
+            return;
+        }
+        assertEqualsExternalItem(expected.getCategory(), actual.getCategory());
+        assertEqualsExternalItem(expected.getMaintainer(), actual.getMaintainer());
+    }
 
     public static void assertEqualsCategorisation(Categorisation expected, Categorisation actual) throws MetamacException {
         assertEqualsNullability(expected, actual);

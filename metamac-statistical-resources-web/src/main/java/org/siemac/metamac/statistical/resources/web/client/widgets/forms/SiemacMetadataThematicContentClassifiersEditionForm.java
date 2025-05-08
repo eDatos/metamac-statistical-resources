@@ -21,9 +21,17 @@ public class SiemacMetadataThematicContentClassifiersEditionForm extends Statist
     private SearchMultiExternalItemSimpleItem instancesItem;
 
     public SiemacMetadataThematicContentClassifiersEditionForm() {
+        super();
+        initSiemacMetadataThematicContentClassifiersEditionForm();
+    }
 
+    public SiemacMetadataThematicContentClassifiersEditionForm(boolean isMultipleUpdate) {
+        super(isMultipleUpdate);
+        initSiemacMetadataThematicContentClassifiersEditionForm();
+    }
+
+    private void initSiemacMetadataThematicContentClassifiersEditionForm() {
         instancesItem = createStatisticalOperationInstancesItem();
-
         addFields(instancesItem);
     }
 

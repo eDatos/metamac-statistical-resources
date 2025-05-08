@@ -12,6 +12,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.asserts.Common
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts.assertEqualsCategorisation;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts.assertEqualsDatasetVersion;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts.assertEqualsDatasetVersionCollection;
+import static org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts.assertEqualsDatasetVersionInGroup;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts.assertEqualsDatasetVersionNotChecksDataset;
 import static org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts.assertEqualsDimensionRepresentationMapping;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.CategorisationMockFactory.CATEGORISATION_01_DATASET_VERSION_01_NAME;
@@ -27,7 +28,9 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_01_BASIC_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_01_FOR_UPDATE_MULTIPLE;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_02_BASIC_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_02_FOR_UPDATE_MULTIPLE;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_03_FOR_DATASET_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_05_FOR_DATASET_04_NAME;
@@ -101,34 +104,25 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBui
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
-import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
-import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
-import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
-import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CategorisationProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
@@ -159,10 +153,12 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorR
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DataMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
-import org.siemac.metamac.statistical.resources.core.utils.SrmMockUtils;
+import org.siemac.metamac.statistical.resources.core.utils.DatasetLifecycleTestUtils;
 import org.siemac.metamac.statistical.resources.core.utils.TaskMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.BaseAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.CategorisationMockFactory;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticalResourcesMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDoMocks;
@@ -1651,6 +1647,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     @Override
+    public void testDeleteDatasourcesNotUsed() throws Exception {
+        // In DatasetServiceDatasourceManagementTest.java
+    }
+
+    @Override
     public void testRetrieveDatasourcesByDatasetVersion() throws Exception {
         // In DatasetServiceDatasourceManagementTest.java
     }
@@ -2171,7 +2172,54 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         assertEquals(Long.valueOf(27), tableSize);
     }
 
+    @Override
     public void testGetDatasetLastVersionPublishedByDatasetUrn() throws Exception {
+        // NOTHING TO DO
+    }
+
+    @Override
+    @Test
+    @MetamacMock({DATASET_VERSION_01_FOR_UPDATE_MULTIPLE, DATASET_VERSION_02_FOR_UPDATE_MULTIPLE})
+    public void testUpdateDatasetVersionInGroup() throws Exception {
+        // datasetVersion to change
+        DatasetVersion expected = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_FOR_UPDATE_MULTIPLE);
+        String urn = expected.getSiemacMetadataStatisticalResource().getUrn();
+
+        // metadata changes
+        DatasetVersion metadataToChange = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_02_FOR_UPDATE_MULTIPLE);
+        DatasetLifecycleTestUtils.fillGranularitiesAlternative(metadataToChange);
+        metadataToChange.addCategorisation(CategorisationMockFactory.createCategorisation("cat_data_1", "category01", metadataToChange));
+        metadataToChange.addCategorisation(CategorisationMockFactory.createCategorisation("cat_data_2", "category02", metadataToChange));
+
+        // to change all permitted metadata
+        datasetService.updateDatasetVersionInGroup(getServiceContextWithoutPrincipal(), metadataToChange, urn);
+        DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextWithoutPrincipal(), urn);
+        assertEqualsDatasetVersionInGroup(metadataToChange, actual);
+
+    }
+
+    @Test
+    @MetamacMock(DATASET_VERSION_01_FOR_UPDATE_MULTIPLE)
+    public void testUpdateDatasetVersionInGroupNotPremittedMetadata() throws Exception {
+        DatasetVersion expected = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_FOR_UPDATE_MULTIPLE);
+        DatasetVersion metadataToChange = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_FOR_UPDATE_MULTIPLE);
+        DatasetVersionMockFactory.changeDatasetVersionBasicMetadataNotPermitted(metadataToChange);
+
+        String urn = expected.getSiemacMetadataStatisticalResource().getUrn();
+
+        datasetService.updateDatasetVersionInGroup(getServiceContextWithoutPrincipal(), metadataToChange, urn);
+        DatasetVersion actual = datasetService.retrieveDatasetVersionByUrn(getServiceContextWithoutPrincipal(), urn);
+        assertEqualsDatasetVersion(expected, actual);
+    }
+
+    @Override
+    @Test
+    public void testExportDatasourcesTsv() throws Exception {
+        // NOTHING TO DO
+    }
+
+    @Override
+    public void testCopyDatasetVersion() throws Exception {
         // NOTHING TO DO
     }
 }

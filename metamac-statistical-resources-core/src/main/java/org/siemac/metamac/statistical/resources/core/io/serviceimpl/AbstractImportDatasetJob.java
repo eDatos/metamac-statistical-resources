@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ExceptionHelper;
@@ -34,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractImportDatasetJob implements Job {
 
-    protected final Logger             logger                            = LoggerFactory.getLogger(getClass());
+    protected final Logger             logger                             = LoggerFactory.getLogger(getClass());
 
     public static final String         USER                               = "user";
     public static final String         FILE_PATHS                         = "filePaths";
@@ -47,6 +48,7 @@ public abstract class AbstractImportDatasetJob implements Job {
     public static final String         STORE_ALTERNATIVE_REPRESENTATIONS  = "storeAlternativeRepresentations";
     public static final String         DATASET_VERSION_DATA_PROVIDERS_URN = "datasetVersionDataProvidersUrn";
     public static final String         DATASET_VERSION_RATIONALE_TYPES    = "datasetVersionRationaleTypes";
+    public static final String         DATASET_VERSION_RATIONALE          = "datasetVersionRationale";
     public static final String         DATASET_NEXT_VERSION               = "datasetNextVersion";
     public static final String         DATASET_NEXT_VERSION_DATE          = "datasetNextVersionDate";
     public static final String         DATASET_NEXT_UPDATE_DATE           = "datasetNextUpdateDate";
@@ -55,10 +57,10 @@ public abstract class AbstractImportDatasetJob implements Job {
     public static final String         DATASET_NEXT_PROC_STATUS           = "datasetNextProcStatus";
     public static final String         TASK_NAME                          = "taskName";
 
-    private TaskServiceFacade          taskServiceFacade                 = null;
-    private NoticesRestInternalService noticesRestInternalService        = null;
-    private JobDataMap                 data                              = null;
-    protected ServiceContext           serviceContext                    = null;
+    private TaskServiceFacade          taskServiceFacade                  = null;
+    private NoticesRestInternalService noticesRestInternalService         = null;
+    private JobDataMap                 data                               = null;
+    protected ServiceContext           serviceContext                     = null;
 
     protected abstract ServiceContext setAdditionalProperties(ServiceContext serviceContext, JobDataMap jobDataMap);
     protected abstract void sendSuccessNotification(String fileNames, String user);
@@ -70,11 +72,12 @@ public abstract class AbstractImportDatasetJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
 
         JobDetail jobDetail = context.getJobDetail();
-
+        JobDataMap jobDataMap = context.getMergedJobDataMap();
         JobKey jobKey = jobDetail.getKey();
 
         // Parameters
         data = jobDetail.getJobDataMap();
+
         String dataStructureUrn = data.getString(DATA_STRUCTURE_URN);
         String filePaths = data.getString(FILE_PATHS);
         String fileNames = data.getString(FILE_NAMES);
@@ -93,6 +96,7 @@ public abstract class AbstractImportDatasetJob implements Job {
         String datasetUpdateFrequency = data.getString(DATASET_UPDATE_FREQUENCY);
         Boolean datasetAutomaticLifeCicle = data.getBoolean(DATASET_AUTOMATIC_LIFE_CICLE);
         String datasetNextProcStatus = data.getString(DATASET_NEXT_PROC_STATUS);
+        Map<String, String> versionRationale = (Map<String, String>) context.getMergedJobDataMap().get(DATASET_VERSION_RATIONALE);
 
         try {
             logger.info("Importation job: {} starting at {}", jobKey, new Date());
@@ -115,6 +119,7 @@ public abstract class AbstractImportDatasetJob implements Job {
             taskInfoDataset.setDatasetUpdateFrequency(datasetUpdateFrequency);
             taskInfoDataset.setDatasetAutomaticLifeCicle(datasetAutomaticLifeCicle);
             taskInfoDataset.setDatasetNextProcStatus(datasetNextProcStatus);
+            taskInfoDataset.setVersionRationale(versionRationale);
 
             executeImportTask(serviceContext, taskName, taskInfoDataset);
 
@@ -192,7 +197,7 @@ public abstract class AbstractImportDatasetJob implements Job {
 
         return alternativeRepresentationList;
     }
-    
+
     private List<String> inflateDatasetVersionFieldListAsString(String datasetVersionFieldStringList) {
         List<String> datasetVersionFieldList = new ArrayList<>();
         if (!StringUtils.isEmpty(datasetVersionFieldStringList)) {

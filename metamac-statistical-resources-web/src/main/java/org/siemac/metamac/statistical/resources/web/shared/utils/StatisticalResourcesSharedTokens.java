@@ -25,6 +25,7 @@ public class StatisticalResourcesSharedTokens extends org.siemac.metamac.web.com
     public static final String UPLOAD_RESOURCE_TYPE                 = "import-resource-type";
     public static final String UPLOAD_DATA_PROVIDER                 = "import-data-provider";
     public static final String UPLOAD_VERSION_RATIONALE_TYPES       = "import-ver-rat-type";
+    public static final String UPLOAD_VERSION_RATIONALE             = "import-ver-rat";
     public static final String UPLOAD_NEXT_VERSION                  = "import-ver-next-ver";
     public static final String UPLOAD_DATE_NEXT_VERSION             = "import-ver-date-next-ver";
     public static final String UPLOAD_DATE_NEXT_UPDATE              = "import-ver-date-next-update";
@@ -32,5 +33,5 @@ public class StatisticalResourcesSharedTokens extends org.siemac.metamac.web.com
     public static final String UPLOAD_HAS_EXTRA_FIELDS              = "import-has-extra-fields";
     public static final String UPLOAD_PROC_STATUS                   = "import-proc-status";
     public static final String UPLOAD_ZIP_INFORMATION_LABEL         = "zip-information-label";
-    
+
 }

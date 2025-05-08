@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.statistical.resources.core.base.mapper.BaseDo2DtoMapperImpl;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
@@ -15,6 +18,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
+import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -29,6 +33,9 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
 
     @Autowired
     private DatasetVersionRepository datasetVersionRepository;
+
+    @Autowired
+    private SrmRestInternalService srmRestInternalService;
 
     // ---------------------------------------------------------------------------------------------------------
     // QUERY VERSION
@@ -157,8 +164,81 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         List<RelatedResourceResult> isPartOf = queryVersionRepository.retrieveIsPartOf(source);
         target.getIsPartOf().clear();
         target.getIsPartOf().addAll(relatedResourceResultCollectionToDtoCollection(isPartOf));
-
+        setHeadingAndStubDimension(target, source);
         return target;
+    }
+
+    private void setHeadingAndStubDimension(QueryVersionDto target, QueryVersion source) throws MetamacException {
+        String dsdUrn = "";
+        if (source.getDataset() != null && source.getDataset().getVersions() != null && !source.getDataset().getVersions().isEmpty()) {
+            dsdUrn = source.getDataset().getVersions().get(0).getRelatedDsd().getUrn();
+        }
+
+        if (dsdUrn.isEmpty() && source.getFixedDatasetVersion() != null && source.getFixedDatasetVersion().getRelatedDsd() != null) {
+            dsdUrn = source.getFixedDatasetVersion().getRelatedDsd().getUrn();
+        }
+
+        DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(dsdUrn);
+        if (source.getStubDimensions() != null && !source.getStubDimensions().isEmpty()
+                || (source.getHeadingDimensions() != null && !source.getHeadingDimensions().isEmpty())) {
+            target.getHeadingDimensions().addAll(getDatasetDimension(source.getHeadingDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
+            target.getStubDimensions().addAll(getDatasetDimension(source.getStubDimensions(),  dsd.getDataStructureComponents().getDimensions().getDimensions()));
+        } else {
+            if (dsd != null && dsd.getStub() != null && dsd.getStub().getDimensions() != null) {
+                target.getStubDimensions().addAll(getDsdDimensions(dsd, dsd.getStub().getDimensions()));
+            }
+            if (dsd != null && dsd.getHeading() != null && dsd.getHeading().getDimensions() != null) {
+                target.getHeadingDimensions().addAll(getDsdDimensions(dsd, dsd.getHeading().getDimensions()));
+            }
+        }
+    }
+
+    private List<RelatedResourceDto> getDatasetDimension(List<DimensionOrder> dimensionsOrder, List<DimensionBase> dimensions) {
+        List<RelatedResourceDto> relatedResources = new ArrayList<>();
+        for (DimensionOrder dimensionOrder : dimensionsOrder) {
+            RelatedResourceDto relatedResource = new RelatedResourceDto();
+            DimensionBase dimensionBase = getDimensionByUrn(dimensionOrder.getUrnDimComponentFk(), dimensions);
+            relatedResource.setId(dimensionOrder.getId());
+            relatedResource.setCode(dimensionBase.getId());
+            relatedResource.setUrn(dimensionOrder.getUrnDimComponentFk());
+            relatedResources.add(relatedResource);
+        }
+        return relatedResources;
+    }
+
+    private List<RelatedResourceDto> getDsdDimensions(DataStructure dsd, List<String> dimensionsName) {
+        List<RelatedResourceDto> dimensions = new ArrayList<>();
+        List<DimensionBase> dimensionsBase = dsd.getDataStructureComponents().getDimensions().getDimensions();
+        for (String dimensionName : dimensionsName) {
+            DimensionBase dimensionBase = getDimensionByName(dimensionName, dimensionsBase);
+            if (dimensionBase != null) {
+                RelatedResourceDto target = new RelatedResourceDto();
+                target.setCode(dimensionBase.getId());
+                target.setUrn(dimensionBase.getUrn());
+                dimensions.add(target);
+            }
+        }
+
+        return dimensions;
+    }
+
+    private DimensionBase getDimensionByName(String dimensionName, List<DimensionBase> dimensions) {
+        for (DimensionBase dimensionBase : dimensions) {
+            if (dimensionBase.getId().equals(dimensionName)) {
+                return dimensionBase;
+            }
+        }
+        return null;
+    }
+
+
+    private DimensionBase getDimensionByUrn(String urn, List<DimensionBase> dimensions) {
+        for (DimensionBase dimensionBase : dimensions) {
+            if (dimensionBase.getUrn().equals(urn)) {
+                return dimensionBase;
+            }
+        }
+        return null;
     }
 
     // ---------------------------------------------------------------------------------------------------------

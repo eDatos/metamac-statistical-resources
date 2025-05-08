@@ -10,7 +10,11 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.external.Externa
 public class SiemacMetadataThematicContentClassifiersForm extends StatisticalResourceThematicContentClassifiersForm {
 
     public SiemacMetadataThematicContentClassifiersForm() {
+        super();
+        initSiemacMetadataThematicContentClassifiersForm();
+    }
 
+    private void initSiemacMetadataThematicContentClassifiersForm() {
         ExternalItemListItem instances = new ExternalItemListItem(SiemacMetadataDS.STATISTICAL_OPERATION_INSTANCE, getConstants().siemacMetadataStatisticalResourceStatisticalOperationInstance(),
                 false);
 

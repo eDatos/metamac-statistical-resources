@@ -11,7 +11,7 @@ public interface DatasetConstraintsTabUiHandlers extends UiHandlers {
 
     void createConstraint();
     void deleteConstraint(ContentConstraintDto contentConstraintDto, RegionValueDto regionValueDto);
-    void saveRegion(String contentConstraintUrn, RegionValueDto regionToSave, DsdDimensionDto selectedDimension);
+    void saveRegion(String contentConstraintUrn, RegionValueDto regionToSave, DsdDimensionDto selectedDimension, String datasetUrn);
     void retrieveCodes(DsdDimensionDto dsdDimensionDto, String codeSrmRestriction);
     void retrieveConcepts(DsdDimensionDto dsdDimensionDto);
     void retrieveRestrictions(DsdDimensionDto dsdDimensionDto, TypeExternalArtefactsEnum type);

@@ -195,6 +195,10 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
         return SharedDatasetsSecurityUtils.canImportDatasourcesInStatisticalOperation(getMetamacPrincipal(), getCurrentStatisticalOperationCode());
     }
 
+    public static boolean canUpdateDatasetsInGroup() {
+        return SharedDatasetsSecurityUtils.canUpdateDatasetsInGroupInStatisticalOperation(getMetamacPrincipal(), getCurrentStatisticalOperationCode());
+    }
+
     public static boolean canCreateCategorisation(DatasetVersionDto dto) {
         return SharedDatasetsSecurityUtils.canCreateCategorisation(getMetamacPrincipal(), getCurrentStatisticalOperationCode(), dto.getProcStatus());
     }
@@ -248,8 +252,8 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
 
     public static boolean canUpdateAllGeographicCoverageVariableElementsCache() {
         return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
-    }    
-    
+    }
+
     public static boolean canUpdateGeographicCoverageVariableElementsCache(DatasetVersionDto dto) {
         if (!isPublished(dto.getProcStatus())) {
             return false;
@@ -258,5 +262,9 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
             return false;
         }
         return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
+    }
+
+    public static boolean canCopyDataset(DatasetVersionDto datasetVersionDto) {
+        return SharedDatasetsSecurityUtils.canCopyDataset(getMetamacPrincipal(), getCurrentStatisticalOperationCode()) && BooleanUtils.isFalse(datasetVersionDto.getIsTaskInBackground());
     }
 }

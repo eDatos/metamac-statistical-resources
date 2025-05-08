@@ -90,10 +90,14 @@ Application FacadeStatisticalResources {
 	    	@DatasourceDto retrieveDatasourceByUrn(String urn) throws MetamacException;
 	    	"Deletes datasource"
 	    	int deleteDatasource(String urn, boolean deleteAttributes) throws MetamacException;
+	    	"delete all datasources not used"
+	    	List<String> deleteDatasourcesNotUsed(String datasetUrn, boolean deleteAttributes) throws MetamacException;
 	    	"Retrieves all datasources of a dataset version"
 	    	List<@DatasourceDto> retrieveDatasourcesByDatasetVersion(String urnDatasetVersion) throws MetamacException;
 	    	"Retrieves the dimension representation mapping of the datasetVersion for the filename specified"
 	    	@DimensionRepresentationMappingDto retrieveDimensionRepresentationMappings(String datasetVersionUrn, String filename) throws MetamacException;
+	    	"Export datasources"
+	    	String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
 
 	    	// DATASETS 
 	   		"Find all datasets"
@@ -105,13 +109,15 @@ Application FacadeStatisticalResources {
 	   		"Updates dataset"
             @DatasetVersionDto updateDatasetVersion(@DatasetVersionDto datasetVersionDto) throws MetamacException;
             "Copy dataset version"
-			@DatasetVersionDto copyDatasetVersion(@DatasetVersionDto datasetVersion, @ExternalItemDto statisticalOperation) throws MetamacException;
+			@DatasetVersionDto copyDatasetVersion(@DatasetVersionDto datasetVersionDto) throws MetamacException;
             "Deletes dataset"
             deleteDatasetVersion(String urn) throws MetamacException;
             "Finds datasets by criteria"
             MetamacCriteriaResult<@DatasetVersionBaseDto> findDatasetsVersionsByCondition(MetamacCriteria criteria) throws MetamacException;
             "Retrieves a dataset by URN"
             @DatasetVersionDto retrieveDatasetVersionByUrn(String urn) throws MetamacException;
+            "Retrieves temporal granularities by URN"
+            List<@ExternalItemDto> retrieveExternalItemsByDatasetUrn(String urn, List<@ExternalItemDto> externalItemDtos) throws MetamacException;
             "Retrieves all dataset versions"
             List<@DatasetVersionBaseDto> retrieveDatasetVersions(String datasetVersionUrn) throws MetamacException;
     		"Retrieve latest datasetVersion providing datasetUrn"
@@ -136,13 +142,14 @@ Application FacadeStatisticalResources {
     		"Creates a new version of a dataset, copying metadata from version with provided urn"
     		@DatasetVersionDto versioningDatasetVersion(@DatasetVersionDto datasetVersionDto, @VersionTypeEnum versionType) throws MetamacException;
     		@DatasetVersionBaseDto versioningDatasetVersion(@DatasetVersionBaseDto datasetVersionDto, @VersionTypeEnum versionType) throws MetamacException;
-
+			void updateDatasetVersionInGroup(@DatasetVersionDto datasetVersionMetadataToChangeDto, String datasetUrnToChange, List<@CategorisationDto> categorisationsDto) throws MetamacException;
+			
     		//Data related actions
     		"Retrieve Dataset version dimensions ids"
     		List<String> retrieveDatasetVersionDimensionsIds(String datasetVersionUrn) throws MetamacException;
     		"Retrieve the coverage for a given dimension"
     		List<@CodeItemDto> retrieveCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId) throws MetamacException;
-    		List<@CodeItemDto> filterCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId, String filter) throws MetamacException;
+    		List<@CodeItemDto> filterCoverageForDatasetVersionDimension(String datasetVersionUrn, String dsdDimensionId, String filter, List<String> temporalGranularities) throws MetamacException;
     		"Import a set of files provided by urn as datasources in a datasetVersion"
     		importDatasourcesInDatasetVersion(@DatasetVersionDto datasetVersionDto, List<URL> fileUrls, Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
     		"Import attribues from file"
@@ -160,7 +167,6 @@ Application FacadeStatisticalResources {
     		deleteAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
     		"Retrieve attribute instances given the dataset version URN and the attribute Id"
     		List<@DsdAttributeInstanceDto> retrieveAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
-
     		// Other actions
     		void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
@@ -310,7 +316,7 @@ Application FacadeStatisticalResources {
     		"Retrieve region with keies"
 			@RegionValueDto retrieveRegionForContentConstraint(String contentConstraintUrn, String regionCode) throws MetamacException;
     		"Create or update a region"
-    		@RegionValueDto saveRegionForContentConstraint(String contentConstraintUrn, @RegionValueDto regionValueDto) throws MetamacException;
+    		@RegionValueDto saveRegionForContentConstraint(String contentConstraintUrn, @RegionValueDto regionValueDto, @DsdDimensionDto selectedDimensionDto, String datasetUrn) throws MetamacException;
     		"Remove region"
     		deleteRegion(String contentConstraintUrn, String regionCode) throws MetamacException;
 		}

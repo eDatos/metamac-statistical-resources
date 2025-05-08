@@ -35,6 +35,7 @@ Application DatasetsStatisticalResources {
 	    	@Datasource updateDatasource(@Datasource datasource) throws MetamacException;
 	    	@Datasource retrieveDatasourceByUrn(String urn) throws MetamacException;
 	    	int deleteDatasource(String urn, boolean deleteAttributes) throws MetamacException;
+	    	List<String> deleteDatasourcesNotUsed(String datasetUrn, boolean deleteAttributes) throws MetamacException;
 	    	List<@Datasource> retrieveDatasourcesByDatasetVersion(String datasetVersionUrn) throws MetamacException;
 	    	
 	    	// Datasets Versions
@@ -42,6 +43,8 @@ Application DatasetsStatisticalResources {
 			@DatasetVersion createDatasetVersion(@DatasetVersion datasetVersion, @ExternalItem statisticalOperation) throws MetamacException;
 			"Updates dataset version"
 			@DatasetVersion updateDatasetVersion(@DatasetVersion datasetVersion) throws MetamacException;
+			"Copy dataset version"
+			@DatasetVersion copyDatasetVersion(String urn) throws MetamacException;
 			"Retrieves dataset version by urn"
 			@DatasetVersion retrieveDatasetVersionByUrn(String datasetVersionUrn) throws MetamacException;
 			"Retrieves last dataset version by dataset urn"
@@ -58,7 +61,9 @@ Application DatasetsStatisticalResources {
 			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
 			"Finds resource from cache by criteria"
 			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
-			
+			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
+			"Export datasources to TSV"
+			String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
     		
     		"Link a dataset view to the latest version of the indicator"
 	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;
@@ -68,7 +73,7 @@ Application DatasetsStatisticalResources {
     		importAttributesFromFile(String datasetVersionUrn, List<URL> fileUrls) throws MetamacException;
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
-    		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException; 
+    		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
 
     		// Datasets
     		"Finds datasets by criteria"
@@ -264,6 +269,10 @@ Application DatasetsStatisticalResources {
 			- Bag<@Datasource> datasources cascade="all-delete-orphan" fetch="lazy" inverse orderby="id asc" <-> datasetVersion;
 			"Categorisations"
 			- Bag<@Categorisation> categorisations cascade="all-delete-orphan" fetch="lazy" inverse <-> datasetVersion;
+			"Heading Dimensions"
+			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> datasetVersionHeading;
+			"Stub dimensions"
+			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> datasetVersionStub;
 			
 			Repository DatasetVersionRepository {
 				save;
@@ -434,8 +443,8 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}  	
-    	
+    	}
+
 		Entity GeoCovVarElementCacheDatasetVersion {
 			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
 			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
@@ -464,5 +473,6 @@ Application DatasetsStatisticalResources {
 				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
 			}
 		}
+
 	}
 }

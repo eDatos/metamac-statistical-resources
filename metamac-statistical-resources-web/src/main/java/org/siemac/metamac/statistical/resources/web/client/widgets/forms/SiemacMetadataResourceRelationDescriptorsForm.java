@@ -14,8 +14,13 @@ public class SiemacMetadataResourceRelationDescriptorsForm extends NavigationEna
 
     public SiemacMetadataResourceRelationDescriptorsForm() {
         super(getConstants().formResourceRelationDescriptors());
+        init();
+    }
 
-        RelatedResourceLinkItem replaces = new RelatedResourceLinkItem(SiemacMetadataDS.REPLACES, getConstants().siemacMetadataStatisticalResourceReplaces(), getCustomLinkItemNavigationClickHandler());
+    private void init() {
+
+        RelatedResourceLinkItem replaces = new RelatedResourceLinkItem(SiemacMetadataDS.REPLACES, getConstants().siemacMetadataStatisticalResourceReplaces(),
+                getCustomLinkItemNavigationClickHandler());
         RelatedResourceLinkItem isReplacedBy = new RelatedResourceLinkItem(SiemacMetadataDS.IS_REPLACED_BY, getConstants().siemacMetadataStatisticalResourceIsReplacedBy(),
                 getCustomLinkItemNavigationClickHandler());
 

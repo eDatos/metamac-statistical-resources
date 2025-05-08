@@ -2,19 +2,26 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
+<%@ page import="org.siemac.metamac.core.common.util.InternationalizationUtils" %>
+<%@ page import="java.util.ResourceBundle" %>
+<%@ page import="org.apache.commons.lang.LocaleUtils" %>
+<%@ page import="static java.util.ResourceBundle.Control.getNoFallbackControl" %>
+<%@ page import="org.siemac.metamac.core.common.util.MessagesResourceBundle"%>
+<%
+    String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
+    String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
+    String appName = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("apps.api_catalog.name");
+    MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale, "i18n.messages-swagger");
+    pageContext.setAttribute("msg", messagesResource);
+    String appVersion = ResourceBundle.getBundle("application").getString("app.version");
+%>
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>APIs de recursos estadísticos</title>
+  <title>${msg['api.doc.title']}</title>
  
   <link href="<%=WebUtils.getFavicon()%>" rel="shortcut icon"/>
-  
-  <c:set var="apiStyleCssUrl" value="<%=WebUtils.getApiStyleCssUrl()%>" />
 
-  <c:if test="${!empty apiStyleCssUrl}">
-    <link href="<c:out value='${apiStyleCssUrl}'/>" media='screen' rel='stylesheet' type='text/css' />
-  </c:if>
-  
 </head>
 <body>
     <c:set var="apiStyleHeaderUrl" value="<%=WebUtils.getApiStyleHeaderUrl()%>" />
@@ -23,24 +30,28 @@
     <c:set var="apiBaseURL" value="<%=WebUtils.getApiBaseURL()%>" />
     
     <c:if test="${!empty apiStyleHeaderUrl}">
-       <c:import charEncoding="UTF-8" url="${apiStyleHeaderUrl}" />
+       <c:import charEncoding="UTF-8" url="${apiStyleHeaderUrl}">
+          <c:param name="appName" value="<%= appName %>" />
+          <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
+          <c:param name="appVersion" value="<%= appVersion %>" />
+       </c:import>
     </c:if>
     
     <div class="version-list">
-       <h1>APIs de recursos estadísticos</h1>
-       <h2>Versiones</h2>
+       <h1>${msg['api.doc.title']}</h1>
+       <h2>${msg['api.doc.versions']}</h2>
        <ul>
            <li>
-               <h3 class="version-title"><a href="${apiBaseURL}/latest" alt="Última versión de la API">/latest</a></h3>
+               <h3 class="version-title"><a href="${apiBaseURL}/latest">/latest</a></h3>
                <div class="version-description">
-                   <p><strong>latest</strong> es la palabra clave reservada con la que se puede acceder a la última versión de la API</p>                      
+                   <p><strong>latest</strong> ${msg['api.doc.latest']}</p>
                </div>
            </li>
            
            <li>
-               <h3 class="version-title"><a href="${apiBaseURL}/v1.0" alt="Versión 1.0">/v1.0</a></h3>
+               <h3 class="version-title"><a href="${apiBaseURL}/v1.0">/v1.0</a></h3>
                <div class="version-description">
-                    <p>Versión 1.0 de la API</p>    
+                    <p>${msg['api.doc.version.1_0']}</p>
                </div>
            </li>
        </ul>

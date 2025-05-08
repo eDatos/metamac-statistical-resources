@@ -6,6 +6,7 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
@@ -33,11 +34,14 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.Nameabl
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.NameableResourceIdentifiersForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourceThematicContentClassifiersEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourceThematicContentClassifiersForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataDescriptorsForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgenciesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetAgencySchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
 
@@ -179,6 +183,12 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
         queryFormPanel.productionDescriptorsEditionForm.setExternalItemsForMaintainer(result.getAgencies(), result.getFirstResultOut(), result.getAgencies().size(), result.getTotalResults());
     }
 
+    @Override
+    public void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result) {
+        List<ExternalItemDto> externalItemsDtos = result.getTemporalGranularities();
+        queryFormPanel.productionDescriptorsEditionForm.setCodesForTemporalGranularities(externalItemsDtos, result.getFirstResultOut(), result.getTotalResults());
+    }
+
     private void setWarningLabelContents(String message) {
         warningLabel.setContents(message);
         warningLabel.show();
@@ -204,6 +214,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
         private QueryResourceRelationDescriptorsForm                     resourceRelationDescriptorsForm;
         private LifeCycleResourceLifeCycleForm                           lifeCycleForm;
         private LifeCycleResourceVersionForm                             versionForm;
+        private VisualizationMetadataDescriptorsForm                     visualizationMetadataDescriptorsForm;
 
         // only creation
         private QueryIdentifiersCreationForm                             identifiersCreationForm;
@@ -214,6 +225,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
         private StatisticalResourceThematicContentClassifiersEditionForm thematicContentClassifiersEditionForm;
         private QueryProductionDescriptorsEditionForm                    productionDescriptorsEditionForm;
         private QueryResourceRelationDescriptorsForm                     resourceRelationDescriptorsEditionForm;
+        private VisualizationMetadataEditionForm                         visualizationMetadataEditionForm;
         private LifeCycleResourceLifeCycleForm                           lifeCycleEditionForm;
         private LifeCycleResourceVersionEditionForm                      versionEditionForm;
 
@@ -333,14 +345,14 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().sendToProductionValidation(queryVersionDto);
+                    getUiHandlers().sendToProductionValidation(getQuery());
                 }
             });
             mainFormLayout.getDiffusionValidationButton().addClickHandler(new ClickHandler() {
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().sendToDiffusionValidation(queryVersionDto);
+                    getUiHandlers().sendToDiffusionValidation(getQuery());
                 }
             });
             mainFormLayout.getRejectValidationButton().addClickHandler(new ClickHandler() {
@@ -356,7 +368,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                         public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                             String reasonOfRejection = window.getReasonOfRejection();
                             window.markForDestroy();
-                            getUiHandlers().rejectValidation(queryVersionDto, reasonOfRejection);
+                            getUiHandlers().rejectValidation(getQuery(), reasonOfRejection);
                         }
                     });
                 }
@@ -366,7 +378,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().publish(queryVersionDto);
+                    getUiHandlers().publish(getQuery());
                 }
             });
 
@@ -374,7 +386,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().resendStreamMessage(queryVersionDto);
+                    getUiHandlers().resendStreamMessage(getQuery());
                 }
             });
 
@@ -388,7 +400,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                         @Override
                         public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
                             if (versionWindow.validateForm()) {
-                                getUiHandlers().version(queryVersionDto, versionWindow.getSelectedVersion());
+                                getUiHandlers().version(getQuery(), versionWindow.getSelectedVersion());
                                 versionWindow.destroy();
                             }
                         }
@@ -401,7 +413,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().previewData(queryVersionDto);
+                    getUiHandlers().previewData(getQuery());
                 }
             });
         }
@@ -412,6 +424,8 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             contentDescriptorsForm = new LifeCycleResourceContentDescriptorsForm();
             productionDescriptorsForm = new QueryProductionDescriptorsForm();
             resourceRelationDescriptorsForm = new QueryResourceRelationDescriptorsForm();
+            visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
+            
             lifeCycleForm = new LifeCycleResourceLifeCycleForm();
             versionForm = new LifeCycleResourceVersionForm();
             mainFormLayout.addViewCanvas(identifiersForm);
@@ -419,6 +433,8 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             mainFormLayout.addViewCanvas(thematicContentClassifiersForm);
             mainFormLayout.addViewCanvas(productionDescriptorsForm);
             mainFormLayout.addViewCanvas(resourceRelationDescriptorsForm);
+            mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
+            
             mainFormLayout.addViewCanvas(lifeCycleForm);
             mainFormLayout.addViewCanvas(versionForm);
         }
@@ -430,6 +446,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             thematicContentClassifiersEditionForm = new StatisticalResourceThematicContentClassifiersEditionForm();
             productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm();
             resourceRelationDescriptorsEditionForm = new QueryResourceRelationDescriptorsForm();
+            visualizationMetadataEditionForm = new VisualizationMetadataEditionForm();
             lifeCycleEditionForm = new LifeCycleResourceLifeCycleForm();
             versionEditionForm = new LifeCycleResourceVersionEditionForm();
 
@@ -439,6 +456,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             mainFormLayout.addEditionCanvas(thematicContentClassifiersEditionForm);
             mainFormLayout.addEditionCanvas(productionDescriptorsEditionForm);
             mainFormLayout.addEditionCanvas(resourceRelationDescriptorsEditionForm);
+            mainFormLayout.addEditionCanvas(visualizationMetadataEditionForm);
             mainFormLayout.addEditionCanvas(lifeCycleEditionForm);
             mainFormLayout.addEditionCanvas(versionEditionForm);
         }
@@ -482,6 +500,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             // EDATOS-3113 WORKAROUND
 
             resourceRelationDescriptorsForm.setQueryDto(queryDto);
+            visualizationMetadataDescriptorsForm.setSiemacMetadataStatisticalResourceDto(queryDto.getHeadingDimensions(), queryDto.getStubDimensions());
             lifeCycleForm.setLifeCycleStatisticalResourceDto(queryDto);
             versionForm.setLifeCycleStatisticalResourceDto(queryDto);
         }
@@ -517,6 +536,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             lifeCycleEditionForm.setLifeCycleStatisticalResourceDto(queryVersionDto);
             lifeCycleEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
 
+            visualizationMetadataEditionForm.setSiemacMetadataStatisticalResourceDto(queryVersionDto.getHeadingDimensions(), queryVersionDto.getStubDimensions());
             versionEditionForm.setLifeCycleStatisticalResourceDto(queryVersionDto);
             versionEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
 
@@ -546,6 +566,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             queryVersionDto = (QueryVersionDto) contentDescriptorsEditionForm.getLifeCycleStatisticalResourceDto(queryVersionDto);
             queryVersionDto = productionDescriptorsEditionForm.getQueryDto(queryVersionDto);
             queryVersionDto = (QueryVersionDto) versionEditionForm.getLifeCycleStatisticalResourceDto(queryVersionDto);
+            queryVersionDto = visualizationMetadataEditionForm.getQueryVersionDto(queryVersionDto);
             return queryVersionDto;
         }
 

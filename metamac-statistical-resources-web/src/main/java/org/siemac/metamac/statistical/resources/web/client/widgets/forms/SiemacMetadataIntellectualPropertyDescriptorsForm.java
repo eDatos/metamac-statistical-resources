@@ -12,7 +12,10 @@ public class SiemacMetadataIntellectualPropertyDescriptorsForm extends GroupDyna
 
     public SiemacMetadataIntellectualPropertyDescriptorsForm() {
         super(getConstants().formIntellectualPropertyDescriptors());
+        init();
+    }
 
+    private void init() {
         ViewMultiLanguageTextItem accessRights = new ViewMultiLanguageTextItem(SiemacMetadataDS.ACCESS_RIGHTS, getConstants().siemacMetadataStatisticalResourceAccessRights());
         ViewTextItem copyrightDate = new ViewTextItem(SiemacMetadataDS.COPYRIGHT_DATE, getConstants().siemacMetadataStatisticalResourceCopyrightedDate());
 

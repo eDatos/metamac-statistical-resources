@@ -1,14 +1,26 @@
 package org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.time.TimeSdmx;
 import org.siemac.metamac.core.common.util.SdmxTimeUtils;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.KeyPart;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.KeyPartType;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
@@ -19,56 +31,56 @@ public class ConstraintsValidator {
         Map<String, CodeDimensionDto> mapOfCodesDimension = createMapOfCodesDimension(oservation.getCodesDimension());
 
         // Check all keys definition from a restriction region
-        Boolean keyPass = null;
+        Boolean keyPass = true;
         for (Key constraintKey : constraintKeys) {
             List<KeyPart> constraintKeyParts = constraintKey.getKeyParts().getKeyParts();
             String constraintKeyPartIdentifier = obtainDimensionPartidentification(constraintKeyParts);
-
             CodeDimensionDto codeDimensionDto = mapOfCodesDimension.get(constraintKeyPartIdentifier); // Current Key instance
-            boolean match = constraintKey.isIncluded();
 
-            if (codeDimensionDto == null) {
-                // Wildcard
-                match = true;
-            } else {
-                // Match a dimension (Not wild card)
-                // Check if the dimension f
-                boolean innerMatch = false;
-                for (KeyPart keyPart : constraintKeyParts) {
-                    if (KeyPartType.NORMAL.equals(keyPart.getType())) {
-                        if (keyPart.isCascadeValues()) {
-                            // Cascade Value
-                            innerMatch = checkCodeInCascadeHirarchy(codeDimensionDto, keyPart, codeHierarchyMap);
-                        } else if (codeDimensionDto.getCodeDimensionId().equals(keyPart.getValue())) {
-                            innerMatch = true;
-                        } else {
-                            innerMatch = false;
-                        }
-                    } else if (KeyPartType.TIME_RANGE.equals(keyPart.getType())) {
-                        innerMatch = checkTimeRangeValueAgaintsConstraint(codeDimensionDto, keyPart);
-                    }
+            keyPass = checkConstraintDimensionAgainstDimensionValue(codeHierarchyMap, codeDimensionDto, constraintKey, constraintKeyParts);
 
-                    if (innerMatch) {
-                        break;
-                    }
-                }
-                match = innerMatch;
-            }
-
-            // Update validation result against isIncluded flag
-            if (constraintKey.isIncluded()) {
-                keyPass = match;
-            } else {
-                keyPass = !match;
-            }
-
-            // If the current key constraint is not met, then fails validation.
             if (!keyPass) {
                 return keyPass;
             }
+
+        }
+        return keyPass;
+    }
+
+    private static boolean checkConstraintDimensionAgainstDimensionValue(Map<String, CodeHierarchy> codeHierarchyMap, CodeDimensionDto codeDimensionDto, Key constraintKey,
+            List<KeyPart> constraintKeyParts) {
+        boolean match;
+        if (codeDimensionDto == null) {
+            // Wildcard
+            match = true;
+        } else {
+            // Match a dimension (Not wild card)
+            // Check if the dimension f
+            boolean innerMatch = false;
+            for (KeyPart keyPart : constraintKeyParts) {
+                if (KeyPartType.NORMAL.equals(keyPart.getType())) {
+                    if (keyPart.isCascadeValues()) {
+                        // Cascade Value
+                        innerMatch = checkCodeInCascadeHirarchy(codeDimensionDto, keyPart, codeHierarchyMap);
+                    } else if (codeDimensionDto.getCodeDimensionId().equals(keyPart.getValue())) {
+                        innerMatch = true;
+                    } else {
+                        innerMatch = false;
+                    }
+                } else if (KeyPartType.TIME_RANGE.equals(keyPart.getType())) {
+                    innerMatch = checkTimeRangeValueAgaintsConstraint(codeDimensionDto, keyPart);
+                }
+
+                if (innerMatch) {
+                    break;
+                }
+            }
+            match = innerMatch;
         }
 
-        return keyPass;
+        // Update validation result against isIncluded flag
+        return constraintKey.isIncluded() ? match : !match;
+
     }
 
     private static String obtainDimensionPartidentification(List<KeyPart> constraintKeyParts) {
@@ -128,44 +140,22 @@ public class ConstraintsValidator {
         }
     }
 
+    private static boolean checkPeriod(CodeDimensionDto codeDimensionDto, KeyPart keyPart) {
+        // Is before period
+        TimeSdmx obsValue = new TimeSdmx(codeDimensionDto.getCodeDimensionId());
+        TimeSdmx ckValue = new TimeSdmx(keyPart.getBeforePeriod());
+
+        if (keyPart.isBeforePeriodInclusive()) {
+            return obsValue.getEndDateTime().isBefore(ckValue.getStartDateTime()) || obsValue.getEndDateTime().equals(ckValue.getStartDateTime());
+        } else {
+            return obsValue.getEndDateTime().isBefore(ckValue.getStartDateTime());
+        }
+    }
+
     public static boolean checkTimeRangeValueAgaintsConstraint(CodeDimensionDto codeDimensionDto, KeyPart keyPart) {
 
-        if (keyPart.getBeforePeriod() != null) {
-            // Is before period
-            TimeSdmx obsValue = new TimeSdmx(codeDimensionDto.getCodeDimensionId());
-            TimeSdmx ckValue = new TimeSdmx(keyPart.getBeforePeriod());
-
-            if (keyPart.isBeforePeriodInclusive()) {
-                if (obsValue.getEndDateTime().isBefore(ckValue.getStartDateTime()) || obsValue.getEndDateTime().equals(ckValue.getStartDateTime())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                if (obsValue.getEndDateTime().isBefore(ckValue.getStartDateTime())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
-        } else if (keyPart.getAfterPeriod() != null) {
-            // Is after period
-            TimeSdmx obsValue = new TimeSdmx(codeDimensionDto.getCodeDimensionId());
-            TimeSdmx ckValue = new TimeSdmx(keyPart.getBeforePeriod());
-
-            if (keyPart.isBeforePeriodInclusive()) {
-                if (obsValue.getEndDateTime().isBefore(ckValue.getStartDateTime()) || obsValue.getEndDateTime().equals(ckValue.getStartDateTime())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } else {
-                if (obsValue.getEndDateTime().isBefore(ckValue.getStartDateTime())) {
-                    return true;
-                } else {
-                    return false;
-                }
-            }
+        if (keyPart.getBeforePeriod() != null || keyPart.getAfterPeriod() != null) {
+            return checkPeriod(codeDimensionDto, keyPart);
         } else if (keyPart.getStartPeriod() != null && keyPart.getEndPeriod() != null) {
             // Is range period
             return SdmxTimeUtils.isValidTimeInInterval(codeDimensionDto.getCodeDimensionId(), keyPart.getStartPeriod(), keyPart.isStartPeriodInclusive(), keyPart.getEndPeriod(),
@@ -173,6 +163,59 @@ public class ConstraintsValidator {
         }
 
         return false;
+    }
+
+    public static void checkObservationContentConstraints(List<CodeDimensionDto> observationValuesByDimensionId, Key keysByDimensionId, Map<String, CodeHierarchy> codeHierarchyMap,
+            List<MetamacExceptionItem> exceptions) {
+
+        for (CodeDimensionDto codeDimensionDto : observationValuesByDimensionId) {
+            if (!checkConstraintDimensionAgainstDimensionValue(codeHierarchyMap, codeDimensionDto, keysByDimensionId, keysByDimensionId.getKeyParts().getKeyParts())) {
+                exceptions.add(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINT_UPDATE_CHECK_EXISTING_OBSERVATIONS_FAIL,
+                        ManipulateDataUtils.toStringUnorderedKeyForObservation(Arrays.asList(codeDimensionDto))));
+            }
+        }
+    }
+
+    public static Key getConstraintKeysByDimensionId(RegionReference regionReference, String dimensionId) {
+        List<Key> keies = regionReference.getKeys().getKeies();
+        if (keies != null && !keies.isEmpty()) {
+            for (Key constraintKey : regionReference.getKeys().getKeies()) {
+                List<KeyPart> constraintKeyParts = constraintKey.getKeyParts().getKeyParts();
+                if (constraintKeyParts != null && !constraintKeyParts.isEmpty()) {
+                    String dimensionIdConstraint = constraintKeyParts.get(0).getIdentifier();
+                    if (dimensionIdConstraint != null && dimensionIdConstraint.equals(dimensionId)) {
+                        return constraintKey;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Map<String, CodeHierarchy> getCodeHierarchyMap(SrmRestInternalService srmRestInternalService, DsdDimensionDto selectedDimension) throws MetamacException {
+        String codelistRepresentationUrn = selectedDimension.getCodelistRepresentationUrn();
+
+        Map<String, CodeHierarchy> codeHierarchyMap = new HashMap<>();
+        if (codelistRepresentationUrn != null) {
+
+            Codes codes = null;
+
+            codes = srmRestInternalService.retrieveCodesOfCodelistEfficiently(codelistRepresentationUrn);
+            for (CodeResourceInternal codeType : codes.getCodes()) {
+                codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content constraints
+                                                                                                                                                             // validate
+            }
+        }
+        String conceptSchemeRepresentationUrn = selectedDimension.getConceptSchemeRepresentationUrn();
+        if (conceptSchemeRepresentationUrn != null) {
+            Concepts concepts = srmRestInternalService.retrieveConceptsOfConceptSchemeEfficiently(conceptSchemeRepresentationUrn);
+
+            for (ItemResourceInternal conceptType : concepts.getConcepts()) {
+                codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content
+                                                                                                                                                                      // constraints validate
+            }
+        }
+        return codeHierarchyMap;
     }
 
 }

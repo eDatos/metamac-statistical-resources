@@ -143,41 +143,57 @@ public class BaseAsserts extends CommonAsserts {
     // -----------------------------------------------------------------
 
     protected static void assertEqualsSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResource expected, SiemacMetadataStatisticalResource actual) throws MetamacException {
+        assertEqualsCommonSiemacMetadataStatisticalResource(expected, actual);
         assertEqualsExternalItem(expected.getLanguage(), actual.getLanguage());
-        assertEqualsExternalItemList(expected.getLanguages(), actual.getLanguages());
-
         assertEqualsExternalItemCollection(expected.getStatisticalOperationInstances(), actual.getStatisticalOperationInstances());
+        assertEquals(expected.getType(), actual.getType());
+        assertEqualsDate(expected.getResourceCreatedDate(), actual.getResourceCreatedDate());
+        assertEqualsDate(expected.getNewnessUntilDate(), actual.getNewnessUntilDate());
+        assertEqualsRelatedResource(expected.getReplaces(), actual.getReplaces());
+        assertEqualsRelatedResource(expected.getReplacesVersion(), actual.getReplacesVersion());
+        assertEquals(expected.getCopyrightedDate(), actual.getCopyrightedDate());
+
+        assertEqualsLifeCycleStatisticalResource(expected, actual);
+    }
+
+    protected static void assertEqualsSiemacMetadataStatisticalResourceUpdateInGroup(SiemacMetadataStatisticalResource expected, SiemacMetadataStatisticalResource actual) throws MetamacException {
+        assertEqualsCommonSiemacMetadataStatisticalResource(expected, actual);
+
+        assertEquals(expected.getProcStatus(), actual.getProcStatus());
+        assertEquals(expected.getVersionLogic(), actual.getVersionLogic());
+        assertEquals(expected.getNextVersionDate(), actual.getNextVersionDate());
+        assertEquals(expected.getNextVersion(), actual.getNextVersion());
+        assertEqualsVersionRationaleTypeCollection(expected.getVersionRationaleTypes(), actual.getVersionRationaleTypes());
+        assertEqualsInternationalString(expected.getVersionRationale(), actual.getVersionRationale());
+        assertEqualsInternationalString(expected.getDescription(), actual.getDescription());
+
+    }
+
+    private static void assertEqualsCommonSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResource expected, SiemacMetadataStatisticalResource actual) throws MetamacException {
+        assertEqualsExternalItemList(expected.getLanguages(), actual.getLanguages());
 
         assertEqualsInternationalString(expected.getSubtitle(), actual.getSubtitle());
         assertEqualsInternationalString(expected.getTitleAlternative(), actual.getTitleAlternative());
         assertEqualsInternationalString(expected.getAbstractLogic(), actual.getAbstractLogic());
         assertEqualsInternationalString(expected.getKeywords(), actual.getKeywords());
 
-        assertEquals(expected.getType(), actual.getType());
-
         assertEqualsExternalItem(expected.getCommonMetadata(), actual.getCommonMetadata());
 
         assertEqualsExternalItem(expected.getCreator(), actual.getCreator());
         assertEqualsExternalItemList(expected.getContributor(), actual.getContributor());
-        assertEqualsDate(expected.getResourceCreatedDate(), actual.getResourceCreatedDate());
         assertEqualsInternationalString(expected.getConformsTo(), actual.getConformsTo());
         assertEqualsInternationalString(expected.getConformsToInternal(), actual.getConformsToInternal());
 
         assertEqualsExternalItemList(expected.getPublisher(), actual.getPublisher());
         assertEqualsExternalItemList(expected.getPublisherContributor(), actual.getPublisherContributor());
         assertEqualsExternalItemList(expected.getMediator(), actual.getMediator());
-        assertEqualsDate(expected.getNewnessUntilDate(), actual.getNewnessUntilDate());
 
-        assertEqualsRelatedResource(expected.getReplaces(), actual.getReplaces());
-        assertEqualsRelatedResource(expected.getReplacesVersion(), actual.getReplacesVersion());
-
-        assertEquals(expected.getCopyrightedDate(), actual.getCopyrightedDate());
         assertEqualsInternationalString(expected.getAccessRights(), actual.getAccessRights());
 
-        assertEqualsLifeCycleStatisticalResource(expected, actual);
     }
 
     protected static void assertEqualsLifeCycleStatisticalResource(LifeCycleStatisticalResource expected, LifeCycleStatisticalResource actual) throws MetamacException {
+
         assertEquals(expected.getProcStatus(), actual.getProcStatus());
 
         assertEqualsDate(expected.getCreationDate(), actual.getCreationDate());

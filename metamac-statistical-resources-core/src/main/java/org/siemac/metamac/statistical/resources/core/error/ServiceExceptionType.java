@@ -56,6 +56,10 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.datasource.data.delete_error");
     public static final CommonServiceExceptionType DATASOURCE_IN_DATASET_VERSION_WITH_QUERIES_DELETE_ERROR                                     = create(
             "exception.resources.datasource.data.datasetversion_with_queries_delete_error");
+    public static final CommonServiceExceptionType DATASOURCE_IN_DATASET_VERSION_CHECK_DATASOURCE_IS_USED_ERROR                                = create(
+            "exception.resources.datasource.data.datasetversion_check_datasource_is_used_error");
+    public static final CommonServiceExceptionType DATASOURCE_IN_DATASET_VERSION_FIND_DATASOURCES_USED_ERROR                                   = create(
+            "exception.resources.datasource.data.datasetversion_find_datasources_used_error");
 
     // Categorisation
     public static final CommonServiceExceptionType CATEGORISATION_NOT_FOUND                                                                    = create("exception.resources.categorisation.not_found");
@@ -81,14 +85,16 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.publication_version.must_have_at_least_one_cube");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_CHAPTER_MUST_HAVE_AT_LEAST_ONE_CUBE                                     = create(
             "exception.resources.publication_version.chapter_must_have_at_least_one_cube");
-    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET_URL                     = create(
-            "exception.resources.publication_version.cube_must_link_to_dataset_query_or_multidataset_url");
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_MULTIDATASET_PUBLICATION_OR_URL         = create(
+            "exception.resources.publication_version.cube_must_link_to_dataset_query_or_multidataset_or_publication_url");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_DATASET                                         = create(
             "exception.resources.publication_version.linked_to_dataset_with_no_published_version");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_QUERY                                           = create(
             "exception.resources.publication_version.linked_to_query_not_published");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_MULTIDATASET                                    = create(
             "exception.resources.publication_version.linked_to_multidataset_not_published");
+    public static final CommonServiceExceptionType PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_PUBLICATION                                     = create(
+            "exception.resources.publication_version.linked_to_collection_not_published");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_CANT_BE_DELETED                                                         = create(
             "exception.resources.publication_version.cant_be_deleted");
     public static final CommonServiceExceptionType PUBLICATION_VERSION_IS_REPLACED_BY_OTHER_RESOURCE                                           = create(
@@ -194,6 +200,10 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType CONSTRAINTS_UPDATE_FINAL                                                                    = create("exception.resources.constraints.update.final");
     public static final CommonServiceExceptionType CONSTRAINTS_UPDATE_DATASOURCES_NO_EMPTY                                                     = create(
             "exception.resources.constraints.update.datasources_no_empty");
+    public static final CommonServiceExceptionType CONSTRAINTS_UPDATE_CHECK_EXISTING_OBSERVATIONS                                              = create(
+            "exception.resources.constraints.update.check_existing_observations");
+    public static final CommonServiceExceptionType CONSTRAINT_UPDATE_CHECK_EXISTING_OBSERVATIONS_FAIL                                          = create(
+            "exception.resources.constraints.update.check_existing_observations_fail");
 
     // Identifiable Statistical Resource
     public static final CommonServiceExceptionType IDENTIFIABLE_STATISTICAL_RESOURCE_NOT_FOUND                                                 = create(
@@ -243,6 +253,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType TASKS_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE_GET_ALL_EXTERNAL_PUBLICATION_MESSAGES_ERROR     = create(
             "exception.resources.task.error.update_external_geocoverage_cache_get_all_external_publication_messages_error");
     public static final CommonServiceExceptionType TASKS_IN_PROGRESS                                                                           = create("exception.resources.task.in_progress");
+
     // Dataset Importation
     public static final CommonServiceExceptionType FILE_NOT_LINKED_TO_ANY_DATASET_IN_STATISTICAL_OPERATION                                     = create(
             "exception.resources.dataset.importation.file_not_linked_to_any_dataset_in_statistical_operation");
@@ -348,6 +359,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "notice_message.resources.exception.db_import_dataset_job.fails");
     public static final CommonServiceExceptionType DB_IMPORT_DATASET_JOB_ERROR_AND_CANT_MARK_AS_FINISHED                                       = create(
             "notice_message.resources.exception.db_import_dataset_job.fails_and_cant_mark_as_finished");
+    public static final CommonServiceExceptionType DB_UPDATE_DATASET_IN_GROUP_ERROR                                                            = create(
+            "notice_message.resources.exception.update_dataset_in_group.fails");
 
     // Stream messaging
     public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER                                  = create(
@@ -384,5 +397,11 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.geocoverage.job_from_external_publication_from_kafka_error");
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_KAFKA_PRINCIPAL_ERROR                         = create(
             "exception.resources.dataset_version.geocoverage.job_from_external_publication_with_errors");
+
+    // Export
+    public static final CommonServiceExceptionType DATASOURCE_EXPORT_ERROR                                                                     = create(
+            "exception.resources.dataset.export.datasource");
+    public static final CommonServiceExceptionType DATASOURCE_EXPORT_NO_DATA_PRESENT                                                           = create(
+            "exception.resources.dataset.export.datasource_no_data_present");
 
 }

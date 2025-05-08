@@ -24,7 +24,11 @@ import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUti
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatabaseDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatabaseDatasourceResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionsVariableMappingAction;
@@ -171,8 +175,30 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
         dispatcher.execute(new DeleteDatasourcesAction(datasourcesUrns, deleteAttributes), new WaitingAsyncCallbackHandlingError<DeleteDatasourcesResult>(this) {
 
             @Override
+            public void onWaitFailure(Throwable caught) {
+                super.onWaitFailure(caught);
+                retrieveDatasourcesByDataset(datasetVersion.getUrn(), 0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
+            }
+
+            @Override
             public void onWaitSuccess(DeleteDatasourcesResult result) {
                 fireSuccessMessage(getMessages().datasourcesDeleted(String.valueOf(result.getObservationsDeleted())));
+                retrieveDatasourcesByDataset(datasetVersion.getUrn(), 0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
+            }
+        });
+    }
+
+    @Override
+    public void deleteAllDatasourcesNotUsed(String datasetUrn, boolean deleteAttributes) {
+        dispatcher.execute(new DeleteDatasourcesNotUsedAction(datasetUrn, deleteAttributes), new WaitingAsyncCallbackHandlingError<DeleteDatasourcesNotUsedResult>(this) {
+
+            @Override
+            public void onWaitSuccess(DeleteDatasourcesNotUsedResult result) {
+                if (result.getDatasourcesDeleted().isEmpty()) {
+                    fireSuccessMessage(getMessages().datasourcesNotUsedEmptyDeleted());
+                } else {
+                    fireSuccessMessage(getMessages().datasourcesNotUsedDeleted(StringUtils.join(result.getDatasourcesDeleted().toArray(), ',')));
+                }
                 retrieveDatasourcesByDataset(datasetVersion.getUrn(), 0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
             }
         });
@@ -245,6 +271,17 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
             public void onWaitSuccess(CreateDatabaseDatasourceResult result) {
                 ShowMessageEvent.fireSuccessMessage(DatasetDatasourcesTabPresenter.this, getMessages().databaseDatasourceCreated());
                 retrieveDatasourcesByDataset(datasetVersion.getUrn(), 0, StatisticalResourceWebConstants.MAIN_LIST_MAX_RESULTS);
+            }
+        });
+    }
+
+    @Override
+    public void exportDatasources(String urn) {
+        dispatcher.execute(new ExportDatasourcesAction(urn), new WaitingAsyncCallbackHandlingError<ExportDatasourcesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(ExportDatasourcesResult result) {
+                CommonUtils.downloadFile(result.getFileName());
             }
         });
     }

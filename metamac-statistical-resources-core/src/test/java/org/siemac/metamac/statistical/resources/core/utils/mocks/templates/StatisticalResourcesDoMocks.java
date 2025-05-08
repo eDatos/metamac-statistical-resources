@@ -44,6 +44,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.publication.domain.Chapter;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
+import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
@@ -906,6 +907,13 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
     public static RelatedResource mockMultidatasetRelated(Multidataset multidatasetVersion) {
         RelatedResource resource = new RelatedResource(TypeRelatedResourceEnum.MULTIDATASET);
         resource.setMultidataset(multidatasetVersion);
+        resource.setVersion(Long.valueOf(0));
+        return resource;
+    }
+
+    public static RelatedResource mockPublicationRelated(Publication publicationVersion) {
+        RelatedResource resource = new RelatedResource(TypeRelatedResourceEnum.PUBLICATION);
+        resource.setPublication(publicationVersion);
         resource.setVersion(Long.valueOf(0));
         return resource;
     }

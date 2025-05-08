@@ -1,0 +1,172 @@
+package org.siemac.metamac.statistical.resources.web.client.dataset.view;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
+import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.DatasetInGroupCategorisationsTabPresenter.DatasetInGroupCategorisationsTabView;
+import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetInGroupCategorisationsTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.model.record.CategorisationRecord;
+import org.siemac.metamac.statistical.resources.web.client.widgets.CategorisationsInGroupPanel;
+import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCriteria;
+import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
+
+import com.google.gwt.user.client.ui.Widget;
+import com.gwtplatform.mvp.client.ViewWithUiHandlers;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.layout.VLayout;
+
+public class DatasetInGroupCategorisationsTabViewImpl extends ViewWithUiHandlers<DatasetInGroupCategorisationsTabUiHandlers> implements DatasetInGroupCategorisationsTabView {
+
+    private VLayout                            panel;
+
+    private DatasetInGroupCategorisationsPanel categorisationsPanel;
+
+    public DatasetInGroupCategorisationsTabViewImpl() {
+        panel = new VLayout();
+        panel.setHeight100();
+
+        categorisationsPanel = new DatasetInGroupCategorisationsPanel();
+
+        panel.addMember(categorisationsPanel);
+    }
+
+    @Override
+    public Widget asWidget() {
+        return panel;
+    }
+
+    @Override
+    public void setCategorySchemesForCategorisations(List<ExternalItemDto> categorySchemes, Integer firstResultOut, Integer totalResults) {
+        categorisationsPanel.setCategorySchemesForCategorisations(categorySchemes, firstResultOut, totalResults);
+    }
+
+    @Override
+    public void setCategoriesForCategorisations(List<ExternalItemDto> categories, Integer firstResultOut, Integer totalResults) {
+        categorisationsPanel.setCategoriesForCategorisations(categories, firstResultOut, totalResults);
+    }
+
+    @Override
+    public List<CategorisationDto> getCategorisations() {
+        return categorisationsPanel.getCategorisations();
+
+    }
+
+    @Override
+    public void clearSelectedCategorisations() {
+        categorisationsPanel.clearSelectedCategorisations();
+
+    }
+
+    private class DatasetInGroupCategorisationsPanel extends CategorisationsInGroupPanel {
+
+        @Override
+        protected void retrieveCategoriesForCategorisations(int firstResult, int maxResults, SrmItemRestCriteria categoryWebCriteria) {
+            getUiHandlers().retrieveCategoriesForCategorisations(firstResult, maxResults, categoryWebCriteria);
+        }
+
+        @Override
+        protected void retrieveCategorySchemesForCategorisations(int firstResult, int maxResults, SrmExternalResourceRestCriteria categorySchemeWebCriteria) {
+            getUiHandlers().retrieveCategorySchemesForCategorisations(firstResult, maxResults, categorySchemeWebCriteria);
+        }
+
+        public List<CategorisationDto> getCategorisations() {
+            List<CategorisationDto> categorisations = new ArrayList<CategorisationDto>();
+
+            for (ListGridRecord rawRecord : categorisationListGrid.getRecords()) {
+                CategorisationRecord categorisationRecord = (CategorisationRecord) rawRecord;
+                categorisations.add(categorisationRecord.getCategorisationDto());
+            }
+
+            return categorisations;
+
+        }
+
+        @Override
+        protected void addNewCategorisations(List<ExternalItemDto> selectedResources) {
+            List<CategorisationDto> dto = new ArrayList<CategorisationDto>();
+
+            for (ExternalItemDto category : selectedResources) {
+                if (categorisationsPanel.checkExistCategorisationInListGrid(category.getUrn())) {
+                    continue;
+                }
+                CategorisationDto categorisationDto = new CategorisationDto();
+                categorisationDto.setCode(category.getCode()); // not real code in categorisation. Only for visualisation purpose.
+                categorisationDto.setTitle(category.getTitle());
+                categorisationDto.setCategory(category);
+                dto.add(categorisationDto);
+            }
+            categorisationsPanel.addCategorisations(dto);
+
+        }
+
+        @Override
+        public void deleteCategorisations(ListGridRecord[] selectedResources) {
+            CategorisationRecord[] categorisations = new CategorisationRecord[categorisationListGrid.getRecords().length - selectedResources.length];
+            int numCategorisation = 0;
+
+            for (ListGridRecord rawRecord : categorisationListGrid.getRecords()) {
+                CategorisationRecord categorisationRecord = (CategorisationRecord) rawRecord;
+                if (!deleteCategorisation(categorisationRecord.getCategory().getUrn())) {
+                    categorisations[numCategorisation++] = categorisationRecord;
+                }
+            }
+
+            categorisationListGrid.setAutoFitMaxRecords(categorisations.length);
+            categorisationListGrid.setData(categorisations);
+
+        }
+
+        private boolean deleteCategorisation(String urnCategorisation) {
+            for (ListGridRecord record : categorisationListGrid.getSelectedRecords()) {
+                CategorisationRecord categorisationRecord = (CategorisationRecord) record;
+                if (categorisationRecord.getCategory().getUrn().equals(urnCategorisation)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        public void clearSelectedCategorisations() {
+            CategorisationRecord[] categorisations = new CategorisationRecord[0];
+            categorisationListGrid.setAutoFitMaxRecords(0);
+            categorisationListGrid.setData(categorisations);
+        }
+
+        @Override
+        public boolean canAllCategorisationsBeDeleted(ListGridRecord[] records) {
+            return true;
+        }
+
+        @Override
+        protected void deleteCategorisations(List<String> selectedCategorisationUrns) {
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
+        }
+
+        @Override
+        public void updateNewButtonVisibility() {
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
+        }
+
+        @Override
+        public boolean canCancelAllCategorisationsValidity(ListGridRecord[] records) {
+            return false;
+        }
+
+        @Override
+        protected void createCategorisations(List<String> selectedResourcesUrns) {
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
+        }
+
+        @Override
+        protected void endCategorisationsValidity(List<String> selectedCategorisationUrns, Date endValidityDate) {
+            // Categorisations filled with datasets in group must be treated in the same transaction of each dataset. The functionality is not independent as it is in a update of a single dataset. So
+            // this function is not necessary.
+        }
+    }
+}

@@ -11,8 +11,10 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -22,6 +24,8 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTyp
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.InternalWebApplicationNavigation;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
+import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
+import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
@@ -42,12 +46,17 @@ public interface CommonDo2RestMapperV10 {
     public DsdProcessorResult processDataStructure(String urn) throws MetamacException;
     public ConstraintDimensionRepresentations processDatasetConstraint(String datasetUrn) throws MetamacException;
     public void toMetadataStatisticalResource(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) throws MetamacException;
-    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages) throws Exception;
-    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages);
+    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages,
+            DimensionsFilter dimensionsFilter) throws Exception;
+    public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages, boolean checkNoData,
+            DimensionsFilter dimensionsFilter) throws Exception;
+    public DimensionsFilter getDimensionFilter(Dimensions dimensions);
+    public DataStructureDefinition toDataStructureDefinition(ExternalItem source, DataStructure dataStructure, List<String> selectedLanguages, List<DimensionOrder> headingDimensions,
+            List<DimensionOrder> stubDimensions);
     public Dimensions toDimensions(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> effectiveDimensionValuesToDataByDimension, List<String> selectedLanguages,
-            Set<String> fields) throws MetamacException;
+            Set<String> fields, DimensionsFilter dimensionsFilter) throws MetamacException;
     public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages) throws MetamacException;
-
+    public Attributes toAttributes(String datasetVersionUrn, DsdProcessorResult dsdProcessorResult, List<String> selectedLanguages, boolean checkNoData) throws MetamacException;
     public ResourceStatisticalResourceBase toResource(ResourceStatisticalResourceBase source, List<String> selectedLanguages);
     public void toResource(ResourceStatisticalResourceBase source, ResourceStatisticalResourceBase target, List<String> selectedLanguages);
     public ResourcesStatisticalResourceBase toResources(List<RelatedResource> sources, List<String> selectedLanguages) throws MetamacException;
@@ -77,9 +86,16 @@ public interface CommonDo2RestMapperV10 {
     public ResourcesStatisticalResourceBase toResourcesExternalItemsSrm(Collection<ExternalItem> sources, List<String> selectedLanguages);
     public ResourceStatisticalResourceBase toResourceExternalItemSrm(ExternalItem source, List<String> selectedLanguages);
     public void toResourceExternalItemSrm(ExternalItem source, ResourceStatisticalResourceBase target, List<String> selectedLanguages);
-    public ResourceStatisticalResourceBase toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages);
-    public ResourcesStatisticalResourceBase toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages);
+    public ResourceStatisticalResourceBase toResourceExternalItemStatisticalOperations(ExternalItem source, List<String> selectedLanguages, ExternalRestObjectsMapper externalRestObjectsMapper);
+    public ResourcesStatisticalResourceBase toResourcesExternalItemsStatisticalOperations(List<ExternalItem> sources, List<String> selectedLanguages,
+            ExternalRestObjectsMapper externalRestObjectsMapper);
     public InternationalString toSdmxObservationalTimePeriod(String sdmxValue, List<String> selectedLanguages) throws MetamacException;
 
+    public Concept toConcept(String urn);
+
     public RestException buildRestException(String message);
+    public List<ExternalItem> getTemporalGranularitiesFiter(Map<String, List<String>> granularities);
+    public List<ExternalItem> getGeographicGranularitiesFilter(Map<String, List<String>> granularities, DsdProcessorResult dsdProcessorResult);
+    public Map<String, List<String>> parseParamExpression(String paramExpression);
+    public DimensionsFilter getDimensionsFilter(Map<String, List<String>> granularities, DsdProcessorResult dsdProcessorResult);
 }

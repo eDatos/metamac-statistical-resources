@@ -93,6 +93,8 @@ Application StatisticalResourcesDto {
 			List<String> dataProvidersUrn;
 			List<String> versionRationaleTypes;
 			Boolean automaticLifeCicle;
+			StringMap versionRationale;
+			
 			
 		}
 		
@@ -142,6 +144,10 @@ Application StatisticalResourcesDto {
 			//INTELLECTUAL PROPERTY DESCRIPTORS
 			Integer copyrightedDate;
 			- @InternationalStringDto accessRights;
+			
+			//METADATA VISUALISATION
+			- List<RelatedResourceDto> headingDimensions
+			- List<RelatedResourceDto> stubDimensions
 		}
 	}
 }

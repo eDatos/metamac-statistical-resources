@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
+import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.MetamacCriteria;
@@ -22,9 +24,11 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.sso.utils.SecurityUtils;
@@ -62,6 +66,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepresentationMappingDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionBaseDto;
@@ -74,9 +79,13 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.Publication
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
@@ -125,6 +134,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 /**
  * Implementation of StatisticalResourcesServiceFacade.
@@ -132,10 +143,8 @@ import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 @Service("statisticalResourcesServiceFacade")
 public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesServiceFacadeImplBase {
 
+    private static Logger                                             logger = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
 
-    private static Logger                     logger                              = LoggerFactory.getLogger(StatisticalResourcesServiceFacadeImpl.class);
-
-    
     @Autowired
     private CommonDo2DtoMapper                                        commonDo2DtoMapper;
 
@@ -249,7 +258,10 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
-  
+
+    @Autowired
+    private DatasetRepositoriesServiceFacade                          datasetRepositoriesServiceFacade;
+
     public StatisticalResourcesServiceFacadeImpl() {
     }
 
@@ -294,6 +306,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         QueryVersionDto queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
 
         return queryVersionDto;
     }
@@ -388,7 +401,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform to Dto
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
-
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
         return queryVersionDto;
     }
 
@@ -435,7 +448,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
-
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
         return queryVersionDto;
     }
 
@@ -469,7 +482,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
-
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
         return queryVersionDto;
     }
 
@@ -503,7 +516,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
-
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
         return queryVersionDto;
     }
 
@@ -537,7 +550,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
-
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
         return queryVersionDto;
     }
 
@@ -584,9 +597,10 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Versioning
         queryVersion = queryLifecycleService.versioning(ctx, queryVersion.getLifeCycleStatisticalResource().getUrn(), versionType);
-
         // Transform
-        return queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
+        queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
+        queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
+        return queryVersionDto; 
     }
 
     @Override
@@ -665,7 +679,21 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canDeleteDatasource(ctx, operationCode);
 
         // Delete
+        logger.info("Deleting a datasource. Dataset = {}", new Object[]{urn});
         return getDatasetService().deleteDatasource(ctx, urn, deleteAttributes);
+    }
+
+    @Override
+    public List<String> deleteDatasourcesNotUsed(ServiceContext ctx, String datasetUrn, boolean deleteAttributes) throws MetamacException {
+        // Retrieve
+        String operationCode = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetUrn).getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode();
+
+        // Security
+        DatasetsSecurityUtils.canDeleteDatasource(ctx, operationCode);
+
+        // Delete
+        logger.info("Deleting a not used datasource. Dataset = {}", new Object[]{datasetUrn});
+        return getDatasetService().deleteDatasourcesNotUsed(ctx, datasetUrn, deleteAttributes);
     }
 
     @Override
@@ -700,6 +728,15 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         return datasetDo2DtoMapper.dimensionRepresentationMappingDoToDto(mapping);
+    }
+
+    @Override
+    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+
+        // Security
+        DatasetsSecurityUtils.canExportDatasourcesTsv(ctx);
+
+        return getDatasetService().exportDatasourcesTsv(ctx, datasetVersionUrn);
     }
 
     // ------------------------------------------------------------------------
@@ -810,6 +847,39 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
+    public List<ExternalItemDto> retrieveExternalItemsByDatasetUrn(ServiceContext ctx, String urn, List<ExternalItemDto> externalItemDtos) throws MetamacException {
+        List<ExternalItemDto> externalItemsDto = new ArrayList<>();
+        List<CodeItemDto> codeItemsDto = filterCoverageForDatasetVersionDimension(ctx, urn, "TIME_PERIOD", null, null);
+        List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = getTemporalGranularities(codeItemsDto);
+        for (ExternalItemDto externalItemDto : externalItemDtos) {
+            if (checkGranularityInList(istacTimeGranularityCodesEnum, externalItemDto)) {
+                externalItemsDto.add(externalItemDto);
+            }
+        }
+        return externalItemsDto;
+    }
+
+    private Boolean checkGranularityInList(List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum, ExternalItemDto externalItemDto) {
+        for (IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum : istacTimeGranularityCodesEnum) {
+            if (istacTimeGranularityCodeEnum.getLabel().equals(externalItemDto.getCode())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private List<IstacTimeGranularityCodeEnum> getTemporalGranularities(List<CodeItemDto> codes) throws MetamacException {
+        List<IstacTimeGranularityCodeEnum> istacTimeGranularityCodesEnum = new ArrayList<>();
+        for (CodeItemDto codeItem : codes) {
+            IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeUtils.guessTimeGranularity(codeItem.getCode());
+            if (!istacTimeGranularityCodesEnum.contains(istacTimeGranularityCodeEnum)) {
+                istacTimeGranularityCodesEnum.add(istacTimeGranularityCodeEnum);
+            }
+        }
+        return istacTimeGranularityCodesEnum;
+    }
+
+    @Override
     public List<DatasetVersionBaseDto> retrieveDatasetVersions(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canRetrieveDatasetVersions(ctx);
@@ -844,13 +914,28 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter) throws MetamacException {
+    public List<CodeItemDto> filterCoverageForDatasetVersionDimension(ServiceContext ctx, String datasetVersionUrn, String dsdDimensionId, String filter, List<String> temporalGranularities)
+            throws MetamacException {
         // Security
         DatasetsSecurityUtils.canFilterCoverageForDatasetVersionDimension(ctx);
 
         List<CodeDimension> codeDimensions = getDatasetService().filterCoverageForDatasetVersionDimension(ctx, datasetVersionUrn, dsdDimensionId, filter);
+        if (temporalGranularities != null && dsdDimensionId.equals("TIME_PERIOD")) {
+            return datasetDo2DtoMapper.codeDimensionDoListToCodeItemDtoList(getCodeDimensionsFiltered(codeDimensions, temporalGranularities));
+        }
 
         return datasetDo2DtoMapper.codeDimensionDoListToCodeItemDtoList(codeDimensions);
+    }
+
+    private List<CodeDimension> getCodeDimensionsFiltered(List<CodeDimension> codeDimensions, List<String> temporalGranularities) throws MetamacException {
+        List<CodeDimension> codeDimensionsFiltered = new ArrayList<>();
+        for (CodeDimension codeDimension : codeDimensions) {
+            IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeUtils.guessTimeGranularity(codeDimension.getIdentifier());
+            if (temporalGranularities.contains(istacTimeGranularityCodeEnum.getLabel())) {
+                codeDimensionsFiltered.add(codeDimension);
+            }
+        }
+        return codeDimensionsFiltered;
     }
 
     @Override
@@ -1113,7 +1198,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls, BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
+    public MetamacException importDatasourcesInStatisticalOperation(ServiceContext ctx, String statisticalOperationCode, List<URL> fileUrls,
+            BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canImportDatasourcesInStatisticalOperation(ctx, statisticalOperationCode);
 
@@ -1136,7 +1222,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceCreated.getAttributeId());
 
-        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceCreated);
+        return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId(), dsdAttribute, attributeInstanceCreated);
     }
 
     @Override
@@ -1172,7 +1258,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         if (attributeInstanceUpdated != null) {
             DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeInstanceUpdated.getAttributeId());
 
-            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId() ,dsdAttribute, attributeInstanceUpdated);
+            return statRepoDto2StatisticalResourcesDtoMapper.attributeDtoToDsdAttributeInstanceDto(datasetVersionDto.getId(), dsdAttribute, attributeInstanceUpdated);
         } else {
             return null;
         }
@@ -1222,32 +1308,30 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-       
+
         logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
-        
-        
+
         // Operate
         getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
 
         logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
-        
+
         logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
-        
+
         getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
-        
+
         logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
-        
-        
+
     }
-     
+
     @Override
     public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
-       getDatasetService().updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+        getDatasetService().updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
     }
- 
+
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
         DatasetVersion datasetVersion = getDatasetService().retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
@@ -1876,13 +1960,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         ConstraintsSecurityUtils.canCreateContentConstraint(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode(),
                 datasetVersion.getLifeCycleStatisticalResource().getProcStatus());
 
-        // Check that there isn't data sources
-        if (!datasetVersion.getDatasources().isEmpty()) {
-            throw MetamacExceptionBuilder.builder()
-                    .withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINTS_CREATE_DATASET_WITH_DATASOURCES, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()))
-                    .build();
-        }
-
         // Transform
         ContentConstraint contentConstraint = constraintDto2RestMapper.constraintDtoTo(contentConstraintDto);
 
@@ -1922,7 +1999,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public RegionValueDto saveRegionForContentConstraint(ServiceContext ctx, String contentConstraintUrn, RegionValueDto regionValueDto) throws MetamacException {
+    public RegionValueDto saveRegionForContentConstraint(ServiceContext ctx, String contentConstraintUrn, RegionValueDto regionValueDto, DsdDimensionDto selectedDimensionDto, String datasetUrn)
+            throws MetamacException {
         // Retrieve
         ContentConstraint contentConstraint = constraintsService.retrieveContentConstraintByUrn(ctx, contentConstraintUrn, Boolean.TRUE);
 
@@ -1932,27 +2010,45 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
                 datasetVersion.getLifeCycleStatisticalResource().getProcStatus());
 
         if (contentConstraint.isIsFinal()) {
-            // Can not update final constraint
+            // Can not update externally_published constraints. Internally published constraint can be updated because dataset is yet in draft.
             throw MetamacExceptionBuilder.builder()
                     .withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINTS_UPDATE_FINAL, contentConstraint.getConstraintAttachment().getUrn())).build();
         }
 
-        // Check not exists datasources
-        if (!datasetVersion.getDatasources().isEmpty()) {
-            // Can not update final constraint
-            throw MetamacExceptionBuilder.builder()
-                    .withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.CONSTRAINTS_UPDATE_DATASOURCES_NO_EMPTY, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()))
-                    .build();
-        }
-
         // Transform
         RegionReference regionReference = constraintDto2RestMapper.toRegionReference(regionValueDto);
+
+        checkObservationsWithContentConstraint(ctx, datasetUrn, regionReference, selectedDimensionDto);
 
         // Create
         regionReference = constraintsService.saveRegionForContentConstraint(ctx, regionReference);
 
         // Transform
         return constraintRest2DtoMapper.toRegionDto(regionReference);
+    }
+
+    private void checkObservationsWithContentConstraint(ServiceContext ctx, String datasetUrn, RegionReference regionReference, DsdDimensionDto selectedDimension) throws MetamacException {
+        List<CodeDimensionDto> observationValuesByDimensionId = new ArrayList<>();
+        List<MetamacExceptionItem> exceptions = new LinkedList<>();
+        Map<String, CodeHierarchy> codeHierarchyMap = ConstraintsValidator.getCodeHierarchyMap(srmRestInternalService, selectedDimension);
+        try {
+
+            observationValuesByDimensionId = datasetRepositoriesServiceFacade.findObservationsValuesByDimensionId(datasetUrn, selectedDimension.getDimensionId());
+
+            if (observationValuesByDimensionId == null || observationValuesByDimensionId.isEmpty()) {
+                return;
+            }
+
+            Key keysByDimensionId = ConstraintsValidator.getConstraintKeysByDimensionId(regionReference, selectedDimension.getDimensionId());
+            if (keysByDimensionId != null) {
+                ConstraintsValidator.checkObservationContentConstraints(observationValuesByDimensionId, keysByDimensionId, codeHierarchyMap, exceptions);
+            }
+
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.CONSTRAINTS_UPDATE_CHECK_EXISTING_OBSERVATIONS, datasetUrn);
+        }
+
+        ExceptionUtils.throwIfException(exceptions);
     }
 
     @Override
@@ -2450,13 +2546,25 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto, ExternalItemDto statisticalOperationDto) throws MetamacException {
-        // we set the null id because it will be autogenerated when we create the dataset
-        datasetVersionDto.setId(null);
-        // we set the following null data because they are set when we create the dataset
-        datasetVersionDto.setStatisticalOperation(null);
-        datasetVersionDto.setVersion(null);
-        datasetVersionDto.setPublicationStreamStatus(null);
-        return createDataset(ctx, datasetVersionDto, statisticalOperationDto);
+    public DatasetVersionDto copyDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canCreateDataset(ctx, datasetVersionDto.getStatisticalOperation().getCode());
+        // Copy
+        DatasetVersion datasetVersionCreated = getDatasetService().copyDatasetVersion(ctx, datasetVersionDto.getUrn());
+        return datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersionCreated);
+    }
+
+    @Override
+    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersionDto datasetVersionMetadataToChangeDto, String datasetUrnToChange, List<CategorisationDto> categorisationsDto)
+            throws MetamacException {
+
+        DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionMetadataToChangeDto);
+
+        for (CategorisationDto categorisationDto : categorisationsDto) {
+            datasetVersion.addCategorisation(datasetDto2DoMapper.categorisationDtoToDo(categorisationDto));
+        }
+
+        getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
+
     }
 }

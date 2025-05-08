@@ -2,15 +2,17 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.view;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.SiemacMetadataExternalField;
-import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceBaseListViewImpl;
+import org.siemac.metamac.statistical.resources.web.client.base.view.StatisticalResourceUpdateMultipleResourcesListViewImpl;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NewStatisticalResourceWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
@@ -21,6 +23,8 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasetVersionSearchSectionStack;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportZipDatasourceWithMappingWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.NewDatasetWindow;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
+import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
@@ -43,7 +47,7 @@ import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.RecordClickEvent;
 import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 
-public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<DatasetListUiHandlers> implements DatasetListPresenter.DatasetListView {
+public class DatasetListViewImpl extends StatisticalResourceUpdateMultipleResourcesListViewImpl<DatasetListUiHandlers> implements DatasetListPresenter.DatasetListView {
 
     private DatasetVersionSearchSectionStack     searchSectionStack;
 
@@ -87,18 +91,7 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
 
         // Import datasources window
 
-        importZipDatasourceWithMappingWindow = new ImportZipDatasourceWithMappingWindow() {
-
-            @Override
-            protected void uploadSuccess(String message) {
-                getUiHandlers().datasourcesImportationSucceed(message);
-            }
-
-            @Override
-            protected void uploadFailed(String error) {
-                getUiHandlers().datasourcesImportationFailed(error);
-            }
-        };
+        createUploadForm();
     }
 
     @Override
@@ -119,6 +112,34 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
+        resetVisibilityButtonsByOperation();
+    }
+
+    private void resetVisibilityButtonsByOperation() {
+        importDatasourcesButton.setVisible(DatasetClientSecurityUtils.canImportDatasourcesInStatisticalOperation());
+        if (this.newButton != null) {
+            this.newButton.setVisible(canCreate());
+        }
+    }
+
+    @Override
+    public void createUploadForm() {
+        // Import datasources window
+
+        importZipDatasourceWithMappingWindow = new ImportZipDatasourceWithMappingWindow() {
+
+            @Override
+            protected void uploadSuccess(String message) {
+                getUiHandlers().datasourcesImportationSucceed(message);
+            }
+
+            @Override
+            protected void uploadFailed(String error) {
+                getUiHandlers().datasourcesImportationFailed(error);
+            }
+        };
+
+        importZipDatasourceWithMappingWindow.setUiHandlers(getUiHandlers());
     }
 
     @Override
@@ -219,6 +240,33 @@ public class DatasetListViewImpl extends StatisticalResourceBaseListViewImpl<Dat
     }
 
     // Reject validation
+
+    @Override
+    protected ClickHandler getUpdateDatasetsInGroupValidationClickHandler() {
+        return new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                List<DatasetVersionBaseDto> datasetVersionDtos = StatisticalResourcesRecordUtils.getDatasetVersionBaseDtosFromListGridRecords(listGrid.getListGrid().getSelectedRecords());
+                if (!datasetVersionDtos.isEmpty()) {
+                    if (datasetVersionDtos.size() <= CommonUtils.getMaxNumberOfUpdatedDatasetInGroup()) {
+                        getUiHandlers().goToDatasetsInGroup(getUrnsFromSelectedDatasetVersion(datasetVersionDtos));
+                    } else {
+                        getUiHandlers().showMessageMaxDatasetsExceeded();
+                    }
+                }
+            }
+        };
+    }
+
+    private String getUrnsFromSelectedDatasetVersion(List<DatasetVersionBaseDto> datasetVersionDtos) {
+        List<String> selectedDatasetIdentifiers = new ArrayList<String>();
+        for (DatasetVersionBaseDto datasetVersion : datasetVersionDtos) {
+            selectedDatasetIdentifiers.add(UrnUtils.removePrefix(datasetVersion.getUrn()));
+        }
+
+        return PlaceRequestUtils.setListDatasetIdentifiers(selectedDatasetIdentifiers);
+    }
 
     @Override
     protected ClickHandler getRejectValidationClickHandler() {

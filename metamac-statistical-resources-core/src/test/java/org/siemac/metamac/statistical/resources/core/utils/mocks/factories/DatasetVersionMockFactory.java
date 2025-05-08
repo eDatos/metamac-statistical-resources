@@ -287,6 +287,11 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     public static final String               DATASET_VERSION_119_DRAFT_DATABASE_DATASET_NAME                                                               = "DATASET_VERSION_119_DRAFT_DATABASE_DATASET";
     public static final String               DATASET_VERSION_120_VALIDATION_REJECTED_DATABASE_DATASET_NAME                                                 = "DATASET_VERSION_120_VALIDATION_REJECTED_DATABASE_DATASET";
 
+    public static final String               DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME                                                             = "DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE";
+
+    public static final String               DATASET_VERSION_01_FOR_UPDATE_MULTIPLE                                                                        = "DATASET_VERSION_01_FOR_UPDATE_MULTIPLE";
+    public static final String               DATASET_VERSION_02_FOR_UPDATE_MULTIPLE                                                                        = "DATASET_VERSION_02_FOR_UPDATE_MULTIPLE";
+
     private static DatasetVersionMockFactory instance                                                                                                      = null;
 
     private DatasetVersionMockFactory() {
@@ -689,6 +694,10 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         return createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
     }
 
+    private static DatasetVersion getDatasetVersion121InDraftWithDatasource() {
+        return createDatasetVersionInStatusWithSpecificDatasource(1, ProcStatusEnum.DRAFT, "TSV_DATA_SOURCE_20111.tsv");
+    }
+
     private static DatasetVersion getDatasetVersion52InProductionValidationWithDatasource() {
         return createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.PRODUCTION_VALIDATION);
     }
@@ -703,6 +712,12 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
 
     private static DatasetVersion getDatasetVersion55PublishedWithDatasource() {
         return createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.PUBLISHED);
+    }
+
+    protected static DatasetVersion getDatasetVersion56DraftWithDatasourceAndQueries() {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
+        datasetVersion.getSiemacMetadataStatisticalResource().setVersionLogic(StatisticalResourcesMockFactory.INIT_VERSION);
+        return datasetVersion;
     }
 
     private static DatasetVersion getDatasetVersion57DraftInitialVersion() {
@@ -1293,6 +1308,38 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         return datasetVersion;
     }
 
+    private static DatasetVersion getDatasetVersion01ForUpdateMultiple() {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
+        datasetVersion.getDatasources().clear();
+        datasetVersion.setDataSourceType(DataSourceTypeEnum.DATABASE);
+        return datasetVersion;
+    }
+
+    private static DatasetVersion getDatasetVersion02ForUpdateMultiple() {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
+        datasetVersion.getDatasources().clear();
+        datasetVersion.setDataSourceType(DataSourceTypeEnum.DATABASE);
+        return datasetVersion;
+    }
+
+    public static void changeDatasetVersionBasicMetadataNotPermitted(DatasetVersion metadataToChange) {
+        DatasetVersion newDatasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, metadataToChange.getSiemacMetadataStatisticalResource().getProcStatus());
+        metadataToChange.getSiemacMetadataStatisticalResource().setUrn(newDatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        metadataToChange.getSiemacMetadataStatisticalResource().setTitle(newDatasetVersion.getSiemacMetadataStatisticalResource().getTitle());
+        metadataToChange.getSiemacMetadataStatisticalResource().setMaintainer(newDatasetVersion.getSiemacMetadataStatisticalResource().getMaintainer());
+        metadataToChange.getSiemacMetadataStatisticalResource().setLanguage(newDatasetVersion.getSiemacMetadataStatisticalResource().getLanguage());
+        metadataToChange.getSiemacMetadataStatisticalResource().setLastUpdated(newDatasetVersion.getSiemacMetadataStatisticalResource().getLastUpdate());
+        metadataToChange.getSiemacMetadataStatisticalResource().setLastVersion(newDatasetVersion.getSiemacMetadataStatisticalResource().getLastVersion());
+        metadataToChange.getSiemacMetadataStatisticalResource().setIsReplacedBy(newDatasetVersion.getSiemacMetadataStatisticalResource().getIsReplacedBy());
+        metadataToChange.getSiemacMetadataStatisticalResource().setReplaces(newDatasetVersion.getSiemacMetadataStatisticalResource().getReplaces());
+        metadataToChange.getSiemacMetadataStatisticalResource().setStatisticalOperation(newDatasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
+        metadataToChange.getSiemacMetadataStatisticalResource().setCreatedDate(newDatasetVersion.getSiemacMetadataStatisticalResource().getCreatedDate());
+        metadataToChange.setBibliographicCitation(newDatasetVersion.getBibliographicCitation());
+        metadataToChange.setRelatedDsd(StatisticalResourcesDoMocks.mockDsdExternalItem());
+        metadataToChange.setDateStart(newDatasetVersion.getDateStart());
+        metadataToChange.setDateEnd(newDatasetVersion.getDateEnd());
+    }
+
     // -----------------------------------------------------------------
     // BUILDERS
     // -----------------------------------------------------------------
@@ -1331,6 +1378,12 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
     public static DatasetVersion createDatasetVersionInStatusWithGeneratedDatasource(int sequentialId, ProcStatusEnum procStatus) {
         DatasetVersion datasetVersion = createDatasetVersionWithSequence(sequentialId);
         return fillDatasetVersionInStatusWithGeneratedDatasource(datasetVersion, procStatus);
+    }
+
+    public static DatasetVersion createDatasetVersionInStatusWithSpecificDatasource(int sequentialId, ProcStatusEnum procStatus, String datasourceName) {
+        DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(sequentialId, procStatus);
+        datasetVersion.addDatasource(DatasourceMockFactory.generateDatasource(datasourceName));
+        return datasetVersion;
     }
 
     public static DatasetVersion fillDatasetVersionInStatusWithGeneratedDatasource(DatasetVersion datasetVersion, ProcStatusEnum procStatus) {

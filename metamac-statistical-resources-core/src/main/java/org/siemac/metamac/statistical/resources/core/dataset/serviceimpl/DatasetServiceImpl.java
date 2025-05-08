@@ -5,6 +5,7 @@ import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCol
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -23,6 +24,7 @@ import java.util.UUID;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -32,6 +34,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
+import org.siemac.edatos.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -68,6 +71,7 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.checks.DatasetMetadataEditionChecks;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CategorisationProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -81,7 +85,9 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarEle
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUpdateUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
+import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
@@ -91,6 +97,7 @@ import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFi
 import org.siemac.metamac.statistical.resources.core.enume.utils.NextVersionTypeEnumUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
@@ -131,6 +138,7 @@ import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import es.ibestat.jaxi.stream.messages.DatasetAvro;
 import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
@@ -197,6 +205,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
+
+    @Autowired
+    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
 
     // ------------------------------------------------------------------------
     // DATASOURCES
@@ -286,7 +297,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         checkNotTasksInProgress(ctx, datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
 
-        checkDatasetVersionForDatasourceHasNoQueries(datasource);
+        checkDatasetVersionForDatasourceHasNoQueries(datasource, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
 
         datasetVersion = deleteDatasourceToDataset(datasource);
 
@@ -311,6 +322,32 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
 
         return observationsDeleted;
+    }
+
+    @Override
+    public List<String> deleteDatasourcesNotUsed(ServiceContext ctx, String datasetUrn, boolean deleteAttributes) throws MetamacException {
+        datasetServiceInvocationValidator.checkDeleteDatasourcesNotUsed(ctx, datasetUrn, deleteAttributes);
+
+        List<String> codesDataSourcesDeleted = new ArrayList<String>();
+        List<String> urnsDataSourcesDeleted = new ArrayList<String>();
+
+        List<String> datasourcesUsed = findDataSourcesUsedInDataset(datasetUrn);
+
+        List<Datasource> allDataSources = retrieveDatasourcesByDatasetVersion(ctx, datasetUrn);
+
+        for (Datasource dataSource : allDataSources) {
+            if (datasourcesUsed.indexOf(dataSource.getIdentifiableStatisticalResource().getCode()) == -1) {
+                codesDataSourcesDeleted.add(dataSource.getIdentifiableStatisticalResource().getCode());
+                urnsDataSourcesDeleted.add(dataSource.getIdentifiableStatisticalResource().getUrn());
+            }
+        }
+
+        for (String dataSourceUrn : urnsDataSourcesDeleted) {
+            log.info("Deleting a not used datasource. Dataset = {}, Datasource = {}", new Object[]{datasetUrn, dataSourceUrn});
+            deleteDatasource(ctx, dataSourceUrn, deleteAttributes);
+        }
+
+        return codesDataSourcesDeleted;
     }
 
     @Override
@@ -347,7 +384,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         List<DsdAttribute> attributes = DsdProcessor.getAttributes(dsd);
         for (DsdAttribute attribute : attributes) {
-            if (attribute.isDimensionAttribute()) {
+            if (attribute.isDimensionAttribute() || attribute.isObservationAttribute()) {
                 deleteAllAttributeInstances(datasetVersion, attribute);
             }
         }
@@ -365,10 +402,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void checkDatasetVersionForDatasourceHasNoQueries(Datasource datasource) throws MetamacException {
+    private void checkDatasetVersionForDatasourceHasNoQueries(Datasource datasource, String datasetUrn) throws MetamacException {
+
+        Boolean isDataSourceUsed = checkExistsAttributeInstanceValues(datasetUrn, datasource.getIdentifiableStatisticalResource().getCode());
+
         List<QueryVersion> queries = queryVersionRepository.findLinkedToFixedDatasetVersion(datasource.getDatasetVersion().getId());
         List<QueryVersion> queriesDataset = queryVersionRepository.findLinkedToDataset(datasource.getDatasetVersion().getDataset().getId());
-        if (!queries.isEmpty() || !queriesDataset.isEmpty()) {
+        if ((!queries.isEmpty() || !queriesDataset.isEmpty()) && isDataSourceUsed) {
             throw new MetamacException(ServiceExceptionType.DATASOURCE_IN_DATASET_VERSION_WITH_QUERIES_DELETE_ERROR, datasource.getIdentifiableStatisticalResource().getUrn());
         }
     }
@@ -381,10 +421,35 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
             internationalStringDto.addText(localisedStringDto);
 
+            log.info("Deleting a datasource is trying to delete observations by attribute instance value. Dataset = {}, Datasource = {}",
+                    new Object[]{datasetId, datasource.getIdentifiableStatisticalResource().getCode()});
+
             return statisticsDatasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(datasetId, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, internationalStringDto);
 
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.DATASOURCE_DATA_DELETE_ERROR, datasource.getIdentifiableStatisticalResource().getCode());
+        }
+    }
+
+    private Boolean checkExistsAttributeInstanceValues(String datasetUrn, String dataSourceAtttributeUrn) throws MetamacException {
+        try {
+
+            return statisticsDatasetRepositoriesServiceFacade.checkExistsAttributeInstanceValues(datasetUrn, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
+                    ManipulateDataUtils.getLocaleDatasourceIdentificationAttribute(), dataSourceAtttributeUrn);
+
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.DATASOURCE_IN_DATASET_VERSION_CHECK_DATASOURCE_IS_USED_ERROR, dataSourceAtttributeUrn, datasetUrn);
+        }
+    }
+
+    private List<String> findDataSourcesUsedInDataset(String datasetUrn) throws MetamacException {
+        try {
+
+            return statisticsDatasetRepositoriesServiceFacade.findDataSourcesAttributesByDatasetId(datasetUrn, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
+                    ManipulateDataUtils.getLocaleDatasourceIdentificationAttribute());
+
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.DATASOURCE_IN_DATASET_VERSION_FIND_DATASOURCES_USED_ERROR, datasetUrn);
         }
     }
 
@@ -427,6 +492,27 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         datasetVersion.setDatasetRepositoryId(datasetRepositoryDto.getDatasetId());
 
         return getDatasetVersionRepository().save(datasetVersion);
+    }
+
+    @Override
+    public DatasetVersion copyDatasetVersion(ServiceContext ctx, String urn) throws MetamacException {
+        // Find entity
+        DatasetVersion datasetVersion = getDatasetVersionRepository().retrieveByUrn(urn);
+        DatasetVersion datasetVersionCopy = DatasetVersioningCopyUtils.copyDatasetVersion(datasetVersion);
+        datasetVersionCopy.setVersion(null);
+        datasetVersionCopy.getSiemacMetadataStatisticalResource().setStatisticalOperation(null);
+        datasetVersionCopy.getSiemacMetadataStatisticalResource().setCreatedDate(null);
+        datasetVersionCopy.setDataset(null);
+        datasetVersionCopy.getDatasources().clear();
+        copyCategorisations(ctx, datasetVersionCopy.getCategorisations());
+        datasetVersionCopy.getDimensionsCoverage().clear();
+        return createDatasetVersion(ctx, datasetVersionCopy, datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
+    }
+
+    private void copyCategorisations(ServiceContext ctx, List<Categorisation> categorisations) throws MetamacException {
+        for (Categorisation categorisation : categorisations) {
+            initializeCategorisationMetadataForCreation(ctx, categorisation);
+        }
     }
 
     private DatasetRepositoryDto createDatasetRepository(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
@@ -556,6 +642,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         // Dataset repository
         try {
+            log.info("The dataset table will be deleted from the repository when trying to delete data related to the dataset metadata. Dataset = {}", resource.getDatasetRepositoryId());
             statisticsDatasetRepositoriesServiceFacade.deleteDatasetRepository(resource.getDatasetRepositoryId());
             resource.setDatasetRepositoryId(null);
         } catch (ApplicationException e) {
@@ -564,6 +651,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         DatasetRepositoryDto datasetRepository = createDatasetRepository(ctx, resource);
         resource.setDatasetRepositoryId(datasetRepository.getDatasetId());
+        resource.getStubDimensions().clear();
+        resource.getHeadingDimensions().clear();
     }
 
     @Override
@@ -630,22 +719,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
 
-        PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements = geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
+        return geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
 
-        updateOperationTitleTerritoriesCache(cacheElements);
-
-        return cacheElements;
-    }
-
-    private void updateOperationTitleTerritoriesCache(PagedResult<GeoCovVarElementCacheDatasetVersion> cacheElements) throws MetamacException {
-        Map<String, InternationalString> operationTitles = statisticalOperationsRestInternalService.getOperationTitles(null);
-
-        for (GeoCovVarElementCacheDatasetVersion cacheElement : cacheElements.getValues()) {
-            InternationalString operationTitle = operationTitles.get(cacheElement.getOperationCode());
-            if (operationTitle != null) {
-                cacheElement.setOperationTitle(operationTitle);
-            }
-        }
     }
 
     @Override
@@ -690,6 +765,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         constraintsService.deleteContentConstraintsForArtefactUrn(ctx, datasetVersionUrn);
 
         // Remove data dataset-repository
+        log.info("The dataset table will be deleted from the repository when trying to delete the dataset version. Dataset = {}", datasetRepositoryId);
         tryToDeleteDatasetRepository(datasetRepositoryId);
     }
 
@@ -843,14 +919,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
         taskInfo.setStoreAlternativeRepresentations(storeDimensionRepresentationMapping);
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
-        taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextVersion() : null);
-        taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextVersionDate() : null);
-        taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextUpdateDate() : null);
-        taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getUpdateFrequency() : null);
-        taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getDataProvidersUrn() : null);
-        taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getVersionRationaleTypes() : null);
-        taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getNextProcStatus() : null);
-        taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto != null ? basicVersionableStatisticalResourceDto.getAutomaticLifeCicle() : null);
+        if (basicVersionableStatisticalResourceDto != null) {
+            taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
+            taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
+            taskInfo.setDatasetNextUpdateDate(basicVersionableStatisticalResourceDto.getNextUpdateDate());
+            taskInfo.setDatasetUpdateFrequency(basicVersionableStatisticalResourceDto.getUpdateFrequency());
+            taskInfo.setDatasetVersionDataProviderUrn(basicVersionableStatisticalResourceDto.getDataProvidersUrn());
+            taskInfo.setDatasetVersionRationaleTypes(basicVersionableStatisticalResourceDto.getVersionRationaleTypes());
+            taskInfo.setDatasetNextProcStatus(basicVersionableStatisticalResourceDto.getNextProcStatus());
+            taskInfo.setDatasetAutomaticLifeCicle(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle());
+            taskInfo.setVersionRationale(basicVersionableStatisticalResourceDto.getVersionRationale());
+        }
         for (String dimensionId : dimensionRepresentationMapping.keySet()) {
             AlternativeEnumeratedRepresentation representation = new AlternativeEnumeratedRepresentation();
             representation.setComponentId(dimensionId);
@@ -1265,6 +1344,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         // Save categorisation
         return getCategorisationRepository().save(categorisation);
+
     }
 
     @Override
@@ -1563,6 +1643,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
+        @Override
         public final T doInTransaction(TransactionStatus status) {
             try {
                 return doInMetamacTransaction(status);
@@ -2179,6 +2260,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     }
 
+    @Override
     public Long calculateTableSize(ServiceContext ctx, DatasetVersion resource) throws MetamacException {
         Long tableSize = Long.valueOf(1);
         DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(resource.getRelatedDsd().getUrn());
@@ -2208,4 +2290,68 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return null;
     }
 
+    @Override
+    public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
+        updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange); 
+    }
+    
+    private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
+        datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
+        
+        datasetServiceInvocationValidator.checkUpdateDatasetVersionInGroup(ctx, datasetVersion, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        
+        DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
+        updateDatasetVersion(ctx, datasetVersion);   
+        updateDatasetVersionCategorisations(ctx, datasetVersion, DatasetVersionUpdateUtils.copyCategorisations(datasetVersionMetadataToChange.getCategorisations()));
+        
+    }
+
+    private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {
+        if (!categorisations.isEmpty()) {
+
+            for (Categorisation categorisation : categorisations ) {
+                List<ConditionalCriteria> condition = criteriaFor(Categorisation.class).withProperty(CategorisationProperties.category().urn()).eq(categorisation.getCategory().getUrn()).and()
+                        .withProperty(CategorisationProperties.datasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersion.getSiemacMetadataStatisticalResource().getUrn())
+                        .distinctRoot().build();
+                List<Categorisation> result = getCategorisationRepository().findByCondition(condition);
+                if (result.isEmpty()) {
+                    categorisation.setDatasetVersion(datasetVersion);
+                    fillMetadataForCreateCategorisation(ctx, categorisation);
+
+                    getCategorisationRepository().save(categorisation);
+                }
+            }
+        }
+    }
+
+    @Override
+    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+        datasetServiceInvocationValidator.checkExportDatasourcesTsv(ctx,datasetVersionUrn);
+        FileOutputStream outputStreamObservations = null;
+        String fileName = "";
+        try {
+            DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+            Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), null);
+
+            String[] datasetUrn = UrnUtils.splitUrnStructure(datasetVersionUrn);
+            String prefix = "datasource" + "-" + datasetUrn[0] + "-" + datasetUrn[1] + "-" + datasetUrn[2] + "-";
+
+            File tmpFileObservations = File.createTempFile(prefix, ".tsv");
+            fileName = tmpFileObservations.getName();
+
+            outputStreamObservations = new FileOutputStream(tmpFileObservations);
+
+            PlainTextExporter exporter = new PlainTextExporter(observations);
+
+            exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
+
+            return fileName;
+
+        } catch (Exception e) {
+            throw new MetamacException(e, ServiceExceptionType.DATASOURCE_EXPORT_ERROR, e.getMessage());
+        } finally {
+            IOUtils.closeQuietly(outputStreamObservations);
+        }
+    }
 }

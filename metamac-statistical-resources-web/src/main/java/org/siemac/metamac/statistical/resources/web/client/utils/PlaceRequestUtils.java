@@ -3,12 +3,14 @@ package org.siemac.metamac.statistical.resources.web.client.utils;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesUrnParserUtils;
+import org.siemac.metamac.statistical.resources.navigation.shared.ConstantsPlaceRequest;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.navigation.shared.PlaceRequestParams;
 import org.siemac.metamac.web.common.client.utils.CommonPlaceRequestUtils;
@@ -17,6 +19,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 
 public class PlaceRequestUtils extends CommonPlaceRequestUtils {
+
+    private static final char HTML_DATASET_SEPARATOR = '-';
 
     // ---------------------------------------------------------------------------
     // OPERATIONS
@@ -68,8 +72,40 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
         return null;
     }
 
+    public static String getOriginDatasetDetailParamFromUrl(PlaceManager placeManager) {
+        for (PlaceRequest request : placeManager.getCurrentPlaceHierarchy()) {
+            if (NameTokens.datasetsGroupPage.equals(request.getNameToken())) {
+                return getRequestParameter(request, PlaceRequestParams.originDatasetDetailParam);
+            }
+        }
+        return "";
+    }
+
+    public static List<String> getDatasetsInGroupParamFromUrl(PlaceManager placeManager) {
+        for (PlaceRequest request : placeManager.getCurrentPlaceHierarchy()) {
+            if (NameTokens.datasetsGroupPage.equals(request.getNameToken())) {
+                return getListDatasetIdentifiers(getRequestParameter(request, PlaceRequestParams.datasetParam));
+            }
+        }
+        return new ArrayList<String>();
+    }
+
+    private static List<String> getListDatasetIdentifiers(String datasetIdentifiers) {
+        return Arrays.asList(datasetIdentifiers.split(String.valueOf(HTML_DATASET_SEPARATOR)));
+    }
+
+    public static String setListDatasetIdentifiers(List<String> selectedDatasetIdentifiers) {
+        return StringUtils.join(selectedDatasetIdentifiers.toArray(), HTML_DATASET_SEPARATOR);
+    }
+
     public static PlaceRequest buildRelativeDatasetPlaceRequest(String urn) {
         return new PlaceRequest(NameTokens.datasetPage).with(PlaceRequestParams.datasetParam, UrnUtils.removePrefix(urn));
+    }
+
+    public static PlaceRequest buildRelativeDatasetInGroupUpdatePlaceRequest(String selectedDatasetIdentifiers) {
+
+        return new PlaceRequest(NameTokens.datasetsGroupPage).with(PlaceRequestParams.originDatasetDetailParam, ConstantsPlaceRequest.updateDatasetsInGroup).with(PlaceRequestParams.datasetParam,
+                selectedDatasetIdentifiers);
     }
 
     public static PlaceRequest buildRelativeDatasetsPlaceRequest() {
@@ -217,6 +253,26 @@ public class PlaceRequestUtils extends CommonPlaceRequestUtils {
     public static List<PlaceRequest> buildAbsoluteMultidatasetPlaceRequest(String operationUrn, String multidatasetUrn) {
         List<PlaceRequest> placeRequests = buildAbsoluteMultidatasetsPlaceRequest(operationUrn);
         placeRequests.add(buildRelativeMultidatasetPlaceRequest(multidatasetUrn));
+        return placeRequests;
+    }
+
+    public static PlaceRequest buildRelativeCollectionPlaceRequest() {
+        return new PlaceRequest(NameTokens.publicationsListPage);
+    }
+
+    public static PlaceRequest buildRelativeCollectionPlaceRequest(String urn) {
+        return new PlaceRequest(NameTokens.publicationPage).with(PlaceRequestParams.publicationParam, UrnUtils.removePrefix(urn));
+    }
+
+    public static List<PlaceRequest> buildAbsoluteCollectionPlaceRequest(String operationUrn) {
+        List<PlaceRequest> placeRequests = buildAbsoluteOperationPlaceRequest(operationUrn);
+        placeRequests.add(buildRelativeCollectionPlaceRequest());
+        return placeRequests;
+    }
+
+    public static List<PlaceRequest> buildAbsoluteCollectionPlaceRequest(String operationUrn, String collectiontUrn) {
+        List<PlaceRequest> placeRequests = buildAbsoluteCollectionPlaceRequest(operationUrn);
+        placeRequests.add(buildRelativeCollectionPlaceRequest(collectiontUrn));
         return placeRequests;
     }
 

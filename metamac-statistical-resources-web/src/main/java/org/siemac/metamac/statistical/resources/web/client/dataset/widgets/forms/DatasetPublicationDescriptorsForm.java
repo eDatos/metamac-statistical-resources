@@ -13,6 +13,10 @@ public class DatasetPublicationDescriptorsForm extends SiemacMetadataPublication
 
     public DatasetPublicationDescriptorsForm() {
         super();
+        init();
+    }
+
+    private void init() {
 
         ViewTextItem statisticOfficiality = new ViewTextItem(DatasetDS.STATISTIC_OFFICIALITY, getConstants().datasetStatisticOfficiality());
         ViewMultiLanguageTextItem bibliographicCitation = new ViewMultiLanguageTextItem(DatasetDS.BIBLIOGRAPHIC_CITATION, getConstants().datasetBibliographicCitation());

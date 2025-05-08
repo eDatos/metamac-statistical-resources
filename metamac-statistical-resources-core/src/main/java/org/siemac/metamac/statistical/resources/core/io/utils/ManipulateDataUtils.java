@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.D
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchyBuilder;
 
 import com.arte.statistic.parser.sdmx.v2_1.domain.IdValuePair;
 
@@ -48,14 +51,20 @@ public class ManipulateDataUtils {
         InternationalStringDto internationalStringDto = new InternationalStringDto();
         LocalisedStringDto localisedStringDto = new LocalisedStringDto();
         localisedStringDto.setLabel(dataSourceId);
-        // In SDMX the attributes aren't localized. For use localised in SDMX must be use a enumerated representation.
-        // In this case, in the repo exists the code of enumerated representation, never the i18n of code.
-        localisedStringDto.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
+        localisedStringDto.setLocale(getLocaleDatasourceIdentificationAttribute());
         internationalStringDto.addText(localisedStringDto);
 
         AttributeInstanceObservationDto attributeDto = new AttributeInstanceObservationDto(StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, internationalStringDto);
 
         return attributeDto;
+    }
+
+    /*
+     * In SDMX the attributes aren't localized. For use localised in SDMX must be use a enumerated representation.
+     * In this case, in the repo exists the code of enumerated representation, never the i18n of code.
+     */
+    public static String getLocaleDatasourceIdentificationAttribute() {
+        return StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE;
     }
 
     /**
@@ -206,6 +215,28 @@ public class ManipulateDataUtils {
      */
     public static IdValuePair attributeInstanceBasicDto2IdValuePair(AttributeInstanceBasicDto attributeBasicDto) {
         return new IdValuePair(attributeBasicDto.getAttributeId(), attributeBasicDto.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE));
+    }
+
+    /**
+     * Note: this method works because the creation of graph is iterate in depth first order
+     *
+     * @param codeUrn
+     * @param codeId
+     * @param codeParentUrn
+     */
+    public static Map<String, CodeHierarchy> cacheCodeHierarchyGraph(Map<String, CodeHierarchy> codeHierarchyMap, String codeUrn, String codeId, String codeParentUrn) {
+        if (codeHierarchyMap == null) {
+            codeHierarchyMap = new LinkedHashMap<String, CodeHierarchy>();
+        }
+
+        // For content constraints validate, create a auxiliary Map
+        CodeHierarchy codeHierarchyParent = new CodeHierarchy();
+        if (codeHierarchyMap.containsKey(codeParentUrn)) {
+            codeHierarchyParent = codeHierarchyMap.get(codeParentUrn);
+        }
+        codeHierarchyMap.put(codeUrn, CodeHierarchyBuilder.codeHierarchy().withCode(codeId).withUrn(codeUrn).withParent(codeHierarchyParent).build());
+
+        return codeHierarchyMap;
     }
 
 };

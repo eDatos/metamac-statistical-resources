@@ -168,6 +168,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showSendToProductionValidationButton(ListGridRecord[] records) {
+        boolean canSendToProductionValidation = canSendToProductionValidation(records);
+        if (canSendToProductionValidation) {
+            sendToProductionValidationButton.show();
+        }
+    }
+
+    private boolean canSendToProductionValidation(ListGridRecord[] records) {
         boolean canSendToProductionValidation = true;
         for (ListGridRecord record : records) {
             if (!canSendToProductionValidation(record)) {
@@ -175,9 +182,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canSendToProductionValidation) {
-            sendToProductionValidationButton.show();
-        }
+        return canSendToProductionValidation;
     }
 
     // Send to diffusion validation
@@ -190,6 +195,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showSendtoDiffusionValidationButton(ListGridRecord[] records) {
+        boolean canSendToDiffusionValidation = canSendToDiffusionValidation(records);
+        if (canSendToDiffusionValidation) {
+            sendToDiffusionValidationButton.show();
+        }
+    }
+
+    private boolean canSendToDiffusionValidation(ListGridRecord[] records) {
         boolean canSendToDiffusionValidation = true;
         for (ListGridRecord record : records) {
             if (!canSendToDiffusionValidation(record)) {
@@ -197,9 +209,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canSendToDiffusionValidation) {
-            sendToDiffusionValidationButton.show();
-        }
+        return canSendToDiffusionValidation;
     }
 
     // Reject validation
@@ -212,6 +222,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showRejectValidationButton(ListGridRecord[] records) {
+        boolean canRejectValidation = canRejectValidation(records);
+        if (canRejectValidation) {
+            rejectValidationButton.show();
+        }
+    }
+
+    private boolean canRejectValidation(ListGridRecord[] records) {
         boolean canRejectValidation = true;
         for (ListGridRecord record : records) {
             if (!canRejectValidation(record)) {
@@ -219,9 +236,7 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canRejectValidation) {
-            rejectValidationButton.show();
-        }
+        return canRejectValidation;
     }
 
     // Publish
@@ -234,6 +249,13 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     private void showPublishButton(ListGridRecord[] records) {
+        boolean canPublish = canPublish(records);
+        if (canPublish) {
+            publishButton.show();
+        }
+    }
+
+    private boolean canPublish(ListGridRecord[] records) {
         boolean canPublish = true;
         for (ListGridRecord record : records) {
             if (!canPublish(record)) {
@@ -241,9 +263,8 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
                 break;
             }
         }
-        if (canPublish) {
-            publishButton.show();
-        }
+
+        return canPublish;
     }
 
     // Version
@@ -272,16 +293,21 @@ public abstract class LifeCycleBaseListViewImpl<C extends UiHandlers> extends Vi
     }
 
     protected void showVersionButton(ListGridRecord[] records) {
+        boolean canVersion = canVersionValidation(records);
+        if (canVersion) {
+            versionButton.show();
+        }
+    }
+
+    protected boolean canVersionValidation(ListGridRecord[] records) {
         boolean canVersion = true;
-        for (ListGridRecord record : records) {
-            if (!canVersion(record)) {
+        for (ListGridRecord resourceRecord : records) {
+            if (!canVersion(resourceRecord)) {
                 canVersion = false;
                 break;
             }
         }
-        if (canVersion) {
-            versionButton.show();
-        }
+        return canVersion;
     }
 
     // Visibility methods

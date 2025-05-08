@@ -36,6 +36,7 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacM
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataPublicationDescriptorsForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.SiemacMetadataThematicContentClassifiersForm;
+import org.siemac.metamac.statistical.resources.web.client.widgets.forms.VisualizationMetadataDescriptorsForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.ValidationRejectionWindow;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
@@ -62,6 +63,7 @@ public class PublicationMetadataTabViewImpl extends StatisticalResourceMetadataB
     private PublicationClassDescriptorsForm                          classDescriptorsForm;
     private PublicationResourceRelationDescriptorsForm               resourceRelationDescriptorsForm;
     private SiemacMetadataPublicationDescriptorsForm                 publicationDescriptorsForm;
+    private VisualizationMetadataDescriptorsForm                     visualizationMetadataDescriptorsForm;
     private LifeCycleResourceLifeCycleForm                           lifeCycleForm;
     private LifeCycleResourceVersionForm                             versionForm;
     private SiemacMetadataIntellectualPropertyDescriptorsForm        intellectualPropertyDescriptorsForm;
@@ -311,6 +313,10 @@ public class PublicationMetadataTabViewImpl extends StatisticalResourceMetadataB
         publicationDescriptorsForm = new SiemacMetadataPublicationDescriptorsForm();
         mainFormLayout.addViewCanvas(publicationDescriptorsForm);
 
+        // Visualization metadata descriptors
+        visualizationMetadataDescriptorsForm = new VisualizationMetadataDescriptorsForm();
+        mainFormLayout.addViewCanvas(visualizationMetadataDescriptorsForm);
+
         // Life cycle
         lifeCycleForm = new LifeCycleResourceLifeCycleForm();
         mainFormLayout.addViewCanvas(lifeCycleForm);
@@ -342,7 +348,7 @@ public class PublicationMetadataTabViewImpl extends StatisticalResourceMetadataB
         mainFormLayout.addEditionCanvas(thematicContentClassifiersEditionForm);
 
         // Languages
-        languageEditionForm = new SiemacMetadataLanguageEditionForm();
+        languageEditionForm = new SiemacMetadataLanguageEditionForm(false);
         mainFormLayout.addEditionCanvas(languageEditionForm);
 
         // Production descriptors

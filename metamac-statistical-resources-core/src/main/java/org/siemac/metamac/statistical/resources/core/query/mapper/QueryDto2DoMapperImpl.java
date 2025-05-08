@@ -11,8 +11,11 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.util.OptimisticLockingUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.mapper.BaseDto2DoMapperImpl;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
+import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
@@ -26,6 +29,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.exception.QueryVersionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 @org.springframework.stereotype.Component("queryDto2DoMapper")
 public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements QueryDto2DoMapper {
@@ -41,6 +45,10 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
     @Autowired
     private CodeItemRepository           codeItemRepository;
+
+    @Autowired
+    @Qualifier("commonDto2DoMapper")
+    private CommonDto2DoMapper           dto2DoMapper;
 
     @Override
     public void checkOptimisticLocking(QueryVersionBaseDto source) throws MetamacException {
@@ -113,6 +121,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         // Latest Data Number
         target.setLatestDataNumber(source.getLatestDataNumber());
 
+        dto2DoMapper.externalItemDtoCollectionToDoList(source.getTemporalGranularities(), target.getTemporalGranularities(), ServiceExceptionParameters.DATASET_VERSION__TEMPORAL_GRANULARITIES);
         // Selection
         List<QuerySelectionItem> targetItems = new ArrayList<QuerySelectionItem>(target.getSelection());
         targetItems = querySelectionDto2Do(source.getSelection(), targetItems, target, ServiceExceptionParameters.QUERY_VERSION__SELECTION);
@@ -120,7 +129,40 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         for (QuerySelectionItem item : targetItems) {
             target.addSelection(item);
         }
+        target.getHeadingDimensions().addAll(getHeadingDimension(source.getHeadingDimensions(), target));
+        target.getStubDimensions().addAll(getStubDimension(source.getStubDimensions(), target));
         return target;
+    }
+
+
+    private List<DimensionOrder> getHeadingDimension(List<RelatedResourceDto> relatedResources, QueryVersion target) {
+        target.getHeadingDimensions().clear();
+        int count = 1;
+        List<DimensionOrder> dimensionsOrder = new ArrayList<>();
+        for (RelatedResourceDto relatedResource : relatedResources) {
+            DimensionOrder dimensionOrder = new DimensionOrder();
+            dimensionOrder.setDimOrder(count);
+            dimensionOrder.setUrnDimComponentFk(relatedResource.getUrn());
+            dimensionOrder.setQueryVersionHeading(target);
+            dimensionsOrder.add(dimensionOrder);
+            count++;
+        }
+        return dimensionsOrder;
+    }
+
+    private List<DimensionOrder> getStubDimension(List<RelatedResourceDto> relatedResources, QueryVersion target) {
+        target.getStubDimensions().clear();
+        int count = 1;
+        List<DimensionOrder> dimensionsOrder = new ArrayList<>();
+        for (RelatedResourceDto relatedResource : relatedResources) {
+            DimensionOrder dimensionOrder = new DimensionOrder();
+            dimensionOrder.setDimOrder(count);
+            dimensionOrder.setUrnDimComponentFk(relatedResource.getUrn());
+            dimensionOrder.setQueryVersionStub(target);
+            dimensionsOrder.add(dimensionOrder);
+            count++;
+        }
+        return dimensionsOrder;
     }
 
     private List<QuerySelectionItem> querySelectionDto2Do(Map<String, List<CodeItemDto>> source, List<QuerySelectionItem> target, QueryVersion queryTarget, String metadataName) {

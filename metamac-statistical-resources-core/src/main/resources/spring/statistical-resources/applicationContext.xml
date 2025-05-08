@@ -21,7 +21,7 @@
     <!-- Metamac environment configuration -->
  	<bean id="configurationService" class="org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfigurationImpl">
         <property name="systemConfigurationFile">
-            <value>classpath:metamac/environment.xml</value>
+            <value>${STATISTICAL_RESOURCES_CONF_PATH:classpath:metamac/environment.xml}</value>
         </property>
     </bean>
     
@@ -37,8 +37,6 @@
     <import resource="classpath:/spring/error-beans-advice.xml" />
     <import resource="classpath:/spring/general-beans-advice.xml" />
 
-	<!-- Listener to check failed jobs -->
-	<bean id="sdmxContextInitialized" class="org.siemac.metamac.statistical.resources.core.SdmxContextInitialized"/>
 
     <!-- import additional spring configuration files -->
 

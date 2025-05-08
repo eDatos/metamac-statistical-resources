@@ -22,6 +22,10 @@ public class DatasetContentDescriptorsForm extends SiemacMetadataContentDescript
 
     public DatasetContentDescriptorsForm() {
         super();
+        init();
+    }
+
+    private void init() {
 
         ExternalItemListItem geographicCoverage = new ExternalItemListItem(DatasetDS.GEOGRAPHIC_COVERAGE, getConstants().datasetGeographicCoverage(), false);
         geographicCoverage.setShowIfCondition(getCanShowCoveragesFunction());
@@ -35,10 +39,10 @@ public class DatasetContentDescriptorsForm extends SiemacMetadataContentDescript
         ExternalItemListItem geographicGranularities = new ExternalItemListItem(DatasetDS.GEOGRAPHIC_GRANULARITY, getConstants().datasetGeographicGranularities(), false);
         ExternalItemListItem temporalGranularities = new ExternalItemListItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities(), false);
 
+        ExternalItemListItem statisticalUnit = new ExternalItemListItem(DatasetDS.STATISTICAL_UNIT, getConstants().datasetStatisticalUnit(), false);
+
         ViewTextItem dateStart = new ViewTextItem(DatasetDS.DATE_START, getConstants().datasetDateStart());
         ViewTextItem dateEnd = new ViewTextItem(DatasetDS.DATE_END, getConstants().datasetDateEnd());
-
-        ExternalItemListItem statisticalUnit = new ExternalItemListItem(DatasetDS.STATISTICAL_UNIT, getConstants().datasetStatisticalUnit(), false);
 
         addFields(dateStart, dateEnd, statisticalUnit, geographicCoverage, temporalCoverage, measures, geographicGranularities, temporalGranularities);
     }

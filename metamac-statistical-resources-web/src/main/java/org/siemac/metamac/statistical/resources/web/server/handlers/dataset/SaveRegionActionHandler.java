@@ -31,7 +31,8 @@ public class SaveRegionActionHandler extends SecurityActionHandler<SaveRegionAct
                 // A region cannot be saved if it does not have keys. If the key list is empty, the region will be deleted. If the code of the region is null, the region has not been created yet.
                 statisticalResourcesServiceFacade.deleteRegion(ServiceContextHolder.getCurrentServiceContext(), action.getContentConstraintUrn(), action.getRegionToSave().getCode());
             } else {
-                region = statisticalResourcesServiceFacade.saveRegionForContentConstraint(ServiceContextHolder.getCurrentServiceContext(), action.getContentConstraintUrn(), action.getRegionToSave());
+                region = statisticalResourcesServiceFacade.saveRegionForContentConstraint(ServiceContextHolder.getCurrentServiceContext(), action.getContentConstraintUrn(), action.getRegionToSave(),
+                        action.getSelectedDimension(), action.getDatasetUrn());
             }
             return new SaveRegionResult(region);
         } catch (MetamacException e) {

@@ -125,7 +125,15 @@ Application QueriesStatisticalResources {
 			- @QueryStatusEnum status not nullable;
 			- Bag<@QuerySelectionItem> selection inverse <-> queryVersion cascade="all-delete-orphan";
 			- @QueryTypeEnum type not nullable;
+			//temporal granularities
+			
+			- Bag<@ExternalItem> temporalGranularities cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="tb_temporal_granularity_selection" databaseColumn="temporal_granularity_fk" databaseJoinColumn="query_fk";
 			Integer latestDataNumber nullable;
+			
+			"Heading Dimensions"
+			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> queryVersionHeading;
+			"Stub dimensions"
+			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> queryVersionStub;
 			
 			Repository QueryVersionRepository {
 				save;

@@ -173,7 +173,7 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         List<String> publishedUrns = getUrnsFromExternalItems(publishedItems);
         Mockito.when(
                 statisticalOperationsRestInternalFacadeV10.findOperations(Mockito.eq(StatisticalOperationsRestInternalFacadeV10MockUtils.mockQueryFindPublishedStatisticalOperationsUrnsAsList(urns)),
-                        Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString()))
+                        Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(), Mockito.isNull(String.class)))
                 .thenReturn(StatisticalOperationsRestInternalFacadeV10MockUtils.mockStatisticalOperationsWithOnlyUrns(publishedUrns));
     }
 

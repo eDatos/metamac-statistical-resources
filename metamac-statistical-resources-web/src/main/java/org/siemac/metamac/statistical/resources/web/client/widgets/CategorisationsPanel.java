@@ -52,6 +52,10 @@ public abstract class CategorisationsPanel extends VLayout {
     protected DateWindow                                           dateWindow;
 
     public CategorisationsPanel() {
+        initCategorisationsPanel();
+    }
+
+    private void initCategorisationsPanel() {
         setMargin(15);
 
         // ToolStrip
@@ -59,7 +63,7 @@ public abstract class CategorisationsPanel extends VLayout {
         ToolStrip toolStrip = new ToolStrip();
         toolStrip.setWidth100();
 
-        newCategorisationButton = new ToolStripButton(getConstants().actionNew(), RESOURCE.newListGrid().getURL());
+        newCategorisationButton = new ToolStripButton(getTitleActionNewButton(), RESOURCE.newListGrid().getURL());
         newCategorisationButton.addClickHandler(new ClickHandler() {
 
             @Override
@@ -111,7 +115,7 @@ public abstract class CategorisationsPanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
-                deleteCategorisations(getSelectedCategorisationUrns());
+                deleteSelectedCategorisations();
                 deleteConfirmationWindow.hide();
             }
         });
@@ -146,9 +150,38 @@ public abstract class CategorisationsPanel extends VLayout {
         addMember(categorisationListGrid);
     }
 
+    protected String getTitleActionNewButton() {
+        return getConstants().actionNew();
+    }
+
+    protected void deleteSelectedCategorisations() {
+        deleteCategorisations(getSelectedCategorisationUrns());
+    }
+
     public void setCategorisations(List<CategorisationDto> categorisationDtos) {
         categorisationListGrid.setAutoFitMaxRecords(categorisationDtos.size());
         categorisationListGrid.setData(StatisticalResourcesRecordUtils.getCategorisationRecords(categorisationDtos));
+    }
+
+    public void addCategorisations(List<CategorisationDto> categorisationDtos) {
+        if (!categorisationDtos.isEmpty()) {
+            categorisationListGrid.setAutoFitMaxRecords(categorisationDtos.size() + (categorisationListGrid.getRecords() != null ? categorisationListGrid.getRecords().length : 0));
+            CategorisationRecord[] categorisations = StatisticalResourcesRecordUtils.getCategorisationRecords(categorisationDtos);
+            for (int i = 0; i < categorisations.length; i++) {
+                categorisationListGrid.addData(categorisations[i]);
+            }
+        }
+        categorisationListGrid.sort();
+    }
+
+    public boolean checkExistCategorisationInListGrid(String urn) {
+        for (ListGridRecord rawRecord : categorisationListGrid.getRecords()) {
+            CategorisationRecord categorisationRecord = (CategorisationRecord) rawRecord;
+            if (urn.equals(categorisationRecord.getUrn())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setUiHandlers(BaseUiHandlers uiHandlers) {
@@ -172,7 +205,7 @@ public abstract class CategorisationsPanel extends VLayout {
         return urns;
     }
 
-    private void showSearchCategoriesWindow() {
+    protected void showSearchCategoriesWindow() {
         SearchPaginatedAction<SrmExternalResourceRestCriteria> filterAction = new SearchPaginatedAction<SrmExternalResourceRestCriteria>() {
 
             @Override
@@ -198,15 +231,18 @@ public abstract class CategorisationsPanel extends VLayout {
 
             @Override
             public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
-                List<String> urns = new ArrayList<String>();
-                for (ExternalItemDto item : categoriesSelectionWindow.getSelectedResources()) {
-                    urns.add(item.getUrn());
-                }
-                createCategorisations(urns);
-                categoriesSelectionWindow.markForDestroy();
-
+                retrieveSelectedCategories(categoriesSelectionWindow.getSelectedResources());
             }
         });
+    }
+
+    protected void retrieveSelectedCategories(List<ExternalItemDto> selectedCategories) {
+        List<String> urns = new ArrayList<String>();
+        for (ExternalItemDto item : selectedCategories) {
+            urns.add(item.getUrn());
+        }
+        createCategorisations(urns);
+        categoriesSelectionWindow.markForDestroy();
     }
 
     public void setCategoriesForCategorisations(List<ExternalItemDto> categories, Integer firstResultOut, Integer totalResults) {

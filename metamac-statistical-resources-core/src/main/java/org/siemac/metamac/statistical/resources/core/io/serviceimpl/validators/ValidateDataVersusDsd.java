@@ -772,7 +772,8 @@ public class ValidateDataVersusDsd {
                     for (CodeResourceInternal codeType : codes.getCodes()) {
                         enumerationRepresentationsMultimap.put(codelistRepresentationUrn, codeType.getId());
 
-                        cacheCodeHierarchyGraph(codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content constraints validate
+                        codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, codeType.getUrn(), codeType.getId(), codeType.getParent()); // Auxiliary data for content
+                                                                                                                                                                     // constraints validate
                     }
                 }
 
@@ -829,30 +830,12 @@ public class ValidateDataVersusDsd {
                 for (ItemResourceInternal conceptType : concepts.getConcepts()) {
                     enumerationRepresentationsMultimap.put(conceptSchemeRepresentationUrn, conceptType.getId());
 
-                    cacheCodeHierarchyGraph(conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content constraints validate
+                    codeHierarchyMap = ManipulateDataUtils.cacheCodeHierarchyGraph(codeHierarchyMap, conceptType.getUrn(), conceptType.getId(), conceptType.getParent()); // Auxiliary data for content
+                                                                                                                                                                          // constraints
+                    // validate
                 }
             }
         }
-    }
-
-    /**
-     * Note: this method works because the creation of graph is iterate in depth first order
-     *
-     * @param codeUrn
-     * @param codeId
-     * @param codeParentUrn
-     */
-    private void cacheCodeHierarchyGraph(String codeUrn, String codeId, String codeParentUrn) {
-        if (codeHierarchyMap == null) {
-            codeHierarchyMap = new LinkedHashMap<String, CodeHierarchy>();
-        }
-
-        // For content constraints validate, create a auxiliary Map
-        CodeHierarchy codeHierarchyParent = new CodeHierarchy();
-        if (codeHierarchyMap.containsKey(codeParentUrn)) {
-            codeHierarchyParent = codeHierarchyMap.get(codeParentUrn);
-        }
-        codeHierarchyMap.put(codeUrn, CodeHierarchyBuilder.codeHierarchy().withCode(codeId).withUrn(codeUrn).withParent(codeHierarchyParent).build());
     }
 
     private boolean isTranslationNecessary(String filename, String componentId, String originaRepresentationUrn) {

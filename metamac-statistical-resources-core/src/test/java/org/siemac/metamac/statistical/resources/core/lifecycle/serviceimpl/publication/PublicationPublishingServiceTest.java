@@ -246,7 +246,7 @@ public class PublicationPublishingServiceTest extends StatisticalResourcesMockRe
 
         List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
         String cubeUrn = getCubeMockUrn(CUBE_08_EMPTY_IN_PUBLICATION_VERSION_90_NAME);
-        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET_URL, cubeUrn));
+        exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_MULTIDATASET_PUBLICATION_OR_URL, cubeUrn));
 
         expectedMetamacException(new MetamacException(exceptionItems));
 
@@ -283,6 +283,8 @@ public class PublicationPublishingServiceTest extends StatisticalResourcesMockRe
                     urn = cube.getQueryUrn();
                 } else if (cube.getMultidataset() != null) {
                     urn = cube.getMultidatasetUrn();
+                } else if (cube.getPublication() != null) {
+                    urn = cube.getPublicationUrn();
                 }
                 uniqueResourceCubes.put(urn, cube);
             }
@@ -297,6 +299,8 @@ public class PublicationPublishingServiceTest extends StatisticalResourcesMockRe
                 resources.add(StatisticalResourcesDoMocks.mockQueryRelated(cube.getQuery()));
             } else if (cube.getMultidataset() != null) {
                 resources.add(StatisticalResourcesDoMocks.mockMultidatasetRelated(cube.getMultidataset()));
+            } else if (cube.getPublication() != null) {
+                resources.add(StatisticalResourcesDoMocks.mockPublicationRelated(cube.getPublication()));
             }
         }
         return resources;

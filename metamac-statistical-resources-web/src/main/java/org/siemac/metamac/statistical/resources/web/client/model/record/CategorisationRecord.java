@@ -11,7 +11,8 @@ import org.siemac.metamac.web.common.client.widgets.NavigableListGridRecord;
 
 public class CategorisationRecord extends NavigableListGridRecord {
 
-    public CategorisationRecord(Long id, String code, String name, ExternalItemDto category, String urn, ExternalItemDto maintainer, Date validFrom, Date validTo, CategorisationDto categorisationDto) {
+    public CategorisationRecord(Long id, String code, String name, ExternalItemDto category, String urn, ExternalItemDto maintainer, Date validFrom, Date validTo,
+            CategorisationDto categorisationDto) {
         setId(id);
         setCode(code);
         setName(name);
@@ -81,5 +82,9 @@ public class CategorisationRecord extends NavigableListGridRecord {
 
     public CategorisationDto getCategorisationDto() {
         return (CategorisationDto) getAttributeAsObject(CategorisationDS.DTO);
+    }
+
+    public ExternalItemDto getCategory() {
+        return getCategorisationDto().getCategory();
     }
 }

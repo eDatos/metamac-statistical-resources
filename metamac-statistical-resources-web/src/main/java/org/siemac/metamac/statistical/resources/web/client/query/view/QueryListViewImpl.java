@@ -24,6 +24,7 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.windows.Valid
 import org.siemac.metamac.statistical.resources.web.shared.criteria.QueryVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.widgets.BaseAdvancedSearchSectionStack;
@@ -39,7 +40,7 @@ import com.smartgwt.client.widgets.grid.events.RecordClickHandler;
 public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHandlers> implements QueryListPresenter.QueryListView {
 
     private QueryVersionSearchSectionStack searchSectionStack;
-    private NewQueryWindow newQueryWindow;
+    private NewQueryWindow                 newQueryWindow;
 
     @Inject
     public QueryListViewImpl() {
@@ -116,8 +117,21 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
     }
 
     @Override
+    public void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result) {
+        List<ExternalItemDto> externalItemsDtos = result.getTemporalGranularities();
+        newQueryWindow.setCodesForTemporalGranularities(externalItemsDtos, result.getFirstResultOut(), result.getTotalResults());
+
+    }
+    @Override
     public void clearSearchSection() {
         searchSectionStack.clearSearchSection();
+        resetVisibilityButtonsByOperation();
+    }
+
+    private void resetVisibilityButtonsByOperation() {
+        if (this.newButton != null) {
+            this.newButton.setVisible(canCreate());
+        }
     }
 
     //
@@ -141,8 +155,8 @@ public class QueryListViewImpl extends LifeCycleBaseListViewImpl<QueryListUiHand
 
             @Override
             public void onClick(ClickEvent event) {
-                if (StatisticalResourcesDefaults.defaultLanguage == null) { 
-                    return; 
+                if (StatisticalResourcesDefaults.defaultLanguage == null) {
+                    return;
                 }
                 newQueryWindow = new NewQueryWindow(getConstants().queryCreate());
                 newQueryWindow.setUiHandlers(getUiHandlers());

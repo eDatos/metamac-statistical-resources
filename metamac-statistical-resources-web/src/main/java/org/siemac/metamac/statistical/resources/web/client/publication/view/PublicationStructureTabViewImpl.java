@@ -16,6 +16,7 @@ import org.siemac.metamac.statistical.resources.web.client.publication.widgets.T
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.GetMultidatasetsResult;
+import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueriesResult;
 import org.siemac.metamac.web.common.client.listener.UploadListener;
 import org.siemac.metamac.web.common.client.widgets.CustomToolStripButton;
@@ -214,8 +215,18 @@ public class PublicationStructureTabViewImpl extends ViewWithUiHandlers<Publicat
     }
 
     @Override
+    public void setStatisticalOperationsForCollectionSelection(GetStatisticalOperationsPaginatedListResult result) {
+        publicationStructureElementPanel.setStatisticalOperationsForCollectionSelection(result);
+    }
+
+    @Override
     public void setQueriesForCubes(GetQueriesResult result) {
         publicationStructureElementPanel.setQueriesForCubes(result);
+    }
+
+    @Override
+    public void setPublicationsForCubes(GetPublicationsResult result) {
+        publicationStructureElementPanel.setCollectionsForCubes(result);
     }
 
     @Override

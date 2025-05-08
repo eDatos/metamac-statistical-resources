@@ -22,7 +22,11 @@ Application QueriesStatisticalResourcesDto {
 			- @QueryTypeEnum type;
 			Integer latestDataNumber;
 			CodeDimensionMap selection;
+			- Bag<@ExternalItemDto> temporalGranularities;
 			- Bag<@RelatedResourceDto> isPartOf;
+			//METADATA VISUALISATION
+			- List<RelatedResourceDto> headingDimensions
+			- List<RelatedResourceDto> stubDimensions
 		}
 		
 		DataTransferObject SelectionItemDto {

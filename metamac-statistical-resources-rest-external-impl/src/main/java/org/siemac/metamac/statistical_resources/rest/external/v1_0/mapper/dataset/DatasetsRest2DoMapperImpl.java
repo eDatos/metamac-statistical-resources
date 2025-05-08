@@ -98,6 +98,8 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
             switch (propertyNameCriteria) {
                 case ID:
                     return DatasetVersionProperties.siemacMetadataStatisticalResource().code();
+                case NAME:
+                	return DatasetVersionProperties.siemacMetadataStatisticalResource().title().texts().label();
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }

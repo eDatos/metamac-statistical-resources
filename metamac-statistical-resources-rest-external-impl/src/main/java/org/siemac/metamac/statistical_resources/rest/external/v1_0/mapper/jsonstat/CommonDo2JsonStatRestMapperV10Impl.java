@@ -15,6 +15,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatCategory;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimension;
+import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatDimensionExtension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatExtension;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatUnit;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
@@ -45,6 +46,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnume
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedAttributeValues;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValue;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.NonEnumeratedDimensionValues;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
@@ -119,17 +121,20 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 Map<String, String> labelMap = new HashMap<>();
                 Map<String, JsonStatUnit> unitMap = new HashMap<>();
 
-                List<InternationalString> attributeNames = getAttributeNames(attributes, dsdAttribute);
-                if (attributeNames.isEmpty()) {
-                    LOGGER.debug("Attribute `{}` has no values, it should at least have 1", dsdAttribute.getComponentId());
+                Attribute attribute = getAttributeFromDsd(attributes, dsdAttribute);
+                Map<String, InternationalString> attributeValueMap = getAttributeValues(attribute);
+                if (attributeValueMap.size() != 1) {
+                    // attributes that function as a dimension should only have one value
+                    LOGGER.debug("Attribute `{}` has {} values, it should have only 1", dsdAttribute.getComponentId(), attributeValueMap.size());
                     continue;
                 }
 
-                indexMap.put(dsdAttribute.getComponentId(), 0L);
-                labelMap.put(dsdAttribute.getComponentId(), toI18nValue(attributeNames.get(0), selectedLanguage));
+                Map.Entry<String, InternationalString> attributeValueEntry = attributeValueMap.entrySet().iterator().next();
+                indexMap.put(attributeValueEntry.getKey(), 0L);
+                labelMap.put(attributeValueEntry.getKey(), toI18nValue(attributeValueEntry.getValue(), selectedLanguage));
                 Concept concept = findConceptById(measureConcepts, dsdAttribute);
                 if (isMeasure(dsdAttribute)) {
-                    setUnitIfExists(unitMap, dsdAttribute, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, dataAttributes, selectedLanguage);
+                    setUnitIfExists(unitMap, attributeValueEntry, concept, unitMeasureAttribute, unitMeasureMultiplierAttribute, dataAttributes, selectedLanguage);
                 }
 
                 jsonStatDimension.getCategory().setIndex(indexMap);
@@ -145,6 +150,17 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return jsonStatDimensionMap;
     }
 
+    private Attribute getAttributeFromDsd(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
+        if (attributes != null && attributes.getAttributes() != null) {
+            for (Attribute attribute : attributes.getAttributes()) {
+                if (attribute.getId().equals(dsdAttribute.getComponentId())) {
+                    return attribute;
+                }
+            }
+        }
+        return null;
+    }
+
     private Concept findConceptById(List<Concept> measureConcepts, DsdExternalProcessor.DsdAttribute dsdAttribute) {
         for (Concept concept : measureConcepts) {
             if (concept.getId().equals(dsdAttribute.getComponentId())) {
@@ -154,13 +170,13 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return null;
     }
 
-    private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, DsdExternalProcessor.DsdAttribute dsdAttribute, Concept concept, Attribute unitMeasureAttribute,
+    private void setUnitIfExists(Map<String, JsonStatUnit> unitMap, Map.Entry<String, InternationalString> attributeValueEntry, Concept concept, Attribute unitMeasureAttribute,
             Attribute unitMeasureMultiplierAttribute, DataAttributes dataAttributes, String selectedLanguage) {
         if ((unitMeasureAttribute != null && unitMeasureAttribute.getAttributeValues() != null)
                 || (unitMeasureMultiplierAttribute != null && unitMeasureMultiplierAttribute.getAttributeValues() != null)) {
-            unitMap.put(dsdAttribute.getComponentId(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, dataAttributes));
+            unitMap.put(attributeValueEntry.getKey(), toUnit(0, unitMeasureAttribute, unitMeasureMultiplierAttribute, selectedLanguage, dataAttributes));
         } else if (concept != null && concept.getQuantity() != null) {
-            unitMap.put(dsdAttribute.getComponentId(), toUnit(concept, selectedLanguage));
+            unitMap.put(attributeValueEntry.getKey(), toUnit(concept, selectedLanguage));
         }
     }
 
@@ -192,7 +208,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         List<Concept> measureConcepts = new ArrayList<>();
         for (Dimension dim : dimensions.getDimensions()) {
             if (dim.getType().equals(DimensionType.MEASURE_DIMENSION)) {
-                Concept measure = commonDo2RestMapper.toConcept(((EnumeratedDimensionValues) dim.getDimensionValues()).getValues().get(0).getUrn()); // TODO: get(0) ????
+                Concept measure = commonDo2RestMapper.toConcept(((EnumeratedDimensionValues) dim.getDimensionValues()).getValues().get(0).getUrn());
                 measureConcepts.add(measure);
             }
         }
@@ -280,33 +296,18 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
 
-    private static List<InternationalString> getAttributeNames(Attributes attributes, DsdExternalProcessor.DsdAttribute dsdAttribute) {
-        List<InternationalString> attributeValues = new ArrayList<>();
-        if (attributes != null && attributes.getAttributes() != null) {
-            for (Attribute attribute : attributes.getAttributes()) {
-                if (attribute.getId().equals(dsdAttribute.getComponentId())) {
-                    attributeValues = getValuesNames(attribute);
-                    break;
-                }
-            }
-        }
-        return attributeValues;
-    }
-
-    private static List<InternationalString> getValuesNames(Attribute attribute) {
-        List<InternationalString> names = new ArrayList<>();
+    private static Map<String, InternationalString> getAttributeValues(Attribute attribute) {
+        Map<String, InternationalString> attributes = new HashMap<>();
         if (attribute.getAttributeValues() instanceof EnumeratedAttributeValues) {
             for (EnumeratedAttributeValue attributeValue : ((EnumeratedAttributeValues) attribute.getAttributeValues()).getValues()) {
-                InternationalString name = attributeValue.getName();
-                names.add(name);
+                attributes.put(attributeValue.getId(), attributeValue.getName());
             }
         } else if (attribute.getAttributeValues() instanceof NonEnumeratedAttributeValues) {
             for (NonEnumeratedAttributeValue attributeValue : ((NonEnumeratedAttributeValues) attribute.getAttributeValues()).getValues()) {
-                InternationalString name = attributeValue.getName();
-                names.add(name);
+                attributes.put(attributeValue.getId(), attributeValue.getName());
             }
         }
-        return names;
+        return attributes;
     }
 
     private String toCategoryI18nName(Dimensions dimensions, String dimensionId, CodeRepresentation category, String selectedLanguage) {
@@ -561,7 +562,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
         for (DsdExternalProcessor.DsdAttribute dsdAttribute : dsdProcessorResult.getAttributes()) {
             if (DIMENSIONLIKE_ATTRIBUTES.contains(dsdAttribute.getType())) {
-                List<InternationalString> attributeValues = getAttributeNames(attributes, dsdAttribute);
+                Map<String, InternationalString> attributeValues = getAttributeValues(getAttributeFromDsd(attributes, dsdAttribute));
                 dimensionSizes.add((long) attributeValues.size());
             }
         }
@@ -569,7 +570,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
     }
 
     @Override
-    public JsonStatExtension toJsonStatExtension(DatasetVersion source, String selectedLanguage) {
+    public JsonStatExtension toJsonStatExtension(DatasetVersion source, Dimensions dimensions, String selectedLanguage) {
         JsonStatExtension extension = new JsonStatExtension();
         extension.setDatasetId(source.getSiemacMetadataStatisticalResource().getCode());
         extension.setDatasetUrn(source.getSiemacMetadataStatisticalResource().getUrn());
@@ -578,7 +579,37 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         extension.setPublishers(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getPublisher(), selectedLanguage));
         extension.setDataProviders(joinExternalItemTitles(source.getSiemacMetadataStatisticalResource().getDataProvider(), selectedLanguage));
         extension.setDataProvidersAnnotations(toI18nValue(source.getSiemacMetadataStatisticalResource().getDataProviderAnnotations(), selectedLanguage));
+        extension.setDimension(toJsonStatDimensionExtensionMap(dimensions));
         return extension;
+    }
+
+    private Map<String, JsonStatDimensionExtension> toJsonStatDimensionExtensionMap(Dimensions dimensions) {
+        Map<String, JsonStatDimensionExtension> dimensionExtensions = new HashMap<>();
+
+        List<Dimension> geographicDimensions = findDimensions(dimensions, DimensionType.GEOGRAPHIC_DIMENSION);
+        for (Dimension geographicDimension : geographicDimensions) {
+            JsonStatDimensionExtension jsonStatDimensionExtension = toJsonStatEnumeratedDimensionExtensionGranularity(geographicDimension);
+            dimensionExtensions.put(geographicDimension.getId(), jsonStatDimensionExtension);
+        }
+
+
+        List<Dimension> temporalDimensions = findDimensions(dimensions, DimensionType.TIME_DIMENSION);
+        for (Dimension temporalDimension : temporalDimensions) {
+            JsonStatDimensionExtension jsonStatDimensionExtension = toJsonStatNonEnumeratedDimensionExtensionGranularity(temporalDimension);
+            dimensionExtensions.put(temporalDimension.getId(), jsonStatDimensionExtension);
+        }
+
+        return dimensionExtensions;
+    }
+
+    private List<Dimension> findDimensions(Dimensions dimensions, DimensionType type) {
+        List<Dimension> filteredDimensions = new ArrayList<>();
+        for (Dimension dimension : dimensions.getDimensions()) {
+            if (dimension.getType() == type) {
+                filteredDimensions.add(dimension);
+            }
+        }
+        return filteredDimensions;
     }
 
     private String joinExternalItemCodes(List<ExternalItem> externalItemList) {
@@ -592,6 +623,36 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             joiner.add(title);
         }
         return joiner.toString();
+    }
+
+    private JsonStatDimensionExtension toJsonStatEnumeratedDimensionExtensionGranularity(Dimension dimensions) {
+        if (!(dimensions.getDimensionValues() instanceof EnumeratedDimensionValues)) {
+            return null;
+        }
+
+        JsonStatDimensionExtension jsonStatDimensionExtension = new JsonStatDimensionExtension();
+        Map<String, String> geographicGranularities = new HashMap<>();
+        for (EnumeratedDimensionValue dimValue : ((EnumeratedDimensionValues) dimensions.getDimensionValues()).getValues()) {
+            ResourceStatisticalResourceBase geographicGranularity = dimValue.getGeographicGranularity();
+            geographicGranularities.put(dimValue.getId(), geographicGranularity.getId());
+        }
+        jsonStatDimensionExtension.setGeographicGranularity(geographicGranularities);
+        return jsonStatDimensionExtension;
+    }
+
+    private JsonStatDimensionExtension toJsonStatNonEnumeratedDimensionExtensionGranularity(Dimension dimensions) {
+        if (!(dimensions.getDimensionValues() instanceof NonEnumeratedDimensionValues)) {
+            return null;
+        }
+
+        JsonStatDimensionExtension jsonStatDimensionExtension = new JsonStatDimensionExtension();
+        Map<String, String> temporalGranularities = new HashMap<>();
+        for (NonEnumeratedDimensionValue dimValue : ((NonEnumeratedDimensionValues) dimensions.getDimensionValues()).getValues()) {
+            String temporalGranularity = dimValue.getTemporalGranularity();
+            temporalGranularities.put(dimValue.getId(), temporalGranularity);
+        }
+        jsonStatDimensionExtension.setTemporalGranularity(temporalGranularities);
+        return jsonStatDimensionExtension;
     }
 
     private String joinExternalItemTitles(List<ExternalItem> externalItemList, String selectedLanguage) {
@@ -668,7 +729,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             return null;
         }
 
-        org.siemac.metamac.rest.common.v1_0.domain.InternationalString internationalString = new org.siemac.metamac.rest.common.v1_0.domain.InternationalString();
+        InternationalString internationalString = new InternationalString();
         for (LocalisedString item : source.getTexts()) {
             org.siemac.metamac.rest.common.v1_0.domain.LocalisedString localisedString = new org.siemac.metamac.rest.common.v1_0.domain.LocalisedString();
             localisedString.setValue(item.getLabel());

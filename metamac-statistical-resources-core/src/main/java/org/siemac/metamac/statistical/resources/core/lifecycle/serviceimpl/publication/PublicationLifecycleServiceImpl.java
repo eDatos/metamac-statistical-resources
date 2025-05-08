@@ -141,8 +141,8 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
     private void checkAllCubesLinkToDatasetQueryOrMultidataset(PublicationVersion resource, List<MetamacExceptionItem> exceptionItems) {
         for (ElementLevel elementLevel : resource.getChildrenAllLevels()) {
             if (elementLevel.isCube() && elementLevel.getCube().getDataset() == null && elementLevel.getCube().getQuery() == null && elementLevel.getCube().getMultidataset() == null
-                    && elementLevel.getCube().getUrl() == null) {
-                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_OR_MULTIDATASET_URL,
+                    && elementLevel.getCube().getUrl() == null && elementLevel.getCube().getPublication() == null) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_CUBE_MUST_LINK_TO_DATASET_QUERY_MULTIDATASET_PUBLICATION_OR_URL,
                         elementLevel.getCube().getNameableStatisticalResource().getUrn()));
             }
         }
@@ -158,6 +158,8 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
                     checkQueryMustBePublishedAndVisibleBeforePublication(resource, exceptionItems, cube.getQueryUrn());
                 } else if (cube.getMultidataset() != null) {
                     checkMultidatasetMustBePublishedAndVisibleBeforePublication(exceptionItems, cube.getMultidatasetUrn());
+                } else if (cube.getPublication() != null) {
+                    checkPublicationMustBePublishedAndVisibleBeforePublication(exceptionItems, cube.getPublicationUrn());
                 }
             }
         }
@@ -198,6 +200,16 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
             MultidatasetVersion lastVersion = multidatasetVersionRepository.retrieveLastVersion(multidatasetUrn);
             if (!ProcStatusEnumUtils.isInAnyProcStatus(lastVersion, ProcStatusEnum.PUBLISHED)) {
                 exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_MULTIDATASET, multidatasetUrn));
+            }
+        }
+    }
+
+    protected void checkPublicationMustBePublishedAndVisibleBeforePublication(List<MetamacExceptionItem> exceptionItems, String publicationUrn) throws MetamacException {
+        PublicationVersion lastPublishedVersion = publicationVersionRepository.retrieveLastPublishedVersion(publicationUrn);
+        if (lastPublishedVersion == null) {
+            PublicationVersion lastVersion = publicationVersionRepository.retrieveLastVersion(publicationUrn);
+            if (!ProcStatusEnumUtils.isInAnyProcStatus(lastVersion, ProcStatusEnum.PUBLISHED)) {
+                exceptionItems.add(new MetamacExceptionItem(ServiceExceptionType.PUBLICATION_VERSION_LINKED_TO_NOT_PUBLISHED_PUBLICATION, publicationUrn));
             }
         }
     }

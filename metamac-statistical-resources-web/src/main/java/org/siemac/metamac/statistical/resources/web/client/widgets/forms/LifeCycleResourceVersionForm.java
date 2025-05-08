@@ -19,17 +19,25 @@ import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class LifeCycleResourceVersionForm extends GroupDynamicForm {
+
     CustomDatePickerItem nextVersionDate;
-    
+
     public LifeCycleResourceVersionForm() {
         super(getConstants().formVersion());
+        init();
+    }
+
+    private void init() {
 
         ViewTextItem versionLogic = new ViewTextItem(VersionableResourceDS.VERSION, getConstants().versionableStatisticalResourceVersionLogic());
+
         SearchVersionRationaleTypeItem versionRationaleTypeItem = new SearchVersionRationaleTypeItem(VersionableResourceDS.VERSION_RATIONALE_TYPES,
                 getConstants().versionableStatisticalResourceVersionRationaleTypes(), false);
         ViewMultiLanguageTextItem versionRationale = new ViewMultiLanguageTextItem(VersionableResourceDS.VERSION_RATIONALE, getConstants().versionableStatisticalResourceVersionRationale());
         ViewTextItem validFrom = new ViewTextItem(VersionableResourceDS.VALID_FROM, getConstants().versionableStatisticalResourceValidFrom());
+
         ViewTextItem validTo = new ViewTextItem(VersionableResourceDS.VALID_TO, getConstants().versionableStatisticalResourceValidTo());
+
         ViewTextItem nextVersion = new ViewTextItem(VersionableResourceDS.NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersion());
         ViewTextItem nextVersionView = new ViewTextItem(VersionableResourceDS.NEXT_VERSION_VIEW, getConstants().versionableStatisticalResourceNextVersion());
         nextVersionView.setVisible(false);
@@ -66,8 +74,8 @@ public class LifeCycleResourceVersionForm extends GroupDynamicForm {
         String nextVersionValue = getValueAsString(VersionableResourceDS.NEXT_VERSION_VIEW);
         return StringUtils.equals(NextVersionTypeEnum.SCHEDULED_UPDATE.name(), nextVersionValue);
     }
-    
+
     private CustomDatePickerItem createFieldDateNextVersion() {
-        return  new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), true, false, CommonUtils.getDateFormatTypeHashMap());
+        return new CustomDatePickerItem(VersionableResourceDS.DATE_NEXT_VERSION, getConstants().versionableStatisticalResourceNextVersionDate(), true, false, CommonUtils.getDateFormatTypeHashMap());
     }
 }

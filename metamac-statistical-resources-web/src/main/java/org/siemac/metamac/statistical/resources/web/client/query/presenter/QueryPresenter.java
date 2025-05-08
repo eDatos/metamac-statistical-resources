@@ -38,6 +38,8 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.DeleteQueryVersionsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueryVersionAction;
@@ -109,6 +111,8 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
         void setAgenciesForMaintainer(GetAgenciesPaginatedListResult result);
 
         void showUnauthorizedResourceWarningMessage();
+
+        void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result);
     }
 
     @Inject
@@ -278,8 +282,8 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
     }
 
     @Override
-    public void retrieveDimensionCodesForDataset(String urn, final String dimensionId, MetamacWebCriteria webCriteria) {
-        dispatcher.execute(new GetDatasetDimensionCoverageAction(urn, dimensionId, webCriteria), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionCoverageResult>(this) {
+    public void retrieveDimensionCodesForDataset(String urn, final String dimensionId, MetamacWebCriteria webCriteria, List<String> temporalGranularities) {
+        dispatcher.execute(new GetDatasetDimensionCoverageAction(urn, dimensionId, webCriteria, temporalGranularities), new WaitingAsyncCallbackHandlingError<GetDatasetDimensionCoverageResult>(this) {
 
             @Override
             public void onWaitSuccess(GetDatasetDimensionCoverageResult result) {
@@ -414,5 +418,16 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
     @Override
     public void goToQueries() {
         placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteQueriesPlaceRequest(StatisticalResourcesDefaults.getSelectedStatisticalOperation().getUrn()));
+    }
+
+    @Override
+    public void retrieveTemporalCodesForField(int firstResult, int maxResults, String datasetUrn, MetamacWebCriteria webCriteria) {
+        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(firstResult, maxResults, datasetUrn, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
+                getView().setTemporalCodesForField(result);
+            }
+        });
     }
 }
