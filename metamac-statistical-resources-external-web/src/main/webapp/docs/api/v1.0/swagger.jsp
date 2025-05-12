@@ -1232,7 +1232,17 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.value.description']}",
                      "type":"string"
-                  }
+                     },
+                     "multilingualValues":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.multilingualValues.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/InternationalString"
+                     }
+                     },   
                }
             }
          ],
