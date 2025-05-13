@@ -11,6 +11,9 @@ import static org.siemac.metamac.rest.statistical_resources.constants.RestTestCo
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_7_DIMENSION;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_8_DIMENSION;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_9_DIMENSION;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_DIMENSION_MULTILINGUAL_1_GLOBAL;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_GROUP_MULTILINGUAL_1_GLOBAL;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_MULTILINGUAL_1_GLOBAL;
 import static org.siemac.metamac.rest.structural_resources.v1_0.utils.RestMocks.mockInternationalString;
 
 import java.math.BigInteger;
@@ -95,6 +98,7 @@ public class SrmRestMocks {
 
         components.setAttributes(new Attributes());
         components.getAttributes().getAttributes().add(mockAttributeDataset(ATTRIBUTE_1_GLOBAL, null, null));
+        components.getAttributes().getAttributes().add(mockAttributeDatasetNonEnumerated(ATTRIBUTE_MULTILINGUAL_1_GLOBAL));
         components.getAttributes().getAttributes().add(mockAttributeDataset(ATTRIBUTE_2_GLOBAL, mockCodelistResource("agency01", "abc", "01.000"), null));
         components.getAttributes().getAttributes().add(mockAttributeDimension(ATTRIBUTE_3_DIMENSION, null, Arrays.asList("GEO_DIM"), null, null));
         components.getAttributes().getAttributes().add(mockAttributeDimension(ATTRIBUTE_4_DIMENSION, null, Arrays.asList("GEO_DIM", "dim01"), null, null));
@@ -106,6 +110,10 @@ public class SrmRestMocks {
         components.getAttributes().getAttributes().add(mockAttributeGroup(ATTRIBUTE_9_DIMENSION, "group02", null, null));
         components.getAttributes().getAttributes().add(mockAttributePrimaryMeasure(ATTRIBUTE_10_OBSERVATION, null, null));
         components.getAttributes().getAttributes().add(mockAttributePrimaryMeasure(ATTRIBUTE_11_OBSERVATION, null, null));
+
+        // International string values
+        components.getAttributes().getAttributes().add(mockAttributeDimensionNonEnumerated(ATTRIBUTE_DIMENSION_MULTILINGUAL_1_GLOBAL, Arrays.asList("GEO_DIM")));
+        components.getAttributes().getAttributes().add(mockAttributeGroupNonEnumerated(ATTRIBUTE_GROUP_MULTILINGUAL_1_GLOBAL, "group03"));
 
         dataStructure.setShowDecimals(Integer.valueOf(2));
         dataStructure.setShowDecimalsPrecisions(new ShowDecimalPrecisions());
@@ -387,6 +395,14 @@ public class SrmRestMocks {
         return attribute;
     }
 
+    private static AttributeBase mockAttributeDatasetNonEnumerated(String id) {
+        Attribute attribute = new Attribute();
+        mockMultilingualAttribute(id, attribute);
+        attribute.setAttributeRelationship(new AttributeRelationship());
+        attribute.getAttributeRelationship().setNone(new Empty());
+        return attribute;
+    }
+
     private static AttributeBase mockAttributeDimension(String id, AttributeQualifierType type, List<String> dimensions, ResourceInternal enumeratedCodelist,
             ResourceInternal enumeratedConceptScheme) {
         Attribute attribute = new Attribute();
@@ -397,12 +413,42 @@ public class SrmRestMocks {
         return attribute;
     }
 
+    private static AttributeBase mockAttributeDimensionNonEnumerated(String id, List<String> dimensions) {
+        Attribute attribute = new Attribute();
+        mockMultilingualAttribute(id, attribute);
+        attribute.setAttributeRelationship(new AttributeRelationship());
+        attribute.getAttributeRelationship().getDimensions().addAll(dimensions);
+        return attribute;
+    }
+
     private static AttributeBase mockAttributeGroup(String id, String group, ResourceInternal enumeratedCodelist, ResourceInternal enumeratedConceptScheme) {
         Attribute attribute = new Attribute();
         mockAttributeBase(id, attribute, enumeratedCodelist, enumeratedConceptScheme);
         attribute.setAttributeRelationship(new AttributeRelationship());
         attribute.getAttributeRelationship().setGroup(group);
         return attribute;
+    }
+
+    private static AttributeBase mockAttributeGroupNonEnumerated(String id, String group) {
+        Attribute attribute = new Attribute();
+        mockMultilingualAttribute(id, attribute);
+        attribute.setAttributeRelationship(new AttributeRelationship());
+        attribute.getAttributeRelationship().setGroup(group);
+        return attribute;
+    }
+
+    private static void mockMultilingualAttribute(String id, AttributeBase attribute) {
+        attribute.setId(id);
+        attribute.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-concept01", null));
+        attribute.setLocalRepresentation(new Representation());
+        attribute.getLocalRepresentation().setTextFormat(mockMultilingualTextFormatType());
+
+    }
+
+    private static TextFormat mockMultilingualTextFormatType() {
+        TextFormat internationalStringTextFormatType = new TextFormat();
+        internationalStringTextFormatType.setTextType(DataType.INTERNATIONAL_STRING);
+        return internationalStringTextFormatType;
     }
 
     private static AttributeBase mockAttributePrimaryMeasure(String id, ResourceInternal enumeratedCodelist, ResourceInternal enumeratedConceptScheme) {
