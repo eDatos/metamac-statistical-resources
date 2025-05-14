@@ -919,6 +919,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
         taskInfo.setStoreAlternativeRepresentations(storeDimensionRepresentationMapping);
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
+        taskInfo.setDatasetVersionCode(datasetVersion.getSiemacMetadataStatisticalResource().getCode());
         if (basicVersionableStatisticalResourceDto != null) {
             taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
             taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());

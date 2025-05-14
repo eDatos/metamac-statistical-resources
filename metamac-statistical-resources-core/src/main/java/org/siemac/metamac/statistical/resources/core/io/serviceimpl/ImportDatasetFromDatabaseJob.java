@@ -47,7 +47,7 @@ public class ImportDatasetFromDatabaseJob extends AbstractImportDatasetJob {
     }
 
     @Override
-    protected void sendSuccessNotification(String fileNames, String user) {
+    protected void sendSuccessNotification(String fileNames, String user, String datasetVersionCode) {
         // This dataset import is invoked from a continuous job, it's not necessary notification to user when the process goes OK
     }
 
@@ -62,7 +62,7 @@ public class ImportDatasetFromDatabaseJob extends AbstractImportDatasetJob {
     }
 
     @Override
-    protected void processImportJobError(String taskName, String fileNames, MetamacException metamacException) {
+    protected void processImportJobError(String taskName, String fileNames, String datasetVersionCode, MetamacException metamacException) {
         try {
             getTaskServiceFacade().markTaskAsFinished(serviceContext, taskName);
             logger.info("{} marked as finished with error at {}", taskName, new Date());
