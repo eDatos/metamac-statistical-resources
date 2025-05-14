@@ -18,18 +18,7 @@
     <listener>
         <listener-class>org.siemac.metamac.statistical.resources.web.external.ApplicationStartup</listener-class>
     </listener>
-    
-    <!-- URL rewriting -->
-    <filter>
-            <filter-name>UrlRewriteFilter</filter-name>
-            <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
-    </filter>
-    <filter-mapping>
-            <filter-name>UrlRewriteFilter</filter-name>
-            <url-pattern>/apis/*</url-pattern>
-            <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-    
+
     <filter>
         <filter-name>CORSFilter</filter-name>
         <filter-class>org.siemac.metamac.core.common.filter.CORSFilter</filter-class>
@@ -39,6 +28,17 @@
         <url-pattern>/apis/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
+    <!-- URL rewriting -->
+    <filter>
+            <filter-name>UrlRewriteFilter</filter-name>
+            <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+    </filter>
+    <filter-mapping>
+            <filter-name>UrlRewriteFilter</filter-name>
+            <url-pattern>/apis/*</url-pattern>
+            <dispatcher>REQUEST</dispatcher>
+            <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
     <filter>
