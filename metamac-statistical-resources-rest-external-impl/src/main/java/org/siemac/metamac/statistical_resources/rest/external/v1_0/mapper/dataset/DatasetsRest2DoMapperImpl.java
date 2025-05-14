@@ -85,10 +85,17 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                 case STATISTICAL_OPERATION_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation());
                 case IS_LAST_VERSION:
-                    return buildSculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteriaForDateProperty(getSculptorPropertyCriteriaForValidFromIsNull(), DatasetVersionProperties.siemacMetadataStatisticalResource().validTo(), DatasetVersion.class, false);
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }
+        }
+
+        private MetamacRestQueryPropertyRestriction getSculptorPropertyCriteriaForValidFromIsNull() {
+            MetamacRestQueryPropertyRestriction propertyRestriction = new MetamacRestQueryPropertyRestriction();
+            propertyRestriction.setOperationType(OperationTypeEnum.IS_NULL);
+            propertyRestriction.setPropertyName(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo().getName());
+            return propertyRestriction;
         }
 
         @SuppressWarnings("rawtypes")
