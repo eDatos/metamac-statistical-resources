@@ -489,7 +489,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         
         JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put(AbstractImportDatasetJob.DATASET_VERSION_RATIONALE, taskInfoDataset.getVersionRationale());
-        
         JobBuilder jobBuilder = 
                 newJob().withIdentity(jobKey)
                     .usingJobData(AbstractImportDatasetJob.FILE_PATHS, filePaths.toString())
@@ -510,6 +509,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .usingJobData(AbstractImportDatasetJob.DATASET_AUTOMATIC_LIFE_CICLE, taskInfoDataset.getDatasetAutomaticLifeCicle())
                     .usingJobData(AbstractImportDatasetJob.TASK_NAME, taskName)
                     .usingJobData(AbstractImportDatasetJob.USER, serviceContext.getUserId())
+                    .usingJobData(AbstractImportDatasetJob.DATASET_CODE, taskInfoDataset.getDatasetVersionCode())
                     .usingJobData(jobDataMap);
         // @formatter:on
 
@@ -2118,6 +2118,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     
     abstract class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
+        @Override
         public final T doInTransaction(TransactionStatus status) {
             try {
                 return doInMetamacTransaction(status);
