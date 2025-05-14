@@ -1232,8 +1232,27 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.value.description']}",
                      "type":"string"
+                     }                  
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.dataAttribute.description']}"
+      },
+      "DataInternationalAttribute":{
+         "type":"object",
+         "title":"DataInternationalAttribute",
+         "allOf":[
+            {
+               "properties":{
+                  "id":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
                      },
-                     "multilingualValues":{
+                     "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.id.description']}",
+                     "type":"string"
+                  },
+                    "values":{
                      "xml":{
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
@@ -1246,7 +1265,7 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.dataAttribute.description']}"
+         "description":"${msg['api.doc.swagger.definitions.dataInternationalAttribute.description']}"
       },
       "DataAttributes":{
          "type":"object",
@@ -1270,6 +1289,16 @@
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/DataAttribute"
+                     }
+                  },
+                  "internationalAttribute":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.dataAttributes.properties.internationalAttribute.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/DataInternationalAttribute"
                      }
                   }
                }

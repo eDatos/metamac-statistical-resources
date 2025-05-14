@@ -121,6 +121,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Contacts
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataInternationalAttribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataStructureDefinition;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
@@ -428,12 +429,24 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             if (CollectionUtils.isEmpty(target.getAttributes().getAttributes())) {
                 target.setAttributes(null);
             } else {
-                target.getAttributes().setTotal(BigInteger.valueOf(target.getAttributes().getAttributes().size()));
+                target.getAttributes().setTotal(getTotalAttributes(target.getAttributes()));
             }
         } catch (MetamacException e) {
             handleDatasetException(e, checkNoData);
         }
         return target;
+    }
+
+    private BigInteger getTotalAttributes(DataAttributes attributes) {
+        BigInteger totalAttributes = BigInteger.valueOf(0);
+        if (attributes.getAttributes() != null) {
+            totalAttributes = totalAttributes.add(BigInteger.valueOf(attributes.getAttributes().size()));
+        }
+        if (!CollectionUtils.isEmpty(attributes.getInternationalAttributes())) {
+            totalAttributes = totalAttributes.add(BigInteger.valueOf(attributes.getInternationalAttributes().size()));
+        }
+        return totalAttributes;
+
     }
 
     @Override
@@ -1783,13 +1796,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private void getInternationalStringAttributes(DataAttributes targets, String attributeId, TemporalAttributeValues temporalAttributeValues, List<String> selectedLanguages) {
         if (!temporalAttributeValues.getInternationalStringValues().isEmpty()) {
-            DataAttribute target = new DataAttribute();
+            DataInternationalAttribute target = new DataInternationalAttribute();
             target.setId(attributeId);
             for (InternationalStringDto attributeValue : temporalAttributeValues.getInternationalStringValues()) {
-                target.getMultilingualValues().addAll(getNonEnumeratedAttributeDataMultilingualValues(Arrays.asList(attributeValue), selectedLanguages));
+                target.getValues().addAll(getNonEnumeratedAttributeDataMultilingualValues(Arrays.asList(attributeValue), selectedLanguages));
 
             }
-            targets.getAttributes().add(target);
+            targets.getInternationalAttributes().add(target);
         }
     }
 
