@@ -95,6 +95,7 @@ public class SrmRestMocks {
         components.setGroups(new Groups());
         components.getGroups().getGroups().add(mockGroup("group01", Arrays.asList("TIME_PERIOD", "GEO_DIM")));
         components.getGroups().getGroups().add(mockGroup("group02", Arrays.asList("GEO_DIM", "TIME_PERIOD", "dim01")));
+        components.getGroups().getGroups().add(mockGroup("group03", Arrays.asList("TIME_PERIOD", "GEO_DIM")));
 
         components.setAttributes(new Attributes());
         components.getAttributes().getAttributes().add(mockAttributeDataset(ATTRIBUTE_1_GLOBAL, null, null));
