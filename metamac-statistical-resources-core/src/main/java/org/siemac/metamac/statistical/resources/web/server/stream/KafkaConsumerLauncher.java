@@ -38,6 +38,7 @@ import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -60,29 +61,29 @@ import net.sf.ehcache.CacheManager;
 @Component
 public class KafkaConsumerLauncher implements ApplicationListener<ContextRefreshedEvent> {
 
-    protected static final Log             LOGGER                  = LogFactory.getLog(KafkaConsumerLauncher.class);
-    
-    private static final String      MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
-    
+    protected static final Log                LOGGER                                                    = LogFactory.getLog(KafkaConsumerLauncher.class);
+
+    private static final String               MAX_POOL_MSG                                              = "We have set a poll of 1 message at most. This error can not be given.";
+
     @Autowired
     private StatisticalResourcesConfiguration statisticalResourcesConfiguration;
-    
+
     @Autowired
-    private ThreadPoolTaskExecutor         threadPoolTaskExecutor;
-    
+    private ThreadPoolTaskExecutor            threadPoolTaskExecutor;
+
     @Autowired
-    private NoticesRestInternalService     noticesRestInternalService;
-    
+    private NoticesRestInternalService        noticesRestInternalService;
+
     @Autowired
-    private StatisticalResourcesServiceFacade     statisticalResourcesServiceFacade;
-    
-    private Map<String, Future<?>>         futuresMap;
-    
-    private Cache                          kafkaFailedMessagesCache;
-    private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME   = "statistical_resources_consumer_jaxi_publication_1";
-    private static final String            CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME   = "statistical_resources_consumer_jaxi_publication_2";
-    private static final String            KAFKA_FAILED_CACHE_NAME = "kafkaFailed";
-    
+    private StatisticalResourcesServiceFacade statisticalResourcesServiceFacade;
+
+    private Map<String, Future<?>>            futuresMap;
+
+    private Cache                             kafkaFailedMessagesCache;
+    private static final String               CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME     = "statistical_resources_consumer_jaxi_publication_1";
+    private static final String               CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME = "statistical_resources_consumer_jaxi_publication_2";
+    private static final String               KAFKA_FAILED_CACHE_NAME                                   = "kafkaFailed";
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
         ApplicationContext ac = event.getApplicationContext();
@@ -109,7 +110,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
             // @formatter:on
     }
-    
+
     private Boolean checkIsAvailableTopic(List<NewTopic> availableTopics, String topicName) {
         for (NewTopic topic : availableTopics) {
             if (topicName.equals(topic.name())) {
@@ -175,7 +176,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
             } finally {
                 sendErrorNotification(exceptionItems);
             }
-            
+
         }
 
     }
@@ -183,7 +184,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private void updateDatasetExternalPublication(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer, List<MetamacExceptionItem> exceptionItems) throws MetamacException {
         int it = 0;
         Long latestOffset = getLastConsumerOffset();
-        
+
         if (latestOffset <= 0L) {
             noticesRestInternalService.createExternalPublicationUpdateErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR);
         }
@@ -214,19 +215,19 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 // Process resources
                 ConsumerRecord<String, DatasetAvro> record = records.iterator().next();
 
-                if (record.offset() >= latestOffset-1) {
+                if (record.offset() >= latestOffset - 1) {
                     LOGGER.info("The dataset external publication update has finished correctly. Consumer topic external publication last offset " + latestOffset);
                     keepOnReading = false;
                 }
-       
+
                 if (!removePendingOffsets(consumer, record, pendigOffsetsToCommit)) {
                     callFacadeBusinessLogicUpdateCache(externalPublicationTopicName, consumer, record, pendigOffsetsToCommit, exceptionItems);
                 }
             }
         }
-       
+
     }
-    
+
     private void sendErrorNotification(List<MetamacExceptionItem> exceptionItems) {
         if (!exceptionItems.isEmpty()) {
             MetamacException metamacException = new MetamacException();
@@ -235,7 +236,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
             noticesRestInternalService.createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_DATASET, metamacException);
         }
     }
-    
+
     private boolean removePendingOffsets(KafkaConsumer<String, DatasetAvro> consumer, ConsumerRecord<String, DatasetAvro> record, Map<Integer, Long> pendigOffsetsToCommit) {
         if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
             LOGGER.debug("The current message already processed successfully");
@@ -247,7 +248,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
         return false;
     }
-    
+
     private void externalPublicationConsumerConfig(String externalPublicationTopicName, KafkaConsumer<String, DatasetAvro> consumer) {
         consumer.subscribe(Collections.singleton(externalPublicationTopicName), new ConsumerRebalanceListener() {
 
@@ -301,13 +302,13 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
             LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
         }
     }
-    
+
     private void removeFromErrorCacheMessagesIfNeccesary(ConsumerRecord<String, DatasetAvro> record) {
         if (kafkaFailedMessagesCache.isKeyInCache(record.key())) {
             kafkaFailedMessagesCache.remove(record.key());
         }
     }
-    
+
     private ServiceContext createServiceContext(String logMessage) {
         ServiceContext serviceContext = new ServiceContext("kafka-jaxi-publication-received", logMessage.toString(), "metamac-statistical-resources-core");
         MetamacPrincipal metamacPrincipal = new MetamacPrincipal();
@@ -333,7 +334,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         kafkaConsumer.subscribe(Collections.singletonList(topic));
         return kafkaConsumer;
     }
-    
+
     private Properties getCustomonsumerProperties(String clientId) throws MetamacException {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
@@ -347,28 +348,25 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 900000); // 15 min, Max time for Bussiness Logic execution of consumer thread
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1); // The maximum number of records returned in a single call to poll()
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.toString().toLowerCase()); // Policy to follow when there are no confirmed offset
-        
-        
 
         props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, statisticalResourcesConfiguration.retrieveKafkaSchemaRegistryUrl());
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
 
         return props;
     }
-    
-    
+
     public void startKeepAliveKafkaThread(ApplicationContext context) throws MetamacException {
         KeepAliveKafkaThread keepAliveKafkaThread = new KeepAliveKafkaThread();
         threadPoolTaskExecutor.execute(keepAliveKafkaThread);
     }
-    
+
     private void prepareFailedMessageCache() {
         CacheManager cacheManager = CacheManager.getInstance();
         cacheManager.addCache(KAFKA_FAILED_CACHE_NAME);
         Cache cache = cacheManager.getCache(KAFKA_FAILED_CACHE_NAME);
         kafkaFailedMessagesCache = cache;
     }
-    
+
     @SuppressWarnings({"unchecked", "rawtypes"})
     private Future<?> startConsumerForExternalDatasetPublicationTopic(ApplicationContext context, String externalPublicationTopicName) throws MetamacException {
         String topicJaxiPublication = externalPublicationTopicName;
@@ -379,9 +377,18 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
         consumerThread.setNoticesRestInternalService(noticesRestInternalService);
         consumerThread.setKafkaFailedMessagesCache(kafkaFailedMessagesCache);
+        consumerThread.setIsJaxiConsumerDisabled(retrieveJaxiPublicationConsumerIsDisabled());
         return threadPoolTaskExecutor.submit(consumerThread);
     }
-    
+
+    private boolean retrieveJaxiPublicationConsumerIsDisabled() {
+        try {
+            return statisticalResourcesConfiguration.retrievePropertyBoolean(StatisticalResourcesConfigurationConstants.DISABLED_JAXI_PUBLICATIONS_CONSUMER);
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private Properties getConsumerProperties(String clientId) throws MetamacException {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
@@ -401,13 +408,13 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
         return props;
     }
-    
+
     private KafkaConsumer<String, DatasetAvro> createConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
         KafkaConsumer<String, DatasetAvro> kafkaConsumer = new KafkaConsumer<>(getConsumerProperties(clientId));
         kafkaConsumer.subscribe(Collections.singletonList(topic));
         return kafkaConsumer;
     }
-    
+
     class KeepAliveKafkaThread implements Runnable {
 
         @Override
@@ -436,7 +443,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 }
             }
         }
-     
+
         private boolean alwaysWithDelay(long timeout) {
             try {
                 Thread.sleep(timeout);
@@ -446,5 +453,5 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
             return true;
         }
     }
-    
+
 }
