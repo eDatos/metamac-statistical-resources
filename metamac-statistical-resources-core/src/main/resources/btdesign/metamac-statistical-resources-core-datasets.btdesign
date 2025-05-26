@@ -414,7 +414,7 @@ Application DatasetsStatisticalResources {
 			!optimisticLocking
 			
 			Long id not nullable key;
-			String maintainerUrn not nullable;
+			String maintainerUrn not nullable length="4000";
 			Long actualSequence not nullable;
 			
 			Repository CategorisationSequenceRepository {
