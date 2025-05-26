@@ -3160,7 +3160,11 @@
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_GET",
             "produces":[
+               "application/json",
+               "application/xml",
                "application/jsonstat+json",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                {
@@ -3247,11 +3251,7 @@
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_POST",
             "produces":[
-               "application/json",
-               "application/xml",
-               "application/jsonstat+json",
-               "text/tab-separated-values",
-               "text/csv"
+               "application/jsonstat+json"
             ],
             "parameters":[
                {
