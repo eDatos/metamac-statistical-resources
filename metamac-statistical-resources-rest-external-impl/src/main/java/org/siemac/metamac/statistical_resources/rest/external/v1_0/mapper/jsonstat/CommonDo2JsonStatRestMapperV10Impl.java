@@ -32,6 +32,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepr
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Data;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataAttributes;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DataInternationalAttribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentations;
@@ -365,7 +366,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         }
         for (DsdExternalProcessor.DsdAttribute attribute : attributesThatAreNotAtObservationLevel) {
             if (attribute.getAttributeRelationship().getNone() != null) {
-                notes.addAll(getNotesForDatasetLevelAttribute(attribute, source));
+                notes.addAll(getNotesForDatasetLevelAttribute(attribute, source, selectedLanguage));
             } else if (!attribute.getAttributeRelationship().getDimensions().isEmpty() || attribute.getAttributeRelationship().getGroup() != null) {
                 notes.addAll(getNotesForAttributesAssociatedToCategories(attribute, dimensions, attributes, selectedLanguage, data, dsdProcessorResult));
             }
@@ -373,7 +374,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return notes;
     }
 
-    private List<String> getNotesForDatasetLevelAttribute(DsdExternalProcessor.DsdAttribute attribute, DatasetVersion source) {
+    private List<String> getNotesForDatasetLevelAttribute(DsdExternalProcessor.DsdAttribute attribute, DatasetVersion source, String selectedLanguage) {
         if (DIMENSIONLIKE_ATTRIBUTES.contains(attribute.getType())) {
             return Collections.emptyList(); // don't include in the notes dsdAttributes of spatial, measure or temporal type
         }
@@ -382,7 +383,9 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         // To find the value of the attribute we need to look up the dataset attribute coverage.
         AttributeValue attributeCoverage = getAttributeCoverageByComponentId(source.getAttributesCoverage(), attribute.getComponentId());
         if (attributeCoverage != null) {
-            String note = attributeCoverage.getTitle();
+            String note = attributeCoverage.getTitle() != null
+                          ? attributeCoverage.getTitle()
+                          : toI18nValue(attributeCoverage.getInternationalStringValue(), selectedLanguage);
             notes.add(note);
         }
         return notes;
@@ -404,15 +407,16 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
             DsdProcessorResult dsdProcessorResult) {
         List<String> notes = new ArrayList<>();
         List<DimensionRepresentation> attributeAssociatedDimensions = getDimensionsAssociatedToAttribute(attribute, data, dsdProcessorResult);
-        DataAttribute dataAttribute = getAttributeFromDatasetData(attribute, data);
-        if (dataAttribute == null) {
+
+        List<String> attributeValues = getAttributeValuesFromDatasetData(attributes, attribute, data, selectedLanguage);
+        if (attributeValues == null) {
             return notes;
         }
-        List<String> attributeValues = new ArrayList<>();
-        for (String attributeValue : dataAttribute.getValue().split("\\|")) {
-            attributeValues.add(toAttributeI18nName(attributes, attribute.getComponentId(), attributeValue.trim(), selectedLanguage));
+
+        if (!attributeValues.isEmpty()) {
+            notes.addAll(getAttributeValuesNotes(dimensions, selectedLanguage, attributeAssociatedDimensions, attributeValues));
         }
-        notes.addAll(getAttributeValuesNotes(dimensions, selectedLanguage, attributeAssociatedDimensions, attributeValues));
+
         return notes;
     }
 
@@ -436,17 +440,32 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
         return attributeAssociatedDimensions;
     }
 
-    private DataAttribute getAttributeFromDatasetData(DsdExternalProcessor.DsdAttribute attribute, Data data) {
-        DataAttribute dataAttribute = null;
+    private List<String> getAttributeValuesFromDatasetData(Attributes attributes, DsdExternalProcessor.DsdAttribute attribute, Data data, String selectedLanguage) {
         if (data.getAttributes() != null) {
-            for (DataAttribute da : data.getAttributes().getAttributes()) {
-                if (Objects.equals(da.getId(), attribute.getComponentId())) {
-                    dataAttribute = da;
-                    break;
+            for (DataAttribute dataAttribute : data.getAttributes().getAttributes()) {
+                if (Objects.equals(dataAttribute.getId(), attribute.getComponentId())) {
+                    String[] dataAttributeValues = dataAttribute.getValue().split("\\|");
+                    List<String> attributeValues = new ArrayList<>();
+                    for (String dataAttributeValue : dataAttributeValues) {
+                        attributeValues.add(toAttributeI18nName(attributes, attribute.getComponentId(), dataAttributeValue.trim(), selectedLanguage));
+                    }
+                    return attributeValues;
                 }
             }
         }
-        return dataAttribute;
+        if (data.getAttributes().getInternationalAttributes() != null) {
+            for (DataInternationalAttribute dataAttribute : data.getAttributes().getInternationalAttributes()) {
+                if (Objects.equals(dataAttribute.getId(), attribute.getComponentId())) {
+                    List<String> labels = new ArrayList<>();
+                    for (InternationalString internationalString : dataAttribute.getValues()) {
+                        String i18nValue = toI18nValue(internationalString, selectedLanguage);
+                        labels.add(i18nValue == null ? "" : i18nValue);
+                    }
+                    return labels;
+                }
+            }
+        }
+        return null;
     }
 
     private List<String> getAttributeValuesNotes(Dimensions dimensions, String selectedLanguage, List<DimensionRepresentation> attributeAssociatedDimensions, List<String> attributeValues) {
