@@ -16,6 +16,9 @@ import static org.siemac.metamac.rest.statistical_resources.constants.RestTestCo
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_7_DIMENSION;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_8_DIMENSION;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_9_DIMENSION;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_DIMENSION_MULTILINGUAL_1_GLOBAL;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_GROUP_MULTILINGUAL_1_GLOBAL;
+import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.ATTRIBUTE_MULTILINGUAL_1_GLOBAL;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.COLLECTION_1_CODE;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.COLLECTION_2_CODE;
 import static org.siemac.metamac.rest.statistical_resources.constants.RestTestConstants.DATASET_1_CODE;
@@ -103,6 +106,7 @@ import org.siemac.metamac.statistical_resources.rest.internal.v1_0.service.Stati
 import org.springframework.context.ApplicationContext;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -692,6 +696,24 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         });
     }
 
+    private void mockFindAttributesInstancesWithDatasetAttachmentLevelForMultilingualValues() throws Exception {
+        when(datasetRepositoriesServiceFacade.findAttributeInstancesValues(any(String.class), any(String.class))).thenAnswer(new Answer<List<InternationalStringDto>>() {
+
+            @Override
+            public List<InternationalStringDto> answer(InvocationOnMock invocation) throws Throwable {
+                String attributeId = (String) invocation.getArguments()[1];
+                List<InternationalStringDto> attributes = new ArrayList<InternationalStringDto>();
+                if (ATTRIBUTE_MULTILINGUAL_1_GLOBAL.equals(attributeId)) {
+                    String value = "Value " + attributeId;
+                    attributes.add(restDoMocks.mockAttributeInstanceWithDatasetAttachmentLevelForMultilingualValues(attributeId, value));
+                } else {
+                    fail("Attribute " + attributeId + " unsupported");
+                }
+                return attributes;
+            };
+        });
+    }
+
     @SuppressWarnings("unchecked")
     private void mockFindAttributesInstancesWithDimensionAttachmentLevelDenormalized() throws Exception {
         when(datasetRepositoriesServiceFacade.findAttributesInstancesWithDimensionAttachmentLevelDenormalized(any(String.class), any(String.class), any(Map.class)))
@@ -705,81 +727,103 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
                         int i = 1;
                         if (ATTRIBUTE_3_DIMENSION.equals(attributeId)) {
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", null, null, null,
-                                    null, null, null));
+                                    null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "la-laguna", null, null, null, null,
-                                    null, null));
+                                    null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "el-hierro", null, null, null, null,
-                                    null, null));
+                                    null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", null, null, null, null,
-                                    null, null));
+                                    null, null, false));
                         } else if (ATTRIBUTE_4_DIMENSION.equals(attributeId)) {
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "dim01",
-                                    "dim01-codelist01-code01", null, null, null, null));
+                                    "dim01-codelist01-code01", null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "la-laguna", "dim01",
-                                    "dim01-codelist01-code01", null, null, null, null));
+                                    "dim01-codelist01-code01", null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "el-hierro", "dim01",
-                                    "dim01-codelist01-code01", null, null, null, null));
+                                    "dim01-codelist01-code01", null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "dim01",
-                                    "dim01-codelist01-code03", null, null, null, null));
+                                    "dim01-codelist01-code03", null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", "dim01",
-                                    "dim01-codelist01-code03", null, null, null, null));
+                                    "dim01-codelist01-code03", null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", "dim01",
-                                    "dim01-codelist01-code04", null, null, null, null));
+                                    "dim01-codelist01-code04", null, null, null, null, false));
                         } else if (ATTRIBUTE_5_DIMENSION.equals(attributeId)) {
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q1", "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD", "2011",
-                                    null, null, null, null));
+                                    null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q2", "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD", "2012",
-                                    null, null, null, null));
+                                    null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q3", "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD", "2013",
-                                    null, null, null, null));
+                                    null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q1", "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD", "2014",
-                                    null, null, null, null));
+                                    null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q2", "GEO_DIM", "tenerife", "TIME_PERIOD", "2012", null, null,
-                                    null, null));
+                                    null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q3", "GEO_DIM", "la-laguna", "TIME_PERIOD", "2012", null, null,
-                                    null, null));
+                                    null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q1", "GEO_DIM", "fuerteventura", "TIME_PERIOD", "2011", null,
-                                    null, null, null));
+                                    null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q2", "GEO_DIM", "fuerteventura", "TIME_PERIOD", "2012", null,
-                                    null, null, null));
+                                    null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q3", "GEO_DIM", "fuerteventura", "TIME_PERIOD", "2013", null,
-                                    null, null, null));
+                                    null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q1", "GEO_DIM", "fuerteventura", "TIME_PERIOD", "2014", null,
-                                    null, null, null));
+                                    null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, "2013Q2", "GEO_DIM", "lanzarote", "TIME_PERIOD", "2011", null, null,
-                                    null, null));
+                                    null, null, false));
                         } else if (ATTRIBUTE_6_DIMENSION.equals(attributeId)) {
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
-                                    "2011", "measure01", "measure01-conceptScheme01-concept01", null, null));
+                                    "2011", "measure01", "measure01-conceptScheme01-concept01", null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "la-laguna", "TIME_PERIOD", "2011",
-                                    "measure01", "measure01-conceptScheme01-concept01", null, null));
+                                    "measure01", "measure01-conceptScheme01-concept01", null, null, false));
                         } else if (ATTRIBUTE_7_DIMENSION.equals(attributeId)) {
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
-                                    "2011", "measure01", "measure01-conceptScheme01-concept01", "dim01", "dim01-codelist01-code01"));
+                                    "2011", "measure01", "measure01-conceptScheme01-concept01", "dim01", "dim01-codelist01-code01", false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
-                                    "2011", "measure01", "measure01-conceptScheme01-concept01", "dim01", "dim01-codelist01-code03"));
+                                    "2011", "measure01", "measure01-conceptScheme01-concept01", "dim01", "dim01-codelist01-code03", false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", "TIME_PERIOD", "2014",
-                                    "measure01", "measure01-conceptScheme01-concept05", "dim01", "dim01-codelist01-code04"));
+                                    "measure01", "measure01-conceptScheme01-concept05", "dim01", "dim01-codelist01-code04", false));
                         } else if (ATTRIBUTE_8_DIMENSION.equals(attributeId)) {
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
-                                    "2011", null, null, null, null));
+                                    "2011", null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
-                                    "2014", null, null, null, null));
+                                    "2014", null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "tenerife", "TIME_PERIOD", "2012", null,
-                                    null, null, null));
+                                    null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "la-laguna", "TIME_PERIOD", "2012",
-                                    null, null, null, null));
+                                    null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "fuerteventura", "TIME_PERIOD", "2014",
-                                    null, null, null, null));
+                                    null, null, null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", "TIME_PERIOD", "2011",
-                                    null, null, null, null));
+                                    null, null, null, null, false));
                         } else if (ATTRIBUTE_9_DIMENSION.equals(attributeId)) {
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
-                                    "2011", "dim01", "dim01-codelist01-code01", null, null));
+                                    "2011", "dim01", "dim01-codelist01-code01", null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
-                                    "2011", "dim01", "dim01-codelist01-code03", null, null));
+                                    "2011", "dim01", "dim01-codelist01-code03", null, null, false));
                             attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", "TIME_PERIOD", "2014",
-                                    "dim01", "dim01-codelist01-code04", null, null));
+                                    "dim01", "dim01-codelist01-code04", null, null, false));
+                        } else if (ATTRIBUTE_DIMENSION_MULTILINGUAL_1_GLOBAL.equals(attributeId)) {
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", null, null, null,
+                                    null, null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "la-laguna", null, null, null, null,
+                                    null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "el-hierro", null, null, null, null,
+                                    null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", null, null, null, null,
+                                    null, null, true));
+                        } else if (ATTRIBUTE_GROUP_MULTILINGUAL_1_GLOBAL.equals(attributeId)) {
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
+                                    "2011", null, null, null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "santa-cruz-tenerife", "TIME_PERIOD",
+                                    "2014", null, null, null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "tenerife", "TIME_PERIOD", "2012", null,
+                                    null, null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "la-laguna", "TIME_PERIOD", "2012",
+                                    null, null, null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "fuerteventura", "TIME_PERIOD", "2014",
+                                    null, null, null, null, true));
+                            attributes.add(restDoMocks.mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(attributeId, value + "-" + i++, "GEO_DIM", "lanzarote", "TIME_PERIOD", "2011",
+                                    null, null, null, null, true));
                         } else {
                             fail("Attribute " + attributeId + " unsupported");
                         }
@@ -1000,6 +1044,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         mockFindObservationsExtendedByDimensions();
         mockFindAttributesInstancesWithDatasetAttachmentLevel();
         mockFindAttributesInstancesWithDimensionAttachmentLevelDenormalized();
+        mockFindAttributesInstancesWithDatasetAttachmentLevelForMultilingualValues();
         mockDatasetVersionRepository();
         mockPublicationVersionRepository();
 

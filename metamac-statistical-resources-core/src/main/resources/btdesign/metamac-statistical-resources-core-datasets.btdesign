@@ -355,7 +355,13 @@ Application DatasetsStatisticalResources {
 
     		String dsdComponentId;
     		String identifier;
-    		String title length="4000";
+    		
+    		"value when the representation type is an external item o any type except international string. null when it is an international string"
+    		String title nullable length="4000";
+    		
+    		"value when the type is an international string. null when it is another type"
+    		- @InternationalString internationalStringValue nullable cascade="all" databaseColumn="VALUE_FK";
+    		
     		- @DatasetVersion datasetVersion cascade="none" fetch="lazy" not nullable databaseColumn="DATASET_VERSION_FK" <-> attributesCoverage;
 
     		Repository AttributeValueRepository {

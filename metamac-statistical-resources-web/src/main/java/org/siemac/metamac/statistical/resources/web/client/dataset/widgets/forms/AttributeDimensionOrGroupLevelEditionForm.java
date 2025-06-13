@@ -15,7 +15,9 @@ import org.siemac.metamac.statistical.resources.web.client.constants.Statistical
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DimensionCoverageValuesSelectionItem;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.DsdAttributeInstanceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.DatasetAttibuteUtils;
+import org.siemac.metamac.web.common.client.utils.RecordUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
@@ -35,20 +37,46 @@ public class AttributeDimensionOrGroupLevelEditionForm extends AttributeDimensio
     protected void buildNonEnumeratedRepresentationForm(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         this.dsdAttributeInstanceDto = dsdAttributeInstanceDto;
         this.dsdAttributeDto = dsdAttributeDto;
+
         DimensionCoverageValuesSelectionItem dimensionCoverageValuesSelectionItem = createDimensionValuesSelectionItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES,
                 getConstants().datasetAttributeDimensionValuesSelection(), dsdAttributeInstanceDto);
+
+        if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+            MultiLanguageTextItem value = buildMultilanguageTextItemNonEnumeratedRepresentationForm(dsdAttributeInstanceDto);
+            setFields(dimensionCoverageValuesSelectionItem, value);
+
+        } else {
+            CustomTextItem value = buildTextItemNonEnumeratedRepresentationForm(dsdAttributeInstanceDto);
+            setFields(dimensionCoverageValuesSelectionItem, value);
+        }
+
+        setDimensionValues(dsdAttributeDto, dsdAttributeInstanceDto);
+
+    }
+
+    private CustomTextItem buildTextItemNonEnumeratedRepresentationForm(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
 
         CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
         value.setValidators(DatasetAttibuteUtils.getDimensionOrGroupLevelAttibuteValueLengthValidator());
         value.setRequired(true);
 
-        setFields(dimensionCoverageValuesSelectionItem, value);
-
-        setDimensionValues(dsdAttributeDto, dsdAttributeInstanceDto);
-
         if (dsdAttributeInstanceDto.getValue() != null) {
             setValue(DsdAttributeInstanceDS.VALUE, dsdAttributeInstanceDto.getValue().getStringValue());
         }
+
+        return value;
+    }
+
+    private MultiLanguageTextItem buildMultilanguageTextItemNonEnumeratedRepresentationForm(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
+        MultiLanguageTextItem value = new MultiLanguageTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+        value.setValidators(DatasetAttibuteUtils.getDimensionOrGroupLevelAttibuteValueLengthValidator());
+
+        if (dsdAttributeInstanceDto.getValue() != null) {
+            setValue(DsdAttributeInstanceDS.VALUE, RecordUtils.getInternationalStringRecord(dsdAttributeInstanceDto.getValue().getInternationalStringValue()));
+        }
+
+        return value;
+
     }
 
     @Override
@@ -84,11 +112,11 @@ public class AttributeDimensionOrGroupLevelEditionForm extends AttributeDimensio
         // Code dimensions
         Map<String, List<CodeItemDto>> codeItems = ((DimensionCoverageValuesSelectionItem) getItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES)).getSelectedCodeDimensions();
         dsdAttributeInstanceDto.setCodeDimensions(codeItems);
-
-        // Value
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (getItem(DsdAttributeInstanceDS.VALUE) instanceof CustomTextItem) {
             attributeValueDto.setStringValue(getValueAsString(DsdAttributeInstanceDS.VALUE));
+        } else if (getItem(DsdAttributeInstanceDS.VALUE) instanceof MultiLanguageTextItem) {
+            attributeValueDto.setInternationalStringValue(getValueAsInternationalStringDto(DsdAttributeInstanceDS.VALUE));
         } else if (getItem(DsdAttributeInstanceDS.VALUE) instanceof SearchExternalItemSimpleItem) {
             ExternalItemDto selectedExternalItemDto = ((SearchExternalItemSimpleItem) getItem(DsdAttributeInstanceDS.VALUE)).getExternalItemDto();
             attributeValueDto.setExternalItemValue(selectedExternalItemDto);

@@ -11,25 +11,54 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeIn
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DimensionCoverageValuesSelectionItem;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.DsdAttributeInstanceDS;
+import org.siemac.metamac.statistical.resources.web.client.utils.DatasetAttibuteUtils;
+import org.siemac.metamac.web.common.client.utils.RecordUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
 public class AttributeDimensionOrGroupLevelForm extends AttributeDimensionOrGroupLevelBaseForm {
 
     @Override
     protected void buildNonEnumeratedRepresentationForm(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
-        DimensionCoverageValuesSelectionItem dimensionCoverageValuesSelectionItem = createDimensionValuesSelectionItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES, getConstants()
-                .datasetAttributeDimensionValuesSelection(), dsdAttributeInstanceDto);
+        DimensionCoverageValuesSelectionItem dimensionCoverageValuesSelectionItem = createDimensionValuesSelectionItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES,
+                getConstants().datasetAttributeDimensionValuesSelection(), dsdAttributeInstanceDto);
 
-        ViewTextItem value = new ViewTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+        if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+            ViewMultiLanguageTextItem value = buildMultilanguageTextItemNonEnumeratedRepresentationForm(dsdAttributeInstanceDto);
+            setFields(dimensionCoverageValuesSelectionItem, value);
 
-        setFields(dimensionCoverageValuesSelectionItem, value);
+        } else {
+            ViewTextItem value = buildTextItemNonEnumeratedRepresentationForm(dsdAttributeInstanceDto);
+            setFields(dimensionCoverageValuesSelectionItem, value);
+        }
 
         setDimensionValues(dsdAttributeDto, dsdAttributeInstanceDto);
+    }
+
+    private ViewTextItem buildTextItemNonEnumeratedRepresentationForm(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
+
+        ViewTextItem value = new ViewTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+        value.setValidators(DatasetAttibuteUtils.getDimensionOrGroupLevelAttibuteValueLengthValidator());
+        value.setRequired(true);
 
         if (dsdAttributeInstanceDto.getValue() != null) {
             setValue(DsdAttributeInstanceDS.VALUE, dsdAttributeInstanceDto.getValue().getStringValue());
         }
+
+        return value;
+    }
+
+    private ViewMultiLanguageTextItem buildMultilanguageTextItemNonEnumeratedRepresentationForm(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
+        ViewMultiLanguageTextItem value = new ViewMultiLanguageTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+        value.setValidators(DatasetAttibuteUtils.getDimensionOrGroupLevelAttibuteValueLengthValidator());
+
+        if (dsdAttributeInstanceDto.getValue() != null) {
+            setValue(DsdAttributeInstanceDS.VALUE, RecordUtils.getInternationalStringRecord(dsdAttributeInstanceDto.getValue().getInternationalStringValue()));
+        }
+
+        return value;
+
     }
 
     @Override

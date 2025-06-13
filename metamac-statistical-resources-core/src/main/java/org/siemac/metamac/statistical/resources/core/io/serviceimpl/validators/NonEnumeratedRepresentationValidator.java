@@ -1,7 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators;
 
-import static org.siemac.metamac.core.common.constants.shared.RegularExpressionConstants.END;
-import static org.siemac.metamac.core.common.constants.shared.RegularExpressionConstants.START;
+import static org.siemac.edatos.core.common.constants.shared.RegularExpressionConstants.END;
+import static org.siemac.edatos.core.common.constants.shared.RegularExpressionConstants.START;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -46,6 +46,7 @@ public class NonEnumeratedRepresentationValidator {
             case ALPHA:
             case ALPHA_NUMERIC:
             case XHTML:
+            case INTERNATIONAL_STRING:
                 validateText(textFormat, key, value, exceptions);
                 break;
             // Numeric
