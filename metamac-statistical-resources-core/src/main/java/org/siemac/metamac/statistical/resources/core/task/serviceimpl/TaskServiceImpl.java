@@ -2159,8 +2159,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             Map<String, List<CodeDimension>> codeDimensions = getCodeDimensions(ctx, idsDimensions, dataVersionUrn);
             List<DsdAttribute> dsdAttributes = DsdProcessor.getAttributes(dataStructure);
             Map<String, List<ExternalItemDto>> externalItemsAttributesId = getExternalItemsFromSrm(dsdAttributes);
+            List<String> languages = configurationService.retrieveLanguages();
             for (FileDescriptor fileDescriptor : taskInfoDataset.getFiles()) {
-                manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile(), dataStructure, codeDimensions, externalItemsAttributesId, ctx, dataVersionUrn);
+                manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile(), dataStructure, codeDimensions, externalItemsAttributesId, ctx, dataVersionUrn, languages);
             }
         } catch(MetamacException e) {
             throw e;

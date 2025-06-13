@@ -86,10 +86,10 @@ public class AttributeInstancesSectionStack extends CustomListGridSectionStack {
     public ListGrid getListGrid() {
         return listGrid;
     }
-    
+
     public void showInstances(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
         setSectionTitle(getMessages().datasetAttributeIntances(dsdAttributeDto.getIdentifier()));
-        listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos));
+        listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos, dsdAttributeDto));
         deleteInstanceButton.setVisible(false);
         show();
     }
@@ -116,7 +116,7 @@ public class AttributeInstancesSectionStack extends CustomListGridSectionStack {
         }
         return null;
     }
-    
+
     public HasClickHandlers getNewInstanceButton() {
         return newInstanceButton;
     }
