@@ -769,4 +769,10 @@ public class DatasetVersionRepositoryTest extends StatisticalResourcesBaseTest i
         RelatedResource resource = publishedDataset.getSiemacMetadataStatisticalResource().getIsReplacedBy();
         assertNotNull(resource);
     }
+
+    @Override
+    public void testBuildPropertyCriteriaForDateProperty() throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
 }

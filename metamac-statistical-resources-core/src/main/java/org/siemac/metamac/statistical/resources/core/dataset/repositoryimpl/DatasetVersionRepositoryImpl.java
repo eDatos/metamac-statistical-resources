@@ -5,10 +5,17 @@ import static org.siemac.metamac.statistical.resources.core.base.domain.utils.Re
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils.isLastPublishedVersionConditions;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
@@ -35,6 +42,30 @@ import org.springframework.stereotype.Repository;
 public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
 
     public DatasetVersionRepositoryImpl() {
+    }
+
+    @Override
+    public void buildPropertyCriteriaForDateProperty() {
+        LocalDate desde = LocalDate.of(2021, 1, 1);
+
+        CriteriaBuilder cb  = getEntityManager().getCriteriaBuilder();
+        CriteriaQuery cq = cb.createQuery(DatasetVersion.class);
+        Root root = cq.from(DatasetVersion.class);
+
+        Expression<java.sql.Date> fecha =
+                cb.function("sdmx_to_date", java.sql.Date.class,
+                            root.get("dateStart"));
+
+        Predicate p = cb.greaterThanOrEqualTo(
+                         fecha,
+                         cb.parameter(java.sql.Date.class, "desde"));
+
+        cq.where(p);
+
+        TypedQuery q = getEntityManager().createQuery(cq);
+        q.setParameter("desde", java.sql.Date.valueOf(desde));
+
+        List lista = q.getResultList();
     }
 
     @Override
