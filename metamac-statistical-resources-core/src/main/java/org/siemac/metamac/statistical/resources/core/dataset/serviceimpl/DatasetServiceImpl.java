@@ -48,6 +48,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeRes
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
@@ -102,6 +103,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesR
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
+import org.siemac.metamac.statistical.resources.core.io.domain.TemporalAttributeValues;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetFromDatabaseJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
@@ -117,6 +119,7 @@ import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
+import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.CodeDimensionEqualsIdentifierPredicate;
@@ -920,6 +923,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDataStructureUrn(datasetVersion.getRelatedDsd().getUrn());
         taskInfo.setStoreAlternativeRepresentations(storeDimensionRepresentationMapping);
         taskInfo.setStatisticalOperationUrn(datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn());
+        taskInfo.setDatasetVersionCode(datasetVersion.getSiemacMetadataStatisticalResource().getCode());
         if (basicVersionableStatisticalResourceDto != null) {
             taskInfo.setDatasetNextVersion(basicVersionableStatisticalResourceDto.getNextVersion());
             taskInfo.setDatasetNextVersionDate(basicVersionableStatisticalResourceDto.getNextVersionDate());
@@ -1770,8 +1774,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             for (DsdAttribute dsdAttribute : attributes) {
                 if (dsdAttribute.isAttributeAtObservationLevel()) {
-                    List<String> values = attrCoverages.get(dsdAttribute.getComponentId());
-                    processAttributeCoverage(resource, dsdAttribute, values);
+                    processAttributeCoverage(resource, dsdAttribute, new TemporalAttributeValues(attrCoverages.get(dsdAttribute.getComponentId())));
                 }
             }
         } catch (ApplicationException e) {
@@ -1782,23 +1785,38 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     // Single attribute coverage
     private void processNonObservationAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute) throws MetamacException {
         try {
-            List<String> values = statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId(),
-                    StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
-            processAttributeCoverage(resource, dsdAttribute, values);
+            TemporalAttributeValues temporalAttributeValues = new TemporalAttributeValues();
+            if (isTextFormatAttributeMultilingual(dsdAttribute)) {
+                temporalAttributeValues
+                        .setInternationalStringValues(statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId()));
+                temporalAttributeValues.setMultilingualValue(true);
+            } else {
+                temporalAttributeValues.setValues(statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId(),
+                        StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE));
+            }
+            processAttributeCoverage(resource, dsdAttribute, temporalAttributeValues);
         } catch (ApplicationException e) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "Error retrieving values for attribute " + dsdAttribute.getComponentId());
         }
     }
 
-    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, List<String> values) throws MetamacException {
+    private boolean isTextFormatAttributeMultilingual(DsdAttribute dsdAttribute) {
+        return dsdAttribute.getTextFormatRepresentation() != null && DataType.INTERNATIONAL_STRING.equals(dsdAttribute.getTextFormatRepresentation().getTextType());
+    }
+
+    private void processAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute, TemporalAttributeValues temporalAttributeValues) throws MetamacException {
         String attributeId = dsdAttribute.getComponentId();
 
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
-        if (values != null) {
-            List<ExternalItem> items = buildExternalItemsBasedOnCodeIdentifiers(values, dsdAttribute);
+        if (temporalAttributeValues.hasValues()) {
+            List<ExternalItem> items = buildExternalItemsBasedOnCodeIdentifiers(temporalAttributeValues.getValues(), dsdAttribute);
             String locale = configurationService.retrieveLanguageDefault();
 
-            attrValues = buildAttributeValues(attributeId, values, resource, items, locale);
+            if (temporalAttributeValues.isMultilingualValue()) {
+                attrValues = buildInternationalStringAttributeValues(attributeId, temporalAttributeValues, resource);
+            } else {
+                attrValues = buildAttributeValues(attributeId, temporalAttributeValues.getValues(), resource, items, locale);
+            }
 
             if (CollectionUtils.isNotEmpty(items)) {
                 addTranslationsToAttributeValuesFromExternalItems(attrValues, items, locale);
@@ -1813,7 +1831,32 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
+    private List<AttributeValue> buildInternationalStringAttributeValues(final String attributeId, TemporalAttributeValues temporalAttributeValues, final DatasetVersion datasetVersion) {
+
+        List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
+
+        Set<InternationalStringDto> uniqueValues = new HashSet<InternationalStringDto>(temporalAttributeValues.getInternationalStringValues());
+
+        StatisticalResourcesCollectionUtils.mapCollection(uniqueValues, attrValues, new MetamacTransformer<InternationalStringDto, AttributeValue>() {
+
+            @Override
+            public AttributeValue transformItem(InternationalStringDto item) {
+                AttributeValue result = new AttributeValue();
+                result.setIdentifier(getGenericIdentifier());
+                result.setTitle(null);
+                result.setInternationalStringValue(InternationalStringUtils.getCommonInternationalStringFromDatasetRepositoryInternationalStringDto(item));
+                result.setDsdComponentId(attributeId);
+                result.setDatasetVersion(datasetVersion);
+                return result;
+            }
+
+        });
+        return attrValues;
+
+    }
+
     private List<AttributeValue> buildAttributeValues(final String attributeId, List<String> values, final DatasetVersion datasetVersion, List<ExternalItem> externalItems, String locale) {
+
         List<AttributeValue> attrValues = new ArrayList<AttributeValue>();
 
         Set<String> uniqueValues = new HashSet<String>(values);
@@ -1848,7 +1891,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
                 // In any other case, if the size of the item parameter is greater than 255 and there is no variable element associated with it,
                 // the generated identifier will be a random uuid.
-                String uuidIdenfier = UUID.randomUUID().toString();
+                String uuidIdenfier = getGenericIdentifier();
                 log.info("Item can not be set as identifier because is too long: {} using uuid instead: {}", StringUtils.length(item), uuidIdenfier);
 
                 return uuidIdenfier;
@@ -1856,6 +1899,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         });
         return attrValues;
+    }
+
+    private String getGenericIdentifier() {
+        return UUID.randomUUID().toString();
     }
 
     private void clearAttributeValues(DatasetVersion datasetVersion, String componentId) {

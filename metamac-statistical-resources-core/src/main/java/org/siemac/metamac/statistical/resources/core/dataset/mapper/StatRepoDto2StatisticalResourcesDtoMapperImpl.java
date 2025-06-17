@@ -18,6 +18,8 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValue
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
+import org.siemac.metamac.statistical.resources.core.utils.AttributesUtils;
+import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,11 +30,10 @@ import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDto2StatisticalResourcesDtoMapper {
 
     @Autowired
-    private SrmRestInternalService srmRestInternalService;
+    private SrmRestInternalService  srmRestInternalService;
 
-   @Autowired
-   private CodeDimensionRepository codeDimensionRepository;
-
+    @Autowired
+    private CodeDimensionRepository codeDimensionRepository;
 
     @Override
     public DsdAttributeInstanceDto attributeDtoToDsdAttributeInstanceDto(Long datasetVersionId, DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
@@ -60,6 +61,8 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
             attributeValueDto.setExternalItemValue(retrieveCodeExternalItem(dsdAttribute.getCodelistRepresentationUrn(), attrValue));
         } else if (dsdAttribute.getConceptSchemeRepresentationUrn() != null) {
             attributeValueDto.setExternalItemValue(retrieveConceptExternalItem(dsdAttribute.getConceptSchemeRepresentationUrn(), attrValue));
+        } else if (AttributesUtils.isMultilingualAttributeTextFormatType(dsdAttribute)) {
+            attributeValueDto.setInternationalStringValue(InternationalStringUtils.getCommonInternationalStringDtoFromDatasetRepositoryInternationalStringDto(source.getValue()));
         } else {
             attributeValueDto.setStringValue(attrValue);
         }

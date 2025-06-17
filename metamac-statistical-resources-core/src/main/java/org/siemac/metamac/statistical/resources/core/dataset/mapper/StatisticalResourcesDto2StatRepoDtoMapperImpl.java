@@ -11,6 +11,7 @@ import org.siemac.metamac.statistical.resources.core.constants.StatisticalResour
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.springframework.stereotype.Component;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
@@ -38,14 +39,16 @@ public class StatisticalResourcesDto2StatRepoDtoMapperImpl implements Statistica
             return null;
         }
         String valueStr = null;
-
+        InternationalStringDto internationalStringDto;
         if (StringUtils.isNotBlank(attributeValueDto.getStringValue())) {
             valueStr = attributeValueDto.getStringValue();
+        } else if (attributeValueDto.getInternationalStringValue() != null && attributeValueDto.getInternationalStringValue().hasTexts()) {
+            return InternationalStringUtils.buildDatasetRepositoryInternationalStringDtoFromCommonInternationalStringDto(attributeValueDto.getInternationalStringValue());
         } else {
             valueStr = attributeValueDto.getExternalItemValue() != null ? attributeValueDto.getExternalItemValue().getCode() : null;
         }
         if (valueStr != null) {
-            InternationalStringDto internationalStringDto = new InternationalStringDto();
+            internationalStringDto = new InternationalStringDto();
             LocalisedStringDto localisedValue = new LocalisedStringDto();
             localisedValue.setLocale(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
             localisedValue.setLabel(valueStr);

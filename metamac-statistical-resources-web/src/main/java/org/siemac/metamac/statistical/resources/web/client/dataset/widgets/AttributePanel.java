@@ -88,7 +88,7 @@ public class AttributePanel extends VLayout {
                 } else {
                     getUiHandlers().retrieveAttributeInstancesForRefresh(dsdAttributeDto);
                 }
-                    
+
             }
         });
 
@@ -127,9 +127,8 @@ public class AttributePanel extends VLayout {
             // Updated attributeInstances from database because it could have been changed
             if (instancesSectionStack.getListGrid().getSelectedRecords() != null && instancesSectionStack.getListGrid().getSelectedRecords().length > 0) {
                 ListGridRecord[] attributeInstances = instancesSectionStack.getListGrid().getSelectedRecords();
-                if (attributeInstances.length == 1
-                        && (CommonUtils.hasDimensionRelationshipType(dsdAttributeDto) || CommonUtils.hasGroupRelationshipType(dsdAttributeDto))) {
-                    instancesSectionStack.getListGrid().setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos));
+                if (attributeInstances.length == 1 && (CommonUtils.hasDimensionRelationshipType(dsdAttributeDto) || CommonUtils.hasGroupRelationshipType(dsdAttributeDto))) {
+                    instancesSectionStack.getListGrid().setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos, dsdAttributeDto));
 
                     DsdAttributeInstanceRecord dsdAttributeInstanceRecordUpdated = (DsdAttributeInstanceRecord) instancesSectionStack
                             .getSelectedAttributeInstance(((DsdAttributeInstanceRecord) attributeInstances[0]).getUuid());
@@ -142,7 +141,7 @@ public class AttributePanel extends VLayout {
             }
         }
     }
-    
+
     public void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverage) {
         mainFormLayout.setDimensionsCoverageValues(dimensionsCoverage);
     }
