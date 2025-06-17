@@ -285,11 +285,19 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
 
         urls = PublicationsUtils.computeUrlsHasPart(source);
 
-        ResourcesStatisticalResourceBase resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        ResourcesStatisticalResourceBase resources = initResources(hasPart, selectedLanguages);
         ResourcesStatisticalResourceBase urlResources = commonDo2RestMapper.toUrlResources(urls);
         if (urlResources != null && !urlResources.getResources().isEmpty()) {
             resources.getResources().addAll(urlResources.getResources());
             resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
+        }
+        return resources;
+    }
+
+    private ResourcesStatisticalResourceBase initResources(List<RelatedResource> hasPart, List<String> selectedLanguages) throws MetamacException {
+        ResourcesStatisticalResourceBase resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        if (resources == null) {
+            resources = new ResourcesStatisticalResourceBase();
         }
         return resources;
     }
