@@ -245,14 +245,6 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         return resources;
     }
 
-    private ResourcesStatisticalResourceBase initResources(List<RelatedResource> hasPart, List<String> selectedLanguages) throws MetamacException {
-        ResourcesStatisticalResourceBase resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
-        if (resources == null) {
-            resources = new ResourcesStatisticalResourceBase();
-        }
-        return resources;
-    }
-
     private CollectionData toCollectionData(PublicationVersion source, List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
