@@ -707,8 +707,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Find
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
-        getDatasetVersionRepository().buildPropertyCriteriaForDateProperty();
-        PagedResult<DatasetVersion> datasetVersionPagedResult = getDatasetVersionRepository().findByCondition(conditions, pagingParameter);
+//        getDatasetVersionRepository().buildPropertyCriteriaForDateProperty();
+        PagedResult<DatasetVersion> datasetVersionPagedResult = getDatasetVersionRepository().findByConditionCopy(conditions, pagingParameter);
         return datasetVersionPagedResult;
     }
 

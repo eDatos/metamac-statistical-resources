@@ -284,6 +284,7 @@ Application DatasetsStatisticalResources {
 				@DatasetVersion retrieveByUrn(String urn) throws MetamacException;
 				@DatasetVersion retrieveByUrnPublished(String urn) throws MetamacException;
 				buildPropertyCriteriaForDateProperty();
+				PagedResult<DatasetVersion> findByConditionCopy(List<ConditionalCriteria> condition, PagingParameter pagingParameter)
 				@DatasetVersion retrieveLastVersion(String datasetUrn) throws MetamacException;
 				@DatasetVersion retrieveLastPublishedVersion(String datasetUrn) throws MetamacException;
 				@DatasetVersion retrieveByVersion(Long statisticalResourceId, String versionLogic) throws MetamacException;
