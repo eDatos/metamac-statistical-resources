@@ -9,7 +9,7 @@
 <%
     String internationalizationCookie = InternationalizationUtils.getInstance().getInternationalizationCookieId();
     String locale = InternationalizationUtils.getInstance().getCurrentLocale(request);
-    String appName = ResourceBundle.getBundle("i18n.messages-swagger" , LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("apps.api_catalog.name");
+    String appName = ResourceBundle.getBundle("i18n.messages-swagger", LocaleUtils.toLocale(locale), getNoFallbackControl(ResourceBundle.Control.FORMAT_DEFAULT)).getString("app.name");
     MessagesResourceBundle messagesResource = new MessagesResourceBundle(locale, "i18n.messages-swagger");
     pageContext.setAttribute("msg", messagesResource);
     String appVersion = ResourceBundle.getBundle("application").getString("app.version");
@@ -109,11 +109,11 @@
 </head>
 
 <body>
-	<c:set var="apiStyleHeaderUrl" value="<%=org.siemac.metamac.core.common.util.WebUtils.getApiStyleHeaderUrl()%>" />
-	<c:set var="apiStyleFooterUrl" value="<%=org.siemac.metamac.core.common.util.WebUtils.getApiStyleFooterUrl()%>" />
+	<c:set var="appStyleHeaderUrl" value="<%=org.siemac.metamac.core.common.util.WebUtils.getAppStyleHeaderUrl()%>" />
+	<c:set var="appStyleFooterUrl" value="<%=org.siemac.metamac.core.common.util.WebUtils.getAppStyleFooterUrl()%>" />
 	
-	<c:if test="${!empty apiStyleHeaderUrl}">
-	   <c:import charEncoding="UTF-8" url="${apiStyleHeaderUrl}">
+	<c:if test="${!empty appStyleHeaderUrl}">
+	   <c:import charEncoding="UTF-8" url="${appStyleHeaderUrl}">
 	      <c:param name="appName" value="<%= appName %>" />
 	      <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
 	      <c:param name="appId" value="statistical-resources-external"/>
@@ -121,13 +121,15 @@
 	   </c:import>
 	</c:if>
 	
-	<div class="swagger-section">
-		<div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
-		<div id="swagger-ui-container" class="swagger-ui-wrap"></div>
+	<div class="content-wrapper edatos-wrapper edatos-swagger">
+		<div class="swagger-section">
+			<div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
+			<div id="swagger-ui-container" class="swagger-ui-wrap"></div>
+		</div>
 	</div>
 	
-	<c:if test="${!empty apiStyleFooterUrl}">
-	   <c:import charEncoding="UTF-8" url="${apiStyleFooterUrl}">
+	<c:if test="${!empty appStyleFooterUrl}">
+	   <c:import charEncoding="UTF-8" url="${appStyleFooterUrl}">
 	      <c:param name="appName" value="<%= appName %>" />
 	      <c:param name="<%= internationalizationCookie %>" value="<%= locale %>" />
 	   </c:import>
