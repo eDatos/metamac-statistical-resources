@@ -232,13 +232,16 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             hasPart = source.getHasPart();
         }
         urls = PublicationsUtils.computeUrlsHasPart(source);
-
-        ResourcesStatisticalResourceBase resources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
-        ResourcesStatisticalResourceBase urlResources = commonDo2RestMapper.toUrlResources(urls);
-        if (urlResources != null && !urlResources.getResources().isEmpty()) {
-            resources.getResources().addAll(urlResources.getResources());
-            resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
+        ResourcesStatisticalResourceBase resources = new ResourcesStatisticalResourceBase();
+        ResourcesStatisticalResourceBase hasPartResources = commonDo2RestMapper.toResources(hasPart, selectedLanguages);
+        if (hasPartResources != null) {
+            resources.getResources().addAll(hasPartResources.getResources());
         }
+        ResourcesStatisticalResourceBase urlResources = commonDo2RestMapper.toUrlResources(urls);
+        if (urlResources != null) {
+            resources.getResources().addAll(urlResources.getResources());
+        }
+        resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
         return resources;
     }
 
