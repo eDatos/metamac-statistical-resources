@@ -86,6 +86,8 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     protected Tree                              tree;
     protected TreeGridField                     titleField;
     protected TreeGridField                     urnField;
+    protected TreeGridField                     resourceField;
+    protected TreeGridField                     dsdField;
     protected TreeGridField                     orderField;
     protected TreeGridField                     infoField;
 
@@ -141,6 +143,16 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         urnField.setCanFilter(true);
         urnField.setCanSort(false);
 
+        resourceField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResource());
+        resourceField.setShowHover(false); // only show hover in info field
+        resourceField.setCanFilter(true);
+        resourceField.setCanSort(false);
+
+        dsdField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementDSD());
+        dsdField.setShowHover(false); // only show hover in info field
+        dsdField.setCanFilter(true);
+        dsdField.setCanSort(false);
+
         orderField = new TreeGridField(ElementLevelDS.ORDER_IN_LEVEL, getConstants().publicationStructureElementOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
         orderField.setCanSort(true);
@@ -153,7 +165,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(titleField, urnField, orderField, infoField);
+        setFields(titleField, urnField, resourceField, dsdField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);
@@ -193,7 +205,6 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         });
         contextMenu.addItem(deleteElementMenuItem);
     }
-
     private void bindEvents() {
 
         filterEditionHandler = addFilterEditorSubmitHandler(new FilterEditorSubmitHandler() {
@@ -455,7 +466,10 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         DetailViewerField descriptionField = new DetailViewerField(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
         DetailViewerField urnField = new DetailViewerField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
-        return new DetailViewerField[]{titleField, descriptionField, urnField};
+        DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResource());
+        //FIXME
+        DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DTO, getConstants().publicationStructureElementDSD());
+        return new DetailViewerField[]{titleField, descriptionField, urnField, resourceField, dsdField};
     }
 
     public void addCreateChapterMenuItemClickHandler(ClickHandler clickHandler) {
