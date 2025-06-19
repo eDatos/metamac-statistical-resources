@@ -7,9 +7,13 @@ import static org.siemac.metamac.statistical.resources.core.base.domain.utils.Re
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -22,6 +26,8 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.metamodel.Attribute;
+import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
 
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -100,18 +106,6 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
         }
         TypedQuery<DatasetVersion> typedQuery = getEntityManager().createQuery(criteriaQuery);
         List<DatasetVersion> result = typedQuery.getResultList();
-        // ao.setCondition(conditions);
-        //
-        // if (pagingParameter.getStartRow() != PagedResult.UNKNOWN && pagingParameter.getRealFetchCount() != PagedResult.UNKNOWN) {
-        // ao.setFirstResult(pagingParameter.getStartRow());
-        // ao.setMaxResult(pagingParameter.getRealFetchCount());
-        // }
-        //
-        // ao.execute();
-        //
-        // List<DatasetVersion> result = ao.getResult();
-        //
-        // PagedResult<DatasetVersion> pagedResult = getPagedResult(pagingParameter, ao, result);
         return null;
     }
 
@@ -236,53 +230,47 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
     }
 
     private Path<?> resolvePath(Root<?> root, String propertyFullName, Metamodel mm) {
+        if (propertyFullName == null) {
+            return root;
+        }
+        Set<String> SQL_TYPE_TOKENS = new HashSet<String>(Arrays.asList("datetime", "timestamp", "date", "varchar", "char", "int" /* … */
+        ));
+        Path<?> path = root;
+        Class<?> jType = root.getJavaType();
 
-        Path<?>    path   = root;
-        Class<?>   jType  = root.getJavaType();
-        String[]   parts  = propertyFullName.split("\\.");
+        /* 1. Dividir la ruta y limpiar tokens “raro-tipo” --------------- */
+        List<String> cleaned = new ArrayList<String>();
+        for (String part : propertyFullName.split("\\.")) {
+            if (part == null || part.isEmpty())
+                continue; // vacío
+            if (SQL_TYPE_TOKENS.contains(part.toLowerCase(Locale.ENGLISH)))
+                continue; // tipo SQL
+            cleaned.add(part);
+        }
 
-//        for (int i = 0; i < parts.length; i++) {
-//            String part = parts[i];
-//
-//            // omite el nombre de la propia entidad al inicio, si viene en la ruta
-//            if (part.equalsIgnoreCase(jType.getSimpleName())) {
-//                continue;
-//            }
-//
-//            /*--- 1. Solo intentamos acceder al metamodelo si jType es entidad ---*/
-//            EntityType<?> et;
-//            try {
-//                et = mm.entity(jType);          // ← falla si jType NO es entidad
-//            } catch (IllegalArgumentException ex) {
-//                throw new IllegalArgumentException(
-//                    "La parte '" + part + "' de la ruta '" + propertyFullName +
-//                    "' no es navegable (tipo básico alcanzado antes de tiempo)", ex);
-//            }
-//
-//            Attribute<?, ?> attr = et.getAttribute(part);
-//
-//            /*--- 2. Avanza la Path ---*/
-//            path = attr.isAssociation()
-//                 ? ((From<?, ?>) path).join(part, JoinType.LEFT)
-//                 : path.get(part);
-//
-//            /*--- 3. Nuevo tipo Java para el siguiente paso ---*/
-//            jType = attr.getJavaType();
-//
-//            /*--- 4. Si estamos en la ÚLTIMA parte no necesitamos más metamodelo ---*/
-//            if (i == parts.length - 1) {
-//                return path;          // terminamos con atributo básico o entidad
-//            }
-////
-////            /*--- 5. Si el atributo actual es básico pero NO era la última parte,
-////                   la ruta es errónea --------------------------------------------*/
-////            if (!attr.isAssociation()) {
-////                throw new IllegalArgumentException(
-////                    "La ruta '" + propertyFullName +
-////                    "' intenta navegar dentro de un atributo básico ('" + part + "')");
-////            }
-//        }
-        return path; 
+        /* 2. Recorrer tokens limpios (igual que antes) ------------------ */
+        for (int i = 0; i < cleaned.size(); i++) {
+            String part = cleaned.get(i);
+
+            // omite el nombre de la entidad raíz si viene repetido
+            if (part.equalsIgnoreCase(jType.getSimpleName())) {
+                continue;
+            }
+
+            EntityType<?> et;
+            try {
+                et = mm.entity(jType);
+            } catch (IllegalArgumentException ex) { // jType ya no es entidad
+                throw new IllegalArgumentException("No se puede navegar dentro de un atributo básico (" + jType.getName() + ") usando '" + part + "' en la ruta '" + propertyFullName + '\'', ex);
+            }
+
+            Attribute<?, ?> attr = et.getAttribute(part);
+
+            path = attr.isAssociation() ? ((From<?, ?>) path).join(part, JoinType.LEFT) : path.get(part);
+
+            jType = attr.getJavaType(); // tipo para el siguiente salto
+        }
+        return path;
     }
 
     private <T extends Comparable<? super T>> Expression<T> cast(Expression<?> exp) {
