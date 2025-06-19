@@ -234,7 +234,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
                 resourceId = params[1];
                 version = params[2];
             }
-            return restApiLocator.getSrmRestInternalFacadeV10().findConcepts(agencyId, resourceId, version, query, null, limit, offset, null);
+            return restApiLocator.getSrmRestInternalFacadeV10().findConcepts(agencyId, resourceId, version, query, null, limit, offset, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }
@@ -251,7 +251,7 @@ public class SrmRestInternalServiceImpl implements SrmRestInternalService {
             String agencyId = params[0];
             String resourceId = params[1];
             String version = params[2];
-            return restApiLocator.getSrmRestInternalFacadeV10().findConcepts(agencyId, resourceId, version, null, null, null, null, null);
+            return restApiLocator.getSrmRestInternalFacadeV10().findConcepts(agencyId, resourceId, version, null, null, null, null, null, null);
         } catch (Exception e) {
             throw manageSrmInternalRestException(e);
         }

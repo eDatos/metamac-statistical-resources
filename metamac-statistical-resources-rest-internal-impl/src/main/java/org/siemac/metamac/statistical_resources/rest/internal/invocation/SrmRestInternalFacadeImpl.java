@@ -76,13 +76,13 @@ public class SrmRestInternalFacadeImpl implements SrmRestInternalFacade {
     }
 
     @Override
-    public Concepts retrieveConceptsByConceptSchemeByUrn(String urn, String fields) {
+    public Concepts retrieveConceptsByConceptSchemeByUrn(String urn, String order, String fields) {
         try {
             String[] urnSplited = UrnUtils.splitUrnItemScheme(urn);
             String agencyID = urnSplited[0];
             String resourceID = urnSplited[1];
             String version = urnSplited[2];
-            return restApiLocator.getSrmRestExternalFacadeV10().findConcepts(agencyID, resourceID, version, null, null, null, null, fields);
+            return restApiLocator.getSrmRestExternalFacadeV10().findConcepts(agencyID, resourceID, version, null, null, null, null, null, fields);
         } catch (Exception e) {
             throw toRestException(e);
         }
