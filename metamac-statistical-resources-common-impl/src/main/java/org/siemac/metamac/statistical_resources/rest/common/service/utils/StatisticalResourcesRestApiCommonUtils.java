@@ -40,8 +40,6 @@ public class StatisticalResourcesRestApiCommonUtils {
 
     private static final Pattern patternCodes          = Pattern.compile("(" + CODE + ")\\|?");
 
-    private static final Pattern patternDataSeparator  = Pattern.compile(" \\| ");
-
     protected StatisticalResourcesRestApiCommonUtils() {
 
     }
@@ -95,12 +93,4 @@ public class StatisticalResourcesRestApiCommonUtils {
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
         return parseFields(fieldsParam, validFields);
     }
-
-    public static String escapeValueToData(String value) {
-        if (value == null) {
-            return null;
-        }
-        return patternDataSeparator.matcher(value).replaceAll("\\\\ | \\\\");
-    }
-
 }
