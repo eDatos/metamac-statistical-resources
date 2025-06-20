@@ -75,6 +75,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
     protected TreeGridField                        titleField;
     protected TreeGridField                        urnField;
     protected TreeGridField                        resourceField;
+    protected TreeGridField                        dsdField;
     protected TreeGridField                        orderField;
     protected TreeGridField                        infoField;
 
@@ -130,11 +131,15 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         urnField.setCanFilter(true);
         urnField.setCanSort(false);
 
-        resourceField = new TreeGridField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeURN());
+        resourceField = new TreeGridField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResource());
         resourceField.setShowHover(false); // only show hover in info field
         resourceField.setCanFilter(true);
         resourceField.setCanSort(false);
 
+        dsdField = new TreeGridField(MultidatasetCubeDS.DTO, getConstants().multidatasetStructureCubeDSD());
+        dsdField.setShowHover(false); // only show hover in info field
+        dsdField.setCanFilter(true);
+        dsdField.setCanSort(false);
 
         orderField = new TreeGridField(MultidatasetCubeDS.ORDER_IN_LEVEL, getConstants().multidatasetStructureCubeOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
@@ -148,7 +153,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(identifierField, titleField, urnField,resourceField, orderField, infoField);
+        setFields(identifierField, titleField, urnField,resourceField, dsdField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);

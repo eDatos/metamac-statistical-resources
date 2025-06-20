@@ -19,7 +19,7 @@ public class ElementLevelTreeNode extends NavigableTreeNode {
 
     @Override
     public void setTitle(String value) {
-        setAttribute(ElementLevelDS.TITLE, value);
+        setAttribute(ElementLevelDS.TITLE, value + "cristo_");
     }
 
     public void setDescription(String value) {

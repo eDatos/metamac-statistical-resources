@@ -466,8 +466,8 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         DetailViewerField descriptionField = new DetailViewerField(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
         DetailViewerField urnField = new DetailViewerField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
+        //FIXME _ No carga el resources field y el dsdfield no creo que sea el correcto (se ve en pantalla pero no creo que este bien)
         DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResource());
-        //FIXME
         DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DTO, getConstants().publicationStructureElementDSD());
         return new DetailViewerField[]{titleField, descriptionField, urnField, resourceField, dsdField};
     }
