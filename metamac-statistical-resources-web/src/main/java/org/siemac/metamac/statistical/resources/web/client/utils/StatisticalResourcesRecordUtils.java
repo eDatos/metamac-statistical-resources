@@ -17,6 +17,7 @@ import org.siemac.metamac.statistical.resources.core.dto.VersionableStatisticalR
 import org.siemac.metamac.statistical.resources.core.dto.VersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.KeyValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
@@ -54,6 +55,7 @@ import org.siemac.metamac.statistical.resources.web.client.publication.model.rec
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.PublicationRecord;
 import org.siemac.metamac.statistical.resources.web.client.query.model.record.QueryRecord;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
+import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.utils.RecordUtils;
@@ -422,11 +424,13 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
     // DSD ATTRIBUTE INSTANCES
     //
 
-    public static DsdAttributeInstanceRecord getDsdAttributeInstanceRecord(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
+    public static DsdAttributeInstanceRecord getDsdAttributeInstanceRecord(DsdAttributeInstanceDto dsdAttributeInstanceDto, DsdAttributeDto dsdAttributeDto) {
         DsdAttributeInstanceRecord record = new DsdAttributeInstanceRecord();
         if (dsdAttributeInstanceDto.getValue() != null) {
             if (dsdAttributeInstanceDto.getValue().getExternalItemValue() != null) {
                 record.setExternalItemValue(dsdAttributeInstanceDto.getValue().getExternalItemValue());
+            } else if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+                record.setStringValue(getTitleFromInternationalStringValue(dsdAttributeInstanceDto.getValue()));
             } else {
                 record.setStringValue(dsdAttributeInstanceDto.getValue().getStringValue());
             }
@@ -436,10 +440,17 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         return record;
     }
 
-    public static DsdAttributeInstanceRecord[] getDsdAttributeInstanceRecords(List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
+    private static String getTitleFromInternationalStringValue(AttributeValueDto attributeValueDto) {
+        if (attributeValueDto != null && attributeValueDto.getInternationalStringValue() != null) {
+            return InternationalStringUtils.getLocalisedString(attributeValueDto.getInternationalStringValue(), ApplicationEditionLanguages.getCurrentLocale());
+        }
+        return "-";
+    }
+
+    public static DsdAttributeInstanceRecord[] getDsdAttributeInstanceRecords(List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos, DsdAttributeDto dsdAttributeDto) {
         DsdAttributeInstanceRecord[] records = new DsdAttributeInstanceRecord[dsdAttributeInstanceDtos.size()];
         for (int i = 0; i < dsdAttributeInstanceDtos.size(); i++) {
-            records[i] = getDsdAttributeInstanceRecord(dsdAttributeInstanceDtos.get(i));
+            records[i] = getDsdAttributeInstanceRecord(dsdAttributeInstanceDtos.get(i), dsdAttributeDto);
         }
         return records;
     }

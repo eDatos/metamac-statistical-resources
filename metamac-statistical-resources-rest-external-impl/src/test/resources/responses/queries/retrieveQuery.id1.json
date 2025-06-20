@@ -20,7 +20,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-resource-bYmJvnJXqU en Espanol",
+				"value": "description-resource-vakPdhch5v en Espanol",
 				"lang": "es"
 			}
 		]
@@ -31,7 +31,7 @@
 		],
 		"total": 1
 	},
-	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=hfZiYvFlSO&resourceId=query1",
+	"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=fPSEpoS98L&resourceId=query1",
 	"metadata": {
 		"relatedDataset": {
 			"id": "dataset01",
@@ -49,7 +49,7 @@
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=SQgeyUSDvz&resourceId=dataset01&version=01.000"
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=Nx0o1q66Zk&resourceId=dataset01&version=01.000"
 		},
 		"relatedDsd": {
 			"heading": {
@@ -700,6 +700,19 @@
 					"type": "OTHER"
 				},
 				{
+					"id": "at12",
+					"name": {
+						"text": [
+							{
+								"value": "at12-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DATASET",
+					"type": "OTHER"
+				},
+				{
 					"id": "at2",
 					"name": {
 						"text": [
@@ -1042,9 +1055,54 @@
 					},
 					"attachmentLevel": "PRIMARY_MEASURE",
 					"type": "OTHER"
+				},
+				{
+					"id": "at14",
+					"name": {
+						"text": [
+							{
+								"value": "at14-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							}
+						],
+						"total": 1
+					},
+					"type": "OTHER"
+				},
+				{
+					"id": "at15",
+					"name": {
+						"text": [
+							{
+								"value": "at15-concept01 en Español",
+								"lang": "es"
+							}
+						]
+					},
+					"attachmentLevel": "DIMENSION",
+					"dimensions": {
+						"dimension": [
+							{
+								"dimensionId": "GEO_DIM"
+							},
+							{
+								"dimensionId": "TIME_PERIOD"
+							}
+						],
+						"total": 2
+					},
+					"type": "OTHER"
 				}
 			],
-			"total": 11
+			"total": 14
 		},
 		"status": "ACTIVE",
 		"type": "FIXED",
@@ -1064,7 +1122,7 @@
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/agency1/dataset01/01.000"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset01(01.000)",
-			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=SQgeyUSDvz&resourceId=dataset01&version=01.000"
+			"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=Nx0o1q66Zk&resourceId=dataset01&version=01.000"
 		},
 		"isPartOf": {
 			"resource": [
@@ -1108,11 +1166,11 @@
 			"total": 2
 		},
 		"statisticalOperation": {
-			"id": "2dMccE2DE8",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=2dMccE2DE8",
+			"id": "mKSr2Wn7R8",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=mKSr2Wn7R8",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/2dMccE2DE8"
+				"href": "http://data.istac.es/apis/operations/latest/mKSr2Wn7R8"
 			},
 			"name": {
 				"text": [
@@ -1125,17 +1183,17 @@
 			"kind": "statisticalOperations#operation"
 		},
 		"maintainer": {
-			"id": "hfZiYvFlSO",
+			"id": "fPSEpoS98L",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).hfZiYvFlSO",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).fPSEpoS98L",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/hfZiYvFlSO"
+				"href": "http://data.istac.es/apis/srm/latest/fPSEpoS98L"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-hfZiYvFlSO en Espanol",
+						"value": "title-fPSEpoS98L en Espanol",
 						"lang": "es"
 					}
 				]
@@ -1302,7 +1360,77 @@
 					"id": "at11"
 				}
 			],
-			"total": 11
+			"internationalAttribute": [
+				{
+					"values": [
+						{
+							"text": [
+								{
+									"value": "Value at12 es",
+									"lang": "es"
+								}
+							]
+						}
+					],
+					"id": "at12"
+				},
+				{
+					"values": [
+						{
+							"text": [
+								{
+									"value": "Value at14-1 es",
+									"lang": "es"
+								}
+							]
+						},
+						null,
+						{
+							"text": [
+								{
+									"value": "Value at14-2 es",
+									"lang": "es"
+								}
+							]
+						},
+						null,
+						null,
+						null,
+						null,
+						null
+					],
+					"id": "at14"
+				},
+				{
+					"values": [
+						null,
+						{
+							"text": [
+								{
+									"value": "Value at15-1 es",
+									"lang": "es"
+								}
+							]
+						},
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null,
+						null
+					],
+					"id": "at15"
+				}
+			],
+			"total": 14
 		},
 		"observations": "19 | 22 | 25 | 1 | 4 | 7 | 55 | 58 | 61 | 37 | 40 | 43 | 91 | 94 | 97 | 73 | 76 | 79 | 127 | 130 | 133 | 109 | 112 | 115 | 163 | 166 | 169 | 145 | 148 | 151 | 235 | 238 | 241 | 217 | 220 | 223 | 343 | 346 | 349 | 325 | 328 | 331 | 415 | 418 | 421 | 397 | 400 | 403"
 	},

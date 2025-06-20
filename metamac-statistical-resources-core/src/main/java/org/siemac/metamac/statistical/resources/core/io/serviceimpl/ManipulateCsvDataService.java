@@ -17,5 +17,5 @@ public interface ManipulateCsvDataService {
     public void importCsv(ServiceContext ctx, File csvFile, DataStructure dataStructure, String datasetID, String dataSourceID, ValidateDataVersusDsd validateDataVersusDsd) throws Exception;
 
     public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId,
-            ServiceContext ctx, String dataVersionUrn) throws Exception;
+            ServiceContext ctx, String dataVersionUrn, List<String> validLanguages) throws Exception;
 }

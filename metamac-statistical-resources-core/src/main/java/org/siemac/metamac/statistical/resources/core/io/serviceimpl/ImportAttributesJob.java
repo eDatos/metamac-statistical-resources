@@ -136,8 +136,7 @@ public class ImportAttributesJob implements Job {
     }
 
     private void sendErrorNotification(MetamacException metamacException) {
-        String user = getData().getString(USER);
-        getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.IMPORT_ATTRIBUTE_JOB, metamacException);
+        getNoticesRestInternalService().createErrorBackgroundNotification(null, ServiceNoticeAction.IMPORT_ATTRIBUTE_JOB, metamacException);
     }
 
     private JobDataMap getData() {

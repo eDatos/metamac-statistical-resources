@@ -289,6 +289,14 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.attribute.importation.dimension_id_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_ATTRIBUTE_ID_INVALID                                                 = create(
             "exception.resources.attribute.importation.attribute_id_invalid");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER                                          = create(
+            "exception.resources.attribute.importation.attribute_invalid_multilingual_header");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_HEADER_OR_ATTRIBUTE_INFO                                     = create(
+            "exception.resources.attribute.importation.attribute_invalid_header_or_attribute_info");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_DUPLICATE_LANGUAGE                       = create(
+            "exception.resources.attribute.importation.attribute_invalid_multilingual_header_duplicate_language");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_INVALID_LANGUAGE                         = create(
+            "exception.resources.attribute.importation.attribute_invalid_multilingual_header_invalid_language");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_FILE_EMPTY                                                           = create(
             "exception.resources.attribute.importation.file_empty");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_CODE_ENUM_NOT_VALID                                                        = create(

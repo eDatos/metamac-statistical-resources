@@ -1232,11 +1232,40 @@
                      },
                      "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.value.description']}",
                      "type":"string"
-                  }
+                     }                  
                }
             }
          ],
          "description":"${msg['api.doc.swagger.definitions.dataAttribute.description']}"
+      },
+      "DataInternationalAttribute":{
+         "type":"object",
+         "title":"DataInternationalAttribute",
+         "allOf":[
+            {
+               "properties":{
+                  "id":{
+                     "xml":{
+                        "attribute":true,
+                        "namespace":""
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.id.description']}",
+                     "type":"string"
+                  },
+                    "values":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.dataAttribute.properties.multilingualValues.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/InternationalString"
+                     }
+                     },   
+               }
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.dataInternationalAttribute.description']}"
       },
       "DataAttributes":{
          "type":"object",
@@ -1260,6 +1289,16 @@
                      "type":"array",
                      "items":{
                         "$ref":"#/definitions/DataAttribute"
+                     }
+                  },
+                  "internationalAttribute":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.dataAttributes.properties.internationalAttribute.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/DataInternationalAttribute"
                      }
                   }
                }
@@ -3160,7 +3199,11 @@
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_GET",
             "produces":[
+               "application/json",
+               "application/xml",
                "application/jsonstat+json",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                {
@@ -3247,11 +3290,7 @@
             "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.description']}",
             "operationId":"resource__v1.0_datasets__agencyID___resourceID___version__retrieveDataset_POST",
             "produces":[
-               "application/json",
-               "application/xml",
-               "application/jsonstat+json",
-               "text/tab-separated-values",
-               "text/csv"
+               "application/jsonstat+json"
             ],
             "parameters":[
                {

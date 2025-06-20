@@ -603,7 +603,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
         queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
-        return queryVersionDto; 
+        return queryVersionDto;
     }
 
     @Override
@@ -1266,7 +1266,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         AttributeInstanceDto attributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper.dsdAttributeInstanceDtoToAttributeInstanceDto(dsdAttributeInstanceDto);
-
         // Update attribute
         AttributeInstanceDto attributeInstanceUpdated = getDatasetService().updateAttributeInstance(ctx, datasetVersionUrn, attributeInstanceDto);
 
