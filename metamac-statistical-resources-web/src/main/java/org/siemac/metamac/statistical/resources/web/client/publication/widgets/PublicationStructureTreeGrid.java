@@ -36,6 +36,8 @@ import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitHandler;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -88,6 +90,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     protected TreeGridField                     urnField;
     protected TreeGridField                     resourceField;
     protected TreeGridField                     dsdField;
+    protected TreeGridField                     queryDatasetField;
     protected TreeGridField                     orderField;
     protected TreeGridField                     infoField;
 
@@ -148,10 +151,26 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         resourceField.setCanFilter(true);
         resourceField.setCanSort(false);
 
-        dsdField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementDSD());
+        resourceField.setCellFormatter(new CellFormatter() {
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (value == null) return null;
+                String url = value.toString();
+                //TODO: Montar la URL de manera correcta
+                return "<a href='" + url + "'>"+url+"/a>";
+            }
+        });
+
+
+        dsdField = new TreeGridField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
         dsdField.setShowHover(false); // only show hover in info field
         dsdField.setCanFilter(true);
         dsdField.setCanSort(false);
+
+        queryDatasetField = new TreeGridField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
+        queryDatasetField.setShowHover(false); // only show hover in info field
+        queryDatasetField.setCanFilter(true);
+        queryDatasetField.setCanSort(false);
 
         orderField = new TreeGridField(ElementLevelDS.ORDER_IN_LEVEL, getConstants().publicationStructureElementOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
@@ -165,7 +184,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(titleField, urnField, resourceField, dsdField, orderField, infoField);
+        setFields(titleField, resourceField, dsdField, queryDatasetField, urnField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);

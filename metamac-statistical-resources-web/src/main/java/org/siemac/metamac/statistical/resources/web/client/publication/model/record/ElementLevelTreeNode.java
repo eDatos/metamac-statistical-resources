@@ -19,7 +19,7 @@ public class ElementLevelTreeNode extends NavigableTreeNode {
 
     @Override
     public void setTitle(String value) {
-        setAttribute(ElementLevelDS.TITLE, value + "cristo_");
+        setAttribute(ElementLevelDS.TITLE, value);
     }
 
     public void setDescription(String value) {
@@ -40,5 +40,29 @@ public class ElementLevelTreeNode extends NavigableTreeNode {
 
     public ElementLevelDto getElementLevelDto() {
         return (ElementLevelDto) getAttributeAsObject(ElementLevelDS.DTO);
+    }
+
+    public void setLinkedResource(String value) {
+        setAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK, value);
+    }
+
+    public String getLinkedResource() {
+        return getAttributeAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+    }
+
+    public void setDSD(String value) {
+        setAttribute(ElementLevelDS.DSD, value);
+    }
+
+    public String getDSD() {
+        return getAttributeAsString(ElementLevelDS.DSD);
+    }
+
+    public void setQueryDataset(String value) {
+        setAttribute(ElementLevelDS.QUERY_DATASET, value);
+    }
+
+    public String getQueryDataset() {
+        return getAttributeAsString(ElementLevelDS.QUERY_DATASET);
     }
 }

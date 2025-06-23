@@ -21,6 +21,9 @@ public class MultidatasetCubeDS extends DataSource {
 
     public static final String DTO                   = "str-dto";
 
+    public static final String DSD                   = "str-dsd";
+    public static final String QUERY_DATASET    = "str-query-dataset";
+
     public MultidatasetCubeDS() {
         DataSourceIntegerField identifier = new DataSourceIntegerField(URN, getConstants().multidatasetStructureCubeURN());
         identifier.setPrimaryKey(true);

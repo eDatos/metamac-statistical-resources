@@ -5,6 +5,7 @@ import static org.siemac.metamac.web.common.client.utils.InternationalStringUtil
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.IdentifiableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
@@ -243,11 +244,45 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
     }
 
     public static ElementLevelTreeNode getElementLevelNode(ElementLevelDto elementLevelDto) {
+
         ElementLevelTreeNode elementLevelNode = new ElementLevelTreeNode();
         NameableStatisticalResourceDto element = elementLevelDto.getChapter() != null ? elementLevelDto.getChapter() : elementLevelDto.getCube();
         elementLevelNode.setID(element.getUrn());
         elementLevelNode.setUrn(element.getUrn());
         elementLevelNode.setTitle(InternationalStringUtils.getLocalisedString(element.getTitle()));
+
+        if (elementLevelDto.getCube() != null) {
+            CubeDto cubeDto = elementLevelDto.getCube();
+            String linkedResource = StringUtils.EMPTY;
+            String queryDataset = StringUtils.EMPTY;
+
+
+            if (cubeDto.getDatasetUrn() != null) {
+                linkedResource = cubeDto.getDatasetUrn();
+            } else if (cubeDto.getQueryUrn() != null) {
+                linkedResource = cubeDto.getQueryUrn();
+                // TODO: In case of query , get Dataset associated
+                queryDataset = cubeDto.getQueryUrn();
+            } else if (cubeDto.getMultidatasetUrn() != null) {
+                linkedResource = cubeDto.getMultidatasetUrn();
+            } else if (cubeDto.getCollectionUrn() != null) {
+                linkedResource = cubeDto.getCollectionUrn();
+            } else if (cubeDto.getUrl() != null) {
+                linkedResource = cubeDto.getUrl();
+            }
+
+            if (linkedResource != null){
+                elementLevelNode.setLinkedResource(linkedResource);
+            }
+            if (queryDataset != null) {
+                elementLevelNode.setQueryDataset(queryDataset);
+            }
+
+            //TODO: Get DSD associated to dataset
+            elementLevelNode.setDSD(element.getStatisticalOperation().getUuid());
+
+        }
+
         elementLevelNode.setDescription(InternationalStringUtils.getLocalisedString(element.getDescription()));
         if (element instanceof ChapterDto) {
             elementLevelNode.setOrderInLevel(((ChapterDto) element).getOrderInLevel());
@@ -266,6 +301,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         ElementLevelTreeNode elementLevelTreeNode = new ElementLevelTreeNode();
         elementLevelTreeNode.setID(schemeNodeName);
         elementLevelTreeNode.setTitle(InternationalStringUtils.getLocalisedString(publicationVersion.getTitle()));
+
         return elementLevelTreeNode;
     }
 
