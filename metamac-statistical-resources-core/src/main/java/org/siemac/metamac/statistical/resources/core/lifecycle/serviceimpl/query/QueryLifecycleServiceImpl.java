@@ -33,6 +33,8 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.query.utils.QueryVersioningCopyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +68,8 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
 
     @Autowired
     private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
+
+    private static Logger       logger              = LoggerFactory.getLogger(QueryLifecycleServiceImpl.class);
 
     @Override
     protected String getResourceMetadataName() throws MetamacException {
@@ -289,6 +293,7 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
             }
             updateXStreamStatus(resource, XStreamStatusEnum.SENT);
         } catch (Exception e) {
+            logger.error(e.getMessage(), e);
             createXMessageSentNotification(ctx, resource);
             updateXStreamStatus(resource, XStreamStatusEnum.FAILED);
         }
