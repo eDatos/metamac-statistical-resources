@@ -438,8 +438,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
             if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
                 String portalBaseUrl = configurationService.findProperty("metamac.portal.web.internal.visualizer");
-                String url = entry.getValue().getPrimaryMeasure() + ": " + PortalWebCoreUtils.buildDatasetVersionUrl(resource, portalBaseUrl);
-                return localisedString.getLabel().replace("{datos}", url);
+                return localisedString.getLabel().replace("{datos}", entry.getValue().getPrimaryMeasure());
             }
         }
         return "";
