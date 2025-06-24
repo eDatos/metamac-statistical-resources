@@ -250,4 +250,11 @@ public class ResourceAccess {
     public static String generateMatrixFromString(String string) {
         return Base64.getEncoder().encodeToString(string.getBytes()).substring(0, MAX_PX_MATRIX_LENGTH);
     }
+
+    // return number of observations + 1 (header row)
+    public Long getObservationsNumber() {
+        Long dimensionRows = Long.valueOf(getDataSelection().getRows());
+        Long dimensionColumns = Long.valueOf(getDataSelection().getColumns());
+        return dimensionRows * dimensionColumns + 1;
+    }
 }
