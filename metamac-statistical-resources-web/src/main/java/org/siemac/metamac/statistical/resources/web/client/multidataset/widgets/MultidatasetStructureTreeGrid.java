@@ -161,7 +161,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(identifierField, titleField, resourceField, dsdField,queryDatasetField, urnField, orderField, infoField);
+        setFields(identifierField, titleField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);

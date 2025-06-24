@@ -22,6 +22,7 @@ import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalReso
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomLinkItem;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -155,9 +156,9 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
                 if (value == null) return null;
-                String url = value.toString();
-                //TODO: Montar la URL de manera correcta
-                return "<a href='" + url + "'>"+url+"/a>";
+                String urn = value.toString();
+                //TODO: Montar la URL de manera correcta parecido al getUiHandlers().goToLastVersion(urn)
+                return "<a href='" + urn + "'>" + urn + "/a>";
             }
         });
 
@@ -184,7 +185,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(titleField, resourceField, dsdField, queryDatasetField, urnField, orderField, infoField);
+        setFields(titleField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);
