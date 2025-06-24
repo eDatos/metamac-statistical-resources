@@ -266,11 +266,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields, granularity);
 
-        ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
+        ResourceAccess resourceAccess = ExportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
 
-        ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
-
-        exportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows(), dataset.getUrn());
+        ExportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows(), dataset.getUrn());
 
         FileOutputStream outputStreamObservations = null;
         try {
@@ -278,7 +276,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
-            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
+            ExportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
 
             return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
                     .header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();

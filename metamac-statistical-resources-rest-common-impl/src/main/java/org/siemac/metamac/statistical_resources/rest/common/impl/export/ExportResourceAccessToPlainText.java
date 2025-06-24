@@ -15,7 +15,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DatasetB
 
 public class ExportResourceAccessToPlainText {
 
-    public void exportResourceAccessToPlainText(ResourceAccess resourceAccess, String format, OutputStream os) throws MetamacException {
+    public static void exportResourceAccessToPlainText(ResourceAccess resourceAccess, String format, OutputStream os) throws MetamacException {
         try {
             PlainTextExporter exporter = new PlainTextExporter(resourceAccess, format);
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(os);
@@ -24,7 +24,7 @@ public class ExportResourceAccessToPlainText {
         }
     }
 
-    public ResourceAccess buildResourceAccessForDataset(DatasetBase dataset, List<String> selectedLanguages) {
+    public static ResourceAccess buildResourceAccessForDataset(DatasetBase dataset, List<String> selectedLanguages) {
         try {
             DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(dataset.getData().getDimensions(), dataset.getMetadata().getAttributes(),
                     dataset.getMetadata().getRelatedDsd());
@@ -36,7 +36,7 @@ public class ExportResourceAccessToPlainText {
         }
     }
 
-    public void checkMaxRowsInXlsxFormat(ResourceAccess resourceAccess, String format, String maxXlsxRows, String datasetUrn) throws RestException {
+    public static void checkMaxRowsInXlsxFormat(ResourceAccess resourceAccess, String format, String maxXlsxRows, String datasetUrn) throws RestException {
         if (ResourcesFormat.XLSX.name().equals(format.toUpperCase()) && (resourceAccess.getObservationsNumber() > Long.parseLong(maxXlsxRows))) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils
                     .getException(RestStatisticalResourcesCommonServiceExceptionType.DATASET_OBSERVATIONS_EXCEED_MAX_FOR_XLSX, datasetUrn);
