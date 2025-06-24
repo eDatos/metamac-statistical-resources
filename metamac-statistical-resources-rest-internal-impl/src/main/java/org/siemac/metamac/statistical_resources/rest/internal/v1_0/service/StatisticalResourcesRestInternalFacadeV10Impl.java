@@ -190,9 +190,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
             String granularity) {
         try {
-
             return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity);
-
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
@@ -256,8 +254,9 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields, granularity);
         ResourceAccess resourceAccess = ExportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
         String filename = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
+        final String urn = dataset.getUrn();
 
-        ExportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows(), dataset.getUrn());
+        ExportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows(), urn);
         return ExportResourceAccessToPlainText.buildResponseExportResourceAccessToPlainText(resourceAccess, filename, format);
     }
 
