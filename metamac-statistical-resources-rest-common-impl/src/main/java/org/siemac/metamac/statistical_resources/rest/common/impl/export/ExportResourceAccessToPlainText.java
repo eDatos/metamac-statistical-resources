@@ -1,11 +1,20 @@
 package org.siemac.metamac.statistical_resources.rest.common.impl.export;
 
+import static org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.ExportUtils.getContentDisposition;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.io.IOUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.io.DeleteOnCloseFileInputStream;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.statistical_resources.rest.common.impl.exceptions.ExceptionUtils;
@@ -41,6 +50,22 @@ public class ExportResourceAccessToPlainText {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils
                     .getException(RestStatisticalResourcesCommonServiceExceptionType.DATASET_OBSERVATIONS_EXCEED_MAX_FOR_XLSX, datasetUrn);
             throw new RestException(exception, Status.NOT_FOUND);
+        }
+    }
+
+    public static Response buildResponseExportResourceAccessToPlainText(ResourceAccess resourceAccess, String filename, String format) throws MetamacException, IOException, FileNotFoundException {
+
+        FileOutputStream outputStreamObservations = null;
+        try {
+
+            final File tmpFileObservations = File.createTempFile(filename, format);
+            outputStreamObservations = new FileOutputStream(tmpFileObservations);
+            exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
+
+            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
+                    .header("Content-Disposition", getContentDisposition(filename, format)).build();
+        } finally {
+            IOUtils.closeQuietly(outputStreamObservations);
         }
     }
 }
