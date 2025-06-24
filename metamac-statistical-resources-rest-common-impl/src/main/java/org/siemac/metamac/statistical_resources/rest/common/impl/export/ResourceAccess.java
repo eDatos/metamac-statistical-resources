@@ -56,7 +56,7 @@ public class ResourceAccess {
     }
 
     private void initialize(Data data, Dimensions dimensions, Attributes attributes, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
-        this.setSelectedLanguages(selectedLanguages);
+        setSelectedLanguages(selectedLanguages);
 
         initializeDimensions(dimensions, datasetSelection);
         initializeAttributes(data, attributes, datasetSelection);
@@ -112,7 +112,7 @@ public class ResourceAccess {
             }
         }
 
-        this.dimensionsValuesCurrentLocaleLabels = valuesCurrentLocaleLabels;
+        dimensionsValuesCurrentLocaleLabels = valuesCurrentLocaleLabels;
     }
 
     /**

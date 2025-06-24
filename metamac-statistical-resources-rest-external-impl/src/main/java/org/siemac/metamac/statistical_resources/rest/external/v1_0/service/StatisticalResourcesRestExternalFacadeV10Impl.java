@@ -34,6 +34,8 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
+import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.DimensionFilters;
+import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.Exportation;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -68,12 +70,10 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resour
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.*;
-
 @Service("statisticalResourcesRestExternalFacadeV10")
 public class StatisticalResourcesRestExternalFacadeV10Impl implements StatisticalResourcesV1_0 {
 
-    public static final String OPERATOR = "=";
+    public static final String                            OPERATOR = "=";
     @Autowired
     private StatisticalResourcesRestExternalCommonService commonService;
 
@@ -158,7 +158,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
 
-            //Parse body for dimensions
+            // Parse body for dimensions
             String dimensionSelection = toStatisticalResourcesApiRepresentationParameter(exportationBody);
 
             Map<String, List<String>> dimensions = parseDimensionExpression(dimensionSelection, exportationBody.toString());
@@ -199,7 +199,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity);
     }
 
-    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity) {
+    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
+            String granularity) {
         try {
             return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity);
         } catch (Exception e) {
@@ -251,11 +252,10 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         return sb.toString();
     }
 
-    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity)
-            throws Exception {
+    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
+            String granularity) throws Exception {
 
         Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-
         checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
         checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
 
@@ -422,7 +422,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Add condition for specific or default locale
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            sculptorCriteria.setOrderByCaseCondition(PublicationVersion.class, PublicationVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR, orderBy);
+            sculptorCriteria.setOrderByCaseCondition(PublicationVersion.class, PublicationVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR,
+                    orderBy);
 
             // Find
             PagedResult<PublicationVersion> entitiesPagedResult = commonService.findPublicationVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());

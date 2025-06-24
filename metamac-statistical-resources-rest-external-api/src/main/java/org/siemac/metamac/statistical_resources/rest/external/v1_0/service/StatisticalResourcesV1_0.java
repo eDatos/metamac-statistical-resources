@@ -2,7 +2,13 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
@@ -10,13 +16,12 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
+import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.Exportation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
-
-import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.Exportation;
 
 @Path("v1.0")
 // IMPORTANT: If a new version of API is added, remember change latest url y urlrewrite.xml in war
@@ -67,9 +72,8 @@ public interface StatisticalResourcesV1_0 {
     @POST
     @Produces({"application/jsonstat+json"})
     @Path("datasets/{agencyID}/{resourceID}/{version}")
-    JsonStatData retrieveDatasetJsonStat(Exportation exportationBody,@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version,
+    JsonStatData retrieveDatasetJsonStat(Exportation exportationBody, @PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version,
             @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields, @QueryParam("granularity") String granularity);
-
 
     @GET
     @Produces({"application/jsonstat+json"})
