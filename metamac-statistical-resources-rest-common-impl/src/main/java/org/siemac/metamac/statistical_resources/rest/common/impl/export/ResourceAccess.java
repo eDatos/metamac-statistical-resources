@@ -251,10 +251,10 @@ public class ResourceAccess {
         return Base64.getEncoder().encodeToString(string.getBytes()).substring(0, MAX_PX_MATRIX_LENGTH);
     }
 
-    // return number of observations + 1 (header row)
     public Long getObservationsNumber() {
         Long dimensionRows = Long.valueOf(getDataSelection().getRows());
         Long dimensionColumns = Long.valueOf(getDataSelection().getColumns());
+        // This calculation is used to check XLSX size, so we add 1 to include header row
         return dimensionRows * dimensionColumns + 1;
     }
 }
