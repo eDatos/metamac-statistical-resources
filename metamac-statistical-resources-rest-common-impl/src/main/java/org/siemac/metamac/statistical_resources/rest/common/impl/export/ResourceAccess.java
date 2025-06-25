@@ -27,6 +27,8 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensio
 
 public class ResourceAccess {
 
+    private String                                        urn;
+
     private static final int                              MAX_PX_MATRIX_LENGTH = 8;
 
     private DatasetSelection                              datasetSelection;
@@ -49,7 +51,7 @@ public class ResourceAccess {
     private final Map<String, Map<String, Long>>          representationIndex  = new HashMap<String, Map<String, Long>>(); // Map<Dimension, Map<Code, Index>
 
     public ResourceAccess(DatasetBase dataset, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
-
+        urn = dataset.getUrn();
         this.datasetSelection = datasetSelection;
 
         initialize(dataset.getData(), dataset.getMetadata().getDimensions(), dataset.getMetadata().getAttributes(), datasetSelection, selectedLanguages);
@@ -245,6 +247,10 @@ public class ResourceAccess {
 
     public void setSelectedLanguages(List<String> selectedLanguages) {
         this.selectedLanguages = selectedLanguages;
+    }
+
+    public String getUrn() {
+        return urn;
     }
 
     public static String generateMatrixFromString(String string) {
