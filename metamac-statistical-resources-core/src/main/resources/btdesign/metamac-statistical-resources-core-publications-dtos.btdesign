@@ -63,6 +63,13 @@ Application PublicationsStatisticalResourcesDto {
 			
 			"Parent chapter"
 			String parentChapterUrn;
+
+			"Query Related Dataset"
+			String queryRelatedDatasetUrn;
+
+			"Related DSD"
+			String relatedDSD;
+
 	    }
 	}
 

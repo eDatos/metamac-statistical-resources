@@ -22,7 +22,6 @@ import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalReso
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
-import org.siemac.metamac.web.common.client.widgets.form.fields.CustomLinkItem;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
@@ -68,6 +67,7 @@ import com.smartgwt.client.widgets.viewer.DetailViewerField;
 public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
     protected static final String               SCHEME_NODE_NAME = "scheme-node";
+
 
     protected TreeNodeClickAction               treeNodeClickAction;
 
@@ -153,15 +153,16 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         resourceField.setCanSort(false);
 
         resourceField.setCellFormatter(new CellFormatter() {
+
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (value == null) return null;
+                if (value == null)
+                    return null;
                 String urn = value.toString();
-                //TODO: Montar la URL de manera correcta parecido al getUiHandlers().goToLastVersion(urn)
-                return "<a href='" + urn + "'>" + urn + "/a>";
+                // TODO: Cristo _ Montar la URL de manera correcta parecido al getUiHandlers().goToLastVersion(urn)
+                return "<a href='" + urn+ "'>" + urn + "/a>";
             }
         });
-
 
         dsdField = new TreeGridField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
         dsdField.setShowHover(false); // only show hover in info field
@@ -486,10 +487,10 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         DetailViewerField descriptionField = new DetailViewerField(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
         DetailViewerField urnField = new DetailViewerField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
-        //FIXME _ No carga el resources field y el dsdfield no creo que sea el correcto (se ve en pantalla pero no creo que este bien)
         DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResource());
-        DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DTO, getConstants().publicationStructureElementDSD());
-        return new DetailViewerField[]{titleField, descriptionField, urnField, resourceField, dsdField};
+        DetailViewerField queryDatasetField = new DetailViewerField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
+        DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
+        return new DetailViewerField[]{titleField, descriptionField, resourceField, queryDatasetField, dsdField, urnField};
     }
 
     public void addCreateChapterMenuItemClickHandler(ClickHandler clickHandler) {

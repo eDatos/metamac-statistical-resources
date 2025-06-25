@@ -30,6 +30,8 @@ import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitHandler;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -138,6 +140,16 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         resourceField.setShowHover(false); // only show hover in info field
         resourceField.setCanFilter(true);
         resourceField.setCanSort(false);
+        resourceField.setCellFormatter(new CellFormatter() {
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (value == null)
+                    return null;
+                String urn = value.toString();
+                // TODO: Cristo _ Montar la URL de manera correcta
+                return "<a href='" + urn+ "'>" + urn + "/a>";
+            }
+        });
 
         dsdField = new TreeGridField(MultidatasetCubeDS.DSD, getConstants().multidatasetStructureCubeDSD());
         dsdField.setShowHover(false); // only show hover in info field
@@ -436,7 +448,10 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(MultidatasetCubeDS.TITLE, getConstants().multidatasetStructureCubeTitle());
         DetailViewerField descriptionField = new DetailViewerField(MultidatasetCubeDS.DESCRIPTION, getConstants().multidatasetStructureCubeDescription());
         DetailViewerField urnField = new DetailViewerField(MultidatasetCubeDS.URN, getConstants().multidatasetStructureCubeURN());
-        return new DetailViewerField[]{identifier, titleField, descriptionField, urnField};
+        DetailViewerField resourceField = new DetailViewerField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResource());
+        DetailViewerField queryDatasetField = new DetailViewerField(MultidatasetCubeDS.QUERY_DATASET, getConstants().multidatasetStructureCubeQueryDataset());
+        DetailViewerField dsdField = new DetailViewerField(MultidatasetCubeDS.DSD, getConstants().multidatasetStructureCubeDSD());
+        return new DetailViewerField[]{identifier, titleField, descriptionField, resourceField, queryDatasetField, dsdField, urnField};
     }
 
     public void addCreateCubeMenuItemClickHandler(ClickHandler clickHandler) {

@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.mapper.BaseDo2DtoMapperImpl;
+import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.ChapterDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.CubeDto;
@@ -20,6 +24,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +34,11 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
     @Autowired
     private PublicationVersionRepository publicationVersionRepository;
 
+    @Autowired
+    private QueryVersionRepository queryVersionRepository;
+
+    @Autowired
+    private DatasetVersionRepository datasetVersionRepository;
     // ---------------------------------------------------------------------------------------------------------
     // PUBLICATIONS
     // ---------------------------------------------------------------------------------------------------------
@@ -257,6 +267,21 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
         target.setId(source.getId());
         target.setVersion(source.getVersion());
 
+        //Query, Datasource an DSD
+        if (source.getQueryUrn() !=null){
+            Dataset queryDataset = queryVersionRepository.retrieveLastVersion(source.getQueryUrn()).getDataset();
+            String queryDataseturn =  queryDataset.getIdentifiableStatisticalResource().getUrn();
+            target.setQueryRelatedDatasetUrn(queryDataseturn);
+            target.setRelatedDSD(getRelatedDsdUrn(queryDataseturn));
+
+        }
+        if(source.getDatasetUrn() !=null){
+            Dataset dataset = datasetVersionRepository.retrieveLastVersion(source.getDatasetUrn()).getDataset();
+            String datasetUrn =  dataset.getIdentifiableStatisticalResource().getUrn();
+            target.setRelatedDSD(getRelatedDsdUrn(datasetUrn));
+        }
+
+
         // Other
         target.setParentChapterUrn(source.getElementLevel().getParentUrn());
         target.setOrderInLevel(source.getElementLevel().getOrderInLevel());
@@ -267,6 +292,13 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
         target.setUrl(source.getUrl());
         return target;
     }
+
+    private String getRelatedDsdUrn(String datasetUrn) throws MetamacException {
+        DatasetVersion datasetVersion = datasetVersionRepository.retrieveLastVersion(datasetUrn);
+        ExternalItem externalItem = datasetVersion.getRelatedDsd();
+        return externalItem.getUrn();
+    }
+
 
     // --------------------------------------------------------------------------------------
     // ELEMENT LEVELS

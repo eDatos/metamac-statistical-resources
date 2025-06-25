@@ -5,6 +5,10 @@ import java.util.List;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.mapper.BaseDo2DtoMapperImpl;
+import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionBaseDto;
@@ -15,6 +19,7 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumU
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +28,12 @@ public class MultidatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
 
     @Autowired
     private MultidatasetVersionRepository multidatasetVersionRepository;
+
+    @Autowired
+    private QueryVersionRepository queryVersionRepository;
+
+    @Autowired
+    private DatasetVersionRepository datasetVersionRepository;
 
     // ---------------------------------------------------------------------------------------------------------
     // MULTIDATASETS
@@ -203,6 +214,20 @@ public class MultidatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
         target.setId(source.getId());
         target.setVersion(source.getVersion());
 
+        //Query, Datasource an DSD
+        if (source.getQueryUrn() !=null){
+            Dataset queryDataset = queryVersionRepository.retrieveLastVersion(source.getQueryUrn()).getDataset();
+            String queryDataseturn =  queryDataset.getIdentifiableStatisticalResource().getUrn();
+            target.setQueryRelatedDatasetUrn(queryDataseturn);
+            target.setRelatedDSD(getRelatedDsdUrn(queryDataseturn));
+
+        }
+        if(source.getDatasetUrn() !=null){
+            Dataset dataset = datasetVersionRepository.retrieveLastVersion(source.getDatasetUrn()).getDataset();
+            String datasetUrn =  dataset.getIdentifiableStatisticalResource().getUrn();
+            target.setRelatedDSD(getRelatedDsdUrn(datasetUrn));
+        }
+
         // Other
         target.setIdentifier(source.getIdentifier());
         target.setParentMultidatasetUrn(source.getMultidatasetVersion().getSiemacMetadataStatisticalResource().getUrn());
@@ -210,6 +235,12 @@ public class MultidatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
         target.setQueryUrn(source.getQueryUrn());
         target.setDatasetUrn(source.getDatasetUrn());
         return target;
+    }
+
+    private String getRelatedDsdUrn(String datasetUrn) throws MetamacException {
+        DatasetVersion datasetVersion = datasetVersionRepository.retrieveLastVersion(datasetUrn);
+        ExternalItem externalItem = datasetVersion.getRelatedDsd();
+        return externalItem.getUrn();
     }
 
     @Override

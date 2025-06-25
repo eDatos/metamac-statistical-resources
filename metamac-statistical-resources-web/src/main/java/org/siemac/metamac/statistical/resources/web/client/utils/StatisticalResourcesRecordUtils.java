@@ -256,13 +256,11 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
             String linkedResource = StringUtils.EMPTY;
             String queryDataset = StringUtils.EMPTY;
 
-
             if (cubeDto.getDatasetUrn() != null) {
                 linkedResource = cubeDto.getDatasetUrn();
             } else if (cubeDto.getQueryUrn() != null) {
                 linkedResource = cubeDto.getQueryUrn();
-                // TODO: In case of query , get Dataset associated
-                queryDataset = cubeDto.getQueryUrn();
+                queryDataset = cubeDto.getQueryRelatedDatasetUrn();
             } else if (cubeDto.getMultidatasetUrn() != null) {
                 linkedResource = cubeDto.getMultidatasetUrn();
             } else if (cubeDto.getCollectionUrn() != null) {
@@ -271,15 +269,14 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
                 linkedResource = cubeDto.getUrl();
             }
 
-            if (linkedResource != null){
+            if (linkedResource != null) {
                 elementLevelNode.setLinkedResource(linkedResource);
             }
             if (queryDataset != null) {
                 elementLevelNode.setQueryDataset(queryDataset);
             }
 
-            //TODO: Get DSD associated to dataset
-            elementLevelNode.setDSD(element.getStatisticalOperation().getUuid());
+            elementLevelNode.setDSD(cubeDto.getRelatedDSD());
 
         }
 
@@ -500,6 +497,26 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         multidatasetCubeNode.setIdentifier(multidatasetCubeDto.getIdentifier());
         multidatasetCubeNode.setTitle(InternationalStringUtils.getLocalisedString(multidatasetCubeDto.getTitle()));
         multidatasetCubeNode.setDescription(InternationalStringUtils.getLocalisedString(multidatasetCubeDto.getDescription()));
+
+        String linkedResource = StringUtils.EMPTY;
+        String queryDataset = StringUtils.EMPTY;
+
+        if (multidatasetCubeDto.getDatasetUrn() != null) {
+            linkedResource = multidatasetCubeDto.getDatasetUrn();
+        } else if (multidatasetCubeDto.getQueryUrn() != null) {
+            linkedResource = multidatasetCubeDto.getQueryUrn();
+            queryDataset = multidatasetCubeDto.getQueryRelatedDatasetUrn();
+        }
+
+        if (linkedResource != null) {
+            multidatasetCubeNode.setLinkedResource(linkedResource);
+        }
+        if (queryDataset != null) {
+            multidatasetCubeNode.setQueryDataset(queryDataset);
+        }
+
+        multidatasetCubeNode.setDSD(multidatasetCubeDto.getRelatedDSD());
+
 
         multidatasetCubeNode.setOrderInMultidataset(multidatasetCubeDto.getOrderInMultidataset());
         multidatasetCubeNode.setIcon(org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources.RESOURCE.treeFile().getURL());
