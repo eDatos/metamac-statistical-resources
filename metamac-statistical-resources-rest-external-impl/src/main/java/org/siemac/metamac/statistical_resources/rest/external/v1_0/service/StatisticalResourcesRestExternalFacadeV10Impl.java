@@ -248,7 +248,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
         // Specific for dataset
         DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion, lang);
+        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion.getSiemacMetadataStatisticalResource().getLanguages(), lang);
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields, granularity);
         ResourceAccess resourceAccess = ExportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
         String filename = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
@@ -466,11 +466,11 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     // if sources is not empty, the user has introduced the languages. Otherwise, the dataset languages will be returned. The default language in common-metadata will be returned always.
-    private List<String> languagesRequestedToEffectiveLanguages(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private List<String> languagesRequestedToEffectiveLanguages(List<ExternalItem> sourceLanguages, List<String> selectedLanguages) throws MetamacException {
         List<String> targets = null;
         if (CollectionUtils.isEmpty(selectedLanguages)) {
             targets = new ArrayList<String>();
-            for (ExternalItem lang : source.getSiemacMetadataStatisticalResource().getLanguages()) {
+            for (ExternalItem lang : sourceLanguages) {
                 targets.add(lang.getCode().toLowerCase());
             }
             String languageDefault = configurationService.retrieveLanguageDefault();
