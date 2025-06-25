@@ -46,9 +46,12 @@ public class ExportResourceAccessToPlainText {
     }
 
     public static void checkMaxRowsInXlsxFormat(ResourceAccess resourceAccess, String format, String maxXlsxRows, String datasetUrn) throws RestException {
-        if (ResourcesFormat.XLSX.name().equals(format.toUpperCase()) && (resourceAccess.getObservationsNumber() > Long.parseLong(maxXlsxRows))) {
+        if (!ResourcesFormat.XLSX.name().equals(format.toUpperCase())) {
+            return;
+        }
+        if (resourceAccess.getObservationsNumber() > Long.parseLong(maxXlsxRows)) {
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils
-                    .getException(RestStatisticalResourcesCommonServiceExceptionType.DATASET_OBSERVATIONS_EXCEED_MAX_FOR_XLSX, datasetUrn);
+                    .getException(RestStatisticalResourcesCommonServiceExceptionType.OBSERVATIONS_EXCEED_MAX_FOR_XLSX, datasetUrn);
             throw new RestException(exception, Status.NOT_FOUND);
         }
     }
