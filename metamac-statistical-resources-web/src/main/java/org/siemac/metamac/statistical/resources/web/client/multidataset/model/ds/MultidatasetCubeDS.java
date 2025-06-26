@@ -13,7 +13,7 @@ public class MultidatasetCubeDS extends DataSource {
     public static final String ORDER_IN_LEVEL        = "str-order-level";
     public static final String URN                   = "str-urn";
 
-    public static final String RESOURCE_TYPE_TO_LINK = "str-type-link";  // Not mapped in DTO
+    public static final String RESOURCE_TYPE_TO_LINK = "str-type-link";    // Not mapped in DTO
     public static final String DATASET               = "str-dataset";
     public static final String QUERY                 = "str-query";
 
@@ -22,7 +22,7 @@ public class MultidatasetCubeDS extends DataSource {
     public static final String DTO                   = "str-dto";
 
     public static final String DSD                   = "str-dsd";
-    public static final String QUERY_DATASET    = "str-query-dataset";
+    public static final String QUERY_DATASET         = "str-query-dataset";
 
     public MultidatasetCubeDS() {
         DataSourceIntegerField identifier = new DataSourceIntegerField(URN, getConstants().multidatasetStructureCubeURN());
