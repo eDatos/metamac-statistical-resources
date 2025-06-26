@@ -65,7 +65,7 @@ Application PublicationsStatisticalResourcesDto {
 			String parentChapterUrn;
 
 			"Query Related Dataset"
-			String queryRelatedDatasetUrn;
+			String relatedDatasetUrnInQuery;
 
 			"Related DSD"
 			String relatedDSD;

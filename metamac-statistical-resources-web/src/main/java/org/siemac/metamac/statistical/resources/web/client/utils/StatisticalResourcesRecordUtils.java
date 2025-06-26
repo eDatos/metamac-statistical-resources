@@ -260,7 +260,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
                 linkedResource = cubeDto.getDatasetUrn();
             } else if (cubeDto.getQueryUrn() != null) {
                 linkedResource = cubeDto.getQueryUrn();
-                queryDataset = cubeDto.getQueryRelatedDatasetUrn();
+                queryDataset = cubeDto.getRelatedDatasetUrnInQuery();
             } else if (cubeDto.getMultidatasetUrn() != null) {
                 linkedResource = cubeDto.getMultidatasetUrn();
             } else if (cubeDto.getCollectionUrn() != null) {
@@ -505,7 +505,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
             linkedResource = multidatasetCubeDto.getDatasetUrn();
         } else if (multidatasetCubeDto.getQueryUrn() != null) {
             linkedResource = multidatasetCubeDto.getQueryUrn();
-            queryDataset = multidatasetCubeDto.getQueryRelatedDatasetUrn();
+            queryDataset = multidatasetCubeDto.getRelatedDatasetUrnInQuery();
         }
 
         if (linkedResource != null) {

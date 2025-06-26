@@ -37,7 +37,7 @@ Application MultidatasetsStatisticalResourcesDto {
             String parentMultidatasetUrn;
 
             "Query Related Dataset"
-            String queryRelatedDatasetUrn;
+            String relatedDatasetUrnInQuery;
 
             "Related DSD"
             String relatedDSD;

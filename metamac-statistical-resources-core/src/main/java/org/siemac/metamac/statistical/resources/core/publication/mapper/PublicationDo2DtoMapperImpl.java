@@ -270,9 +270,9 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
         //Query, Datasource an DSD
         if (source.getQueryUrn() !=null){
             Dataset queryDataset = queryVersionRepository.retrieveLastVersion(source.getQueryUrn()).getDataset();
-            String queryDataseturn =  queryDataset.getIdentifiableStatisticalResource().getUrn();
-            target.setQueryRelatedDatasetUrn(queryDataseturn);
-            target.setRelatedDSD(getRelatedDsdUrn(queryDataseturn));
+            String datasetUrnInQuery =  queryDataset.getIdentifiableStatisticalResource().getUrn();
+            target.setRelatedDatasetUrnInQuery(datasetUrnInQuery);
+            target.setRelatedDSD(getRelatedDsdUrn(datasetUrnInQuery));
 
         }
         if(source.getDatasetUrn() !=null){
