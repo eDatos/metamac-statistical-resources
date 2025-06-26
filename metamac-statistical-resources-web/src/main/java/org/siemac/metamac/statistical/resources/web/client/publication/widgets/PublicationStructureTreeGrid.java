@@ -9,18 +9,27 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalResourceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
+import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLevelDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationStructureDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
+import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NavigableTreeGrid;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.ElementLevelTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.publication.utils.PublicationClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.publication.view.handlers.PublicationStructureTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
+import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionResult;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
+import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 
 import com.google.gwt.core.client.Scheduler;
@@ -67,7 +76,6 @@ import com.smartgwt.client.widgets.viewer.DetailViewerField;
 public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
     protected static final String               SCHEME_NODE_NAME = "scheme-node";
-
 
     protected TreeNodeClickAction               treeNodeClickAction;
 
@@ -160,7 +168,8 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                     return null;
                 String urn = value.toString();
                 // TODO: Cristo _ Montar la URL de manera correcta parecido al getUiHandlers().goToLastVersion(urn)
-                return "<a href='" + urn+ "'>" + urn + "/a>";
+                return "<a href=# onclick='" + urn + "'>" + urn + "/a>";
+
             }
         });
 
@@ -198,6 +207,33 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         bindEvents();
     }
 
+    public String getLatestVersionUrl(final String urn) {
+        if (!StringUtils.isBlank(urn)) {
+            new GetLatestResourceVersionAction(urn);
+            new WaitingAsyncCallbackHandlingError<GetLatestResourceVersionResult>(this) {
+
+                @Override
+                public void onWaitSuccess(GetLatestResourceVersionResult result) {
+                    LifeCycleStatisticalResourceDto resourceVersion = result.getResourceVersion();
+                    String operationUrn = resourceVersion.getStatisticalOperation().getUrn();
+                    String resourceUrn = resourceVersion.getUrn();
+                    System.out.println(">>>>>>>" + operationUrn);
+                    System.out.println(">>>>>>>" + resourceUrn);
+                    System.out.println(">>>>>>>" + PlaceRequestUtils.buildAbsoluteDatasetPlaceRequest(operationUrn, resourceUrn));
+                    if (resourceVersion instanceof DatasetVersionDto) {
+                        PlaceRequestUtils.buildAbsoluteDatasetPlaceRequest(operationUrn, resourceUrn);
+                    } else if (resourceVersion instanceof QueryVersionDto) {
+                        PlaceRequestUtils.buildAbsoluteQueryPlaceRequest(operationUrn, resourceUrn);
+                    } else if (resourceVersion instanceof MultidatasetVersionDto) {
+                        PlaceRequestUtils.buildAbsoluteMultidatasetPlaceRequest(operationUrn, resourceUrn);
+                    } else if (resourceVersion instanceof PublicationVersionDto) {
+                        PlaceRequestUtils.buildAbsoluteCollectionPlaceRequest(operationUrn, resourceUrn);
+                    }
+                }
+            };
+        }
+        return urn;
+    }
     private void createContextMenu() {
         contextMenu = new Menu();
 
