@@ -707,12 +707,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Find
         conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
         pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
-//        getDatasetVersionRepository().buildPropertyCriteriaForDateProperty();
-        PagedResult<DatasetVersion> datasetVersionPagedResult = getDatasetVersionRepository().findByConditionCopy(conditions, pagingParameter);
+
+        PagedResult<DatasetVersion> datasetVersionPagedResult = getDatasetVersionRepository().findByCondition(conditions, pagingParameter);
         return datasetVersionPagedResult;
     }
 
-    
     @Override
     public PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
             throws MetamacException {
