@@ -183,21 +183,21 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Override
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity, StatisticalResourceTypeEnum.DATASET);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity);
     }
 
     @Override
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(agencyID, resourceID, version, lang, fields, dim, representation, "csv", granularity, StatisticalResourceTypeEnum.DATASET);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, "csv", granularity);
     }
 
     @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity, StatisticalResourceTypeEnum.DATASET);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity);
     }
 
-    private Response retrieveResourcePlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format,
-            String granularity, StatisticalResourceTypeEnum resourceType) {
+    private Response retrieveResourcePlainText(StatisticalResourceTypeEnum resourceType, String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation,
+            String format, String granularity) {
         try {
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
@@ -271,7 +271,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Override
     public Response retrieveQueryTSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(agencyID, resourceID, null, lang, fields, dim, representation, "tsv", granularity, StatisticalResourceTypeEnum.QUERY);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, "tsv", granularity);
     }
 
     private static String toStatisticalResourcesApiRepresentationParameter(Exportation exportationBody) {
