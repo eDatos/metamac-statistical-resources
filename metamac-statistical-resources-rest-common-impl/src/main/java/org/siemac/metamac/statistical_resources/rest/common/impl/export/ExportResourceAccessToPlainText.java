@@ -21,6 +21,7 @@ import org.siemac.metamac.statistical_resources.rest.common.impl.exceptions.Exce
 import org.siemac.metamac.statistical_resources.rest.common.impl.exceptions.RestStatisticalResourcesCommonServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DatasetBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryBase;
 
 public class ExportResourceAccessToPlainText {
 
@@ -33,12 +34,24 @@ public class ExportResourceAccessToPlainText {
         }
     }
 
-    public static ResourceAccess buildResourceAccessForDataset(DatasetBase dataset, List<String> selectedLanguages) {
+    public static ResourceAccess buildResourceAccess(DatasetBase dataset, List<String> selectedLanguages) {
         try {
             DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(dataset.getData().getDimensions(), dataset.getMetadata().getAttributes(),
                     dataset.getMetadata().getRelatedDsd());
 
             return new ResourceAccess(dataset, datasetSelection, selectedLanguages);
+
+        } catch (Exception e) {
+            throw ExceptionUtils.manageException(e);
+        }
+    }
+
+    public static ResourceAccess buildResourceAccess(QueryBase query, List<String> selectedLanguages) {
+        try {
+            DatasetSelection datasetSelection = DatasetSelectionMapper.datasetToDatasetSelection(query.getData().getDimensions(), query.getMetadata().getAttributes(),
+                    query.getMetadata().getRelatedDsd());
+
+            return new ResourceAccess(query, datasetSelection, selectedLanguages);
 
         } catch (Exception e) {
             throw ExceptionUtils.manageException(e);

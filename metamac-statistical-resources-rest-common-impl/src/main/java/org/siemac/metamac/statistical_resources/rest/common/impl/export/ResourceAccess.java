@@ -24,6 +24,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DatasetB
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryBase;
 
 public class ResourceAccess {
 
@@ -55,6 +56,13 @@ public class ResourceAccess {
         this.datasetSelection = datasetSelection;
 
         initialize(dataset.getData(), dataset.getMetadata().getDimensions(), dataset.getMetadata().getAttributes(), datasetSelection, selectedLanguages);
+    }
+
+    public ResourceAccess(QueryBase query, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
+        urn = query.getUrn();
+        this.datasetSelection = datasetSelection;
+
+        initialize(query.getData(), query.getMetadata().getDimensions(), query.getMetadata().getAttributes(), datasetSelection, selectedLanguages);
     }
 
     private void initialize(Data data, Dimensions dimensions, Attributes attributes, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
