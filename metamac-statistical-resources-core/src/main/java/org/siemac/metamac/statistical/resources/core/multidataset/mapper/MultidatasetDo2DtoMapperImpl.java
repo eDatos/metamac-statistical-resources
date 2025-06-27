@@ -19,6 +19,7 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumU
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -215,12 +216,19 @@ public class MultidatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
         target.setVersion(source.getVersion());
 
         //Query, Datasource an DSD
-        if (source.getQueryUrn() !=null){
-            Dataset queryDataset = queryVersionRepository.retrieveLastVersion(source.getQueryUrn()).getDataset();
-            String datasetUrnInQuery =  queryDataset.getIdentifiableStatisticalResource().getUrn();
+        if (source.getQueryUrn() != null) {
+            String datasetUrnInQuery = "";
+            QueryVersion queryVersion = queryVersionRepository.retrieveLastVersion(source.getQueryUrn());
+            if (queryVersion.getDataset() != null && queryVersion.getDataset().getVersions() != null && !queryVersion.getDataset().getVersions().isEmpty()) {
+                datasetUrnInQuery = queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+                target.setRelatedDSD(getRelatedDsdUrn(datasetUrnInQuery));
+            }
+            if (datasetUrnInQuery.isEmpty() && queryVersion.getFixedDatasetVersion() != null) {
+                DatasetVersion datasetVersion = queryVersion.getFixedDatasetVersion();
+                datasetUrnInQuery = datasetVersion.getLifeCycleStatisticalResource().getUrn();
+                target.setRelatedDSD(datasetVersion.getRelatedDsd().getUrn());
+            }
             target.setRelatedDatasetUrnInQuery(datasetUrnInQuery);
-            target.setRelatedDSD(getRelatedDsdUrn(datasetUrnInQuery));
-
         }
         if(source.getDatasetUrn() !=null){
             Dataset dataset = datasetVersionRepository.retrieveLastVersion(source.getDatasetUrn()).getDataset();

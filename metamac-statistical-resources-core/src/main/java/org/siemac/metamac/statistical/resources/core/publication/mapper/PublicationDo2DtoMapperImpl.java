@@ -24,6 +24,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -35,10 +36,10 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
     private PublicationVersionRepository publicationVersionRepository;
 
     @Autowired
-    private QueryVersionRepository queryVersionRepository;
+    private QueryVersionRepository       queryVersionRepository;
 
     @Autowired
-    private DatasetVersionRepository datasetVersionRepository;
+    private DatasetVersionRepository     datasetVersionRepository;
     // ---------------------------------------------------------------------------------------------------------
     // PUBLICATIONS
     // ---------------------------------------------------------------------------------------------------------
@@ -267,20 +268,26 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
         target.setId(source.getId());
         target.setVersion(source.getVersion());
 
-        //Query, Datasource an DSD
-        if (source.getQueryUrn() !=null){
-            Dataset queryDataset = queryVersionRepository.retrieveLastVersion(source.getQueryUrn()).getDataset();
-            String datasetUrnInQuery =  queryDataset.getIdentifiableStatisticalResource().getUrn();
+        // Query, Datasource an DSD
+        if (source.getQueryUrn() != null) {
+            String datasetUrnInQuery = "";
+            QueryVersion queryVersion = queryVersionRepository.retrieveLastVersion(source.getQueryUrn());
+            if (queryVersion.getDataset() != null && queryVersion.getDataset().getVersions() != null && !queryVersion.getDataset().getVersions().isEmpty()) {
+                datasetUrnInQuery = queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+                target.setRelatedDSD(getRelatedDsdUrn(datasetUrnInQuery));
+            }
+            if (datasetUrnInQuery.isEmpty() && queryVersion.getFixedDatasetVersion() != null) {
+                DatasetVersion datasetVersion = queryVersion.getFixedDatasetVersion();
+                datasetUrnInQuery = datasetVersion.getLifeCycleStatisticalResource().getUrn();
+                target.setRelatedDSD(datasetVersion.getRelatedDsd().getUrn());
+            }
             target.setRelatedDatasetUrnInQuery(datasetUrnInQuery);
-            target.setRelatedDSD(getRelatedDsdUrn(datasetUrnInQuery));
-
         }
-        if(source.getDatasetUrn() !=null){
+        if (source.getDatasetUrn() != null) {
             Dataset dataset = datasetVersionRepository.retrieveLastVersion(source.getDatasetUrn()).getDataset();
-            String datasetUrn =  dataset.getIdentifiableStatisticalResource().getUrn();
+            String datasetUrn = dataset.getIdentifiableStatisticalResource().getUrn();
             target.setRelatedDSD(getRelatedDsdUrn(datasetUrn));
         }
-
 
         // Other
         target.setParentChapterUrn(source.getElementLevel().getParentUrn());
@@ -298,7 +305,6 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
         ExternalItem externalItem = datasetVersion.getRelatedDsd();
         return externalItem.getUrn();
     }
-
 
     // --------------------------------------------------------------------------------------
     // ELEMENT LEVELS
