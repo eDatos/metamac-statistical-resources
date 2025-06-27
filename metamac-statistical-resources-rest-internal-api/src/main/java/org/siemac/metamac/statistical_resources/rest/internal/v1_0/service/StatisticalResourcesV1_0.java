@@ -120,7 +120,7 @@ public interface StatisticalResourcesV1_0 {
 
     @GET
     @Produces("text/tab-separated-values")
-    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    @Path("datasets/{agencyID}/{resourceID}")
     Response retrieveQueryTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
             @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
