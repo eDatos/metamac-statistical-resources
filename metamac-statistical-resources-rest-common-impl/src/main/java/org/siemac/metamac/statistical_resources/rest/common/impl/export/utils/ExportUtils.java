@@ -176,12 +176,12 @@ public class ExportUtils {
     }
 
 
-    public static String getContentDisposition(String fileNamePrefix, String format) {
-        return "attachment; filename=" + getExportFileName(fileNamePrefix, format);
+    public static String getContentDisposition(String fileNamePrefix, String fileExtension) {
+        return "attachment; filename=" + getExportFileName(fileNamePrefix, fileExtension);
     }
 
-    public static String getExportFileName(String fileNamePrefix, String format) {
+    public static String getExportFileName(String fileNamePrefix, String fileExtension) {
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return fileNamePrefix + "_" + timestamp + "." + format;
+        return fileNamePrefix + "_" + timestamp + "." + fileExtension;
     }
 }

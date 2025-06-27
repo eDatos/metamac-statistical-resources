@@ -25,7 +25,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryBas
 
 public class ExportResourceAccessToPlainText {
 
-    public static void exportResourceAccessToPlainText(ResourceAccess resourceAccess, String format, OutputStream os) throws MetamacException {
+    public static void exportResourceAccessToPlainText(ResourceAccess resourceAccess, ResourcesFormat format, OutputStream os) throws MetamacException {
         try {
             PlainTextExporter exporter = new PlainTextExporter(resourceAccess, format);
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(os);
@@ -58,8 +58,8 @@ public class ExportResourceAccessToPlainText {
         }
     }
 
-    public static void checkMaxRowsInXlsxFormat(ResourceAccess resourceAccess, String format, String maxXlsxRows) throws RestException {
-        if (!ResourcesFormat.XLSX.name().equals(format.toUpperCase())) {
+    public static void checkMaxRowsInXlsxFormat(ResourceAccess resourceAccess, ResourcesFormat format, String maxXlsxRows) throws RestException {
+        if (!ResourcesFormat.XLSX.equals(format)) {
             return;
         }
         if (resourceAccess.getObservationsNumber() > Long.parseLong(maxXlsxRows)) {
@@ -69,17 +69,18 @@ public class ExportResourceAccessToPlainText {
         }
     }
 
-    public static Response buildResponseExportResourceAccessToPlainText(ResourceAccess resourceAccess, String filename, String format) throws MetamacException, IOException, FileNotFoundException {
+    public static Response buildResponseExportResourceAccessToPlainText(ResourceAccess resourceAccess, String filename, ResourcesFormat format)
+            throws MetamacException, IOException, FileNotFoundException {
 
         FileOutputStream outputStreamObservations = null;
         try {
 
-            final File tmpFileObservations = File.createTempFile(filename, format);
+            final File tmpFileObservations = File.createTempFile(filename, format.getExtension());
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
             exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
 
-            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
-                    .header("Content-Disposition", getContentDisposition(filename, format)).build();
+            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), format.getMimeType()).header("Content-Disposition", getContentDisposition(filename, format.getExtension()))
+                    .build();
         } finally {
             IOUtils.closeQuietly(outputStreamObservations);
         }

@@ -47,6 +47,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionPr
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
+import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
@@ -183,21 +184,21 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Override
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
     }
 
     @Override
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, "csv", granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.CSV, granularity);
     }
 
     @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity);
     }
 
-    private Response retrieveResourcePlainText(StatisticalResourceTypeEnum resourceType, String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation,
-            String format, String granularity) {
+    private Response retrieveResourcePlainText(StatisticalResourceTypeEnum resourceType, String agencyID, String resourceID, String version, List<String> lang, String fields, String dim,
+            String representation, ResourcesFormat format, String granularity) {
         try {
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
@@ -271,7 +272,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Override
     public Response retrieveQueryTSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, "tsv", granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
     }
 
     private static String toStatisticalResourcesApiRepresentationParameter(Exportation exportationBody) {
