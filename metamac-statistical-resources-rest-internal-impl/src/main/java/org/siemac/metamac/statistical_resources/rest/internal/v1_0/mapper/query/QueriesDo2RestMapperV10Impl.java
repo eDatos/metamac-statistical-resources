@@ -114,7 +114,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     @Override
-    public Query toQuery(QueryVersion source, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields, String granularity) throws Exception {
+    public Query toQuery(QueryVersion source, DatasetVersion relatedDataset, Map<String, List<String>> selectedDimensions, List<String> selectedLanguages, Set<String> fields, String granularity)
+            throws Exception {
         if (source == null) {
             return null;
         }
@@ -131,7 +132,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setSelectedLanguages(commonDo2RestMapper.toLanguages(selectedLanguages));
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.QUERY, source.getLifeCycleStatisticalResource(), configurationService, false));
         DsdProcessorResult dsdProcessorResult = null;
-        DatasetVersion relatedDatasetEffective = null;
         boolean includeMetadata = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_METADATA);
         boolean includeData = !containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_EXCLUDE_DATA);
         boolean includeKeywords = containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_KEYWORDS);
@@ -141,26 +141,25 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
 
         if (includeMetadata || includeData || includeKeywords) {
-            relatedDatasetEffective = getQueryRelatedDatasetVersionEffective(source);
-            dsdProcessorResult = commonDo2RestMapper.processDataStructure(relatedDatasetEffective.getRelatedDsd().getUrn());
+            dsdProcessorResult = commonDo2RestMapper.processDataStructure(relatedDataset.getRelatedDsd().getUrn());
             dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
             dimensionsFilter.setTemporalDimensionValuesQueriesIds(getTemporalGranularities(source.getTemporalGranularities()));
         }
         if (includeMetadata || (includeData && (dimensionsFilter.getTemporalDimensionValuesIds() != null && !dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())
                 || (dimensionsFilter.getGeographicDimensionValuesIds() != null && !(dimensionsFilter.getGeographicDimensionValuesIds().isEmpty())
                         || (source.getTemporalGranularities() != null && !source.getTemporalGranularities().isEmpty())))) {
-            Map<String, List<String>> effectiveDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, relatedDatasetEffective);
-            dimensions = commonDo2RestMapper.toDimensions(relatedDatasetEffective.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, effectiveDimensionValuesToDataByDimension,
+            Map<String, List<String>> effectiveDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, relatedDataset);
+            dimensions = commonDo2RestMapper.toDimensions(relatedDataset.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, effectiveDimensionValuesToDataByDimension,
                     selectedLanguages, null, dimensionsFilter);
         }
         if (includeMetadata) {
-            target.setMetadata(toQueryMetadata(source, relatedDatasetEffective, dsdProcessorResult, selectedLanguages, dimensions));
+            target.setMetadata(toQueryMetadata(source, relatedDataset, dsdProcessorResult, selectedLanguages, dimensions));
         }
         if (includeData) {
-            target.setData(toQueryData(source, relatedDatasetEffective, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions));
+            target.setData(toQueryData(source, relatedDataset, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions));
         }
         if (includeKeywords) {
-            target.setKeywords(commonDo2RestMapper.toInternationalString(relatedDatasetEffective.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
+            target.setKeywords(commonDo2RestMapper.toInternationalString(relatedDataset.getSiemacMetadataStatisticalResource().getKeywords(), selectedLanguages));
         }
         return target;
     }
@@ -212,18 +211,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(datasetVersion, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
 
         return target;
-    }
-
-    public DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
-        if (source.getFixedDatasetVersion() != null) {
-            return source.getFixedDatasetVersion();
-        } else {
-            if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
-                return datasetVersionRepository.retrieveLastVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
-            } else {
-                return datasetVersionRepository.retrieveLastPublishedVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
-            }
-        }
     }
 
     @Override

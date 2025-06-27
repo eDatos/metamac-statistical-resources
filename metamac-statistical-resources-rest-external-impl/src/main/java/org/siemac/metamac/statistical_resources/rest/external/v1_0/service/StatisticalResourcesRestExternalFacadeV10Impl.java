@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResources;
@@ -35,6 +36,7 @@ import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -109,6 +111,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Autowired
     private ResourcesDo2RestMapperV10                     resourcesDo2RestMapper;
+
+    @Autowired
+    private DatasetVersionRepository                      datasetVersionRepository;
 
     @Override
     public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
@@ -227,7 +232,18 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
         List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion.getSiemacMetadataStatisticalResource().getLanguages(), lang);
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, fields, granularity);
-        return ExportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
+        return ExportResourceAccessToPlainText.buildResourceAccess(dataset, selectedLanguages);
+    }
+    }
+    /*
+     * @see org.siemac.metamac.statistical_resources.rest.internal.v1_0.service.StatisticalResourcesRestInternalFacadeV10Impl.getQueryRelatedDatasetVersionEffective(QueryVersion)
+     */
+    public DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
+        if (source.getFixedDatasetVersion() != null) {
+            return source.getFixedDatasetVersion();
+        } else {
+            return datasetVersionRepository.retrieveLastPublishedVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
+        }
     }
         } catch (Exception e) {
             throw manageExceptionResponse(e);
@@ -322,8 +338,17 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            boolean includeMetadata = !containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
+            boolean includeData = !containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
+            boolean includeKeywords = containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, parsedFields, granularity);
+            DatasetVersion relatedDataset = null;
+
+            if (includeMetadata || includeData || includeKeywords) {
+                relatedDataset = getQueryRelatedDatasetVersionEffective(queryVersion);
+            }
+
+            Query query = queriesDo2RestMapper.toQuery(queryVersion, relatedDataset, dimensions, selectedLanguages, parsedFields, granularity);
             return query;
         } catch (Exception e) {
             throw manageException(e);
