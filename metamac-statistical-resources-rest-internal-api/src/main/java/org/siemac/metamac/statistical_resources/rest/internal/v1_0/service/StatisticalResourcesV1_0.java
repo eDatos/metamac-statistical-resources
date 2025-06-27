@@ -123,6 +123,17 @@ public interface StatisticalResourcesV1_0 {
     @Path("datasets/{agencyID}/{resourceID}")
     Response retrieveQueryTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
             @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+    @GET
+    @Produces("text/csv")
+    @Path("datasets/{agencyID}/{resourceID}")
+    Response retrieveQueryCSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+
+    @GET
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @Path("datasets/{agencyID}/{resourceID}")
+    Response retrieveQueryXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
     @GET
     @Produces({"application/jsonstat+json"})

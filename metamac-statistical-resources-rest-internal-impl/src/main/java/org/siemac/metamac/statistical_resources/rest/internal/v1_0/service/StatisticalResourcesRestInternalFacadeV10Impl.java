@@ -276,6 +276,16 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
     }
 
+    @Override
+    public Response retrieveQueryCSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.CSV, granularity);
+    }
+
+    @Override
+    public Response retrieveQueryXLSX(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity);
+    }
+
     private static String toStatisticalResourcesApiRepresentationParameter(Exportation exportationBody) {
         if (exportationBody == null) {
             return null;
