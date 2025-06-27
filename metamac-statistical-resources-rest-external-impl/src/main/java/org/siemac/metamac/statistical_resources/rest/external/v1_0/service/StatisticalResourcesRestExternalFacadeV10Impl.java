@@ -209,9 +209,11 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             switch (resourceType) {
                 case DATASET:
                     resourceAccess = buildResourceAccessForDataset(agencyID, resourceID, version, lang, parsedFields, dimensions, granularity);
-                    filename = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
+                    filename = resourceType.toString().toLowerCase() + "-" + agencyID + "_" + resourceID + "_" + version;
                     break;
                 case QUERY:
+                    resourceAccess = buildResourceAccessForQuery(agencyID, resourceID, lang, parsedFields, dimensions, granularity);
+                    filename = resourceType.toString().toLowerCase() + "-" + agencyID + "_" + resourceID;
                     break;
                 default:
                     logger.error("RelatedResource unsupported: " + resourceType);
@@ -234,7 +236,28 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, fields, granularity);
         return ExportResourceAccessToPlainText.buildResourceAccess(dataset, selectedLanguages);
     }
+
+    private ResourceAccess buildResourceAccessForQuery(String agencyID, String resourceID, List<String> lang, Set<String> fields, Map<String, List<String>> dimensions, String granularity)
+            throws Exception {
+
+        QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
+        boolean includeMetadata = !containsField(fields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
+        boolean includeData = !containsField(fields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
+        boolean includeKeywords = containsField(fields, StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
+        DatasetVersion relatedDataset = null;
+        List<ExternalItem> sourceLanguages = null;
+
+        // If all of this conditions are false, we won't need to recover relatedDataset or sourceLanguages
+        if (includeMetadata || includeData || includeKeywords || CollectionUtils.isEmpty(lang)) {
+            relatedDataset = getQueryRelatedDatasetVersionEffective(queryVersion);
+            sourceLanguages = relatedDataset.getSiemacMetadataStatisticalResource().getLanguages();
+        }
+
+        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(sourceLanguages, lang);
+        Query query = queriesDo2RestMapper.toQuery(queryVersion, relatedDataset, dimensions, selectedLanguages, fields, granularity);
+        return ExportResourceAccessToPlainText.buildResourceAccess(query, selectedLanguages);
     }
+
     /*
      * @see org.siemac.metamac.statistical_resources.rest.internal.v1_0.service.StatisticalResourcesRestInternalFacadeV10Impl.getQueryRelatedDatasetVersionEffective(QueryVersion)
      */
@@ -245,9 +268,10 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             return datasetVersionRepository.retrieveLastPublishedVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
         }
     }
-        } catch (Exception e) {
-            throw manageExceptionResponse(e);
-        }
+
+    @Override
+    public Response retrieveQueryTSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
+        return retrieveResourcePlainText(agencyID, resourceID, null, lang, fields, dim, representation, "tsv", granularity, StatisticalResourceTypeEnum.QUERY);
     }
 
     private static String toStatisticalResourcesApiRepresentationParameter(Exportation exportationBody) {

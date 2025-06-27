@@ -112,6 +112,12 @@ public interface StatisticalResourcesV1_0 {
             @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
     @GET
+    @Produces("text/tab-separated-values")
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    Response retrieveQueryTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+
+    @GET
     @Produces({"application/jsonstat+json"})
     @Path("queries/{agencyID}/{resourceID}")
     JsonStatData retrieveJsonStatQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
