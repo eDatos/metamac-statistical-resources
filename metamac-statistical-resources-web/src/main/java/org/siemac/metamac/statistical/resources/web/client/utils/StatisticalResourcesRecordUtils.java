@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.siemac.edatos.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.statistical.resources.core.dto.IdentifiableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
@@ -255,8 +254,8 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
 
         if (elementLevelDto.getCube() != null) {
             CubeDto cubeDto = elementLevelDto.getCube();
-            String linkedResource = StringUtils.EMPTY;
-            String queryDataset = StringUtils.EMPTY;
+            String linkedResource = "";
+            String queryDataset = "";
 
             if (cubeDto.getDatasetUrn() != null) {
                 linkedResource = cubeDto.getDatasetUrn();
@@ -515,8 +514,8 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         multidatasetCubeNode.setTitle(InternationalStringUtils.getLocalisedString(multidatasetCubeDto.getTitle()));
         multidatasetCubeNode.setDescription(InternationalStringUtils.getLocalisedString(multidatasetCubeDto.getDescription()));
 
-        String linkedResource = StringUtils.EMPTY;
-        String queryDataset = StringUtils.EMPTY;
+        String linkedResource = "";
+        String queryDataset = "";
 
         if (multidatasetCubeDto.getDatasetUrn() != null) {
             linkedResource = multidatasetCubeDto.getDatasetUrn();

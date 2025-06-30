@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NavigableTreeGrid;
@@ -31,7 +32,10 @@ import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitHandler;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -146,14 +150,16 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         resourceField.setShowHover(false); // only show hover in info field
         resourceField.setCanFilter(true);
         resourceField.setCanSort(false);
+        resourceField.setType(ListGridFieldType.LINK);
         resourceField.setCellFormatter(new CellFormatter() {
+
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
                 if (value == null)
                     return null;
                 String urn = value.toString();
-                // TODO: Cristo _ Montar la URL de manera correcta
-                return "<a href='" + urn+ "'>" + urn + "/a>";
+                // TODO: EDATOS-5010 - comprobar que sea una URN valida antes de hacer el removeprefix, aplicar a dsdField y queryDatasetField
+                return UrnUtils.removePrefix(urn);
             }
         });
 
@@ -161,11 +167,33 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         dsdField.setShowHover(false); // only show hover in info field
         dsdField.setCanFilter(true);
         dsdField.setCanSort(false);
+        dsdField.setType(ListGridFieldType.LINK);
+        dsdField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (value == null)
+                    return null;
+                String urn = value.toString();
+                return UrnUtils.removePrefix(urn);
+            }
+        });
 
         queryDatasetField = new TreeGridField(MultidatasetCubeDS.QUERY_DATASET, getConstants().multidatasetStructureCubeQueryDataset());
         queryDatasetField.setShowHover(false); // only show hover in info field
         queryDatasetField.setCanFilter(true);
         queryDatasetField.setCanSort(false);
+        queryDatasetField.setType(ListGridFieldType.LINK);
+        queryDatasetField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (value == null)
+                    return null;
+                String urn = value.toString();
+                return UrnUtils.removePrefix(urn);
+            }
+        });
 
         orderField = new TreeGridField(MultidatasetCubeDS.ORDER_IN_LEVEL, getConstants().multidatasetStructureCubeOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
@@ -282,6 +310,27 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                 }
             }
         });
+
+        cellClickHandlerRegistration = addCellClickHandler(new CellClickHandler() {
+
+            @Override
+            public void onCellClick(CellClickEvent event) {
+                ListGridField clickedField = getField(event.getColNum());
+                ListGridRecord record = event.getRecord();
+                String fieldName = clickedField.getName();
+
+                if (fieldName.equals(resourceField.getName()) || fieldName.equals(dsdField.getName()) || fieldName.equals(queryDatasetField.getName())) {
+                    String urn = record.getAttribute(fieldName);
+                    if (urn != null && !urn.isEmpty()) {
+                        // TODO: EDATOS-5010 - revisar esta llamada ya que algunos dan errores al recuperar la ultima version, sobre todo si es un dataset con una version especifica
+                        getUiHandlers().goToLastVersion(urn);
+                        event.cancel();
+                        return;
+                    }
+                }
+            }
+        });
+
         folderContextHandlerRegistration = addFolderContextClickHandler(new FolderContextClickHandler() {
 
             @Override

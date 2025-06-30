@@ -10,34 +10,24 @@ import java.util.Map;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
-import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalResourceDto;
-import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
-import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLevelDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationStructureDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
-import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
-import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NavigableTreeGrid;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.ElementLevelTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.publication.utils.PublicationClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.publication.view.handlers.PublicationStructureTabUiHandlers;
-import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
-import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
-import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionResult;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
-import org.siemac.metamac.web.common.client.utils.WaitingAsyncCallbackHandlingError;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.Alignment;
@@ -49,7 +39,10 @@ import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitHandler;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -178,8 +171,8 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                 if (value == null)
                     return null;
                 String urn = value.toString();
-                // TODO: Cristo _ Montar la URL de manera correcta parecido al getUiHandlers().goToLastVersion(urn)
-                return "<a href='" + urn + "' title='" + urn + "'>" + UrnUtils.removePrefix(urn) + "</a>";
+                // TODO: EDATOS-5010 - comprobar que sea una URN valida antes de hacer el removeprefix, aplicar a dsdField y queryDatasetField
+                return UrnUtils.removePrefix(urn);
             }
         });
 
@@ -187,11 +180,33 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         dsdField.setShowHover(false); // only show hover in info field
         dsdField.setCanFilter(true);
         dsdField.setCanSort(false);
+        dsdField.setType(ListGridFieldType.LINK);
+        dsdField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (value == null)
+                    return null;
+                String urn = value.toString();
+                return UrnUtils.removePrefix(urn);
+            }
+        });
 
         queryDatasetField = new TreeGridField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
         queryDatasetField.setShowHover(false); // only show hover in info field
         queryDatasetField.setCanFilter(true);
         queryDatasetField.setCanSort(false);
+        queryDatasetField.setType(ListGridFieldType.LINK);
+        queryDatasetField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                if (value == null)
+                    return null;
+                String urn = value.toString();
+                return UrnUtils.removePrefix(urn);
+            }
+        });
 
         orderField = new TreeGridField(ElementLevelDS.ORDER_IN_LEVEL, getConstants().publicationStructureElementOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
@@ -217,41 +232,6 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         bindEvents();
     }
 
-    public String getLatestVersionUrl(final String urn) {
-        final String[] finalUrl = {""};
-        if (!StringUtils.isBlank(urn)) {
-            new GetLatestResourceVersionAction(urn);
-            new WaitingAsyncCallbackHandlingError<GetLatestResourceVersionResult>(this) {
-
-                @Override
-                public void onWaitSuccess(GetLatestResourceVersionResult result) {
-                    LifeCycleStatisticalResourceDto resourceVersion = result.getResourceVersion();
-                    String operationUrn = resourceVersion.getStatisticalOperation().getUrn();
-                    String resourceUrn = resourceVersion.getUrn();
-                    List<PlaceRequest> places = new ArrayList<PlaceRequest>();
-                    if (resourceVersion instanceof DatasetVersionDto) {
-                        places = PlaceRequestUtils.buildAbsoluteDatasetPlaceRequest(operationUrn, resourceUrn);
-                    } else if (resourceVersion instanceof QueryVersionDto) {
-                        places = PlaceRequestUtils.buildAbsoluteQueryPlaceRequest(operationUrn, resourceUrn);
-                    } else if (resourceVersion instanceof MultidatasetVersionDto) {
-                        places = PlaceRequestUtils.buildAbsoluteMultidatasetPlaceRequest(operationUrn, resourceUrn);
-                    } else if (resourceVersion instanceof PublicationVersionDto) {
-                        places = PlaceRequestUtils.buildAbsoluteCollectionPlaceRequest(operationUrn, resourceUrn);
-                    }
-
-                    StringBuilder urlBuilder = new StringBuilder();
-                    for (int i = 0; i < places.size(); i++) {
-                        if (i > 0) {
-                            urlBuilder.append('/');
-                        }
-                        urlBuilder.append(placeManager.buildHistoryToken(places.get(i)));
-                    }
-                    finalUrl[0] = "#" + urlBuilder.toString();
-                }
-            };
-        }
-        return finalUrl[0];
-    }
     private void createContextMenu() {
         contextMenu = new Menu();
 
@@ -317,6 +297,25 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                     Tree resultTree = new Tree();
                     resultTree.setData(matchingNodes.toArray(new TreeNode[0]));
                     setData(resultTree);
+                }
+            }
+        });
+        cellClickHandlerRegistration = addCellClickHandler(new CellClickHandler() {
+
+            @Override
+            public void onCellClick(CellClickEvent event) {
+                ListGridField clickedField = getField(event.getColNum());
+                ListGridRecord record = event.getRecord();
+                String fieldName = clickedField.getName();
+
+                if (fieldName.equals(resourceField.getName()) || fieldName.equals(dsdField.getName()) || fieldName.equals(queryDatasetField.getName())) {
+                    String urn = record.getAttribute(fieldName);
+                    if (urn != null && !urn.isEmpty()) {
+                        // TODO: EDATOS-5010 - revisar esta llamada ya que algunos dan errores al recuperar la ultima version, sobre todo si es un dataset con una version especifica
+                        getUiHandlers().goToLastVersion(urn);
+                        event.cancel();
+                        return;
+                    }
                 }
             }
         });
