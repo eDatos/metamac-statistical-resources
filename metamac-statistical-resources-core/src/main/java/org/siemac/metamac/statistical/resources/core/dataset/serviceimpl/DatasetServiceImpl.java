@@ -2391,7 +2391,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             PlainTextExporter exporter = new PlainTextExporter(observations);
 
-            exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, configurationService.retrieveDefaultInternationalizationLanguage());
+            exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, ManipulateDataUtils.getLocaleDatasourceIdentificationAttribute());
 
             return fileName;
 
