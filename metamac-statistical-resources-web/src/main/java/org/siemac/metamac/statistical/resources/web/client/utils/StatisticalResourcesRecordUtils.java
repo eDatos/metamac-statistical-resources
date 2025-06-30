@@ -4,8 +4,10 @@ import static org.siemac.metamac.web.common.client.utils.InternationalStringUtil
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.siemac.edatos.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.statistical.resources.core.dto.IdentifiableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
@@ -271,6 +273,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
 
             if (linkedResource != null) {
                 elementLevelNode.setLinkedResource(linkedResource);
+                elementLevelNode.setLinkedResourceType(getResourceType(linkedResource));
             }
             if (queryDataset != null) {
                 elementLevelNode.setQueryDataset(queryDataset);
@@ -292,6 +295,20 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         elementLevelNode.setElementLevelDto(elementLevelDto);
         elementLevelNode.setAttribute(ElementLevelDS.INFO, GlobalResources.RESOURCE.info().getURL());
         return elementLevelNode;
+    }
+
+    private static String getResourceType(String urn) {
+        int lastDotIndex = urn.lastIndexOf(UrnConstants.DOT);
+        int equalsIndex = urn.indexOf(UrnConstants.EQUAL);
+
+        if (lastDotIndex < 0 || equalsIndex < 0 || equalsIndex <= lastDotIndex) {
+            return null;
+        }
+
+        String resourceTypeInUrn = urn.substring(lastDotIndex + 1, equalsIndex);
+        Map<String, String> map = CommonUtils.getStatisticalResourceTypeThatCanBeAddIntoACubeInPublicationHashMap();
+
+        return map.get(resourceTypeInUrn.toUpperCase());
     }
 
     public static ElementLevelTreeNode getPublicationVersionRootNode(String schemeNodeName, PublicationVersionBaseDto publicationVersion) {
@@ -510,6 +527,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
 
         if (linkedResource != null) {
             multidatasetCubeNode.setLinkedResource(linkedResource);
+            multidatasetCubeNode.setLinkedTypeResource(getResourceType(linkedResource));
         }
         if (queryDataset != null) {
             multidatasetCubeNode.setQueryDataset(queryDataset);

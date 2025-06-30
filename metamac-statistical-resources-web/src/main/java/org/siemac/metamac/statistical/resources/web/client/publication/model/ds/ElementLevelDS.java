@@ -15,6 +15,7 @@ public class ElementLevelDS extends DataSource {
 
     // only suitable for cubes (not chapters!)
     public static final String RESOURCE_TYPE_TO_LINK = "str-type-link";          // Not mapped in DTO
+    public static final String RESOURCE_TO_LINK      = "str-resource-link";      // Not mapped in DTO
     public static final String DSD                   = "str-dsd-link";           // Not mapped in DTO
 
     public static final String QUERY_DATASET         = "str-query-dataset-link"; // Not mapped in DTO

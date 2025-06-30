@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
@@ -35,6 +36,8 @@ import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
+import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.Alignment;
@@ -80,6 +83,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     protected TreeNodeClickAction               treeNodeClickAction;
 
     protected Menu                              contextMenu;
+    private PlaceManager                        placeManager;
     private MenuItem                            createChapterMenuItem;
     private MenuItem                            createCubeMenuItem;
     private MenuItem                            deleteElementMenuItem;
@@ -98,6 +102,8 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     protected TreeGridField                     titleField;
     protected TreeGridField                     urnField;
     protected TreeGridField                     resourceField;
+
+    protected TreeGridField                     resourceTypeField;
     protected TreeGridField                     dsdField;
     protected TreeGridField                     queryDatasetField;
     protected TreeGridField                     orderField;
@@ -155,11 +161,16 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         urnField.setCanFilter(true);
         urnField.setCanSort(false);
 
-        resourceField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResource());
+        resourceTypeField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeToLink());
+        resourceTypeField.setShowHover(false); // only show hover in info field
+        resourceTypeField.setCanFilter(true);
+        resourceTypeField.setCanSort(false);
+
+        resourceField = new TreeGridField(ElementLevelDS.RESOURCE_TO_LINK, getConstants().publicationStructureElementResource());
         resourceField.setShowHover(false); // only show hover in info field
         resourceField.setCanFilter(true);
         resourceField.setCanSort(false);
-
+        resourceField.setType(ListGridFieldType.LINK);
         resourceField.setCellFormatter(new CellFormatter() {
 
             @Override
@@ -168,8 +179,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                     return null;
                 String urn = value.toString();
                 // TODO: Cristo _ Montar la URL de manera correcta parecido al getUiHandlers().goToLastVersion(urn)
-                return "<a href=# onclick='" + urn + "'>" + urn + "/a>";
-
+                return "<a href='" + urn + "' title='" + urn + "'>" + UrnUtils.removePrefix(urn) + "</a>";
             }
         });
 
@@ -195,7 +205,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(titleField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
+        setFields(titleField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);
@@ -208,6 +218,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     }
 
     public String getLatestVersionUrl(final String urn) {
+        final String[] finalUrl = {""};
         if (!StringUtils.isBlank(urn)) {
             new GetLatestResourceVersionAction(urn);
             new WaitingAsyncCallbackHandlingError<GetLatestResourceVersionResult>(this) {
@@ -217,22 +228,29 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                     LifeCycleStatisticalResourceDto resourceVersion = result.getResourceVersion();
                     String operationUrn = resourceVersion.getStatisticalOperation().getUrn();
                     String resourceUrn = resourceVersion.getUrn();
-                    System.out.println(">>>>>>>" + operationUrn);
-                    System.out.println(">>>>>>>" + resourceUrn);
-                    System.out.println(">>>>>>>" + PlaceRequestUtils.buildAbsoluteDatasetPlaceRequest(operationUrn, resourceUrn));
+                    List<PlaceRequest> places = new ArrayList<PlaceRequest>();
                     if (resourceVersion instanceof DatasetVersionDto) {
-                        PlaceRequestUtils.buildAbsoluteDatasetPlaceRequest(operationUrn, resourceUrn);
+                        places = PlaceRequestUtils.buildAbsoluteDatasetPlaceRequest(operationUrn, resourceUrn);
                     } else if (resourceVersion instanceof QueryVersionDto) {
-                        PlaceRequestUtils.buildAbsoluteQueryPlaceRequest(operationUrn, resourceUrn);
+                        places = PlaceRequestUtils.buildAbsoluteQueryPlaceRequest(operationUrn, resourceUrn);
                     } else if (resourceVersion instanceof MultidatasetVersionDto) {
-                        PlaceRequestUtils.buildAbsoluteMultidatasetPlaceRequest(operationUrn, resourceUrn);
+                        places = PlaceRequestUtils.buildAbsoluteMultidatasetPlaceRequest(operationUrn, resourceUrn);
                     } else if (resourceVersion instanceof PublicationVersionDto) {
-                        PlaceRequestUtils.buildAbsoluteCollectionPlaceRequest(operationUrn, resourceUrn);
+                        places = PlaceRequestUtils.buildAbsoluteCollectionPlaceRequest(operationUrn, resourceUrn);
                     }
+
+                    StringBuilder urlBuilder = new StringBuilder();
+                    for (int i = 0; i < places.size(); i++) {
+                        if (i > 0) {
+                            urlBuilder.append('/');
+                        }
+                        urlBuilder.append(placeManager.buildHistoryToken(places.get(i)));
+                    }
+                    finalUrl[0] = "#" + urlBuilder.toString();
                 }
             };
         }
-        return urn;
+        return finalUrl[0];
     }
     private void createContextMenu() {
         contextMenu = new Menu();
@@ -523,7 +541,8 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         DetailViewerField descriptionField = new DetailViewerField(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
         DetailViewerField urnField = new DetailViewerField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
-        DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResource());
+        DetailViewerField resourceTypeField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeToLink());
+        DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TO_LINK, getConstants().publicationStructureElementResource());
         DetailViewerField queryDatasetField = new DetailViewerField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
         DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
         return new DetailViewerField[]{titleField, descriptionField, resourceField, queryDatasetField, dsdField, urnField};
