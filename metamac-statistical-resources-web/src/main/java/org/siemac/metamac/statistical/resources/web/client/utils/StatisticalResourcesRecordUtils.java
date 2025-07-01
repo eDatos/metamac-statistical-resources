@@ -36,6 +36,7 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLeve
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasourceRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DimensionConstraintsRecord;
@@ -296,18 +297,19 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         return elementLevelNode;
     }
 
-    private static String getResourceType(String urn) {
-        int lastDotIndex = urn.lastIndexOf(UrnConstants.DOT);
-        int equalsIndex = urn.indexOf(UrnConstants.EQUAL);
+    private static String getResourceType(String value) {
+        Map<String, String> statisticalResourceTypeMap = CommonUtils.getStatisticalResourceTypeThatCanBeAddIntoACubeInPublicationHashMap();
+
+        int lastDotIndex = value.lastIndexOf(UrnConstants.DOT);
+        int equalsIndex = value.indexOf(UrnConstants.EQUAL);
 
         if (lastDotIndex < 0 || equalsIndex < 0 || equalsIndex <= lastDotIndex) {
-            return null;
+            return statisticalResourceTypeMap.get(StatisticalResourceTypeEnum.URL.name());
         }
 
-        String resourceTypeInUrn = urn.substring(lastDotIndex + 1, equalsIndex);
-        Map<String, String> map = CommonUtils.getStatisticalResourceTypeThatCanBeAddIntoACubeInPublicationHashMap();
+        String resourceTypeInUrn = value.substring(lastDotIndex + 1, equalsIndex);
 
-        return map.get(resourceTypeInUrn.toUpperCase());
+        return statisticalResourceTypeMap.get(resourceTypeInUrn.toUpperCase());
     }
 
     public static ElementLevelTreeNode getPublicationVersionRootNode(String schemeNodeName, PublicationVersionBaseDto publicationVersion) {

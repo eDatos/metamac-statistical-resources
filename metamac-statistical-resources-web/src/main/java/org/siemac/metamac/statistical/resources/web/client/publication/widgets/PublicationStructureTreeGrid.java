@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
-import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLevelDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationStructureDto;
@@ -19,6 +18,7 @@ import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.ElementLevelTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.publication.utils.PublicationClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.publication.view.handlers.PublicationStructureTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
@@ -165,14 +165,9 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         resourceField.setCanSort(false);
         resourceField.setType(ListGridFieldType.LINK);
         resourceField.setCellFormatter(new CellFormatter() {
-
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (value == null)
-                    return null;
-                String urn = value.toString();
-                // TODO: EDATOS-5010 - comprobar que sea una URN valida antes de hacer el removeprefix, aplicar a dsdField y queryDatasetField
-                return UrnUtils.removePrefix(urn);
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
             }
         });
 
@@ -185,10 +180,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (value == null)
-                    return null;
-                String urn = value.toString();
-                return UrnUtils.removePrefix(urn);
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
             }
         });
 
@@ -201,10 +193,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (value == null)
-                    return null;
-                String urn = value.toString();
-                return UrnUtils.removePrefix(urn);
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
             }
         });
 

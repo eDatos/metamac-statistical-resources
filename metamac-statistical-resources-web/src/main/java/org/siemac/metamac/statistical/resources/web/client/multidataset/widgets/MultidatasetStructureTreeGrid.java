@@ -10,11 +10,14 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NavigableTreeGrid;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds.MultidatasetCubeDS;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds.MultidatasetCubeTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.utils.MultidatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.view.handlers.MultidatasetStructureTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
+import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
@@ -155,11 +158,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (value == null)
-                    return null;
-                String urn = value.toString();
-                // TODO: EDATOS-5010 - comprobar que sea una URN valida antes de hacer el removeprefix, aplicar a dsdField y queryDatasetField
-                return UrnUtils.removePrefix(urn);
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
             }
         });
 
@@ -172,10 +171,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (value == null)
-                    return null;
-                String urn = value.toString();
-                return UrnUtils.removePrefix(urn);
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
             }
         });
 
@@ -188,10 +184,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                if (value == null)
-                    return null;
-                String urn = value.toString();
-                return UrnUtils.removePrefix(urn);
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
             }
         });
 
@@ -217,6 +210,18 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         createContextMenu();
 
         bindEvents();
+    }
+
+    private String formatResourceLink(Object value, ListGridRecord record, String resourceTypeFieldName) {
+        if (value == null) {
+            return null;
+        }
+        String urn = value.toString();
+        String resourceType = record.getAttribute(resourceTypeFieldName);
+        if (!StatisticalResourceTypeEnum.URL.name().equalsIgnoreCase(resourceType) && urn != null && !urn.isEmpty()) {
+            return UrnUtils.removePrefix(urn);
+        }
+        return urn;
     }
 
     private void createContextMenu() {
