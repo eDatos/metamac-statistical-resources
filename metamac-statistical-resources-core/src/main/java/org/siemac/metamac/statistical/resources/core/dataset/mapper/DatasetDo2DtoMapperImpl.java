@@ -205,7 +205,6 @@ public class DatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Dat
         target.setRelatedDsd(externalItemDoToDto(source.getRelatedDsd()));
         target.setStatisticOfficiality(statisticOfficialityDo2Dto(source.getStatisticOfficiality()));
         target.setIsTaskInBackground(taskService.existsTaskForResource(ctx, source.getDataset().getIdentifiableStatisticalResource().getUrn()));
-
         return target;
     }
 

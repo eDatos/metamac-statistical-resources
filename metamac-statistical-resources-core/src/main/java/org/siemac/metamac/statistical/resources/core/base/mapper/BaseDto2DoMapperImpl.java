@@ -251,6 +251,7 @@ public class BaseDto2DoMapperImpl extends CommonDto2DoMapperImpl implements Base
         }
 
         target.setPublicationStreamStatus(source.getPublicationStreamStatus());
+        target.setXStreamStatus(source.getXStreamStatus());
 
         // Other attributes are automatic, non modifiable
 

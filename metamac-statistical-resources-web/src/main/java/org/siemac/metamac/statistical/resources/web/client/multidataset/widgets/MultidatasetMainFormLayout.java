@@ -50,6 +50,11 @@ public class MultidatasetMainFormLayout extends LifecycleMainFormLayout {
     }
 
     @Override
+    protected boolean canResendXMessage() {
+        return false;
+    }
+
+    @Override
     protected boolean canVersion() {
         return MultidatasetClientSecurityUtils.canVersionMultidataset(multidatasetVersionDto);
     }

@@ -113,7 +113,10 @@ public class NewQueryWindow extends CustomWindow {
                 form.markForRedraw();
             }
         });
+        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
         items.add(typeSelectorItem);
+        items.add(purposeTypeSelectorItem);
 
         return items;
     }
@@ -152,6 +155,7 @@ public class NewQueryWindow extends CustomWindow {
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularitie(queryDto);
+        queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         return queryDto;
     }
 

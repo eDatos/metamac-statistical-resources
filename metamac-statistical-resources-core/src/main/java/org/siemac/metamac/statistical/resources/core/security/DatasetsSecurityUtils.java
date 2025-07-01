@@ -114,6 +114,12 @@ public class DatasetsSecurityUtils extends SecurityUtils {
         }
     }
 
+    public static void canResendPublishedQueryVersionXMessage(ServiceContext ctx, String operationCode) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canPublishDataset(getMetamacPrincipal(ctx), operationCode)) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
     public static void canVersionDataset(ServiceContext ctx, String operationCode) throws MetamacException {
         if (!SharedDatasetsSecurityUtils.canVersionDataset(getMetamacPrincipal(ctx), operationCode)) {
             throwExceptionIfOperationNotAllowed(ctx);
@@ -170,6 +176,12 @@ public class DatasetsSecurityUtils extends SecurityUtils {
 
     public static void canFindStatisticOfficialities(ServiceContext ctx) throws MetamacException {
         if (!SharedDatasetsSecurityUtils.canFindStatisticOfficialities(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canFindPurposes(ServiceContext ctx) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canFindPurposes(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
