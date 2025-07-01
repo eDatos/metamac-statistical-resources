@@ -144,7 +144,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         urnField.setCanFilter(true);
         urnField.setCanSort(false);
 
-        resourceTypeField = new TreeGridField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResourceTypeToLink());
+        resourceTypeField = new TreeGridField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResourceTypeLinked());
         resourceTypeField.setShowHover(false); // only show hover in info field
         resourceTypeField.setCanFilter(true);
         resourceTypeField.setCanSort(false);
@@ -508,10 +508,11 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(MultidatasetCubeDS.TITLE, getConstants().multidatasetStructureCubeTitle());
         DetailViewerField descriptionField = new DetailViewerField(MultidatasetCubeDS.DESCRIPTION, getConstants().multidatasetStructureCubeDescription());
         DetailViewerField urnField = new DetailViewerField(MultidatasetCubeDS.URN, getConstants().multidatasetStructureCubeURN());
-        DetailViewerField resourceField = new DetailViewerField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResource());
+        DetailViewerField resourceTypeField = new DetailViewerField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResourceTypeLinked());
+        DetailViewerField resourceField = new DetailViewerField(MultidatasetCubeDS.RESOURCE_TO_LINK, getConstants().multidatasetStructureCubeResource());
         DetailViewerField queryDatasetField = new DetailViewerField(MultidatasetCubeDS.QUERY_DATASET, getConstants().multidatasetStructureCubeQueryDataset());
         DetailViewerField dsdField = new DetailViewerField(MultidatasetCubeDS.DSD, getConstants().multidatasetStructureCubeDSD());
-        return new DetailViewerField[]{identifier, titleField, descriptionField, resourceField, queryDatasetField, dsdField, urnField};
+        return new DetailViewerField[]{identifier, titleField, descriptionField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField};
     }
 
     public void addCreateCubeMenuItemClickHandler(ClickHandler clickHandler) {

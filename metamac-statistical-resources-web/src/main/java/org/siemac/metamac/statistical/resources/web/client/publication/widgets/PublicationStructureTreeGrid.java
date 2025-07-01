@@ -154,7 +154,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         urnField.setCanFilter(true);
         urnField.setCanSort(false);
 
-        resourceTypeField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeToLink());
+        resourceTypeField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeLinked());
         resourceTypeField.setShowHover(false); // only show hover in info field
         resourceTypeField.setCanFilter(true);
         resourceTypeField.setCanSort(false);
@@ -529,11 +529,11 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         DetailViewerField descriptionField = new DetailViewerField(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
         DetailViewerField urnField = new DetailViewerField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
-        DetailViewerField resourceTypeField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeToLink());
+        DetailViewerField resourceTypeField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeLinked());
         DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TO_LINK, getConstants().publicationStructureElementResource());
         DetailViewerField queryDatasetField = new DetailViewerField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
         DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
-        return new DetailViewerField[]{titleField, descriptionField, resourceField, queryDatasetField, dsdField, urnField};
+        return new DetailViewerField[]{titleField, descriptionField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField};
     }
 
     public void addCreateChapterMenuItemClickHandler(ClickHandler clickHandler) {
