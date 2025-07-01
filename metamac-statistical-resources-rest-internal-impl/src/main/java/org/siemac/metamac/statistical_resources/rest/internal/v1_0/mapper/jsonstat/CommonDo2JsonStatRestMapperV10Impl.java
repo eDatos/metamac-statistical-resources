@@ -454,7 +454,7 @@ public class CommonDo2JsonStatRestMapperV10Impl implements CommonDo2JsonStatRest
                 }
             }
         }
-        if (data.getAttributes().getInternationalAttributes() != null) {
+        if (data.getAttributes() != null && data.getAttributes().getInternationalAttributes() != null) {
             for (DataInternationalAttribute dataAttribute : data.getAttributes().getInternationalAttributes()) {
                 if (Objects.equals(dataAttribute.getId(), attribute.getComponentId())) {
                     List<String> labels = new ArrayList<>();
