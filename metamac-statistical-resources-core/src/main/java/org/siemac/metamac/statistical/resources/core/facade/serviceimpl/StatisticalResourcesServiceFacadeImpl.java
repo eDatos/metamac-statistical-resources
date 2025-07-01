@@ -77,6 +77,7 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.Publication
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
@@ -113,6 +114,7 @@ import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.Query
 import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.QuerySculptorCriteria2MetamacCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.QueryVersionMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.QueryVersionSculptorCriteria2MetamacCriteriaMapper;
+import org.siemac.metamac.statistical.resources.core.query.domain.Purpose;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
@@ -402,6 +404,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Transform to Dto
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
         queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
+
         return queryVersionDto;
     }
 
@@ -1051,6 +1054,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Send to publish and retrieve
         datasetVersion = datasetLifecycleService.sendToPublished(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
 
+        datasetLifecycleService.checkTwitterPostActivatedAndPostTwit(ctx, datasetVersion);
         // Transform
         datasetVersionDto = datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersion);
 
@@ -1175,6 +1179,17 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Transform
         return datasetDo2DtoMapper.statisticOfficialityDoList2DtoList(statisticOfficialities);
+    }
+
+    @Override
+    public List<PurposeDto> findPurposes(ServiceContext ctx) throws MetamacException {
+        // Security
+        DatasetsSecurityUtils.canFindPurposes(ctx);
+        // retrieve
+        List<Purpose> purposes = getQueryService().findPurposes(ctx);
+
+        // transform
+        return queryDo2DtoMapper.purposeDoListToDtoList(purposes);
     }
 
     @Override
@@ -2565,5 +2580,20 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         getDatasetService().updateDatasetVersionInGroup(ctx, datasetVersion, datasetUrnToChange);
 
+    }
+
+    @Override
+    public QueryVersionDto resendPublishedQueryVersionXMessage(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+     // Retrieve Query
+        QueryVersion datasetVersion = queryVersionRepository.retrieveByUrn(datasetVersionUrn);
+
+        // Security
+        DatasetsSecurityUtils.canResendPublishedQueryVersionXMessage(ctx, datasetVersion.getLifeCycleStatisticalResource().getStatisticalOperation().getCode());
+
+        // Send x message
+        queryLifecycleService.checkTwitterPostActivatedAndPostTwit(ctx, datasetVersion);
+
+        // Transform
+        return queryDo2DtoMapper.queryVersionDoToDto(datasetVersion);
     }
 }

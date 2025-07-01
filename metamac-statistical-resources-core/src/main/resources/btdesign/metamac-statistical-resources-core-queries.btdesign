@@ -41,6 +41,8 @@ Application QueriesStatisticalResources {
     		// Queries
     		"Finds queries by criteria"
     		List<@Query> findQueriesByCondition(List<ConditionalCriteria> conditions)  throws MetamacException;
+    		// Purposes
+    		List<@Purpose> findPurposes() throws MetamacException;
 		}  
 
 
@@ -134,6 +136,9 @@ Application QueriesStatisticalResources {
 			- Bag<@DimensionOrder> headingDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> queryVersionHeading;
 			"Stub dimensions"
 			- Bag<@DimensionOrder> stubDimensions cascade="all-delete-orphan" fetch="lazy" inverse orderby="dimOrder asc" <-> queryVersionStub;
+			//Social_network/data_filter
+			- @Purpose purposes nullable databaseColumn="PURPOSE_FK" cascade="none";
+			- @InternationalString xTemplate nullable databaseColumn="X_TEMPLATES_FK" cascade="all"
 			
 			Repository QueryVersionRepository {
 				save;
@@ -154,5 +159,23 @@ Application QueriesStatisticalResources {
 				List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(@QueryVersion queryVersion) throws MetamacException;
 			}
 		}
+
+		"Purposes"
+    	Entity Purpose {
+    		databaseTable="TB_PURPOSES"
+    		hint="idSequence=PURPOSES"
+    		!auditable
+
+    		"Added explicitly to avoid that Sculptor generate UUID"
+			Long id key;
+
+    		String identifier;
+    		- @InternationalString description nullable cascade="all" databaseColumn="DESCRIPTION_FK";
+
+    		Repository PurposeRepository {
+    			findById;
+    			findAll;
+    		}
+    	}
 	}
 }
