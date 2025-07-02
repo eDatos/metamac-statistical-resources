@@ -17,6 +17,8 @@ public interface LifecycleService<E extends Object> {
     E versioning(ServiceContext ctx, String urn, VersionTypeEnum versionType) throws MetamacException;
 
     void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, E resource);
+    
+    public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, E resource);
 
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException;
 }

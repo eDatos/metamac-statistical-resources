@@ -121,6 +121,10 @@ public class SharedDatasetsSecurityUtils extends SharedSecurityUtils {
         return isAnyStatisticalResourceRole(metamacPrincipal);
     }
 
+    public static boolean canFindPurposes(MetamacPrincipal metamacPrincipal) {
+        return isAnyStatisticalResourceRole(metamacPrincipal);
+    }
+
     public static boolean canImportDatasourcesInDatasetVersion(MetamacPrincipal metamacPrincipal, String operationCode) {
         return isOperationAllowed(metamacPrincipal, operationCode, PRODUCTION_ROLES);
     }

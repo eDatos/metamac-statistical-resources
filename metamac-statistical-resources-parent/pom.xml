@@ -58,6 +58,9 @@
 
 		<!-- WEB -->
 		<jstl.version>1.2</jstl.version>
+		
+		<io-github-redouane59-twitter.version>2.23</io-github-redouane59-twitter.version>
+		<com-fasterxml-jackson-core.version>2.15.0</com-fasterxml-jackson-core.version>
 	</properties>
 
 	<build>

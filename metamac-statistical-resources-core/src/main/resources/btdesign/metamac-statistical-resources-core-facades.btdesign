@@ -139,6 +139,7 @@ Application FacadeStatisticalResources {
     		@DatasetVersionDto publishDatasetVersion(@DatasetVersionDto datasetVersionDto) throws MetamacException;
     		@DatasetVersionBaseDto publishDatasetVersion(@DatasetVersionBaseDto datasetVersionDto) throws MetamacException;
     		@DatasetVersionBaseDto resendPublishedDatasetVersionStreamMessage(String datasetVersionUrn) throws MetamacException;
+    		@QueryVersionDto resendPublishedQueryVersionXMessage(String datasetVersionUrn) throws MetamacException;
     		"Creates a new version of a dataset, copying metadata from version with provided urn"
     		@DatasetVersionDto versioningDatasetVersion(@DatasetVersionDto datasetVersionDto, @VersionTypeEnum versionType) throws MetamacException;
     		@DatasetVersionBaseDto versioningDatasetVersion(@DatasetVersionBaseDto datasetVersionDto, @VersionTypeEnum versionType) throws MetamacException;
@@ -174,7 +175,9 @@ Application FacadeStatisticalResources {
 
     		// Statistic officialities
     		List<@StatisticOfficialityDto> findStatisticOfficialities() throws MetamacException;
-
+    		
+    		// Purposes
+			List<@PurposeDto> findPurposes() throws MetamacException;
 			// CATEGORISATIONS
     		"Creates categorisation"
     		@CategorisationDto createCategorisation(String datasetVersionUrn, @CategorisationDto categorisationDto) throws MetamacException;
