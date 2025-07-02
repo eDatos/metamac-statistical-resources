@@ -576,10 +576,10 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
                     codeDimensions.add(restDoMocks.mockCodeDimension(componentId, componentId + "-conceptScheme01-concept02"));
                     codeDimensions.add(restDoMocks.mockCodeDimension(componentId, componentId + "-conceptScheme01-concept05"));
                 } else if ("TIME_PERIOD".equals(componentId)) {
-                    codeDimensions.add(restDoMocks.mockCodeDimension(componentId, "2011"));
-                    codeDimensions.add(restDoMocks.mockCodeDimension(componentId, "2012"));
-                    codeDimensions.add(restDoMocks.mockCodeDimension(componentId, "2013"));
                     codeDimensions.add(restDoMocks.mockCodeDimension(componentId, "2014"));
+                    codeDimensions.add(restDoMocks.mockCodeDimension(componentId, "2013"));
+                    codeDimensions.add(restDoMocks.mockCodeDimension(componentId, "2012"));
+                    codeDimensions.add(restDoMocks.mockCodeDimension(componentId, "2011"));
                 } else if ("dim01".equals(componentId)) {
                     codeDimensions.add(restDoMocks.mockCodeDimension(componentId, componentId + "-codelist01-code01"));
                     codeDimensions.add(restDoMocks.mockCodeDimension(componentId, componentId + "-codelist01-code03"));
