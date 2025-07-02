@@ -74,7 +74,21 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
     @Test
     public void testRetrieveDatasetXlsxDataCheck() throws Exception {
         String requestUri = getRetrieveDatasetUri(AGENCY_1, DATASET_1_CODE, VERSION_1, null, null);
-        CommonDatasetUtils.checkXlsDatasetResponse(requestUri);
+        // @formatter:off
+        String[] expectedValuesFirstRow = {
+                null, null,
+                "santa-cruz-tenerife en Español", "santa-cruz-tenerife",
+                null, null,
+                "2014", "2014",
+                null, null,
+                "measure01-conceptScheme01-concept01 en Español", "measure01-conceptScheme01-concept01",
+                null, null,
+                "dim01-codelist01-code01 en Español", "dim01-codelist01-code01",
+                "28",
+                null, null
+            };
+        // @formatter:on
+        CommonDatasetUtils.checkXlsDatasetResponse(requestUri, expectedValuesFirstRow);
     }
 
     @Test

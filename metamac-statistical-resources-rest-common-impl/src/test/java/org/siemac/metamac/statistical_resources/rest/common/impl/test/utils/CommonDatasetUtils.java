@@ -24,7 +24,7 @@ import org.junit.Test;
 public class CommonDatasetUtils {
 
     @Test
-    public static void checkXlsDatasetResponse(String requestUri) throws Exception {
+    public static void checkXlsDatasetResponse(String requestUri, String[] expectedValuesFirstRow) throws Exception {
         WebClient webClient = WebClient.create(requestUri).accept("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         Response response = webClient.get();
         InputStream responseActual = (InputStream) response.getEntity();
@@ -62,29 +62,23 @@ public class CommonDatasetUtils {
 
         // Data Row 1
         Row rowData1 = rowIterator.next();
-        assertEquals(19, rowData1.getPhysicalNumberOfCells());
+        assertRowMatchesExpected(rowData1, expectedValuesFirstRow);
 
-        // System.out.println(rowData1.getCell(0).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(0)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(1)));
-        assertEquals("santa-cruz-tenerife en Español", rowData1.getCell(2).getStringCellValue());
-        assertEquals("santa-cruz-tenerife", rowData1.getCell(3).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(4)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(5)));
-        assertEquals("2011", rowData1.getCell(6).getStringCellValue());
-        assertEquals("2011", rowData1.getCell(7).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(8)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(9)));
-        assertEquals("measure01-conceptScheme01-concept01 en Español", rowData1.getCell(10).getStringCellValue());
-        assertEquals("measure01-conceptScheme01-concept01", rowData1.getCell(11).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(12)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(13)));
-        assertEquals("dim01-codelist01-code01 en Español", rowData1.getCell(14).getStringCellValue());
-        assertEquals("dim01-codelist01-code01", rowData1.getCell(15).getStringCellValue());
-        assertEquals("1", rowData1.getCell(16).getStringCellValue());
-        assertEquals("Value 1", rowData1.getCell(17).getStringCellValue());
-        assertEquals("Value 5", rowData1.getCell(18).getStringCellValue());
+    }
 
+    private static void assertRowMatchesExpected(Row row, String[] expectedValues) {
+        assertEquals(expectedValues.length, row.getPhysicalNumberOfCells());
+
+        for (int i = 0; i < expectedValues.length; i++) {
+            Cell cell = row.getCell(i);
+            String expected = expectedValues[i];
+
+            if (expected == null) {
+                assertTrue(checkIsEmptyCell(cell));
+            } else {
+                assertEquals(expected, cell.getStringCellValue());
+            }
+        }
     }
 
     private static boolean checkIsEmptyCell(Cell cell) {
