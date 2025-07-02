@@ -111,7 +111,7 @@ public class CommonDatasetUtils {
         assertTrue(lines.contains(
                 ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept01 en Español,measure01-conceptScheme01-concept01,,,dim01-codelist01-code01 en Español,dim01-codelist01-code01,1,Value 1,Value 5"));
         assertTrue(lines.contains(
-                ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept01 en Español,measure01-conceptScheme01-concept01,,,dim01-codelist01-code03 en Español,dim01-codelist01-code03,2,Value 2,"));
+                ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept02 en Español,measure01-conceptScheme01-concept02,,,dim01-codelist01-code01 en Español,dim01-codelist01-code01,4,,"));
 
     }
 
@@ -126,7 +126,7 @@ public class CommonDatasetUtils {
         assertTrue(lines.contains(
                 "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept01 en Español\tmeasure01-conceptScheme01-concept01\t\t\tdim01-codelist01-code01 en Español\tdim01-codelist01-code01\t1\tValue 1\tValue 5"));
         assertTrue(lines.contains(
-                "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept01 en Español\tmeasure01-conceptScheme01-concept01\t\t\tdim01-codelist01-code03 en Español\tdim01-codelist01-code03\t2\tValue 2\t"));
+                "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept02 en Español\tmeasure01-conceptScheme01-concept02\t\t\tdim01-codelist01-code01 en Español\tdim01-codelist01-code01\t4\t\t"));
 
     }
 
