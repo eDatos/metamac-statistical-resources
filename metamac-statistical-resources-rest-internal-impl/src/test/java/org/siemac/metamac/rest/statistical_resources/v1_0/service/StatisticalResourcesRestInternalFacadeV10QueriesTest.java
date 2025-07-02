@@ -23,6 +23,7 @@ import org.apache.cxf.transports.http.configuration.ConnectionType;
 import org.junit.Test;
 import org.siemac.metamac.rest.common.test.utils.MetamacRestAsserts;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
+import org.siemac.metamac.statistical_resources.rest.common.impl.test.utils.CommonDatasetUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.CodeRepresentations;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
@@ -111,6 +112,59 @@ public class StatisticalResourcesRestInternalFacadeV10QueriesTest extends Statis
         // Ultimo elemento de las observaciones
         assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR).length, 8 * 2 * 3 * 1);
         assertEquals(StringUtils.splitByWholeSeparatorPreserveAllTokens(query.getData().getObservations(), StatisticalResourcesRestInternalConstants.DATA_SEPARATOR)[8 * 2 * 3 * 1 - 1], "403");
+    }
+
+    @Test
+    public void testRetrieveQueryTsv() throws Exception {
+        String requestUri = getRetrieveQueryUri(AGENCY_1, QUERY_1_CODE, null, null);
+        InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/queries/retrieveQuery.id1.tsv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/tab-separated-values", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testRetrieveQueryTsvDataCheck() throws Exception {
+        String requestUri = getRetrieveQueryUri(AGENCY_1, QUERY_1_CODE, null, null);
+        CommonDatasetUtils.checkTsvDatasetResponse(requestUri);
+    }
+
+    @Test
+    public void testRetrieveQueryCsv() throws Exception {
+
+        String requestUri = getRetrieveQueryUri(AGENCY_1, QUERY_1_CODE, null, null);
+        InputStream responseExpected = StatisticalResourcesRestInternalFacadeV10DatasetsTest.class.getResourceAsStream("/responses/queries/retrieveQuery.id1.csv");
+
+        // Request and validate
+        testRequestWithoutJaxbTransformation(requestUri, "text/csv", Status.OK, responseExpected);
+
+    }
+
+    @Test
+    public void testRetrieveQueryCsvDataCheck() throws Exception {
+        String requestUri = getRetrieveQueryUri(AGENCY_1, QUERY_1_CODE, null, null);
+        CommonDatasetUtils.checkCsvDatasetResponse(requestUri);
+    }
+
+    @Test
+    public void testRetrieveQueryXlsxDataCheck() throws Exception {
+        String requestUri = getRetrieveQueryUri(AGENCY_1, QUERY_1_CODE, null, null);
+        // @formatter:off
+        String[] expectedValuesFirstRow = {
+                null, null,
+                "santa-cruz-tenerife en Español", "santa-cruz-tenerife",
+                null, null,
+                "2013", "2013",
+                null, null,
+                "measure01-conceptScheme01-concept01 en Español", "measure01-conceptScheme01-concept01",
+                null, null,
+                "dim01-codelist01-code01 en Español", "dim01-codelist01-code01",
+                "19",
+                null, null
+            };
+        // @formatter:on
+        CommonDatasetUtils.checkXlsDatasetResponse(requestUri, expectedValuesFirstRow);
     }
 
     @Test
