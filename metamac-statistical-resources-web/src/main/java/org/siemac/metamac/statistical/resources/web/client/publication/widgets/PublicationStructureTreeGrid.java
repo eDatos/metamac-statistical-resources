@@ -52,8 +52,6 @@ import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import com.smartgwt.client.widgets.tree.events.FolderClickEvent;
-import com.smartgwt.client.widgets.tree.events.FolderClickHandler;
 import com.smartgwt.client.widgets.tree.events.FolderClosedEvent;
 import com.smartgwt.client.widgets.tree.events.FolderClosedHandler;
 import com.smartgwt.client.widgets.tree.events.FolderContextClickEvent;
@@ -62,8 +60,6 @@ import com.smartgwt.client.widgets.tree.events.FolderDropEvent;
 import com.smartgwt.client.widgets.tree.events.FolderDropHandler;
 import com.smartgwt.client.widgets.tree.events.FolderOpenedEvent;
 import com.smartgwt.client.widgets.tree.events.FolderOpenedHandler;
-import com.smartgwt.client.widgets.tree.events.LeafClickEvent;
-import com.smartgwt.client.widgets.tree.events.LeafClickHandler;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickEvent;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickHandler;
 import com.smartgwt.client.widgets.viewer.DetailViewer;
@@ -305,25 +301,10 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                         event.cancel();
                         return;
                     }
-                }
-            }
-        });
-
-        folderClickHandlerRegistration = addFolderClickHandler(new FolderClickHandler() {
-
-            @Override
-            public void onFolderClick(FolderClickEvent event) {
-                if (event.getFolder() instanceof ElementLevelTreeNode) {
-                    onNodeClick(((ElementLevelTreeNode) event.getFolder()).getElementLevelDto());
-                }
-            }
-        });
-        leafClickHandlerRegistration = addLeafClickHandler(new LeafClickHandler() {
-
-            @Override
-            public void onLeafClick(LeafClickEvent event) {
-                if (event.getLeaf() instanceof ElementLevelTreeNode) {
-                    onNodeClick(((ElementLevelTreeNode) event.getLeaf()).getElementLevelDto());
+                }else{
+                    if (record instanceof ElementLevelTreeNode) {
+                        onNodeClick(((ElementLevelTreeNode) record).getElementLevelDto());
+                    }
                 }
             }
         });

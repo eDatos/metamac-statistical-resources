@@ -48,14 +48,10 @@ import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import com.smartgwt.client.widgets.tree.events.FolderClickEvent;
-import com.smartgwt.client.widgets.tree.events.FolderClickHandler;
 import com.smartgwt.client.widgets.tree.events.FolderContextClickEvent;
 import com.smartgwt.client.widgets.tree.events.FolderContextClickHandler;
 import com.smartgwt.client.widgets.tree.events.FolderDropEvent;
 import com.smartgwt.client.widgets.tree.events.FolderDropHandler;
-import com.smartgwt.client.widgets.tree.events.LeafClickEvent;
-import com.smartgwt.client.widgets.tree.events.LeafClickHandler;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickEvent;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickHandler;
 import com.smartgwt.client.widgets.viewer.DetailViewer;
@@ -297,25 +293,6 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
             }
         });
 
-        folderClickHandlerRegistration = addFolderClickHandler(new FolderClickHandler() {
-
-            @Override
-            public void onFolderClick(FolderClickEvent event) {
-                if (event.getFolder() instanceof MultidatasetCubeTreeNode) {
-                    onNodeClick(((MultidatasetCubeTreeNode) event.getFolder()).getMultidatasetCubeDto());
-                }
-            }
-        });
-        leafClickHandlerRegistration = addLeafClickHandler(new LeafClickHandler() {
-
-            @Override
-            public void onLeafClick(LeafClickEvent event) {
-                if (event.getLeaf() instanceof MultidatasetCubeTreeNode) {
-                    onNodeClick(((MultidatasetCubeTreeNode) event.getLeaf()).getMultidatasetCubeDto());
-                }
-            }
-        });
-
         cellClickHandlerRegistration = addCellClickHandler(new CellClickHandler() {
 
             @Override
@@ -331,6 +308,10 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                         getUiHandlers().goToLastVersion(urn);
                         event.cancel();
                         return;
+                    }
+                }else{
+                    if (record instanceof MultidatasetCubeTreeNode) {
+                        onNodeClick(((MultidatasetCubeTreeNode) record).getMultidatasetCubeDto());
                     }
                 }
             }
