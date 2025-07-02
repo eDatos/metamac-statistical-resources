@@ -30,6 +30,9 @@ public class CommonDatasetUtils {
         InputStream responseActual = (InputStream) response.getEntity();
         Workbook file = WorkbookFactory.create(responseActual);
 
+        // Just for local debug
+        // file.write(new FileOutputStream("W:\\temp\\Excel_TEST\\checkXlsDatasetResponse.xlsx"));
+
         Sheet sheet = file.getSheetAt(0);
 
         Iterator<Row> rowIterator = sheet.rowIterator();
