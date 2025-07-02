@@ -28,4 +28,7 @@ public interface PublicationStructureTabUiHandlers extends BaseUiHandlers {
     void resourceImportationSucceed(String fileName, String publicationVersionUrn);
 
     void showWaitPopup();
+
+
+    void goToRelatedDatasetQuery(String urn);
 }

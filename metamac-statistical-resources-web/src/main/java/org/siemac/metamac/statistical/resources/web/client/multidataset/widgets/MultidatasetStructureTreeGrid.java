@@ -300,20 +300,25 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                 ListGridField clickedField = getField(event.getColNum());
                 ListGridRecord record = event.getRecord();
                 String fieldName = clickedField.getName();
+                String urn = record.getAttribute(fieldName);
+                boolean urnPresent  = urn != null && !urn.isEmpty();
 
-                if (fieldName.equals(resourceField.getName()) || fieldName.equals(dsdField.getName()) || fieldName.equals(queryDatasetField.getName())) {
-                    String urn = record.getAttribute(fieldName);
-                    if (urn != null && !urn.isEmpty()) {
-                        // TODO: EDATOS-5010 - revisar esta llamada ya que algunos dan errores al recuperar la ultima version, sobre todo si es un dataset con una version especifica
-                        getUiHandlers().goToLastVersion(urn);
-                        event.cancel();
-                        return;
-                    }
-                }else{
+                if (fieldName.equals(resourceField.getName()) && urnPresent ) {
+                    getUiHandlers().goToLastVersion(urn);
+                    event.cancel();
+                    return;
+                } else if (fieldName.equals(queryDatasetField.getName()) && urnPresent ) {
+                    getUiHandlers().goToRelatedDatasetQuery(urn);
+                    event.cancel();
+                    return;
+                } else if (fieldName.equals(dsdField.getName()) && urnPresent ) {
+                    // TODO: EDATOS-5010 - llamada distinta para DSD
+                } else {
                     if (record instanceof MultidatasetCubeTreeNode) {
                         onNodeClick(((MultidatasetCubeTreeNode) record).getMultidatasetCubeDto());
                     }
                 }
+
             }
         });
 
