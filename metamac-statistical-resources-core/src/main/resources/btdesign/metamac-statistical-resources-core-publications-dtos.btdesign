@@ -68,7 +68,7 @@ Application PublicationsStatisticalResourcesDto {
 			String relatedDatasetUrnInQuery;
 
 			"Related DSD"
-			String relatedDSD;
+			- @ExternalItemDto relatedDSD;
 
 	    }
 	}

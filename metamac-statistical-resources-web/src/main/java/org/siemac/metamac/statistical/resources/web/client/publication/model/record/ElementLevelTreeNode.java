@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.client.publication.model.record;
 
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLevelDto;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
 import org.siemac.metamac.web.common.client.widgets.NavigableTreeNode;
@@ -59,7 +60,7 @@ public class ElementLevelTreeNode extends NavigableTreeNode {
     }
 
 
-    public void setDSD(String value) {
+    public void setDSD(ExternalItemDto value) {
         setAttribute(ElementLevelDS.DSD, value);
     }
 

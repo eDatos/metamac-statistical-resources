@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLevelDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationStructureDto;
@@ -21,6 +23,7 @@ import org.siemac.metamac.statistical.resources.web.client.publication.view.hand
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
+import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
 import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 
@@ -176,7 +179,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                return formatExternalItemValue(value, true);
             }
         });
 
@@ -216,6 +219,36 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
         bindEvents();
     }
+
+
+    public static String formatExternalItemValue(Object value, boolean showVersion) {
+        if (value == null) {
+            return StringUtils.EMPTY;
+        }
+        ExternalItemDto item = (ExternalItemDto)value;
+
+        String title = ""; //In this case, we don´t need the dsd title, only the code and version
+        String code = item.getCode();
+        String url = item.getManagementAppUrl();
+        String urn = item.getUrn();
+        String label;
+
+        if (showVersion && !StringUtils.isBlank(urn)) {
+            String[] parts = UrnUtils.splitUrnItemScheme(urn);
+            if (parts.length == 3 && !StringUtils.isBlank(parts[1]) && !StringUtils.isBlank(parts[2])) {
+                String resourceId = parts[1];
+                String version = parts[2];
+                label = CommonWebUtils.getElementNameWithVersion(resourceId, title, version);
+            } else {
+                label = CommonWebUtils.getElementName(code, title);
+            }
+        } else {
+            label = CommonWebUtils.getElementName(code, title);
+        }
+
+        return (!StringUtils.isBlank(url)) ? "<a href=\"" + url + "\">" + label + "</a>" : label;
+    }
+
 
     private void createContextMenu() {
         contextMenu = new Menu();
@@ -304,8 +337,6 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                     getUiHandlers().goToRelatedDatasetQuery(urn);
                     event.cancel();
                     return;
-                } else if (fieldName.equals(dsdField.getName()) && urnPresent ) {
-                    // TODO: EDATOS-5010 - llamada distinta para DSD
                 } else {
                     if (record instanceof ElementLevelTreeNode) {
                         onNodeClick(((ElementLevelTreeNode) record).getElementLevelDto());
