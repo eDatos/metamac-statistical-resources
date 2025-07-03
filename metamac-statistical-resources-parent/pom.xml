@@ -33,16 +33,16 @@
 	<properties>
         <metamac-statistical-resources-rest-api-common.version>2.11.0</metamac-statistical-resources-rest-api-common.version>
 		<metamac-common-metadata-rest-external-api.version>4.0.0</metamac-common-metadata-rest-external-api.version>
-		<metamac-core-common.version>8.4.0</metamac-core-common.version>
+		<metamac-core-common.version>8.4.1-SNAPSHOT</metamac-core-common.version>
 		<metamac-rest-api.version>2.3.1</metamac-rest-api.version>
 		<metamac-rest-common.version>2.7.1</metamac-rest-common.version>
 		<metamac-srm-rest-internal-api.version>3.4.0</metamac-srm-rest-internal-api.version>
 		<metamac-srm-rest-external-api.version>3.4.0</metamac-srm-rest-external-api.version>
-		<metamac-sso.version>4.9.0</metamac-sso.version>
+		<metamac-sso.version>4.9.1-SNAPSHOT</metamac-sso.version>
 		<metamac-statistical-operations-rest-internal-api.version>2.8.1</metamac-statistical-operations-rest-internal-api.version>
 		<metamac-statistical-operations-rest-external-api.version>3.7.1</metamac-statistical-operations-rest-external-api.version>
 		<metamac-sdmx-data-rest-external-api.version>2.0.0</metamac-sdmx-data-rest-external-api.version>
-		<metamac-web-common.version>5.12.0</metamac-web-common.version>
+		<metamac-web-common.version>5.12.1-SNAPSHOT</metamac-web-common.version>
 		<metamac-notifications-rest-internal-api.version>3.7.1</metamac-notifications-rest-internal-api.version>
 
 		<metamac-statistical-resources.baseDir>${basedir}/..</metamac-statistical-resources.baseDir>
