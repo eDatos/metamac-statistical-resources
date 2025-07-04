@@ -723,34 +723,5 @@ public class CommonUtils {
         CommonUtils.maxNumberOfUpdatedDatasetInGroup = maxNumberOfUpdatedDatasetInGroup;
     }
 
-    public static String formatExternalItemValue(Object value, boolean showVersion, boolean showTitle) {
-        if (value == null) {
-            return StringUtils.EMPTY;
-        }
-        ExternalItemDto item = (ExternalItemDto)value;
 
-        String title = showTitle ? InternationalStringUtils.getLocalisedString(item.getTitle()) : "";
-        String code = item.getCode();
-        String url = item.getManagementAppUrl();
-        String urn = item.getUrn();
-
-        String label = buildLabel(code, title, urn, showVersion);
-
-        return (!StringUtils.isBlank(url)) ? "<a href=\"" + url + "\">" + label + "</a>" : label;
-    }
-
-    private static String buildLabel(String code, String title, String urn, boolean showVersion) {
-        if (!showVersion || StringUtils.isBlank(urn)) {
-            return CommonWebUtils.getElementName(code, title);
-        }
-
-        String[] parts = UrnUtils.splitUrnItemScheme(urn);
-        if (parts.length == 3 && !StringUtils.isBlank(parts[1]) && !StringUtils.isBlank(parts[2])) {
-            String resourceId = parts[1];
-            String version = parts[2];
-            return CommonWebUtils.getElementNameWithVersion(resourceId, title, version);
-        }
-
-        return CommonWebUtils.getElementName(code, title);
-    }
 }

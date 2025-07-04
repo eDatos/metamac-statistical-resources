@@ -13,12 +13,12 @@ import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalReso
 import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLevelDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationStructureDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NavigableTreeGrid;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.ElementLevelTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.publication.utils.PublicationClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.publication.view.handlers.PublicationStructureTabUiHandlers;
-import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
@@ -27,6 +27,7 @@ import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.smartgwt.client.data.Record;
@@ -178,7 +179,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                return CommonUtils.formatExternalItemValue(value, true, false);
+                return ResourceFieldUtils.formatExternalItemValue(value, true, false);
             }
         });
 
@@ -296,12 +297,19 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                 String fieldName = clickedField.getName();
 
                 String urn = record.getAttribute(fieldName);
+                String resourceType = record.getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
                 boolean urnPresent = urn != null && !urn.isEmpty();
 
                 if (fieldName.equals(resourceField.getName()) && urnPresent) {
-                    getUiHandlers().goToLastVersion(urn);
-                    event.cancel();
-                    return;
+                    if (!StatisticalResourceTypeEnum.URL.name().equalsIgnoreCase(resourceType)) {
+                        getUiHandlers().goToLastVersion(urn);
+                        event.cancel();
+                        return;
+                    }else{
+                        Window.open(urn,"","");
+                        event.cancel();
+                        return;
+                    }
                 } else if (fieldName.equals(queryDatasetField.getName()) && urnPresent) {
                     getUiHandlers().goToRelatedDatasetQuery(urn);
                     event.cancel();

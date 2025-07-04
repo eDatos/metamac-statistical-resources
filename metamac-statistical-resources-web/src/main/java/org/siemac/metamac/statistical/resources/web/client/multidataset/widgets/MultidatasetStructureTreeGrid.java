@@ -17,7 +17,6 @@ import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds
 import org.siemac.metamac.statistical.resources.web.client.multidataset.utils.MultidatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.view.handlers.MultidatasetStructureTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
-import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
@@ -168,7 +167,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                return CommonUtils.formatExternalItemValue(value, true, false);
+                return ResourceFieldUtils.formatExternalItemValue(value, true, false);
             }
         });
 
