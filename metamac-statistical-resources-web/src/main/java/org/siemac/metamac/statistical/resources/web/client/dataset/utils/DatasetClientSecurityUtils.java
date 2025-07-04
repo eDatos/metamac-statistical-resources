@@ -94,6 +94,10 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
         return canResendStreamMessageDatasetVersion(dto.getProcStatus(), dto.getIsTaskInBackground());
     }
 
+    public static boolean canResendXMessageDatasetVersion(DatasetVersionDto dto) {
+        return false;
+    }
+
     public static boolean canVersionDataset(DatasetVersionDto dto) {
         return canVersionDataset(dto.getProcStatus(), dto.getIsTaskInBackground());
     }

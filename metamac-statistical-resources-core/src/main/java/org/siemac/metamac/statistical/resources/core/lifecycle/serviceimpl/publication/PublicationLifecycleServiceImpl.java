@@ -290,6 +290,11 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
     }
 
     @Override
+    public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, PublicationVersion resource) {
+        //ONLY FOR DATASET
+    }
+
+    @Override
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
         // ONLY FOR DATASETS
     }

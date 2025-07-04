@@ -5,6 +5,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.base.GetHelp
 import org.siemac.metamac.statistical.resources.web.server.handlers.base.GetInitialValuesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.base.GetLatestResourceVersionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.base.ResendStreamMessageActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.base.ResendXMessageActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.CopyDatasetActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.CreateDatabaseDatasourceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.CreateDatasetCategorisationsActionHandler;
@@ -99,6 +100,7 @@ import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlAction
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatabaseDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatasetCategorisationsAction;
@@ -323,6 +325,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetLatestResourceVersionAction.class, GetLatestResourceVersionActionHandler.class);
         bindHandler(GetInitialValuesAction.class, GetInitialValuesActionHandler.class);
         bindHandler(ResendStreamMessageAction.class, ResendStreamMessageActionHandler.class);
+        bindHandler(ResendXMessageAction.class, ResendXMessageActionHandler.class);
 
         bindHandler(ValidateTicketAction.class, ValidateTicketActionHandler.class);
         bindHandler(GetLoginPageUrlAction.class, GetLoginPageUrlActionHandler.class);

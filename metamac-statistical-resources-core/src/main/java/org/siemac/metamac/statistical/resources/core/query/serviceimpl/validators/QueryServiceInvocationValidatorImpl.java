@@ -146,4 +146,7 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
         StatisticalResourcesValidationUtils.checkParameterRequired(dataset, ServiceExceptionParameters.DATASET_VERSION, exceptions);
     }
 
+    public static void checkFindPurposes(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
 }

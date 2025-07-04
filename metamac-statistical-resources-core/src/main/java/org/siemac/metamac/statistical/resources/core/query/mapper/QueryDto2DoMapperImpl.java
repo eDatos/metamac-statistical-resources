@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -17,38 +18,52 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItemRepository;
+import org.siemac.metamac.statistical.resources.core.query.domain.Purpose;
+import org.siemac.metamac.statistical.resources.core.query.domain.PurposeRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItemRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical.resources.core.query.exception.PurposeNotFoundException;
 import org.siemac.metamac.statistical.resources.core.query.exception.QueryVersionNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
+import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 @org.springframework.stereotype.Component("queryDto2DoMapper")
 public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements QueryDto2DoMapper {
 
     @Autowired
-    private QueryVersionRepository       queryVersionRepository;
+    private QueryVersionRepository           queryVersionRepository;
 
     @Autowired
-    private DatasetVersionRepository     datasetVersionRepository;
+    private DatasetVersionRepository         datasetVersionRepository;
 
     @Autowired
-    private QuerySelectionItemRepository querySelectionItemRepository;
+    private QuerySelectionItemRepository     querySelectionItemRepository;
 
     @Autowired
-    private CodeItemRepository           codeItemRepository;
+    private CodeItemRepository               codeItemRepository;
+
+    @Autowired
+    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
+
+    @Autowired
+    private PurposeRepository                purposeRepository;
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
-    private CommonDto2DoMapper           dto2DoMapper;
+    private CommonDto2DoMapper               dto2DoMapper;
 
     @Override
     public void checkOptimisticLocking(QueryVersionBaseDto source) throws MetamacException {
@@ -70,7 +85,6 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         if (source == null) {
             return null;
         }
-
         // If exists, retrieves existing entity. Otherwise, creates new entity.
         QueryVersion target = null;
         if (source.getId() == null) {
@@ -86,8 +100,46 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         }
 
         queryVersionDtoToDo(source, target);
+        try {
+            checkPurpose(source, target);
+        } catch (ApplicationException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withMessageParameters(source.getUrn()).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
 
         return target;
+    }
+
+    private void checkPurpose(QueryVersionDto source, QueryVersion target) throws MetamacException, ApplicationException {
+        if (source.getPurpose() != null) {
+            List<ConditionDimensionDto> conditions = generateConditions(target.getSelection());
+            DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(target);
+            Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
+            if (observations.size() > 1 && "SOCIAL_NETWORK".equals(source.getPurpose().getIdentifier())) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
+                        .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
+        }
+    }
+
+    private DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
+        if (source.getFixedDatasetVersion() != null) {
+            return source.getFixedDatasetVersion();
+        } else {
+            return datasetVersionRepository.retrieveLastVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
+        }
+    }
+
+    private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
+        List<ConditionDimensionDto> conditionDimensionDtos = new ArrayList<ConditionDimensionDto>();
+        for (QuerySelectionItem querySelectionItem : querySelectionItems) {
+            ConditionDimensionDto conditionDimensionDto = new ConditionDimensionDto();
+            conditionDimensionDto.setDimensionId(querySelectionItem.getDimension());
+            for (CodeItem codeItem : querySelectionItem.getCodes()) {
+                conditionDimensionDto.getCodesDimension().add(codeItem.getCode());
+            }
+            conditionDimensionDtos.add(conditionDimensionDto);
+        }
+        return conditionDimensionDtos;
     }
 
     private QueryVersion queryVersionDtoToDo(QueryVersionDto source, QueryVersion target) throws MetamacException {
@@ -131,9 +183,22 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         }
         target.getHeadingDimensions().addAll(getHeadingDimension(source.getHeadingDimensions(), target));
         target.getStubDimensions().addAll(getStubDimension(source.getStubDimensions(), target));
+        target.setPurposes(purposeDtoToDo(source.getPurpose()));
+        target.setXTemplate(internationalStringDtoToDo(source.getXTemplateDto(), target.getXTemplate(), ServiceExceptionParameters.QUERY_VERSION));
         return target;
     }
 
+    private Purpose purposeDtoToDo(PurposeDto source) throws MetamacException {
+        if (source == null) {
+            return null;
+        }
+
+        try {
+            return purposeRepository.findById(source.getId());
+        } catch (PurposeNotFoundException e) {
+            throw new MetamacException(ServiceExceptionType.PURPOSE_NOT_FOUND, source.getId());
+        }
+    }
 
     private List<DimensionOrder> getHeadingDimension(List<RelatedResourceDto> relatedResources, QueryVersion target) {
         target.getHeadingDimensions().clear();
