@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.core.multidataset.mapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.mapper.BaseDo2DtoMapperImpl;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -221,19 +222,19 @@ public class MultidatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
             QueryVersion queryVersion = queryVersionRepository.retrieveLastVersion(source.getQueryUrn());
             if (queryVersion.getDataset() != null && queryVersion.getDataset().getVersions() != null && !queryVersion.getDataset().getVersions().isEmpty()) {
                 datasetUrnInQuery = queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
-                target.setRelatedDSD(getRelatedDsdUrn(datasetUrnInQuery));
+                target.setRelatedDSD(getRelatedDsd(datasetUrnInQuery));
             }
             if (datasetUrnInQuery.isEmpty() && queryVersion.getFixedDatasetVersion() != null) {
                 DatasetVersion datasetVersion = queryVersion.getFixedDatasetVersion();
                 datasetUrnInQuery = datasetVersion.getLifeCycleStatisticalResource().getUrn();
-                target.setRelatedDSD(datasetVersion.getRelatedDsd().getUrn());
+                target.setRelatedDSD(externalItemDoToDto(datasetVersion.getRelatedDsd()));
             }
             target.setRelatedDatasetUrnInQuery(datasetUrnInQuery);
         }
         if(source.getDatasetUrn() !=null){
             Dataset dataset = datasetVersionRepository.retrieveLastVersion(source.getDatasetUrn()).getDataset();
             String datasetUrn =  dataset.getIdentifiableStatisticalResource().getUrn();
-            target.setRelatedDSD(getRelatedDsdUrn(datasetUrn));
+            target.setRelatedDSD(getRelatedDsd(datasetUrn));
         }
 
         // Other
@@ -245,10 +246,10 @@ public class MultidatasetDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implement
         return target;
     }
 
-    private String getRelatedDsdUrn(String datasetUrn) throws MetamacException {
+    private ExternalItemDto getRelatedDsd(String datasetUrn) throws MetamacException {
         DatasetVersion datasetVersion = datasetVersionRepository.retrieveLastVersion(datasetUrn);
         ExternalItem externalItem = datasetVersion.getRelatedDsd();
-        return externalItem.getUrn();
+        return externalItemDoToDto(externalItem);
     }
 
     @Override

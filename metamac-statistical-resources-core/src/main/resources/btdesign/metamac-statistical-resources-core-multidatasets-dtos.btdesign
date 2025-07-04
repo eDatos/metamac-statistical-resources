@@ -40,7 +40,7 @@ Application MultidatasetsStatisticalResourcesDto {
             String relatedDatasetUrnInQuery;
 
             "Related DSD"
-            String relatedDSD;
+            - @ExternalItemDto relatedDSD;
 
         }
 	}

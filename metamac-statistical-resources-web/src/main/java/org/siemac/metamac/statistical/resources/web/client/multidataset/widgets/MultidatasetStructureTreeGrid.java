@@ -17,6 +17,7 @@ import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds
 import org.siemac.metamac.statistical.resources.web.client.multidataset.utils.MultidatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.view.handlers.MultidatasetStructureTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
@@ -167,7 +168,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
 
             @Override
             public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                return CommonUtils.formatExternalItemValue(value, true, false);
             }
         });
 
@@ -311,8 +312,6 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                     getUiHandlers().goToRelatedDatasetQuery(urn);
                     event.cancel();
                     return;
-                } else if (fieldName.equals(dsdField.getName()) && urnPresent ) {
-                    // TODO: EDATOS-5010 - llamada distinta para DSD
                 } else {
                     if (record instanceof MultidatasetCubeTreeNode) {
                         onNodeClick(((MultidatasetCubeTreeNode) record).getMultidatasetCubeDto());
