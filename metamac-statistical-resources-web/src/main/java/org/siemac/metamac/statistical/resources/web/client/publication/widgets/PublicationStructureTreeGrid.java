@@ -52,6 +52,7 @@ import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.menu.events.ClickHandler;
 import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
 import com.smartgwt.client.widgets.tree.Tree;
+import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
 import com.smartgwt.client.widgets.tree.events.FolderClosedEvent;
@@ -93,7 +94,6 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     protected TreeGridField                     titleField;
     protected TreeGridField                     urnField;
     protected TreeGridField                     resourceField;
-
     protected TreeGridField                     resourceTypeField;
     protected TreeGridField                     dsdField;
     protected TreeGridField                     queryDatasetField;
@@ -141,11 +141,37 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         setDragDataAction(DragDataAction.MOVE);
         setShowOpenIcons(true);
         setShowDropIcons(true);
+        final TreeGrid treeGrid = this;
 
         titleField = new TreeGridField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         titleField.setShowHover(false); // only show hover in info field
         titleField.setCanFilter(true);
         titleField.setCanSort(false);
+        titleField.setEscapeHTML(false);
+        titleField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                String title = (value != null) ? value.toString() : "";
+                String resourceType = record.getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                if (resourceType == null)
+                    return title;
+
+                RecordList records = treeGrid.getRecordList();
+                int cubeCount = 1;
+
+                for (int i = 0; i < records.getLength(); i++) {
+                    ListGridRecord rec = (ListGridRecord) records.get(i);
+                    if (rec == record)
+                        break;
+                    if (rec.getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK) != null)
+                        cubeCount++;
+                }
+
+                String numeration = (cubeCount < 10 ? "0" : "") + cubeCount;
+                return "<span class='item-numeration'>" + numeration + "</span> " + title;
+            }
+        });
 
         urnField = new TreeGridField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
         urnField.setShowHover(false); // only show hover in info field
@@ -305,8 +331,8 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                         getUiHandlers().goToLastVersion(urn);
                         event.cancel();
                         return;
-                    }else{
-                        Window.open(urn,"","");
+                    } else {
+                        Window.open(urn, "", "");
                         event.cancel();
                         return;
                     }
