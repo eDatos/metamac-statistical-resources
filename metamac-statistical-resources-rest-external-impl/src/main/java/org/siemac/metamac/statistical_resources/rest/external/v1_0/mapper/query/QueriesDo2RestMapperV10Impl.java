@@ -489,7 +489,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             String latestSelectionCode = sortedSelectionCodes.get(0);
             int indexLatestSelectionCode = sortedTemporalCoverageCodes.indexOf(latestSelectionCode);
 
-            effectiveDimensionValues.addAll(selectionCodes);
+            effectiveDimensionValues.addAll(sortedSelectionCodes);
             if (indexLatestSelectionCode >= 0) {
                 // add codes added after lastest selected code
                 List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(0, indexLatestSelectionCode);
