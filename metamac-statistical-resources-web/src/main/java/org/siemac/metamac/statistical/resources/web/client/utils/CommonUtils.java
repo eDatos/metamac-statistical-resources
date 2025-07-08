@@ -25,6 +25,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDt
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.TemporalCodeDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.constraint.domain.KeyPartTypeEnum;
@@ -36,6 +37,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
@@ -61,6 +63,7 @@ public class CommonUtils {
     private static String                               metamacPortalBaseUrl;
     private static Integer                              maxNumberOfUpdatedDatasetInGroup;
     private static Map<String, StatisticOfficialityDto> statisticOfficialitiesMap;
+    private static Map<String, PurposeDto> purposesMap;
 
     // -----------------------------------------------------------------------------------------
     // DATASET CONSTRAINTS
@@ -236,6 +239,21 @@ public class CommonUtils {
         } else if (StreamMessageStatusEnum.PENDING.equals(status)) {
             icon.setSrc(GlobalResources.RESOURCE.warn().getURL());
         } else if (StreamMessageStatusEnum.SENT.equals(status)) {
+            icon.setSrc(GlobalResources.RESOURCE.success().getURL());
+        }
+
+        return icon;
+    }
+
+    public static FormItemIcon getXStatusIcon(XStreamStatusEnum status) {
+        if (status == null) {
+            return null;
+        }
+
+        FormItemIcon icon = new FormItemIcon();
+        if (XStreamStatusEnum.FAILED.equals(status)) {
+            icon.setSrc(GlobalResources.RESOURCE.errorSmart().getURL());
+        } else if (XStreamStatusEnum.SENT.equals(status)) {
             icon.setSrc(GlobalResources.RESOURCE.success().getURL());
         }
 
@@ -519,6 +537,38 @@ public class CommonUtils {
         CommonUtils.statisticOfficialitiesMap = new HashMap<String, StatisticOfficialityDto>();
         for (StatisticOfficialityDto officiality : statisticOfficialities) {
             CommonUtils.statisticOfficialitiesMap.put(officiality.getIdentifier(), officiality);
+        }
+    }
+    
+    // -----------------------------------------------------------------------------------------
+    // PURPOSES
+    // -----------------------------------------------------------------------------------------
+    public static LinkedHashMap<String, String> getPurposesHashMap() {
+        LinkedHashMap<String, String> map = new LinkedHashMap<String, String>();
+        map.put("", "");
+        if (purposesMap != null) {
+            for (Entry<String, PurposeDto> entry : purposesMap.entrySet()) {
+                map.put(entry.getKey(), getPurposeName(entry.getValue()));
+            }
+        }
+        return map;
+    }
+
+    public static PurposeDto getPurpose(String identifier) {
+        return purposesMap.get(identifier);
+    }
+
+    public static String getPurposeName(PurposeDto purposeDto) {
+        if (purposeDto != null) {
+            return CommonWebUtils.getElementName(purposeDto.getIdentifier(), purposeDto.getDescription());
+        }
+        return StringUtils.EMPTY;
+    }
+
+    public static void setPurposes(List<PurposeDto> purposes) {
+        CommonUtils.purposesMap = new HashMap<String, PurposeDto>();
+        for (PurposeDto purpose : purposes) {
+            CommonUtils.purposesMap.put(purpose.getIdentifier(), purpose);
         }
     }
 

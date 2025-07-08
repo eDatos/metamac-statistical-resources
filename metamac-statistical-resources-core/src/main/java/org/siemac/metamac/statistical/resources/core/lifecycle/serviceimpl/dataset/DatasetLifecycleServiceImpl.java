@@ -5,6 +5,8 @@ import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceE
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,9 +17,11 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
+import org.siemac.metamac.statistical.resources.core.common.utils.PortalWebCoreUtils;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
@@ -26,12 +30,16 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
+import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
+import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
+import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
@@ -44,8 +52,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+import io.github.redouane59.twitter.TwitterClient;
+import io.github.redouane59.twitter.dto.tweet.Tweet;
+import io.github.redouane59.twitter.signature.TwitterCredentials;
 
 @Service("datasetLifecycleService")
 public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<DatasetVersion> {
@@ -348,10 +361,100 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             for (QueryVersion queryVersion : queriesDataset) {
                 sendNewVersionPublishedStreamMessage(ctx, queryVersion);
             }
-
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
+    }
+
+    @Override
+    public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, DatasetVersion resource) {
+        List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(resource.getDataset().getId());
+        try {
+            if (!configurationService.retrieveTwitterSentEnable() || !checkVersionRationaleTypeEnum(resource)) {
+                return;
+            }
+        } catch (MetamacException e) {
+            for (QueryVersion queryVersion : queriesDataset) {
+                createXMessageSentNotification(ctx, resource);
+                updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
+            }
+        }
+        for (QueryVersion queryVersion : queriesDataset) {
+            try {
+                if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
+                    List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
+                    Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
+                    // remember that we have to update the x page for the application to be read and write
+                    TwitterClient twitterClient = new TwitterClient(
+                            TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
+                                    .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+                    String xPublication = getXPublication(observations, queryVersion, resource);
+                    Tweet tweet = twitterClient.postTweet(xPublication);
+                    if (tweet.getText() == null) {
+                        createXMessageSentNotification(ctx, resource);
+                        updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
+                        return;
+                    }
+                    updateXStreamStatus(queryVersion, XStreamStatusEnum.SENT);
+                }
+            } catch (Exception e) {
+                createXMessageSentNotification(ctx, resource);
+                updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
+            }
+        }
+    }
+
+    private boolean checkVersionRationaleTypeEnum(DatasetVersion resource) {
+        if (resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes() != null && !resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes().isEmpty()) {
+            for (VersionRationaleType versionRationaleType : resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes()) {
+                if (VersionRationaleTypeEnum.MINOR_DATA_UPDATE.equals(versionRationaleType.getValue()) || VersionRationaleTypeEnum.MINOR_SERIES_UPDATE.equals(versionRationaleType.getValue())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void updateXStreamStatus(QueryVersion resource, XStreamStatusEnum status) {
+        resource.getLifeCycleStatisticalResource().setXStreamStatus(status);
+        queryVersionRepository.save(resource);
+    }
+
+    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query, DatasetVersion resource) throws MetamacException {
+        if (observations.size() > 1) {
+            throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + query.getLifeCycleStatisticalResource().getCode());
+        }
+
+        if (query.getXTemplate() != null && !observations.isEmpty()) {
+            // Get the only entry in the map
+            Entry<String, ObservationExtendedDto> entry = observations.entrySet().iterator().next();
+
+            return setMessageLanguageDefault(query, entry, resource);
+        }
+        return "";
+    }
+
+    private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry, DatasetVersion resource) throws MetamacException {
+        for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
+            if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
+                String portalBaseUrl = configurationService.findProperty("metamac.portal.web.internal.visualizer");
+                return localisedString.getLabel().replace("{datos}", entry.getValue().getPrimaryMeasure());
+            }
+        }
+        return "";
+    }
+
+    private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
+        List<ConditionDimensionDto> conditionDimensionDtos = new ArrayList<ConditionDimensionDto>();
+        for (QuerySelectionItem querySelectionItem : querySelectionItems) {
+            ConditionDimensionDto conditionDimensionDto = new ConditionDimensionDto();
+            conditionDimensionDto.setDimensionId(querySelectionItem.getDimension());
+            for (CodeItem codeItem : querySelectionItem.getCodes()) {
+                conditionDimensionDto.getCodesDimension().add(codeItem.getCode());
+            }
+            conditionDimensionDtos.add(conditionDimensionDto);
+        }
+        return conditionDimensionDtos;
     }
 
     protected void sendNewVersionPublishedStreamMessage(ServiceContext ctx, QueryVersion version) {

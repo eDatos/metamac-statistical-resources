@@ -14,6 +14,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetada
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
 import org.siemac.metamac.statistical.resources.core.common.utils.RelatedResourceUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleChecker;
@@ -462,11 +463,29 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         }
     }
 
+    protected void createXMessageSentNotification(ServiceContext ctx, HasSiemacMetadata version) {
+        if (version.getLifeCycleStatisticalResource().getXStreamStatus() != XStreamStatusEnum.SENT) {
+            String userId = ctx.getUserId();
+            String messageCode = ServiceNoticeAction.X_MESSAGE_SEND;
+            String messageText = ServiceNoticeMessage.X_MESSAGE_SEND_ERROR;
+            noticesRestInternalService.createErrorOnStreamMessagingService(userId, messageCode, version, messageText, (Serializable[]) null);
+        }
+    }
+
     protected void createStreamMessageSentNotification(ServiceContext ctx, QueryVersion version) {
         if (version.getLifeCycleStatisticalResource().getPublicationStreamStatus() != StreamMessageStatusEnum.SENT) {
             String userId = ctx.getUserId();
             String messageCode = ServiceNoticeAction.STREAM_MESSAGE_SEND;
             String messageText = ServiceNoticeMessage.STREAM_MESSAGE_SEND_ERROR;
+            noticesRestInternalService.createErrorOnStreamMessagingService(userId, messageCode, version, messageText, (Serializable[]) null);
+        }
+    }
+
+    protected void createXMessageSentNotification(ServiceContext ctx, QueryVersion version) {
+        if (version.getLifeCycleStatisticalResource().getXStreamStatus() != XStreamStatusEnum.SENT) {
+            String userId = ctx.getUserId();
+            String messageCode = ServiceNoticeAction.X_MESSAGE_SEND;
+            String messageText = ServiceNoticeMessage.X_MESSAGE_SEND_ERROR;
             noticesRestInternalService.createErrorOnStreamMessagingService(userId, messageCode, version, messageText, (Serializable[]) null);
         }
     }

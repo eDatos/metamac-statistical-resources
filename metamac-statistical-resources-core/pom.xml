@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>10.11.1-SNAPSHOT</version>
+        <version>10.12.1-SNAPSHOT</version>
         <relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 
@@ -15,6 +15,16 @@
     <name>METAMAC :: STATISTICAL RESOURCES :: CORE</name>
 
     <dependencies>
+		<dependency>
+		    <groupId>io.github.redouane59.twitter</groupId>
+		    <artifactId>twittered</artifactId>
+		    <version>${io-github-redouane59-twitter.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>${com-fasterxml-jackson-core.version}</version>
+		</dependency>
         <!-- METAMAC -->
         <dependency>
             <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
