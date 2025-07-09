@@ -1586,7 +1586,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 : getObservationsFiltered(datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions), dimensionsFilter);
 
         // Build data (observations and attribute in observation attachment level)
-        int dataSize = calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
+        long dataSize = calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
         DataProcessorForObservation dataProcessor = new DataProcessorForObservation(observations, dataSize);
         toDataCommon(dimensions, dimensionsCodesSelectedEffective, dataProcessor);
 
@@ -1770,7 +1770,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         Map<String, AttributeInstanceDto> attributesByCodeDimensions = buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(attributeDimensionsOrdered, sources);
 
         // Build data
-        int dataSize = calculateDataSize(attributeDimensions, dimensionsCodesSelectedEffective);
+        long dataSize = calculateDataSize(attributeDimensions, dimensionsCodesSelectedEffective);
         DataProcessorForAttributeWithDimensionAttachmentLevel dataProcessor = new DataProcessorForAttributeWithDimensionAttachmentLevel(attributesByCodeDimensions, dataSize);
         toDataCommon(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, dataProcessor);
 
@@ -1957,9 +1957,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         private final Map<String, AttributeInstanceDto> attributesByCodeDimensions;
         private final List<AttributeInstanceDto>        targets;
 
-        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions, int dataSize) {
+        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions, long dataSize) {
             this.attributesByCodeDimensions = attributesByCodeDimensions;
-            targets = new ArrayList<AttributeInstanceDto>(dataSize);
+            targets = dataSize > Integer.MAX_VALUE ? new ArrayList<AttributeInstanceDto>() : new ArrayList<AttributeInstanceDto>((int) dataSize);
         }
 
         @Override
@@ -1993,9 +1993,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         private final Map<String, ObservationExtendedDto> sources;
         private final List<ObservationExtendedDto>        targets;
 
-        public DataProcessorForObservation(Map<String, ObservationExtendedDto> observations, int dataSize) {
+        public DataProcessorForObservation(Map<String, ObservationExtendedDto> observations, long dataSize) {
             sources = observations;
-            targets = new ArrayList<ObservationExtendedDto>(dataSize);
+            targets = dataSize > Integer.MAX_VALUE ? new ArrayList<ObservationExtendedDto>() : new ArrayList<ObservationExtendedDto>((int) dataSize);
         }
 
         @Override
@@ -2113,8 +2113,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
     }
 
-    private int calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
-        int dataSize = 1;
+    private long calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
+        long dataSize = 1;
         for (String dimension : dimensions) {
             dataSize = dataSize * dimensionsCodesSelectedEffective.get(dimension).size();
         }
