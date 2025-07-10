@@ -1680,7 +1680,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 : getObservationsFiltered(datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions), dimensionsFilter);
 
         // Build data (observations and attribute in observation attachment level)
-        int dataSize = calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
         DataProcessorForObservation dataProcessor = new DataProcessorForObservation(observations);
         toDataCommon(dimensions, dimensionsCodesSelectedEffective, dataProcessor);
 
@@ -2180,14 +2179,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         public boolean isAnyObservationHasAttribute() {
             return anyObservationHasAttribute;
         }
-    }
-
-    private int calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
-        int dataSize = 1;
-        for (String dimension : dimensions) {
-            dataSize = dataSize * dimensionsCodesSelectedEffective.get(dimension).size();
-        }
-        return dataSize;
     }
 
     private InternationalString getUpdatedStatisticalOperationName(String operationCode, ExternalRestObjectsMapper externalRestObjectsMapper) {

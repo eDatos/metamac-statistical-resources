@@ -2111,14 +2111,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
     }
 
-    private long calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
-        long dataSize = 1;
-        for (String dimension : dimensions) {
-            dataSize = dataSize * dimensionsCodesSelectedEffective.get(dimension).size();
-        }
-        return dataSize;
-    }
-
     private InternationalString getUpdatedStatisticalOperationName(String operationCode, ExternalRestObjectsMapper externalRestObjectsMapper) {
 
         InternationalString operationTitle = externalRestObjectsMapper.getOperationTitlesByCode().get(operationCode);
