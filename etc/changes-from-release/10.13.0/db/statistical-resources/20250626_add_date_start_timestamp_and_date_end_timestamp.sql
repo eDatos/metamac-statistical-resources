@@ -15,4 +15,9 @@ set date_start_timestamp = sdmx_to_date(tdv.date_start),
 date_start_timestamp_tz = 'Atlantic/Canary'
 where date_start is not null;
 
+update tb_datasets_versions tdv 
+set date_end_timestamp = sdmx_to_date(tdv.date_end),
+date_end_timestamp_tz = 'Atlantic/Canary'
+where date_end is not null;
+
 commit;
