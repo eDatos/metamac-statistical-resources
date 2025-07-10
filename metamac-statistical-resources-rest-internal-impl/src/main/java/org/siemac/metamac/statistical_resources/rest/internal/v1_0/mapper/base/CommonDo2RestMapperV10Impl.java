@@ -1680,8 +1680,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 : getObservationsFiltered(datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions), dimensionsFilter);
 
         // Build data (observations and attribute in observation attachment level)
-        long dataSize = calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
-        DataProcessorForObservation dataProcessor = new DataProcessorForObservation(observations, dataSize);
+        int dataSize = calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
+        DataProcessorForObservation dataProcessor = new DataProcessorForObservation(observations);
         toDataCommon(dimensions, dimensionsCodesSelectedEffective, dataProcessor);
 
         // Observations
@@ -1745,7 +1745,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             String attributeId = source.getComponentId();
             TemporalAttributeValues temporalAttributeValues = new TemporalAttributeValues();
 
-            String value = null;
             if (source.getAttributeRelationship().getNone() != null) {
 
                 if (isTextFormatAttributeMultilingual(source)) {
@@ -1866,8 +1865,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         Map<String, AttributeInstanceDto> attributesByCodeDimensions = buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(attributeDimensionsOrdered, sources);
 
         // Build data
-        long dataSize = calculateDataSize(attributeDimensions, dimensionsCodesSelectedEffective);
-        DataProcessorForAttributeWithDimensionAttachmentLevel dataProcessor = new DataProcessorForAttributeWithDimensionAttachmentLevel(attributesByCodeDimensions, dataSize);
+        DataProcessorForAttributeWithDimensionAttachmentLevel dataProcessor = new DataProcessorForAttributeWithDimensionAttachmentLevel(attributesByCodeDimensions);
         toDataCommon(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, dataProcessor);
 
         return dataProcessor;
@@ -2028,9 +2026,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         private final Map<String, AttributeInstanceDto> attributesByCodeDimensions;
         private final List<AttributeInstanceDto>        targets;
 
-        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions, long dataSize) {
+        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions) {
             this.attributesByCodeDimensions = attributesByCodeDimensions;
-            targets = dataSize > Integer.MAX_VALUE ? new ArrayList<AttributeInstanceDto>() : new ArrayList<AttributeInstanceDto>((int) dataSize);
+            targets = new ArrayList<AttributeInstanceDto>();
         }
 
         @Override
@@ -2064,9 +2062,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         private final Map<String, ObservationExtendedDto> sources;
         private final List<ObservationExtendedDto>        targets;
 
-        public DataProcessorForObservation(Map<String, ObservationExtendedDto> observations, long dataSize) {
+        public DataProcessorForObservation(Map<String, ObservationExtendedDto> observations) {
             sources = observations;
-            targets = dataSize > Integer.MAX_VALUE ? new ArrayList<ObservationExtendedDto>() : new ArrayList<ObservationExtendedDto>((int) dataSize);
+            targets = new ArrayList<ObservationExtendedDto>();
         }
 
         @Override
@@ -2184,8 +2182,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
     }
 
-    private long calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
-        long dataSize = 1;
+    private int calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
+        int dataSize = 1;
         for (String dimension : dimensions) {
             dataSize = dataSize * dimensionsCodesSelectedEffective.get(dimension).size();
         }
