@@ -11,11 +11,14 @@ import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MathUtils {
+public class SafeCalculatorUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(MathUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(SafeCalculatorUtils.class);
 
-    public static int calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
+    private SafeCalculatorUtils() {
+    }
+
+    public static int safeCalculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
         int dataSize = 1;
         for (String dimension : dimensions) {
             dataSize = safeMultiply(dataSize, dimensionsCodesSelectedEffective.get(dimension).size());
