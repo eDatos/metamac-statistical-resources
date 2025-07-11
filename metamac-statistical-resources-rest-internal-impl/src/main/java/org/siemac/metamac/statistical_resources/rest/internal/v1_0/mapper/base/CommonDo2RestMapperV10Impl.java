@@ -102,6 +102,7 @@ import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUt
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
+import org.siemac.metamac.statistical_resources.rest.common.impl.utils.MathUtils;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
@@ -1680,7 +1681,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 : getObservationsFiltered(datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions), dimensionsFilter);
 
         // Build data (observations and attribute in observation attachment level)
-        DataProcessorForObservation dataProcessor = new DataProcessorForObservation(observations);
+        int dataSize = MathUtils.calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
+        DataProcessorForObservation dataProcessor = new DataProcessorForObservation(observations, dataSize);
         toDataCommon(dimensions, dimensionsCodesSelectedEffective, dataProcessor);
 
         // Observations
@@ -1864,7 +1866,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         Map<String, AttributeInstanceDto> attributesByCodeDimensions = buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(attributeDimensionsOrdered, sources);
 
         // Build data
-        DataProcessorForAttributeWithDimensionAttachmentLevel dataProcessor = new DataProcessorForAttributeWithDimensionAttachmentLevel(attributesByCodeDimensions);
+        int dataSize = MathUtils.calculateDataSize(attributeDimensions, dimensionsCodesSelectedEffective);
+        DataProcessorForAttributeWithDimensionAttachmentLevel dataProcessor = new DataProcessorForAttributeWithDimensionAttachmentLevel(attributesByCodeDimensions, dataSize);
         toDataCommon(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, dataProcessor);
 
         return dataProcessor;
@@ -2025,9 +2028,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         private final Map<String, AttributeInstanceDto> attributesByCodeDimensions;
         private final List<AttributeInstanceDto>        targets;
 
-        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions) {
+        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions, int dataSize) {
             this.attributesByCodeDimensions = attributesByCodeDimensions;
-            targets = new ArrayList<AttributeInstanceDto>();
+            targets = new ArrayList<AttributeInstanceDto>(dataSize);
         }
 
         @Override
@@ -2061,9 +2064,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         private final Map<String, ObservationExtendedDto> sources;
         private final List<ObservationExtendedDto>        targets;
 
-        public DataProcessorForObservation(Map<String, ObservationExtendedDto> observations) {
+        public DataProcessorForObservation(Map<String, ObservationExtendedDto> observations, int dataSize) {
             sources = observations;
-            targets = new ArrayList<ObservationExtendedDto>();
+            targets = new ArrayList<ObservationExtendedDto>(dataSize);
         }
 
         @Override
