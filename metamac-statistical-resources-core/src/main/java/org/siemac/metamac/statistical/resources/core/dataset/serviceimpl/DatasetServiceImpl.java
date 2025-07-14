@@ -43,6 +43,7 @@ import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.core.common.util.transformers.MetamacTransformer;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
@@ -632,6 +633,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Date start and end
         resource.setDateStart(null);
         resource.setDateEnd(null);
+        resource.setDateStartTimestamp(null);
+        resource.setDateEndTimestamp(null);
 
         // Format extent
         resource.setFormatExtentDimensions(null);
@@ -1713,6 +1716,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         if (temporalCoverage.isEmpty()) {
             resource.setDateStart(null);
             resource.setDateEnd(null);
+            resource.setDateStartTimestamp(null);
+            resource.setDateEndTimestamp(null);
             return;
         }
         TemporalCode start = temporalCoverage.get(temporalCoverage.size() - 1);
@@ -1720,6 +1725,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         resource.setDateStart(start.getIdentifier());
         resource.setDateEnd(end.getIdentifier());
+        resource.setDateStartTimestamp(SdmxTimeUtils.getDateTimeFromSDMXFormat(start.getIdentifier()));
+        resource.setDateEndTimestamp(SdmxTimeUtils.getDateTimeFromSDMXFormat(end.getIdentifier()));
     }
 
     private void processDateNextUpdate(DatasetVersion resource) {

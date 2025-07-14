@@ -52,7 +52,7 @@ public class CollectionsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imple
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, PublicationVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(),
                             PublicationVersion.class, false);
                 case VALID_FROM:
-                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, PublicationVersionProperties.siemacMetadataStatisticalResource().validTo(), PublicationVersion.class,
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, PublicationVersionProperties.siemacMetadataStatisticalResource().validFrom(), PublicationVersion.class,
                             false);
                 case VALID_TO:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, PublicationVersionProperties.siemacMetadataStatisticalResource().validTo(), PublicationVersion.class,
