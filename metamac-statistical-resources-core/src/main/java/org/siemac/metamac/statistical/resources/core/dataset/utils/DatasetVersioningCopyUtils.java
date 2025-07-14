@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
 import org.siemac.metamac.statistical.resources.core.common.utils.CommonVersioningCopyUtils;
@@ -121,8 +122,10 @@ public class DatasetVersioningCopyUtils extends CommonVersioningCopyUtils {
         target.getTemporalGranularities().addAll(copyCollectionExternalItem(source.getTemporalGranularities()));
 
         target.setDateStart(source.getDateStart());
-
         target.setDateEnd(source.getDateEnd());
+
+        target.setDateStartTimestamp(SdmxTimeUtils.getDateTimeFromSDMXFormat(source.getDateStart()));
+        target.setDateEndTimestamp(SdmxTimeUtils.getDateTimeFromSDMXFormat(source.getDateEnd()));
 
         target.getStatisticalUnit().clear();
         target.getStatisticalUnit().addAll(copyCollectionExternalItem(source.getStatisticalUnit()));
