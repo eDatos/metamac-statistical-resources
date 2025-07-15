@@ -151,7 +151,8 @@ public class NewQueryWindow extends CustomWindow {
         queryDto.setSelection(selection);
         Integer latestDataNumber = null;
         if (isLatestData) {
-            latestDataNumber = ((CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
+            CustomIntegerItem customIntegerItem = (CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA);  
+            latestDataNumber = customIntegerItem != null ? customIntegerItem.getValueAsInteger() : null;
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularitie(queryDto);
@@ -222,12 +223,10 @@ public class NewQueryWindow extends CustomWindow {
 
         setDimensions(datasetDimensions, datasetVersion, fields);
 
-        if (hasTemporalDimension) {
-            CustomIntegerItem latestData = new CustomIntegerItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
-            latestData.setShowIfCondition(getFormItemIfFunctionShowLatestDataItem());
-            latestData.setRequired(true);
-            fields.add(latestData);
-        }
+        CustomIntegerItem latestData = new CustomIntegerItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
+        latestData.setShowIfCondition(getFormItemIfFunctionShowLatestDataItem());
+        latestData.setRequired(true);
+        fields.add(latestData);
         CustomButtonItem saveItem = new CustomButtonItem(FIELD_SAVE, getConstants().queryCreate());
         saveItem.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
