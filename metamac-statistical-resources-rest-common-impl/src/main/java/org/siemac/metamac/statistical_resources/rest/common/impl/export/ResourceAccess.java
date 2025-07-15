@@ -24,8 +24,11 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DatasetB
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimension;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.DimensionRepresentation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Dimensions;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryBase;
 
 public class ResourceAccess {
+
+    private String                                        urn;
 
     private static final int                              MAX_PX_MATRIX_LENGTH = 8;
 
@@ -49,14 +52,21 @@ public class ResourceAccess {
     private final Map<String, Map<String, Long>>          representationIndex  = new HashMap<String, Map<String, Long>>(); // Map<Dimension, Map<Code, Index>
 
     public ResourceAccess(DatasetBase dataset, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
-
+        urn = dataset.getUrn();
         this.datasetSelection = datasetSelection;
 
         initialize(dataset.getData(), dataset.getMetadata().getDimensions(), dataset.getMetadata().getAttributes(), datasetSelection, selectedLanguages);
     }
 
+    public ResourceAccess(QueryBase query, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
+        urn = query.getUrn();
+        this.datasetSelection = datasetSelection;
+
+        initialize(query.getData(), query.getMetadata().getDimensions(), query.getMetadata().getAttributes(), datasetSelection, selectedLanguages);
+    }
+
     private void initialize(Data data, Dimensions dimensions, Attributes attributes, DatasetSelection datasetSelection, List<String> selectedLanguages) throws MetamacException {
-        this.setSelectedLanguages(selectedLanguages);
+        setSelectedLanguages(selectedLanguages);
 
         initializeDimensions(dimensions, datasetSelection);
         initializeAttributes(data, attributes, datasetSelection);
@@ -112,7 +122,7 @@ public class ResourceAccess {
             }
         }
 
-        this.dimensionsValuesCurrentLocaleLabels = valuesCurrentLocaleLabels;
+        dimensionsValuesCurrentLocaleLabels = valuesCurrentLocaleLabels;
     }
 
     /**
@@ -247,7 +257,18 @@ public class ResourceAccess {
         this.selectedLanguages = selectedLanguages;
     }
 
+    public String getUrn() {
+        return urn;
+    }
+
     public static String generateMatrixFromString(String string) {
         return Base64.getEncoder().encodeToString(string.getBytes()).substring(0, MAX_PX_MATRIX_LENGTH);
+    }
+
+    public Long getObservationsNumber() {
+        Long dimensionRows = Long.valueOf(getDataSelection().getRows());
+        Long dimensionColumns = Long.valueOf(getDataSelection().getColumns());
+        // This calculation is used to check XLSX size, so we add 1 to include header row
+        return dimensionRows * dimensionColumns + 1;
     }
 }

@@ -24,11 +24,14 @@ import org.junit.Test;
 public class CommonDatasetUtils {
 
     @Test
-    public static void checkXlsDatasetResponse(String requestUri) throws Exception {
+    public static void checkXlsDatasetResponse(String requestUri, String[] expectedValuesFirstRow) throws Exception {
         WebClient webClient = WebClient.create(requestUri).accept("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         Response response = webClient.get();
         InputStream responseActual = (InputStream) response.getEntity();
         Workbook file = WorkbookFactory.create(responseActual);
+
+        // Just for local debug
+        // file.write(new FileOutputStream("W:\\temp\\Excel_TEST\\checkXlsDatasetResponse.xlsx"));
 
         Sheet sheet = file.getSheetAt(0);
 
@@ -62,29 +65,23 @@ public class CommonDatasetUtils {
 
         // Data Row 1
         Row rowData1 = rowIterator.next();
-        assertEquals(19, rowData1.getPhysicalNumberOfCells());
+        assertRowMatchesExpected(rowData1, expectedValuesFirstRow);
 
-        // System.out.println(rowData1.getCell(0).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(0)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(1)));
-        assertEquals("santa-cruz-tenerife en Español", rowData1.getCell(2).getStringCellValue());
-        assertEquals("santa-cruz-tenerife", rowData1.getCell(3).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(4)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(5)));
-        assertEquals("2011", rowData1.getCell(6).getStringCellValue());
-        assertEquals("2011", rowData1.getCell(7).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(8)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(9)));
-        assertEquals("measure01-conceptScheme01-concept01 en Español", rowData1.getCell(10).getStringCellValue());
-        assertEquals("measure01-conceptScheme01-concept01", rowData1.getCell(11).getStringCellValue());
-        assertTrue(checkIsEmptyCell(rowData1.getCell(12)));
-        assertTrue(checkIsEmptyCell(rowData1.getCell(13)));
-        assertEquals("dim01-codelist01-code01 en Español", rowData1.getCell(14).getStringCellValue());
-        assertEquals("dim01-codelist01-code01", rowData1.getCell(15).getStringCellValue());
-        assertEquals("1", rowData1.getCell(16).getStringCellValue());
-        assertEquals("Value 1", rowData1.getCell(17).getStringCellValue());
-        assertEquals("Value 5", rowData1.getCell(18).getStringCellValue());
+    }
 
+    private static void assertRowMatchesExpected(Row row, String[] expectedValues) {
+        assertEquals(expectedValues.length, row.getPhysicalNumberOfCells());
+
+        for (int i = 0; i < expectedValues.length; i++) {
+            Cell cell = row.getCell(i);
+            String expected = expectedValues[i];
+
+            if (expected == null) {
+                assertTrue(checkIsEmptyCell(cell));
+            } else {
+                assertEquals(expected, cell.getStringCellValue());
+            }
+        }
     }
 
     private static boolean checkIsEmptyCell(Cell cell) {
@@ -114,7 +111,7 @@ public class CommonDatasetUtils {
         assertTrue(lines.contains(
                 ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept01 en Español,measure01-conceptScheme01-concept01,,,dim01-codelist01-code01 en Español,dim01-codelist01-code01,1,Value 1,Value 5"));
         assertTrue(lines.contains(
-                ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept01 en Español,measure01-conceptScheme01-concept01,,,dim01-codelist01-code03 en Español,dim01-codelist01-code03,2,Value 2,"));
+                ",,santa-cruz-tenerife en Español,santa-cruz-tenerife,,,2011,2011,,,measure01-conceptScheme01-concept02 en Español,measure01-conceptScheme01-concept02,,,dim01-codelist01-code01 en Español,dim01-codelist01-code01,4,,"));
 
     }
 
@@ -129,7 +126,7 @@ public class CommonDatasetUtils {
         assertTrue(lines.contains(
                 "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept01 en Español\tmeasure01-conceptScheme01-concept01\t\t\tdim01-codelist01-code01 en Español\tdim01-codelist01-code01\t1\tValue 1\tValue 5"));
         assertTrue(lines.contains(
-                "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept01 en Español\tmeasure01-conceptScheme01-concept01\t\t\tdim01-codelist01-code03 en Español\tdim01-codelist01-code03\t2\tValue 2\t"));
+                "\t\tsanta-cruz-tenerife en Español\tsanta-cruz-tenerife\t\t\t2011\t2011\t\t\tmeasure01-conceptScheme01-concept02 en Español\tmeasure01-conceptScheme01-concept02\t\t\tdim01-codelist01-code01 en Español\tdim01-codelist01-code01\t4\t\t"));
 
     }
 
