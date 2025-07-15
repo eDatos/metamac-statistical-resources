@@ -93,4 +93,13 @@ public class StatisticalResourcesRestApiCommonUtils {
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
         return parseFields(fieldsParam, validFields);
     }
+
+    public static Map<String, List<String>> parseDimensionExpression(String dim, String representation) {
+        if (StringUtils.isEmpty(representation)) {
+            return parseDimensionExpression(dim);
+        } else {
+            return org.siemac.metamac.core.common.util.rest.RequestUtil.parseParamExpression(representation);
+        }
+    }
+
 }
