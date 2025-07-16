@@ -95,6 +95,7 @@ import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUt
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
+import org.siemac.metamac.statistical_resources.rest.common.impl.utils.SafeCalculatorUtils;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
@@ -1586,7 +1587,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 : getObservationsFiltered(datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(source.getDatasetRepositoryId(), conditions), dimensionsFilter);
 
         // Build data (observations and attribute in observation attachment level)
-        int dataSize = calculateDataSize(dimensions, dimensionsCodesSelectedEffective);
+        int dataSize = SafeCalculatorUtils.safeCalculateDataSize(dimensions, dimensionsCodesSelectedEffective);
         DataProcessorForObservation dataProcessor = new DataProcessorForObservation(observations, dataSize);
         toDataCommon(dimensions, dimensionsCodesSelectedEffective, dataProcessor);
 
@@ -1770,7 +1771,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         Map<String, AttributeInstanceDto> attributesByCodeDimensions = buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(attributeDimensionsOrdered, sources);
 
         // Build data
-        int dataSize = calculateDataSize(attributeDimensions, dimensionsCodesSelectedEffective);
+        int dataSize = SafeCalculatorUtils.safeCalculateDataSize(attributeDimensions, dimensionsCodesSelectedEffective);
         DataProcessorForAttributeWithDimensionAttachmentLevel dataProcessor = new DataProcessorForAttributeWithDimensionAttachmentLevel(attributesByCodeDimensions, dataSize);
         toDataCommon(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, dataProcessor);
 
@@ -2111,14 +2112,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         public boolean isAnyObservationHasAttribute() {
             return anyObservationHasAttribute;
         }
-    }
-
-    private int calculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {
-        int dataSize = 1;
-        for (String dimension : dimensions) {
-            dataSize = dataSize * dimensionsCodesSelectedEffective.get(dimension).size();
-        }
-        return dataSize;
     }
 
     private InternationalString getUpdatedStatisticalOperationName(String operationCode, ExternalRestObjectsMapper externalRestObjectsMapper) {
