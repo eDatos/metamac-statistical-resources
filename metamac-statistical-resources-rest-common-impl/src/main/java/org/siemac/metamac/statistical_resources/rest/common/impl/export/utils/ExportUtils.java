@@ -1,5 +1,9 @@
 package org.siemac.metamac.statistical_resources.rest.common.impl.export.utils;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,4 +175,13 @@ public class ExportUtils {
         return StringUtils.isEmpty(value) ? StringUtils.EMPTY : value;
     }
 
+
+    public static String getContentDisposition(String fileNamePrefix, String fileExtension) {
+        return "attachment; filename=" + getExportFileName(fileNamePrefix, fileExtension);
+    }
+
+    public static String getExportFileName(String fileNamePrefix, String fileExtension) {
+        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+        return fileNamePrefix + "_" + timestamp + "." + fileExtension;
+    }
 }

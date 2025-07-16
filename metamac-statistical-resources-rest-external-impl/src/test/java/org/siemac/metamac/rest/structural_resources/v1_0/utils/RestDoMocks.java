@@ -220,7 +220,10 @@ public class RestDoMocks {
         target.addSelection(mockQuerySelectionItem("GEO_DIM", Arrays.asList("santa-cruz-tenerife", "las-palmas-gran-canaria")));
         target.addSelection(mockQuerySelectionItem("measure01", Arrays.asList("measure01-conceptScheme01-concept01", "measure01-conceptScheme01-concept02", "measure01-conceptScheme01-concept05")));
         target.addSelection(mockQuerySelectionItem("dim01", Arrays.asList("dim01-codelist01-code01")));
-        target.addSelection(mockQuerySelectionItem("TIME_PERIOD", Arrays.asList("2011")));
+        // Take note that this order for TIME_PERIOD is wrong: the proper order is recent to oldest
+        // We are not sure why selection is stored wrong, but we can ensure proper order on api retrieve,
+        // that's why we force this, to ensure order is working properly
+        target.addSelection(mockQuerySelectionItem("TIME_PERIOD", Arrays.asList("2011", "2012")));
         target.setLatestDataNumber(null);
     }
     private void mockQueryVersionLatestData(QueryVersion target) {
