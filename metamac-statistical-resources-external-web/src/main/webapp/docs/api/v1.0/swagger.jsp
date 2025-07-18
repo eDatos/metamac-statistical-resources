@@ -3538,7 +3538,9 @@
             "produces":[
                "application/json",
                "application/xml",
-               "application/jsonstat+json"
+               "application/jsonstat+json",
+               "text/tab-separated-values",
+               "text/csv"
             ],
             "parameters":[
                {
