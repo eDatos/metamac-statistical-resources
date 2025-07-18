@@ -1,3 +1,7 @@
+-- ---------------------------------------------------------------------------------------------------------
+-- EDATOS-4397 Algunos parámetros de la API parecen filtrar por valores correspondientes a otras propiedades
+-- ---------------------------------------------------------------------------------------------------------
+
 CREATE OR REPLACE FUNCTION sdmx_to_date(txt text)
 RETURNS date
 LANGUAGE plpgsql
