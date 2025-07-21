@@ -127,8 +127,10 @@ Application DatasetsStatisticalResourcesDto {
         
         DataTransferObject RepresentationDto extends @IdentityDto {
         	- @AttributeRepresentationTypeEnum representationType;
+        	Boolean multilingualType;
         	String codelistRepresentationUrn;
         	String conceptSchemeRepresentationUrn;
+        	
         }
 
         DataTransferObject DsdAttributeInstanceDto extends @IdentityDto {
@@ -139,6 +141,7 @@ Application DatasetsStatisticalResourcesDto {
         
         DataTransferObject AttributeValueDto extends @IdentityDto {
         	- @ExternalItemDto externalItemValue;
+        	- @InternationalStringDto internationalStringValue;
         	String stringValue;
         }
         

@@ -59,8 +59,8 @@ Application BaseStatisticalResources {
 			discriminatorValue="IDENTIFIABLE_RESOURCE"
 
 			String code nullable;
-			String urn nullable;
-
+			String urn nullable length="4000";
+            - @XStreamStatusEnum xStreamStatus nullable;
 			Repository IdentifiableStatisticalResourceRepository {
 				findByCondition;
 				@IdentifiableStatisticalResource retrieveByUrn(String urn) throws MetamacException;

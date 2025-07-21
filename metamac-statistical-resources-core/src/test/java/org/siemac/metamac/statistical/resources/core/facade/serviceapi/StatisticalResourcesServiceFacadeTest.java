@@ -4340,4 +4340,15 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     public void testRetrieveExternalItemsByDatasetUrn() throws Exception {
         // // Without test in facade
     }
+
+    @Override
+    public void testFindPurposes() throws Exception {
+        // // Without test in facade
+    }
+
+    @Override
+    public void testResendPublishedQueryVersionXMessage() throws Exception {
+     // // Without test in facade
+        
+    }
 }

@@ -49,6 +49,11 @@ public class PublicationMainFormLayout extends LifecycleMainFormLayout {
     }
 
     @Override
+    protected boolean canResendXMessage() {
+        return false;
+    }
+
+    @Override
     protected boolean canVersion() {
         return PublicationClientSecurityUtils.canVersionPublication(publicationVersionDto);
     }

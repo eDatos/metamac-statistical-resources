@@ -12,12 +12,12 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeDatasetLevelForm;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeDimensionOrGroupLevelEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeDimensionOrGroupLevelForm;
-import org.siemac.metamac.web.common.client.widgets.form.MainFormLayout;
+import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
 
 import com.smartgwt.client.widgets.events.ClickEvent;
 import com.smartgwt.client.widgets.events.ClickHandler;
 
-public class AttributeMainFormLayout extends MainFormLayout {
+public class AttributeMainFormLayout extends InternationalMainFormLayout {
 
     private DatasetAttributesTabUiHandlers            uiHandlers;
 
@@ -32,6 +32,8 @@ public class AttributeMainFormLayout extends MainFormLayout {
 
     public AttributeMainFormLayout() {
         setCanEdit(true);
+
+        bindMainFormLayoutEvents();
 
         // DATASET LEVEL FORMS
 
@@ -68,6 +70,26 @@ public class AttributeMainFormLayout extends MainFormLayout {
         });
     }
 
+    private void bindMainFormLayoutEvents() {
+        getTranslateToolStripButton().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                setTranslation();
+            }
+        });
+    }
+
+    private void setTranslation() {
+        if (getTranslateToolStripButton().isVisible()) {
+            boolean translationsShowed = Boolean.TRUE.equals(getTranslateToolStripButton().isSelected());
+            attributeDatasetLevelForm.setTranslationsShowed(translationsShowed);
+            attributeDatasetLevelEditionForm.setTranslationsShowed(translationsShowed);
+            attributeDimensionOrGroupLevelForm.setTranslationsShowed(translationsShowed);
+            attributeDimensionOrGroupLevelEditionForm.setTranslationsShowed(translationsShowed);
+        }
+    }
+
     public boolean isCreateMode() {
         return createMode;
     }
@@ -99,6 +121,14 @@ public class AttributeMainFormLayout extends MainFormLayout {
         }
 
         canDelete = canDeleteBck;
+
+        if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+            getTranslateToolStripButton().show();
+            setTranslation();
+        } else {
+            getTranslateToolStripButton().hide();
+        }
+
     }
 
     private void showDatasetLevelForm(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {

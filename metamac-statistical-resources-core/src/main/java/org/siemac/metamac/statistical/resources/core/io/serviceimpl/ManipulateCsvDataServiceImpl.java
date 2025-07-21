@@ -84,14 +84,14 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
     @Override
     public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId,
-            ServiceContext ctx, String datasetVersionUrn) throws Exception {
+            ServiceContext ctx, String datasetVersionUrn, List<String> validLanguages) throws Exception {
         InputStream is = null;
         try {
             // Parse Csv
             String charsetName = FileUtils.guessCharset(csvFile);
             is = new FileInputStream(csvFile);
 
-            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure);
+            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure, validLanguages);
 
             List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos = new ArrayList<>();
 
@@ -100,8 +100,8 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
                 idAttribute = csvReader.nextLine(dsdAttributeInstanceDtos, codeDimensions, externalItemsAttributeId);
             }
             checkAttributeInstancesIsNotEmpty(dsdAttributeInstanceDtos);
-            checkAttributeInstances(csvReader, datasetVersionUrn, dsdAttributeInstanceDtos, ctx);
             checkAnyErrorInTSV(csvReader);
+            checkAttributeInstances(csvReader, datasetVersionUrn, dsdAttributeInstanceDtos, ctx);
             insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDtos);
         } finally {
             IOUtils.closeQuietly(is);

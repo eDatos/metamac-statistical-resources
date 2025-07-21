@@ -52,7 +52,7 @@ public class MultidatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imp
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, MultidatasetVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(),
                             MultidatasetVersion.class, false);
                 case VALID_FROM:
-                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, MultidatasetVersionProperties.siemacMetadataStatisticalResource().validTo(), MultidatasetVersion.class,
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, MultidatasetVersionProperties.siemacMetadataStatisticalResource().validFrom(), MultidatasetVersion.class,
                             false);
                 case VALID_TO:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, MultidatasetVersionProperties.siemacMetadataStatisticalResource().validTo(), MultidatasetVersion.class,

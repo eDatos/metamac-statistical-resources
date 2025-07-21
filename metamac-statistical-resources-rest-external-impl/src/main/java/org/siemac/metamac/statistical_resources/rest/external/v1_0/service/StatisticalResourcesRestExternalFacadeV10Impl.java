@@ -1,16 +1,14 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.service;
 
+import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.rest.exception.utils.RestExceptionUtils.checkParameterNotWildcardAll;
+import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResources;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseFieldsStatisticalResourcesListEndpoints;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,11 +18,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.io.DeleteOnCloseFileInputStream;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -34,11 +30,15 @@ import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Query;
+import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.DimensionFilters;
+import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.Exportation;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
@@ -54,6 +54,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidat
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
+import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
 import org.siemac.metamac.statistical_resources.rest.external.service.StatisticalResourcesRestExternalCommonService;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.collection.CollectionsRest2DoMapper;
@@ -65,15 +66,17 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query.
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query.QueriesRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources.ResourcesDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources.ResourcesRest2DoMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.*;
 
 @Service("statisticalResourcesRestExternalFacadeV10")
 public class StatisticalResourcesRestExternalFacadeV10Impl implements StatisticalResourcesV1_0 {
 
-    public static final String OPERATOR = "=";
+    private static final Logger                           logger   = LoggerFactory.getLogger(StatisticalResourcesRestExternalFacadeV10Impl.class);
+
+    public static final String                            OPERATOR = "=";
     @Autowired
     private StatisticalResourcesRestExternalCommonService commonService;
 
@@ -110,6 +113,9 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     @Autowired
     private ResourcesDo2RestMapperV10                     resourcesDo2RestMapper;
 
+    @Autowired
+    private DatasetVersionRepository                      datasetVersionRepository;
+
     @Override
     public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
         Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
@@ -143,14 +149,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
     }
 
-    private Map<String, List<String>> parseDimensionExpression(String dim, String representation) {
-        if (StringUtils.isEmpty(representation)) {
-            return org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestApiCommonUtils.parseDimensionExpression(dim);
-        } else {
-            return org.siemac.metamac.core.common.util.rest.RequestUtil.parseParamExpression(representation);
-        }
-    }
-
     @Override
     public JsonStatData retrieveDatasetJsonStat(Exportation exportationBody, String agencyID, String resourceID, String version, List<String> lang, String fields, String granularity) {
 
@@ -158,7 +156,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
 
-            //Parse body for dimensions
+            // Parse body for dimensions
             String dimensionSelection = toStatisticalResourcesApiRepresentationParameter(exportationBody);
 
             Map<String, List<String>> dimensions = parseDimensionExpression(dimensionSelection, exportationBody.toString());
@@ -186,25 +184,105 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
     @Override
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
     }
 
     @Override
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "csv", granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.CSV, granularity);
     }
 
     @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity);
     }
 
-    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity) {
+    private Response retrieveResourcePlainText(StatisticalResourceTypeEnum resourceType, String agencyID, String resourceID, String version, List<String> lang, String fields, String dim,
+            String representation, ResourcesFormat format, String granularity) {
         try {
-            return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity);
+            Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
+            checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
+            Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
+
+            ResourceAccess resourceAccess = null;
+            String filename = null;
+            switch (resourceType) {
+                case DATASET:
+                    resourceAccess = buildResourceAccessForDataset(agencyID, resourceID, version, lang, parsedFields, dimensions, granularity);
+                    filename = resourceType.toString().toLowerCase() + "-" + agencyID + "_" + resourceID + "_" + version;
+                    break;
+                case QUERY:
+                    resourceAccess = buildResourceAccessForQuery(agencyID, resourceID, lang, parsedFields, dimensions, granularity);
+                    filename = resourceType.toString().toLowerCase() + "-" + agencyID + "_" + resourceID;
+                    break;
+                default:
+                    logger.error("RelatedResource unsupported: " + resourceType);
+                    org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
+                    throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
+            }
+
+            ExportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows());
+            return ExportResourceAccessToPlainText.buildResponseExportResourceAccessToPlainText(resourceAccess, filename, format);
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
+    }
+
+    private ResourceAccess buildResourceAccessForDataset(String agencyID, String resourceID, String version, List<String> lang, Set<String> fields, Map<String, List<String>> dimensions,
+            String granularity) throws Exception {
+
+        DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion.getSiemacMetadataStatisticalResource().getLanguages(), lang);
+        Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, fields, granularity);
+        return ExportResourceAccessToPlainText.buildResourceAccess(dataset, selectedLanguages);
+    }
+
+    private ResourceAccess buildResourceAccessForQuery(String agencyID, String resourceID, List<String> lang, Set<String> fields, Map<String, List<String>> dimensions, String granularity)
+            throws Exception {
+
+        QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
+        boolean includeMetadata = !containsField(fields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
+        boolean includeData = !containsField(fields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
+        boolean includeKeywords = containsField(fields, StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
+        DatasetVersion relatedDataset = null;
+        List<ExternalItem> sourceLanguages = null;
+
+        // If all of this conditions are false, we won't need to recover relatedDataset or sourceLanguages
+        if (includeMetadata || includeData || includeKeywords || CollectionUtils.isEmpty(lang)) {
+            relatedDataset = getQueryRelatedDatasetVersionEffective(queryVersion);
+            sourceLanguages = relatedDataset.getSiemacMetadataStatisticalResource().getLanguages();
+        }
+
+        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(sourceLanguages, lang);
+        Query query = queriesDo2RestMapper.toQuery(queryVersion, relatedDataset, dimensions, selectedLanguages, fields, granularity);
+        return ExportResourceAccessToPlainText.buildResourceAccess(query, selectedLanguages);
+    }
+
+    /*
+     * @see org.siemac.metamac.statistical_resources.rest.internal.v1_0.service.StatisticalResourcesRestInternalFacadeV10Impl.getQueryRelatedDatasetVersionEffective(QueryVersion)
+     */
+    public DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
+        if (source.getFixedDatasetVersion() != null) {
+            return source.getFixedDatasetVersion();
+        } else {
+            return datasetVersionRepository.retrieveLastPublishedVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
+        }
+    }
+
+    @Override
+    public Response retrieveQueryTSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
+    }
+
+    @Override
+    public Response retrieveQueryCSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.CSV, granularity);
+    }
+
+    @Override
+    public Response retrieveQueryXLSX(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity);
     }
 
     private static String toStatisticalResourcesApiRepresentationParameter(Exportation exportationBody) {
@@ -251,43 +329,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         return sb.toString();
     }
 
-    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity)
-            throws Exception {
-
-        Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-
-        checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_DATA);
-        checkParameterData(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_EXCLUDE_METADATA);
-
-        DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-        Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
-
-        List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(datasetVersion, lang);
-
-        Dataset dataset = datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields, granularity);
-
-        ExportResourceAccessToPlainText exportResourceAccessToPlainText = new ExportResourceAccessToPlainText();
-
-        ResourceAccess resourceAccess = exportResourceAccessToPlainText.buildResourceAccessForDataset(dataset, selectedLanguages);
-
-        exportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows(), dataset.getUrn());
-
-        FileOutputStream outputStreamObservations = null;
-        try {
-            String fileNamePrefix = StatisticalResourcesRestConstants.LINK_SUBPATH_DATASETS + "-" + agencyID + "_" + resourceID + "_" + version;
-
-            final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
-            outputStreamObservations = new FileOutputStream(tmpFileObservations);
-            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
-
-            return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), ResourcesFormat.getMimeType(format.toUpperCase()))
-                    .header("Content-Disposition", getContentDisposition(fileNamePrefix, format)).build();
-        } finally {
-            IOUtils.closeQuietly(outputStreamObservations);
-        }
-
-    }
-
     @Override
     public Collections findCollections(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
         Set<String> parsedFields = parseFieldsStatisticalResourcesListEndpoints(fields);
@@ -332,8 +373,17 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
+            boolean includeMetadata = !containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
+            boolean includeData = !containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
+            boolean includeKeywords = containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            Query query = queriesDo2RestMapper.toQuery(queryVersion, dimensions, selectedLanguages, parsedFields, granularity);
+            DatasetVersion relatedDataset = null;
+
+            if (includeMetadata || includeData || includeKeywords) {
+                relatedDataset = getQueryRelatedDatasetVersionEffective(queryVersion);
+            }
+
+            Query query = queriesDo2RestMapper.toQuery(queryVersion, relatedDataset, dimensions, selectedLanguages, parsedFields, granularity);
             return query;
         } catch (Exception e) {
             throw manageException(e);
@@ -424,7 +474,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
 
             // Add condition for specific or default locale
             List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
-            sculptorCriteria.setOrderByCaseCondition(PublicationVersion.class, PublicationVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR, orderBy);
+            sculptorCriteria.setOrderByCaseCondition(PublicationVersion.class, PublicationVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR,
+                    orderBy);
 
             // Find
             PagedResult<PublicationVersion> entitiesPagedResult = commonService.findPublicationVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
@@ -495,11 +546,11 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     // if sources is not empty, the user has introduced the languages. Otherwise, the dataset languages will be returned. The default language in common-metadata will be returned always.
-    private List<String> languagesRequestedToEffectiveLanguages(DatasetVersion source, List<String> selectedLanguages) throws MetamacException {
+    private List<String> languagesRequestedToEffectiveLanguages(List<ExternalItem> sourceLanguages, List<String> selectedLanguages) throws MetamacException {
         List<String> targets = null;
         if (CollectionUtils.isEmpty(selectedLanguages)) {
             targets = new ArrayList<String>();
-            for (ExternalItem lang : source.getSiemacMetadataStatisticalResource().getLanguages()) {
+            for (ExternalItem lang : sourceLanguages) {
                 targets.add(lang.getCode().toLowerCase());
             }
             String languageDefault = configurationService.retrieveLanguageDefault();
@@ -535,16 +586,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         }
         return result;
     }
-
-    private static String getContentDisposition(String fileNamePrefix, String format) {
-        return "attachment; filename=" + getExportFileName(fileNamePrefix, format);
-    }
-
-    private static String getExportFileName(String fileNamePrefix, String format) {
-        String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-        return fileNamePrefix + "_" + timestamp + "." + format;
-    }
-
     /**
      * Throws response error, logging exception When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
      */

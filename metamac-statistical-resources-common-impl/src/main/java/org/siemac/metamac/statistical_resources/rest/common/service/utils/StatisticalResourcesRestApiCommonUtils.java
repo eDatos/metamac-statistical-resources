@@ -40,8 +40,6 @@ public class StatisticalResourcesRestApiCommonUtils {
 
     private static final Pattern patternCodes          = Pattern.compile("(" + CODE + ")\\|?");
 
-    private static final Pattern patternDataSeparator  = Pattern.compile(" \\| ");
-
     protected StatisticalResourcesRestApiCommonUtils() {
 
     }
@@ -96,11 +94,12 @@ public class StatisticalResourcesRestApiCommonUtils {
         return parseFields(fieldsParam, validFields);
     }
 
-    public static String escapeValueToData(String value) {
-        if (value == null) {
-            return null;
+    public static Map<String, List<String>> parseDimensionExpression(String dim, String representation) {
+        if (StringUtils.isEmpty(representation)) {
+            return parseDimensionExpression(dim);
+        } else {
+            return org.siemac.metamac.core.common.util.rest.RequestUtil.parseParamExpression(representation);
         }
-        return patternDataSeparator.matcher(value).replaceAll("\\\\ | \\\\");
     }
 
 }

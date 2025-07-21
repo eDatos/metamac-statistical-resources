@@ -47,6 +47,7 @@ import com.arte.statistic.parser.sdmx.v2_1.mapper.DataSetDo2JaxbDomainMapper;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceBasicDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -423,10 +424,13 @@ public class WriterDataCallbackImpl implements WriterDataCallback {
         // Calculate Key
         List<IdValuePair> observationKeyFull = new LinkedList<IdValuePair>();
         observationKeyFull.addAll(observationPartialKey);
-        observationKeyFull.add(dimensionAtObservationKey);
+
         if (isGroupedObservation) {
-            result.getObservationKey().add(dimensionAtObservationKey);
+            IdValuePair dimensionCodeAtObservationKey = getDimensionAtObservationKey(dimensionAtObservationKey.getCode(), dimensionAtObservationKey.getValue(), observation);
+            observationKeyFull.add(dimensionCodeAtObservationKey);
+            result.getObservationKey().add(dimensionCodeAtObservationKey);
         } else {
+            observationKeyFull.add(dimensionAtObservationKey);
             result.getObservationKey().addAll(observationKeyFull);
         }
 
@@ -452,6 +456,17 @@ public class WriterDataCallbackImpl implements WriterDataCallback {
         }
 
         return result;
+    }
+
+    private IdValuePair getDimensionAtObservationKey(String code, String defaultValue, ObservationExtendedDto observation) {
+
+        for (CodeDimensionDto codeDimensionDto : observation.getCodesDimension()) {
+            if (codeDimensionDto.getDimensionId().equals(code)) {
+                return new IdValuePair(code, codeDimensionDto.getCodeDimensionId());
+            }
+        }
+
+        return new IdValuePair(code, defaultValue);
     }
 
     private String generateMessageId() {

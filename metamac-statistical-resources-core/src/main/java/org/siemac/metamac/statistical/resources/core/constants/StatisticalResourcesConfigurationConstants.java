@@ -36,4 +36,11 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
 
     public static final String DB_DRIVER_NAME_POSTGRESQL                           = "org.postgresql.Driver";
 
+    // X variables
+    public static final String TWITTER_ACCES_TOKEN                                 = "metamac.statistical_resources.twitter.accessToken";
+    public static final String TWITTER_ACCES_TOKEN_SECRET                          = "metamac.statistical_resources.twitter.accessTokenSecret";
+    public static final String TWITTER_API_KEY                                     = "metamac.statistical_resources.twitter.apiKey";
+    public static final String TWITTER_API_SECRET_KEY                              = "metamac.statistical_resources.twitter.apiSecretKey";
+    public static final String TWITTER_SENT_ENABLE                                 = "metamac.statistical_resources.twitter.enabled";
+
 }

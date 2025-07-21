@@ -193,7 +193,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.query_version.is_part_of_publications");
     public static final CommonServiceExceptionType QUERY_VERSION_IS_PART_OF_NOT_VISIBLE_PUBLICATION                                            = create(
             "exception.resources.query_version.is_part_of_not_visible_publication");
-
+    public static final CommonServiceExceptionType QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT                                                      = create(
+            "exception.resources.query_version.purpose.not_unique_result");
     // Constraints
     public static final CommonServiceExceptionType CONSTRAINTS_CREATE_DATASET_WITH_DATASOURCES                                                 = create(
             "exception.resources.constraints.create.dataset_with_datasources");
@@ -230,6 +231,9 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     // Lists
     public static final CommonServiceExceptionType STATISTIC_OFFICIALITY_NOT_FOUND                                                             = create(
             "exception.resources.statistic_officiality.not_found");
+
+    //Purposes
+    public static final CommonServiceExceptionType PURPOSE_NOT_FOUND                                                                          = create("exception.resources.purpose.not_found");
 
     // Tasks
     public static final CommonServiceExceptionType TASKS_ERROR_MAX_CURRENT_JOBS                                                                = create(
@@ -285,6 +289,14 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.attribute.importation.dimension_id_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_ATTRIBUTE_ID_INVALID                                                 = create(
             "exception.resources.attribute.importation.attribute_id_invalid");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER                                          = create(
+            "exception.resources.attribute.importation.attribute_invalid_multilingual_header");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_HEADER_OR_ATTRIBUTE_INFO                                     = create(
+            "exception.resources.attribute.importation.attribute_invalid_header_or_attribute_info");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_DUPLICATE_LANGUAGE                       = create(
+            "exception.resources.attribute.importation.attribute_invalid_multilingual_header_duplicate_language");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_INVALID_LANGUAGE                         = create(
+            "exception.resources.attribute.importation.attribute_invalid_multilingual_header_invalid_language");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_FILE_EMPTY                                                           = create(
             "exception.resources.attribute.importation.file_empty");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_CODE_ENUM_NOT_VALID                                                        = create(

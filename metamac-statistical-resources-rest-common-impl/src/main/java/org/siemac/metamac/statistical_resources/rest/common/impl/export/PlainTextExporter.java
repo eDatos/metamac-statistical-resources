@@ -6,8 +6,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,32 +21,21 @@ import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.Ex
 
 public class PlainTextExporter {
 
-    private final ResourceAccess             datasetAccess;
-    private String                           format                                = "";
-    private static final String              HEADER_OBSERVATION                    = "OBS_VALUE";
-    private static final String              HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE   = "_CODE";
-    private static final String              HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
-    private String                           separator;
-    private ExcelMapper                      excelMapper;
-    PrintWriter                              printWriter;
-    private boolean                          isExcelFormat                         = false;
-    private static final Map<String, String> separatorsByFormat                    = initMapSeparators();
+    private final ResourceAccess datasetAccess;
+    private ResourcesFormat      format                                = null;
+    private static final String  HEADER_OBSERVATION                    = "OBS_VALUE";
+    private static final String  HEADER_SUFIX_CODE_WHEN_EXPORT_TITLE   = "_CODE";
+    private static final String  HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
+    private ExcelMapper          excelMapper;
+    PrintWriter                  printWriter;
 
-    private static Map<String, String> initMapSeparators() {
-        Map<String, String> map = new HashMap<>();
-        map.put("csv", ",");
-        map.put("tsv", "\t");
-        return Collections.unmodifiableMap(map);
+    public PlainTextExporter(ResourceAccess resourceAccess, ResourcesFormat format) {
+        this.format = format;
+        datasetAccess = resourceAccess;
     }
 
-    public PlainTextExporter(ResourceAccess resourceAccess, String format) {
-        datasetAccess = resourceAccess;
-        this.format = format;
-        separator = separatorsByFormat.get(format);
-
-        if (ResourcesFormat.XLSX.name().equals(format.toUpperCase()) || ResourcesFormat.XLS.name().equals(format.toUpperCase())) {
-            isExcelFormat = true;
-        }
+    private boolean isExcelFormat() {
+        return ResourcesFormat.XLSX.equals(format);
     }
 
     private String getHeaderName(String name) {
@@ -65,7 +52,7 @@ public class PlainTextExporter {
     public void writeObservationsAndAttributesWithObservationAttachmentLevel(OutputStream os) throws MetamacException {
         try {
 
-            if (isExcelFormat) {
+            if (isExcelFormat()) {
                 excelMapper = new ExcelMapper();
             } else {
                 printWriter = new PrintWriter(new OutputStreamWriter(os, Charset.forName("UTF-8")));
@@ -77,7 +64,7 @@ public class PlainTextExporter {
     }
 
     private void dispose() throws MetamacException {
-        if (isExcelFormat) {
+        if (isExcelFormat()) {
             excelMapper.dispose();
             excelMapper = null;
         }
@@ -170,13 +157,13 @@ public class PlainTextExporter {
     }
 
     private void writeToOutputStream(OutputStream os) throws MetamacException {
-        if (isExcelFormat) {
+        if (isExcelFormat()) {
             excelMapper.writeExcelWorkBookToOutputStream(os);
         }
     }
 
     private void createHeader(Map<String, String> line) {
-        if (isExcelFormat) {
+        if (isExcelFormat()) {
             excelMapper.createHeaderRow(line);
         } else {
             createHeaderPlainText(line);
@@ -188,13 +175,13 @@ public class PlainTextExporter {
         StringBuilder headerLine = new StringBuilder();
         for (Map.Entry<String, String> columnObservation : line.entrySet()) {
             String key = columnObservation.getKey();
-            headerLine.append(headerLine.length() == 0 ? key : (separator + key));
+            headerLine.append(headerLine.length() == 0 ? key : (format.getSeparator() + key));
         }
         printWriter.println(headerLine);
     }
 
     private void createObservation(Map<String, String> line) {
-        if (isExcelFormat) {
+        if (isExcelFormat()) {
             excelMapper.addObservationRow(line);
         } else {
             createObservationPlainText(line);
@@ -207,7 +194,7 @@ public class PlainTextExporter {
         boolean isFirstColumn = true;
         for (Map.Entry<String, String> columnObservation : line.entrySet()) {
             String value = ExportUtils.escapeNulls(columnObservation.getValue());
-            observationLine.append(isFirstColumn ? value : (separator + value));
+            observationLine.append(isFirstColumn ? value : (format.getSeparator() + value));
             if (isFirstColumn) {
                 isFirstColumn = false;
             }
@@ -244,7 +231,7 @@ public class PlainTextExporter {
     }
 
     private String formattedText(String text) {
-        if ("csv".equals(format)) {
+        if (ResourcesFormat.CSV.equals(format)) {
             text = StringEscapeUtils.escapeCsv(text);
         }
         return text;

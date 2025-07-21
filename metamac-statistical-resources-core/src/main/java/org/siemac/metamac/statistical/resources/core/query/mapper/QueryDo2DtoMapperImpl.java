@@ -15,11 +15,13 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
+import org.siemac.metamac.statistical.resources.core.query.domain.Purpose;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
@@ -126,6 +128,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         // Identity
         target.setId(source.getId());
         target.setVersion(source.getVersion());
+        target.setXStreamStatus(source.getLifeCycleStatisticalResource().getXStreamStatus());
 
         return target;
     }
@@ -165,6 +168,8 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         target.getIsPartOf().clear();
         target.getIsPartOf().addAll(relatedResourceResultCollectionToDtoCollection(isPartOf));
         setHeadingAndStubDimension(target, source);
+        target.setPurpose(purposeDo2Dto(source.getPurposes()));
+        target.setXTemplateDto(internationalStringDoToDto(source.getXTemplate()));
         return target;
     }
 
@@ -269,5 +274,38 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
             return datasetVersionRepository.retrieveLastVersion(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
         }
         return null;
+    }
+
+    @Override
+    public List<PurposeDto> purposeDoListToDtoList(List<Purpose> sources) throws MetamacException {
+        List<PurposeDto> targets = new ArrayList<>();
+        
+        for (Purpose source : sources) {
+            targets.add(purposeDo2Dto(source));
+        }
+        return targets;
+    }
+    
+    // ---------------------------------------------------------------------------------------------------------
+    // STATISTIC OFFICIALITY
+    // ---------------------------------------------------------------------------------------------------------
+
+    @Override
+    public PurposeDto purposeDo2Dto(Purpose source) {
+        if (source == null) {
+            return null;
+        }
+
+        PurposeDto target = new PurposeDto();
+
+        // Identity
+        target.setId(source.getId());
+        target.setVersion(source.getVersion());
+
+        // Other
+        target.setIdentifier(source.getIdentifier());
+        target.setDescription(internationalStringDoToDto(source.getDescription()));
+
+        return target;
     }
 }

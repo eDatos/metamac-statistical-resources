@@ -236,6 +236,11 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
     }
 
     @Override
+    public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, MultidatasetVersion resource) {
+        //ONLY FOR DATASET
+    }
+
+    @Override
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
         // ONLY FOR DATASETS
     }

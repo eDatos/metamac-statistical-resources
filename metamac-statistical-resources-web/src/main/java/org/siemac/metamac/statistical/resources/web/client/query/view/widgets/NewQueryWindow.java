@@ -113,7 +113,10 @@ public class NewQueryWindow extends CustomWindow {
                 form.markForRedraw();
             }
         });
+        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
         items.add(typeSelectorItem);
+        items.add(purposeTypeSelectorItem);
 
         return items;
     }
@@ -148,10 +151,12 @@ public class NewQueryWindow extends CustomWindow {
         queryDto.setSelection(selection);
         Integer latestDataNumber = null;
         if (isLatestData) {
-            latestDataNumber = ((CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
+            CustomIntegerItem customIntegerItem = (CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA);  
+            latestDataNumber = customIntegerItem != null ? customIntegerItem.getValueAsInteger() : null;
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularitie(queryDto);
+        queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         return queryDto;
     }
 
@@ -218,12 +223,10 @@ public class NewQueryWindow extends CustomWindow {
 
         setDimensions(datasetDimensions, datasetVersion, fields);
 
-        if (hasTemporalDimension) {
-            CustomIntegerItem latestData = new CustomIntegerItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
-            latestData.setShowIfCondition(getFormItemIfFunctionShowLatestDataItem());
-            latestData.setRequired(true);
-            fields.add(latestData);
-        }
+        CustomIntegerItem latestData = new CustomIntegerItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
+        latestData.setShowIfCondition(getFormItemIfFunctionShowLatestDataItem());
+        latestData.setRequired(true);
+        fields.add(latestData);
         CustomButtonItem saveItem = new CustomButtonItem(FIELD_SAVE, getConstants().queryCreate());
         saveItem.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
