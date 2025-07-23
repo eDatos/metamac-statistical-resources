@@ -163,13 +163,6 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         dsdField.setCanFilter(true);
         dsdField.setCanSort(false);
         dsdField.setType(ListGridFieldType.LINK);
-        dsdField.setCellFormatter(new CellFormatter() {
-
-            @Override
-            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                return ResourceFieldUtils.formatExternalItemValue(value, true, false);
-            }
-        });
 
         queryDatasetField = new TreeGridField(MultidatasetCubeDS.QUERY_DATASET, getConstants().multidatasetStructureCubeQueryDataset());
         queryDatasetField.setShowHover(false); // only show hover in info field
@@ -206,18 +199,6 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         createContextMenu();
 
         bindEvents();
-    }
-
-    private String formatResourceLink(Object value, ListGridRecord record, String resourceTypeFieldName) {
-        if (value == null) {
-            return null;
-        }
-        String urn = value.toString();
-        String resourceType = record.getAttribute(resourceTypeFieldName);
-        if (!StatisticalResourceTypeEnum.URL.name().equalsIgnoreCase(resourceType) && urn != null && !urn.isEmpty()) {
-            return UrnUtils.removePrefix(urn);
-        }
-        return urn;
     }
 
     private void createContextMenu() {

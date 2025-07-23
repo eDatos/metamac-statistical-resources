@@ -279,7 +279,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
                 elementLevelNode.setQueryDataset(queryDataset);
             }
 
-            elementLevelNode.setDSD(cubeDto.getRelatedDSD());
+            elementLevelNode.setDSD(ResourceFieldUtils.formatExternalItemValue(cubeDto.getRelatedDSD(), true, false));
 
         }
 
@@ -535,7 +535,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
             multidatasetCubeNode.setQueryDataset(queryDataset);
         }
 
-        multidatasetCubeNode.setDSD(multidatasetCubeDto.getRelatedDSD());
+        multidatasetCubeNode.setDSD(ResourceFieldUtils.formatExternalItemValue(multidatasetCubeDto.getRelatedDSD(), true, false));
 
 
         multidatasetCubeNode.setOrderInMultidataset(multidatasetCubeDto.getOrderInMultidataset());

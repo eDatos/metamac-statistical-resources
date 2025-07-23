@@ -201,13 +201,6 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         dsdField.setCanFilter(true);
         dsdField.setCanSort(false);
         dsdField.setType(ListGridFieldType.LINK);
-        dsdField.setCellFormatter(new CellFormatter() {
-
-            @Override
-            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
-                return ResourceFieldUtils.formatExternalItemValue(value, true, false);
-            }
-        });
 
         queryDatasetField = new TreeGridField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
         queryDatasetField.setShowHover(false); // only show hover in info field
@@ -285,8 +278,9 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
                 String titleCriteria = event.getCriteria().getAttribute(ElementLevelDS.TITLE);
                 String urnCriteria = event.getCriteria().getAttribute(ElementLevelDS.URN);
+                String dsdCriteria = event.getCriteria().getAttribute(ElementLevelDS.DSD);
 
-                if (StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria)) {
+                if (StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria) && StringUtils.isBlank(dsdCriteria)) {
                     setData(tree);
                     return;
                 } else {
@@ -295,12 +289,16 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                         if (!SCHEME_NODE_NAME.equals(treeNode.getName())) {
                             String title = treeNode.getAttributeAsString(ElementLevelDS.TITLE);
                             String urn = treeNode.getAttributeAsString(ElementLevelDS.URN);
+                            String dsd = treeNode.getAttributeAsString(ElementLevelDS.DSD);
 
                             boolean matches = true;
                             if (titleCriteria != null && !StringUtils.containsIgnoreCase(title, titleCriteria)) {
                                 matches = false;
                             }
                             if (urnCriteria != null && !StringUtils.containsIgnoreCase(urn, urnCriteria)) {
+                                matches = false;
+                            }
+                            if (dsdCriteria != null && !StringUtils.containsIgnoreCase(dsd, dsdCriteria)) {
                                 matches = false;
                             }
                             if (matches) {

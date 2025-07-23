@@ -1,6 +1,5 @@
 package org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds;
 
-import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.web.common.client.widgets.NavigableTreeNode;
 
@@ -57,7 +56,7 @@ public class MultidatasetCubeTreeNode extends NavigableTreeNode {
     public String getLinkedResource() {
         return getAttributeAsString(MultidatasetCubeDS.RESOURCE_TO_LINK);
     }
-    public void setDSD(ExternalItemDto value) {
+    public void setDSD(String value) {
         setAttribute(MultidatasetCubeDS.DSD, value);
     }
 
