@@ -279,8 +279,12 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                 String titleCriteria = event.getCriteria().getAttribute(ElementLevelDS.TITLE);
                 String urnCriteria = event.getCriteria().getAttribute(ElementLevelDS.URN);
                 String dsdCriteria = event.getCriteria().getAttribute(ElementLevelDS.DSD);
+                String resourceTypeCriteria = event.getCriteria().getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                String resourceCriteria = event.getCriteria().getAttribute(ElementLevelDS.RESOURCE_TO_LINK);
+                String datasetCriteria = event.getCriteria().getAttribute(ElementLevelDS.QUERY_DATASET);
 
-                if (StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria) && StringUtils.isBlank(dsdCriteria)) {
+                if (StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria) && StringUtils.isBlank(dsdCriteria) 
+                        && StringUtils.isBlank(resourceTypeCriteria) && StringUtils.isBlank(resourceCriteria) && StringUtils.isBlank(datasetCriteria)) {
                     setData(tree);
                     return;
                 } else {
@@ -290,17 +294,13 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                             String title = treeNode.getAttributeAsString(ElementLevelDS.TITLE);
                             String urn = treeNode.getAttributeAsString(ElementLevelDS.URN);
                             String dsd = treeNode.getAttributeAsString(ElementLevelDS.DSD);
+                            String resourceType = treeNode.getAttributeAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                            String resource = treeNode.getAttributeAsString(ElementLevelDS.RESOURCE_TO_LINK);
+                            String dataset = treeNode.getAttributeAsString(ElementLevelDS.QUERY_DATASET);
 
                             boolean matches = true;
-                            if (titleCriteria != null && !StringUtils.containsIgnoreCase(title, titleCriteria)) {
-                                matches = false;
-                            }
-                            if (urnCriteria != null && !StringUtils.containsIgnoreCase(urn, urnCriteria)) {
-                                matches = false;
-                            }
-                            if (dsdCriteria != null && !StringUtils.containsIgnoreCase(dsd, dsdCriteria)) {
-                                matches = false;
-                            }
+                            matches = checkCriteria(title, titleCriteria) && checkCriteria(urn, urnCriteria) && checkCriteria(dsd, dsdCriteria) && checkCriteria(resourceType, resourceTypeCriteria)
+                                    && checkCriteria(resource, resourceCriteria) && checkCriteria(dataset, datasetCriteria);
                             if (matches) {
                                 matchingNodes.add(treeNode);
                             }
@@ -429,6 +429,10 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                 saveTreeOpenState();
             }
         });
+    }
+
+    private boolean checkCriteria(String field, String criteria) {
+        return criteria == null || StringUtils.containsIgnoreCase(field, criteria);
     }
 
     public void removeHandlerRegistrations() {
