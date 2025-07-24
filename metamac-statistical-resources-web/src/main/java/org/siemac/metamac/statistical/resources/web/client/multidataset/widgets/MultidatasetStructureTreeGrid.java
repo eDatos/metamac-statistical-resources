@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
-import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
-import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NavigableTreeGrid;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds.MultidatasetCubeDS;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds.MultidatasetCubeTreeNode;
@@ -239,8 +237,13 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                 String identifierCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.IDENTIFIER);
                 String titleCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.TITLE);
                 String urnCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.URN);
+                String dsdCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.DSD);
+                String resourceTypeCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK);
+                String resourceCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.RESOURCE_TO_LINK);
+                String datasetCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.QUERY_DATASET);
 
-                if (StringUtils.isBlank(identifierCriteria) && StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria)) {
+                if (StringUtils.isBlank(identifierCriteria) && StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria) && StringUtils.isBlank(dsdCriteria) 
+                        && StringUtils.isBlank(resourceTypeCriteria) && StringUtils.isBlank(resourceCriteria) && StringUtils.isBlank(datasetCriteria)) {
                     setData(tree);
                     return;
                 } else {
@@ -250,18 +253,15 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                             String identifier = treeNode.getAttributeAsString(MultidatasetCubeDS.IDENTIFIER);
                             String title = treeNode.getAttributeAsString(MultidatasetCubeDS.TITLE);
                             String urn = treeNode.getAttributeAsString(MultidatasetCubeDS.URN);
+                            String dsd = treeNode.getAttributeAsString(MultidatasetCubeDS.DSD);
+                            String resourceType = treeNode.getAttributeAsString(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK);
+                            String resource = treeNode.getAttributeAsString(MultidatasetCubeDS.RESOURCE_TO_LINK);
+                            String dataset = treeNode.getAttributeAsString(MultidatasetCubeDS.QUERY_DATASET);
 
                             boolean matches = true;
 
-                            if (identifierCriteria != null && !StringUtils.containsIgnoreCase(identifier, identifierCriteria)) {
-                                matches = false;
-                            }
-                            if (titleCriteria != null && !StringUtils.containsIgnoreCase(title, titleCriteria)) {
-                                matches = false;
-                            }
-                            if (urnCriteria != null && !StringUtils.containsIgnoreCase(urn, urnCriteria)) {
-                                matches = false;
-                            }
+                            matches = checkCriteria(identifier, identifierCriteria) && checkCriteria(title, titleCriteria) && checkCriteria(urn, urnCriteria) && checkCriteria(dsd, dsdCriteria)
+                                    && checkCriteria(resourceType, resourceTypeCriteria) && checkCriteria(resource, resourceCriteria) && checkCriteria(dataset, datasetCriteria);
                             if (matches) {
                                 matchingNodes.add(treeNode);
                             }
@@ -360,6 +360,10 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
             }
         });
 
+    }
+
+    private boolean checkCriteria(String field, String criteria) {
+        return criteria == null || StringUtils.containsIgnoreCase(field, criteria);
     }
 
     public void removeHandlerRegistrations() {
