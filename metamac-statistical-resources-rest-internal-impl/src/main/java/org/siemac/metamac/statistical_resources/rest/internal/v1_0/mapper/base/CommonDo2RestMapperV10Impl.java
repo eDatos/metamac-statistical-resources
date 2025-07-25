@@ -1096,8 +1096,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             targets = toEnumeratedDimensionValuesFromCodelist(coveragesById, dimension.getCodelistRepresentationUrn(), dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages,
                     dimension, fields, dimensionsFilters);
         } else if (dimension.getConceptSchemeRepresentationUrn() != null) {
-            targets = toEnumeratedDimensionValuesFromConceptScheme(coveragesById, dataStructure, dimension.getType(), dimension.getConceptSchemeRepresentationUrn(), effectiveDimensionValuesToData,
-                    selectedLanguages, fields);
+            targets = toEnumeratedDimensionValuesFromConceptScheme(coveragesById, dataStructure, dimension.getType(), dimension.getConceptSchemeRepresentationUrn(), dimensionVisualisation,
+                    effectiveDimensionValuesToData, selectedLanguages, fields);
         } else if (dimension.getTextFormatRepresentation() != null) {
             targets = toNonEnumeratedDimensionValuesFromTextFormatType(coverages, dimension.getTextFormatRepresentation(), dimension.getType(), effectiveDimensionValuesToData, selectedLanguages,
                     dimension.getComponentId(), dimensionsFilters);
@@ -1175,11 +1175,14 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     }
 
     private EnumeratedDimensionValues toEnumeratedDimensionValuesFromConceptScheme(Map<String, CodeDimension> coveragesById, DataStructure dataStructure, DsdComponentType dimensionType,
-            String conceptSchemeUrn, List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields) throws MetamacException {
+            String conceptSchemeUrn, DimensionVisualisation dimensionVisualisation, List<String> effectiveDimensionValuesToData, List<String> selectedLanguages, Set<String> fields)
+            throws MetamacException {
         if (conceptSchemeUrn == null) {
             return null;
         }
         EnumeratedDimensionValues targets = new EnumeratedDimensionValues();
+
+        String order = dimensionVisualisation != null ? dimensionVisualisation.getOrder() : null;
 
         Map<String, Integer> showDecimalPrecisionsByUrn = null;
         if (DsdComponentType.MEASURE.equals(dimensionType)) {
@@ -1196,7 +1199,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
         boolean includeDescription = containsField(fields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_DIMENSION_DESCRIPTION);
         String conceptField = includeDescription ? SrmRestConstants.FIELD_INCLUDE_DESCRIPTION : null;
-        Concepts concepts = srmRestExternalFacade.retrieveConceptsByConceptSchemeByUrn(conceptSchemeUrn, conceptField);
+        Concepts concepts = srmRestExternalFacade.retrieveConceptsByConceptSchemeByUrn(conceptSchemeUrn, order, conceptField);
         for (ItemResourceInternal concept : concepts.getConcepts()) {
             String id = concept.getId();
             boolean skip = false;
@@ -1480,7 +1483,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             return null;
         }
         EnumeratedAttributeValues targets = new EnumeratedAttributeValues();
-        Concepts concepts = srmRestExternalFacade.retrieveConceptsByConceptSchemeByUrn(conceptSchemeUrn, null);
+        Concepts concepts = srmRestExternalFacade.retrieveConceptsByConceptSchemeByUrn(conceptSchemeUrn, null, null);
         for (ItemResourceInternal concept : concepts.getConcepts()) {
             String id = concept.getId();
             if (!coveragesById.containsKey(id)) {
