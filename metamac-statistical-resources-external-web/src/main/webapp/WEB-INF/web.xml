@@ -18,7 +18,43 @@
     <listener>
         <listener-class>org.siemac.metamac.statistical.resources.web.external.ApplicationStartup</listener-class>
     </listener>
-    
+	<!--
+	  WHY THIS FILTER ORDER?
+	  
+	  (1) CORSFilter
+	      • MUST execute first so that the Access-Control* headers are added while
+	        the original request URL is still intact.  
+	      • Guarantees that the headers survive any subsequent internal
+	        forward/redirect performed by downstream filters or servlets.
+	
+	  (2) UrlRewriteFilter
+	      • Performs server-side rewrites/forwards (e.g., /api/v1/* → /legacy/*).  
+	      • Runs after CORS so that the rewritten request already carries the
+	        correct cross-origin headers—otherwise they could be lost or duplicated
+	        when the request re-enters the filter chain.
+	
+	  (3) DeprecationFilter
+	      • Runs last to log or flag the *final* endpoint that was actually served,
+	        not the one originally requested nor any intermediate rewrite.  
+	      • Ensures accurate analytics, deprecation warnings, and metrics.
+	
+	  All three mappings include:
+	      <dispatcher>REQUEST</dispatcher>
+	      <dispatcher>FORWARD</dispatcher>
+	  so they apply both to the external client request (REQUEST) and to any
+	  internal forwards initiated by UrlRewriteFilter (FORWARD). This keeps header
+	  handling and logging consistent across the entire request lifecycle.
+	-->
+    <filter>
+        <filter-name>CORSFilter</filter-name>
+        <filter-class>org.siemac.metamac.core.common.filter.CORSFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CORSFilter</filter-name>
+        <url-pattern>/apis/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+    </filter-mapping>
     <!-- URL rewriting -->
     <filter>
             <filter-name>UrlRewriteFilter</filter-name>
@@ -27,15 +63,8 @@
     <filter-mapping>
             <filter-name>UrlRewriteFilter</filter-name>
             <url-pattern>/apis/*</url-pattern>
-    </filter-mapping>
-    
-    <filter>
-        <filter-name>CORSFilter</filter-name>
-        <filter-class>org.siemac.metamac.core.common.filter.CORSFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>CORSFilter</filter-name>
-        <url-pattern>/apis/*</url-pattern>
+            <dispatcher>REQUEST</dispatcher>
+            <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
     <filter>
@@ -45,6 +74,8 @@
     <filter-mapping>
         <filter-name>DeprecationFilter</filter-name>
         <url-pattern>/apis/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
     <!-- Encoding -->
@@ -60,6 +91,8 @@
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
     <!-- Rest -->
@@ -71,6 +104,8 @@
     <servlet-mapping>
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/apis/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
     </servlet-mapping>
 
      <filter>
@@ -80,6 +115,8 @@
     <filter-mapping>
         <filter-name>HttpWrapperFilter</filter-name>
         <url-pattern>/apis/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
 	<filter>
@@ -89,6 +126,8 @@
 	<filter-mapping>
 		<filter-name>SwaggerFilter</filter-name>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
     <error-page>
