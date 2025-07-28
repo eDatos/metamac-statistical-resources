@@ -126,8 +126,8 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         List<String> urns = getUrnsFromExternalItems(allItems);
         List<String> publishedUrns = getUrnsFromExternalItems(publishedItems);
         Mockito.when(srmRestInternalFacadeV10.findOrganisations(Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL),
-                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedOrganisationsUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(), Mockito.isNull(String.class)))
-                .thenReturn(SrmRestInternalFacadeV10MockUtils.mockOrganisationsWithOnlyUrns(publishedUrns));
+                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedOrganisationsUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(),
+                Mockito.isNull(String.class))).thenReturn(SrmRestInternalFacadeV10MockUtils.mockOrganisationsWithOnlyUrns(publishedUrns));
     }
 
     protected void mockFindPublishedCodes(Collection<ExternalItem> allItems, Collection<ExternalItem> publishedItems) {
@@ -143,15 +143,15 @@ public class StatisticalResourcesMockRestBaseTest extends StatisticalResourcesBa
         List<String> publishedUrns = getUrnsFromExternalItems(publishedItems);
         Mockito.when(srmRestInternalFacadeV10.findConcepts(Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL),
                 Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedConceptsUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(),
-                Mockito.isNull(String.class))).thenReturn(SrmRestInternalFacadeV10MockUtils.mockConceptsWithOnlyUrns(publishedUrns));
+                Mockito.isNull(String.class), Mockito.isNull(String.class))).thenReturn(SrmRestInternalFacadeV10MockUtils.mockConceptsWithOnlyUrns(publishedUrns));
     }
 
     protected void mockFindPublishedCategories(Collection<ExternalItem> allItems, Collection<ExternalItem> publishedItems) {
         List<String> urns = getUrnsFromExternalItems(allItems);
         List<String> publishedUrns = getUrnsFromExternalItems(publishedItems);
         Mockito.when(srmRestInternalFacadeV10.findCategories(Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL), Mockito.eq(RestApiConstants.WILDCARD_ALL),
-                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedCategoriesUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(), Mockito.isNull(String.class)))
-                .thenReturn(SrmRestInternalFacadeV10MockUtils.mockCategoriesWithOnlyUrns(publishedUrns));
+                Mockito.eq(SrmRestInternalFacadeV10MockUtils.mockQueryFindPublishedCategoriesUrnsAsList(urns)), Mockito.isNull(String.class), Mockito.anyString(), Mockito.anyString(),
+                Mockito.isNull(String.class))).thenReturn(SrmRestInternalFacadeV10MockUtils.mockCategoriesWithOnlyUrns(publishedUrns));
     }
 
     protected void mockFindPublishedDsd(Collection<ExternalItem> allItems, Collection<ExternalItem> publishedItems) {

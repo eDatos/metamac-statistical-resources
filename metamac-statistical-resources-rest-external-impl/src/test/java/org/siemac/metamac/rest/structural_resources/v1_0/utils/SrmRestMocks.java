@@ -137,7 +137,7 @@ public class SrmRestMocks {
 
     private static ShowDecimalPrecision mockShowDecimalPrecision(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, int value) {
         ShowDecimalPrecision showDecimalPrecision = new ShowDecimalPrecision();
-        showDecimalPrecision.setConcept(mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, null));
+        showDecimalPrecision.setConcept(mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, null, 1));
         showDecimalPrecision.setShowDecimals(value);
         return showDecimalPrecision;
     }
@@ -255,7 +255,7 @@ public class SrmRestMocks {
     public static Concepts mockConceptsByConceptScheme(String agencyID, String resourceID, String version, List<String> conceptsId) {
         Concepts concepts = new Concepts();
         for (String conceptId : conceptsId) {
-            ConceptResource concept = mockConceptResource(agencyID, resourceID, version, conceptId, null);
+            ConceptResource concept = mockConceptResource(agencyID, resourceID, version, conceptId, null, 1);
             concepts.getConcepts().add(concept);
         }
         return concepts;
@@ -263,11 +263,11 @@ public class SrmRestMocks {
 
     public static Concepts mockConceptsByConceptSchemeWithHierarchy(String agencyID, String resourceID, String version) {
         Concepts concepts = new Concepts();
-        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept01", null));
-        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept02", concepts.getConcepts().get(0).getUrn()));
-        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept03", null));
-        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept04", null));
-        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept05", null));
+        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept01", null, 1));
+        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept02", concepts.getConcepts().get(0).getUrn(), 1));
+        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept03", null, 2));
+        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept04", null, 3));
+        concepts.getConcepts().add(mockConceptResourceWithDescription(agencyID, resourceID, version, resourceID + "-concept05", null, 4));
         return concepts;
     }
 
@@ -300,7 +300,7 @@ public class SrmRestMocks {
         return code;
     }
 
-    public static ConceptResource mockConceptResource(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
+    public static ConceptResource mockConceptResource(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn, Integer order) {
         ConceptResource concept = new ConceptResource();
         concept.setUrn("urn:sdmx:org.sdmx.infomodel.conceptscheme.Concept=" + agencyID + ":" + maintainableParentID + "(" + maintainableVersionID + ")." + resourceID);
         concept.setId(resourceID);
@@ -312,8 +312,8 @@ public class SrmRestMocks {
         return concept;
     }
 
-    public static ConceptResource mockConceptResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn) {
-        ConceptResource concept = mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn);
+    public static ConceptResource mockConceptResourceWithDescription(String agencyID, String maintainableParentID, String maintainableVersionID, String resourceID, String parentUrn, Integer order) {
+        ConceptResource concept = mockConceptResource(agencyID, maintainableParentID, maintainableVersionID, resourceID, parentUrn, order);
         concept.setDescription(mockInternationalString("Description " + resourceID));
         return concept;
     }
@@ -343,7 +343,7 @@ public class SrmRestMocks {
         dimension.setIsSpatial(isSpatial);
         dimension.setLocalRepresentation(new Representation());
         dimension.getLocalRepresentation().setEnumerationCodelist(mockCodelistResource("agency01", id + "-codelist01", "01.000"));
-        dimension.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-concept01", null));
+        dimension.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-concept01", null, 1));
         return dimension;
     }
 
@@ -353,7 +353,7 @@ public class SrmRestMocks {
         dimension.setId(id);
         dimension.setLocalRepresentation(new Representation());
         dimension.getLocalRepresentation().setEnumerationConceptScheme(mockConceptSchemeResource("agency01", id + "-conceptScheme01", "01.000"));
-        dimension.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-conceptMeasureDimension01", null));
+        dimension.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-conceptMeasureDimension01", null, 1));
         return dimension;
     }
 
@@ -363,7 +363,7 @@ public class SrmRestMocks {
         dimension.setId(id);
         dimension.setLocalRepresentation(new Representation());
         dimension.getLocalRepresentation().setTextFormat(mockTimeTextFormatType());
-        dimension.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-conceptTimeDimension01", null));
+        dimension.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-conceptTimeDimension01", null, 1));
         return dimension;
     }
 
@@ -434,7 +434,7 @@ public class SrmRestMocks {
 
     private static void mockAttributeBase(String id, AttributeBase attribute, Resource enumeratedCodelist, Resource enumeratedConceptScheme) {
         attribute.setId(id);
-        attribute.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-concept01", null));
+        attribute.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-concept01", null, 1));
         attribute.setLocalRepresentation(new Representation());
         if (enumeratedCodelist != null) {
             attribute.getLocalRepresentation().setEnumerationCodelist(enumeratedCodelist);
@@ -447,7 +447,7 @@ public class SrmRestMocks {
 
     private static void mockMultilingualAttribute(String id, AttributeBase attribute) {
         attribute.setId(id);
-        attribute.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-concept01", null));
+        attribute.setConceptIdentity(mockConceptResource("agency01", "conceptScheme01", "01.000", id + "-concept01", null, 1));
         attribute.setLocalRepresentation(new Representation());
         attribute.getLocalRepresentation().setTextFormat(mockMultilingualTextFormatType());
 
