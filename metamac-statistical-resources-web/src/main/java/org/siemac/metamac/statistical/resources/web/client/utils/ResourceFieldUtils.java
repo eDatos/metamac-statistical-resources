@@ -2,12 +2,18 @@ package org.siemac.metamac.statistical.resources.web.client.utils;
 
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 
+import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.IdentifiableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.NameableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.VersionableResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
+import org.siemac.metamac.web.common.client.utils.CommonWebUtils;
+import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
 import org.siemac.metamac.web.common.client.widgets.CustomLinkListGridField;
 import org.siemac.metamac.web.common.client.widgets.CustomListGridField;
@@ -15,6 +21,7 @@ import org.siemac.metamac.web.common.client.widgets.utils.VersionFieldSortNormal
 
 import com.smartgwt.client.types.Alignment;
 import com.smartgwt.client.types.ListGridFieldType;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
 
 public class ResourceFieldUtils {
 
@@ -128,5 +135,53 @@ public class ResourceFieldUtils {
 
     public static CustomListGridField[] getMultidatasetListGridFields() {
         return getSiemacMetadataListGridFields();
+    }
+
+
+    //
+    // Common
+    //
+    public static String formatResourceLink(Object value, ListGridRecord record, String resourceTypeFieldName) {
+        if (value == null) {
+            return null;
+        }
+        String urn = value.toString();
+        String resourceType = record.getAttribute(resourceTypeFieldName);
+
+        if (!StatisticalResourceTypeEnum.URL.name().equalsIgnoreCase(resourceType) && urn != null && !urn.isEmpty()) {
+            return UrnUtils.removePrefix(urn);
+        }
+        return urn;
+    }
+
+    public static String formatExternalItemValue(Object value, boolean showVersion, boolean showTitle) {
+        if (value == null) {
+            return StringUtils.EMPTY;
+        }
+        ExternalItemDto item = (ExternalItemDto)value;
+
+        String title = showTitle ? InternationalStringUtils.getLocalisedString(item.getTitle()) : "";
+        String code = item.getCode();
+        String url = item.getManagementAppUrl();
+        String urn = item.getUrn();
+
+        String label = buildLabel(code, title, urn, showVersion);
+
+        return (!StringUtils.isBlank(url)) ? "<a href=\"" + url + "\">" + label + "</a>" : label;
+    }
+
+    private static String buildLabel(String code, String title, String urn, boolean showVersion) {
+        if (!showVersion || StringUtils.isBlank(urn)) {
+            return CommonWebUtils.getElementName(code, title);
+        }
+
+        String[] parts = UrnUtils.splitUrnItemScheme(urn);
+        if (parts.length == 3 && !StringUtils.isBlank(parts[1]) && !StringUtils.isBlank(parts[2])) {
+            String resourceId = parts[1];
+            String version = parts[2];
+            return CommonWebUtils.getElementNameWithVersion(resourceId, title, version);
+        }
+
+        return CommonWebUtils.getElementName(code, title);
     }
 }

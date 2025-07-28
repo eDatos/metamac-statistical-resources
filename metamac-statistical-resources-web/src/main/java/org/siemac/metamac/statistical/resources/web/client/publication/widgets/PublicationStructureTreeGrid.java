@@ -13,11 +13,13 @@ import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalReso
 import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLevelDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationStructureDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.base.widgets.NavigableTreeGrid;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.ElementLevelTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.publication.utils.PublicationClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.publication.view.handlers.PublicationStructureTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
@@ -25,7 +27,9 @@ import org.siemac.metamac.web.common.client.widgets.DeleteConfirmationWindow;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.user.client.Window;
 import com.google.web.bindery.event.shared.HandlerRegistration;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.smartgwt.client.data.Record;
 import com.smartgwt.client.data.RecordList;
 import com.smartgwt.client.types.Alignment;
@@ -36,6 +40,11 @@ import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitHandler;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -43,10 +52,9 @@ import com.smartgwt.client.widgets.menu.MenuItem;
 import com.smartgwt.client.widgets.menu.events.ClickHandler;
 import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
 import com.smartgwt.client.widgets.tree.Tree;
+import com.smartgwt.client.widgets.tree.TreeGrid;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import com.smartgwt.client.widgets.tree.events.FolderClickEvent;
-import com.smartgwt.client.widgets.tree.events.FolderClickHandler;
 import com.smartgwt.client.widgets.tree.events.FolderClosedEvent;
 import com.smartgwt.client.widgets.tree.events.FolderClosedHandler;
 import com.smartgwt.client.widgets.tree.events.FolderContextClickEvent;
@@ -55,8 +63,6 @@ import com.smartgwt.client.widgets.tree.events.FolderDropEvent;
 import com.smartgwt.client.widgets.tree.events.FolderDropHandler;
 import com.smartgwt.client.widgets.tree.events.FolderOpenedEvent;
 import com.smartgwt.client.widgets.tree.events.FolderOpenedHandler;
-import com.smartgwt.client.widgets.tree.events.LeafClickEvent;
-import com.smartgwt.client.widgets.tree.events.LeafClickHandler;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickEvent;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickHandler;
 import com.smartgwt.client.widgets.viewer.DetailViewer;
@@ -69,6 +75,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     protected TreeNodeClickAction               treeNodeClickAction;
 
     protected Menu                              contextMenu;
+    private PlaceManager                        placeManager;
     private MenuItem                            createChapterMenuItem;
     private MenuItem                            createCubeMenuItem;
     private MenuItem                            deleteElementMenuItem;
@@ -86,6 +93,10 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
     protected Tree                              tree;
     protected TreeGridField                     titleField;
     protected TreeGridField                     urnField;
+    protected TreeGridField                     resourceField;
+    protected TreeGridField                     resourceTypeField;
+    protected TreeGridField                     dsdField;
+    protected TreeGridField                     queryDatasetField;
     protected TreeGridField                     orderField;
     protected TreeGridField                     infoField;
 
@@ -130,16 +141,79 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         setDragDataAction(DragDataAction.MOVE);
         setShowOpenIcons(true);
         setShowDropIcons(true);
+        final TreeGrid treeGrid = this;
 
         titleField = new TreeGridField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         titleField.setShowHover(false); // only show hover in info field
         titleField.setCanFilter(true);
         titleField.setCanSort(false);
+        titleField.setEscapeHTML(false);
+        titleField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                String title = (value != null) ? value.toString() : "";
+                String resourceType = record.getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                if (resourceType == null)
+                    return title;
+
+                RecordList records = treeGrid.getRecordList();
+                int cubeCount = 1;
+
+                for (int i = 0; i < records.getLength(); i++) {
+                    ListGridRecord rec = (ListGridRecord) records.get(i);
+                    if (rec == record)
+                        break;
+                    if (rec.getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK) != null)
+                        cubeCount++;
+                }
+
+                String numeration = (cubeCount < 10 ? "0" : "") + cubeCount;
+                return "<span class='item-numeration'>" + numeration + "</span> " + title;
+            }
+        });
 
         urnField = new TreeGridField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
         urnField.setShowHover(false); // only show hover in info field
         urnField.setCanFilter(true);
         urnField.setCanSort(false);
+
+        resourceTypeField = new TreeGridField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeLinked());
+        resourceTypeField.setShowHover(false); // only show hover in info field
+        resourceTypeField.setCanFilter(true);
+        resourceTypeField.setCanSort(false);
+
+        resourceField = new TreeGridField(ElementLevelDS.RESOURCE_TO_LINK, getConstants().publicationStructureElementResource());
+        resourceField.setShowHover(false); // only show hover in info field
+        resourceField.setCanFilter(true);
+        resourceField.setCanSort(false);
+        resourceField.setType(ListGridFieldType.LINK);
+        resourceField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+            }
+        });
+
+        dsdField = new TreeGridField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
+        dsdField.setShowHover(false); // only show hover in info field
+        dsdField.setCanFilter(true);
+        dsdField.setCanSort(false);
+        dsdField.setType(ListGridFieldType.LINK);
+
+        queryDatasetField = new TreeGridField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
+        queryDatasetField.setShowHover(false); // only show hover in info field
+        queryDatasetField.setCanFilter(true);
+        queryDatasetField.setCanSort(false);
+        queryDatasetField.setType(ListGridFieldType.LINK);
+        queryDatasetField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+            }
+        });
 
         orderField = new TreeGridField(ElementLevelDS.ORDER_IN_LEVEL, getConstants().publicationStructureElementOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
@@ -153,7 +227,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(titleField, urnField, orderField, infoField);
+        setFields(titleField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);
@@ -193,7 +267,6 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         });
         contextMenu.addItem(deleteElementMenuItem);
     }
-
     private void bindEvents() {
 
         filterEditionHandler = addFilterEditorSubmitHandler(new FilterEditorSubmitHandler() {
@@ -205,8 +278,13 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
                 String titleCriteria = event.getCriteria().getAttribute(ElementLevelDS.TITLE);
                 String urnCriteria = event.getCriteria().getAttribute(ElementLevelDS.URN);
+                String dsdCriteria = event.getCriteria().getAttribute(ElementLevelDS.DSD);
+                String resourceTypeCriteria = event.getCriteria().getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                String resourceCriteria = event.getCriteria().getAttribute(ElementLevelDS.RESOURCE_TO_LINK);
+                String datasetCriteria = event.getCriteria().getAttribute(ElementLevelDS.QUERY_DATASET);
 
-                if (StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria)) {
+                if (StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria) && StringUtils.isBlank(dsdCriteria) 
+                        && StringUtils.isBlank(resourceTypeCriteria) && StringUtils.isBlank(resourceCriteria) && StringUtils.isBlank(datasetCriteria)) {
                     setData(tree);
                     return;
                 } else {
@@ -215,14 +293,14 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                         if (!SCHEME_NODE_NAME.equals(treeNode.getName())) {
                             String title = treeNode.getAttributeAsString(ElementLevelDS.TITLE);
                             String urn = treeNode.getAttributeAsString(ElementLevelDS.URN);
+                            String dsd = treeNode.getAttributeAsString(ElementLevelDS.DSD);
+                            String resourceType = treeNode.getAttributeAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                            String resource = treeNode.getAttributeAsString(ElementLevelDS.RESOURCE_TO_LINK);
+                            String dataset = treeNode.getAttributeAsString(ElementLevelDS.QUERY_DATASET);
 
                             boolean matches = true;
-                            if (titleCriteria != null && !StringUtils.containsIgnoreCase(title, titleCriteria)) {
-                                matches = false;
-                            }
-                            if (urnCriteria != null && !StringUtils.containsIgnoreCase(urn, urnCriteria)) {
-                                matches = false;
-                            }
+                            matches = checkCriteria(title, titleCriteria) && checkCriteria(urn, urnCriteria) && checkCriteria(dsd, dsdCriteria) && checkCriteria(resourceType, resourceTypeCriteria)
+                                    && checkCriteria(resource, resourceCriteria) && checkCriteria(dataset, datasetCriteria);
                             if (matches) {
                                 matchingNodes.add(treeNode);
                             }
@@ -234,22 +312,36 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                 }
             }
         });
-
-        folderClickHandlerRegistration = addFolderClickHandler(new FolderClickHandler() {
-
-            @Override
-            public void onFolderClick(FolderClickEvent event) {
-                if (event.getFolder() instanceof ElementLevelTreeNode) {
-                    onNodeClick(((ElementLevelTreeNode) event.getFolder()).getElementLevelDto());
-                }
-            }
-        });
-        leafClickHandlerRegistration = addLeafClickHandler(new LeafClickHandler() {
+        cellClickHandlerRegistration = addCellClickHandler(new CellClickHandler() {
 
             @Override
-            public void onLeafClick(LeafClickEvent event) {
-                if (event.getLeaf() instanceof ElementLevelTreeNode) {
-                    onNodeClick(((ElementLevelTreeNode) event.getLeaf()).getElementLevelDto());
+            public void onCellClick(CellClickEvent event) {
+                ListGridField clickedField = getField(event.getColNum());
+                ListGridRecord record = event.getRecord();
+                String fieldName = clickedField.getName();
+
+                String urn = record.getAttribute(fieldName);
+                String resourceType = record.getAttribute(ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+                boolean urnPresent = urn != null && !urn.isEmpty();
+
+                if (fieldName.equals(resourceField.getName()) && urnPresent) {
+                    if (!StatisticalResourceTypeEnum.URL.name().equalsIgnoreCase(resourceType)) {
+                        getUiHandlers().goToLastVersion(urn);
+                        event.cancel();
+                        return;
+                    } else {
+                        Window.open(urn, "", "");
+                        event.cancel();
+                        return;
+                    }
+                } else if (fieldName.equals(queryDatasetField.getName()) && urnPresent) {
+                    getUiHandlers().goToRelatedDatasetQuery(urn);
+                    event.cancel();
+                    return;
+                } else {
+                    if (record instanceof ElementLevelTreeNode) {
+                        onNodeClick(((ElementLevelTreeNode) record).getElementLevelDto());
+                    }
                 }
             }
         });
@@ -337,6 +429,10 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
                 saveTreeOpenState();
             }
         });
+    }
+
+    private boolean checkCriteria(String field, String criteria) {
+        return criteria == null || StringUtils.containsIgnoreCase(field, criteria);
     }
 
     public void removeHandlerRegistrations() {
@@ -455,7 +551,11 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         DetailViewerField descriptionField = new DetailViewerField(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
         DetailViewerField urnField = new DetailViewerField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
-        return new DetailViewerField[]{titleField, descriptionField, urnField};
+        DetailViewerField resourceTypeField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeLinked());
+        DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TO_LINK, getConstants().publicationStructureElementResource());
+        DetailViewerField queryDatasetField = new DetailViewerField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
+        DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
+        return new DetailViewerField[]{titleField, descriptionField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField};
     }
 
     public void addCreateChapterMenuItemClickHandler(ClickHandler clickHandler) {

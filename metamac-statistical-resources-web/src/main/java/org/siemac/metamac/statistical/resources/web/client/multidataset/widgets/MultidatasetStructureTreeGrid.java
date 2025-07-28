@@ -14,6 +14,8 @@ import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds
 import org.siemac.metamac.statistical.resources.web.client.multidataset.model.ds.MultidatasetCubeTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.utils.MultidatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.multidataset.view.handlers.MultidatasetStructureTabUiHandlers;
+import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.ElementLevelDS;
+import org.siemac.metamac.statistical.resources.web.client.utils.ResourceFieldUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 import org.siemac.metamac.web.common.client.resources.StyleUtils;
 import org.siemac.metamac.web.common.client.utils.ListGridUtils;
@@ -30,6 +32,11 @@ import com.smartgwt.client.types.SelectionStyle;
 import com.smartgwt.client.types.TreeModelType;
 import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.events.ClickEvent;
+import com.smartgwt.client.widgets.grid.CellFormatter;
+import com.smartgwt.client.widgets.grid.ListGridField;
+import com.smartgwt.client.widgets.grid.ListGridRecord;
+import com.smartgwt.client.widgets.grid.events.CellClickEvent;
+import com.smartgwt.client.widgets.grid.events.CellClickHandler;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitEvent;
 import com.smartgwt.client.widgets.grid.events.FilterEditorSubmitHandler;
 import com.smartgwt.client.widgets.menu.Menu;
@@ -39,14 +46,10 @@ import com.smartgwt.client.widgets.menu.events.MenuItemClickEvent;
 import com.smartgwt.client.widgets.tree.Tree;
 import com.smartgwt.client.widgets.tree.TreeGridField;
 import com.smartgwt.client.widgets.tree.TreeNode;
-import com.smartgwt.client.widgets.tree.events.FolderClickEvent;
-import com.smartgwt.client.widgets.tree.events.FolderClickHandler;
 import com.smartgwt.client.widgets.tree.events.FolderContextClickEvent;
 import com.smartgwt.client.widgets.tree.events.FolderContextClickHandler;
 import com.smartgwt.client.widgets.tree.events.FolderDropEvent;
 import com.smartgwt.client.widgets.tree.events.FolderDropHandler;
-import com.smartgwt.client.widgets.tree.events.LeafClickEvent;
-import com.smartgwt.client.widgets.tree.events.LeafClickHandler;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickEvent;
 import com.smartgwt.client.widgets.tree.events.LeafContextClickHandler;
 import com.smartgwt.client.widgets.viewer.DetailViewer;
@@ -74,6 +77,12 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
     protected TreeGridField                        identifierField;
     protected TreeGridField                        titleField;
     protected TreeGridField                        urnField;
+    protected TreeGridField                        resourceField;
+    protected TreeGridField                        resourceTypeField;
+    protected TreeGridField                        dsdField;
+
+    protected TreeGridField                        queryDatasetField;
+
     protected TreeGridField                        orderField;
     protected TreeGridField                        infoField;
 
@@ -129,6 +138,43 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         urnField.setCanFilter(true);
         urnField.setCanSort(false);
 
+        resourceTypeField = new TreeGridField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResourceTypeLinked());
+        resourceTypeField.setShowHover(false); // only show hover in info field
+        resourceTypeField.setCanFilter(true);
+        resourceTypeField.setCanSort(false);
+
+        resourceField = new TreeGridField(MultidatasetCubeDS.RESOURCE_TO_LINK, getConstants().multidatasetStructureCubeResource());
+        resourceField.setShowHover(false); // only show hover in info field
+        resourceField.setCanFilter(true);
+        resourceField.setCanSort(false);
+        resourceField.setType(ListGridFieldType.LINK);
+        resourceField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+            }
+        });
+
+        dsdField = new TreeGridField(MultidatasetCubeDS.DSD, getConstants().multidatasetStructureCubeDSD());
+        dsdField.setShowHover(false); // only show hover in info field
+        dsdField.setCanFilter(true);
+        dsdField.setCanSort(false);
+        dsdField.setType(ListGridFieldType.LINK);
+
+        queryDatasetField = new TreeGridField(MultidatasetCubeDS.QUERY_DATASET, getConstants().multidatasetStructureCubeQueryDataset());
+        queryDatasetField.setShowHover(false); // only show hover in info field
+        queryDatasetField.setCanFilter(true);
+        queryDatasetField.setCanSort(false);
+        queryDatasetField.setType(ListGridFieldType.LINK);
+        queryDatasetField.setCellFormatter(new CellFormatter() {
+
+            @Override
+            public String format(Object value, ListGridRecord record, int rowNum, int colNum) {
+                return ResourceFieldUtils.formatResourceLink(value, record, ElementLevelDS.RESOURCE_TYPE_TO_LINK);
+            }
+        });
+
         orderField = new TreeGridField(MultidatasetCubeDS.ORDER_IN_LEVEL, getConstants().multidatasetStructureCubeOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
         orderField.setCanSort(true);
@@ -141,7 +187,7 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(identifierField, titleField, urnField, orderField, infoField);
+        setFields(identifierField, titleField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);
@@ -191,8 +237,13 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                 String identifierCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.IDENTIFIER);
                 String titleCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.TITLE);
                 String urnCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.URN);
+                String dsdCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.DSD);
+                String resourceTypeCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK);
+                String resourceCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.RESOURCE_TO_LINK);
+                String datasetCriteria = event.getCriteria().getAttribute(MultidatasetCubeDS.QUERY_DATASET);
 
-                if (StringUtils.isBlank(identifierCriteria) && StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria)) {
+                if (StringUtils.isBlank(identifierCriteria) && StringUtils.isBlank(titleCriteria) && StringUtils.isBlank(urnCriteria) && StringUtils.isBlank(dsdCriteria) 
+                        && StringUtils.isBlank(resourceTypeCriteria) && StringUtils.isBlank(resourceCriteria) && StringUtils.isBlank(datasetCriteria)) {
                     setData(tree);
                     return;
                 } else {
@@ -202,18 +253,15 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
                             String identifier = treeNode.getAttributeAsString(MultidatasetCubeDS.IDENTIFIER);
                             String title = treeNode.getAttributeAsString(MultidatasetCubeDS.TITLE);
                             String urn = treeNode.getAttributeAsString(MultidatasetCubeDS.URN);
+                            String dsd = treeNode.getAttributeAsString(MultidatasetCubeDS.DSD);
+                            String resourceType = treeNode.getAttributeAsString(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK);
+                            String resource = treeNode.getAttributeAsString(MultidatasetCubeDS.RESOURCE_TO_LINK);
+                            String dataset = treeNode.getAttributeAsString(MultidatasetCubeDS.QUERY_DATASET);
 
                             boolean matches = true;
 
-                            if (identifierCriteria != null && !StringUtils.containsIgnoreCase(identifier, identifierCriteria)) {
-                                matches = false;
-                            }
-                            if (titleCriteria != null && !StringUtils.containsIgnoreCase(title, titleCriteria)) {
-                                matches = false;
-                            }
-                            if (urnCriteria != null && !StringUtils.containsIgnoreCase(urn, urnCriteria)) {
-                                matches = false;
-                            }
+                            matches = checkCriteria(identifier, identifierCriteria) && checkCriteria(title, titleCriteria) && checkCriteria(urn, urnCriteria) && checkCriteria(dsd, dsdCriteria)
+                                    && checkCriteria(resourceType, resourceTypeCriteria) && checkCriteria(resource, resourceCriteria) && checkCriteria(dataset, datasetCriteria);
                             if (matches) {
                                 matchingNodes.add(treeNode);
                             }
@@ -226,24 +274,33 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
             }
         });
 
-        folderClickHandlerRegistration = addFolderClickHandler(new FolderClickHandler() {
+        cellClickHandlerRegistration = addCellClickHandler(new CellClickHandler() {
 
             @Override
-            public void onFolderClick(FolderClickEvent event) {
-                if (event.getFolder() instanceof MultidatasetCubeTreeNode) {
-                    onNodeClick(((MultidatasetCubeTreeNode) event.getFolder()).getMultidatasetCubeDto());
-                }
-            }
-        });
-        leafClickHandlerRegistration = addLeafClickHandler(new LeafClickHandler() {
+            public void onCellClick(CellClickEvent event) {
+                ListGridField clickedField = getField(event.getColNum());
+                ListGridRecord record = event.getRecord();
+                String fieldName = clickedField.getName();
+                String urn = record.getAttribute(fieldName);
+                boolean urnPresent  = urn != null && !urn.isEmpty();
 
-            @Override
-            public void onLeafClick(LeafClickEvent event) {
-                if (event.getLeaf() instanceof MultidatasetCubeTreeNode) {
-                    onNodeClick(((MultidatasetCubeTreeNode) event.getLeaf()).getMultidatasetCubeDto());
+                if (fieldName.equals(resourceField.getName()) && urnPresent ) {
+                    getUiHandlers().goToLastVersion(urn);
+                    event.cancel();
+                    return;
+                } else if (fieldName.equals(queryDatasetField.getName()) && urnPresent ) {
+                    getUiHandlers().goToRelatedDatasetQuery(urn);
+                    event.cancel();
+                    return;
+                } else {
+                    if (record instanceof MultidatasetCubeTreeNode) {
+                        onNodeClick(((MultidatasetCubeTreeNode) record).getMultidatasetCubeDto());
+                    }
                 }
+
             }
         });
+
         folderContextHandlerRegistration = addFolderContextClickHandler(new FolderContextClickHandler() {
 
             @Override
@@ -303,6 +360,10 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
             }
         });
 
+    }
+
+    private boolean checkCriteria(String field, String criteria) {
+        return criteria == null || StringUtils.containsIgnoreCase(field, criteria);
     }
 
     public void removeHandlerRegistrations() {
@@ -416,7 +477,11 @@ public class MultidatasetStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(MultidatasetCubeDS.TITLE, getConstants().multidatasetStructureCubeTitle());
         DetailViewerField descriptionField = new DetailViewerField(MultidatasetCubeDS.DESCRIPTION, getConstants().multidatasetStructureCubeDescription());
         DetailViewerField urnField = new DetailViewerField(MultidatasetCubeDS.URN, getConstants().multidatasetStructureCubeURN());
-        return new DetailViewerField[]{identifier, titleField, descriptionField, urnField};
+        DetailViewerField resourceTypeField = new DetailViewerField(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, getConstants().multidatasetStructureCubeResourceTypeLinked());
+        DetailViewerField resourceField = new DetailViewerField(MultidatasetCubeDS.RESOURCE_TO_LINK, getConstants().multidatasetStructureCubeResource());
+        DetailViewerField queryDatasetField = new DetailViewerField(MultidatasetCubeDS.QUERY_DATASET, getConstants().multidatasetStructureCubeQueryDataset());
+        DetailViewerField dsdField = new DetailViewerField(MultidatasetCubeDS.DSD, getConstants().multidatasetStructureCubeDSD());
+        return new DetailViewerField[]{identifier, titleField, descriptionField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField};
     }
 
     public void addCreateCubeMenuItemClickHandler(ClickHandler clickHandler) {

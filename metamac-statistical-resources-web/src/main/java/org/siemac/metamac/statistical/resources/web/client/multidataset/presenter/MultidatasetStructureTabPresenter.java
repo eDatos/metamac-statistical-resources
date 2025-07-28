@@ -5,6 +5,7 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import java.util.List;
 
 import org.siemac.metamac.core.common.util.shared.StringUtils;
+import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
@@ -24,6 +25,8 @@ import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUti
 import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.StatisticalResourceWebCriteria;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetsResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
@@ -274,6 +277,38 @@ public class MultidatasetStructureTabPresenter extends Presenter<MultidatasetStr
                 }
             });
         }
+    }
+
+    @Override
+    public void goToRelatedDatasetQuery(final String urn) {
+        if (!StringUtils.isBlank(urn)) {
+            String[] urnSplited = UrnUtils.splitUrnItemScheme(urn);
+            boolean hasVersion = urnSplited.length == 3 && !StringUtils.isBlank(urnSplited[2]);
+
+            if (!hasVersion) {
+                dispatcher.execute(new GetLatestResourceVersionAction(urn), new WaitingAsyncCallbackHandlingError<GetLatestResourceVersionResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetLatestResourceVersionResult result) {
+                        navigateToDatasetVersion(result.getResourceVersion());
+                    }
+                });
+            } else {
+                dispatcher.execute(new GetDatasetVersionAction(urn), new WaitingAsyncCallbackHandlingError<GetDatasetVersionResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetDatasetVersionResult result) {
+                        navigateToDatasetVersion(result.getDatasetVersionDto());
+                    }
+                });
+            }
+        }
+    }
+
+    private void navigateToDatasetVersion(LifeCycleStatisticalResourceDto resourceVersion) {
+        String operationUrn = resourceVersion.getStatisticalOperation().getUrn();
+        String resourceUrn = resourceVersion.getUrn();
+        placeManager.revealPlaceHierarchy(PlaceRequestUtils.buildAbsoluteDatasetPlaceRequest(operationUrn, resourceUrn));
     }
 
 }
