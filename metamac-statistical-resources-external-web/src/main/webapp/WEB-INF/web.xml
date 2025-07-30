@@ -74,8 +74,6 @@
     <filter-mapping>
         <filter-name>DeprecationFilter</filter-name>
         <url-pattern>/apis/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
     
     <!-- Encoding -->
@@ -91,8 +89,6 @@
     <filter-mapping>
         <filter-name>encodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
     <!-- Rest -->
@@ -104,8 +100,6 @@
     <servlet-mapping>
         <servlet-name>CXFServlet</servlet-name>
         <url-pattern>/apis/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
     </servlet-mapping>
 
      <filter>
@@ -115,8 +109,6 @@
     <filter-mapping>
         <filter-name>HttpWrapperFilter</filter-name>
         <url-pattern>/apis/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
 	<filter>
@@ -126,8 +118,6 @@
 	<filter-mapping>
 		<filter-name>SwaggerFilter</filter-name>
 		<url-pattern>/*</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-        <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
     <error-page>
