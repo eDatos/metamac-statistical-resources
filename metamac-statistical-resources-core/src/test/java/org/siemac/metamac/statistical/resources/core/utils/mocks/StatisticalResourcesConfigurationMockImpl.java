@@ -102,4 +102,14 @@ public class StatisticalResourcesConfigurationMockImpl extends ConfigurationServ
     public boolean retrieveTwitterSentEnable() throws MetamacException {
         throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
     }
+
+    @Override
+    public String retrieveKafkaCustomCodelistPublicationMessagesGroup() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
+
+    @Override
+    public String retrieveKafkaCustomConceptSchemePublicationMessagesGroup() throws MetamacException {
+        throw new UnsupportedOperationException("Not implemented. Not necessary for mocking purposes");
+    }
 }

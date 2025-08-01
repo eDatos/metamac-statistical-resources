@@ -139,8 +139,8 @@ public class DatasetInfo {
                     // If is a wildcard dimension, all dimension codes are needed
                     addAllCodesConditionForDimension(datasetRepository, i, conditions);
                 } else {
-                    DimensionCodeInfo dimensionCodeInfo = new DimensionCodeInfo(datasetRepository.getDimensions().get(i),
-                            getDsdSdmxInfo().getDimensions().get(datasetRepository.getDimensions().get(i)).getTypeComponentInfo());
+                    DimensionCodeInfo dimensionCodeInfo = new DimensionCodeInfo(datasetRepository.getDimensions().get(i).getDimensionId(),
+                            getDsdSdmxInfo().getDimensions().get(datasetRepository.getDimensions().get(i).getDimensionId()).getTypeComponentInfo());
                     // Split the code by '+' to find OR operators for codes
                     String[] codes = split[i].split("\\+");
                     for (int j = 0; j < codes.length; j++) {
@@ -155,7 +155,7 @@ public class DatasetInfo {
     }
 
     private void addAllCodesConditionForDimension(DatasetRepositoryDto datasetRepository, int dimensionOrder, List<DimensionCodeInfo> conditions) throws ApplicationException {
-        String dimensionID = datasetRepository.getDimensions().get(dimensionOrder);
+        String dimensionID = datasetRepository.getDimensions().get(dimensionOrder).getDimensionId();
         DimensionCodeInfo dimensionCodeInfo = new DimensionCodeInfo(dimensionID, getDsdSdmxInfo().getDimensions().get(dimensionID).getTypeComponentInfo());
         dimensionCodeInfo.getCodes().addAll(getCoverage().get(dimensionID));
 

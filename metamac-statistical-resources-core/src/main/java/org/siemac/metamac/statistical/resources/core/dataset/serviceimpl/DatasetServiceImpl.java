@@ -140,6 +140,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
@@ -528,8 +529,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
 
             List<DsdDimension> dimensions = DsdProcessor.getDimensions(dsd);
-            for (DsdDimension dimension : dimensions) {
-                datasetRepositoryDto.getDimensions().add(dimension.getComponentId());
+            for (DsdDimension dsdDimension : dimensions) {
+                DimensionDto dimension = new DimensionDto();
+                dimension.setDimensionId(dsdDimension.getComponentId());
+                dimension.setSourceUrn(getDataSourceUrnForEnumeratedDimensions(dsdDimension));
+                datasetRepositoryDto.getDimensions().add(dimension);
             }
 
             // Attributes
@@ -549,6 +553,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
+    private String getDataSourceUrnForEnumeratedDimensions(DsdDimension dsdDimension) {
+        if (!DsdComponentType.TEMPORAL.equals(dsdDimension.getType()) && dsdDimension.getTextFormatRepresentation() == null) {
+            if (dsdDimension.getCodelistRepresentationUrn() != null) {
+                return dsdDimension.getCodelistRepresentationUrn();
+
+            } else if (dsdDimension.getConceptSchemeRepresentationUrn() != null) {
+                return dsdDimension.getConceptSchemeRepresentationUrn();
+            }
+
+        }
+
+        return null;
+    }
+
     @Override
     public void manageDatabaseView(ServiceContext ctx, String datasetRepositoryId, DatasetVersion datasetVersion) throws MetamacException {
         datasetServiceInvocationValidator.checkManageDatabaseView(ctx, datasetRepositoryId, datasetVersion);
@@ -561,7 +579,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         String viewCode = datasetVersion.getDataset().getViewCode();
 
         try {
-            statisticsDatasetRepositoriesServiceFacade.createOrReplaceDatasetRepositoryView(datasetRepositoryId, viewCode);
+            List<String> languages = configurationService.retrieveInternationalizationLanguages();
+            statisticsDatasetRepositoriesServiceFacade.createOrReplaceDatasetRepositoryView(datasetRepositoryId, viewCode, languages);
         } catch (Exception e) {
             log.error("Error creating or replacing view " + viewCode + " for datasetRepositoryId " + datasetRepositoryId, e);
             noticesRestInternalService.createCreateReplaceDatasetErrorBackgroundNotification(datasetVersion, viewCode, datasetRepositoryId);
@@ -2407,5 +2426,5 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStreamObservations);
         }
-    }
+    } 
 }

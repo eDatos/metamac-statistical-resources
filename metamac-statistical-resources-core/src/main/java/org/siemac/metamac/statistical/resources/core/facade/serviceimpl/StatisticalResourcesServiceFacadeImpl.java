@@ -130,6 +130,7 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedMulti
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
+import org.siemac.metamac.statistical.resources.web.server.stream.KafkaMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -263,6 +264,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Autowired
     private DatasetRepositoriesServiceFacade                          datasetRepositoriesServiceFacade;
+
+    @Autowired
+    private KafkaMapper                                               kafkaMapper;
 
     public StatisticalResourcesServiceFacadeImpl() {
     }
@@ -2584,7 +2588,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public QueryVersionDto resendPublishedQueryVersionXMessage(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
-     // Retrieve Query
+        // Retrieve Query
         QueryVersion datasetVersion = queryVersionRepository.retrieveByUrn(datasetVersionUrn);
 
         // Security
@@ -2596,4 +2600,15 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Transform
         return queryDo2DtoMapper.queryVersionDoToDto(datasetVersion);
     }
+
+    @Override
+    public void processSrmResourcesKafkaMessage(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+        es.gobcan.istac.edatos.dataset.repository.dto.ExternalItemDto externalItemDto = kafkaMapper.kafkaMessageToRepositoryExternalItemDto(ctx, message);
+        try {
+            datasetRepositoriesServiceFacade.processSrmResources(kafkaMapper.kafkaMessageToRepositoryExternalItemDto(ctx, message));
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.CREATE_OR_UPDATE_SRM_RESOURCE, externalItemDto.getUrn());
+        }
+    }
+
 }

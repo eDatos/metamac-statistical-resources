@@ -14,6 +14,9 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.stream.message.CodelistAvro;
+import org.siemac.metamac.srm.core.stream.message.ConceptSchemeAvro;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
@@ -24,6 +27,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesR
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -31,9 +35,9 @@ import net.sf.ehcache.Element;
 @Scope("prototype")
 public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnable {
 
-    protected static Log                      LOGGER                 = LogFactory.getLog(KafkaConsumerThread.class);
+    protected static Log                      LOGGER       = LogFactory.getLog(KafkaConsumerThread.class);
 
-    private static final String               MAX_POOL_MSG           = "We have set a poll of 1 message at most. This error can not be given.";
+    private static final String               MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
 
     private KafkaConsumer<String, T>          consumer;
     private String                            topicName;
@@ -114,7 +118,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                 try {
                     ServiceContext serviceContext = createServiceContext(logMessage);
 
-                    statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
+                    updateByKafkaMessage(serviceContext, record.value(), record.key());
 
                     commitSync(record);
                 } catch (Exception e) {
@@ -131,6 +135,14 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
         } finally {
             LOGGER.info("Closing the consumer...");
             consumer.close();
+        }
+    }
+
+    public void updateByKafkaMessage(ServiceContext ctx, SpecificRecordBase message, String recordKey) throws MetamacException {
+        if (message instanceof DatasetAvro) {
+            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+        } else if (message instanceof CodelistAvro || message instanceof ConceptSchemeAvro) {
+            statisticalResourcesServiceFacade.processSrmResourcesKafkaMessage(ctx, message);
         }
     }
 

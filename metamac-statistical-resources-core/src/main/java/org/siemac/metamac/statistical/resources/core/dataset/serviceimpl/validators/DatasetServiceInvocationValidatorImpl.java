@@ -398,6 +398,10 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
+    public static void checkProcessSrmResourcesKafkaMessage(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
     public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
