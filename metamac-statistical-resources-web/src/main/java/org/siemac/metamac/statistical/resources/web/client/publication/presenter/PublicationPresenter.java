@@ -113,7 +113,7 @@ public class PublicationPresenter extends Presenter<PublicationPresenter.Publica
         // Redirect to metadata tab
         getView().selectMetadataTab();
         if (NameTokens.publicationPage.equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
-            goToPublicationMetadata();
+            loadInitialData();
         }
     }
 

@@ -40,4 +40,35 @@ public class MultidatasetCubeTreeNode extends NavigableTreeNode {
     public MultidatasetCubeDto getMultidatasetCubeDto() {
         return (MultidatasetCubeDto) getAttributeAsObject(MultidatasetCubeDS.DTO);
     }
+
+    public void setLinkedTypeResource(String value) {
+        setAttribute(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK, value);
+    }
+
+    public String getLinkedTypeResource() {
+        return getAttributeAsString(MultidatasetCubeDS.RESOURCE_TYPE_TO_LINK);
+    }
+
+    public void setLinkedResource(String value) {
+        setAttribute(MultidatasetCubeDS.RESOURCE_TO_LINK, value);
+    }
+
+    public String getLinkedResource() {
+        return getAttributeAsString(MultidatasetCubeDS.RESOURCE_TO_LINK);
+    }
+    public void setDSD(String value) {
+        setAttribute(MultidatasetCubeDS.DSD, value);
+    }
+
+    public String getDSD() {
+        return getAttributeAsString(MultidatasetCubeDS.DSD);
+    }
+
+    public void setQueryDataset(String value) {
+        setAttribute(MultidatasetCubeDS.QUERY_DATASET, value);
+    }
+
+    public String getQueryDataset() {
+        return getAttributeAsString(MultidatasetCubeDS.QUERY_DATASET);
+    }
 }

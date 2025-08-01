@@ -869,7 +869,7 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
     }
 
     private void mockRetrieveConceptsByConceptSchemeUrn() throws MetamacException {
-        when(srmRestInternalFacade.retrieveConceptsByConceptSchemeByUrn(any(String.class), any(String.class))).thenAnswer(new Answer<Concepts>() {
+        when(srmRestInternalFacade.retrieveConceptsByConceptSchemeByUrn(any(String.class), any(String.class), any(String.class))).thenAnswer(new Answer<Concepts>() {
 
             @Override
             public Concepts answer(InvocationOnMock invocation) throws Throwable {
