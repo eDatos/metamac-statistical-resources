@@ -139,7 +139,6 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
         if (!StringUtils.isBlank(operationCode)) {
             String operationUrn = CommonUtils.generateStatisticalOperationUrn(operationCode);
             retrieveOperation(operationUrn);
-            loadInitialData();
         }
     }
 
