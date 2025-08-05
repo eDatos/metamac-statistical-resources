@@ -326,6 +326,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         String purpose = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : "";
         setValue(QueryDS.PURPOSE_TYPE, purpose);
         setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
+        queryDto.setIsDsdChanged(false);
         this.queryDto = queryDto;
     }
 
@@ -432,6 +433,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                         // Set selected resource in form
                         setSelectedDataset(selectedResource);
                         dtoSelection = null;
+                        queryDto.setIsDsdChanged(true);
                         validate(false);
                     }
 
