@@ -115,8 +115,8 @@ public class NewQueryWindow extends CustomWindow {
         });
         CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
         purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
-        items.add(typeSelectorItem);
         items.add(purposeTypeSelectorItem);
+        items.add(typeSelectorItem);
 
         return items;
     }
