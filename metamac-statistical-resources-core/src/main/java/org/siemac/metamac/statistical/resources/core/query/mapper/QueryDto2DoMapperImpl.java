@@ -21,6 +21,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
@@ -114,7 +115,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
             List<ConditionDimensionDto> conditions = generateConditions(target.getSelection());
             DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(target);
             Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
-            if (observations.size() > 1 && "SOCIAL_NETWORK".equals(source.getPurpose().getIdentifier())) {
+            if (QueryTypeEnum.LATEST_DATA.equals(source.getType()) && source.getLatestDataNumber() > 1 && observations.size() > 1 && "SOCIAL_NETWORK".equals(source.getPurpose().getIdentifier())) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
                         .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
