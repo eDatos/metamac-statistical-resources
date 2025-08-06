@@ -21,7 +21,6 @@ import org.siemac.metamac.statistical.resources.core.base.domain.VersionRational
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
-import org.siemac.metamac.statistical.resources.core.common.utils.PortalWebCoreUtils;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
@@ -381,7 +380,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         }
         for (QueryVersion queryVersion : queriesDataset) {
             try {
-                if (queryVersion.getPurposes() != null && "SOCIAL_NETWORK".equals(queryVersion.getPurposes().getIdentifier())) {
+                if (queryVersion.getPurposes() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryVersion.getPurposes().getIdentifier())) {
                     List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
                     Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
                     // remember that we have to update the x page for the application to be read and write
