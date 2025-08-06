@@ -202,7 +202,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
     private List<DimensionOrder> getHeadingDimension(List<RelatedResourceDto> relatedResources, QueryVersion target, Boolean isDsdChanged) {
         target.getHeadingDimensions().clear();
-        if (isDsdChanged) {
+        if (Boolean.TRUE.equals(isDsdChanged)) {
             return new ArrayList<>();
         }
         int count = 1;
@@ -220,7 +220,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
     private List<DimensionOrder> getStubDimension(List<RelatedResourceDto> relatedResources, QueryVersion target, Boolean isDsdChanged) {
         target.getStubDimensions().clear();
-        if (isDsdChanged) {
+        if (Boolean.TRUE.equals(isDsdChanged)) {
             return new ArrayList<>();
         }
         int count = 1;
