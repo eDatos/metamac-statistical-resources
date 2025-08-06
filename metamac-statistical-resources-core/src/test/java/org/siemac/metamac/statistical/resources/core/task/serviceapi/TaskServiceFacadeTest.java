@@ -97,4 +97,16 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
         // No test
     }
+
+    @Override
+    public void testScheduleDataViewAdjustmentJob() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void testExecuteDataViewAdjustmentTask() throws Exception {
+        // TODO Auto-generated method stub
+
+    }
 }

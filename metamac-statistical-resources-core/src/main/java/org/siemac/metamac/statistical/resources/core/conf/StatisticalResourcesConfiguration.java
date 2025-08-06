@@ -44,4 +44,7 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public boolean retrieveTwitterSentEnable() throws MetamacException;
 
     public String retrieveTwitterAccesTokenSecret() throws MetamacException;
+
+    @Deprecated
+    public String retrieveCronExpressionForDataViewAdjustment() throws MetamacException;
 }

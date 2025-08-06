@@ -135,4 +135,16 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
         taskservice.scheduleResendKafkaDatasetMessageJob(ctx);
 
     }
+
+    @Override
+    public void scheduleDataViewAdjustmentJob(ServiceContext ctx) {
+        taskservice.scheduleDataViewAdjustmentJob(ctx);
+
+    }
+
+    @Override
+    public void executeDataViewAdjustmentTask(ServiceContext ctx) throws MetamacException {
+        taskservice.processDataViewAdjustmentTask(ctx);
+
+    }
 }

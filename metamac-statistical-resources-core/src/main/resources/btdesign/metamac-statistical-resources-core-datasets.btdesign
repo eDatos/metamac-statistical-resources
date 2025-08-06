@@ -130,6 +130,10 @@ Application DatasetsStatisticalResources {
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
     		List<@DatasetVersion> retrievePublishedLastVersionDatasets() throws MetamacException;
     		@DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId) throws MetamacException;
+    		
+    		
+    		"Temporal for EDATOS-5154 Schedule data transformation job"
+			processDataViewAdjustmentInRepository();
 		}
 
 

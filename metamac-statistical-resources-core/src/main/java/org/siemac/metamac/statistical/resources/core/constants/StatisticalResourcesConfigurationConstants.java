@@ -17,6 +17,9 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String CRON_EXPRESSION_FOR_GEOGRAPHIC_COVERAGE_CACHE_CLEAR = "metamac.statistical_resources.geografic_coverage_cache_clear.cron_expression";
     public static final String CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE    = "metamac.statistical_resources.resend_dataset_kafka_message.cron_expression";
 
+    @Deprecated
+    public static final String CRON_EXPRESSION_FOR_DATA_VIEW_ADJUSTMENT            = "metamac.statistical_resources.data_view_adjustment.cron_expression";
+
     // DataSources
 
     public static final String DB_URL                                              = "metamac.statistical_resources.db.url";

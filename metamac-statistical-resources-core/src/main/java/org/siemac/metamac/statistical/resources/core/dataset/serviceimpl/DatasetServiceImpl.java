@@ -12,6 +12,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -2426,5 +2427,78 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         } finally {
             IOUtils.closeQuietly(outputStreamObservations);
         }
+    }
+
+    @Override
+    @Deprecated
+    public void processDataViewAdjustmentInRepository(ServiceContext ctx) {
+     
+      
+            
+            //retrieve all datasets
+            Map<String, List<DimensionDto>> dsdByDimension = new HashMap<>();
+            
+            List<DatasetVersion> datasetVersions = datasetVersionRepository.findAll();
+                   
+            log.info("----------------------------------------- processDataViewAdjustmentTask: starting at {}  --- number affected datasets: {}", new Date(), datasetVersions.size());
+            
+            int numberAffectedDatasets = 0;
+            int i = 0;
+            
+            for (DatasetVersion dv: datasetVersions) {
+               
+                processDataViewAdjustmentDataset(ctx, dv, dsdByDimension, datasetVersions);
+                
+                if ( i++>= 50) {
+                    log.info(String.format("processDataViewAdjustmentTask checkPoint : number updated datasets %d --- of total datasets: %d at %s", numberAffectedDatasets, datasetVersions.size(), new Date().toString()));
+                i = 0;
+                }
+                numberAffectedDatasets++;
+                }
+                
+            log.info("----------------------------------------- processDataViewAdjustmentTask: finished at {}",  new Date());
     } 
+    
+    @Deprecated
+    private void processDataViewAdjustmentDataset(ServiceContext ctx, DatasetVersion dv, Map<String, List<DimensionDto>> dsdByDimension, List<DatasetVersion> datasetVersions) {
+        try {
+            
+            if (dv.getDatasetRepositoryId() == null) {
+                // dataset not exists in repository
+                log.warn("processDataViewAdjustmentDataset -> ID_NOT_EXISTS Dataset {} not exists in repository. It will not be updated", dv.getSiemacMetadataStatisticalResource().getUrn());
+                return;         
+            }
+            
+            List<DimensionDto> dimensionsDto = new ArrayList<>();                
+            if (dsdByDimension.containsKey(dv.getRelatedDsd().getUrn())) {
+                dimensionsDto = dsdByDimension.get(dv.getRelatedDsd().getUrn()); 
+            } else {
+                DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(dv.getRelatedDsd().getUrn());
+                List<DsdDimension> dimensions = DsdProcessor.getDimensions(dsd);
+                for (DsdDimension dsdDimension : dimensions) {
+                    String sourceUrn = getDataSourceUrnForEnumeratedDimensions(dsdDimension);
+                    if (sourceUrn != null) {
+                    DimensionDto dimension = new DimensionDto();
+                    dimension.setDimensionId(dsdDimension.getComponentId());
+                    dimension.setSourceUrn(getDataSourceUrnForEnumeratedDimensions(dsdDimension));
+                    dimensionsDto.add(dimension);
+                    }     
+                }
+                if (!dimensionsDto.isEmpty()) {
+                dsdByDimension.put(dv.getRelatedDsd().getUrn(), dimensionsDto);
+                }
+            }
+                     
+                datasetRepositoriesServiceFacade.updateDatasetDimensionSourceUrn(dv.getDatasetRepositoryId(), dimensionsDto);
+                //do not assign view role because it has a bad performance. I will be assign manually by script.
+                createOrReplaceLastVersionDatabaseView(dv.getSiemacMetadataStatisticalResource().getUrn(), dv);
+                
+                
+                
+        } catch (MetamacException  | ApplicationException e) {
+            log.warn("Dataset repository [" + dv.getDatasetRepositoryId() + "] Error in data view adjustment for descriptions fields", e);
+
+        }        
+    }
+    
 }
