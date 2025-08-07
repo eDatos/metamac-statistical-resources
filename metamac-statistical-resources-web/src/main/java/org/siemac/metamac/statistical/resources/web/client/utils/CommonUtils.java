@@ -560,7 +560,7 @@ public class CommonUtils {
 
     public static String getPurposeName(PurposeDto purposeDto) {
         if (purposeDto != null) {
-            return CommonWebUtils.getElementName(purposeDto.getIdentifier(), purposeDto.getDescription());
+            return InternationalStringUtils.getLocalisedString(purposeDto.getDescription());
         }
         return StringUtils.EMPTY;
     }
