@@ -155,8 +155,7 @@ public class NewQueryWindow extends CustomWindow {
             CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
             String purposeStr = selectPurpose.getValueAsString();
             
-            latestDataNumber = customIntegerItem != null ? customIntegerItem.getValueAsInteger() 
-                    : StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? 1 : null;
+            latestDataNumber = customIntegerItem != null ? (!StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? customIntegerItem.getValueAsInteger() : 1) : null;
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularitie(queryDto);
