@@ -103,9 +103,18 @@ public class NewQueryWindow extends CustomWindow {
         relatedDatasetItem = createQueryDatasetItem();
         relatedDatasetItem.setRequired(true);
         items.add(relatedDatasetItem);
+        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
+        purposeTypeSelectorItem.addChangedHandler(new ChangedHandler() {
+
+            @Override
+            public void onChanged(ChangedEvent event) {
+                form.markForRedraw();
+            }
+        });
         CustomSelectItem typeSelectorItem = new CustomSelectItem(QueryDS.TYPE, getConstants().queryType());
         typeSelectorItem.setValueMap(CommonUtils.getQueryTypeHashMap());
-        typeSelectorItem.setRequired(true);
+        typeSelectorItem.setShowIfCondition(getFormItemIfPurposeSocialNetworkSelected());
         typeSelectorItem.addChangedHandler(new ChangedHandler() {
 
             @Override
@@ -113,8 +122,6 @@ public class NewQueryWindow extends CustomWindow {
                 form.markForRedraw();
             }
         });
-        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
-        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
         items.add(purposeTypeSelectorItem);
         items.add(typeSelectorItem);
 
@@ -128,7 +135,10 @@ public class NewQueryWindow extends CustomWindow {
     }
     public QueryVersionDto getNewQueryDto() {
         QueryVersionDto queryDto = new QueryVersionDto();
-        QueryTypeEnum queryType = QueryTypeEnum.valueOf(form.getValueAsString(QueryDS.TYPE));
+        CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
+        String purposeStr = selectPurpose.getValueAsString();
+
+        QueryTypeEnum queryType = !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? QueryTypeEnum.valueOf(form.getValueAsString(QueryDS.TYPE)) : QueryTypeEnum.LATEST_DATA;
         queryDto.setCode(form.getValueAsString(QueryDS.CODE));
         queryDto.setTitle(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(QueryDS.TITLE)));
         queryDto.setSelection(new HashMap<String, List<CodeItemDto>>());
@@ -152,8 +162,6 @@ public class NewQueryWindow extends CustomWindow {
         Integer latestDataNumber = null;
         if (isLatestData) {
             CustomIntegerItem customIntegerItem = (CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA);
-            CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
-            String purposeStr = selectPurpose.getValueAsString();
             
             latestDataNumber = customIntegerItem != null ? (!StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? customIntegerItem.getValueAsInteger() : 1) : null;
         }
@@ -429,6 +437,18 @@ public class NewQueryWindow extends CustomWindow {
         };
     }
 
+    private FormItemIfFunction getFormItemIfPurposeSocialNetworkSelected() {
+        return new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
+                String purposeStr = selectPurpose.getValueAsString();
+                return !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr);
+            }
+        };
+    }
+
     private void setSelectedCodesForDimension(String dimensionId, List<CodeItemDto> selectedResources, boolean editable) {
         CodeItemListItem item = (CodeItemListItem) form.getItem(buildSelectionItemId(dimensionId));
         item.setCodeItems(selectedResources);
@@ -453,7 +473,9 @@ public class NewQueryWindow extends CustomWindow {
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 CustomSelectItem selectType = ((CustomSelectItem) form.getItem(QueryDS.TYPE));
                 String typeStr = selectType.getValueAsString();
-                return (typeStr != null);
+                CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
+                String purposeStr = selectPurpose.getValueAsString();
+                return (typeStr != null || StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr));
             }
         };
     }
