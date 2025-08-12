@@ -13,7 +13,7 @@
 * Ejecutar el script de la carpeta common-metadata
 * Ejecutar los scripts creados en el proyecto  edatos-dataset-repository sobre la base de datos statistical-resources-data: etc/changes-from-release/3.3.0/db/edatos-dataset-repository/postgresql
 ** Ejecutar los scripts de la carpeta "/db/edatos-dataset-repository/" excepto los de "/db/edatos-dataset-repository/view_transformation_process" que son scripts de adecuación al nuevo modelo por lo que se dejarán para el final.
-** Ejecutar los scripts "/db/edatos-dataset-repository/view_transformation_process" siguiendo los pasos que se indican en cada fichero. s
+** Ejecutar los scripts "/db/edatos-dataset-repository/view_transformation_process" siguiendo los pasos que se indican en cada fichero.
 
 
 ## 10.15.2 a 10.16.0

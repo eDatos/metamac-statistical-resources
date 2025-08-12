@@ -53,6 +53,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRep
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDto2DoMapper;
+import org.siemac.metamac.statistical.resources.core.dataset.mapper.KafkaMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatRepoDto2StatisticalResourcesDtoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.StatisticalResourcesDto2StatRepoDtoMapper;
 import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatisticalResourceDto;
@@ -130,7 +131,6 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedMulti
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
-import org.siemac.metamac.statistical.resources.web.server.stream.KafkaMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

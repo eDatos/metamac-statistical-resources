@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical.resources.web.server.stream;
+package org.siemac.metamac.statistical.resources.core.dataset.mapper;
 
 import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
