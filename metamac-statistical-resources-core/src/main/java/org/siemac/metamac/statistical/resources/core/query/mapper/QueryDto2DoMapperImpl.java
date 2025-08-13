@@ -120,6 +120,10 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
                         .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
+            if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getType())) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
+                .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
         }
     }
 

@@ -149,13 +149,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
     private CustomSelectItem createPurposeAndXTemplate() {
         CustomSelectItem purposeTypeSelectorItem = createPurposeTypeSelector();
-        purposeTypeSelectorItem.addChangedHandler(new ChangedHandler() {
 
-            @Override
-            public void onChanged(ChangedEvent event) {
-                QueryProductionDescriptorsEditionForm.this.markForRedraw();
-            }
-        });
         createXTemplate();
         return purposeTypeSelectorItem;
     }
@@ -187,7 +181,6 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     private CustomSelectItem createTypeSelector() {
         CustomSelectItem typeSelectorItem = new CustomSelectItem(QueryDS.TYPE, getConstants().queryType());
         typeSelectorItem.setValueMap(CommonUtils.getQueryTypeHashMap());
-        typeSelectorItem.setShowIfCondition(getFormItemIfPurposeSocialNetworkSelected());
         typeSelectorItem.addChangedHandler(new ChangedHandler() {
 
             @Override
@@ -335,11 +328,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     }
 
     public QueryVersionDto getQueryDto(QueryVersionDto queryDto) {
-        
-        CustomSelectItem selectPurpose = ((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE));
-        String purposeStr = selectPurpose.getValueAsString();
-
-        QueryTypeEnum queryType = !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? QueryTypeEnum.valueOf(getValueAsString(QueryDS.TYPE)) : QueryTypeEnum.LATEST_DATA;
+        QueryTypeEnum queryType = QueryTypeEnum.valueOf(getValueAsString(QueryDS.TYPE));
         queryDto.setMaintainer(getValueAsExternalItemDto(SiemacMetadataDS.MAINTAINER));
         queryDto.setRelatedDatasetVersion(getRelatedResourceValue(getItem(QueryDS.RELATED_DATASET_VERSION)));
 
@@ -360,8 +349,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         queryDto.setSelection(selection);
         Integer latestDataNumber = null;
         if (isLatestData) {
-            CustomIntegerItem customIntegerItem = (CustomIntegerItem) getItem(QueryDS.LATEST_N_DATA);
-            latestDataNumber = customIntegerItem != null ? (!StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? customIntegerItem.getValueAsInteger() : 1) : null;
+            latestDataNumber = ((CustomIntegerItem) getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularities(queryDto);
@@ -720,18 +708,6 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                 return purpose != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purpose.getIdentifier());
             }
         });
-    }
-
-    private FormItemIfFunction getFormItemIfPurposeSocialNetworkSelected() {
-        return new FormItemIfFunction() {
-
-            @Override
-            public boolean execute(FormItem item, Object value, DynamicForm form) {
-                CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
-                String purposeStr = selectPurpose.getValueAsString();
-                return !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr);
-            }
-        };
     }
 
     @Override
