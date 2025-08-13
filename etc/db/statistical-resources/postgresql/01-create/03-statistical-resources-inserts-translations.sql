@@ -119,3 +119,14 @@ INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VE
 INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), '{yyyy} Semana {ww}', 'pt', currval('seq_i18nstrs'), 1);
 INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), '{yyyy} Setmana {ww}', 'ca', currval('seq_i18nstrs'), 1);
 INSERT INTO TB_TRANSLATIONS (ID, CODE, TITLE_FK) values (nextval('seq_translations'), 'TIME_SDMX.WEEK', currval('seq_i18nstrs'));
+
+-- PURPOSES
+INSERT INTO TB_INTERNATIONAL_STRINGS (ID, VERSION) values (nextval('seq_i18nstrs'), 1);
+INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), 'Social networks', 'en', currval('seq_i18nstrs'), 1);
+INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), 'Redes sociales', 'es', currval('seq_i18nstrs'), 1);
+INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), 'Xarxes socials', 'ca', currval('seq_i18nstrs'), 1);
+
+INSERT INTO TB_INTERNATIONAL_STRINGS (ID, VERSION) values (nextval('seq_i18nstrs'), 1);
+INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), 'Data filter', 'en', currval('seq_i18nstrs'), 1);
+INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), 'Filtro de datos', 'es', currval('seq_i18nstrs'), 1);
+INSERT INTO TB_LOCALISED_STRINGS (ID, LABEL, LOCALE, INTERNATIONAL_STRING_FK, VERSION) values (nextval('seq_l10nstrs'), 'Filtre de dades', 'ca', currval('seq_i18nstrs'), 1);
