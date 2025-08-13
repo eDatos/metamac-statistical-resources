@@ -29,6 +29,7 @@ Application QueriesStatisticalResourcesDto {
 			- List<RelatedResourceDto> stubDimensions
 			- @PurposeDto purpose
 			- @InternationalStringDto xTemplateDto
+			Boolean isDsdChanged;
 		}
 		
 		DataTransferObject SelectionItemDto {

@@ -187,8 +187,8 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         for (QuerySelectionItem item : targetItems) {
             target.addSelection(item);
         }
-        target.getHeadingDimensions().addAll(getHeadingDimension(source.getHeadingDimensions(), target));
-        target.getStubDimensions().addAll(getStubDimension(source.getStubDimensions(), target));
+        target.getHeadingDimensions().addAll(getHeadingDimension(source.getHeadingDimensions(), target, source.getIsDsdChanged()));
+        target.getStubDimensions().addAll(getStubDimension(source.getStubDimensions(), target, source.getIsDsdChanged()));
         target.setPurposes(purposeDtoToDo(source.getPurpose()));
         target.setXTemplate(internationalStringDtoToDo(source.getXTemplateDto(), target.getXTemplate(), ServiceExceptionParameters.QUERY_VERSION));
         return target;
@@ -206,8 +206,11 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         }
     }
 
-    private List<DimensionOrder> getHeadingDimension(List<RelatedResourceDto> relatedResources, QueryVersion target) {
+    private List<DimensionOrder> getHeadingDimension(List<RelatedResourceDto> relatedResources, QueryVersion target, Boolean isDsdChanged) {
         target.getHeadingDimensions().clear();
+        if (Boolean.TRUE.equals(isDsdChanged)) {
+            return new ArrayList<>();
+        }
         int count = 1;
         List<DimensionOrder> dimensionsOrder = new ArrayList<>();
         for (RelatedResourceDto relatedResource : relatedResources) {
@@ -221,8 +224,11 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         return dimensionsOrder;
     }
 
-    private List<DimensionOrder> getStubDimension(List<RelatedResourceDto> relatedResources, QueryVersion target) {
+    private List<DimensionOrder> getStubDimension(List<RelatedResourceDto> relatedResources, QueryVersion target, Boolean isDsdChanged) {
         target.getStubDimensions().clear();
+        if (Boolean.TRUE.equals(isDsdChanged)) {
+            return new ArrayList<>();
+        }
         int count = 1;
         List<DimensionOrder> dimensionsOrder = new ArrayList<>();
         for (RelatedResourceDto relatedResource : relatedResources) {
