@@ -113,16 +113,16 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
     private void checkPurpose(QueryVersionDto source, QueryVersion target) throws MetamacException, ApplicationException {
         if (source.getPurpose() != null) {
+            if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getType())) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_PURPOSE_TYPE_NOT_COMPATIBLE).withMessageParameters(source.getUrn())
+                .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
             List<ConditionDimensionDto> conditions = generateConditions(target.getSelection());
             DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(target);
             Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
             if (QueryTypeEnum.LATEST_DATA.equals(source.getType()) && source.getLatestDataNumber() > 1 && observations.size() > 1 && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier())) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
                         .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
-            }
-            if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getType())) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
-                .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
         }
     }
