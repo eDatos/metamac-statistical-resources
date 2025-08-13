@@ -558,6 +558,15 @@ public class CommonUtils {
         return purposesMap.get(identifier);
     }
 
+    public static PurposeDto getPurposeFromLabel(String label) {
+        for (Map.Entry<String, PurposeDto> entry : purposesMap.entrySet()) {
+            if (getPurposeName(entry.getValue()).equals(label)) {
+                return entry.getValue();
+            }
+        }
+        return null;
+    }
+
     public static String getPurposeName(PurposeDto purposeDto) {
         if (purposeDto != null) {
             return InternationalStringUtils.getLocalisedString(purposeDto.getDescription());

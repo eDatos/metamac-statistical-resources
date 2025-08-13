@@ -144,7 +144,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 String purpose = ((ViewTextItem) getItem(QueryDS.PURPOSE_TYPE)).getValue().toString();
-                PurposeDto purposeDto = CommonUtils.getPurpose(purpose.split(" ") != null ? purpose.split(" ")[0] : "");
+                PurposeDto purposeDto = CommonUtils.getPurposeFromLabel(purpose);
                 return purposeDto != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeDto.getIdentifier());
             }
         };
