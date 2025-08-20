@@ -99,14 +99,16 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     }
 
     @Override
+    @Deprecated
     public void testScheduleDataViewAdjustmentJob() throws Exception {
-        // TODO Auto-generated method stub
+        // No test deleted with EDATOS-5200
 
     }
 
     @Override
+    @Deprecated
     public void testExecuteDataViewAdjustmentTask() throws Exception {
-        // TODO Auto-generated method stub
+        // No test deleted with EDATOS-5200
 
     }
 }

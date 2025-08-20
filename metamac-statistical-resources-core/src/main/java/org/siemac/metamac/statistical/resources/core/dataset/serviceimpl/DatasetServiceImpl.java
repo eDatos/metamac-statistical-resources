@@ -581,7 +581,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         try {
             List<String> languages = configurationService.retrieveInternationalizationLanguages();
-            statisticsDatasetRepositoriesServiceFacade.createOrReplaceDatasetRepositoryView(datasetRepositoryId, viewCode, languages);
+            statisticsDatasetRepositoriesServiceFacade.createOrReplaceDatasetRepositoryView(datasetRepositoryId, viewCode, languages,
+                    Arrays.asList(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID));
         } catch (Exception e) {
             log.error("Error creating or replacing view " + viewCode + " for datasetRepositoryId " + datasetRepositoryId, e);
             noticesRestInternalService.createCreateReplaceDatasetErrorBackgroundNotification(datasetVersion, viewCode, datasetRepositoryId);
@@ -2438,9 +2439,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             //retrieve all datasets
             Map<String, List<DimensionDto>> dsdByDimension = new HashMap<>();
             
-            List<DatasetVersion> datasetVersions = datasetVersionRepository.findAll();
+            // views only are defined for the last version of dataset. Independently that the last versión is draft o not. So only generate view for last versions.
+            List<DatasetVersion> datasetVersions = retrieveLastVersionDatasets();
+           
                    
-            log.info("----------------------------------------- processDataViewAdjustmentTask: starting at {}  --- number affected datasets: {}", new Date(), datasetVersions.size());
+            log.info("----------------------------------------- processDataViewAdjustmentTask: starting at {}  --- number affected last version datasets: {}", new Date(), datasetVersions.size());
             
             int numberAffectedDatasets = 0;
             int i = 0;
@@ -2499,6 +2502,16 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             log.warn("Dataset repository [" + dv.getDatasetRepositoryId() + "] Error in data view adjustment for descriptions fields", e);
 
         }        
+    }
+    
+    @Deprecated
+    // DELETE IN EDATOS 5200 
+    private List<DatasetVersion> retrieveLastVersionDatasets()  {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion())
+                .eq(Boolean.TRUE).distinctRoot().build();
+        return datasetVersionRepository.findByCondition(criteria);
+
     }
     
 }
