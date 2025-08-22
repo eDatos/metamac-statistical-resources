@@ -44,12 +44,16 @@ public class KafkaMapperImpl implements KafkaMapper {
 
         ExternalItemDto externalItemDto = new ExternalItemDto();
 
-        externalItemDto.setType(TypeExternalArtefactsEnum.CODELIST.getName());
+        externalItemDto.setType(TypeExternalArtefactsEnum.CODELIST.getValue());
         externalItemDto.setUrn(codelistAvro.getUrn());
 
         Codes codes = srmService.retrieveCodesOfCodelistEfficiently(codelistAvro.getUrn());
         for (CodeResourceInternal srmCode : codes.getCodes()) {
-            externalItemDto.addCode(itemResourceInternalToExternalItemCodesDto(srmCode));
+            ExternalItemCodesDto externalItemCodeDto = itemResourceInternalToExternalItemCodesDto(srmCode);
+            if (srmCode.getVariableElement() != null) {
+                externalItemCodeDto.setElementCode(srmCode.getVariableElement().getId());
+            }
+            externalItemDto.addCode(externalItemCodeDto);
         }
 
         return externalItemDto;
@@ -62,7 +66,7 @@ public class KafkaMapperImpl implements KafkaMapper {
 
         ExternalItemDto externalItemDto = new ExternalItemDto();
 
-        externalItemDto.setType(TypeExternalArtefactsEnum.CONCEPT_SCHEME.getName());
+        externalItemDto.setType(TypeExternalArtefactsEnum.CONCEPT_SCHEME.getValue());
         externalItemDto.setUrn(conceptSchemeAvro.getUrn());
 
         Concepts concepts = srmService.retrieveConceptsOfConceptSchemeEfficiently(conceptSchemeAvro.getUrn());

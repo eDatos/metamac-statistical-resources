@@ -582,7 +582,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             List<String> languages = configurationService.retrieveInternationalizationLanguages();
             statisticsDatasetRepositoriesServiceFacade.createOrReplaceDatasetRepositoryView(datasetRepositoryId, viewCode, languages,
-                    Arrays.asList(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID));
+                    Arrays.asList(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID), new ArrayList<>());
         } catch (Exception e) {
             log.error("Error creating or replacing view " + viewCode + " for datasetRepositoryId " + datasetRepositoryId, e);
             noticesRestInternalService.createCreateReplaceDatasetErrorBackgroundNotification(datasetVersion, viewCode, datasetRepositoryId);
@@ -2441,7 +2441,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             
             // views only are defined for the last version of dataset. Independently that the last versión is draft o not. So only generate view for last versions.
             List<DatasetVersion> datasetVersions = retrieveLastVersionDatasets();
-           
+            List<String> datasetVersionTreated = new ArrayList<>();
                    
             log.info("----------------------------------------- processDataViewAdjustmentTask: starting at {}  --- number affected last version datasets: {}", new Date(), datasetVersions.size());
             
@@ -2450,20 +2450,46 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             
             for (DatasetVersion dv: datasetVersions) {
                
-                processDataViewAdjustmentDataset(ctx, dv, dsdByDimension, datasetVersions);
+                processDataViewAdjustmentDataset(ctx, dv, dsdByDimension, datasetVersions, true);
                 
                 if ( i++>= 50) {
                     log.info(String.format("processDataViewAdjustmentTask checkPoint : number updated datasets %d --- of total datasets: %d at %s", numberAffectedDatasets, datasetVersions.size(), new Date().toString()));
                 i = 0;
                 }
                 numberAffectedDatasets++;
+                datasetVersionTreated.add(dv.getSiemacMetadataStatisticalResource().getUrn());
                 }
                 
             log.info("----------------------------------------- processDataViewAdjustmentTask: finished at {}",  new Date());
+            
+            
+            List<DatasetVersion> datasetVersionsAll = datasetVersionRepository.findAll();
+            
+ log.info("----------------------------------------- processDataViewAdjustmentTask to fill sourceUrn not lastVersion datasets: starting at {}  --- number affected last version datasets: {}", new Date(), datasetVersions.size());
+            
+            numberAffectedDatasets = 0;
+            i = 0;
+            
+            for (DatasetVersion dv: datasetVersionsAll) {
+               if (!datasetVersionTreated.contains(dv.getSiemacMetadataStatisticalResource().getUrn())) {
+                processDataViewAdjustmentDataset(ctx, dv, dsdByDimension, datasetVersions, false);
+                
+                if ( i++>= 50) {
+                    log.info(String.format("processDataViewAdjustmentTask to fill sourceUrn not lastVersion datasets checkPoint : number updated datasets %d --- of total datasets: %d at %s", numberAffectedDatasets, datasetVersions.size(), new Date().toString()));
+                i = 0;
+                }
+                numberAffectedDatasets++;
+                }
+            }
+                
+            log.info("----------------------------------------- processDataViewAdjustmentTask to fill sourceUrn not lastVersion datasets: finished at {}",  new Date());
+            
+            
+            
     } 
     
     @Deprecated
-    private void processDataViewAdjustmentDataset(ServiceContext ctx, DatasetVersion dv, Map<String, List<DimensionDto>> dsdByDimension, List<DatasetVersion> datasetVersions) {
+    private void processDataViewAdjustmentDataset(ServiceContext ctx, DatasetVersion dv, Map<String, List<DimensionDto>> dsdByDimension, List<DatasetVersion> datasetVersions, boolean regenerateViewForLastVersionDataset) {
         try {
             
             if (dv.getDatasetRepositoryId() == null) {
@@ -2493,8 +2519,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             }
                      
                 datasetRepositoriesServiceFacade.updateDatasetDimensionSourceUrn(dv.getDatasetRepositoryId(), dimensionsDto);
+                
+                if (regenerateViewForLastVersionDataset) {
                 //do not assign view role because it has a bad performance. I will be assign manually by script.
                 createOrReplaceLastVersionDatabaseView(dv.getSiemacMetadataStatisticalResource().getUrn(), dv);
+                }
                 
                 
                 
