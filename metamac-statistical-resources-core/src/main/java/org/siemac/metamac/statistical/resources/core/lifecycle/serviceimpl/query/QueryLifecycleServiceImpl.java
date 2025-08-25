@@ -12,8 +12,8 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
-import org.siemac.metamac.statistical.resources.core.common.utils.PortalWebCoreUtils;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
@@ -275,7 +275,7 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
             if (!configurationService.retrieveTwitterSentEnable()) {
                 return;
             }
-            if (resource.getPurposes() != null && "SOCIAL_NETWORK".equals(resource.getPurposes().getIdentifier())) {
+            if (resource.getPurposes() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(resource.getPurposes().getIdentifier())) {
                 DatasetVersion lastDatasetVersion = datasetVersionRepository.retrieveLastPublishedVersion(resource.getDataset().getIdentifiableStatisticalResource().getUrn());
                 List<ConditionDimensionDto> conditions = generateConditions(resource.getSelection());
                 Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(lastDatasetVersion.getDatasetRepositoryId(), conditions);
