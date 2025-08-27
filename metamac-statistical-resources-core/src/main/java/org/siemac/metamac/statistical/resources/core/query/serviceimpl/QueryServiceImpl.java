@@ -42,6 +42,8 @@ import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTyp
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.query.QueryLifecycleService;
+import org.siemac.metamac.statistical.resources.core.query.domain.Purpose;
+import org.siemac.metamac.statistical.resources.core.query.domain.PurposeRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -81,6 +83,9 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
     @Autowired
     private RelatedResourceRepository                 relatedResourceRepository;
+
+    @Autowired
+    private PurposeRepository                         purposeRepository;
 
     @Autowired
     private LifeCycleStatisticalResourceGeneratedCode    lifeCycleStatisticalResourceGeneratedCode;
@@ -422,6 +427,11 @@ public class QueryServiceImpl extends QueryServiceImplBase {
             return queryVersion.getFixedDatasetVersion();
         }
         return datasetVersionRepository.retrieveLastVersion(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+    }
+
+    @Override
+    public List<Purpose> findPurposes(ServiceContext ctx) throws MetamacException {
+        return purposeRepository.findAll();
     }
 
 }

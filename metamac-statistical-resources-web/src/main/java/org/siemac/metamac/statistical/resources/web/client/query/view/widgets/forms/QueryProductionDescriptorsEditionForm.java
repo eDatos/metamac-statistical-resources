@@ -19,6 +19,7 @@ import org.siemac.metamac.statistical.resources.core.base.checks.MetadataEdition
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
@@ -45,6 +46,7 @@ import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginat
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmItemLinkItemWithSchemeFilterItem;
 import org.siemac.metamac.web.common.client.widgets.windows.search.SearchMultipleExternalItemPaginatedWindow;
@@ -63,6 +65,8 @@ import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemClickHandler;
 import com.smartgwt.client.widgets.form.fields.events.FormItemIconClickEvent;
 import com.smartgwt.client.widgets.form.validator.CustomValidator;
+import com.smartgwt.client.widgets.form.validator.RequiredIfFunction;
+import com.smartgwt.client.widgets.form.validator.RequiredIfValidator;
 import com.smartgwt.client.widgets.grid.ListGrid;
 import com.smartgwt.client.widgets.grid.ListGridField;
 import com.smartgwt.client.widgets.grid.ListGridRecord;
@@ -84,6 +88,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
     private QueryVersionDto                                          queryDto;
     private SearchMultiExternalItem                                  temporalGranularitiesItem;
+    private MultiLanguageRichTextEditorItem                          xTemplate;
 
     public QueryProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
@@ -92,15 +97,43 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setFields(fields.toArray(new FormItem[fields.size()]));
     }
 
+    public QueryProductionDescriptorsEditionForm(QueryVersionDto queryVersionDto) {
+        super(getConstants().formProductionDescriptors());
+
+        List<FormItem> fields = createComponents(queryVersionDto);
+        
+        setFields(fields.toArray(new FormItem[fields.size()]));
+    }
+
     private List<FormItem> createComponents() {
         List<FormItem> fields = new ArrayList<FormItem>();
 
+        createMaintainersAndSearchDataset(fields);
+        CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
+        fields.add(purposeTypeSelectorItem);
+        fields.add(xTemplate);
+        
+        return fields;
+    }
+
+    private List<FormItem> createComponents(QueryVersionDto queryVersionDto) {
+        List<FormItem> fields = new ArrayList<FormItem>();
+
+        createMaintainersAndSearchDataset(fields);
+        CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
+        xTemplate.setRequired(queryVersionDto.getPurpose() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryVersionDto.getPurpose().getIdentifier()));
+        fields.add(purposeTypeSelectorItem);
+        fields.add(xTemplate);
+        
+        return fields;
+    }
+    
+    private void createMaintainersAndSearchDataset(List<FormItem> fields) {
         maintainerItem = createMaintainerItem();
         maintainerItem.setShowIfCondition(getFormItemIfFunctionEditionMode());
         fields.add(maintainerItem);
 
-        ExternalItemLinkItem maintainerViewItem = new ExternalItemLinkItem(SiemacMetadataDS.MAINTAINER_VIEW, getConstants().siemacMetadataStatisticalResourceMaintainer());
-        maintainerViewItem.setShowIfCondition(getFormItemIfFunctionViewMode());
+        ExternalItemLinkItem maintainerViewItem = createMaintainerViewItem();
         fields.add(maintainerViewItem);
 
         SearchRelatedResourceLinkItem searchDatasetItem = createQueryDatasetItem();
@@ -109,9 +142,45 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         ViewTextItem status = new ViewTextItem(QueryDS.STATUS, getConstants().queryStatus());
         fields.add(status);
 
+        CustomSelectItem typeSelectorItem = createTypeSelector();
+
+        fields.add(typeSelectorItem);
+    }
+
+    private CustomSelectItem createPurposeAndXTemplate() {
+        CustomSelectItem purposeTypeSelectorItem = createPurposeTypeSelector();
+
+        createXTemplate();
+        return purposeTypeSelectorItem;
+    }
+
+    private void createXTemplate() {
+        xTemplate = new MultiLanguageRichTextEditorItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+        xTemplate.setShowIfCondition(getXTemplateTextItem());
+    }
+
+    private CustomSelectItem createPurposeTypeSelector() {
+        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
+        purposeTypeSelectorItem.addChangedHandler(new ChangedHandler() {
+
+            @Override
+            public void onChanged(ChangedEvent event) {
+                xTemplate.setRequired(true);
+                PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
+                if (purpose == null || !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purpose.getIdentifier())) {
+                    xTemplate.clearValue();
+                    xTemplate.setRequired(false);
+                }
+                QueryProductionDescriptorsEditionForm.this.markForRedraw();
+            }
+        });
+        return purposeTypeSelectorItem;
+    }
+
+    private CustomSelectItem createTypeSelector() {
         CustomSelectItem typeSelectorItem = new CustomSelectItem(QueryDS.TYPE, getConstants().queryType());
         typeSelectorItem.setValueMap(CommonUtils.getQueryTypeHashMap());
-        typeSelectorItem.setRequired(true);
         typeSelectorItem.addChangedHandler(new ChangedHandler() {
 
             @Override
@@ -119,8 +188,13 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                 QueryProductionDescriptorsEditionForm.this.markForRedraw();
             }
         });
-        fields.add(typeSelectorItem);
-        return fields;
+        return typeSelectorItem;
+    }
+
+    private ExternalItemLinkItem createMaintainerViewItem() {
+        ExternalItemLinkItem maintainerViewItem = new ExternalItemLinkItem(SiemacMetadataDS.MAINTAINER_VIEW, getConstants().siemacMetadataStatisticalResourceMaintainer());
+        maintainerViewItem.setShowIfCondition(getFormItemIfFunctionViewMode());
+        return maintainerViewItem;
     }
 
     private SearchMultiExternalItem createTemporalGranularitiesItem(final String datasetUrn) {
@@ -230,20 +304,27 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
     public void setQueryDto(QueryVersionDto queryDto) {
 
-        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, (SearchRelatedResourceLinkItem) getItem(QueryDS.RELATED_DATASET_VERSION));
+        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, getItem(QueryDS.RELATED_DATASET_VERSION));
         setValue(LifeCycleResourceDS.MAINTAINER, queryDto.getMaintainer());
         setValue(LifeCycleResourceDS.MAINTAINER_VIEW, queryDto.getMaintainer());
 
         String typeStr = queryDto.getType() != null ? queryDto.getType().name() : null;
         setValue(QueryDS.TYPE, typeStr);
+        String purposeType = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : null;
+        setValue(QueryDS.PURPOSE_TYPE, purposeType);
 
         dtoSelection = queryDto.getSelection();
+
         if (queryDto.getRelatedDatasetVersion() != null) {
             retrieveDimensionsForDataset(queryDto.getRelatedDatasetVersion().getUrn());
         }
 
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
+        String purpose = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : "";
+        setValue(QueryDS.PURPOSE_TYPE, purpose);
+        setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
+        queryDto.setIsDsdChanged(false);
         this.queryDto = queryDto;
     }
 
@@ -273,6 +354,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularities(queryDto);
+        queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
+        queryDto.setXTemplateDto(getValueAsInternationalStringDto(QueryDS.X_TEMPLATE));
         return queryDto;
     }
 
@@ -298,7 +381,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     // *******************************************************
 
     private void setSelectedDataset(RelatedResourceDto datasetResource) {
-        QueryRelatedDatasetUtils.setRelatedDataset(datasetResource, (SearchRelatedResourceLinkItem) getItem(QueryDS.RELATED_DATASET_VERSION));
+        QueryRelatedDatasetUtils.setRelatedDataset(datasetResource, getItem(QueryDS.RELATED_DATASET_VERSION));
 
         // Get dimensions
         if (datasetResource != null) {
@@ -348,6 +431,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                         // Set selected resource in form
                         setSelectedDataset(selectedResource);
                         dtoSelection = null;
+                        queryDto.setIsDsdChanged(true);
                         validate(false);
                     }
 
@@ -595,6 +679,17 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         };
     }
 
+    private FormItemIfFunction getXTemplateTextItem() {
+        return new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
+                return purpose != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purpose.getIdentifier());
+            }
+        };
+    }
+
     private FormItemIfFunction getFormItemIfFunctionViewMode() {
         return new FormItemIfFunction() {
 
@@ -604,6 +699,17 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
                 return !MetadataEditionChecks.canMaintainerBeEdited(maintainer != null ? maintainer.getId() : null);
             }
         };
+    }
+
+    public RequiredIfValidator getXTemplateRequiredIfValidator() {
+        return new RequiredIfValidator(new RequiredIfFunction() {
+
+            @Override
+            public boolean execute(FormItem formItem, Object value) {
+                PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
+                return purpose != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purpose.getIdentifier());
+            }
+        });
     }
 
     @Override

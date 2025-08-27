@@ -31,8 +31,8 @@ public class ImportDatasetJob extends AbstractImportDatasetJob {
     }
 
     @Override
-    protected void sendSuccessNotification(String fileNames, String user) {
-        getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_JOB_OK, fileNames);
+    protected void sendSuccessNotification(String fileNames, String user, String datasetVersionCode) {
+        getNoticesRestInternalService().createSuccessBackgroundNotification(user, ServiceNoticeAction.IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_JOB_OK, fileNames, datasetVersionCode);
     }
 
     @Override
@@ -47,11 +47,11 @@ public class ImportDatasetJob extends AbstractImportDatasetJob {
     }
 
     @Override
-    protected void processImportJobError(String taskName, String fileNames, MetamacException metamacException) {
+    protected void processImportJobError(String taskName, String fileNames, String datasetVersionCode, MetamacException metamacException) {
         try {
             getTaskServiceFacade().markTaskAsFailed(serviceContext, getData().getString(TASK_NAME), getData().getString(DATASET_VERSION_ID), getData().getString(DATASET_URN), metamacException);
             logger.info("{} marked as error at {}", taskName, new Date());
-            metamacException.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORT_DATASET_JOB_ERROR, fileNames));
+            metamacException.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.IMPORT_DATASET_JOB_ERROR, fileNames, datasetVersionCode));
             sendErrorNotification(metamacException);
         } catch (MetamacException e1) {
             logger.error("The importation with key {} has failed and it can't marked as error", taskName, e1);

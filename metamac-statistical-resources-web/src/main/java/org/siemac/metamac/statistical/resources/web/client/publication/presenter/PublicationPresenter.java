@@ -114,6 +114,7 @@ public class PublicationPresenter extends Presenter<PublicationPresenter.Publica
         getView().selectMetadataTab();
         if (NameTokens.publicationPage.equals(placeManager.getCurrentPlaceRequest().getNameToken())) {
             goToPublicationMetadata();
+            loadInitialData();
         }
     }
 

@@ -150,7 +150,7 @@ Application CommonStatisticalResources {
 			// Order
 			Integer dimOrder not nullable;
 			
-			String urnDimComponentFk not nullable;
+			String urnDimComponentFk not nullable length="4000";
 			
 			"Not null when dimension is in heading"
 			- @DatasetVersion datasetVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_heading_fk" <-> headingDimensions;

@@ -23,6 +23,7 @@ Application StatisticalResourcesDto {
 		DataTransferObject IdentifiableStatisticalResourceDto extends @StatisticalResourceDto {
 			String code;
 			String urn;
+			- @XStreamStatusEnum xStreamStatus nullable;
 		}
 		
 		DataTransferObject NameableStatisticalResourceBaseDto extends @IdentifiableStatisticalResourceDto {

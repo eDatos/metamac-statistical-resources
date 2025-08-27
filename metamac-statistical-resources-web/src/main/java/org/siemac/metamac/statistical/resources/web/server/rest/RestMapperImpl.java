@@ -16,6 +16,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribu
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concepts;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdDimension;
@@ -137,10 +138,16 @@ public class RestMapperImpl implements RestMapper {
             representationDto.setRepresentationType(AttributeRepresentationTypeEnum.ENUMERATION);
         } else if (dsdAttribute.getTextFormatRepresentation() != null) {
             representationDto.setRepresentationType(AttributeRepresentationTypeEnum.TEXT_FORMAT);
+            representationDto.setMultilingualType(isMultilingualAttributeTextFormatType(dsdAttribute));
         }
         representationDto.setCodelistRepresentationUrn(dsdAttribute.getCodelistRepresentationUrn());
         representationDto.setConceptSchemeRepresentationUrn(dsdAttribute.getConceptSchemeRepresentationUrn());
         return representationDto;
+    }
+
+    private Boolean isMultilingualAttributeTextFormatType(DsdAttribute dsdAttribute) {
+        return dsdAttribute.getTextFormatRepresentation() != null && dsdAttribute.getTextFormatRepresentation().getTextType() != null
+                && DataType.INTERNATIONAL_STRING.equals(dsdAttribute.getTextFormatRepresentation().getTextType());
     }
 
     private AttributeRelationshipTypeEnum getTypeRelathionship(AttributeRelationship attributeRelationship) {

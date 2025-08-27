@@ -17,4 +17,6 @@ public interface MultidatasetStructureTabUiHandlers extends BaseUiHandlers {
     void saveMultidatasetCube(String multidatasetVersionUrn, MultidatasetCubeDto cube);
     void deleteCube(String urn, String multidatasetCubeUrn);
     void updateCubeLocation(String multidatasetVersionUrn, String multidatasetCubeUrn, Long orderInMultidataset);
+
+    void goToRelatedDatasetQuery(String urn);
 }

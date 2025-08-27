@@ -24,6 +24,7 @@ Application DatasetsStatisticalResourcesDto {
 			String datasetNextProcStatus;
 			Boolean datasetAutomaticLifeCicle;
 			StringMap versionRationale;
+			String datasetVersionCode;
 			
  		}
 

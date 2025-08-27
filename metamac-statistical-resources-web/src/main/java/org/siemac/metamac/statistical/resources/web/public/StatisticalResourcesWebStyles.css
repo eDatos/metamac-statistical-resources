@@ -148,3 +148,7 @@ a:HOVER {
 	border-left: 1px solid #A7ABB4;
 	border-right: 1px solid #A7ABB4;
 }
+
+.item-numeration {
+	color: #808080;
+}

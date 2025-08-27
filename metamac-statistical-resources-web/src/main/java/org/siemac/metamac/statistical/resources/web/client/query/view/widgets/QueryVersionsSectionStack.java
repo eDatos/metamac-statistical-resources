@@ -23,6 +23,7 @@ public class QueryVersionsSectionStack extends VersionableResourceSectionStack {
 
         List<ListGridField> gridFields = new ArrayList<ListGridField>();
         addPublicationStreamStatusToGrid(gridFields);
+        addPublicationXStatusGrid(gridFields);
         super.setListGridFields(gridFields.toArray(new ListGridField[gridFields.size()]));
     }
 
@@ -44,5 +45,12 @@ public class QueryVersionsSectionStack extends VersionableResourceSectionStack {
         publicationStreamStatus.setType(ListGridFieldType.IMAGE);
         publicationStreamStatus.setAlign(Alignment.CENTER);
         fieldList.add(publicationStreamStatus);
+    }
+
+    private void addPublicationXStatusGrid(List<ListGridField> fieldList) {
+        ListGridField publicationXStatus = new ListGridField(LifeCycleResourceDS.PUBLICATION_X_STATUS, getConstants().publicationXStatus());
+        publicationXStatus.setType(ListGridFieldType.IMAGE);
+        publicationXStatus.setAlign(Alignment.CENTER);
+        fieldList.add(publicationXStatus);
     }
 }

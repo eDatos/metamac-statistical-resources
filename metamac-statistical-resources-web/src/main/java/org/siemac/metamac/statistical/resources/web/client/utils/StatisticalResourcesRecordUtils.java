@@ -4,7 +4,9 @@ import static org.siemac.metamac.web.common.client.utils.InternationalStringUtil
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.siemac.edatos.core.common.constants.shared.UrnConstants;
 import org.siemac.metamac.statistical.resources.core.dto.IdentifiableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
@@ -17,6 +19,7 @@ import org.siemac.metamac.statistical.resources.core.dto.VersionableStatisticalR
 import org.siemac.metamac.statistical.resources.core.dto.VersionableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.KeyValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.constraint.RegionValueDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.CategorisationDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
@@ -33,6 +36,7 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.ElementLeve
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasetRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasourceRecord;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DimensionConstraintsRecord;
@@ -54,6 +58,7 @@ import org.siemac.metamac.statistical.resources.web.client.publication.model.rec
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.PublicationRecord;
 import org.siemac.metamac.statistical.resources.web.client.query.model.record.QueryRecord;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
+import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.utils.RecordUtils;
@@ -241,11 +246,43 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
     }
 
     public static ElementLevelTreeNode getElementLevelNode(ElementLevelDto elementLevelDto) {
+
         ElementLevelTreeNode elementLevelNode = new ElementLevelTreeNode();
         NameableStatisticalResourceDto element = elementLevelDto.getChapter() != null ? elementLevelDto.getChapter() : elementLevelDto.getCube();
         elementLevelNode.setID(element.getUrn());
         elementLevelNode.setUrn(element.getUrn());
         elementLevelNode.setTitle(InternationalStringUtils.getLocalisedString(element.getTitle()));
+
+        if (elementLevelDto.getCube() != null) {
+            CubeDto cubeDto = elementLevelDto.getCube();
+            String linkedResource = "";
+            String queryDataset = "";
+
+            if (cubeDto.getDatasetUrn() != null) {
+                linkedResource = cubeDto.getDatasetUrn();
+            } else if (cubeDto.getQueryUrn() != null) {
+                linkedResource = cubeDto.getQueryUrn();
+                queryDataset = cubeDto.getRelatedDatasetUrnInQuery();
+            } else if (cubeDto.getMultidatasetUrn() != null) {
+                linkedResource = cubeDto.getMultidatasetUrn();
+            } else if (cubeDto.getCollectionUrn() != null) {
+                linkedResource = cubeDto.getCollectionUrn();
+            } else if (cubeDto.getUrl() != null) {
+                linkedResource = cubeDto.getUrl();
+            }
+
+            if (linkedResource != null) {
+                elementLevelNode.setLinkedResource(linkedResource);
+                elementLevelNode.setLinkedResourceType(getResourceType(linkedResource));
+            }
+            if (queryDataset != null) {
+                elementLevelNode.setQueryDataset(queryDataset);
+            }
+
+            elementLevelNode.setDSD(ResourceFieldUtils.formatExternalItemValue(cubeDto.getRelatedDSD(), true, false));
+
+        }
+
         elementLevelNode.setDescription(InternationalStringUtils.getLocalisedString(element.getDescription()));
         if (element instanceof ChapterDto) {
             elementLevelNode.setOrderInLevel(((ChapterDto) element).getOrderInLevel());
@@ -260,10 +297,26 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         return elementLevelNode;
     }
 
+    private static String getResourceType(String value) {
+        Map<String, String> statisticalResourceTypeMap = CommonUtils.getStatisticalResourceTypeThatCanBeAddIntoACubeInPublicationHashMap();
+
+        int lastDotIndex = value.lastIndexOf(UrnConstants.DOT);
+        int equalsIndex = value.indexOf(UrnConstants.EQUAL);
+
+        if (lastDotIndex < 0 || equalsIndex < 0 || equalsIndex <= lastDotIndex) {
+            return statisticalResourceTypeMap.get(StatisticalResourceTypeEnum.URL.name());
+        }
+
+        String resourceTypeInUrn = value.substring(lastDotIndex + 1, equalsIndex);
+
+        return statisticalResourceTypeMap.get(resourceTypeInUrn.toUpperCase());
+    }
+
     public static ElementLevelTreeNode getPublicationVersionRootNode(String schemeNodeName, PublicationVersionBaseDto publicationVersion) {
         ElementLevelTreeNode elementLevelTreeNode = new ElementLevelTreeNode();
         elementLevelTreeNode.setID(schemeNodeName);
         elementLevelTreeNode.setTitle(InternationalStringUtils.getLocalisedString(publicationVersion.getTitle()));
+
         return elementLevelTreeNode;
     }
 
@@ -296,6 +349,7 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         record.setStatus(CommonUtils.getQueryStatusName(queryDto));
         record.setType(CommonUtils.getQueryTypeName(queryDto));
         record.setQueryVersionBaseDto(queryDto);
+        record.setXPublicationStatus(CommonUtils.getXStatusIcon(queryDto.getXStreamStatus()));
         return record;
     }
 
@@ -421,11 +475,13 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
     // DSD ATTRIBUTE INSTANCES
     //
 
-    public static DsdAttributeInstanceRecord getDsdAttributeInstanceRecord(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
+    public static DsdAttributeInstanceRecord getDsdAttributeInstanceRecord(DsdAttributeInstanceDto dsdAttributeInstanceDto, DsdAttributeDto dsdAttributeDto) {
         DsdAttributeInstanceRecord record = new DsdAttributeInstanceRecord();
         if (dsdAttributeInstanceDto.getValue() != null) {
             if (dsdAttributeInstanceDto.getValue().getExternalItemValue() != null) {
                 record.setExternalItemValue(dsdAttributeInstanceDto.getValue().getExternalItemValue());
+            } else if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+                record.setStringValue(getTitleFromInternationalStringValue(dsdAttributeInstanceDto.getValue()));
             } else {
                 record.setStringValue(dsdAttributeInstanceDto.getValue().getStringValue());
             }
@@ -435,10 +491,17 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         return record;
     }
 
-    public static DsdAttributeInstanceRecord[] getDsdAttributeInstanceRecords(List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
+    private static String getTitleFromInternationalStringValue(AttributeValueDto attributeValueDto) {
+        if (attributeValueDto != null && attributeValueDto.getInternationalStringValue() != null) {
+            return InternationalStringUtils.getLocalisedString(attributeValueDto.getInternationalStringValue(), ApplicationEditionLanguages.getCurrentLocale());
+        }
+        return "-";
+    }
+
+    public static DsdAttributeInstanceRecord[] getDsdAttributeInstanceRecords(List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos, DsdAttributeDto dsdAttributeDto) {
         DsdAttributeInstanceRecord[] records = new DsdAttributeInstanceRecord[dsdAttributeInstanceDtos.size()];
         for (int i = 0; i < dsdAttributeInstanceDtos.size(); i++) {
-            records[i] = getDsdAttributeInstanceRecord(dsdAttributeInstanceDtos.get(i));
+            records[i] = getDsdAttributeInstanceRecord(dsdAttributeInstanceDtos.get(i), dsdAttributeDto);
         }
         return records;
     }
@@ -453,6 +516,27 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
         multidatasetCubeNode.setIdentifier(multidatasetCubeDto.getIdentifier());
         multidatasetCubeNode.setTitle(InternationalStringUtils.getLocalisedString(multidatasetCubeDto.getTitle()));
         multidatasetCubeNode.setDescription(InternationalStringUtils.getLocalisedString(multidatasetCubeDto.getDescription()));
+
+        String linkedResource = "";
+        String queryDataset = "";
+
+        if (multidatasetCubeDto.getDatasetUrn() != null) {
+            linkedResource = multidatasetCubeDto.getDatasetUrn();
+        } else if (multidatasetCubeDto.getQueryUrn() != null) {
+            linkedResource = multidatasetCubeDto.getQueryUrn();
+            queryDataset = multidatasetCubeDto.getRelatedDatasetUrnInQuery();
+        }
+
+        if (linkedResource != null) {
+            multidatasetCubeNode.setLinkedResource(linkedResource);
+            multidatasetCubeNode.setLinkedTypeResource(getResourceType(linkedResource));
+        }
+        if (queryDataset != null) {
+            multidatasetCubeNode.setQueryDataset(queryDataset);
+        }
+
+        multidatasetCubeNode.setDSD(ResourceFieldUtils.formatExternalItemValue(multidatasetCubeDto.getRelatedDSD(), true, false));
+
 
         multidatasetCubeNode.setOrderInMultidataset(multidatasetCubeDto.getOrderInMultidataset());
         multidatasetCubeNode.setIcon(org.siemac.metamac.statistical.resources.web.client.resources.GlobalResources.RESOURCE.treeFile().getURL());

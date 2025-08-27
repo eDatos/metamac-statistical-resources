@@ -59,7 +59,7 @@ public class QueriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implement
                 case STATUS:
                     return buildSculptorPropertyCriteria(QueryVersionProperties.status(), PropertyTypeEnum.QUERY_STATUS, propertyRestriction);
                 case VALID_FROM:
-                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, QueryVersionProperties.lifeCycleStatisticalResource().validTo(), QueryVersion.class, false);
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, QueryVersionProperties.lifeCycleStatisticalResource().validFrom(), QueryVersion.class, false);
                 case VALID_TO:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, QueryVersionProperties.lifeCycleStatisticalResource().validTo(), QueryVersion.class, false);
                 case STATISTICAL_OPERATION_URN:

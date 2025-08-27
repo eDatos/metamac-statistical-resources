@@ -23,6 +23,8 @@ import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageResult;
+import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageResult;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageResult;
@@ -136,12 +138,7 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
 
         if (!StringUtils.isBlank(operationCode)) {
             String operationUrn = CommonUtils.generateStatisticalOperationUrn(operationCode);
-
-            if (!CommonUtils.isUrnFromSelectedStatisticalOperation(operationUrn)) {
-                retrieveOperation(operationUrn);
-            } else {
-                loadInitialData();
-            }
+            retrieveOperation(operationUrn);
         }
     }
 
@@ -359,6 +356,18 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
 
             @Override
             public void onWaitSuccess(ResendStreamMessageResult result) {
+                retrieveQueryVersions(result.getLifeCycleStatisticalResourceResultDto().getUrn());
+                getView().setQueryDto((QueryVersionDto) result.getLifeCycleStatisticalResourceResultDto());
+            }
+        });
+    }
+
+    @Override
+    public void resendXMessage(QueryVersionDto query) {
+        dispatcher.execute(new ResendXMessageAction(query), new WaitingAsyncCallbackHandlingError<ResendXMessageResult>(this) {
+
+            @Override
+            public void onWaitSuccess(ResendXMessageResult result) {
                 retrieveQueryVersions(result.getLifeCycleStatisticalResourceResultDto().getUrn());
                 getView().setQueryDto((QueryVersionDto) result.getLifeCycleStatisticalResourceResultDto());
             }

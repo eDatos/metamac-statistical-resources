@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.HEAD;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -13,6 +14,7 @@ import javax.ws.rs.core.Response;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dataset;
+import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Exportation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
@@ -41,7 +43,8 @@ public interface StatisticalResourcesV1_0 {
     @Produces({"application/xml", "application/json"})
     @Path("datasets/{agencyID}/{resourceID}")
     Datasets findDatasets(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("query") String query, @QueryParam("orderBy") String orderBy,
-            @QueryParam("limit") String limit, @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields, @QueryParam("granularity") String granularity);
+            @QueryParam("limit") String limit, @QueryParam("offset") String offset, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("granularity") String granularity);
 
     @GET
     @Produces({"application/xml", "application/json"})
@@ -67,10 +70,18 @@ public interface StatisticalResourcesV1_0 {
     Response retrieveDatasetXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version, @QueryParam("lang") List<String> lang,
             @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
+    @POST
+    @Produces({"application/jsonstat+json"})
+    @Path("datasets/{agencyID}/{resourceID}/{version}")
+    JsonStatData retrieveDatasetJsonStat(Exportation exportationBody, @PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version,
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields, @QueryParam("granularity") String granularity);
+
+    @GET
     @Produces({"application/jsonstat+json"})
     @Path("datasets/{agencyID}/{resourceID}/{version}")
     JsonStatData retrieveDatasetJsonStat(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @PathParam("version") String version,
-            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields, @QueryParam("dim") String dim, @QueryParam("representation") String representation,
+            @QueryParam("granularity") String granularity);
 
     @GET
     @Produces({"application/xml", "application/json"})
@@ -107,6 +118,24 @@ public interface StatisticalResourcesV1_0 {
     Query retrieveQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
             @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
 
+    @GET
+    @Produces("text/tab-separated-values")
+    @Path("queries/{agencyID}/{resourceID}")
+    Response retrieveQueryTSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+    @GET
+    @Produces("text/csv")
+    @Path("queries/{agencyID}/{resourceID}")
+    Response retrieveQueryCSV(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+
+    @GET
+    @Produces("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    @Path("queries/{agencyID}/{resourceID}")
+    Response retrieveQueryXLSX(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,
+            @QueryParam("dim") String dim, @QueryParam("representation") String representation, @QueryParam("granularity") String granularity);
+
+    @GET
     @Produces({"application/jsonstat+json"})
     @Path("queries/{agencyID}/{resourceID}")
     JsonStatData retrieveJsonStatQuery(@PathParam("agencyID") String agencyID, @PathParam("resourceID") String resourceID, @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields,

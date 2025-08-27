@@ -13,6 +13,7 @@ import org.siemac.metamac.statistical.resources.web.client.model.ds.DsdAttribute
 import org.siemac.metamac.statistical.resources.web.client.utils.DatasetAttibuteUtils;
 import org.siemac.metamac.web.common.client.utils.RecordUtils;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
@@ -39,20 +40,43 @@ public class AttributeDatasetLevelEditionForm extends AttributeBaseForm {
         this.dsdAttributeInstanceDto = dsdAttributeInstanceDto;
         this.dsdAttributeDto = dsdAttributeDto;
 
+        if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+            buildMultilanguageTextItemNonEnumeratedRepresentationForm(dsdAttributeInstanceDto);
+
+        } else {
+            buildTextItemNonEnumeratedRepresentationForm(dsdAttributeInstanceDto);
+        }
+    }
+
+    private void buildMultilanguageTextItemNonEnumeratedRepresentationForm(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
+        MultiLanguageTextItem value = new MultiLanguageTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
+        value.setValidators(DatasetAttibuteUtils.getDatasetLevelAttibuteValueLengthValidator());
+
+        if (dsdAttributeInstanceDto.getValue() != null) {
+            setValue(DsdAttributeInstanceDS.VALUE, RecordUtils.getInternationalStringRecord(dsdAttributeInstanceDto.getValue().getInternationalStringValue()));
+        }
+
+        setFields(value);
+
+    }
+
+    private void buildTextItemNonEnumeratedRepresentationForm(DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         CustomTextItem value = new CustomTextItem(DsdAttributeInstanceDS.VALUE, getConstants().datasetAttributeValue());
         value.setValidators(DatasetAttibuteUtils.getDatasetLevelAttibuteValueLengthValidator());
 
         if (dsdAttributeInstanceDto.getValue() != null) {
             value.setValue(dsdAttributeInstanceDto.getValue().getStringValue());
         }
+
         setFields(value);
     }
 
     public DsdAttributeInstanceDto getDsdAttributeInstanceDto() {
-
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (getItem(DsdAttributeInstanceDS.VALUE) instanceof CustomTextItem) {
             attributeValueDto.setStringValue(getValueAsString(DsdAttributeInstanceDS.VALUE));
+        } else if (getItem(DsdAttributeInstanceDS.VALUE) instanceof MultiLanguageTextItem) {
+            attributeValueDto.setInternationalStringValue(getValueAsInternationalStringDto(DsdAttributeInstanceDS.VALUE));
         } else if (getItem(DsdAttributeInstanceDS.VALUE) instanceof SearchExternalItemSimpleItem) {
             ExternalItemDto selectedExternalItemDto = ((SearchExternalItemSimpleItem) getItem(DsdAttributeInstanceDS.VALUE)).getExternalItemDto();
             attributeValueDto.setExternalItemValue(selectedExternalItemDto);

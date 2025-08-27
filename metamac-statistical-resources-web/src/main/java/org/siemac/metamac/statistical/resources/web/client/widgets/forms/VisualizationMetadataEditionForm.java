@@ -33,7 +33,7 @@ public class VisualizationMetadataEditionForm extends GroupDynamicForm {
         dimensionVisualizationItem.setVisualisationDimensions(headingDimensions, stubDimensions);
         CustomCheckboxItem modifyDistributionDimension = dimensionVisualizationItem.getModifyDistributionDimension();
         modifyDistributionDimension.setValue(checked);
-        
+        this.markForRedraw();
     }
 
     private boolean checkDatasetDimensionsModified(List<RelatedResourceDto> relatedResources) {

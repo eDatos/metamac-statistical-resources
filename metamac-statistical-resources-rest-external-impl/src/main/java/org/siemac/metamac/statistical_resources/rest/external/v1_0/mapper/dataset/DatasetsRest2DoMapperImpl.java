@@ -1,6 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset;
 
 import org.fornax.cartridges.sculptor.framework.domain.Property;
+import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestOrder;
 import org.siemac.metamac.rest.common.query.domain.MetamacRestQueryPropertyRestriction;
 import org.siemac.metamac.rest.common.query.domain.OperationTypeEnum;
@@ -55,9 +57,11 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                 case TEMPORAL_GRANULARITY_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.temporalGranularities());
                 case DATE_START:
-                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().validFrom(), DatasetVersion.class, false);
+                    propertyRestriction.setValue(getParsedDate(propertyRestriction));
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.dateStartTimestamp(), DatasetVersion.class, false);
                 case DATE_END:
-                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.dateStart(), DatasetVersion.class, false);
+                    propertyRestriction.setValue(getParsedDate(propertyRestriction));
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.dateEndTimestamp(), DatasetVersion.class, false);
                 case STATISTICAL_UNIT_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.statisticalUnit());
                 case MEASURE_COVERAGE_URN:
@@ -79,16 +83,35 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(), DatasetVersion.class,
                             false);
                 case VALID_FROM:
-                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().validTo(), DatasetVersion.class, false);
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().validFrom(), DatasetVersion.class, false);
                 case VALID_TO:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().validTo(), DatasetVersion.class, false);
                 case STATISTICAL_OPERATION_URN:
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation());
                 case IS_LAST_VERSION:
-                    return buildSculptorPropertyCriteria(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion(), PropertyTypeEnum.BOOLEAN, propertyRestriction);
+                    return buildSculptorPropertyCriteriaForDateProperty(mapperSculptorPropertyCriteriaForValidFromIsNull(propertyRestriction), DatasetVersionProperties.siemacMetadataStatisticalResource().validTo(), DatasetVersion.class, false);
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }
+        }
+
+        private String getParsedDate(MetamacRestQueryPropertyRestriction propertyRestriction) {
+            DateTime[] dateStartTime = SdmxTimeUtils.calculateDateTimes(propertyRestriction.getValue());
+            if (dateStartTime != null) {
+                return dateStartTime[0].toString();
+            }
+            return "";
+        }
+
+        private MetamacRestQueryPropertyRestriction mapperSculptorPropertyCriteriaForValidFromIsNull(MetamacRestQueryPropertyRestriction propertyRestriction) {
+            MetamacRestQueryPropertyRestriction propertyRestrictionForValidFromIsNull = new MetamacRestQueryPropertyRestriction();
+            propertyRestrictionForValidFromIsNull.setPropertyName(DatasetVersionProperties.siemacMetadataStatisticalResource().validTo().getName());
+            if (Boolean.TRUE.equals(Boolean.valueOf(propertyRestriction.getValue()))) {
+                propertyRestrictionForValidFromIsNull.setOperationType(OperationTypeEnum.IS_NULL);
+                return propertyRestrictionForValidFromIsNull;
+            }
+            propertyRestrictionForValidFromIsNull.setOperationType(OperationTypeEnum.IS_NOT_NULL);
+            return propertyRestrictionForValidFromIsNull;
         }
 
         @SuppressWarnings("rawtypes")

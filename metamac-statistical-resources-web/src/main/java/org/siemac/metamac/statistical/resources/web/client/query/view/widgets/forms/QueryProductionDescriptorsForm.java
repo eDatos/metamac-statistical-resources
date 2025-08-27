@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
@@ -17,13 +18,15 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceLinkItem;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ViewMultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.ExternalItemListItem;
 
+import com.smartgwt.client.widgets.form.DynamicForm;
+import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm {
-
     private BaseUiHandlers                    uiHandlers;
 
     public QueryProductionDescriptorsForm() {
@@ -49,6 +52,11 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         ViewTextItem type = new ViewTextItem(QueryDS.TYPE, getConstants().queryType());
         fields.add(type);
 
+        ViewTextItem purposeType = new ViewTextItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        fields.add(purposeType);
+        ViewMultiLanguageTextItem twitterTemplate = new ViewMultiLanguageTextItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+        twitterTemplate.setShowIfCondition(getXTemplateTextItem());
+        fields.add(twitterTemplate);
         return fields;
     }
 
@@ -92,12 +100,14 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
             }
         }
 
-        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, (RelatedResourceLinkItem) getItem(QueryDS.RELATED_DATASET_VERSION));
+        QueryRelatedDatasetUtils.setRelatedDataset(queryDto, getItem(QueryDS.RELATED_DATASET_VERSION));
 
         setValue(QueryDS.MAINTAINER, queryDto.getMaintainer());
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
         setValue(QueryDS.TYPE, CommonUtils.getQueryTypeName(queryDto));
+        setValue(QueryDS.PURPOSE_TYPE, CommonUtils.getPurposeName(queryDto.getPurpose()));
+        setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
         if (isLatestData) {
             setValue(QueryDS.LATEST_N_DATA, queryDto.getLatestDataNumber());
         }
@@ -126,5 +136,17 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
     private boolean isTemporalDimension(String dimensionId) {
         return StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId);
+    }
+
+    private FormItemIfFunction getXTemplateTextItem() {
+        return new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                String purpose = ((ViewTextItem) getItem(QueryDS.PURPOSE_TYPE)).getValue().toString();
+                PurposeDto purposeDto = CommonUtils.getPurposeFromLabel(purpose);
+                return purposeDto != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeDto.getIdentifier());
+            }
+        };
     }
 }

@@ -15,6 +15,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.RequiredFieldUtils;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.LifeCycleResourceDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.record.QueryRecord;
 import org.siemac.metamac.statistical.resources.web.client.query.presenter.QueryPresenter;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryUiHandlers;
@@ -24,6 +25,7 @@ import org.siemac.metamac.statistical.resources.web.client.query.view.widgets.fo
 import org.siemac.metamac.statistical.resources.web.client.query.view.widgets.forms.QueryProductionDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.query.view.widgets.forms.QueryProductionDescriptorsForm;
 import org.siemac.metamac.statistical.resources.web.client.query.view.widgets.forms.QueryResourceRelationDescriptorsForm;
+import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.VersionWindow;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceContentDescriptorsEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.LifeCycleResourceContentDescriptorsForm;
@@ -44,6 +46,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
 import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.widgets.WarningLabel;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.ui.Widget;
@@ -390,6 +393,13 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
                 }
             });
 
+            mainFormLayout.getResendXMessageButton().addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    getUiHandlers().resendXMessage(queryVersionDto);
+                }
+            });
             mainFormLayout.getVersioningButton().addClickHandler(new ClickHandler() {
 
                 @Override
@@ -420,7 +430,16 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
         private void createViewForm() {
             identifiersForm = new NameableResourceIdentifiersForm();
+            
+            ViewTextItem publicationStreamStatus = new ViewTextItem(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS, getConstants().lifeCycleStatisticalResourceStreamMsgStatus());
+            publicationStreamStatus.setWidth(20);
+
+            ViewTextItem publicationXStatus = new ViewTextItem(LifeCycleResourceDS.PUBLICATION_X_STATUS, getConstants().lifeCycleStatisticalResourceXMsgStatus());
+            publicationXStatus.setWidth(20);
+
+            identifiersForm.addFields(publicationStreamStatus, publicationXStatus);
             thematicContentClassifiersForm = new StatisticalResourceThematicContentClassifiersForm();
+
             contentDescriptorsForm = new LifeCycleResourceContentDescriptorsForm();
             productionDescriptorsForm = new QueryProductionDescriptorsForm();
             resourceRelationDescriptorsForm = new QueryResourceRelationDescriptorsForm();
@@ -441,6 +460,13 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
         private void createEditionForm() {
             identifiersEditionForm = new NameableResourceIdentifiersEditionForm();
+            ViewTextItem publicationStreamStatus = new ViewTextItem(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS, getConstants().lifeCycleStatisticalResourceStreamMsgStatus());
+            publicationStreamStatus.setWidth(20);
+
+            ViewTextItem publicationXStatus = new ViewTextItem(LifeCycleResourceDS.PUBLICATION_X_STATUS, getConstants().lifeCycleStatisticalResourceXMsgStatus());
+            publicationXStatus.setWidth(20);
+
+            identifiersEditionForm.addFields(publicationStreamStatus, publicationXStatus);
             identifiersCreationForm = new QueryIdentifiersCreationForm();
             contentDescriptorsEditionForm = new LifeCycleResourceContentDescriptorsEditionForm();
             thematicContentClassifiersEditionForm = new StatisticalResourceThematicContentClassifiersEditionForm();
@@ -488,6 +514,8 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
         private void fillViewForm(QueryVersionDto queryDto) {
             identifiersForm.setNameableStatisticalResourceDto(queryDto);
+            identifiersForm.getItem(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS).setIcons(CommonUtils.getPublicationStreamStatusIcon(queryVersionDto.getPublicationStreamStatus()));
+            identifiersForm.getItem(LifeCycleResourceDS.PUBLICATION_X_STATUS).setIcons(CommonUtils.getXStatusIcon(queryVersionDto.getXStreamStatus()));
             contentDescriptorsForm.setLifeCycleResource(queryDto);
             thematicContentClassifiersForm.setStatisticalResourceDto(queryDto);
 
@@ -511,6 +539,8 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
             identifiersEditionForm.setNameableStatisticalResourceDto(queryVersionDto);
             identifiersEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
+            identifiersEditionForm.getItem(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS).setIcons(CommonUtils.getPublicationStreamStatusIcon(queryVersionDto.getPublicationStreamStatus()));
+            identifiersEditionForm.getItem(LifeCycleResourceDS.PUBLICATION_X_STATUS).setIcons(CommonUtils.getXStatusIcon(queryVersionDto.getXStreamStatus()));
 
             identifiersCreationForm.setNameableStatisticalResourceDto(queryVersionDto);
             identifiersCreationForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
@@ -523,7 +553,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
             // WORKAROUND, this form is continuously rebuilt
             mainFormLayout.removeEditionCanvas(productionDescriptorsEditionForm);
-            productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm();
+            productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm(queryVersionDto);
             productionDescriptorsEditionForm.setUiHandlers(getUiHandlers());
             productionDescriptorsEditionForm.setQueryDto(queryVersionDto);
             productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
@@ -557,6 +587,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             }
 
         }
+
         private QueryVersionDto getQuery() {
             if (isCreationMode()) {
                 queryVersionDto = (QueryVersionDto) identifiersCreationForm.getNameableStatisticalResourceDto(queryVersionDto);

@@ -1151,4 +1151,10 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
         assertNotNull(datasetService.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn));
 
     }
+
+    @Override
+    public void testFindPurposes() throws Exception {
+        // no optimistic locking in this operation
+
+    }
 }

@@ -16,7 +16,7 @@ public interface SrmRestExternalFacade {
     public Codelist retrieveCodelistByUrn(String urn);
     public Codes retrieveCodesByCodelistUrn(String urn, String order, String openness, String fields);
 
-    public Concepts retrieveConceptsByConceptSchemeByUrn(String urn, String fields);
+    public Concepts retrieveConceptsByConceptSchemeByUrn(String urn, String order, String fields);
     public Concept retrieveConceptByUrn(String urn);
 
     public VariableElementsGeoInfo findVariableElementsGeoInfo(String urn);

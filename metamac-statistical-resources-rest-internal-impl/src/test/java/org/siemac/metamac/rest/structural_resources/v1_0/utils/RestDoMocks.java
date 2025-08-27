@@ -265,7 +265,10 @@ public class RestDoMocks {
         target.addSelection(mockQuerySelectionItem("GEO_DIM", Arrays.asList("santa-cruz-tenerife", "las-palmas-gran-canaria")));
         target.addSelection(mockQuerySelectionItem("measure01", Arrays.asList("measure01-conceptScheme01-concept01", "measure01-conceptScheme01-concept02", "measure01-conceptScheme01-concept05")));
         target.addSelection(mockQuerySelectionItem("dim01", Arrays.asList("dim01-codelist01-code01")));
-        target.addSelection(mockQuerySelectionItem("TIME_PERIOD", Arrays.asList("2011")));
+        // Take note that this order for TIME_PERIOD is wrong: the proper order is recent to oldest
+        // We are not sure why selection is stored wrong, but we can ensure proper order on api retrieve,
+        // that's why we force this, to ensure order is working properly
+        target.addSelection(mockQuerySelectionItem("TIME_PERIOD", Arrays.asList("2011", "2012")));
         target.setLatestDataNumber(null);
     }
     private void mockQueryVersionLatestData(QueryVersion target) {
@@ -305,15 +308,19 @@ public class RestDoMocks {
     public AttributeInstanceDto mockAttributeInstanceWithDatasetAttachmentLevel(String attributeId, String value) {
         AttributeInstanceDto attributeDto = new AttributeInstanceDto();
         attributeDto.setAttributeId(attributeId);
-        attributeDto.setValue(mockInternationalStringAttributeDto(value));
+        attributeDto.setValue(mockInternationalStringAttributeDto(value, false));
         return attributeDto;
     }
 
+    public InternationalStringDto mockAttributeInstanceWithDatasetAttachmentLevelForMultilingualValues(String attributeId, String value) {
+        return mockInternationalStringAttributeDto(value, true);
+    }
+
     public AttributeInstanceDto mockAttributeInstanceWithDimensionAttachmentLevelDenormalized(String attributeId, String value, String dimension1, String codeDimension1, String dimension2,
-            String codeDimension2, String dimension3, String codeDimension3, String dimension4, String codeDimension4) {
+            String codeDimension2, String dimension3, String codeDimension3, String dimension4, String codeDimension4, boolean isMultilingual) {
         AttributeInstanceDto attributeDto = new AttributeInstanceDto();
         attributeDto.setAttributeId(attributeId);
-        attributeDto.setValue(mockInternationalStringAttributeDto(value));
+        attributeDto.setValue(mockInternationalStringAttributeDto(value, isMultilingual));
         attributeDto.setCodesByDimension(new HashMap<String, List<String>>());
         if (dimension1 != null) {
             attributeDto.getCodesByDimension().put(dimension1, Arrays.asList(codeDimension1));
@@ -458,9 +465,32 @@ public class RestDoMocks {
     }
 
     private InternationalStringDto mockInternationalStringAttributeDto(String label) {
+        return mockInternationalStringAttributeDto(label, false);
+    }
+
+    private InternationalStringDto mockInternationalStringAttributeDto(String label, boolean isMultilingual) {
         InternationalStringDto internationalStringDto = new InternationalStringDto();
-        internationalStringDto.addText(new LocalisedStringDto(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE, label));
+
+        if (isMultilingual) {
+            internationalStringDto = mockInternationalStringDto(label, Arrays.asList("es", "en"));
+        } else {
+            internationalStringDto.addText(new LocalisedStringDto(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE, label));
+        }
         return internationalStringDto;
     }
 
+    private InternationalStringDto mockInternationalStringDto(String baseName, List<String> locales) {
+        InternationalStringDto internationalStringDto = new InternationalStringDto();
+        for (String locale : locales) {
+            internationalStringDto.addText(getLocalisedString(locale, baseName + " " + locale));
+        }
+        return internationalStringDto;
+    }
+
+    private LocalisedStringDto getLocalisedString(String locale, String label) {
+        LocalisedStringDto localisedStringDto = new LocalisedStringDto();
+        localisedStringDto.setLocale(locale);
+        localisedStringDto.setLabel(label);
+        return localisedStringDto;
+    }
 }

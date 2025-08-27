@@ -103,9 +103,18 @@ public class NewQueryWindow extends CustomWindow {
         relatedDatasetItem = createQueryDatasetItem();
         relatedDatasetItem.setRequired(true);
         items.add(relatedDatasetItem);
+        CustomSelectItem purposeTypeSelectorItem = new CustomSelectItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
+        purposeTypeSelectorItem.setValueMap(CommonUtils.getPurposesHashMap());
+        purposeTypeSelectorItem.addChangedHandler(new ChangedHandler() {
+
+            @Override
+            public void onChanged(ChangedEvent event) {
+                form.markForRedraw();
+            }
+        });
         CustomSelectItem typeSelectorItem = new CustomSelectItem(QueryDS.TYPE, getConstants().queryType());
         typeSelectorItem.setValueMap(CommonUtils.getQueryTypeHashMap());
-        typeSelectorItem.setRequired(true);
+        typeSelectorItem.setShowIfCondition(getFormItemIfPurposeSocialNetworkSelected());
         typeSelectorItem.addChangedHandler(new ChangedHandler() {
 
             @Override
@@ -113,6 +122,7 @@ public class NewQueryWindow extends CustomWindow {
                 form.markForRedraw();
             }
         });
+        items.add(purposeTypeSelectorItem);
         items.add(typeSelectorItem);
 
         return items;
@@ -125,7 +135,10 @@ public class NewQueryWindow extends CustomWindow {
     }
     public QueryVersionDto getNewQueryDto() {
         QueryVersionDto queryDto = new QueryVersionDto();
-        QueryTypeEnum queryType = QueryTypeEnum.valueOf(form.getValueAsString(QueryDS.TYPE));
+        CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
+        String purposeStr = selectPurpose.getValueAsString();
+
+        QueryTypeEnum queryType = !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? QueryTypeEnum.valueOf(form.getValueAsString(QueryDS.TYPE)) : QueryTypeEnum.LATEST_DATA;
         queryDto.setCode(form.getValueAsString(QueryDS.CODE));
         queryDto.setTitle(InternationalStringUtils.updateInternationalString(new InternationalStringDto(), form.getValueAsString(QueryDS.TITLE)));
         queryDto.setSelection(new HashMap<String, List<CodeItemDto>>());
@@ -148,10 +161,13 @@ public class NewQueryWindow extends CustomWindow {
         queryDto.setSelection(selection);
         Integer latestDataNumber = null;
         if (isLatestData) {
-            latestDataNumber = ((CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA)).getValueAsInteger();
+            CustomIntegerItem customIntegerItem = (CustomIntegerItem) form.getItem(QueryDS.LATEST_N_DATA);
+            
+            latestDataNumber = customIntegerItem != null ? (!StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr) ? customIntegerItem.getValueAsInteger() : 1) : null;
         }
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularitie(queryDto);
+        queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         return queryDto;
     }
 
@@ -218,12 +234,10 @@ public class NewQueryWindow extends CustomWindow {
 
         setDimensions(datasetDimensions, datasetVersion, fields);
 
-        if (hasTemporalDimension) {
-            CustomIntegerItem latestData = new CustomIntegerItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
-            latestData.setShowIfCondition(getFormItemIfFunctionShowLatestDataItem());
-            latestData.setRequired(true);
-            fields.add(latestData);
-        }
+        CustomIntegerItem latestData = new CustomIntegerItem(QueryDS.LATEST_N_DATA, getConstants().queryLatestNData());
+        latestData.setShowIfCondition(getFormItemIfFunctionShowLatestDataItem());
+        latestData.setRequired(true);
+        fields.add(latestData);
         CustomButtonItem saveItem = new CustomButtonItem(FIELD_SAVE, getConstants().queryCreate());
         saveItem.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
 
@@ -416,7 +430,21 @@ public class NewQueryWindow extends CustomWindow {
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 CustomSelectItem selectType = ((CustomSelectItem) form.getItem(QueryDS.TYPE));
                 String typeStr = selectType.getValueAsString();
-                return (QueryTypeEnum.LATEST_DATA.name().equals(typeStr));
+                CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
+                String purposeStr = selectPurpose.getValueAsString();
+                return (QueryTypeEnum.LATEST_DATA.name().equals(typeStr) && !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr));
+            }
+        };
+    }
+
+    private FormItemIfFunction getFormItemIfPurposeSocialNetworkSelected() {
+        return new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
+                String purposeStr = selectPurpose.getValueAsString();
+                return !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr);
             }
         };
     }
@@ -445,7 +473,9 @@ public class NewQueryWindow extends CustomWindow {
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 CustomSelectItem selectType = ((CustomSelectItem) form.getItem(QueryDS.TYPE));
                 String typeStr = selectType.getValueAsString();
-                return (typeStr != null);
+                CustomSelectItem selectPurpose = ((CustomSelectItem) form.getItem(QueryDS.PURPOSE_TYPE));
+                String purposeStr = selectPurpose.getValueAsString();
+                return (typeStr != null || StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeStr));
             }
         };
     }

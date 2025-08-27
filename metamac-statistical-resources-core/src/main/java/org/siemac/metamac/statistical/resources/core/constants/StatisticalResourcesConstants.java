@@ -42,5 +42,7 @@ public class StatisticalResourcesConstants {
     public static final String TRANSLATION_TIME_SDMX_HOUR_END_IN_LABEL   = "{hh_END}";
     public static final String TRANSLATION_TIME_SDMX_MINUTE_END_IN_LABEL = "{mm_END}";
     public static final String TRANSLATION_TIME_SDMX_SECOND_END_IN_LABEL = "{ss_END}";
+    
+    public static final String SOCIAL_NETWORK_PURPOSE                    = "SOCIAL_NETWORK";
 
 }
