@@ -185,47 +185,27 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-<<<<<<< HEAD
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity, boolean isTransposed) {
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "tsv", granularity, isTransposed);
-=======
-    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
->>>>>>> develop
     }
 
     @Override
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-<<<<<<< HEAD
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "csv", granularity, false);
-=======
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.CSV, granularity);
->>>>>>> develop
     }
 
     @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-<<<<<<< HEAD
-        return retrieveDatasetPlainText(agencyID, resourceID, version, lang, fields, dim, representation, "xlsx", granularity, false);
-    }
-
-    private Response retrieveDatasetPlainText(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity, boolean isTransposed) {
-=======
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity);
     }
 
     private Response retrieveResourcePlainText(StatisticalResourceTypeEnum resourceType, String agencyID, String resourceID, String version, List<String> lang, String fields, String dim,
             String representation, ResourcesFormat format, String granularity) {
->>>>>>> develop
         try {
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
             checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
-
-<<<<<<< HEAD
-            return createPlainTextResourceAccess(agencyID, resourceID, version, lang, fields, dim, representation, format, granularity, isTransposed);
-=======
             ResourceAccess resourceAccess = null;
             String filename = null;
             switch (resourceType) {
@@ -242,7 +222,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
                     org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
                     throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
             }
->>>>>>> develop
 
             ExportResourceAccessToPlainText.checkMaxRowsInXlsxFormat(resourceAccess, format, configurationService.retrieveMaxXlsxRows());
             return ExportResourceAccessToPlainText.buildResponseExportResourceAccessToPlainText(resourceAccess, filename, format);
@@ -251,9 +230,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         }
     }
 
-<<<<<<< HEAD
-    private Response createPlainTextResourceAccess(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String format, String granularity, boolean isTransposed)
-=======
     private ResourceAccess buildResourceAccessForDataset(String agencyID, String resourceID, String version, List<String> lang, Set<String> fields, Map<String, List<String>> dimensions,
             String granularity) throws Exception {
 
@@ -264,7 +240,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     private ResourceAccess buildResourceAccessForQuery(String agencyID, String resourceID, List<String> lang, Set<String> fields, Map<String, List<String>> dimensions, String granularity)
->>>>>>> develop
             throws Exception {
 
         QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
@@ -325,11 +300,11 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             sb.append(dimension.getDimensionId());
             sb.append("[");
 
-<<<<<<< HEAD
-            final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
-            outputStreamObservations = new FileOutputStream(tmpFileObservations);
-            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations, isTransposed);
-=======
+//<<<<<<< HEAD
+//            final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
+//            outputStreamObservations = new FileOutputStream(tmpFileObservations);
+//            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations, isTransposed);
+//=======
             if (dimension.getDimensionFilters() != null) {
                 DimensionFilters dimensionFilters = dimension.getDimensionFilters();
                 if (dimensionFilters.getAfter() != null) {
@@ -348,7 +323,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             if ('|' == sb.charAt(sb.length() - 1)) {
                 sb.deleteCharAt(sb.length() - 1); // delete last |
             }
->>>>>>> develop
 
             sb.append("]");
             sb.append(":");
