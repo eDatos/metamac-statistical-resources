@@ -27,8 +27,6 @@ import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
 
 public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm {
-
-    private static final String SOCIAL_NETWORK = "SOCIAL_NETWORK";
     private BaseUiHandlers                    uiHandlers;
 
     public QueryProductionDescriptorsForm() {
@@ -146,8 +144,8 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 String purpose = ((ViewTextItem) getItem(QueryDS.PURPOSE_TYPE)).getValue().toString();
-                PurposeDto purposeDto = CommonUtils.getPurpose(purpose.split(" ") != null ? purpose.split(" ")[0] : "");
-                return purposeDto != null && SOCIAL_NETWORK.equals(purposeDto.getIdentifier());
+                PurposeDto purposeDto = CommonUtils.getPurposeFromLabel(purpose);
+                return purposeDto != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purposeDto.getIdentifier());
             }
         };
     }
