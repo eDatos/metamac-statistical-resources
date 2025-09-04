@@ -1415,18 +1415,18 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             if (conceptDetail.getQuantity() != null) {
                 target.setMeasureQuantity(toQuantity(conceptDetail.getQuantity(), selectedLanguages));
             }
-            setShowDecimalPrecision(dsdProcessorResult, target, conceptDetail);
+            setShowDecimalsPrecision(dsdProcessorResult, target, conceptDetail);
         }
 
         return target;
     }
 
-    private void setShowDecimalPrecision(DsdProcessorResult dsdProcessorResult, EnumeratedAttributeValue target, Concept conceptDetail) {
+    private void setShowDecimalsPrecision(DsdProcessorResult dsdProcessorResult, EnumeratedAttributeValue target, Concept conceptDetail) {
         if (dsdProcessorResult != null && dsdProcessorResult.getDataStructure().getShowDecimalsPrecisions() != null
                 && !CollectionUtils.isEmpty(dsdProcessorResult.getDataStructure().getShowDecimalsPrecisions().getShowDecimalPrecisions())) {
             for (ShowDecimalPrecision showDecimalPrecision : dsdProcessorResult.getDataStructure().getShowDecimalsPrecisions().getShowDecimalPrecisions()) {
                 if (conceptDetail.getUrn().equals(showDecimalPrecision.getConcept().getUrn())) {
-                    target.setShowDecimalPrecision(showDecimalPrecision.getShowDecimals());
+                    target.setShowDecimalsPrecision(showDecimalPrecision.getShowDecimals());
                 }
             }
         }
