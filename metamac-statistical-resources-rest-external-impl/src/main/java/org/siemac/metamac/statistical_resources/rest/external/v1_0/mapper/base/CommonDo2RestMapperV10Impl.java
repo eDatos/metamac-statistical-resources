@@ -1414,8 +1414,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             Concept conceptDetail = srmRestExternalFacade.retrieveConceptByUrn(source.getUrn());
             if (conceptDetail.getQuantity() != null) {
                 target.setMeasureQuantity(toQuantity(conceptDetail.getQuantity(), selectedLanguages));
-                setShowDecimalPrecision(dsdProcessorResult, target, conceptDetail);
             }
+            setShowDecimalPrecision(dsdProcessorResult, target, conceptDetail);
         }
 
         return target;
