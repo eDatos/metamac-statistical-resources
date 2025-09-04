@@ -40,6 +40,8 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdPro
 public interface CommonDo2RestMapperV10 {
 
     public DsdProcessorResult processDataStructure(String urn) throws MetamacException;
+    public String getMeasureDimensionName(String urn);
+    public Map<String, List<String>> buildDimensionsSelectedWithValues(DatasetVersion source, Map<String, List<String>> dimensionsSelected, List<String> dimensions) throws MetamacException;
     public ConstraintDimensionRepresentations processDatasetConstraint(String datasetUrn) throws MetamacException;
     public void toMetadataStatisticalResource(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) throws MetamacException;
     public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages,
