@@ -1329,11 +1329,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setType(ComponentType.valueOf(source.getType().name()));
 
         // Attributes values
-        target.setAttributeValues(toAttributeValues(datasetVersionUrn, source, selectedLanguages));
+        target.setAttributeValues(toAttributeValues(datasetVersionUrn, source, selectedLanguages, dsdProcessorResult));
         return target;
     }
 
-    private AttributeValues toAttributeValues(String datasetVersionUrn, DsdAttribute attribute, List<String> selectedLanguages) throws MetamacException {
+    private AttributeValues toAttributeValues(String datasetVersionUrn, DsdAttribute attribute, List<String> selectedLanguages, DsdProcessorResult dsdProcessorResult) throws MetamacException {
         if (attribute == null) {
             return null;
         }
@@ -1354,7 +1354,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         if (attribute.getCodelistRepresentationUrn() != null) {
             targets = toEnumeratedAttributeValuesFromCodelist(coveragesById, attribute.getCodelistRepresentationUrn(), attribute.getType(), selectedLanguages);
         } else if (attribute.getConceptSchemeRepresentationUrn() != null) {
-            targets = toEnumeratedAttributeValuesFromConceptScheme(coveragesById, attribute.getConceptSchemeRepresentationUrn(), attribute.getType(), selectedLanguages);
+            targets = toEnumeratedAttributeValuesFromConceptScheme(coveragesById, attribute.getConceptSchemeRepresentationUrn(), attribute.getType(), selectedLanguages, dsdProcessorResult);
         } else if (DsdComponentType.TEMPORAL.equals(attribute.getType())) {
             targets = toNonEnumeratedAttributeValuesFromTextFormatType(coverages, attribute.getTextFormatRepresentation(), attribute.getType(), selectedLanguages);
         } else {
@@ -1378,14 +1378,14 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 // skip to include only values in coverage
                 continue;
             }
-            targets.getValues().add(toEnumeratedAttributeValue(code, attributeType, selectedLanguages));
+            targets.getValues().add(toEnumeratedAttributeValue(code, attributeType, selectedLanguages, null));
         }
         targets.setTotal(BigInteger.valueOf(targets.getValues().size()));
         return targets;
     }
 
     private EnumeratedAttributeValues toEnumeratedAttributeValuesFromConceptScheme(Map<String, AttributeValue> coveragesById, String conceptSchemeUrn, DsdComponentType attributeType,
-            List<String> selectedLanguages) throws MetamacException {
+            List<String> selectedLanguages, DsdProcessorResult dsdProcessorResult) throws MetamacException {
         if (conceptSchemeUrn == null) {
             return null;
         }
@@ -1397,13 +1397,13 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
                 // skip to include only values in coverage
                 continue;
             }
-            targets.getValues().add(toEnumeratedAttributeValue(concept, attributeType, selectedLanguages));
+            targets.getValues().add(toEnumeratedAttributeValue(concept, attributeType, selectedLanguages, dsdProcessorResult));
         }
         targets.setTotal(BigInteger.valueOf(targets.getValues().size()));
         return targets;
     }
 
-    private EnumeratedAttributeValue toEnumeratedAttributeValue(ItemResource source, DsdComponentType attributeType, List<String> selectedLanguages) throws MetamacException {
+    private EnumeratedAttributeValue toEnumeratedAttributeValue(ItemResource source, DsdComponentType attributeType, List<String> selectedLanguages, DsdProcessorResult dsdProcessorResult) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -1414,10 +1414,22 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             Concept conceptDetail = srmRestExternalFacade.retrieveConceptByUrn(source.getUrn());
             if (conceptDetail.getQuantity() != null) {
                 target.setMeasureQuantity(toQuantity(conceptDetail.getQuantity(), selectedLanguages));
+                setShowDecimalPrecision(dsdProcessorResult, target, conceptDetail);
             }
         }
 
         return target;
+    }
+
+    private void setShowDecimalPrecision(DsdProcessorResult dsdProcessorResult, EnumeratedAttributeValue target, Concept conceptDetail) {
+        if (dsdProcessorResult != null && dsdProcessorResult.getDataStructure().getShowDecimalsPrecisions() != null
+                && !CollectionUtils.isEmpty(dsdProcessorResult.getDataStructure().getShowDecimalsPrecisions().getShowDecimalPrecisions())) {
+            for (ShowDecimalPrecision showDecimalPrecision : dsdProcessorResult.getDataStructure().getShowDecimalsPrecisions().getShowDecimalPrecisions()) {
+                if (conceptDetail.getUrn().equals(showDecimalPrecision.getConcept().getUrn())) {
+                    target.setShowDecimalPrecision(showDecimalPrecision.getShowDecimals());
+                }
+            }
+        }
     }
 
     private NonEnumeratedAttributeValues toNonEnumeratedAttributeValuesFromTextFormatType(List<AttributeValue> coverages, TextFormat textFormatType, DsdComponentType attributeType,
