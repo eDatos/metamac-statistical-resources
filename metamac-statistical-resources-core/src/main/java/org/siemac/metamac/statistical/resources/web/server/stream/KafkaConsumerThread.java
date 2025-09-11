@@ -31,15 +31,16 @@ import net.sf.ehcache.Element;
 @Scope("prototype")
 public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnable {
 
-    protected static Log LOGGER = LogFactory.getLog(KafkaConsumerThread.class);
+    protected static Log                      LOGGER                 = LogFactory.getLog(KafkaConsumerThread.class);
 
-    private static final String      MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
+    private static final String               MAX_POOL_MSG           = "We have set a poll of 1 message at most. This error can not be given.";
 
-    private KafkaConsumer<String, T> consumer;
-    private String                   topicName;
-    private StatisticalResourcesServiceFacade  statisticalResourcesServiceFacade;
-    private NoticesRestInternalService noticesRestInternalService;
-    private Cache                      kafkaFailedMessagesCache;
+    private KafkaConsumer<String, T>          consumer;
+    private String                            topicName;
+    private StatisticalResourcesServiceFacade statisticalResourcesServiceFacade;
+    private NoticesRestInternalService        noticesRestInternalService;
+    private Cache                             kafkaFailedMessagesCache;
+    private boolean                           isJaxiConsumerDisabled = false;
 
     public void setConsumer(KafkaConsumer<String, T> consumer) {
         this.consumer = consumer;
@@ -61,18 +62,22 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
         this.kafkaFailedMessagesCache = kafkaFailedMessagesCache;
     }
 
+    public void setIsJaxiConsumerDisabled(boolean isDisabled) {
+        this.isJaxiConsumerDisabled = isDisabled;
+    }
+
     @Override
     public void run() {
         LOGGER.info("Reading KAFKA topic: " + topicName);
 
         try {
-            
+
             Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
-             
+
             while (KafkaUtils.alwaysWithDelay()) {
                 // Milliseconds, spent waiting in poll if data is not available in the buffer
                 ConsumerRecords<String, T> records = consumer.poll(100);
-                     
+
                 if (records.count() > 1) {
                     LOGGER.error(MAX_POOL_MSG);
                     throw new RuntimeException(MAX_POOL_MSG);
@@ -85,6 +90,11 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                 // Process resources
                 ConsumerRecord<String, T> record = records.iterator().next();
 
+                if (this.isJaxiConsumerDisabled) {
+                    commitSync(record);
+                    return;
+                }
+
                 if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
                     LOGGER.debug("The current message already processed successfully");
                     if (commitSync(record)) {
@@ -94,17 +104,18 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                     continue;
                 }
 
-                StringBuilder logMessageBldr = KafkaUtils.buildLogMessage("Received message from Kafka -> Topic Name: ", topicName, record.partition(), record.offset(), record.timestampType(), record.timestamp());
+                StringBuilder logMessageBldr = KafkaUtils.buildLogMessage("Received message from Kafka -> Topic Name: ", topicName, record.partition(), record.offset(), record.timestampType(),
+                        record.timestamp());
                 String logMessage = logMessageBldr.toString();
-                
+
                 pendigOffsetsToCommit.put(record.partition(), record.offset());
-                
+
                 LOGGER.info(logMessageBldr);
                 try {
                     ServiceContext serviceContext = createServiceContext(logMessage);
-  
+
                     statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
-                    
+
                     commitSync(record);
                 } catch (Exception e) {
                     LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
