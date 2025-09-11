@@ -25,7 +25,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryBas
 
 public class ExportResourceAccessToPlainText {
 
-    public static void exportResourceAccessToPlainText(ResourceAccess resourceAccess, ResourcesFormat format, OutputStream os, boolean isTransposed) throws MetamacException {
+    public static void exportResourceAccessToPlainText(ResourceAccess resourceAccess, ResourcesFormat format, OutputStream os) throws MetamacException {
         try {
             PlainTextExporter exporter = new PlainTextExporter(resourceAccess, format);
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(os);
@@ -77,7 +77,7 @@ public class ExportResourceAccessToPlainText {
 
             final File tmpFileObservations = File.createTempFile(filename, format.getExtension());
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
-            exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations, false);
+            exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations);
 
             return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), format.getMimeType()).header("Content-Disposition", getContentDisposition(filename, format.getExtension()))
                     .build();

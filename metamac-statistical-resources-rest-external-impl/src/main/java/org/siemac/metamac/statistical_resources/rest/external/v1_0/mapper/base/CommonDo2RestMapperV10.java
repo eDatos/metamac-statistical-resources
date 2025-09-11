@@ -12,6 +12,7 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
@@ -35,6 +36,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 
 public interface CommonDo2RestMapperV10 {
@@ -68,7 +70,7 @@ public interface CommonDo2RestMapperV10 {
     public InternationalString toInternationalString(InternationalString sources, List<String> selectedLanguages);
     public InternationalString toInternationalString(String source, List<String> selectedLanguages);
     public InternationalString toInternationalString(Map<String, String> sources, List<String> selectedLanguages);
-
+    public boolean checkCodeDimensionsInGeographicalGranularities(CodeResource source, List<String> geographicGranularities, DsdDimension dimension) throws MetamacException;
     public Date toDate(DateTime source);
 
     public NextVersionType toNextVersionType(NextVersionTypeEnum source, List<String> selectedLanguages);

@@ -989,8 +989,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setType(toDimensionType(source.getType()));
         target.setName(toInternationalString(source.getConceptIdentity().getName(), selectedLanguages));
         target.setPluralName(source.getPluralName());
-        //TODO restaurar
-        target.setShowCode(false); //dimensionVisualisation != null && dimensionVisualisation.isShowCode());
+        target.setShowCode(dimensionVisualisation != null && dimensionVisualisation.isShowCode());
 
         // Dimension values
         target.setDimensionValues(toDimensionValues(datasetVersionUrn, dataStructure, source, dimensionVisualisation, effectiveDimensionValuesToData, selectedLanguages, fields, dimensionsFilter));
@@ -1083,7 +1082,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return targets;
     }
 
-    private boolean checkCodeDimensionsInGeographicalGranularities(CodeResource source, List<String> geographicGranularities, DsdDimension dimension) throws MetamacException {
+    @Override
+    public boolean checkCodeDimensionsInGeographicalGranularities(CodeResource source, List<String> geographicGranularities, DsdDimension dimension) throws MetamacException {
         if (!DsdComponentType.SPATIAL.equals(dimension.getType()) || geographicGranularities == null || geographicGranularities.isEmpty()) {
             return true;
         }
