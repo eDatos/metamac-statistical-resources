@@ -242,7 +242,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
                         DsdDimension geographicalDimension = getGeographicalDimension(dimensionsFilter, dsdProcessorResult);
                         List<String> geographicCodes = getGeographicalCodes(geographicalDimension, dimensionsFilter.getGeographicDimensionValuesIds());
                         return ExportDatasetToTransposedPlainText.buildResponseExportResourceAccessToPlainText(tabularDataDto, dimensionsFilter, geographicCodes, filename, format);
-//                        return buildResponseExportResourceAccessToPlainText(tabularDataDto, filename, format, granularities, dsdProcessorResult);
                     }
                     resourceAccess = buildResourceAccessForDataset(agencyID, resourceID, version, lang, parsedFields, dimensions, granularity);
                     break;

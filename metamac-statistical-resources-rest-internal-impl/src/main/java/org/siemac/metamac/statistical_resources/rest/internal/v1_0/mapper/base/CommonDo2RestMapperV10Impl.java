@@ -1652,7 +1652,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     /**
      * Build dimensions selected, with codes selected or all codes if codes are not selected to one dimension
      */
-    private Map<String, List<String>> buildDimensionsSelectedWithValues(DatasetVersion source, Map<String, List<String>> dimensionsSelected, List<String> dimensions) throws MetamacException {
+    @Override
+    public Map<String, List<String>> buildDimensionsSelectedWithValues(DatasetVersion source, Map<String, List<String>> dimensionsSelected, List<String> dimensions) throws MetamacException {
         Map<String, List<String>> dimensionsCodesSelected = new HashMap<String, List<String>>();
         for (String dimension : dimensions) {
             List<String> dimensionValues = dimensionsSelected.get(dimension);
@@ -2459,5 +2460,16 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
         }
         return targets;
+    }
+
+    @Override
+    public String getMeasureDimensionName(String urn) {
+        DataStructure dataStructure = srmRestExternalFacade.retrieveDataStructureByUrn(urn);
+        for (org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase dimension : dataStructure.getDataStructureComponents().getDimensions().getDimensions()) {
+            if (org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionType.MEASURE_DIMENSION.equals(dimension.getType())) {
+                return dimension.getId();
+            }
+        }
+        return "";
     }
 }

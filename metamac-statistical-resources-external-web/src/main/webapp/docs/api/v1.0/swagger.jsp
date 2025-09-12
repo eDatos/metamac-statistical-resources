@@ -3239,6 +3239,12 @@
                   "type": "string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.granularity.description']}"
                },
+			   {
+                  "name": "isTransposed",
+                  "in": "query",
+                  "type": "string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.isTransposed.description']}"
+               },
                {
                   "name":"dim",
                   "in":"query",
