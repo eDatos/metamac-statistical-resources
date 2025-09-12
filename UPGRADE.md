@@ -8,8 +8,18 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 10.15.2 a 10.15.3-SNAPSHOT
+* Se debe resetear el schema registry para el topic JAXI_PUBLICATIONS debido a que se añaden dos nuevos campos
+******** curl -X DELETE http://localhost:8081/subjects/JAXI_PUBLICATIONS-value
+** Una vez acabe la subida. Al día siguiente comprobar que se ha regenerado automáticamente el schema-registry con los dos nuevos campos. Si no es así habrá que añadirlo manualmente con el xml que se encuentra en la ruta [etc/helpers/kafka/registry_jaxi_publications_topic.json]
+
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.15.2/db]
+** Se crea variable de entorno que permite deshabilitar el consumidor de jaxi de eTerritorios. De esta manera se podrá lanzar el proceso masivo para eCatalogo sin que se vea afectada la caché de eTerritorios.
+
+
 ## 10.15.1 a 10.15.2
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.15.1/db]
+
 
 ## 10.13.0 a 10.14.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.13.0/db]

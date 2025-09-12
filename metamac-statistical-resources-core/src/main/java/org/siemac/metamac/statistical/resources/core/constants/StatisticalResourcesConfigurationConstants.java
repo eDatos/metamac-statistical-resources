@@ -42,5 +42,10 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String TWITTER_API_KEY                                     = "metamac.statistical_resources.twitter.apiKey";
     public static final String TWITTER_API_SECRET_KEY                              = "metamac.statistical_resources.twitter.apiSecretKey";
     public static final String TWITTER_SENT_ENABLE                                 = "metamac.statistical_resources.twitter.enabled";
+    
+    // if it is only necessary to reload jaxi messages for e-catalogo it is better to disabled this consumer to avoid bad performance.
+    public static final String DISABLED_JAXI_PUBLICATIONS_CONSUMER                 = "metamac.statistical_resources.kafka.jaxi_publication_consumer_disabled";
+
+
 
 }
