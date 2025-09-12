@@ -30,7 +30,9 @@
         {"name" : "geographicGranularities", "type" : ["null", {"type" : "array", "items": "ExternalItemAvro"}]},
         {"name" : "temporalGranularities", "type" : ["null", {"type" : "array", "items": "ExternalItemAvro"}]},
         {"name" : "htmlLink", "type" : ["null", "string"]},
-        {"name" : "jsonLink", "type" : ["null", "string"]}
+        {"name" : "jsonLink", "type" : ["null", "string"]},
+        {"name" : "pxLink", "type" : ["null", "string"], "default": null},
+        {"name" : "jsonStatLink", "type" : ["null", "string"], "default": null}
     ]
 }
 ]  
