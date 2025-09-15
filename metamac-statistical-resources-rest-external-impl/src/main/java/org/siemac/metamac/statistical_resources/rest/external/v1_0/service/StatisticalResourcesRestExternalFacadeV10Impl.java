@@ -36,6 +36,7 @@ import org.siemac.metamac.rest.statistical_resources_external.v1_0.domain.Export
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.VariableElementResource;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -49,11 +50,9 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Publicat
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
-import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportDatasetToTransposedPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
-import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
@@ -241,7 +240,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
                         DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
                         DsdDimension geographicalDimension = getGeographicalDimension(dimensionsFilter, dsdProcessorResult);
                         List<String> geographicCodes = getGeographicalCodes(geographicalDimension, dimensionsFilter.getGeographicDimensionValuesIds());
-                        return ExportDatasetToTransposedPlainText.buildResponseExportResourceAccessToPlainText(tabularDataDto, dimensionsFilter, geographicCodes, filename, format);
+                        return ExportResourceAccessToPlainText.buildResponseExportTabularDataToPlainText(tabularDataDto, dimensionsFilter, geographicCodes, filename, format);
                     }
                     resourceAccess = buildResourceAccessForDataset(agencyID, resourceID, version, lang, parsedFields, dimensions, granularity);
                     break;

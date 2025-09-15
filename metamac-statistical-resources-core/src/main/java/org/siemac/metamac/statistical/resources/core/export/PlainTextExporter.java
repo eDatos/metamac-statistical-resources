@@ -10,23 +10,99 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
+import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceObservationDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.TabularDataDto;
 
 public class PlainTextExporter {
 
-    private static final String HEADER_OBSERVATION = "OBS_VALUE";
-    private static final String EXCLUDE_HEADER = "DATA_SOURCE_ID";
-    private static final String SEPARATOR = "\t";
+    private static final String                       HEADER_OBSERVATION         = "OBS_VALUE";
+    private static final String                       EXCLUDE_HEADER             = "DATA_SOURCE_ID";
+    private static final String                       SEPARATOR                  = "\t";
     private final Map<String, ObservationExtendedDto> observations;
-    private PrintWriter printWriter;
-    private String lang;
+    private final TabularDataDto                      tabularDataDto;
+    private final DimensionsFilter                    dimensionsFilter;
+    private final List<String>                        geographicCodes;
+    int                                               temporalDimensionIndex     = -1;
+    int                                               geographicalDimensionIndex = -1;
+    private PrintWriter                               printWriter;
+    private String                                    lang;
 
-    public PlainTextExporter(Map<String, ObservationExtendedDto> observations) {
+    public PlainTextExporter(Map<String, ObservationExtendedDto> observations, TabularDataDto tabularDataDto, DimensionsFilter dimensionsFilter, List<String> geographicCodes) {
         this.observations = observations;
+        this.tabularDataDto = tabularDataDto;
+        this.dimensionsFilter = dimensionsFilter;
+        this.geographicCodes = geographicCodes;
+    }
+
+    public void writeObservations(OutputStream os) throws MetamacException {
+        printWriter = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+        createBodyForPlainTextTransposedObservations();
+    }
+
+    private void createBodyForPlainTextTransposedObservations() throws MetamacException {
+        try {
+            if (tabularDataDto == null || tabularDataDto.getRows().isEmpty()) {
+                throw new MetamacException(ServiceExceptionType.DATASOURCE_EXPORT_NO_DATA_PRESENT);
+            }
+
+            String header = getHeader(tabularDataDto.getHeaders());
+            write(header);
+            writeTransposedRows(tabularDataDto.getRows());
+        } finally {
+            dispose();
+        }
+    }
+
+    private void writeTransposedRows(List<String[]> rows) throws MetamacException {
+        for (String[] row : rows) {
+            if (checkInTemporalGranularities(row, temporalDimensionIndex, dimensionsFilter) && checkInGeographicalGranularities(row, geographicalDimensionIndex, geographicCodes)) {
+                write(String.join(SEPARATOR, row));
+            }
+        }
+    }
+
+    private String getHeader(List<String> header) {
+        StringBuilder headerLine = new StringBuilder();
+        for (String key : header) {
+            headerLine.append(headerLine.length() == 0 ? key : (SEPARATOR + key));
+        }
+
+        for (int i = 0; i < header.size(); i++) {
+            if (header.get(i).equals(dimensionsFilter.getTemporalDimensionId())) {
+                temporalDimensionIndex = i;
+            }
+            if (header.get(i).equals(dimensionsFilter.getGeographicDimensionId())) {
+                geographicalDimensionIndex = i;
+            }
+        }
+        return headerLine.toString();
+    }
+
+    private boolean checkInTemporalGranularities(Object[] row, int temporalDimensionIndex, DimensionsFilter dimensionsFilter) throws MetamacException {
+        if (temporalDimensionIndex >= 0) {
+            IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils
+                    .guessTimeGranularity((String) row[temporalDimensionIndex]);
+            return dimensionsFilter.getTemporalDimensionValuesIds().contains(istacTimeGranularityCodeEnum.getLabel());
+        }
+        return true;
+    }
+
+    private boolean checkInGeographicalGranularities(Object[] row, int geographicalDimensionIndex, List<String> geographicCodes) {
+        if (geographicalDimensionIndex >= 0) {
+            for (String code : geographicCodes) {
+                if (row[geographicalDimensionIndex].equals(code)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        return true;
     }
 
     public void writeObservationsAndAttributesWithObservationAttachmentLevel(OutputStream os, String lang) throws MetamacException {
@@ -49,7 +125,7 @@ public class PlainTextExporter {
             }
             datasourceColumns.remove(EXCLUDE_HEADER);
             int obsHeaderIndex = new ArrayList<>(datasourceColumns.keySet()).indexOf(HEADER_OBSERVATION);
-            
+
             if (obsHeaderIndex + 1 < datasourceColumns.keySet().size()) {
                 List<String> attributeIds = new ArrayList<>(datasourceColumns.keySet()).subList(obsHeaderIndex + 1, datasourceColumns.keySet().size());
                 for (Map.Entry<String, ObservationExtendedDto> entry : observations.entrySet()) {
@@ -136,6 +212,5 @@ public class PlainTextExporter {
         }
         return headerLine.toString();
     }
-
 
 }

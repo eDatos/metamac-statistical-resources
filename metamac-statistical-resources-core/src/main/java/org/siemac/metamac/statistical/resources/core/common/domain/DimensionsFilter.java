@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.common.impl.export.utils;
+package org.siemac.metamac.statistical.resources.core.common.domain;
 
 import java.util.List;
 

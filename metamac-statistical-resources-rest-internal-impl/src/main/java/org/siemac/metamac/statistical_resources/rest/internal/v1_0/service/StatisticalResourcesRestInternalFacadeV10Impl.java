@@ -36,6 +36,7 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElementResourceInternal;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdDimension;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -50,11 +51,9 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Publicat
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
-import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportDatasetToTransposedPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ExportResourceAccessToPlainText;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.ResourceAccess;
 import org.siemac.metamac.statistical_resources.rest.common.impl.export.enume.ResourcesFormat;
-import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Collections;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Datasets;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Multidatasets;
@@ -241,7 +240,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
                         DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
                         DsdDimension geographicalDimension = getGeographicalDimension(dimensionsFilter, dsdProcessorResult);
                         List<String> geographicCodes = getGeographicalCodes(geographicalDimension, dimensionsFilter.getGeographicDimensionValuesIds());
-                        return ExportDatasetToTransposedPlainText.buildResponseExportResourceAccessToPlainText(tabularDataDto, dimensionsFilter, geographicCodes, filename, format);
+                        return ExportResourceAccessToPlainText.buildResponseExportTabularDataToPlainText(tabularDataDto, dimensionsFilter, geographicCodes, filename, format);
                     }
                     resourceAccess = buildResourceAccessForDataset(agencyID, resourceID, version, lang, parsedFields, dimensions, granularity);
                     break;
@@ -381,12 +380,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         for (org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.SelectionDimension dimension : dimensions) {
             sb.append(dimension.getDimensionId());
             sb.append("[");
-
-//<<<<<<< HEAD
-//            final File tmpFileObservations = File.createTempFile(fileNamePrefix, format);
-//            outputStreamObservations = new FileOutputStream(tmpFileObservations);
-//            exportResourceAccessToPlainText.exportResourceAccessToPlainText(resourceAccess, format, outputStreamObservations, isTransposed);
-//=======
             if (dimension.getDimensionFilters() != null) {
                 DimensionFilters dimensionFilters = dimension.getDimensionFilters();
                 if (dimensionFilters.getAfter() != null) {

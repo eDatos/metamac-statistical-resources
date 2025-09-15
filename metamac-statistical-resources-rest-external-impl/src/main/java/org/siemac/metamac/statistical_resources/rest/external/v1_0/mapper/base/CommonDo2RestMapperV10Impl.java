@@ -66,6 +66,7 @@ import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -93,7 +94,6 @@ import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryServi
 import org.siemac.metamac.statistical.resources.core.utils.AttributesUtils;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
-import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.impl.utils.SafeCalculatorUtils;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
@@ -449,10 +449,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             }
         }
         return dimensionsFilter;
-    }
-    @Override
-    public DimensionsFilter getMeasureDimensionFilter(Dimensions dimensions) {
-        return null;
     }
 
     private List<String> getTemporalDimensionsValuesIds(Dimension dimension) {
