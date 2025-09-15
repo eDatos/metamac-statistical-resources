@@ -278,7 +278,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     private List<String> getGeographicalCodes(DsdDimension source, List<String> geographicGranularities) {
         List<String> geographicCodes = new ArrayList<>();
         if (source != null) {
-            Codes codes = srmRestExternalFacade.retrieveCodesByCodelistUrn(source.getCodelistRepresentationUrn(), "CUSTOM_O", "ALL_EXPANDED",
+            Codes codes = srmRestExternalFacade.retrieveCodesByCodelistUrn(source.getCodelistRepresentationUrn(), null, null,
                     SrmRestConstants.FIELD_INCLUDE_OPENNES + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_ORDER + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT);
             for (CodeResource code : codes.getCodes()) {
                 if (code.getVariableElement() != null && code.getVariableElement() instanceof VariableElementResource
