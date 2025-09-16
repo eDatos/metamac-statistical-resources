@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 10.15.2 a 10.15.3-SNAPSHOT
+## 10.15.2 a 10.16.0
 * Se debe resetear el schema registry para el topic JAXI_PUBLICATIONS debido a que se añaden dos nuevos campos
 ******** curl -X DELETE http://localhost:8081/subjects/JAXI_PUBLICATIONS-value
 ** Una vez acabe la subida. Al día siguiente comprobar que se ha regenerado automáticamente el schema-registry con los dos nuevos campos. Si no es así habrá que añadirlo manualmente con el xml que se encuentra en la ruta [etc/helpers/kafka/registry_jaxi_publications_topic.json]
