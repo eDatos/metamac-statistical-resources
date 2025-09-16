@@ -59,8 +59,8 @@ public class PlainTextExporter {
         }
     }
 
-    private void writeTransposedRows(List<String[]> rows) throws MetamacException {
-        for (String[] row : rows) {
+    private void writeTransposedRows(List<List> rows) throws MetamacException {
+        for (List row : rows) {
             if (checkInTemporalGranularities(row, temporalDimensionIndex, dimensionsFilter) && checkInGeographicalGranularities(row, geographicalDimensionIndex, geographicCodes)) {
                 write(String.join(SEPARATOR, row));
             }
@@ -84,19 +84,19 @@ public class PlainTextExporter {
         return headerLine.toString();
     }
 
-    private boolean checkInTemporalGranularities(Object[] row, int temporalDimensionIndex, DimensionsFilter dimensionsFilter) throws MetamacException {
+    private boolean checkInTemporalGranularities(List row, int temporalDimensionIndex, DimensionsFilter dimensionsFilter) throws MetamacException {
         if (temporalDimensionIndex >= 0) {
             IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils
-                    .guessTimeGranularity((String) row[temporalDimensionIndex]);
+                    .guessTimeGranularity((String) row.get(temporalDimensionIndex));
             return dimensionsFilter.getTemporalDimensionValuesIds().contains(istacTimeGranularityCodeEnum.getLabel());
         }
         return true;
     }
 
-    private boolean checkInGeographicalGranularities(Object[] row, int geographicalDimensionIndex, List<String> geographicCodes) {
+    private boolean checkInGeographicalGranularities(List row, int geographicalDimensionIndex, List<String> geographicCodes) {
         if (geographicalDimensionIndex >= 0) {
             for (String code : geographicCodes) {
-                if (row[geographicalDimensionIndex].equals(code)) {
+                if (row.get(geographicalDimensionIndex).equals(code)) {
                     return true;
                 }
             }

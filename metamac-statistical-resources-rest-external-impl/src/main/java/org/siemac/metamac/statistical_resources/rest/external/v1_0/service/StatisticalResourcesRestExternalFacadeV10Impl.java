@@ -9,7 +9,6 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -308,20 +307,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         Map<String, List<String>> dimensionSelected = commonDo2RestMapper.buildDimensionsSelectedWithValues(datasetVersion, dimensions, dimensionsNames);
         Map<String, List<String>> dimensionSelectedDataset = datasetsDo2RestMapper.calculateEffectiveDimensionValuesToDataset(dimensions, datasetVersion);
         TabularDataDto transposedObservationsExtendedByDimensions = datasetRepositoriesServiceFacade.findTransposedObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(),
-                getConditionDimension(dimensionSelectedDataset), dimensionName, dimensionSelected.get(dimensionName));
+                dimensionSelectedDataset, dimensionName, dimensionSelected.get(dimensionName));
         return transposedObservationsExtendedByDimensions;
-    }
-
-    private Map<String, String> getConditionDimension (Map<String, List<String>> conditionsDimensions) {
-        Map<String, String> conditionDimensions = new HashMap<String, String>();
-        for (Map.Entry<String, List<String>> condition : conditionsDimensions.entrySet()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("'");
-            builder.append(String.join("', '", condition.getValue()));
-            builder.append("'");
-            conditionDimensions.put(condition.getKey(), builder.toString());
-        }
-        return conditionDimensions;
     }
 
     private ResourceAccess buildResourceAccessForQuery(String agencyID, String resourceID, List<String> lang, Set<String> fields, Map<String, List<String>> dimensions, String granularity)
