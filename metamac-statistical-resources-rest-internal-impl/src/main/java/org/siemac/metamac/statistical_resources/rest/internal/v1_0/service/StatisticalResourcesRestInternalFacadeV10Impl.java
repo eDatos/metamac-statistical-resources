@@ -235,7 +235,8 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
                     filename = resourceType.toString().toLowerCase() + "-" + agencyID + "_" + resourceID + "_" + version;
                     if (isTransposed) {
                         DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
-                        TabularDataDto tabularDataDto = getTransposedObservationsExtendedByDimensions(datasetVersion, dimensions);
+                        Map<String, List<String>> effectiveDimensions = datasetsDo2RestMapper.calculateEffectiveDimensionValuesToDataset(dimensions, datasetVersion);
+                        TabularDataDto tabularDataDto = getTransposedObservationsExtendedByDimensions(datasetVersion, effectiveDimensions);
                         DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
                         Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
                         DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
