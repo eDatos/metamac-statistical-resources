@@ -267,6 +267,10 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
 
         List<String> dimensionsNames = new ArrayList<>();
         String dimensionName = commonDo2RestMapper.getMeasureDimensionName(datasetVersion.getRelatedDsd().getUrn());
+        if (StringUtils.isBlank(dimensionName)) {
+            throw new IllegalArgumentException("The dataset has no measure dimension, the tsv cannot be exported in this format. " + datasetVersion.getSiemacMetadataStatisticalResource().getCode()
+                    + " " + datasetVersion.getSiemacMetadataStatisticalResource().getVersionLogic());
+        }
         dimensionsNames.add(dimensionName);
         Map<String, List<String>> dimensionSelected = commonDo2RestMapper.buildDimensionsSelectedWithValues(datasetVersion, dimensions, dimensionsNames);
         Map<String, List<String>> dimensionSelectedDataset = datasetsDo2RestMapper.calculateEffectiveDimensionValuesToDataset(dimensions, datasetVersion);
