@@ -59,7 +59,7 @@
     <!-- <property name="password" value="${datasource.password}" /> -->
     <!-- </bean> -->
    
-    <bean id="dataSourceDatasetRepository" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+    <bean id="dataSourceDatasetRepository" class="org.siemac.edatos.core.common.datasource.EdatosBasicDataSource" destroy-method="close">
         <property name="driverClassName" value="${datasource.driver_name}" />
         <property name="url" value="${datasource.repository.url}" />
         <property name="username" value="${datasource.repository.username}" />
