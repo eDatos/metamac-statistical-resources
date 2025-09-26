@@ -21,6 +21,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.rest.api.constants.RestApiConstants;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
@@ -32,7 +33,13 @@ import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Dimens
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Exportation;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Multidataset;
 import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.Query;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.VariableElementResourceInternal;
+import org.siemac.metamac.srm.rest.common.SrmRestConstants;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
+import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdDimension;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
@@ -55,7 +62,10 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Queries;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.internal.invocation.SrmRestInternalFacade;
 import org.siemac.metamac.statistical_resources.rest.internal.service.StatisticalResourcesRestInternalCommonService;
+import org.siemac.metamac.statistical_resources.rest.internal.v1_0.domain.DsdProcessorResult;
+import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.collection.CollectionsDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.collection.CollectionsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -70,6 +80,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import es.gobcan.istac.edatos.dataset.repository.dto.TabularDataDto;
+import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 @Service("statisticalResourcesRestInternalFacadeV10")
 public class StatisticalResourcesRestInternalFacadeV10Impl implements StatisticalResourcesV1_0 {
@@ -115,6 +128,15 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
 
     @Autowired
     private DatasetVersionRepository                      datasetVersionRepository;
+
+    @Autowired
+    private CommonDo2RestMapperV10                        commonDo2RestMapper;
+    
+    @Autowired
+    private SrmRestInternalFacade                         srmRestInternalFacade;
+
+    @Autowired
+    private DatasetRepositoriesServiceFacade              datasetRepositoriesServiceFacade;
 
     @Override
     public Datasets findDatasets(String query, String orderBy, String limit, String offset, List<String> lang, String fields) {
@@ -185,34 +207,44 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
+    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity, boolean isTransposed) {
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity, isTransposed);
     }
 
     @Override
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.CSV, granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.CSV, granularity, false);
     }
 
     @Override
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity, false);
     }
 
     private Response retrieveResourcePlainText(StatisticalResourceTypeEnum resourceType, String agencyID, String resourceID, String version, List<String> lang, String fields, String dim,
-            String representation, ResourcesFormat format, String granularity) {
+            String representation, ResourcesFormat format, String granularity, boolean isTransposed) {
         try {
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
             checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
             checkParameterData(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
-
             ResourceAccess resourceAccess = null;
             String filename = null;
             switch (resourceType) {
                 case DATASET:
-                    resourceAccess = buildResourceAccessForDataset(agencyID, resourceID, version, lang, parsedFields, dimensions, granularity);
                     filename = resourceType.toString().toLowerCase() + "-" + agencyID + "_" + resourceID + "_" + version;
+                    if (isTransposed) {
+                        DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
+                        Map<String, List<String>> effectiveDimensions = datasetsDo2RestMapper.calculateEffectiveDimensionValuesToDataset(dimensions, datasetVersion);
+                        TabularDataDto tabularDataDto = getTransposedObservationsExtendedByDimensions(datasetVersion, effectiveDimensions);
+                        DsdProcessorResult dsdProcessorResult = commonDo2RestMapper.processDataStructure(datasetVersion.getRelatedDsd().getUrn());
+                        Map<String, List<String>> granularities = commonDo2RestMapper.parseParamExpression(granularity);
+                        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionsFilter(granularities, dsdProcessorResult);
+                        DsdDimension geographicalDimension = getGeographicalDimension(dimensionsFilter, dsdProcessorResult);
+                        List<String> geographicCodes = getGeographicalCodes(geographicalDimension, dimensionsFilter.getGeographicDimensionValuesIds());
+                        return ExportResourceAccessToPlainText.buildResponseExportTabularDataToPlainText(tabularDataDto, dimensionsFilter, geographicCodes, filename, format);
+                    }
+                    resourceAccess = buildResourceAccessForDataset(agencyID, resourceID, version, lang, parsedFields, dimensions, granularity);
                     break;
                 case QUERY:
                     resourceAccess = buildResourceAccessForQuery(agencyID, resourceID, lang, parsedFields, dimensions, granularity);
@@ -229,6 +261,49 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         } catch (Exception e) {
             throw manageExceptionResponse(e);
         }
+    }
+
+    private TabularDataDto getTransposedObservationsExtendedByDimensions(DatasetVersion datasetVersion, Map<String, List<String>> dimensions) throws Exception {
+
+        List<String> dimensionsNames = new ArrayList<>();
+        String dimensionName = commonDo2RestMapper.getMeasureDimensionName(datasetVersion.getRelatedDsd().getUrn());
+        if (StringUtils.isBlank(dimensionName)) {
+            throw new IllegalArgumentException("The dataset has no measure dimension, the tsv cannot be exported in this format. " + datasetVersion.getSiemacMetadataStatisticalResource().getCode()
+                    + " " + datasetVersion.getSiemacMetadataStatisticalResource().getVersionLogic());
+        }
+        dimensionsNames.add(dimensionName);
+        Map<String, List<String>> dimensionSelected = commonDo2RestMapper.buildDimensionsSelectedWithValues(datasetVersion, dimensions, dimensionsNames);
+        Map<String, List<String>> dimensionSelectedDataset = datasetsDo2RestMapper.calculateEffectiveDimensionValuesToDataset(dimensions, datasetVersion);
+        TabularDataDto transposedObservationsExtendedByDimensions = datasetRepositoriesServiceFacade.findTransposedObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(),
+                dimensionSelectedDataset, dimensionName, dimensionSelected.get(dimensionName));
+        return transposedObservationsExtendedByDimensions;
+    }
+
+    private DsdDimension getGeographicalDimension(DimensionsFilter dimensionsFilter, DsdProcessorResult dsdProcessorResult) {
+        if (dimensionsFilter.getGeographicDimensionId() == null) {
+            return null;
+        }
+        for (DsdDimension source : dsdProcessorResult.getDimensions()) {
+            if (dimensionsFilter.getGeographicDimensionId().equals(source.getComponentId())) {
+                return source;
+            }
+        }
+        return null;
+    }
+
+    private List<String> getGeographicalCodes(DsdDimension source, List<String> geographicGranularities) {
+        List<String> geographicCodes = new ArrayList<>();
+        if (source != null) {
+            Codes codes = srmRestInternalFacade.retrieveCodesByCodelistUrn(source.getCodelistRepresentationUrn(), null, null,
+                    SrmRestConstants.FIELD_INCLUDE_OPENNES + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_ORDER + RestApiConstants.COMMA + SrmRestConstants.FIELD_INCLUDE_VARIABLE_ELEMENT);
+            for (CodeResourceInternal code : codes.getCodes()) {
+                if (code.getVariableElement() != null && code.getVariableElement() instanceof VariableElementResourceInternal
+                        && geographicGranularities.contains(((VariableElementResourceInternal) code.getVariableElement()).getGeographicalGranularity().getId())) {
+                geographicCodes.add(code.getId());
+            }
+            }
+        }
+        return geographicCodes;
     }
 
     private ResourceAccess buildResourceAccessForDataset(String agencyID, String resourceID, String version, List<String> lang, Set<String> fields, Map<String, List<String>> dimensions,
@@ -273,17 +348,17 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
 
     @Override
     public Response retrieveQueryTSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.TSV, granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.TSV, granularity, false);
     }
 
     @Override
     public Response retrieveQueryCSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.CSV, granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.CSV, granularity, false);
     }
 
     @Override
     public Response retrieveQueryXLSX(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
-        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity);
+        return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity, false);
     }
 
     private static String toStatisticalResourcesApiRepresentationParameter(Exportation exportationBody) {
@@ -300,7 +375,6 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
         for (org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.SelectionDimension dimension : dimensions) {
             sb.append(dimension.getDimensionId());
             sb.append("[");
-
             if (dimension.getDimensionFilters() != null) {
                 DimensionFilters dimensionFilters = dimension.getDimensionFilters();
                 if (dimensionFilters.getAfter() != null) {
