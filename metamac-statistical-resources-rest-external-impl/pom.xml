@@ -34,12 +34,6 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
-			<artifactId>metamac-statistical-resources-core</artifactId>
-			<classifier>client</classifier>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.siemac.metamac.metamac-srm</groupId>
 			<artifactId>metamac-srm-rest-external-api</artifactId>
 			<version>${metamac-srm-rest-external-api.version}</version>

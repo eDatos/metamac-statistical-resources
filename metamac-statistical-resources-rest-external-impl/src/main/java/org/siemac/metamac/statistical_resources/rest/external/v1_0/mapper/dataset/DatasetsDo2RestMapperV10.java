@@ -20,6 +20,7 @@ public interface DatasetsDo2RestMapperV10 {
     public Datasets toDatasets(PagedResult<DatasetVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
             Set<String> parsedFields) throws MetamacException;
     public Dataset toDataset(DatasetVersion source, Map<String, List<String>> dimensions, List<String> selectedLanguages, Set<String> fields, String granularity) throws Exception;
+    public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion);
     public ResourceWithStatisticalOperation toResource(DatasetVersion source, List<String> selectedLanguages, Set<String> parsedFields, ExternalRestObjectsMapper externalRestObjectsMapper)
             throws MetamacException;
     public ResourceStatisticalResourceBase toResourceAsLatest(DatasetVersion source, List<String> selectedLanguages) throws MetamacException;

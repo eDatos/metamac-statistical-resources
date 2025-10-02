@@ -66,6 +66,7 @@ import org.siemac.metamac.srm.rest.common.SrmRestConstants;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -93,7 +94,6 @@ import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryServi
 import org.siemac.metamac.statistical.resources.core.utils.AttributesUtils;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
-import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.impl.utils.SafeCalculatorUtils;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
@@ -269,6 +269,17 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         dsdProcessorResult.setAttributes(DsdExternalProcessor.getAttributes(dataStructure));
         dsdProcessorResult.setGroups(DsdExternalProcessor.getGroups(dataStructure));
         return dsdProcessorResult;
+    }
+
+    @Override
+    public String getMeasureDimensionName(String urn) {
+        DataStructure dataStructure = srmRestExternalFacade.retrieveDataStructureByUrn(urn);
+        for (org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionBase dimension : dataStructure.getDataStructureComponents().getDimensions().getDimensions()) {
+            if (org.siemac.metamac.rest.structural_resources.v1_0.domain.DimensionType.MEASURE_DIMENSION.equals(dimension.getType())) {
+                return dimension.getId();
+            }
+        }
+        return "";
     }
 
     @Override
@@ -1067,7 +1078,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return targets;
     }
 
-    private boolean checkCodeDimensionsInGeographicalGranularities(CodeResource source, List<String> geographicGranularities, DsdDimension dimension) throws MetamacException {
+    @Override
+    public boolean checkCodeDimensionsInGeographicalGranularities(CodeResource source, List<String> geographicGranularities, DsdDimension dimension) throws MetamacException {
         if (!DsdComponentType.SPATIAL.equals(dimension.getType()) || geographicGranularities == null || geographicGranularities.isEmpty()) {
             return true;
         }
@@ -1544,7 +1556,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     /**
      * Build dimensions selected, with codes selected or all codes if codes are not selected to one dimension
      */
-    private Map<String, List<String>> buildDimensionsSelectedWithValues(DatasetVersion source, Map<String, List<String>> dimensionsSelected, List<String> dimensions) throws MetamacException {
+    @Override
+    public Map<String, List<String>> buildDimensionsSelectedWithValues(DatasetVersion source, Map<String, List<String>> dimensionsSelected, List<String> dimensions) throws MetamacException {
         Map<String, List<String>> dimensionsCodesSelected = new HashMap<String, List<String>>();
         for (String dimension : dimensions) {
             List<String> dimensionValues = dimensionsSelected.get(dimension);

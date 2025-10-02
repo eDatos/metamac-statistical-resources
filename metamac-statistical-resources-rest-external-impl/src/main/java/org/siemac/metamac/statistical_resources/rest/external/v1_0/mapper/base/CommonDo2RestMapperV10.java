@@ -12,10 +12,12 @@ import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.Resource;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
+import org.siemac.metamac.rest.structural_resources.v1_0.domain.CodeResource;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.Concept;
 import org.siemac.metamac.rest.structural_resources.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.DimensionOrder;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
@@ -23,7 +25,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
-import org.siemac.metamac.statistical_resources.rest.common.impl.export.utils.DimensionsFilter;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ConstraintDimensionRepresentations;
@@ -35,11 +36,14 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesStatisticalResourceBase;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.SelectedLanguages;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.StatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.external.service.utils.DsdExternalProcessor.DsdDimension;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.domain.DsdProcessorResult;
 
 public interface CommonDo2RestMapperV10 {
 
     public DsdProcessorResult processDataStructure(String urn) throws MetamacException;
+    public String getMeasureDimensionName(String urn);
+    public Map<String, List<String>> buildDimensionsSelectedWithValues(DatasetVersion source, Map<String, List<String>> dimensionsSelected, List<String> dimensions) throws MetamacException;
     public ConstraintDimensionRepresentations processDatasetConstraint(String datasetUrn) throws MetamacException;
     public void toMetadataStatisticalResource(SiemacMetadataStatisticalResource source, StatisticalResourceBase target, List<String> selectedLanguages) throws MetamacException;
     public Data toData(DatasetVersion source, DsdProcessorResult dsdProcessorResult, Map<String, List<String>> dimensionValuesSelected, List<String> selectedLanguages,
@@ -65,7 +69,7 @@ public interface CommonDo2RestMapperV10 {
     public InternationalString toInternationalString(InternationalString sources, List<String> selectedLanguages);
     public InternationalString toInternationalString(String source, List<String> selectedLanguages);
     public InternationalString toInternationalString(Map<String, String> sources, List<String> selectedLanguages);
-
+    public boolean checkCodeDimensionsInGeographicalGranularities(CodeResource source, List<String> geographicGranularities, DsdDimension dimension) throws MetamacException;
     public Date toDate(DateTime source);
 
     public NextVersionType toNextVersionType(NextVersionTypeEnum source, List<String> selectedLanguages);

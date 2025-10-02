@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.common.impl.export.utils;
+package org.siemac.metamac.statistical.resources.core.common.domain;
 
 import java.util.List;
 
@@ -6,9 +6,11 @@ public class DimensionsFilter {
 
     private String       temporalDimensionId;
     private String       geographicDimensionId;
+    private String       measureDimensionId;
     private List<String> temporalDimensionValuesIds;
     private List<String> temporalDimensionValuesQueriesIds;
     private List<String> geographicDimensionValuesIds;
+    private List<String> measureDimensionValuesIds;
 
     public String getTemporalDimensionId() {
         return temporalDimensionId;
