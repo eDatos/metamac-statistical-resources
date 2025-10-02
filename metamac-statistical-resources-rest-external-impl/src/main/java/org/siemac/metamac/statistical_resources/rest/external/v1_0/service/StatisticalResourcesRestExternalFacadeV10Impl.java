@@ -283,8 +283,8 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             for (CodeResource code : codes.getCodes()) {
                 if (code.getVariableElement() != null && code.getVariableElement() instanceof VariableElementResource
                         && geographicGranularities.contains(((VariableElementResource) code.getVariableElement()).getGeographicalGranularity().getId())) {
-                geographicCodes.add(code.getId());
-            }
+                    geographicCodes.add(code.getId());
+                }
             }
         }
         return geographicCodes;
