@@ -52,7 +52,7 @@
         <edatos-dataset-repository.version>3.3.2-SNAPSHOT</edatos-dataset-repository.version>
         
 		<statistic-parser.version>2.1.0</statistic-parser.version>
-		<statistic-sdmx-srm-rest-external-api.version>4.5.0</statistic-sdmx-srm-rest-external-api.version>
+		<statistic-sdmx-srm-rest-external-api.version>4.7.2</statistic-sdmx-srm-rest-external-api.version>
 
 		<!-- WEB -->
 		<jstl.version>1.2</jstl.version>
