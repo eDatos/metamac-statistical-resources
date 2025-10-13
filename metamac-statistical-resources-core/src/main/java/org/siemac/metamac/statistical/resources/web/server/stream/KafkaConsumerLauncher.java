@@ -422,7 +422,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
     }
 
-    private Properties getConsumerProperties(String clientId) throws MetamacException {
+    private Properties getConsumerProperties(String clientId, String group) throws MetamacException {
         Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, statisticalResourcesConfiguration.retrieveKafkaBootStrapServers());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, group);
