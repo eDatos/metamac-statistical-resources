@@ -62,6 +62,7 @@ import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -527,7 +528,10 @@ public class DataManipulateTest extends StatisticalResourcesBaseTest {
 
         List<DsdDimension> dimensions = DsdProcessor.getDimensions(dsd);
         for (DsdDimension dimension : dimensions) {
-            datasetRepositoryDto.getDimensions().add(dimension.getComponentId());
+            DimensionDto dimensionDto = new DimensionDto();
+            dimensionDto.setDimensionId(dimension.getComponentId());
+            dimensionDto.setSourceUrn("urn:uuid:" + datasetId + ":" + dimension.getComponentId());
+            datasetRepositoryDto.getDimensions().add(dimensionDto);
         }
 
         // Attributes

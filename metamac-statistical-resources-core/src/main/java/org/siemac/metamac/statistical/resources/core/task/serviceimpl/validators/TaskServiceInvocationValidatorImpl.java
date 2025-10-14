@@ -213,6 +213,14 @@ public class TaskServiceInvocationValidatorImpl {
         // NOTHING TO DO HERE
     }
 
+    public static void checkProcessDataViewAdjustmentTask(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
+    public static void checkScheduleDataViewAdjustmentJob(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
     public static void checkSendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(metamacException, ServiceExceptionParameters.METAMAC_EXCEPTION, exceptions);

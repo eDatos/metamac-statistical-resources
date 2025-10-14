@@ -2054,4 +2054,10 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
 
     }
+
+    @Override
+    public void testProcessSrmResourcesKafkaMessage() throws Exception {
+        // no optimistic locking in this operation
+
+    }
 }

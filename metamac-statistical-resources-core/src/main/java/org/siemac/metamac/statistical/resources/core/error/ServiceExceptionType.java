@@ -207,6 +207,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.constraints.update.check_existing_observations");
     public static final CommonServiceExceptionType CONSTRAINT_UPDATE_CHECK_EXISTING_OBSERVATIONS_FAIL                                          = create(
             "exception.resources.constraints.update.check_existing_observations_fail");
+    public static final CommonServiceExceptionType CREATE_OR_UPDATE_SRM_RESOURCE                                                               = create(
+            "exception.resources.kafka.process.message.update_resource_fail");
 
     // Identifiable Statistical Resource
     public static final CommonServiceExceptionType IDENTIFIABLE_STATISTICAL_RESOURCE_NOT_FOUND                                                 = create(
@@ -234,8 +236,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType STATISTIC_OFFICIALITY_NOT_FOUND                                                             = create(
             "exception.resources.statistic_officiality.not_found");
 
-    //Purposes
-    public static final CommonServiceExceptionType PURPOSE_NOT_FOUND                                                                          = create("exception.resources.purpose.not_found");
+    // Purposes
+    public static final CommonServiceExceptionType PURPOSE_NOT_FOUND                                                                           = create("exception.resources.purpose.not_found");
 
     // Tasks
     public static final CommonServiceExceptionType TASKS_ERROR_MAX_CURRENT_JOBS                                                                = create(

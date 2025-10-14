@@ -14,6 +14,8 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
 
     final String STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP        = "STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
     final String STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
+    final String STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP         = "STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP";
+    final String STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP   = "STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP";
 
     @Override
     public Map<KeyDotEnum, String> retrieveDotCodeMapping() throws MetamacException {
@@ -127,7 +129,23 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
+    public String retrieveKafkaCustomCodelistPublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP;
+    }
+
+    @Override
+    public String retrieveKafkaCustomConceptSchemePublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP;
+    }
+
+    @Override
     public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE);
+    }
+
+    @Override
+    @Deprecated
+    public String retrieveCronExpressionForDataViewAdjustment() throws MetamacException {
+        return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_DATA_VIEW_ADJUSTMENT);
     }
 }
