@@ -44,12 +44,14 @@
 		<metamac-sdmx-data-rest-external-api.version>2.0.0</metamac-sdmx-data-rest-external-api.version>
 		<metamac-web-common.version>5.15.1</metamac-web-common.version>
 		<metamac-notifications-rest-internal-api.version>3.7.1</metamac-notifications-rest-internal-api.version>
+    	<metamac-srm-kafka.version>7.0.0</metamac-srm-kafka.version>
+
 
 		<metamac-statistical-resources.baseDir>${basedir}/..</metamac-statistical-resources.baseDir>
 		<metamac-statistical-resources.etcDir>${metamac-statistical-resources.baseDir}/etc</metamac-statistical-resources.etcDir>
 
         <!-- EDATOS DATASET REPOSITORY -->
-        <edatos-dataset-repository.version>3.4.0</edatos-dataset-repository.version>
+        <edatos-dataset-repository.version>3.4.1-SNAPSHOT</edatos-dataset-repository.version>
         
 		<statistic-parser.version>2.1.0</statistic-parser.version>
 		<statistic-sdmx-srm-rest-external-api.version>4.7.2</statistic-sdmx-srm-rest-external-api.version>

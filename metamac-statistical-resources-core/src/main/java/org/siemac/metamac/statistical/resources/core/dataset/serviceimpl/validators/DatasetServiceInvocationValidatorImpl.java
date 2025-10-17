@@ -398,6 +398,10 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
+    public static void checkProcessSrmResourcesKafkaMessage(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
     public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
@@ -429,5 +433,9 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
     public static void checkExportDatasourcesTsv(String datasetVersionUrn, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
+    }
+
+    public static void checkProcessDataViewAdjustmentInRepository(List<MetamacExceptionItem> exceptions) throws MetamacException {
+        // NOTHING
     }
 }

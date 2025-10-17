@@ -12,6 +12,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -140,6 +141,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
@@ -528,8 +530,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
 
             List<DsdDimension> dimensions = DsdProcessor.getDimensions(dsd);
-            for (DsdDimension dimension : dimensions) {
-                datasetRepositoryDto.getDimensions().add(dimension.getComponentId());
+            for (DsdDimension dsdDimension : dimensions) {
+                DimensionDto dimension = new DimensionDto();
+                dimension.setDimensionId(dsdDimension.getComponentId());
+                dimension.setSourceUrn(getDataSourceUrnForEnumeratedDimensions(dsdDimension));
+                datasetRepositoryDto.getDimensions().add(dimension);
             }
 
             // Attributes
@@ -549,6 +554,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
+    private String getDataSourceUrnForEnumeratedDimensions(DsdDimension dsdDimension) {
+        if (!DsdComponentType.TEMPORAL.equals(dsdDimension.getType()) && dsdDimension.getTextFormatRepresentation() == null) {
+            if (dsdDimension.getCodelistRepresentationUrn() != null) {
+                return dsdDimension.getCodelistRepresentationUrn();
+
+            } else if (dsdDimension.getConceptSchemeRepresentationUrn() != null) {
+                return dsdDimension.getConceptSchemeRepresentationUrn();
+            }
+
+        }
+
+        return null;
+    }
+
     @Override
     public void manageDatabaseView(ServiceContext ctx, String datasetRepositoryId, DatasetVersion datasetVersion) throws MetamacException {
         datasetServiceInvocationValidator.checkManageDatabaseView(ctx, datasetRepositoryId, datasetVersion);
@@ -561,7 +580,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         String viewCode = datasetVersion.getDataset().getViewCode();
 
         try {
-            statisticsDatasetRepositoriesServiceFacade.createOrReplaceDatasetRepositoryView(datasetRepositoryId, viewCode);
+            List<String> languages = configurationService.retrieveInternationalizationLanguages();
+            statisticsDatasetRepositoriesServiceFacade.createOrReplaceDatasetRepositoryView(datasetRepositoryId, viewCode, languages,
+                    Arrays.asList(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID), new ArrayList<>());
         } catch (Exception e) {
             log.error("Error creating or replacing view " + viewCode + " for datasetRepositoryId " + datasetRepositoryId, e);
             noticesRestInternalService.createCreateReplaceDatasetErrorBackgroundNotification(datasetVersion, viewCode, datasetRepositoryId);
@@ -2408,4 +2429,118 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             IOUtils.closeQuietly(outputStreamObservations);
         }
     }
+
+    @Override
+    @Deprecated
+    public void processDataViewAdjustmentInRepository(ServiceContext ctx) {
+     
+      
+            
+            //retrieve all datasets
+            Map<String, List<DimensionDto>> dsdByDimension = new HashMap<>();
+            
+            // views only are defined for the last version of dataset. Independently that the last versión is draft o not. So only generate view for last versions.
+            List<DatasetVersion> datasetVersions = retrieveLastVersionDatasets();
+            List<String> datasetVersionTreated = new ArrayList<>();
+                   
+            log.info("----------------------------------------- processDataViewAdjustmentTask: starting at {}  --- number affected last version datasets: {}", new Date(), datasetVersions.size());
+            
+            int numberAffectedDatasets = 0;
+            int i = 0;
+            
+            for (DatasetVersion dv: datasetVersions) {
+               
+                processDataViewAdjustmentDataset(ctx, dv, dsdByDimension, datasetVersions, true);
+                
+                if ( i++>= 50) {
+                    log.info(String.format("processDataViewAdjustmentTask checkPoint : number updated datasets %d --- of total datasets: %d at %s", numberAffectedDatasets, datasetVersions.size(), new Date().toString()));
+                i = 0;
+                }
+                numberAffectedDatasets++;
+                datasetVersionTreated.add(dv.getSiemacMetadataStatisticalResource().getUrn());
+                }
+                
+            log.info("----------------------------------------- processDataViewAdjustmentTask: finished at {}",  new Date());
+            
+            
+            List<DatasetVersion> datasetVersionsAll = datasetVersionRepository.findAll();
+            
+ log.info("----------------------------------------- processDataViewAdjustmentTask to fill sourceUrn not lastVersion datasets: starting at {}  --- number affected last version datasets: {}", new Date(), datasetVersions.size());
+            
+            numberAffectedDatasets = 0;
+            i = 0;
+            
+            for (DatasetVersion dv: datasetVersionsAll) {
+               if (!datasetVersionTreated.contains(dv.getSiemacMetadataStatisticalResource().getUrn())) {
+                processDataViewAdjustmentDataset(ctx, dv, dsdByDimension, datasetVersions, false);
+                
+                if ( i++>= 50) {
+                    log.info(String.format("processDataViewAdjustmentTask to fill sourceUrn not lastVersion datasets checkPoint : number updated datasets %d --- of total datasets: %d at %s", numberAffectedDatasets, datasetVersions.size(), new Date().toString()));
+                i = 0;
+                }
+                numberAffectedDatasets++;
+                }
+            }
+                
+            log.info("----------------------------------------- processDataViewAdjustmentTask to fill sourceUrn not lastVersion datasets: finished at {}",  new Date());
+            
+            
+            
+    } 
+    
+    @Deprecated
+    private void processDataViewAdjustmentDataset(ServiceContext ctx, DatasetVersion dv, Map<String, List<DimensionDto>> dsdByDimension, List<DatasetVersion> datasetVersions, boolean regenerateViewForLastVersionDataset) {
+        try {
+            
+            if (dv.getDatasetRepositoryId() == null) {
+                // dataset not exists in repository
+                log.warn("processDataViewAdjustmentDataset -> ID_NOT_EXISTS Dataset {} not exists in repository. It will not be updated", dv.getSiemacMetadataStatisticalResource().getUrn());
+                return;         
+            }
+            
+            List<DimensionDto> dimensionsDto = new ArrayList<>();                
+            if (dsdByDimension.containsKey(dv.getRelatedDsd().getUrn())) {
+                dimensionsDto = dsdByDimension.get(dv.getRelatedDsd().getUrn()); 
+            } else {
+                DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(dv.getRelatedDsd().getUrn());
+                List<DsdDimension> dimensions = DsdProcessor.getDimensions(dsd);
+                for (DsdDimension dsdDimension : dimensions) {
+                    String sourceUrn = getDataSourceUrnForEnumeratedDimensions(dsdDimension);
+                    if (sourceUrn != null) {
+                    DimensionDto dimension = new DimensionDto();
+                    dimension.setDimensionId(dsdDimension.getComponentId());
+                    dimension.setSourceUrn(getDataSourceUrnForEnumeratedDimensions(dsdDimension));
+                    dimensionsDto.add(dimension);
+                    }     
+                }
+                if (!dimensionsDto.isEmpty()) {
+                dsdByDimension.put(dv.getRelatedDsd().getUrn(), dimensionsDto);
+                }
+            }
+                     
+                datasetRepositoriesServiceFacade.updateDatasetDimensionSourceUrn(dv.getDatasetRepositoryId(), dimensionsDto);
+                
+                if (regenerateViewForLastVersionDataset) {
+                //do not assign view role because it has a bad performance. I will be assign manually by script.
+                createOrReplaceLastVersionDatabaseView(dv.getSiemacMetadataStatisticalResource().getUrn(), dv);
+                }
+                
+                
+                
+        } catch (MetamacException  | ApplicationException e) {
+            log.warn("Dataset repository [" + dv.getDatasetRepositoryId() + "] Error in data view adjustment for descriptions fields", e);
+
+        }        
+    }
+    
+    @Deprecated
+    // DELETE IN EDATOS 5200 
+    private List<DatasetVersion> retrieveLastVersionDatasets()  {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion())
+                .eq(Boolean.TRUE).distinctRoot().build();
+        return datasetVersionRepository.findByCondition(criteria);
+
+    }
+    
 }

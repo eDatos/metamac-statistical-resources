@@ -14,6 +14,9 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.srm.core.stream.message.CodelistAvro;
+import org.siemac.metamac.srm.core.stream.message.ConceptSchemeAvro;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
@@ -24,6 +27,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesR
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -31,9 +35,9 @@ import net.sf.ehcache.Element;
 @Scope("prototype")
 public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnable {
 
-    protected static Log                      LOGGER                 = LogFactory.getLog(KafkaConsumerThread.class);
+    protected static Log                      LOGGER       = LogFactory.getLog(KafkaConsumerThread.class);
 
-    private static final String               MAX_POOL_MSG           = "We have set a poll of 1 message at most. This error can not be given.";
+    private static final String               MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
 
     private KafkaConsumer<String, T>          consumer;
     private String                            topicName;
@@ -96,7 +100,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                 }
 
                 if (pendigOffsetsToCommit.containsKey(record.partition()) && record.offset() == pendigOffsetsToCommit.get(record.partition())) {
-                    LOGGER.debug("The current message already processed successfully");
+                    LOGGER.debug("Statistical resources. The current message already processed successfully");
                     if (commitSync(record)) {
                         pendigOffsetsToCommit.remove(record.partition());
                         removeFromErrorCacheMessagesIfNeccesary(record);
@@ -104,8 +108,8 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                     continue;
                 }
 
-                StringBuilder logMessageBldr = KafkaUtils.buildLogMessage("Received message from Kafka -> Topic Name: ", topicName, record.partition(), record.offset(), record.timestampType(),
-                        record.timestamp());
+                StringBuilder logMessageBldr = KafkaUtils.buildLogMessage("Statistical resources. Received message from Kafka -> Topic Name: ", topicName, record.partition(), record.offset(),
+                        record.timestampType(), record.timestamp());
                 String logMessage = logMessageBldr.toString();
 
                 pendigOffsetsToCommit.put(record.partition(), record.offset());
@@ -114,23 +118,31 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                 try {
                     ServiceContext serviceContext = createServiceContext(logMessage);
 
-                    statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(serviceContext, record.value());
+                    updateByKafkaMessage(serviceContext, record.value(), record.key());
 
                     commitSync(record);
                 } catch (Exception e) {
-                    LOGGER.error("Unable to process resource received from Kafka. The business of application has failed", e);
+                    LOGGER.error("Statistical resources. Unable to process resource received from Kafka. The business of application has failed", e);
 
                     // Send a error notification, the error message will send only if not exist in error cache
                     sendErrorMessageIfNeccesary(record);
 
-                    LOGGER.error("Process the next resource and discard the current message, key of message: " + record.key());
+                    LOGGER.error("Statistical resources. Process the next resource and discard the current message, key of message: " + record.key());
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("An error has occurred in the Kafka client. Finishing the client.", e);
+            LOGGER.error("Statistical resources. An error has occurred in the Kafka client. Finishing the client.", e);
         } finally {
-            LOGGER.info("Closing the consumer...");
+            LOGGER.info("Statistical resources. Closing the consumer...");
             consumer.close();
+        }
+    }
+
+    public void updateByKafkaMessage(ServiceContext ctx, SpecificRecordBase message, String recordKey) throws MetamacException {
+        if (message instanceof DatasetAvro) {
+            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+        } else if (message instanceof CodelistAvro || message instanceof ConceptSchemeAvro) {
+            statisticalResourcesServiceFacade.processSrmResourcesKafkaMessage(ctx, message);
         }
     }
 
@@ -148,7 +160,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             consumer.commitSync(Collections.singletonMap(new TopicPartition(record.topic(), record.partition()), new OffsetAndMetadata(record.offset() + 1)));
             LOGGER.debug("Commited message: " + record.partition() + " : " + record.offset());
         } catch (CommitFailedException e) {
-            LOGGER.debug("The message processing takes longer than the session timeout. The coordinator kicks the consumer out of the group (rebalanced)");
+            LOGGER.debug("Statistical resources. The message processing takes longer than the session timeout. The coordinator kicks the consumer out of the group (rebalanced)");
             return false;
         }
         return true;

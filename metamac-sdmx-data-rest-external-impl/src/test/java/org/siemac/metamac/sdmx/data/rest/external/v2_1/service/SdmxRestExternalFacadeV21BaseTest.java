@@ -63,6 +63,7 @@ import com.arte.statistic.parser.sdmx.v2_1.domain.IdValuePair;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import es.gobcan.istac.edatos.dataset.repository.util.DtoUtils;
@@ -242,11 +243,25 @@ public abstract class SdmxRestExternalFacadeV21BaseTest extends MetamacRestBaseT
                 DatasetRepositoryDto datasetRepositoryDto = new DatasetRepositoryDto();
 
                 datasetRepositoryDto.setDatasetId(DATASET_ID);
-                datasetRepositoryDto.setDimensions(DIMENSIONS);
+                datasetRepositoryDto.getDimensions().addAll(generateDimensionsDto(DIMENSIONS));
 
                 return datasetRepositoryDto;
             };
         });
+    }
+
+    private List<DimensionDto> generateDimensionsDto(List<String> dimensionsCodes) {
+        List<DimensionDto> dimensionsDto = new ArrayList<>();
+
+        for (String dimensionCode : dimensionsCodes) {
+            DimensionDto dimensionDto = new DimensionDto();
+            dimensionDto.setDimensionId(dimensionCode);
+            dimensionDto.setSourceUrn("urn:" + dimensionCode);
+            dimensionsDto.add(dimensionDto);
+
+        }
+
+        return dimensionsDto;
     }
 
     protected void mockFindCodeDimensions() throws Exception {
