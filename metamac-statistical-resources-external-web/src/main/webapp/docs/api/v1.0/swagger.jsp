@@ -436,6 +436,14 @@
                      "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
                      "$ref":"#/definitions/Resource"
                   },
+                  "publication": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
+                  "url": {
+                     "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
+                     "$ref":"#/definitions/Resource"
+                  },
                   "nodes": {
                      "description": "${msg['api.doc.swagger.definitions.chapter.only.description']}",
                      "$ref":"#/definitions/CollectionNodes"
