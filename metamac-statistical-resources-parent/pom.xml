@@ -51,7 +51,7 @@
 		<metamac-statistical-resources.etcDir>${metamac-statistical-resources.baseDir}/etc</metamac-statistical-resources.etcDir>
 
         <!-- EDATOS DATASET REPOSITORY -->
-        <edatos-dataset-repository.version>3.5.0</edatos-dataset-repository.version>
+        <edatos-dataset-repository.version>3.5.1-SNAPSHOT</edatos-dataset-repository.version>
         
 		<statistic-parser.version>2.1.0</statistic-parser.version>
 		<statistic-sdmx-srm-rest-external-api.version>4.7.2</statistic-sdmx-srm-rest-external-api.version>

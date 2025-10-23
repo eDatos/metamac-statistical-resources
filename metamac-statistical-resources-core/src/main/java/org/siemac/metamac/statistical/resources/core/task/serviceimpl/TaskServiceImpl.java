@@ -107,7 +107,6 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.Statisti
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacSdmx2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.AbstractImportDatasetJob;
-import org.siemac.metamac.statistical.resources.core.io.serviceimpl.DataViewAdjustmentJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.DatabaseDatasetPollingJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.DuplicationDatasetJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.GeographicCoverageCacheClearJob;
@@ -2227,33 +2226,5 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling resend all published last version dataset kafka messages job", e);
         }
-    }
-
-    @Override
-    @Deprecated
-    public void processDataViewAdjustmentTask(ServiceContext ctx) throws MetamacException {
-        datasetService.processDataViewAdjustmentInRepository(ctx);    
-    }
-
-    @Override
-    @Deprecated
-    public void scheduleDataViewAdjustmentJob(ServiceContext ctx) {
-        try {
-            taskServiceInvocationValidator.checkScheduleDataViewAdjustmentJob(ctx);
-
-                JobDetail job = newJob(DataViewAdjustmentJob.class).build();
-
-                CronTrigger cronTrigger = TriggerBuilder.newTrigger()
-                        .withSchedule(CronScheduleBuilder.cronSchedule(configurationService.retrieveCronExpressionForDataViewAdjustment()).withMisfireHandlingInstructionDoNothing()).build();
-
-                Scheduler sched = schedulerFactory.getScheduler();
-                sched.scheduleJob(job, cronTrigger);
-
-                logger.info("Data view adjustment with dimension code descriptions job successfully scheduled at {} ", new Date());
-
-        } catch (Exception e) {
-            logger.error("An unexpected error has occurred scheduling data view adjustment with dimension code descriptions job", e);
-        }
-        
     }
 }
