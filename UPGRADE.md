@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 10.17.1 a 10.17.2-SNAPSHOT
+## 10.17.1 a 10.18.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.17.1/db](etc/changes-from-release/10.17.1/db) 
 * Ejecutar el script de la carpeta common-metadata
 * Ejecutar los scripts creados en el proyecto  edatos-dataset-repository sobre la base de datos statistical-resources-data: etc/changes-from-release/3.4.0/db/edatos-dataset-repository/postgresql
