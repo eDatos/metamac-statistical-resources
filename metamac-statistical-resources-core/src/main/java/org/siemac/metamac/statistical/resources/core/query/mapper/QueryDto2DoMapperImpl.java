@@ -111,11 +111,13 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
     }
 
     private void checkXTemplateLength(QueryVersionDto source) throws MetamacException {
-        for (LocalisedStringDto localisedString : source.getXTemplateDto().getTexts()) {
-            localisedString.setLabel(Jsoup.clean(localisedString.getLabel(), new Whitelist()));
-            if (localisedString.getLabel().length() > StatisticalResourcesConstants.MAX_X_LENGTH_AUTHORIZED) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_X_TEMPLATE_EXCEEDS).withMessageParameters(source.getUrn())
-                .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        if (source.getXTemplateDto() != null) {
+            for (LocalisedStringDto localisedString : source.getXTemplateDto().getTexts()) {
+                localisedString.setLabel(Jsoup.clean(localisedString.getLabel(), new Whitelist()));
+                if (localisedString.getLabel().length() > StatisticalResourcesConstants.MAX_X_LENGTH_AUTHORIZED) {
+                    throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_X_TEMPLATE_EXCEEDS).withMessageParameters(source.getUrn())
+                            .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+                }
             }
         }
     }
