@@ -3,7 +3,6 @@ package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.data
 import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils.addParameter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
-import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
@@ -36,7 +34,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetS
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
-import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -52,6 +49,7 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
+import org.siemac.metamac.statistical.resources.core.utils.TemporalDimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -414,42 +412,6 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         }
     }
 
-    private List<String> calculateEffectiveTemporalDimensionValuesToQuery(QueryVersion queryVersion, List<String> temporalCoverageCodes, List<String> selectionCodes) throws MetamacException {
-        List<String> sortedTemporalCoverageCodes = sortTimeListFromRecentToOldest(temporalCoverageCodes);
-        QueryTypeEnum type = queryVersion.getType();
-        if (QueryTypeEnum.FIXED.equals(type)) {
-            // We return exactly the selected codes, but first, we sort them so all three methods (FIXED, AUTOINCREMENTAL and LATEST_DATA) return the same order, equal to the coverage
-            return sortTimeListFromRecentToOldest(selectionCodes);
-        } else if (QueryTypeEnum.AUTOINCREMENTAL.equals(type)) {
-            List<String> effectiveDimensionValues = new ArrayList<String>();
-            List<String> sortedSelectionCodes = sortTimeListFromRecentToOldest(selectionCodes);
-
-            String latestSelectionCode = sortedSelectionCodes.get(0);
-            int indexLatestSelectionCode = sortedTemporalCoverageCodes.indexOf(latestSelectionCode);
-
-            effectiveDimensionValues.addAll(sortedSelectionCodes);
-            if (indexLatestSelectionCode >= 0) {
-                // add codes added after lastest selected code
-                List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(0, indexLatestSelectionCode);
-                effectiveDimensionValues.addAll(0, temporalCodesAddedAfterLatestSelectedCodeString);
-            }
-
-            return effectiveDimensionValues;
-        } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
-            // return N data
-            int codeLastIndexToReturn = Math.min(sortedTemporalCoverageCodes.size(), queryVersion.getLatestDataNumber());
-            return sortedTemporalCoverageCodes.subList(0, codeLastIndexToReturn);
-        } else {
-            throw new MetamacException(ServiceExceptionType.UNKNOWN, "QueryTypeEnum unsupported: " + queryVersion);
-        }
-    }
-    
-    public static List<String> sortTimeListFromRecentToOldest(List<String> temporalValues) {
-        List<String> sortedValues = SdmxTimeUtils.sortTimeList(temporalValues);
-        Collections.reverse(sortedValues);
-        return sortedValues;
-    }
-
     private List<String> getTemporalCoverageCodes(DatasetVersion datasetVersion) {
         List<String> temporalCoverageCodes = new ArrayList<>();
         for (TemporalCode temporalCode : datasetVersion.getTemporalCoverage()) {
@@ -473,7 +435,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         int dataSize = 1;
         for (QuerySelectionItem selectionItem : querySelectionItems) {
             if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(selectionItem.getDimension())) {
-                this.temporalCodes = calculateEffectiveTemporalDimensionValuesToQuery(queryVersion, getTemporalCoverageCodes(datasetVersion), getCodeItemList(selectionItem.getCodes()));
+                this.temporalCodes = TemporalDimensionUtils.calculateEffectiveTemporalDimensionValuesToQuery(queryVersion, getTemporalCoverageCodes(datasetVersion), getCodeItemList(selectionItem.getCodes()));
                 dataSize = safeMultiply(dataSize, this.temporalCodes.size());
             } else {
                 dataSize = safeMultiply(dataSize, selectionItem.getCodes().size());

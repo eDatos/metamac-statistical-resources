@@ -3,7 +3,6 @@ package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query
 import static org.siemac.edatos.core.common.util.GeneratorUrnUtils.generateSiemacStatisticalResourceQueryUrn;
 import static org.siemac.metamac.core.common.util.rest.RequestUtil.containsField;
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.isDateAfterNowSetNull;
-import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.sortTimeListFromRecentToOldest;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -37,6 +36,7 @@ import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTyp
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical.resources.core.utils.TemporalDimensionUtils;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attributes;
@@ -460,14 +460,14 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         return effectiveDimensions;
     }
 
-    public Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion) {
+    public Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion) throws MetamacException {
         Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(source.getSelection().size());
         for (QuerySelectionItem selection : source.getSelection()) {
             String dimensionId = selection.getDimension();
             List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
             if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
                 List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
-                List<String> dimensionValues = calculateEffectiveTemporalDimensionValuesToQuery(source, temporalCoverageCodes, selectionCodes);
+                List<String> dimensionValues = TemporalDimensionUtils.calculateEffectiveTemporalDimensionValuesToQuery(source, temporalCoverageCodes, selectionCodes);
                 dimensionValuesSelected.put(dimensionId, dimensionValues);
             } else {
                 dimensionValuesSelected.put(dimensionId, selectionCodes);
@@ -475,35 +475,4 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         return dimensionValuesSelected;
     }
-
-    private List<String> calculateEffectiveTemporalDimensionValuesToQuery(QueryVersion source, List<String> temporalCoverageCodes, List<String> selectionCodes) {
-        List<String> sortedTemporalCoverageCodes = sortTimeListFromRecentToOldest(temporalCoverageCodes);
-        QueryTypeEnum type = source.getType();
-        if (QueryTypeEnum.FIXED.equals(type)) {
-            // We return exactly the selected codes, but first, we sort them so all three methods (FIXED, AUTOINCREMENTAL and LATEST_DATA) return the same order, equal to the coverage
-            return sortTimeListFromRecentToOldest(selectionCodes);
-        } else if (QueryTypeEnum.AUTOINCREMENTAL.equals(type)) {
-            List<String> effectiveDimensionValues = new ArrayList<String>();
-            List<String> sortedSelectionCodes = sortTimeListFromRecentToOldest(selectionCodes);
-
-            String latestSelectionCode = sortedSelectionCodes.get(0);
-            int indexLatestSelectionCode = sortedTemporalCoverageCodes.indexOf(latestSelectionCode);
-
-            effectiveDimensionValues.addAll(sortedSelectionCodes);
-            if (indexLatestSelectionCode >= 0) {
-                // add codes added after lastest selected code
-                List<String> temporalCodesAddedAfterLatestSelectedCodeString = sortedTemporalCoverageCodes.subList(0, indexLatestSelectionCode);
-                effectiveDimensionValues.addAll(0, temporalCodesAddedAfterLatestSelectedCodeString);
-            }
-
-            return effectiveDimensionValues;
-        } else if (QueryTypeEnum.LATEST_DATA.equals(type)) {
-            // return N data
-            int codeLastIndexToReturn = Math.min(sortedTemporalCoverageCodes.size(), source.getLatestDataNumber());
-            return sortedTemporalCoverageCodes.subList(0, codeLastIndexToReturn);
-        } else {
-            throw commonDo2RestMapper.buildRestException("QueryTypeEnum unsupported: " + source);
-        }
-    }
-
 }

@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -100,18 +102,25 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
                         .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
         }
-
+        checkXTemplateLength(source);
         queryVersionDtoToDo(source, target);
-        try {
-            checkPurpose(source, target);
-        } catch (ApplicationException e) {
-            throw MetamacExceptionBuilder.builder().withCause(e).withMessageParameters(source.getUrn()).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
-        }
+        checkPurpose(source, target);
+        
 
         return target;
     }
 
-    private void checkPurpose(QueryVersionDto source, QueryVersion target) throws MetamacException, ApplicationException {
+    private void checkXTemplateLength(QueryVersionDto source) throws MetamacException {
+        for (LocalisedStringDto localisedString : source.getXTemplateDto().getTexts()) {
+            localisedString.setLabel(Jsoup.clean(localisedString.getLabel(), new Whitelist()));
+            if (localisedString.getLabel().length() > 280) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_X_TEMPLATE_EXCEEDS).withMessageParameters(source.getUrn())
+                .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
+        }
+    }
+
+    private void checkPurpose(QueryVersionDto source, QueryVersion target) throws MetamacException {
         if (source.getPurpose() != null) {
             if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getType())) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_PURPOSE_TYPE_NOT_COMPATIBLE).withMessageParameters(source.getUrn())
