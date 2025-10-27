@@ -472,7 +472,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     private int safeCalculateDataSize(List<QuerySelectionItem> querySelectionItems, DatasetVersion datasetVersion, QueryVersion queryVersion) throws MetamacException {
         int dataSize = 1;
         for (QuerySelectionItem selectionItem : querySelectionItems) {
-            if ("TIME_PERIOD".equals(selectionItem.getDimension())) {
+            if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(selectionItem.getDimension())) {
                 this.temporalCodes = calculateEffectiveTemporalDimensionValuesToQuery(queryVersion, getTemporalCoverageCodes(datasetVersion), getCodeItemList(selectionItem.getCodes()));
                 dataSize = safeMultiply(dataSize, this.temporalCodes.size());
             } else {
@@ -534,7 +534,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         for (QuerySelectionItem querySelectionItem : querySelectionItems) {
             ConditionDimensionDto conditionDimensionDto = new ConditionDimensionDto();
             conditionDimensionDto.setDimensionId(querySelectionItem.getDimension());
-            if ("TIME_PERIOD".equals(querySelectionItem.getDimension())) {
+            if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(querySelectionItem.getDimension())) {
                 conditionDimensionDto.getCodesDimension().addAll(this.temporalCodes);
             } else {
                 for (CodeItem codeItem : querySelectionItem.getCodes()) {
