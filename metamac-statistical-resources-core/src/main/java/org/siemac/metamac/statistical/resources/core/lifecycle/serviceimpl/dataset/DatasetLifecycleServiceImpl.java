@@ -95,7 +95,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     @Autowired
     private QueryVersionRepository            queryVersionRepository;
 
-    private List<String> temporalCodes;
+    private List<String>                      temporalCodes = new ArrayList<>();
     @Override
     protected String getResourceMetadataName() throws MetamacException {
         return ServiceExceptionParameters.DATASET_VERSION;
