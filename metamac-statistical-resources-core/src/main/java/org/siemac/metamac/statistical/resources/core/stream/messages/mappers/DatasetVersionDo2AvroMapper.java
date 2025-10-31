@@ -60,7 +60,7 @@ public class DatasetVersionDo2AvroMapper {
     protected static List<ExternalItemAvro> genericExternalItemList2Avro(Collection<ExternalItem> source) {
         List<ExternalItemAvro> measureCoverageList = new ArrayList<ExternalItemAvro>();
         for (ExternalItem externalItem : source) {
-            ExternalItemAvro externalItemAvro = ExternalItemDo2AvroMapper.do2Avro(externalItem);
+            ExternalItemAvro externalItemAvro = ExternalItemDo2AvroMapper.do2AvroStructuralResources(externalItem);
             measureCoverageList.add(externalItemAvro);
         }
         return measureCoverageList;

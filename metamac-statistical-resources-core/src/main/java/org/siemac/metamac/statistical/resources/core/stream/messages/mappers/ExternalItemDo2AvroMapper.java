@@ -23,4 +23,18 @@ public class ExternalItemDo2AvroMapper {
 
     }
 
+    public static ExternalItemAvro do2AvroStructuralResources(ExternalItem source) {
+        ExternalItemAvro target = null;
+        if (source != null) {
+            try {
+                target = ExternalItemAvro.newBuilder().setCode(source.getCode()).setCodeNested(source.getCodeNested()).setManagementAppUrl(source.getManagementAppUrl())
+                        .setTitle(InternationalStringDo2AvroMapper.do2Avro(source.getTitle())).setType(TypeExternalArtefactsEnumDo2AvroMapper.do2Avro(source.getType())).setUrn(source.getUrn())
+                        .setUrnProvider(source.getUrnProvider()).setSelfLink(AvroMapperUtils.getSelfLinkStructuralResources(source)).build();
+            } catch (MetamacException e) {
+            }
+        }
+        return target;
+
+    }
+
 }
