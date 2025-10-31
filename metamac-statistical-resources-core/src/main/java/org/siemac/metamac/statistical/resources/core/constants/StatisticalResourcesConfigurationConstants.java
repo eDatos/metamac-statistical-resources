@@ -17,9 +17,6 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String CRON_EXPRESSION_FOR_GEOGRAPHIC_COVERAGE_CACHE_CLEAR = "metamac.statistical_resources.geografic_coverage_cache_clear.cron_expression";
     public static final String CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE    = "metamac.statistical_resources.resend_dataset_kafka_message.cron_expression";
 
-    @Deprecated
-    public static final String CRON_EXPRESSION_FOR_DATA_VIEW_ADJUSTMENT            = "metamac.statistical_resources.data_view_adjustment.cron_expression";
-
     // DataSources
 
     public static final String DB_URL                                              = "metamac.statistical_resources.db.url";
@@ -45,10 +42,8 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String TWITTER_API_KEY                                     = "metamac.statistical_resources.twitter.apiKey";
     public static final String TWITTER_API_SECRET_KEY                              = "metamac.statistical_resources.twitter.apiSecretKey";
     public static final String TWITTER_SENT_ENABLE                                 = "metamac.statistical_resources.twitter.enabled";
-    
+
     // if it is only necessary to reload jaxi messages for e-catalogo it is better to disabled this consumer to avoid bad performance.
     public static final String DISABLED_JAXI_PUBLICATIONS_CONSUMER                 = "metamac.statistical_resources.kafka.jaxi_publication_consumer_disabled";
-
-
 
 }

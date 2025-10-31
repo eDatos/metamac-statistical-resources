@@ -25,7 +25,6 @@ public class JobsSchedulerListener implements ApplicationListener<ContextRefresh
         schedulingGeographicCoverageCacheClearJob();
         schedulingResendKafkaDatasetMessageJob();
         markAllInProgressTaskToFailed();
-        schedulingDataViewAdjustmentJob();
     }
 
     private void schedulingDatabaseDatasetPollingJob() {
@@ -52,13 +51,4 @@ public class JobsSchedulerListener implements ApplicationListener<ContextRefresh
             logger.error("Impossible to mark old jobs with running state to failed state.", e);
         }
     }
-
-    private void schedulingDataViewAdjustmentJob() {
-        ServiceContext ctx = new ServiceContext("Metamac", "Tasks", "Metamac");
-
-        logger.info("Launching temporal job for scheduling data view adjustment with dimension code descriptions");
-        taskServiceFacade.scheduleDataViewAdjustmentJob(ctx);
-
-    }
-
 }
