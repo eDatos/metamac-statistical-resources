@@ -15,7 +15,7 @@ public class ExternalItemDo2AvroMapper {
             try {
                 target = ExternalItemAvro.newBuilder().setCode(source.getCode()).setCodeNested(source.getCodeNested()).setManagementAppUrl(source.getManagementAppUrl())
                         .setTitle(InternationalStringDo2AvroMapper.do2Avro(source.getTitle())).setType(TypeExternalArtefactsEnumDo2AvroMapper.do2Avro(source.getType())).setUrn(source.getUrn())
-                        .setUrnProvider(source.getUrnProvider()).setSelfLink(AvroMapperUtils.getSelfLink(source)).build();
+                        .setUrnProvider(source.getUrnProvider()).setSelfLink(AvroMapperUtils.getSelfLinkStructuralResources(source)).build();
             } catch (MetamacException e) {
             }
         }
