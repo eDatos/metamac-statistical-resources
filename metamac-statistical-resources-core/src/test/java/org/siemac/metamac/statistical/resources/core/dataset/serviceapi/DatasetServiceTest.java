@@ -2222,10 +2222,4 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     public void testCopyDatasetVersion() throws Exception {
         // NOTHING TO DO
     }
-
-    @Override
-    public void testProcessDataViewAdjustmentInRepository() throws Exception {
-        // NOTHING TO DO
-
-    }
 }

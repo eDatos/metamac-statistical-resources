@@ -131,7 +131,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
 
     @Autowired
     private CommonDo2RestMapperV10                        commonDo2RestMapper;
-    
+
     @Autowired
     private SrmRestInternalFacade                         srmRestInternalFacade;
 
@@ -207,7 +207,8 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity, boolean isTransposed) {
+    public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity,
+            boolean isTransposed) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity, isTransposed);
     }
 
@@ -471,7 +472,7 @@ public class StatisticalResourcesRestInternalFacadeV10Impl implements Statistica
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-            DatasetVersion datasetVersion = commonService.retrieveDatasetLastVersionByUrn(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
+            DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(queryVersion);
             String selectedLanguage = languagesRequestedToEffectiveLanguageForJsonStat(datasetVersion, lang);
             return queriesDo2RestMapper.toJsonStatQuery(queryVersion, datasetVersion, dimensions, selectedLanguage, parsedFields, granularity);
         } catch (Exception e) {

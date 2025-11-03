@@ -197,6 +197,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.query_version.purpose.not_unique_result");
     public static final CommonServiceExceptionType QUERY_PURPOSE_TYPE_NOT_COMPATIBLE                                                           = create(
             "exception.resources.query_version.purpose.not_compatible");
+    public static final CommonServiceExceptionType QUERY_X_TEMPLATE_EXCEEDS                                                                          = create(
+            "exception.resources.query_version.x_template.template_length");
     // Constraints
     public static final CommonServiceExceptionType CONSTRAINTS_CREATE_DATASET_WITH_DATASOURCES                                                 = create(
             "exception.resources.constraints.create.dataset_with_datasources");

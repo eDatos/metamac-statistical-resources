@@ -37,11 +37,7 @@ Application DatasetsStatisticalResources {
     		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset) throws MetamacException;
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
-			
-			"Temporal for EDATOS-5154 Schedule data transformation job"
-			scheduleDataViewAdjustmentJob();
-			executeDataViewAdjustmentTask()  throws MetamacException;
-			
+				
 			"Perform geographic coverage cache clear task"
     		executeGeographicCoverageCacheClearTask()  throws MetamacException;
 			"Schedule geographic coverage cache clear"
@@ -98,10 +94,7 @@ Application DatasetsStatisticalResources {
     		processDatabaseDatasetPollingTask() throws MetamacException;   		
     		"Perform the geographic coverage cache clear task"
     		processGeographicCoverageCacheClearTask() throws MetamacException;
- 		
- 			"Temporal for EDATOS-5154 Schedule data transformation job"
-    		processDataViewAdjustmentTask() throws MetamacException;   	
- 		
+ 	 		
      		"Check if exists any kind of job task in the @param resourceId"
     		boolean existsTaskForResource(String resourceId) throws MetamacException;
     
@@ -143,9 +136,6 @@ Application DatasetsStatisticalResources {
 			
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
-			
-			"Temporal for EDATOS-5154 Schedule data transformation job"
-			scheduleDataViewAdjustmentJob();
 			
 			"Schedule geographic coverage cache clear"
 			scheduleGeographicCoverageCacheClearJob();

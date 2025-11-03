@@ -142,10 +142,4 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE);
     }
-
-    @Override
-    @Deprecated
-    public String retrieveCronExpressionForDataViewAdjustment() throws MetamacException {
-        return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_DATA_VIEW_ADJUSTMENT);
-    }
 }

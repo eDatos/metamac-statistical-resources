@@ -12,6 +12,8 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -27,6 +29,7 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
@@ -46,6 +49,7 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
+import org.siemac.metamac.statistical.resources.core.utils.TemporalDimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,6 +95,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     @Autowired
     private QueryVersionRepository            queryVersionRepository;
 
+    private List<String>                      temporalCodes = new ArrayList<>();
     @Override
     protected String getResourceMetadataName() throws MetamacException {
         return ServiceExceptionParameters.DATASET_VERSION;
@@ -381,13 +386,17 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         for (QueryVersion queryVersion : queriesDataset) {
             try {
                 if (queryVersion.getPurposes() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryVersion.getPurposes().getIdentifier())) {
+                    int dataSize = safeCalculateDataSize(queryVersion.getSelection(), resource, queryVersion);
+                    if (dataSize > 1) {
+                        throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + queryVersion.getLifeCycleStatisticalResource().getCode());
+                    }
                     List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
                     Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
                     // remember that we have to update the x page for the application to be read and write
                     TwitterClient twitterClient = new TwitterClient(
                             TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                     .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
-                    String xPublication = getXPublication(observations, queryVersion, resource);
+                    String xPublication = getXPublication(observations, queryVersion);
                     Tweet tweet = twitterClient.postTweet(xPublication);
                     if (tweet.getText() == null) {
                         createXMessageSentNotification(ctx, resource);
@@ -401,6 +410,46 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                 updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             }
         }
+    }
+
+    private List<String> getTemporalCoverageCodes(DatasetVersion datasetVersion) {
+        List<String> temporalCoverageCodes = new ArrayList<>();
+        for (TemporalCode temporalCode : datasetVersion.getTemporalCoverage()) {
+            temporalCoverageCodes.add(temporalCode.getTitle());
+        }
+        return temporalCoverageCodes;
+    }
+
+    private List<String> getCodeItemList(List<CodeItem> codeItems) {
+        if (codeItems == null) {
+            return null;
+        }
+        List<String> temporalCoverageCodes = new ArrayList<>();
+        for (CodeItem temporalCode : codeItems) {
+            temporalCoverageCodes.add(temporalCode.getTitle());
+        }
+        return temporalCoverageCodes;
+    }
+
+    private int safeCalculateDataSize(List<QuerySelectionItem> querySelectionItems, DatasetVersion datasetVersion, QueryVersion queryVersion) throws MetamacException {
+        int dataSize = 1;
+        for (QuerySelectionItem selectionItem : querySelectionItems) {
+            if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(selectionItem.getDimension())) {
+                this.temporalCodes = TemporalDimensionUtils.calculateEffectiveTemporalDimensionValuesToQuery(queryVersion, getTemporalCoverageCodes(datasetVersion), getCodeItemList(selectionItem.getCodes()));
+                dataSize = safeMultiply(dataSize, this.temporalCodes.size());
+            } else {
+                dataSize = safeMultiply(dataSize, selectionItem.getCodes().size());
+            }
+        }
+        return dataSize;
+    }
+
+    private int safeMultiply(int a, int b) throws MetamacException {
+        long res = (long) a * (long) b;
+        if (res > Integer.MAX_VALUE || res < Integer.MIN_VALUE) {
+            throw new MetamacException(ServiceExceptionType.UNKNOWN, "An overflow occurred while performing the multiplication " + a + " and " + b);
+        }
+        return (int) res;
     }
 
     private boolean checkVersionRationaleTypeEnum(DatasetVersion resource) {
@@ -419,7 +468,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         queryVersionRepository.save(resource);
     }
 
-    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query, DatasetVersion resource) throws MetamacException {
+    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query) throws MetamacException {
         if (observations.size() > 1) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + query.getLifeCycleStatisticalResource().getCode());
         }
@@ -428,16 +477,15 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             // Get the only entry in the map
             Entry<String, ObservationExtendedDto> entry = observations.entrySet().iterator().next();
 
-            return setMessageLanguageDefault(query, entry, resource);
+            return setMessageLanguageDefault(query, entry);
         }
         return "";
     }
 
-    private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry, DatasetVersion resource) throws MetamacException {
+    private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry) throws MetamacException {
         for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
             if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
-                String portalBaseUrl = configurationService.findProperty("metamac.portal.web.internal.visualizer");
-                return localisedString.getLabel().replace("{datos}", entry.getValue().getPrimaryMeasure());
+                return Jsoup.clean(localisedString.getLabel().replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
             }
         }
         return "";
@@ -448,8 +496,12 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         for (QuerySelectionItem querySelectionItem : querySelectionItems) {
             ConditionDimensionDto conditionDimensionDto = new ConditionDimensionDto();
             conditionDimensionDto.setDimensionId(querySelectionItem.getDimension());
-            for (CodeItem codeItem : querySelectionItem.getCodes()) {
-                conditionDimensionDto.getCodesDimension().add(codeItem.getCode());
+            if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(querySelectionItem.getDimension())) {
+                conditionDimensionDto.getCodesDimension().addAll(this.temporalCodes);
+            } else {
+                for (CodeItem codeItem : querySelectionItem.getCodes()) {
+                    conditionDimensionDto.getCodesDimension().add(codeItem.getCode());
+                }
             }
             conditionDimensionDtos.add(conditionDimensionDto);
         }

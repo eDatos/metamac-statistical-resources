@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.common.impl.utils;
+package org.siemac.metamac.statistical.resources.core.utils;
 
 import java.util.List;
 import java.util.Map;
@@ -11,11 +11,21 @@ import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
+
 public class SafeCalculatorUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(SafeCalculatorUtils.class);
 
     private SafeCalculatorUtils() {
+    }
+
+    public static int safeCalculateDataSize(List<ConditionDimensionDto> conditions) {
+        int dataSize = 1;
+        for (ConditionDimensionDto condition : conditions) {
+            dataSize = safeMultiply(dataSize, condition.getCodesDimension().size());
+        }
+        return dataSize;
     }
 
     public static int safeCalculateDataSize(List<String> dimensions, Map<String, List<String>> dimensionsCodesSelectedEffective) {

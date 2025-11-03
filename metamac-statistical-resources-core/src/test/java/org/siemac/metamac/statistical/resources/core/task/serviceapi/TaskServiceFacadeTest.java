@@ -97,18 +97,4 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
         // No test
     }
-
-    @Override
-    @Deprecated
-    public void testScheduleDataViewAdjustmentJob() throws Exception {
-        // No test deleted with EDATOS-5200
-
-    }
-
-    @Override
-    @Deprecated
-    public void testExecuteDataViewAdjustmentTask() throws Exception {
-        // No test deleted with EDATOS-5200
-
-    }
 }

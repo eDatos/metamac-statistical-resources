@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+import org.siemac.metamac.core.common.dto.LocalisedStringDto;
 import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -35,11 +37,11 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.exception.PurposeNotFoundException;
 import org.siemac.metamac.statistical.resources.core.query.exception.QueryVersionNotFoundException;
+import org.siemac.metamac.statistical.resources.core.utils.SafeCalculatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 @org.springframework.stereotype.Component("queryDto2DoMapper")
@@ -100,39 +102,49 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
                         .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
         }
-
+        checkXTemplateLength(source);
         queryVersionDtoToDo(source, target);
-        try {
-            checkPurpose(source, target);
-        } catch (ApplicationException e) {
-            throw MetamacExceptionBuilder.builder().withCause(e).withMessageParameters(source.getUrn()).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
-        }
+        checkPurpose(source, target);
+        
 
         return target;
     }
 
-    private void checkPurpose(QueryVersionDto source, QueryVersion target) throws MetamacException, ApplicationException {
+    private void checkXTemplateLength(QueryVersionDto source) throws MetamacException {
+        if (source.getXTemplateDto() != null) {
+            for (LocalisedStringDto localisedString : source.getXTemplateDto().getTexts()) {
+                localisedString.setLabel(Jsoup.clean(localisedString.getLabel(), new Whitelist()));
+                if (localisedString.getLabel().length() > StatisticalResourcesConstants.MAX_X_LENGTH_AUTHORIZED) {
+                    throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_X_TEMPLATE_EXCEEDS).withMessageParameters(source.getUrn())
+                            .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+                }
+            }
+        }
+    }
+
+    private void checkPurpose(QueryVersionDto source, QueryVersion target) throws MetamacException {
         if (source.getPurpose() != null) {
             if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getType())) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_PURPOSE_TYPE_NOT_COMPATIBLE).withMessageParameters(source.getUrn())
                 .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
             List<ConditionDimensionDto> conditions = generateConditions(target.getSelection());
-            DatasetVersion datasetVersion = getQueryRelatedDatasetVersionEffective(target);
-            Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
-            if (QueryTypeEnum.LATEST_DATA.equals(source.getType()) && source.getLatestDataNumber() > 1 && observations.size() > 1 && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier())) {
+            if (checkNumberConditions(conditions, source) && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier())) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT).withMessageParameters(source.getUrn())
                         .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
         }
     }
 
-    private DatasetVersion getQueryRelatedDatasetVersionEffective(QueryVersion source) throws MetamacException {
-        if (source.getFixedDatasetVersion() != null) {
-            return source.getFixedDatasetVersion();
-        } else {
-            return datasetVersionRepository.retrieveLastVersion(source.getDataset().getIdentifiableStatisticalResource().getUrn());
+    private boolean checkNumberConditions(List<ConditionDimensionDto> conditions, QueryVersionDto source) {
+        for (ConditionDimensionDto condition: conditions) {
+            if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(condition.getDimensionId())) {
+                List<String> codes =  new ArrayList<>();
+                codes.add("");
+                condition.getCodesDimension().addAll(codes);
+            }
         }
+        return SafeCalculatorUtils.safeCalculateDataSize(conditions) > 1;
     }
 
     private List<ConditionDimensionDto> generateConditions(List<QuerySelectionItem> querySelectionItems) {
