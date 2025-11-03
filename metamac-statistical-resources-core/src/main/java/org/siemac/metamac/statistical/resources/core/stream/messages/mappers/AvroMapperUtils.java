@@ -158,9 +158,8 @@ public class AvroMapperUtils {
         return RestUtils.createLink(statisticalResourcesApiInternalEndpointV10, source.getUri());
     }
 
-    public static String getSelfLinkStructuralResources(ExternalItem source) throws MetamacException {
-        String srmApiExternalEndpoint = getConfigurationService().retrieveSrmExternalApiUrlBase();
-        return RestUtils.createLink(srmApiExternalEndpoint, source.getUri());
+    public static String getSelfLinkExternalItems(ExternalItem source, String apiExternalEndpoint) throws MetamacException {
+        return RestUtils.createLink(apiExternalEndpoint, source.getUri());
     }
 
 

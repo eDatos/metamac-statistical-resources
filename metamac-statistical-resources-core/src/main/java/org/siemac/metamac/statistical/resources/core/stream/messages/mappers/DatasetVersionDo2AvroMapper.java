@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
@@ -21,6 +23,14 @@ import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalW
 
 public class DatasetVersionDo2AvroMapper {
 
+    protected static ConfigurationService configurationService;
+
+    public static ConfigurationService getConfigurationService() {
+        if (configurationService == null) {
+            configurationService = ApplicationContextProvider.getApplicationContext().getBean(ConfigurationService.class);
+        }
+        return configurationService;
+    }
     protected DatasetVersionDo2AvroMapper() {
     }
 
@@ -34,14 +44,14 @@ public class DatasetVersionDo2AvroMapper {
         List<ExternalItemAvro> geoGranList = geoGranularitesList2Avro(source);
         List<ExternalItemAvro> temporalGranList = tempGranularitesList2Avro(source);
         List<ExternalItemAvro> statisticalUnitList = statisticalUnitList2Avro(source);
-
+        String srmApiExternalEndpoint = getConfigurationService().retrieveSrmExternalApiUrlBase();
         DatasetVersionAvro target = DatasetVersionAvro.newBuilder()
                 .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
                 .setDateStart(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart())).setDateEnd(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd()))
                 .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions()).setFormatExtentTableSize(source.getFormatExtentTableSize())
                 .setDateNextUpdate(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())
-                .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd()))
-                .setUpdateFrequency(ExternalItemDo2AvroMapper.do2Avro(source.getUpdateFrequency())).setStatisticOfficiality(StatisticOfficialityDo2AvroMapper.do2Avro(source.getStatisticOfficiality()))
+                .setDataset(DatasetDo2AvroMapper.do2Avro(source.getDataset())).setRelatedDsd(ExternalItemDo2AvroMapper.do2Avro(source.getRelatedDsd(), srmApiExternalEndpoint))
+                .setUpdateFrequency(ExternalItemDo2AvroMapper.do2Avro(source.getUpdateFrequency(), srmApiExternalEndpoint)).setStatisticOfficiality(StatisticOfficialityDo2AvroMapper.do2Avro(source.getStatisticOfficiality()))
                 .setBibliographicCitation(InternationalStringDo2AvroMapper.do2Avro(source.getBibliographicCitation())).setDimensionsCoverage(dimensions).setAttributesCoverage(coverageList)
                 .setCategorisations(categorisations).setGeographicCoverage(geographicCoverageList).setTemporalCoverage(temporalCoverageList).setMeasureCoverage(measureCoverageList)
                 .setGeographicGranularities(geoGranList).setTemporalGranularities(temporalGranList).setStatisticalUnit(statisticalUnitList)
