@@ -2,13 +2,26 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+       xmlns:cxf="http://cxf.apache.org/core"
        xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
             http://www.springframework.org/schema/util   http://www.springframework.org/schema/util/spring-util-3.1.xsd
-            http://cxf.apache.org/jaxrs                  http://cxf.apache.org/schemas/jaxrs.xsd">
+            http://cxf.apache.org/jaxrs                  http://cxf.apache.org/schemas/jaxrs.xsd
+            http://cxf.apache.org/core                   http://cxf.apache.org/schemas/core.xsd">
 
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+    <!-- Bean of the interceptor that wraps the OutputStream -->
+    <bean id="outputStreamWrappingInterceptor" 
+          class="org.siemac.metamac.statistical_resources.rest.external.interceptor.OutputStreamWrappingInterceptor"/>
+
+    <!-- Register on the CXF bus -->
+    <cxf:bus>
+        <cxf:outInterceptors>
+            <ref bean="outputStreamWrappingInterceptor"/>
+        </cxf:outInterceptors>
+    </cxf:bus>
 
     <jaxrs:server id="restExternal" address="/statistical-resources">
 

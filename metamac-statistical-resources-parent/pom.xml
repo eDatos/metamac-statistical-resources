@@ -56,6 +56,8 @@
 		<statistic-parser.version>2.1.0</statistic-parser.version>
 		<statistic-sdmx-srm-rest-external-api.version>4.7.2</statistic-sdmx-srm-rest-external-api.version>
 
+		<tomcat-catalina.version>8.5.53</tomcat-catalina.version>
+
 		<!-- WEB -->
 		<jstl.version>1.2</jstl.version>
 		
