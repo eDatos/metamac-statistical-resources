@@ -14,7 +14,7 @@
 
     <!-- Bean of the interceptor that wraps the OutputStream -->
     <bean id="outputStreamWrappingInterceptor" 
-          class="org.siemac.metamac.statistical_resources.rest.external.interceptor.OutputStreamWrappingInterceptor"/>
+          class="org.siemac.metamac.rest.interceptor.OutputStreamWrappingInterceptor"/>
 
     <!-- Register on the CXF bus -->
     <cxf:bus>
