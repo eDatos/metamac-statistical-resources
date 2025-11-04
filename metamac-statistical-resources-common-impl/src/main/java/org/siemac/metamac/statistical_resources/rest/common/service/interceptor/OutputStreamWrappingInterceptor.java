@@ -1,4 +1,4 @@
-package org.siemac.metamac.statistical_resources.rest.external.interceptor;
+package org.siemac.metamac.statistical_resources.rest.common.service.interceptor;
 
 import java.io.OutputStream;
 
