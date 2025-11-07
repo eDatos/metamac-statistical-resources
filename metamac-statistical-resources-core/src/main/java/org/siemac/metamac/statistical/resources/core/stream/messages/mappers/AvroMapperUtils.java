@@ -153,13 +153,10 @@ public class AvroMapperUtils {
         return publicationVersion;
     }
 
-    public static String getSelfLink(ExternalItem source) throws MetamacException {
-        String statisticalResourcesApiInternalEndpointV10 = getConfigurationService().retrieveStatisticalResourcesInternalApiUrlBase();
-        return RestUtils.createLink(statisticalResourcesApiInternalEndpointV10, source.getUri());
-    }
-
     public static String getSelfLinkExternalItems(ExternalItem source, String apiExternalEndpoint) throws MetamacException {
-        return RestUtils.createLink(apiExternalEndpoint, source.getUri());
+         String url = RestUtils.createLink(apiExternalEndpoint, source.getUri());
+         log.error("\"" + url + "\",");
+         return url;
     }
 
 
