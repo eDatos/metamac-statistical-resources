@@ -82,6 +82,9 @@ public class DatasetsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implemen
                 case NEWNESS_UNTIL_DATE:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(), DatasetVersion.class,
                             false);
+                case FEATURED_UNTIL_DATE:
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().featuredUntilDate(), DatasetVersion.class,
+                            false);
                 case VALID_FROM:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, DatasetVersionProperties.siemacMetadataStatisticalResource().validFrom(), DatasetVersion.class, false);
                 case VALID_TO:
