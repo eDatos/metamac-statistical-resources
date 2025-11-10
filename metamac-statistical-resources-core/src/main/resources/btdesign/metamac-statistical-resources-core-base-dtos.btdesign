@@ -137,6 +137,7 @@ Application StatisticalResourcesDto {
 			- Bag<@ExternalItemDto> publisherContributor;
 			- Bag<@ExternalItemDto> mediator;
 			JAVADATE newnessUntilDate;
+			JAVADATE featuredUntilDate;
 			
 			//RESOURCE RELATIONS DESCRIPTORS
 			- @RelatedResourceDto replaces;
