@@ -90,6 +90,9 @@ public class PublicationVersionMetamacCriteria2SculptorCriteriaMapperImpl implem
                 case NEWNESS_UNTIL_DATE:
                     return new SculptorPropertyCriteria(CriteriaUtils.getDatetimeLeafPropertyEmbedded(PublicationVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(),
                             PublicationVersion.class), propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                case FEATURED_UNTIL_DATE:
+                    return new SculptorPropertyCriteria(CriteriaUtils.getDatetimeLeafPropertyEmbedded(PublicationVersionProperties.siemacMetadataStatisticalResource().featuredUntilDate(),
+                            PublicationVersion.class), propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
                 case LAST_VERSION:
                     return new SculptorPropertyCriteria(PublicationVersionProperties.siemacMetadataStatisticalResource().lastVersion(), propertyRestriction.getBooleanValue(),
                             propertyRestriction.getOperationType());

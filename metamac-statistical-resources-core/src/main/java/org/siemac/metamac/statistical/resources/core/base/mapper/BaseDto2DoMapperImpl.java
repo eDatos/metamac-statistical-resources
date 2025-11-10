@@ -107,6 +107,7 @@ public class BaseDto2DoMapperImpl extends CommonDto2DoMapperImpl implements Base
         externalItemDtoCollectionToDoList(source.getPublisherContributor(), target.getPublisherContributor(), addParameter(metadataName, ServiceExceptionSingleParameters.PUBLISHER_CONTRIBUTOR));
         externalItemDtoCollectionToDoList(source.getMediator(), target.getMediator(), addParameter(metadataName, ServiceExceptionSingleParameters.MEDIATOR));
         target.setNewnessUntilDate(dateDtoToDo(source.getNewnessUntilDate()));
+        target.setFeaturedUntilDate(dateDtoToDo(source.getFeaturedUntilDate()));
 
         target.setReplaces(relatedResourceDtoToDo(source.getReplaces(), target.getReplaces(), addParameter(metadataName, ServiceExceptionSingleParameters.REPLACES)));
         target.setIsReplacedBy(relatedResourceDtoToDo(source.getIsReplacedBy(), target.getIsReplacedBy(), addParameter(metadataName, ServiceExceptionSingleParameters.IS_REPLACED_BY)));
