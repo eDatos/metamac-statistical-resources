@@ -162,6 +162,7 @@ Application BaseStatisticalResources {
 			- Bag<@ExternalItem> publisherContributor cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_PUB_CONTRIBUTORS" databaseColumn="PUBLISHER_CONT_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
 			- Bag<@ExternalItem> mediator cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_MEDIATORS" databaseColumn="MEDIATOR_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
 			DateTimeTZ newnessUntilDate nullable;
+			DateTimeTZ featuredUntilDate nullable;
 			
 			//RESOURCE RELATIONS DESCRIPTORS
 			- @RelatedResource replaces cascade="all" fetch="lazy" databaseColumn="REPLACES_FK" nullable;
