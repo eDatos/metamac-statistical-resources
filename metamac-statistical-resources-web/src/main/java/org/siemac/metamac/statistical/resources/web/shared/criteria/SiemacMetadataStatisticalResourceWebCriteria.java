@@ -11,6 +11,7 @@ public class SiemacMetadataStatisticalResourceWebCriteria extends LifeCycleStati
     private String                  titleAlternative;
     private String                  keywords;
     private Date                    newnessUtilDate;
+    private Date                    featuredUtilDate;
     private StreamMessageStatusEnum publicationStreamStatus;
 
     public SiemacMetadataStatisticalResourceWebCriteria() {
@@ -52,4 +53,13 @@ public class SiemacMetadataStatisticalResourceWebCriteria extends LifeCycleStati
     public void setPublicationStreamStatus(StreamMessageStatusEnum publicationStreamStatus) {
         this.publicationStreamStatus = publicationStreamStatus;
     }
+
+    public Date getFeaturedUtilDate() {
+        return featuredUtilDate;
+    }
+
+    public void setFeaturedUtilDate(Date featuredUtilDate) {
+        this.featuredUtilDate = featuredUtilDate;
+    }
+
 }

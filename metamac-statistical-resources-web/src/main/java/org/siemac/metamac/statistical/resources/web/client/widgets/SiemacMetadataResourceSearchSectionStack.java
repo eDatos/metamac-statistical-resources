@@ -22,11 +22,12 @@ public abstract class SiemacMetadataResourceSearchSectionStack extends LifeCycle
         TextItem titleAlternative = new TextItem(SiemacMetadataDS.TITLE_ALTERNATIVE, getConstants().siemacMetadataStatisticalResourceTitleAlternative());
         TextItem keywords = new TextItem(SiemacMetadataDS.KEYWORDS, getConstants().siemacMetadataStatisticalResourceKeywords());
         CustomDateItem newNessUntilDate = new CustomDateItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        CustomDateItem newFeaturedUntilDate = new CustomDateItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
 
         SelectItem publicationStreamStatus = new SelectItem(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS, getConstants().publicationStreamStatus());
         publicationStreamStatus.setValueMap(CommonUtils.getPublicationStreamStatusHashMap());
 
-        advancedSearchForm.addFieldsInThePenultimePosition(titleAlternative, keywords, newNessUntilDate, publicationStreamStatus);
+        advancedSearchForm.addFieldsInThePenultimePosition(titleAlternative, keywords, newNessUntilDate, newFeaturedUntilDate, publicationStreamStatus);
     }
 
     public SiemacMetadataStatisticalResourceWebCriteria getSiemacMetadataStatisticalResourceWebCriteria(SiemacMetadataStatisticalResourceWebCriteria siemacMetadataStatisticalResourceWebCriteria) {
@@ -34,6 +35,7 @@ public abstract class SiemacMetadataResourceSearchSectionStack extends LifeCycle
         siemacMetadataStatisticalResourceWebCriteria.setTitleAlternative(advancedSearchForm.getValueAsString(SiemacMetadataDS.TITLE_ALTERNATIVE));
         siemacMetadataStatisticalResourceWebCriteria.setKeywords(advancedSearchForm.getValueAsString(SiemacMetadataDS.KEYWORDS));
         siemacMetadataStatisticalResourceWebCriteria.setNewnessUtilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
+        siemacMetadataStatisticalResourceWebCriteria.setFeaturedUtilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
         siemacMetadataStatisticalResourceWebCriteria
                 .setPublicationStreamStatus(CommonUtils.getPublicationStreamStatusEnum(advancedSearchForm.getValueAsString(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS)));
 
