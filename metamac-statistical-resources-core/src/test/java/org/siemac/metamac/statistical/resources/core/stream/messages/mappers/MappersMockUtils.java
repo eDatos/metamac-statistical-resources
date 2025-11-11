@@ -90,9 +90,9 @@ public class MappersMockUtils {
     protected static final String                        EXPECTED_SELF_LINK                           = EXPECTED_API_BASE + EXPECTED_URI;
     protected static final Long                          EXPECTED_FORMAT_EXTENT_OBSERVATIONS          = 1000L;
     private static final int                             EXPECTED_COPYRIGHT                           = 0;
-    public static final String                           SRM_EXTERNAL_API_URL_BASE                    = "//apis.metamac.org/srm-external";
-    public static final String                           STATISTICAL_OPERATIONS_EXTERNAL_API_URL_BASE = "//apis.metamac.org/statistical-operations-external";
-    public static final String                           COMMON_METADATA_EXTERNAL_API_URL_BASE        = "//apis.metamac.org/common-metadata-external";
+    public static final String                           SRM_EXTERNAL_API_URL_BASE                    = "//apis.metamac.org/srm-external" + EXPECTED_URI;
+    public static final String                           STATISTICAL_OPERATIONS_EXTERNAL_API_URL_BASE = "//apis.metamac.org/statistical-operations-external" + EXPECTED_URI;
+    public static final String                           COMMON_METADATA_EXTERNAL_API_URL_BASE        = "//apis.metamac.org/common-metadata-external" + EXPECTED_URI;
 
     public static ExternalItem mockExternalItem() {
         ExternalItem source = new ExternalItem();
