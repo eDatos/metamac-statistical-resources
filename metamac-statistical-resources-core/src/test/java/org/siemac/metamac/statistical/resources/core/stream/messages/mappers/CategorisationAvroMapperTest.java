@@ -38,14 +38,9 @@ public class CategorisationAvroMapperTest {
         AvroMapperUtils.datasetVersionRepository = datasetVersionRepository;
         AvroMapperUtils.translationService = translationService;
         try {
-            ApplicationContext mockCtx = Mockito.mock(ApplicationContext.class);
-            when(mockCtx.getBean(ConfigurationService.class)).thenReturn(configurationService);
-
-            ApplicationContextProvider applicationContextProvider = new ApplicationContextProvider();
-            applicationContextProvider.setApplicationContext(mockCtx);
             when(configurationService.retrieveStatisticalResourcesInternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
-            when(configurationService.retrieveSrmExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
-            when(configurationService.retrieveStatisticalOperationsExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
+            when(configurationService.retrieveSrmExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_SELF_LINK);
+            when(configurationService.retrieveStatisticalOperationsExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_SELF_LINK);
             when(translationService.retrieveTimeTranslation(Mockito.any(), Mockito.anyString())).thenReturn(MappersMockUtils.mockMapTranslateDateSdmx());
         } catch (MetamacException e) {
         }

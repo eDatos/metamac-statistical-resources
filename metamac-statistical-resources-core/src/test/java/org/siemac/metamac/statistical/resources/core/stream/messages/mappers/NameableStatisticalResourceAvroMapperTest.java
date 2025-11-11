@@ -23,9 +23,8 @@ public class NameableStatisticalResourceAvroMapperTest {
         MockitoAnnotations.initMocks(this);
         AvroMapperUtils.configurationService = configurationService;
         try {
-            when(configurationService.retrieveStatisticalResourcesInternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
-            when(configurationService.retrieveSrmExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
-            when(configurationService.retrieveStatisticalOperationsExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
+            when(configurationService.retrieveSrmExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_SELF_LINK);
+            when(configurationService.retrieveStatisticalOperationsExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_SELF_LINK);
         } catch (MetamacException e) {
         }
     }
