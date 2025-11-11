@@ -154,9 +154,7 @@ public class AvroMapperUtils {
     }
 
     public static String getSelfLinkExternalItems(ExternalItem source, String apiExternalEndpoint) throws MetamacException {
-         String url = RestUtils.createLink(apiExternalEndpoint, source.getUri());
-         log.error("\"" + url + "\",");
-         return url;
+        return RestUtils.createLink(apiExternalEndpoint, source.getUri());
     }
 
 
