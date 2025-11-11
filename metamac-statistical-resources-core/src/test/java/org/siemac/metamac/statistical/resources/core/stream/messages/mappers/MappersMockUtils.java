@@ -162,7 +162,7 @@ public class MappersMockUtils {
                 .setType(EXPECTED_TYPE_AVRO)
                 .setUrn(MappersMockUtils.EXPECTED_URN)
                 .setUrnProvider(MappersMockUtils.EXPECTED_URN_PROVIDER)
-                .setSelfLink(STATISTICAL_OPERATIONS_EXTERNAL_API_URL_BASE)
+                .setSelfLink(COMMON_METADATA_EXTERNAL_API_URL_BASE)
                 .build();
         // @formatter:on
         return expected;
@@ -424,7 +424,8 @@ public class MappersMockUtils {
     }
 
     public static SiemacMetadataStatisticalResourceAvro mockSiemacMetadataStatisticalResourceAvro(TypeRelatedResourceEnum type) throws MetamacException {
-        List<ExternalItemAvro> listExternalItemAvro = mockListExternalItemAvro();
+        List<ExternalItemAvro> listExternalItemStructuralResourcesAvro = mockListExternalItemStructuralResourcesAvro();
+        List<ExternalItemAvro> listExternalItemOperationsAvro = mockListExternalItemOprationsAvro();
         // @formatter:off
         SiemacMetadataStatisticalResourceAvro target = SiemacMetadataStatisticalResourceAvro.newBuilder()
                 .setLifecycleStatisticalResource(mockLifeCycleStatisticalResourceAvro(type))
@@ -433,19 +434,19 @@ public class MappersMockUtils {
                 .setCommonMetadata(mockExternalItemCommonMetadataAvro())
                 .setConformsTo(mockInternationalStringAvro())
                 .setConformsToInternal(mockInternationalStringAvro())
-                .setContributors(listExternalItemAvro)
+                .setContributors(listExternalItemStructuralResourcesAvro)
                 .setCopyrightedDate(EXPECTED_COPYRIGHT)
                 .setCreator(mockExternalItemStructuralResourcesAvro())
                 .setKeywords(mockInternationalStringAvro())
                 .setLanguage(mockExternalItemStructuralResourcesAvro())
-                .setLanguages(listExternalItemAvro)
+                .setLanguages(listExternalItemStructuralResourcesAvro)
                 .setLastUpdate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
-                .setMediators(listExternalItemAvro)
-                .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_FUTURE_DATE)).setPublisherContributors(listExternalItemAvro)
-                .setPublishers(listExternalItemAvro)
+                .setMediators(listExternalItemStructuralResourcesAvro)
+                .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_FUTURE_DATE)).setPublisherContributors(listExternalItemStructuralResourcesAvro)
+                .setPublishers(listExternalItemStructuralResourcesAvro)
                 .setReplaces(mockRelatedResourceAvro(type))
                 .setResourceCreatedDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
-                .setStatisticalOperationInstances(listExternalItemAvro)
+                .setStatisticalOperationInstances(listExternalItemOperationsAvro)
                 .setSubtitle(mockInternationalStringAvro())
                 .setTitleAlternative(mockInternationalStringAvro())
                 .setType(StatisticalResourceTypeEnumDo2AvroMapper.do2Avro(StatisticalResourceTypeEnum.COLLECTION))
@@ -546,6 +547,20 @@ public class MappersMockUtils {
         List<ExternalItemAvro> listExternalItemAvro = new ArrayList<>();
         listExternalItemAvro.add(mockExternalItemAvro());
         listExternalItemAvro.add(mockExternalItemAvro());
+        return listExternalItemAvro;
+    }
+
+    public static List<ExternalItemAvro> mockListExternalItemOprationsAvro() {
+        List<ExternalItemAvro> listExternalItemAvro = new ArrayList<>();
+        listExternalItemAvro.add(mockExternalItemOperationsAvro());
+        listExternalItemAvro.add(mockExternalItemOperationsAvro());
+        return listExternalItemAvro;
+    }
+    
+    public static List<ExternalItemAvro> mockListExternalItemStructuralResourcesAvro() {
+        List<ExternalItemAvro> listExternalItemAvro = new ArrayList<>();
+        listExternalItemAvro.add(mockExternalItemStructuralResourcesAvro());
+        listExternalItemAvro.add(mockExternalItemStructuralResourcesAvro());
         return listExternalItemAvro;
     }
 
