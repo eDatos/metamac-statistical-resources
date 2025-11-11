@@ -12,14 +12,12 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetAvro;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
-import org.springframework.context.ApplicationContext;
 
 public class DatasetAvroMapperTest {
 
@@ -40,11 +38,6 @@ public class DatasetAvroMapperTest {
         AvroMapperUtils.configurationService = configurationService;
         try {
             when(configurationService.retrieveStatisticalResourcesInternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
-            ApplicationContext mockCtx = Mockito.mock(ApplicationContext.class);
-            when(mockCtx.getBean(ConfigurationService.class)).thenReturn(configurationService);
-
-            ApplicationContextProvider applicationContextProvider = new ApplicationContextProvider();
-            applicationContextProvider.setApplicationContext(mockCtx);
             when(configurationService.retrieveSrmExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
             when(configurationService.retrieveStatisticalOperationsExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
         } catch (MetamacException e) {

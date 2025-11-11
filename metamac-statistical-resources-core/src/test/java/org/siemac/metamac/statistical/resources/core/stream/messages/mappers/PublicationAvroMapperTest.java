@@ -12,11 +12,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.siemac.metamac.core.common.conf.ConfigurationService;
 import org.siemac.metamac.core.common.exception.MetamacException;
-import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.statistical.resources.core.publication.domain.Publication;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.stream.messages.PublicationAvro;
-import org.springframework.context.ApplicationContext;
 
 public class PublicationAvroMapperTest {
 
@@ -32,11 +30,6 @@ public class PublicationAvroMapperTest {
         AvroMapperUtils.publicationVersionRepository = publicationVersionRepository;
         AvroMapperUtils.configurationService = configurationService;
         try {
-            ApplicationContext mockCtx = Mockito.mock(ApplicationContext.class);
-            when(mockCtx.getBean(ConfigurationService.class)).thenReturn(configurationService);
-
-            ApplicationContextProvider applicationContextProvider = new ApplicationContextProvider();
-            applicationContextProvider.setApplicationContext(mockCtx);
             when(configurationService.retrieveStatisticalResourcesInternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
             when(configurationService.retrieveSrmExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
             when(configurationService.retrieveStatisticalOperationsExternalApiUrlBase()).thenReturn(MappersMockUtils.EXPECTED_API_BASE);
