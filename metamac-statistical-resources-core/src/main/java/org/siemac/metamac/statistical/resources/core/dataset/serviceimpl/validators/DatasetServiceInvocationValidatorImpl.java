@@ -390,10 +390,6 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
-    public static void checkUpdateAllGeographicExternalCoverageVariableElementsCache(List<MetamacExceptionItem> exceptions) {
-        // NOTHING
-    }
-
     public static void checkUpdateGeographicCoverageExternalPublicationVariableElementsCache(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
@@ -406,8 +402,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
-  public static void checkUpdateGeographicCoverageExternalPublicationCache(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
-       // NOTHING
+    public static void checkUpdateGeographicCoverageExternalPublicationCache(SpecificRecordBase message, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
     }
 
     public static void checkUpdateGeographicCoverageFromSpatialAttribute(DatasetVersion datasetVersion, List<MetamacExceptionItem> exceptions) {

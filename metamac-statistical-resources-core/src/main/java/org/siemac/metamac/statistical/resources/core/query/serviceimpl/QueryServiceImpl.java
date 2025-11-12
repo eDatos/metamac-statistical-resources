@@ -94,7 +94,6 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     private PurposeRepository                         purposeRepository;
 
     @Autowired
-    private LifeCycleStatisticalResourceGeneratedCode    lifeCycleStatisticalResourceGeneratedCode;
     private LifeCycleStatisticalResourceGeneratedCode lifeCycleStatisticalResourceGeneratedCode;
 
     public QueryServiceImpl() {
@@ -449,7 +448,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         return datasetVersionRepository.retrieveLastVersion(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
     }
 
-     private void updateGeographicalCacheInJob(ServiceContext ctx, QueryVersion queryVersion, boolean sendNotification) throws MetamacException {
+    private void updateGeographicalCacheInJob(ServiceContext ctx, QueryVersion queryVersion, boolean sendNotification) throws MetamacException {
         ProcStatusValidator.checkStatisticalResourceStructureCanBeCached(queryVersion);
 
         String publicationUrn = queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn();

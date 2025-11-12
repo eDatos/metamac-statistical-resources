@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import es.ibestat.jaxi.stream.messages.DatasetAvro;
+import es.ibestat.jaxi.stream.messages.PublicationAvro;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 
@@ -35,9 +36,9 @@ import net.sf.ehcache.Element;
 @Scope("prototype")
 public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnable {
 
-    protected static Log                      LOGGER       = LogFactory.getLog(KafkaConsumerThread.class);
+    protected static Log                      LOGGER                 = LogFactory.getLog(KafkaConsumerThread.class);
 
-    private static final String               MAX_POOL_MSG = "We have set a poll of 1 message at most. This error can not be given.";
+    private static final String               MAX_POOL_MSG           = "We have set a poll of 1 message at most. This error can not be given.";
 
     private KafkaConsumer<String, T>          consumer;
     private String                            topicName;
@@ -143,7 +144,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationCache(ctx, message);
         } else if (message instanceof CodelistAvro || message instanceof ConceptSchemeAvro) {
             statisticalResourcesServiceFacade.processSrmResourcesKafkaMessage(ctx, message);
-        } 
+        }
     }
 
     private ServiceContext createServiceContext(String logMessage) {
