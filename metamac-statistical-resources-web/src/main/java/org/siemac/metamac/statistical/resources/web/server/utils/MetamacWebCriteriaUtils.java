@@ -235,14 +235,14 @@ public class MetamacWebCriteriaUtils {
 
     private static MetamacCriteriaRestriction buildNewnessUntilDateCriteria(SiemacMetadataStatisticalResourceWebCriteria criteria) {
         if (criteria.getNewnessUtilDate() != null) {
-            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.NEWNESS_UNTIL_DATE.name(), criteria.getNewnessUtilDate(), OperationType.EQ);
+            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.NEWNESS_UNTIL_DATE.name(), criteria.getNewnessUtilDate(), OperationType.GE);
         }
         return null;
     }
 
     private static MetamacCriteriaRestriction buildFeaturedUntilDateCriteria(SiemacMetadataStatisticalResourceWebCriteria criteria) {
         if (criteria.getFeaturedUtilDate() != null) {
-            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.FEATURED_UNTIL_DATE.name(), criteria.getFeaturedUtilDate(), OperationType.EQ);
+            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.FEATURED_UNTIL_DATE.name(), criteria.getFeaturedUtilDate(), OperationType.GE);
         }
         return null;
     }
