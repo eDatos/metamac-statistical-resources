@@ -34,8 +34,8 @@ public abstract class SiemacMetadataResourceSearchSectionStack extends LifeCycle
         siemacMetadataStatisticalResourceWebCriteria = (SiemacMetadataStatisticalResourceWebCriteria) getLifeCycleResourceWebCriteria(siemacMetadataStatisticalResourceWebCriteria);
         siemacMetadataStatisticalResourceWebCriteria.setTitleAlternative(advancedSearchForm.getValueAsString(SiemacMetadataDS.TITLE_ALTERNATIVE));
         siemacMetadataStatisticalResourceWebCriteria.setKeywords(advancedSearchForm.getValueAsString(SiemacMetadataDS.KEYWORDS));
-        siemacMetadataStatisticalResourceWebCriteria.setNewnessUtilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
-        siemacMetadataStatisticalResourceWebCriteria.setFeaturedUtilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
+        siemacMetadataStatisticalResourceWebCriteria.setNewnessUntilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
+        siemacMetadataStatisticalResourceWebCriteria.setFeaturedUntilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
         siemacMetadataStatisticalResourceWebCriteria
                 .setPublicationStreamStatus(CommonUtils.getPublicationStreamStatusEnum(advancedSearchForm.getValueAsString(LifeCycleResourceDS.PUBLICATION_STREAM_STATUS)));
 

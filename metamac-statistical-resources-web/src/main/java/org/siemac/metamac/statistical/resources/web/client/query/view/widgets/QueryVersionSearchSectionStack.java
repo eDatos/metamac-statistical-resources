@@ -47,8 +47,8 @@ public class QueryVersionSearchSectionStack extends LifeCycleResourceSearchSecti
 
         criteria.setQueryStatus(CommonUtils.getQueryStatusEnum(advancedSearchForm.getValueAsString(QueryDS.STATUS)));
         criteria.setQueryType(CommonUtils.getQueryTypeEnum(advancedSearchForm.getValueAsString(QueryDS.TYPE)));
-        criteria.setNewnessUtilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
-        criteria.setFeaturedUtilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
+        criteria.setNewnessUntilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
+        criteria.setFeaturedUntilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
         return criteria;
     }
 

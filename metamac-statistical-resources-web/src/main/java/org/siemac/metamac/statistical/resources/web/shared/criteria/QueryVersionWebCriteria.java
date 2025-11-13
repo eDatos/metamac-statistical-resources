@@ -12,8 +12,8 @@ public class QueryVersionWebCriteria extends LifeCycleStatisticalResourceWebCrit
     private String            datasetVersionUrn;
     private QueryStatusEnum   queryStatus;
     private QueryTypeEnum     queryType;
-    private Date              newnessUtilDate;
-    private Date              featuredUtilDate;
+    private Date              newnessUntilDate;
+    private Date              featuredUntilDate;
 
     public QueryVersionWebCriteria() {
         super();
@@ -47,20 +47,20 @@ public class QueryVersionWebCriteria extends LifeCycleStatisticalResourceWebCrit
         this.queryType = queryType;
     }
 
-    public Date getNewnessUtilDate() {
-        return newnessUtilDate;
+    public Date getNewnessUntilDate() {
+        return newnessUntilDate;
     }
 
-    public void setNewnessUtilDate(Date newnessUtilDate) {
-        this.newnessUtilDate = newnessUtilDate;
+    public void setNewnessUntilDate(Date newnessUntilDate) {
+        this.newnessUntilDate = newnessUntilDate;
     }
 
-    public Date getFeaturedUtilDate() {
-        return featuredUtilDate;
+    public Date getFeaturedUntilDate() {
+        return featuredUntilDate;
     }
 
-    public void setFeaturedUtilDate(Date featuredUtilDate) {
-        this.featuredUtilDate = featuredUtilDate;
+    public void setFeaturedUntilDate(Date featuredUntilDate) {
+        this.featuredUntilDate = featuredUntilDate;
     }
 
 }
