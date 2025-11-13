@@ -43,6 +43,7 @@ import org.siemac.metamac.web.common.client.utils.NavigationUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchAction;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
@@ -110,9 +111,12 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
         createMaintainersAndSearchDataset(fields);
         CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
+        CustomDateItem newnessUntilDate = new CustomDateItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        CustomDateItem featuredUntilDate = new CustomDateItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
         fields.add(purposeTypeSelectorItem);
         fields.add(xTemplate);
-        
+        fields.add(newnessUntilDate);
+        fields.add(featuredUntilDate);
         return fields;
     }
 
@@ -122,9 +126,12 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         createMaintainersAndSearchDataset(fields);
         CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
         xTemplate.setRequired(queryVersionDto.getPurpose() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryVersionDto.getPurpose().getIdentifier()));
+        CustomDateItem newnessUntilDate = new CustomDateItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        CustomDateItem featuredUntilDate = new CustomDateItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
         fields.add(purposeTypeSelectorItem);
         fields.add(xTemplate);
-        
+        fields.add(newnessUntilDate);
+        fields.add(featuredUntilDate);
         return fields;
     }
     
@@ -312,6 +319,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setValue(QueryDS.TYPE, typeStr);
         String purposeType = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : null;
         setValue(QueryDS.PURPOSE_TYPE, purposeType);
+        setValue(SiemacMetadataDS.NEWNESS_UNTIL_DATE, queryDto.getNewnessUntilDate());
+        setValue(SiemacMetadataDS.FEATURED_UNTIL_DATE, queryDto.getFeaturedUntilDate());
 
         dtoSelection = queryDto.getSelection();
 
@@ -356,6 +365,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setTemporalGranularities(queryDto);
         queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         queryDto.setXTemplateDto(getValueAsInternationalStringDto(QueryDS.X_TEMPLATE));
+        queryDto.setNewnessUntilDate(((CustomDateItem) getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
+        queryDto.setFeaturedUntilDate(((CustomDateItem) getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
         return queryDto;
     }
 

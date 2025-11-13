@@ -1,5 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.shared.criteria;
 
+import java.util.Date;
+
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 
@@ -10,6 +12,8 @@ public class QueryVersionWebCriteria extends LifeCycleStatisticalResourceWebCrit
     private String            datasetVersionUrn;
     private QueryStatusEnum   queryStatus;
     private QueryTypeEnum     queryType;
+    private Date              newnessUtilDate;
+    private Date              featuredUtilDate;
 
     public QueryVersionWebCriteria() {
         super();
@@ -42,4 +46,21 @@ public class QueryVersionWebCriteria extends LifeCycleStatisticalResourceWebCrit
     public void setQueryType(QueryTypeEnum queryType) {
         this.queryType = queryType;
     }
+
+    public Date getNewnessUtilDate() {
+        return newnessUtilDate;
+    }
+
+    public void setNewnessUtilDate(Date newnessUtilDate) {
+        this.newnessUtilDate = newnessUtilDate;
+    }
+
+    public Date getFeaturedUtilDate() {
+        return featuredUtilDate;
+    }
+
+    public void setFeaturedUtilDate(Date featuredUtilDate) {
+        this.featuredUtilDate = featuredUtilDate;
+    }
+
 }

@@ -10,6 +10,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
 import org.siemac.metamac.statistical.resources.web.client.query.utils.QueryRelatedDatasetUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
@@ -57,6 +58,10 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         ViewMultiLanguageTextItem twitterTemplate = new ViewMultiLanguageTextItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
         twitterTemplate.setShowIfCondition(getXTemplateTextItem());
         fields.add(twitterTemplate);
+        ViewTextItem dateNewnessUntil = new ViewTextItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        fields.add(dateNewnessUntil);
+        ViewTextItem dateFeaturedUntil = new ViewTextItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
+        fields.add(dateFeaturedUntil);
         return fields;
     }
 
@@ -111,6 +116,8 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         if (isLatestData) {
             setValue(QueryDS.LATEST_N_DATA, queryDto.getLatestDataNumber());
         }
+        setValue(SiemacMetadataDS.NEWNESS_UNTIL_DATE, queryDto.getNewnessUntilDate());
+        setValue(SiemacMetadataDS.FEATURED_UNTIL_DATE, queryDto.getFeaturedUntilDate());
     }
 
     private void ensureTimeDimensionIsLast(List<String> dimensionIds) {

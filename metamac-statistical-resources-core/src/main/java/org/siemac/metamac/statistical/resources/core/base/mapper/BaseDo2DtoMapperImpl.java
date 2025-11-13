@@ -119,6 +119,8 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
 
         target.setPublicationStreamStatus(source.getPublicationStreamStatus());
         target.setXStreamStatus(source.getXStreamStatus());
+        target.setNewnessUntilDate(dateDoToDto(source.getNewnessUntilDate()));
+        target.setFeaturedUntilDate(dateDoToDto(source.getFeaturedUntilDate()));
     }
 
     @Override

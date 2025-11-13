@@ -87,6 +87,8 @@ public class MetamacWebCriteriaUtils {
             addRestrictionIfExists(criteria, buildDatasetVersionCriteria(queryVersionWebCriteria));
             addRestrictionIfExists(criteria, buildQueryStatusCriteria(queryVersionWebCriteria));
             addRestrictionIfExists(criteria, buildQueryTypeCriteria(queryVersionWebCriteria));
+            addRestrictionIfExists(criteria, buildNewnessUntilDateWebCriteria(queryVersionWebCriteria));
+            addRestrictionIfExists(criteria, buildFeaturedUntilDateWebCriteria(queryVersionWebCriteria));
         }
 
         return criteria;
@@ -241,6 +243,20 @@ public class MetamacWebCriteriaUtils {
     }
 
     private static MetamacCriteriaRestriction buildFeaturedUntilDateCriteria(SiemacMetadataStatisticalResourceWebCriteria criteria) {
+        if (criteria.getFeaturedUtilDate() != null) {
+            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.FEATURED_UNTIL_DATE.name(), criteria.getFeaturedUtilDate(), OperationType.GE);
+        }
+        return null;
+    }
+
+    private static MetamacCriteriaRestriction buildNewnessUntilDateWebCriteria(QueryVersionWebCriteria criteria) {
+        if (criteria.getNewnessUtilDate() != null) {
+            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.NEWNESS_UNTIL_DATE.name(), criteria.getNewnessUtilDate(), OperationType.GE);
+        }
+        return null;
+    }
+
+    private static MetamacCriteriaRestriction buildFeaturedUntilDateWebCriteria(QueryVersionWebCriteria criteria) {
         if (criteria.getFeaturedUtilDate() != null) {
             return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.FEATURED_UNTIL_DATE.name(), criteria.getFeaturedUtilDate(), OperationType.GE);
         }

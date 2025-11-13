@@ -250,7 +250,7 @@ public class BaseDto2DoMapperImpl extends CommonDto2DoMapperImpl implements Base
         if (MetadataEditionChecks.canMaintainerBeEdited(target.getId())) {
             target.setMaintainer(externalItemDtoToDo(source.getMaintainer(), target.getMaintainer(), addParameter(metadataName, ServiceExceptionSingleParameters.MAINTAINER)));
         }
-
+        
         target.setPublicationStreamStatus(source.getPublicationStreamStatus());
         target.setXStreamStatus(source.getXStreamStatus());
 
@@ -327,6 +327,8 @@ public class BaseDto2DoMapperImpl extends CommonDto2DoMapperImpl implements Base
 
         // Optimistic locking: Update "update date" attribute to force update to root entity, to increment "version" attribute
         target.setUpdateDate(new DateTime());
+        target.setNewnessUntilDate(dateDtoToDo(source.getNewnessUntilDate()));
+        target.setFeaturedUntilDate(dateDtoToDo(source.getFeaturedUntilDate()));
     }
 
     // ------------------------------------------------------------
