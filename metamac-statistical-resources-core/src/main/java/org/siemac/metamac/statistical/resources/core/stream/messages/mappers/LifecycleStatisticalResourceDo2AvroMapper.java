@@ -13,6 +13,8 @@ public class LifecycleStatisticalResourceDo2AvroMapper {
         LifecycleStatisticalResourceAvro target = null;
         if (source != null) {
             target = LifecycleStatisticalResourceAvro.newBuilder().setVersionableStatisticalResource(VersionableStatisticalResourceDo2AvroMapper.do2Avro(source))
+                    .setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getFeaturedUntilDate()))
+                    .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getNewnessUntilDate()))
                     .setCreationDate(DateTimeDo2AvroMapper.do2Avro(source.getCreationDate())).setCreationUser(source.getCreationUser())
                     .setProductionValidationDate(DateTimeDo2AvroMapper.do2Avro(source.getProductionValidationDate())).setProductionValidationUser(source.getProductionValidationUser())
                     .setDiffusionValidationDate(DateTimeDo2AvroMapper.do2Avro(source.getDiffusionValidationDate())).setDiffusionValidationUser(source.getDiffusionValidationUser())

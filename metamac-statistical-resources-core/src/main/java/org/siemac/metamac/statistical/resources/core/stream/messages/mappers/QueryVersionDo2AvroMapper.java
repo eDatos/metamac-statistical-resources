@@ -57,7 +57,6 @@ public class QueryVersionDo2AvroMapper {
         // Replace URN with URN withou Version
         String queryUrnWithoutVersion = toQueryUrn(source.getLifeCycleStatisticalResource().getMaintainer().getCodeNested(), source.getLifeCycleStatisticalResource().getCode());
         target.getLifecycleStatisticalResource().getVersionableStatisticalResource().getNameableStatisticalResource().getIdentifiableStatisticalResource().setUrn(queryUrnWithoutVersion);
-
         return target;
     }
 
