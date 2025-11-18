@@ -214,9 +214,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     CacheService                                      cacheService;
 
     @Autowired
-    GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
-
-    @Autowired
     private ManipulateCsvDataService                  manipulateCsvDataService;
 
     // ------------------------------------------------------------------------

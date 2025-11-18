@@ -197,13 +197,13 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.query_version.is_part_of_publications");
     public static final CommonServiceExceptionType QUERY_VERSION_IS_PART_OF_NOT_VISIBLE_PUBLICATION                                                    = create(
             "exception.resources.query_version.is_part_of_not_visible_publication");
-    public static final CommonServiceExceptionType QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT                                                      = create(
+    public static final CommonServiceExceptionType QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT                                                              = create(
             "exception.resources.query_version.purpose.not_unique_result");
     public static final CommonServiceExceptionType QUERY_SOCIAL_NETWORK_DO_NOT_HAVE_X_TEMPLATE                                                 = create(
             "exception.resources.query_version.purpose.no_x_template");
     public static final CommonServiceExceptionType QUERY_PURPOSE_TYPE_NOT_COMPATIBLE                                                           = create(
             "exception.resources.query_version.purpose.not_compatible");
-    public static final CommonServiceExceptionType QUERY_X_TEMPLATE_EXCEEDS                                                                    = create(
+    public static final CommonServiceExceptionType QUERY_X_TEMPLATE_EXCEEDS                                                                            = create(
             "exception.resources.query_version.x_template.template_length");
     // Constraints
     public static final CommonServiceExceptionType CONSTRAINTS_CREATE_DATASET_WITH_DATASOURCES                                                         = create(
@@ -216,7 +216,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.constraints.update.check_existing_observations");
     public static final CommonServiceExceptionType CONSTRAINT_UPDATE_CHECK_EXISTING_OBSERVATIONS_FAIL                                                  = create(
             "exception.resources.constraints.update.check_existing_observations_fail");
-    public static final CommonServiceExceptionType CREATE_OR_UPDATE_SRM_RESOURCE                                                               = create(
+    public static final CommonServiceExceptionType CREATE_OR_UPDATE_SRM_RESOURCE                                                                       = create(
             "exception.resources.kafka.process.message.update_resource_fail");
 
     // Identifiable Statistical Resource
@@ -246,7 +246,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.statistic_officiality.not_found");
 
     // Purposes
-    public static final CommonServiceExceptionType PURPOSE_NOT_FOUND                                                                           = create("exception.resources.purpose.not_found");
+    public static final CommonServiceExceptionType PURPOSE_NOT_FOUND                                                                                   = create(
+            "exception.resources.purpose.not_found");
 
     // Tasks
     public static final CommonServiceExceptionType TASKS_ERROR_MAX_CURRENT_JOBS                                                                        = create(
@@ -311,15 +312,15 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.attribute.importation.dimension_id_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_ATTRIBUTE_ID_INVALID                                                         = create(
             "exception.resources.attribute.importation.attribute_id_invalid");
-    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER                                          = create(
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER                                                  = create(
             "exception.resources.attribute.importation.attribute_invalid_multilingual_header");
-    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_HEADER_OR_ATTRIBUTE_INFO                                     = create(
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_HEADER_OR_ATTRIBUTE_INFO                                             = create(
             "exception.resources.attribute.importation.attribute_invalid_header_or_attribute_info");
-    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_DUPLICATE_LANGUAGE                       = create(
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_DUPLICATE_LANGUAGE                               = create(
             "exception.resources.attribute.importation.attribute_invalid_multilingual_header_duplicate_language");
-    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_INVALID_LANGUAGE                         = create(
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_INVALID_MULTILINGUAL_HEADER_INVALID_LANGUAGE                                 = create(
             "exception.resources.attribute.importation.attribute_invalid_multilingual_header_invalid_language");
-    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_FILE_EMPTY                                                           = create(
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_FILE_EMPTY                                                                   = create(
             "exception.resources.attribute.importation.file_empty");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_CODE_ENUM_NOT_VALID                                                                = create(
             "exception.resources.dataset.importation.attribute_code_enumeration_not_valid");
@@ -435,9 +436,6 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_RELATED_CACHE_JOB_ERROR                                                          = create(
             "exception.resources.related.geocoverage.job_error");
 
-    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NULL_ERROR                         = create(
-
-
     // Export
     public static final CommonServiceExceptionType DATASOURCE_EXPORT_ERROR                                                                             = create(
             "exception.resources.dataset.export.datasource");
@@ -445,14 +443,14 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset.export.datasource_no_data_present");
 
     // Export
-    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_ERROR                                                                     = create(
+    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_ERROR                                                                             = create(
             "exception.resources.dataset.export.attributes");
-    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_NO_DATA_PRESENT                                                           = create(
+    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_NO_DATA_PRESENT                                                                   = create(
             "exception.resources.dataset.export.attributes_no_data_present");
-    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_ERROR_PROCESSING                                                          = create(
+    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_ERROR_PROCESSING                                                                  = create(
             "exception.resources.dataset.export.attributes_processing");
 
-    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NULL_ERROR                 = create(
+    public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_DATASET_NULL_ERROR                         = create(
             "exception.resources.geocoverage.kafka_external_collection_publication_dataset_null_error");
 
     public static final CommonServiceExceptionType UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_COLLECTION_PUBLICATION_RESOURCE_NOT_FOUND_ERROR                   = create(
