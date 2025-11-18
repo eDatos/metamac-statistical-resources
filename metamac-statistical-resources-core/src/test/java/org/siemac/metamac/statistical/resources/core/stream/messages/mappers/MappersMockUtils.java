@@ -293,7 +293,8 @@ public class MappersMockUtils {
         target.setIsReplacedByVersion(mockRelatedResource(type));
         target.setMaintainer(mockExternalItem());
         target.addVersionRationaleType(new VersionRationaleType(VersionRationaleTypeEnum.MAJOR_CATEGORIES));
-
+        target.setNewnessUntilDate(EXPECTED_PAST_DATE);
+        target.setFeaturedUntilDate(EXPECTED_PAST_DATE);
         return target;
     }
 
@@ -316,6 +317,8 @@ public class MappersMockUtils {
                 .setReplacesVersion(mockRelatedResourceAvro(replacesVersionType))
                 .setIsReplacedByVersion(mockRelatedResourceAvro(replacesVersionType))
                 .setMaintainer(mockExternalItemAvro())
+                .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
+                .setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
                 .build();
         // @formatter:on
         return target;
@@ -405,6 +408,8 @@ public class MappersMockUtils {
                 .setTitleAlternative(mockInternationalStringAvro())
                 .setType(StatisticalResourceTypeEnumDo2AvroMapper.do2Avro(StatisticalResourceTypeEnum.COLLECTION))
                 .setIsReplacedBy(mockRelatedResourceAvro(type))
+                .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
+                .setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
                 .build();
         // @formatter:on
         return target;
@@ -486,7 +491,8 @@ public class MappersMockUtils {
             target.addPublisherContributor(item);
             target.addStatisticalOperationInstance(item);
         }
-
+        target.setNewnessUntilDate(EXPECTED_PAST_DATE);
+        target.setFeaturedUntilDate(EXPECTED_PAST_DATE);
         return target;
     }
 
