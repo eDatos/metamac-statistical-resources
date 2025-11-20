@@ -12,7 +12,7 @@
 
 	<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 	<artifactId>metamac-statistical-resources-parent</artifactId>
-	<version>10.18.2-SNAPSHOT</version>
+	<version>10.18.3-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>METAMAC :: STATISTICAL RESOURCES :: PARENT</name>
 	<description>METAMAC :: STATISTICAL RESOURCES :: PARENT</description>
@@ -35,7 +35,7 @@
 		<metamac-common-metadata-rest-external-api.version>4.0.0</metamac-common-metadata-rest-external-api.version>
 		<metamac-core-common.version>8.7.1</metamac-core-common.version>
 		<metamac-rest-api.version>2.3.1</metamac-rest-api.version>
-		<metamac-rest-common.version>2.8.1</metamac-rest-common.version>
+		<metamac-rest-common.version>2.8.2</metamac-rest-common.version>
 		<metamac-srm-rest-internal-api.version>3.5.0</metamac-srm-rest-internal-api.version>
 		<metamac-srm-rest-external-api.version>3.6.0</metamac-srm-rest-external-api.version>
 		<metamac-sso.version>4.11.2</metamac-sso.version>
