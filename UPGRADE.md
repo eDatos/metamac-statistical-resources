@@ -8,6 +8,11 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 10.18.2 a 10.18.3-SNAPSHOT
+- Se han realizado cambios en la base de datos, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  Ejecutar los scripts de la siguiente ruta en el esquema correspondiente **EXCEPTO  istac pre e istac pro**: [etc/changes-from-release/10.18.2/db/common-metadata/postgresql/](etc/changes-from-release/10.18.2/db/common-metadata/postgresql)
+
+
 ## 10.18.0 a 10.18.1
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.18.0/db](etc/changes-from-release/10.18.0/db) 
 
