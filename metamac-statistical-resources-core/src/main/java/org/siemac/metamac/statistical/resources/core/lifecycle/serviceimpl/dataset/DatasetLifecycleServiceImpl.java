@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 import org.jsoup.safety.Whitelist;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -485,7 +486,8 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
     private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry) throws MetamacException {
         for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
             if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
-                return Jsoup.clean(localisedString.getLabel().replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
+                String decoded = Parser.unescapeEntities(localisedString.getLabel(), true);
+                return Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
             }
         }
         return "";
