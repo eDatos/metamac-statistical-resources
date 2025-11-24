@@ -20,4 +20,12 @@ public class AttributesUtils {
         }
         return patternDataSeparator.matcher(value).replaceAll("\\\\ | \\\\");
     }
+
+    public static String escapeValueForTsv(String value) {
+        if (value == null) {
+            return null;
+        }
+        // Escape tabs and newlines that could break TSV structure, then trim whitespace
+        return value.replace("\t", " ").replace("\r", " ").replace("\n", " ").trim();
+    }
 }
