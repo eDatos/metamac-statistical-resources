@@ -77,6 +77,8 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
 
     private static MasterHead   masterHead;
 
+    private String              helpUrl;
+
     @ProxyStandard
     @NameToken(NameTokens.mainPage)
     @NoGatekeeper
@@ -133,6 +135,19 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     protected void onReset() {
         super.onReset();
         updateBreadcrumbs();
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        dispatcher.execute(new GetHelpUrlAction(), new WaitingAsyncCallbackHandlingError<GetHelpUrlResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetHelpUrlResult result) {
+                helpUrl = result.getHelpUrl();
+                masterHead.setHelpLinkVisibility(helpUrl);
+            }
+        });
     }
 
     private void updateBreadcrumbs() {
@@ -239,13 +254,9 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
 
     @Override
     public void openHelpUrl() {
-        dispatcher.execute(new GetHelpUrlAction(), new WaitingAsyncCallbackHandlingError<GetHelpUrlResult>(this) {
-
-            @Override
-            public void onWaitSuccess(GetHelpUrlResult result) {
-                Window.open(result.getHelpUrl(), "_blank", "");
-            }
-        });
+        if (helpUrl != null) {
+            Window.open(helpUrl, "_blank", "");
+        }
     }
 
     @Override

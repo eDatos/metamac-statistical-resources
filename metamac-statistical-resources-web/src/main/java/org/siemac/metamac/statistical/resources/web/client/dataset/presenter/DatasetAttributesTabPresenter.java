@@ -27,6 +27,8 @@ import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetAttributeInstancesResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportAttributesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportAttributesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributesAction;
@@ -211,7 +213,7 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
             }
         });
     }
-    
+
     @Override
     public void saveAttributeInstance(final DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         dispatcher.execute(new SaveDatasetAttributeInstanceAction(datasetVersionUrn, dsdAttributeInstanceDto), new WaitingAsyncCallbackHandlingError<SaveDatasetAttributeInstanceResult>(this) {
@@ -355,5 +357,16 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
         if (location != null && !location.isEmpty()) {
             placeManager.revealPlaceHierarchy(location);
         }
+    }
+
+    @Override
+    public void exportAttributes(String urn) {
+        dispatcher.execute(new ExportAttributesAction(urn), new WaitingAsyncCallbackHandlingError<ExportAttributesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(ExportAttributesResult result) {
+                CommonUtils.downloadFile(result.getFileName());
+            }
+        });
     }
 }

@@ -17,6 +17,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Dele
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesNotUsedActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.EndCategorisationsValidityActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.ExportAttributesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.ExportDatasourcesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetCodelistsWithVariableActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributeInstancesActionHandler;
@@ -112,6 +113,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDataset
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.EndCategorisationsValidityAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportAttributesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesAction;
@@ -276,6 +278,7 @@ public class ServerModule extends HandlerModule {
         bindHandler(DeleteCategorisationsAction.class, DeleteCategorisationsActionHandler.class);
         bindHandler(EndCategorisationsValidityAction.class, EndCategorisationsValidityActionHandler.class);
         bindHandler(ExportDatasourcesAction.class, ExportDatasourcesActionHandler.class);
+        bindHandler(ExportAttributesAction.class, ExportAttributesActionHandler.class);
         bindHandler(GetDatasetConstraintAction.class, GetDatasetConstraintActionHandler.class);
         bindHandler(CreateDatasetConstraintAction.class, CreateDatasetConstraintActionHandler.class);
         bindHandler(DeleteDatasetConstraintAction.class, DeleteDatasetConstraintActionHandler.class);
