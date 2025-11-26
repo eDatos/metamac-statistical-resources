@@ -55,7 +55,6 @@ import org.siemac.metamac.web.common.shared.criteria.SrmExternalResourceRestCrit
 import org.siemac.metamac.web.common.shared.criteria.SrmItemRestCriteria;
 
 import com.smartgwt.client.data.Record;
-import com.smartgwt.client.util.SC;
 import com.smartgwt.client.widgets.form.DynamicForm;
 import com.smartgwt.client.widgets.form.FormItemIfFunction;
 import com.smartgwt.client.widgets.form.fields.FormItem;
@@ -338,7 +337,6 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setTemporalGranularities(queryDto);
         queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         queryDto.setXTemplateDto(getValueAsInternationalStringDto(QueryDS.X_TEMPLATE));
-        SC.say(queryDto.getXTemplateDto() == null ? "get nulo" : "get no nulo");
         this.queryDto = queryDto;
         return queryDto;
     }
