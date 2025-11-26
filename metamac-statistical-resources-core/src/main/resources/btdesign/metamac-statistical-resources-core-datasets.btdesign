@@ -64,6 +64,8 @@ Application DatasetsStatisticalResources {
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			"Export datasources to TSV"
 			String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
+			"Export dataset, dimension and group attributes to TSV"
+			String exportAttributesTsv(String datasetVersionUrn) throws MetamacException;
     		
     		"Link a dataset view to the latest version of the indicator"
 	    	manageDatabaseView(String datasetRepositoryId, @DatasetVersion datasetVersion) throws MetamacException;

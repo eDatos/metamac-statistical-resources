@@ -107,7 +107,7 @@ public class DatasetsSecurityUtils extends SecurityUtils {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
-    
+
     public static void canResendPublishedDatasetVersionStreamMessage(ServiceContext ctx, String operationCode) throws MetamacException {
         if (!SharedDatasetsSecurityUtils.canPublishDataset(getMetamacPrincipal(ctx), operationCode)) {
             throwExceptionIfOperationNotAllowed(ctx);
@@ -277,6 +277,12 @@ public class DatasetsSecurityUtils extends SecurityUtils {
 
     public static void canExportDatasourcesTsv(ServiceContext ctx) throws MetamacException {
         if (!SharedDatasetsSecurityUtils.canExportDatasourcesTsv(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
+    public static void canExportAttributesTsv(ServiceContext ctx) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canExportAttributesTsv(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);
         }
     }
