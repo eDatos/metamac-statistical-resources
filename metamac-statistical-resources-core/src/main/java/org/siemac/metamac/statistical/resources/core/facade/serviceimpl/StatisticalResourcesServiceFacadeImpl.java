@@ -746,6 +746,15 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         return getDatasetService().exportDatasourcesTsv(ctx, datasetVersionUrn);
     }
 
+    @Override
+    public String exportAttributesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+
+        // Security
+        DatasetsSecurityUtils.canExportAttributesTsv(ctx);
+
+        return getDatasetService().exportAttributesTsv(ctx, datasetVersionUrn);
+    }
+
     // ------------------------------------------------------------------------
     // DATASETS
     // ------------------------------------------------------------------------

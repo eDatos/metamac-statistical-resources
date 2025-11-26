@@ -4358,4 +4358,10 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // // Without test in facade
 
     }
+
+    @Override
+    public void testExportAttributesTsv() throws Exception {
+        // // Without test in facade
+
+    }
 }

@@ -8,6 +8,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 
 public interface ManipulateCsvDataService {
@@ -18,4 +19,6 @@ public interface ManipulateCsvDataService {
 
     public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId,
             ServiceContext ctx, String dataVersionUrn, List<String> validLanguages) throws Exception;
+
+    public String exportCsvAttributes(DataStructure dataStructure, DatasetVersion datasetVersion, List<String> validLanguages) throws Exception;
 }
