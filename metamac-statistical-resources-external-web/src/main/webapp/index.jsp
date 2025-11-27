@@ -19,8 +19,6 @@
 <head>
   <meta charset="UTF-8">
   <title>${msg['api.doc.title']}</title>
- 
-  <link href="<%=WebUtils.getFavicon()%>" rel="shortcut icon"/>
 
 </head>
 <body>
