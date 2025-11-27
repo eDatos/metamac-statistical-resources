@@ -299,6 +299,7 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
                 TwitterClient twitterClient = new TwitterClient(
                         TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                 .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+                twitterClient.setAutomaticRetry(false);
                 String xPublication = getXPublication(observations, resource, ctx);
                 Tweet tweet = twitterClient.postTweet(xPublication);
                 if (tweet.getText() == null) {

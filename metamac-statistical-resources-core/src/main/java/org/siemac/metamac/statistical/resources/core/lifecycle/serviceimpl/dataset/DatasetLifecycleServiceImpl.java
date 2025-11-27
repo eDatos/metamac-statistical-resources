@@ -402,6 +402,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                     TwitterClient twitterClient = new TwitterClient(
                             TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                     .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+                    twitterClient.setAutomaticRetry(false);
                     String xPublication = getXPublication(observations, queryVersion, ctx);
                     Tweet tweet = twitterClient.postTweet(xPublication);
                     if (tweet.getText() == null) {
