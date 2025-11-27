@@ -378,9 +378,9 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
         String temporalDimensionValue = getTemporalDimensionValueName(entry.getValue(), ctx);
         for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
             if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
-                String decoded = Parser.unescapeEntities(localisedString.getLabel(), true);
-                decoded = decoded.replace("{periodo}", temporalDimensionValue);
-                return Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
+                String decoded = localisedString.getLabel().replace("{periodo}", temporalDimensionValue);
+                decoded = Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
+                return Parser.unescapeEntities(decoded, true);
             }
         }
         return "";
