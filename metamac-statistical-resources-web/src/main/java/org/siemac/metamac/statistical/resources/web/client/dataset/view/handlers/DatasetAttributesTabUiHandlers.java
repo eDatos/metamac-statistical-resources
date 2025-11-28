@@ -22,4 +22,6 @@ public interface DatasetAttributesTabUiHandlers extends BaseUiHandlers {
     void retrieveItemsFromItemSchemeForDimensionOrGroupLevelAttribute(RepresentationDto representationDto, int firstResult, int maxResults, MetamacWebCriteria criteria);
     void attributesImportationFailed(String errorMessage);
     void attributesImportationSucceed(String fileName);
+
+    void exportAttributes(String urn);
 }
