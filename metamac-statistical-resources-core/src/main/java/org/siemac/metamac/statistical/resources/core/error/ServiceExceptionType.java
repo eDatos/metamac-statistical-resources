@@ -197,7 +197,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.query_version.purpose.not_unique_result");
     public static final CommonServiceExceptionType QUERY_PURPOSE_TYPE_NOT_COMPATIBLE                                                           = create(
             "exception.resources.query_version.purpose.not_compatible");
-    public static final CommonServiceExceptionType QUERY_X_TEMPLATE_EXCEEDS                                                                          = create(
+    public static final CommonServiceExceptionType QUERY_X_TEMPLATE_EXCEEDS                                                                    = create(
             "exception.resources.query_version.x_template.template_length");
     // Constraints
     public static final CommonServiceExceptionType CONSTRAINTS_CREATE_DATASET_WITH_DATASOURCES                                                 = create(
@@ -421,5 +421,13 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset.export.datasource");
     public static final CommonServiceExceptionType DATASOURCE_EXPORT_NO_DATA_PRESENT                                                           = create(
             "exception.resources.dataset.export.datasource_no_data_present");
+
+    // Export
+    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_ERROR                                                                     = create(
+            "exception.resources.dataset.export.attributes");
+    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_NO_DATA_PRESENT                                                           = create(
+            "exception.resources.dataset.export.attributes_no_data_present");
+    public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_ERROR_PROCESSING                                                          = create(
+            "exception.resources.dataset.export.attributes_processing");
 
 }

@@ -88,7 +88,6 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
     private QueryVersionDto                                          queryDto;
     private SearchMultiExternalItem                                  temporalGranularitiesItem;
-    private MultiLanguageRichTextEditorItem                          xTemplate;
 
     public QueryProductionDescriptorsEditionForm() {
         super(getConstants().formProductionDescriptors());
@@ -97,21 +96,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setFields(fields.toArray(new FormItem[fields.size()]));
     }
 
-    public QueryProductionDescriptorsEditionForm(QueryVersionDto queryVersionDto) {
-        super(getConstants().formProductionDescriptors());
-
-        List<FormItem> fields = createComponents(queryVersionDto);
-        
-        setFields(fields.toArray(new FormItem[fields.size()]));
-    }
-
     private List<FormItem> createComponents() {
         List<FormItem> fields = new ArrayList<FormItem>();
 
         createMaintainersAndSearchDataset(fields);
-        CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
-        fields.add(purposeTypeSelectorItem);
-        fields.add(xTemplate);
         
         return fields;
     }
@@ -120,11 +108,6 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         List<FormItem> fields = new ArrayList<FormItem>();
 
         createMaintainersAndSearchDataset(fields);
-        CustomSelectItem purposeTypeSelectorItem = createPurposeAndXTemplate();
-        xTemplate.setRequired(queryVersionDto.getPurpose() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryVersionDto.getPurpose().getIdentifier()));
-        fields.add(purposeTypeSelectorItem);
-        fields.add(xTemplate);
-        
         return fields;
     }
     
@@ -147,16 +130,15 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         fields.add(typeSelectorItem);
     }
 
-    private CustomSelectItem createPurposeAndXTemplate() {
+    private CustomSelectItem createPurpose() {
         CustomSelectItem purposeTypeSelectorItem = createPurposeTypeSelector();
-
-        createXTemplate();
         return purposeTypeSelectorItem;
     }
 
-    private void createXTemplate() {
-        xTemplate = new MultiLanguageRichTextEditorItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+    private MultiLanguageRichTextEditorItem createXTemplate() {
+        MultiLanguageRichTextEditorItem xTemplate = new MultiLanguageRichTextEditorItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
         xTemplate.setShowIfCondition(getXTemplateTextItem());
+        return xTemplate;
     }
 
     private CustomSelectItem createPurposeTypeSelector() {
@@ -166,6 +148,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
             @Override
             public void onChanged(ChangedEvent event) {
+                MultiLanguageRichTextEditorItem xTemplate = (MultiLanguageRichTextEditorItem) getItem(QueryDS.X_TEMPLATE);
                 xTemplate.setRequired(true);
                 PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
                 if (purpose == null || !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purpose.getIdentifier())) {
@@ -303,7 +286,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     }
 
     public void setQueryDto(QueryVersionDto queryDto) {
-
+        this.queryDto = queryDto;
         QueryRelatedDatasetUtils.setRelatedDataset(queryDto, getItem(QueryDS.RELATED_DATASET_VERSION));
         setValue(LifeCycleResourceDS.MAINTAINER, queryDto.getMaintainer());
         setValue(LifeCycleResourceDS.MAINTAINER_VIEW, queryDto.getMaintainer());
@@ -318,14 +301,12 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         if (queryDto.getRelatedDatasetVersion() != null) {
             retrieveDimensionsForDataset(queryDto.getRelatedDatasetVersion().getUrn());
         }
-
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
         String purpose = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : "";
         setValue(QueryDS.PURPOSE_TYPE, purpose);
         setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
         queryDto.setIsDsdChanged(false);
-        this.queryDto = queryDto;
     }
 
     public QueryVersionDto getQueryDto(QueryVersionDto queryDto) {
@@ -356,6 +337,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setTemporalGranularities(queryDto);
         queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         queryDto.setXTemplateDto(getValueAsInternationalStringDto(QueryDS.X_TEMPLATE));
+        this.queryDto = queryDto;
         return queryDto;
     }
 
@@ -468,9 +450,12 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
         ExternalItemDto maintainer = getValueAsExternalItemDto(QueryDS.MAINTAINER);
         RelatedResourceDto datasetVersion = getRelatedResourceValue(getItem(QueryDS.RELATED_DATASET_VERSION));
-
-        List<FormItem> fields = createComponents();
-
+        MultiLanguageRichTextEditorItem xTemplate = createXTemplate();
+        CustomSelectItem purpose = createPurpose();
+        List<FormItem> fields = createComponents(queryDto);
+        xTemplate.setRequired(queryDto.getPurpose() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryDto.getPurpose().getIdentifier()));
+        fields.add(purpose);
+        fields.add(xTemplate);
         selectionFields = new HashMap<String, CodeItemListItem>();
         dimensionCodeSelectionWindow = new HashMap<String, SearchMultipleCodeItemWindow>();
 

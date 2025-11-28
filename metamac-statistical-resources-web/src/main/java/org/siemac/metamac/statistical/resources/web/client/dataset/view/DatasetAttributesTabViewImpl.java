@@ -143,16 +143,33 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
 
     private class AttributesListPanel extends VLayout {
 
-        private CustomToolStripButton              importAttributesButton;
-        private ImportAttributesWithPreviewWindow  importAttributesWithPreviewWindow;
-        
+        private CustomToolStripButton             importAttributesButton;
+        private CustomToolStripButton             exportAttributesButton;
+        private ImportAttributesWithPreviewWindow importAttributesWithPreviewWindow;
+
         public AttributesListPanel() {
             ToolStrip toolStrip = new ToolStrip();
             toolStrip.setWidth100();
 
             importAttributesButton = createImportAttributeButton();
+            exportAttributesButton = createExportAttributeButton();
             toolStrip.addButton(importAttributesButton);
+            toolStrip.addButton(exportAttributesButton);
             addMember(toolStrip);
+        }
+
+        private CustomToolStripButton createExportAttributeButton() {
+            final CustomToolStripButton exportAttributeButton = new CustomToolStripButton(getConstants().actionExportAttributes(),
+                    org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
+            exportAttributeButton.setVisible(Boolean.TRUE);
+            exportAttributeButton.addClickHandler(new ClickHandler() {
+
+                @Override
+                public void onClick(ClickEvent event) {
+                    getUiHandlers().exportAttributes(datasetVersionDto.getUrn());
+                }
+            });
+            return exportAttributeButton;
         }
 
         private CustomToolStripButton createImportAttributeButton() {

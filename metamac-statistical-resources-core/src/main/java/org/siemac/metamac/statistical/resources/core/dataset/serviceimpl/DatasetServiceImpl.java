@@ -106,6 +106,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.Statisti
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.domain.TemporalAttributeValues;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetFromDatabaseJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateCsvDataService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
@@ -213,6 +214,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
+
+    @Autowired
+    private ManipulateCsvDataService                  manipulateCsvDataService;
 
     // ------------------------------------------------------------------------
     // DATASOURCES
@@ -1810,6 +1814,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     // Single attribute coverage
     private void processNonObservationAttributeCoverage(DatasetVersion resource, DsdAttribute dsdAttribute) throws MetamacException {
+
+        TemporalAttributeValues temporalAttributeValues = getNonObservationalAttributes(resource, dsdAttribute);
+        processAttributeCoverage(resource, dsdAttribute, temporalAttributeValues);
+
+    }
+
+    private TemporalAttributeValues getNonObservationalAttributes(DatasetVersion resource, DsdAttribute dsdAttribute) throws MetamacException {
         try {
             TemporalAttributeValues temporalAttributeValues = new TemporalAttributeValues();
             if (isTextFormatAttributeMultilingual(dsdAttribute)) {
@@ -1820,7 +1831,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 temporalAttributeValues.setValues(statisticsDatasetRepositoriesServiceFacade.findAttributeInstancesValues(resource.getDatasetRepositoryId(), dsdAttribute.getComponentId(),
                         StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE));
             }
-            processAttributeCoverage(resource, dsdAttribute, temporalAttributeValues);
+            return temporalAttributeValues;
         } catch (ApplicationException e) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "Error retrieving values for attribute " + dsdAttribute.getComponentId());
         }
@@ -2428,4 +2439,25 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             IOUtils.closeQuietly(outputStreamObservations);
         }
     }
+    
+    @Override
+    public String exportAttributesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+        datasetServiceInvocationValidator.checkExportAttributesTsv(ctx,datasetVersionUrn);
+        String fileName = "";
+        try {
+            DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+             datasetRepositoriesServiceFacade.findAttributesInstancesWithDatasetAttachmentLevel(datasetVersionUrn, fileName);
+            
+            DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
+
+            List<String> languages = configurationService.retrieveLanguages();
+  
+            fileName = manipulateCsvDataService.exportCsvAttributes(dataStructure, datasetVersion,  languages);
+ 
+        } catch (Exception e) {
+            throw new MetamacException(e, ServiceExceptionType.ATTRIBUTES_EXPORT_ERROR, e.getMessage());
+        } 
+        
+        return fileName;
+    }    
 }

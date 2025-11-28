@@ -98,6 +98,8 @@ Application FacadeStatisticalResources {
 	    	@DimensionRepresentationMappingDto retrieveDimensionRepresentationMappings(String datasetVersionUrn, String filename) throws MetamacException;
 	    	"Export datasources"
 	    	String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
+	    	"Export dataset, dimension and group attributes to TSV"
+			String exportAttributesTsv(String datasetVersionUrn) throws MetamacException;
 
 	    	// DATASETS 
 	   		"Find all datasets"

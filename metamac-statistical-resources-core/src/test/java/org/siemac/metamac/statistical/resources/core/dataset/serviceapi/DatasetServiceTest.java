@@ -2222,4 +2222,33 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     public void testCopyDatasetVersion() throws Exception {
         // NOTHING TO DO
     }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_118_PUBLISHED_DATABASE_DATASET_NAME)
+    public void testExportAttributesTsv() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_118_PUBLISHED_DATABASE_DATASET_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        // Set a valid datasetRepositoryId (override mock value if needed)
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        // Mock DSD and dataset repository with attributes
+        DataMockUtils.mockDsdAndDataRepositorySimpleDimensionsWithObservationAttributes(datasetRepositoriesServiceFacade, srmRestInternalService);
+
+        String fileName = datasetService.exportAttributesTsv(getServiceContextWithoutPrincipal(), urn);
+
+        assertNotNull("El nombre del archivo exportado no debe ser null", fileName);
+        assertFalse("El nombre del archivo exportado no debe estar vacío", fileName.isEmpty());
+        assertTrue("El nombre del archivo debe terminar en .tsv", fileName.endsWith(".tsv"));
+
+        // Verify the file was created
+        File exportedFile = new File(System.getProperty("java.io.tmpdir"), fileName);
+        assertTrue("El archivo exportado debe existir", exportedFile.exists());
+        assertTrue("El archivo exportado debe tener contenido", exportedFile.length() > 0);
+
+        // Clean up
+        exportedFile.delete();
+    }
 }
