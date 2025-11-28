@@ -553,7 +553,6 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
             // WORKAROUND, this form is continuously rebuilt
             mainFormLayout.removeEditionCanvas(productionDescriptorsEditionForm);
-            productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm(queryVersionDto);
             productionDescriptorsEditionForm.setUiHandlers(getUiHandlers());
             productionDescriptorsEditionForm.setQueryDto(queryVersionDto);
             productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);

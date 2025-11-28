@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.jsoup.Jsoup;
+import org.jsoup.parser.Parser;
 import org.jsoup.safety.Whitelist;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -23,6 +24,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.VersionRational
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
+import org.siemac.metamac.statistical.resources.core.common.serviceapi.TranslationService;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
@@ -55,6 +57,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.Mapping;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
@@ -76,6 +79,9 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Autowired
     private DatasetService                    datasetService;
+
+    @Autowired
+    private TranslationService                      translationService;
 
     @Autowired
     private DatasetVersionRepository          datasetVersionRepository;
@@ -396,7 +402,8 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                     TwitterClient twitterClient = new TwitterClient(
                             TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
                                     .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
-                    String xPublication = getXPublication(observations, queryVersion);
+                    twitterClient.setAutomaticRetry(false);
+                    String xPublication = getXPublication(observations, queryVersion, ctx);
                     Tweet tweet = twitterClient.postTweet(xPublication);
                     if (tweet.getText() == null) {
                         createXMessageSentNotification(ctx, resource);
@@ -468,7 +475,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         queryVersionRepository.save(resource);
     }
 
-    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query) throws MetamacException {
+    private String getXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query, ServiceContext ctx) throws MetamacException {
         if (observations.size() > 1) {
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + query.getLifeCycleStatisticalResource().getCode());
         }
@@ -477,15 +484,28 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             // Get the only entry in the map
             Entry<String, ObservationExtendedDto> entry = observations.entrySet().iterator().next();
 
-            return setMessageLanguageDefault(query, entry);
+            return setMessageLanguageDefault(query, entry, ctx);
         }
         return "";
     }
 
-    private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry) throws MetamacException {
+    private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry, ServiceContext ctx) throws MetamacException {
+        String temporalDimensionValue = getTemporalDimensionValueName(entry.getValue(), ctx);
         for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
             if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
-                return Jsoup.clean(localisedString.getLabel().replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
+                String decoded = localisedString.getLabel().replace("{periodo}", temporalDimensionValue);
+                decoded = Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
+                return Parser.unescapeEntities(decoded, true);
+            }
+        }
+        return "";
+    }
+
+    private String getTemporalDimensionValueName(ObservationExtendedDto observation, ServiceContext ctx) throws MetamacException {
+        for (CodeDimensionDto codeDimension : observation.getCodesDimension())  {
+            if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(codeDimension.getDimensionId())) {
+                Map<String, String> title = translationService.retrieveTimeTranslation(ctx, codeDimension.getCodeDimensionId());
+                return title.get(configurationService.retrieveLanguageDefault());
             }
         }
         return "";
