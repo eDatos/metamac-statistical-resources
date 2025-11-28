@@ -112,6 +112,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         List<FormItem> fields = new ArrayList<FormItem>();
 
         createMaintainersAndSearchDataset(fields);
+        CustomDateItem newnessUntilDate = new CustomDateItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        CustomDateItem featuredUntilDate = new CustomDateItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
+        fields.add(newnessUntilDate);
+        fields.add(featuredUntilDate);
         return fields;
     }
     
@@ -343,7 +347,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setTemporalGranularities(queryDto);
         queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
         queryDto.setXTemplateDto(getValueAsInternationalStringDto(QueryDS.X_TEMPLATE));
-        this.queryDto = queryDto;
+        queryDto.setNewnessUntilDate(((CustomDateItem) getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
+        queryDto.setFeaturedUntilDate(((CustomDateItem) getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
         return queryDto;
     }
 
