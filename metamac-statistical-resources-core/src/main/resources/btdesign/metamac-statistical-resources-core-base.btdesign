@@ -45,6 +45,8 @@ Application BaseStatisticalResources {
 			
 			"Last update to optimistic locking"
 			DateTimeTZ updateDate nullable;
+			DateTimeTZ newnessUntilDate nullable;
+			DateTimeTZ featuredUntilDate nullable;
 
 			Repository StatisticalResourceRepository {
 				save;
@@ -161,7 +163,6 @@ Application BaseStatisticalResources {
 			- Bag<@ExternalItem> publisher cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_PUBLISHERS" databaseColumn="PUBLISHER_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
 			- Bag<@ExternalItem> publisherContributor cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_PUB_CONTRIBUTORS" databaseColumn="PUBLISHER_CONT_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
 			- Bag<@ExternalItem> mediator cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_MEDIATORS" databaseColumn="MEDIATOR_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
-			DateTimeTZ newnessUntilDate nullable;
 			
 			//RESOURCE RELATIONS DESCRIPTORS
 			- @RelatedResource replaces cascade="all" fetch="lazy" databaseColumn="REPLACES_FK" nullable;

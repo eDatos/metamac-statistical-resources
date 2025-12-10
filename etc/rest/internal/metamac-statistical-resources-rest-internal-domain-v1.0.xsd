@@ -164,6 +164,7 @@
 			<xs:enumeration value="VALID_TO" />
 			<xs:enumeration value="STATISTICAL_OPERATION_URN" />
 			<xs:enumeration value="PROC_STATUS" />
+			
 		</xs:restriction>
 	</xs:simpleType>
 

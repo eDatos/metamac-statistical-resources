@@ -17,7 +17,9 @@ Application StatisticalResourcesDto {
 		DataTransferObject StatisticalResourceDto extends @AuditableDto {
 			- @ExternalItemDto statisticalOperation;
 			
-			 Long optimisticLockingVersion;
+			Long optimisticLockingVersion;
+			JAVADATE newnessUntilDate;
+			JAVADATE featuredUntilDate;
 		}
 
 		DataTransferObject IdentifiableStatisticalResourceDto extends @StatisticalResourceDto {
@@ -136,7 +138,6 @@ Application StatisticalResourcesDto {
 			- Bag<@ExternalItemDto> publisher;
 			- Bag<@ExternalItemDto> publisherContributor;
 			- Bag<@ExternalItemDto> mediator;
-			JAVADATE newnessUntilDate;
 			
 			//RESOURCE RELATIONS DESCRIPTORS
 			- @RelatedResourceDto replaces;

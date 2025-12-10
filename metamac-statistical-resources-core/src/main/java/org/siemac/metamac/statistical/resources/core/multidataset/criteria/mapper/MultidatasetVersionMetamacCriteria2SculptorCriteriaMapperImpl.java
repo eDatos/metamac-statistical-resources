@@ -92,6 +92,10 @@ public class MultidatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl imple
                     return new SculptorPropertyCriteria(
                             CriteriaUtils.getDatetimeLeafPropertyEmbedded(MultidatasetVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(), MultidatasetVersion.class),
                             propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                case FEATURED_UNTIL_DATE:
+                    return new SculptorPropertyCriteria(
+                            CriteriaUtils.getDatetimeLeafPropertyEmbedded(MultidatasetVersionProperties.siemacMetadataStatisticalResource().featuredUntilDate(), MultidatasetVersion.class),
+                            propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
                 case LAST_VERSION:
                     return new SculptorPropertyCriteria(MultidatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion(), propertyRestriction.getBooleanValue(),
                             propertyRestriction.getOperationType());

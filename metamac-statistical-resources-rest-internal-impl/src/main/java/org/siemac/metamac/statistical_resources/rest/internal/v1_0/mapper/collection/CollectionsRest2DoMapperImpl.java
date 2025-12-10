@@ -51,6 +51,9 @@ public class CollectionsRest2DoMapperImpl extends BaseRest2DoMapperV10Impl imple
                 case NEWNESS_UNTIL_DATE:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, PublicationVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(),
                             PublicationVersion.class, false);
+                case FEATURED_UNTIL_DATE:
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, PublicationVersionProperties.siemacMetadataStatisticalResource().featuredUntilDate(),
+                            PublicationVersion.class, false);
                 case VALID_FROM:
                     return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, PublicationVersionProperties.siemacMetadataStatisticalResource().validFrom(), PublicationVersion.class,
                             false);

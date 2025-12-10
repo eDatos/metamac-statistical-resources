@@ -292,6 +292,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
 
         target.setDateStart(toDateStart(temporalDimension, selectedLanguages));
         target.setDateEnd(toDateEnd(temporalDimension, selectedLanguages));
+        target.setNewnessUntilDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getNewnessUntilDate()));
+        target.setFeaturedUntilDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getFeaturedUntilDate()));
 
         return target;
     }
