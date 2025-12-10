@@ -14,7 +14,7 @@
 Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: etc/changes-from-release/10.19.0/db
 
 
-* Se debe resetear el schema registry para el topic OPERATION_PUBLICATIONS debido a que se han modificado las
+* Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS debido a que se han modificado las
   propiedades de los mensajes que se publican en dicho topic:
   ```shell 
   curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
