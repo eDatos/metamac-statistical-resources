@@ -132,6 +132,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         private ImportDatasourcesWindow            importDatasourcesWindow;
         private CreateDatabaseDatasourceWindow     createDatabaseDatasourceWindow;
         private ImportDatasourceWithMappingWindow  importDatasourceWithMappingWindow;
+        private CustomToolStripButton              exportDatasourcesButton;
 
         public DatasourcesListPanel() {
             // Toolstrip
@@ -298,7 +299,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
         }
 
         private CustomToolStripButton createExportDatasourceButton() {
-            final CustomToolStripButton exportDatasourcesButton = new CustomToolStripButton(getConstants().actionExportDatasources(),
+            exportDatasourcesButton = new CustomToolStripButton(getConstants().actionExportDatasources(),
                     org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
             exportDatasourcesButton.setVisible(Boolean.TRUE);
             exportDatasourcesButton.addClickHandler(new ClickHandler() {
@@ -449,6 +450,7 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
             importZipDatasourcesButton.setVisible(getButtonsVisibility(datasetVersionDto, DataSourceTypeEnum.FILE));
             importDatasourceButton.setVisible(getButtonsVisibility(datasetVersionDto, DataSourceTypeEnum.FILE));
             importDatabaseDatasourcesButton.setVisible(getButtonsVisibility(datasetVersionDto, DataSourceTypeEnum.DATABASE));
+            exportDatasourcesButton.setVisible(datasetVersionDto.getDatasetRepositoryId() != null);
 
             updateListGridButtonsVisibilityBasedOnSelection(datasourcesList.getSelectedRecords());
         }
