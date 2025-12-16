@@ -42,6 +42,7 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -398,25 +399,36 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
                     }
                     List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection());
                     Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(resource.getDatasetRepositoryId(), conditions);
-                    // remember that we have to update the x page for the application to be read and write
-                    TwitterClient twitterClient = new TwitterClient(
-                            TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
-                                    .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
-                    twitterClient.setAutomaticRetry(false);
-                    String xPublication = getXPublication(observations, queryVersion, ctx);
-                    Tweet tweet = twitterClient.postTweet(xPublication);
-                    if (tweet.getText() == null) {
-                        createXMessageSentNotification(ctx, resource);
-                        updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
-                        return;
-                    }
-                    updateXStreamStatus(queryVersion, XStreamStatusEnum.SENT);
+                    sendPostTwitter(ctx, queryVersion, observations);
                 }
             } catch (Exception e) {
-                createXMessageSentNotification(ctx, resource);
+                logger.error(e.getMessage(), e);
+                createXMessageSentNotification(ctx, queryVersion, ServiceNoticeMessage.X_MESSAGE_SEND_ERROR);
                 updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             }
         }
+    }
+
+    private void sendPostTwitter(ServiceContext ctx, QueryVersion queryVersion, Map<String, ObservationExtendedDto> observations)
+            throws MetamacException {
+        if (StringUtils.isBlank(queryVersion.getXTemplate())) {
+            createXMessageSentNotification(ctx, queryVersion, ServiceNoticeMessage.QUERY_NOT_HAVE_X_TEMPLATE);
+            updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
+            return;
+        }
+        String xPublication = getXPublication(observations, queryVersion, ctx);
+        // remember that we have to update the x page for the application to be read and write
+        TwitterClient twitterClient = new TwitterClient(
+                TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
+                        .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+        twitterClient.setAutomaticRetry(false);
+        Tweet tweet = twitterClient.postTweet(xPublication);
+        if (tweet.getText() == null) {
+            createXMessageSentNotification(ctx, queryVersion, ServiceNoticeMessage.X_MESSAGE_SEND_ERROR);
+            updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
+            return;
+        }
+        updateXStreamStatus(queryVersion, XStreamStatusEnum.SENT);
     }
 
     private List<String> getTemporalCoverageCodes(DatasetVersion datasetVersion) {
@@ -480,7 +492,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
             throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + query.getLifeCycleStatisticalResource().getCode());
         }
 
-        if (query.getXTemplate() != null && !observations.isEmpty()) {
+        if (!observations.isEmpty()) {
             // Get the only entry in the map
             Entry<String, ObservationExtendedDto> entry = observations.entrySet().iterator().next();
 
@@ -491,14 +503,9 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     private String setMessageLanguageDefault(QueryVersion query, Entry<String, ObservationExtendedDto> entry, ServiceContext ctx) throws MetamacException {
         String temporalDimensionValue = getTemporalDimensionValueName(entry.getValue(), ctx);
-        for (LocalisedString localisedString : query.getXTemplate().getTexts()) {
-            if (localisedString.getLocale().equals(configurationService.retrieveLanguageDefault())) {
-                String decoded = localisedString.getLabel().replace("{periodo}", temporalDimensionValue);
-                decoded = Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
-                return Parser.unescapeEntities(decoded, true);
-            }
-        }
-        return "";
+        String decoded = query.getXTemplate().replace("{periodo}", temporalDimensionValue);
+        decoded = Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure()), new Whitelist());
+        return Parser.unescapeEntities(decoded, true);
     }
 
     private String getTemporalDimensionValueName(ObservationExtendedDto observation, ServiceContext ctx) throws MetamacException {

@@ -195,6 +195,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.query_version.is_part_of_not_visible_publication");
     public static final CommonServiceExceptionType QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT                                                      = create(
             "exception.resources.query_version.purpose.not_unique_result");
+    public static final CommonServiceExceptionType QUERY_SOCIAL_NETWORK_DO_NOT_HAVE_X_TEMPLATE                                                 = create(
+            "exception.resources.query_version.purpose.no_x_template");
     public static final CommonServiceExceptionType QUERY_PURPOSE_TYPE_NOT_COMPATIBLE                                                           = create(
             "exception.resources.query_version.purpose.not_compatible");
     public static final CommonServiceExceptionType QUERY_X_TEMPLATE_EXCEEDS                                                                    = create(
