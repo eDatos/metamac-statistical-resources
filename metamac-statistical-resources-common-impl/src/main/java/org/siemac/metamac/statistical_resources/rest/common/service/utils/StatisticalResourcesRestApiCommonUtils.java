@@ -91,6 +91,7 @@ public class StatisticalResourcesRestApiCommonUtils {
     public static Set<String> parseFieldsStatisticalResourcesListEndpoints(String fieldsParam) {
         Set<String> validFields = new HashSet<>();
         validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+        validFields.add(StatisticalResourcesRestConstants.FIELD_INCLUDE_DESCRIPTION);
         return parseFields(fieldsParam, validFields);
     }
 
