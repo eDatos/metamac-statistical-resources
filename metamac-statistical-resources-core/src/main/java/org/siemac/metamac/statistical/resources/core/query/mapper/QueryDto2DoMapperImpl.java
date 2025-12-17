@@ -121,7 +121,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_PURPOSE_TYPE_NOT_COMPATIBLE).withMessageParameters(source.getUrn())
                 .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
-            if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && (StringUtils.isBlank(source.getXTemplate()))) {
+            if (source.getId() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && (StringUtils.isBlank(source.getXTemplate()))) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_DO_NOT_HAVE_X_TEMPLATE).withMessageParameters(source.getUrn())
                 .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
