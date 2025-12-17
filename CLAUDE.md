@@ -347,3 +347,138 @@ External service clients in `metamac-statistical-resources-core`:
 - `CommonMetadataRestExternalService`: Common metadata
 
 Update endpoint configuration in `environment.xml`
+
+### Code formatting:
+Use the Eclipse formatter defined in the following path: C:\Users\arte40\Documents\WorkSpaceArte\arte-formatter_con_align_fields_v15.xml
+
+### Nomenclatura y Código
+
+- **Idioma del código**: SIEMPRE en inglés
+  - Clases, métodos, variables, constantes, comentarios
+  - Ejemplo: `UserService`, `findActiveUsers()`, `MAX_LOGIN_ATTEMPTS`
+
+- **CamelCase**: Para variables y métodos
+  ```java
+  String userName;
+  boolean isActiveUser;
+  void assignRoleToUser(Long userId, Long roleId);
+  ```
+ ### Restricciones Java 7
+
+Este es un proyecto **legacy** - mantener compatibilidad Java 7:
+
+#### ❌ NO Usar (Java 8+)
+
+```java
+// ❌ Lambdas
+users.forEach(u -> LOG.info(u.getName()));
+
+// ❌ Streams
+List<String> names = users.stream()
+    .map(User::getName)
+    .collect(Collectors.toList());
+
+// ❌ Optional
+Optional<User> user = userRepository.findById(id);
+
+// ❌ LocalDate/LocalDateTime
+LocalDate now = LocalDate.now();
+
+// ❌ Method references
+users.sort(Comparator.comparing(User::getName));
+```
+
+#### ✅ Usar (Java 7)
+
+```java
+// ✅ Bucles tradicionales
+for (User user : users) {
+    LOG.info(user.getName());
+}
+
+// ✅ Iteración manual para mapeo
+List<String> names = new ArrayList<String>();
+for (User user : users) {
+    names.add(user.getName());
+}
+
+// ✅ Null checks tradicionales
+User user = userRepository.findById(id);
+if (user != null) {
+    // ...
+}
+
+// ✅ Joda Time
+DateTime now = new DateTime();
+DateTime tomorrow = now.plusDays(1);
+
+// ✅ Comparadores anónimos
+Collections.sort(users, new Comparator<User>() {
+    @Override
+    public int compare(User u1, User u2) {
+        return u1.getName().compareTo(u2.getName());
+    }
+});
+```
+
+#### Inferencia de Tipos en Genéricos
+
+**Depende del módulo**:
+
+```java
+// Frontend (GWT) - NO PERMITIDA inferencia (limitación GWT 2.3.0)
+Map<String, String> map = new LinkedHashMap<String, String>();
+List<UserDto> users = new ArrayList<UserDto>();
+
+// Backend/REST - SÍ PERMITIDA inferencia (Java 7)
+Map<String, String> map = new LinkedHashMap<>();
+List<UserDto> users = new ArrayList<>();
+```
+
+### Joda Time (Fechas)
+
+**NO usar** `java.time.*` (Java 8+)
+
+```java
+// ✅ Usar Joda Time
+import org.joda.time.DateTime;
+
+DateTime createdDate = new DateTime();
+DateTime yesterday = createdDate.minusDays(1);
+DateTime nextWeek = createdDate.plusWeeks(1);
+
+boolean isBefore = createdDate.isBefore(yesterday);
+
+// Formateo
+DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+String formatted = createdDate.toString(fmt);
+
+// Persistencia JPA/Hibernate
+@Type(type = "org.joda.time.contrib.hibernate.PersistentDateTime")
+@Column(name = "CREATED_DATE")
+private DateTime createdDate;
+```
+
+## Seguridad
+
+### Autenticación
+
+- **CAS 5.3.12.1**: Central Authentication Service
+- **METAMAC SSO 4.11.2**: Single Sign-On personalizado
+- Login centralizado para todas las aplicaciones METAMAC
+
+### Autorización
+
+**3 niveles de validación**:
+
+1. **Frontend (Web)**:
+   - Ocultar/deshabilitar acciones según permisos
+   - Mejora UX pero NO es seguridad real
+
+2. **Backend (Core)**:
+   - Validación REAL antes de ejecutar operaciones
+   - `@PreAuthorize`, custom interceptors
+
+3. **API REST**:
+   - Endpoint `/permissions/check` para otros sistemas
+   - Cache agresivo para performance
