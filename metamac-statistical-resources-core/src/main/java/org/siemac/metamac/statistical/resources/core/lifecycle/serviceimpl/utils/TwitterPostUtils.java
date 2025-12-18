@@ -162,8 +162,7 @@ public class TwitterPostUtils {
         int dataSize = calculateDataSize(queryVersion.getSelection(), datasetVersion, queryVersion, temporalCodes);
         if (dataSize > 1) {
             updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
-            throw new MetamacException(ServiceExceptionType.UNKNOWN,
-                    "there are too many observations in the query " + queryVersion.getLifeCycleStatisticalResource().getCode());
+            throw new MetamacException(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT, queryVersion.getLifeCycleStatisticalResource().getCode());
         }
         if (dataSize == 0) {
             updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
@@ -214,7 +213,7 @@ public class TwitterPostUtils {
      */
     private String buildXPublication(Map<String, ObservationExtendedDto> observations, QueryVersion query, ServiceContext ctx) throws MetamacException {
         if (observations.size() > 1) {
-            throw new MetamacException(ServiceExceptionType.UNKNOWN, "there are too many observations in the query " + query.getLifeCycleStatisticalResource().getCode());
+            throw new MetamacException(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT, query.getLifeCycleStatisticalResource().getCode());
         }
 
         if (!observations.isEmpty()) {
