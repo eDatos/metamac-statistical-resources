@@ -481,11 +481,10 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         }
     }
 
-    protected void createXMessageSentNotification(ServiceContext ctx, QueryVersion version) {
+    protected void createXMessageSentNotification(ServiceContext ctx, QueryVersion version, String messageText) {
         if (version.getLifeCycleStatisticalResource().getXStreamStatus() != XStreamStatusEnum.SENT) {
             String userId = ctx.getUserId();
             String messageCode = ServiceNoticeAction.X_MESSAGE_SEND;
-            String messageText = ServiceNoticeMessage.X_MESSAGE_SEND_ERROR;
             noticesRestInternalService.createErrorOnStreamMessagingService(userId, messageCode, version, messageText, (Serializable[]) null);
         }
     }
