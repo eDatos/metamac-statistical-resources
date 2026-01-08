@@ -174,7 +174,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private static Logger                         logger                                       = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    public static final String                    SCHEDULER_INSTANCE_NAME                      = "StatisticalResourcesScheduler";
+    public static final String SCHEDULER_INSTANCE_NAME = "StatisticalResourcesScheduler";
     public static final String                    PREFIX_JOB_IMPORT_DATA                       = "job_importdata_";
     public static final String                    PREFIX_JOB_DATABASE_IMPORT_DATA              = "job_databaseimportdata_";
     public static final String                    PREFIX_JOB_RECOVERY_IMPORT_DATA              = "job_recoveryimportdata_";
@@ -1968,7 +1968,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, new HashMap<>(), Boolean.FALSE);
 
                     logger.info("Planned a database import for dataset {} generated file: {} ", datasetVersionUrn, csvFile.getName());
-                    sendDatabaseImportationSuccessNotification(datasetVersion, tableName, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
                 } else {
                     logger.debug("There are no new observations in table {} for dataset {}", tableName, datasetVersionUrn);
                 }
@@ -1977,6 +1976,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, e, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
             } catch (Exception e) {
                 logger.error("An unexpected error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
+                MetamacException metamacException = MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(ExceptionHelper.excMessage(e))
+                        .build();
+                sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, metamacException, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
             }
         }
     }
