@@ -39,6 +39,7 @@ public class SiemacMetadataDS extends LifeCycleResourceDS {
     public static final String PUBLISHER_CONTRIBUTOR          = "siemac-pub-cont";
     public static final String MEDIATOR                       = "siemac-mediator";
     public static final String NEWNESS_UNTIL_DATE             = "siemac-date-new-unt";
+    public static final String FEATURED_UNTIL_DATE            = "siemac-date-featured-unt";
 
     // THEMATIC CONTENT CLASSIFIERS
     public static final String STATISTICAL_OPERATION_INSTANCE = "siemac-ope-inst";

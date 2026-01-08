@@ -194,6 +194,9 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
         if (source.getNewnessUntilDate() != null) {
             target.setNewnessUntilDate(source.getNewnessUntilDate());
         }
+        if (source.getFeaturedUntilDate() != null) {
+            target.setFeaturedUntilDate(source.getFeaturedUntilDate());
+        }
     }
 
     private static void copyResourcesRelationDescriptorsMetadata(SiemacMetadataStatisticalResource source, SiemacMetadataStatisticalResource target) {

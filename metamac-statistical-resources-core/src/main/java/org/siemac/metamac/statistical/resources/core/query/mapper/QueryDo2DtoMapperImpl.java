@@ -169,7 +169,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         target.getIsPartOf().addAll(relatedResourceResultCollectionToDtoCollection(isPartOf));
         setHeadingAndStubDimension(target, source);
         target.setPurpose(purposeDo2Dto(source.getPurposes()));
-        target.setXTemplateDto(internationalStringDoToDto(source.getXTemplate()));
+        target.setXTemplate(source.getXTemplate());
         return target;
     }
 

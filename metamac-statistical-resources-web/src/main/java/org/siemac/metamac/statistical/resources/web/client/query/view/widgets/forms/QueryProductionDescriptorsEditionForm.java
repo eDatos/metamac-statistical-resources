@@ -43,10 +43,11 @@ import org.siemac.metamac.web.common.client.utils.NavigationUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchAction;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
-import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageRichTextEditorItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchSrmItemLinkItemWithSchemeFilterItem;
 import org.siemac.metamac.web.common.client.widgets.windows.search.SearchMultipleExternalItemPaginatedWindow;
@@ -100,7 +101,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         List<FormItem> fields = new ArrayList<FormItem>();
 
         createMaintainersAndSearchDataset(fields);
-        
+        CustomDateItem newnessUntilDate = new CustomDateItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        CustomDateItem featuredUntilDate = new CustomDateItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
+        fields.add(newnessUntilDate);
+        fields.add(featuredUntilDate);
         return fields;
     }
 
@@ -108,6 +112,10 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         List<FormItem> fields = new ArrayList<FormItem>();
 
         createMaintainersAndSearchDataset(fields);
+        CustomDateItem newnessUntilDate = new CustomDateItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        CustomDateItem featuredUntilDate = new CustomDateItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
+        fields.add(newnessUntilDate);
+        fields.add(featuredUntilDate);
         return fields;
     }
     
@@ -135,8 +143,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         return purposeTypeSelectorItem;
     }
 
-    private MultiLanguageRichTextEditorItem createXTemplate() {
-        MultiLanguageRichTextEditorItem xTemplate = new MultiLanguageRichTextEditorItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+    private CustomTextItem createXTemplate() {
+        CustomTextItem xTemplate = new CustomTextItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
         xTemplate.setShowIfCondition(getXTemplateTextItem());
         return xTemplate;
     }
@@ -148,7 +156,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
             @Override
             public void onChanged(ChangedEvent event) {
-                MultiLanguageRichTextEditorItem xTemplate = (MultiLanguageRichTextEditorItem) getItem(QueryDS.X_TEMPLATE);
+                CustomTextItem xTemplate = (CustomTextItem) getItem(QueryDS.X_TEMPLATE);
                 xTemplate.setRequired(true);
                 PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
                 if (purpose == null || !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purpose.getIdentifier())) {
@@ -295,6 +303,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setValue(QueryDS.TYPE, typeStr);
         String purposeType = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : null;
         setValue(QueryDS.PURPOSE_TYPE, purposeType);
+        setValue(SiemacMetadataDS.NEWNESS_UNTIL_DATE, queryDto.getNewnessUntilDate());
+        setValue(SiemacMetadataDS.FEATURED_UNTIL_DATE, queryDto.getFeaturedUntilDate());
 
         dtoSelection = queryDto.getSelection();
 
@@ -305,7 +315,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
         String purpose = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : "";
         setValue(QueryDS.PURPOSE_TYPE, purpose);
-        setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplateDto());
+        setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplate());
         queryDto.setIsDsdChanged(false);
     }
 
@@ -336,8 +346,9 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         queryDto.setLatestDataNumber(latestDataNumber);
         setTemporalGranularities(queryDto);
         queryDto.setPurpose(CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString()));
-        queryDto.setXTemplateDto(getValueAsInternationalStringDto(QueryDS.X_TEMPLATE));
-        this.queryDto = queryDto;
+        queryDto.setXTemplate((String) getValue(QueryDS.X_TEMPLATE));
+        queryDto.setNewnessUntilDate(((CustomDateItem) getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
+        queryDto.setFeaturedUntilDate(((CustomDateItem) getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
         return queryDto;
     }
 
@@ -450,7 +461,8 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
         ExternalItemDto maintainer = getValueAsExternalItemDto(QueryDS.MAINTAINER);
         RelatedResourceDto datasetVersion = getRelatedResourceValue(getItem(QueryDS.RELATED_DATASET_VERSION));
-        MultiLanguageRichTextEditorItem xTemplate = createXTemplate();
+        CustomTextItem xTemplate = createXTemplate();
+        
         CustomSelectItem purpose = createPurpose();
         List<FormItem> fields = createComponents(queryDto);
         xTemplate.setRequired(queryDto.getPurpose() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryDto.getPurpose().getIdentifier()));

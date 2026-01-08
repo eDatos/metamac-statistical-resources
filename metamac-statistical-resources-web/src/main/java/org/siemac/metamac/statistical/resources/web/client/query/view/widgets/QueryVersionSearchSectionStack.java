@@ -7,6 +7,7 @@ import java.util.List;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.model.ds.SiemacMetadataDS;
 import org.siemac.metamac.statistical.resources.web.client.query.model.ds.QueryDS;
 import org.siemac.metamac.statistical.resources.web.client.query.utils.QueryRelatedDatasetUtils;
 import org.siemac.metamac.statistical.resources.web.client.query.view.handlers.QueryListUiHandlers;
@@ -20,6 +21,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVer
 import org.siemac.metamac.statistical.resources.web.shared.utils.RelatedResourceUtils;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.handlers.CustomLinkItemNavigationClickHandler;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
@@ -45,6 +47,8 @@ public class QueryVersionSearchSectionStack extends LifeCycleResourceSearchSecti
 
         criteria.setQueryStatus(CommonUtils.getQueryStatusEnum(advancedSearchForm.getValueAsString(QueryDS.STATUS)));
         criteria.setQueryType(CommonUtils.getQueryTypeEnum(advancedSearchForm.getValueAsString(QueryDS.TYPE)));
+        criteria.setNewnessUntilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE)).getValueAsDate());
+        criteria.setFeaturedUntilDate(((CustomDateItem) advancedSearchForm.getItem(SiemacMetadataDS.FEATURED_UNTIL_DATE)).getValueAsDate());
         return criteria;
     }
 
@@ -59,8 +63,10 @@ public class QueryVersionSearchSectionStack extends LifeCycleResourceSearchSecti
 
         SelectItem type = new SelectItem(QueryDS.TYPE, getConstants().queryType());
         type.setValueMap(CommonUtils.getQueryTypeHashMap());
+        CustomDateItem newNessUntilDate = new CustomDateItem(SiemacMetadataDS.NEWNESS_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceNewnessUntilDate());
+        CustomDateItem newFeaturedUntilDate = new CustomDateItem(SiemacMetadataDS.FEATURED_UNTIL_DATE, getConstants().siemacMetadataStatisticalResourceFeaturedUntilDate());
 
-        advancedSearchForm.addFieldsInThePenultimePosition(datasetVersion, status, type);
+        advancedSearchForm.addFieldsInThePenultimePosition(datasetVersion, status, type, newNessUntilDate, newFeaturedUntilDate);
     }
 
     @Override

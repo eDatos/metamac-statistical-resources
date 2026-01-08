@@ -95,6 +95,10 @@ public class DatasetVersionMetamacCriteria2SculptorCriteriaMapperImpl implements
                     return new SculptorPropertyCriteria(
                             CriteriaUtils.getDatetimeLeafPropertyEmbedded(DatasetVersionProperties.siemacMetadataStatisticalResource().newnessUntilDate(), DatasetVersion.class),
                             propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
+                case FEATURED_UNTIL_DATE:
+                    return new SculptorPropertyCriteria(
+                            CriteriaUtils.getDatetimeLeafPropertyEmbedded(DatasetVersionProperties.siemacMetadataStatisticalResource().featuredUntilDate(), DatasetVersion.class),
+                            propertyRestriction.getDateValue(), propertyRestriction.getOperationType());
                 case DATASET_GEOGRAPHIC_GRANULARITY_URN:
                     SculptorPropertyCriteria urnGeoCriteria = new SculptorPropertyCriteria(DatasetVersionProperties.geographicGranularities().urn(), propertyRestriction.getStringValue(),
                             OperationType.LIKE);
