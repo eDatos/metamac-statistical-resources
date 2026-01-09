@@ -174,7 +174,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private static Logger                         logger                                       = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    public static final String SCHEDULER_INSTANCE_NAME = "StatisticalResourcesScheduler";
+    public static final String                    SCHEDULER_INSTANCE_NAME                      = "StatisticalResourcesScheduler";
     public static final String                    PREFIX_JOB_IMPORT_DATA                       = "job_importdata_";
     public static final String                    PREFIX_JOB_DATABASE_IMPORT_DATA              = "job_databaseimportdata_";
     public static final String                    PREFIX_JOB_RECOVERY_IMPORT_DATA              = "job_recoveryimportdata_";

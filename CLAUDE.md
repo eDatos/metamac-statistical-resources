@@ -349,7 +349,7 @@ External service clients in `metamac-statistical-resources-core`:
 Update endpoint configuration in `environment.xml`
 
 ### Code formatting:
-Use the Eclipse formatter defined in the following path: C:\Users\arte40\Documents\WorkSpaceArte\arte-formatter_con_align_fields_v15.xml
+Use the Eclipse formatter defined in the following path: C:\Users\arte40\Documents\WorkSpaceArte\arte-arte-formatter_con_align_fields.xml
 
 ### Nomenclatura y Código
 
