@@ -12,11 +12,11 @@ import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaConjuncti
 import org.siemac.metamac.rest.search.criteria.SculptorPropertyCriteriaDisjunction;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria;
 import org.siemac.metamac.rest.search.criteria.mapper.RestCriteria2SculptorCriteria.CriteriaCallback;
-import org.siemac.metamac.rest.statistical_resources_internal.v1_0.domain.QueryCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryCriteriaPropertyOrder;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.QueryCriteriaPropertyRestriction;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.BaseRest2DoMapperV10Impl;
 import org.springframework.stereotype.Component;
@@ -66,6 +66,12 @@ public class QueriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implement
                     return buildSculptorPropertyCriteriaDisjunctionForUrnProperty(propertyRestriction, QueryVersionProperties.lifeCycleStatisticalResource().statisticalOperation());
                 case PROC_STATUS:
                     return buildSculptorPropertyCriteria(QueryVersionProperties.lifeCycleStatisticalResource().procStatus(), PropertyTypeEnum.PROC_STATUS, propertyRestriction);
+                case NEWNESS_UNTIL_DATE:
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, QueryVersionProperties.lifeCycleStatisticalResource().newnessUntilDate(), QueryVersion.class,
+                            false);
+                case FEATURED_UNTIL_DATE:
+                    return buildSculptorPropertyCriteriaForDateProperty(propertyRestriction, QueryVersionProperties.lifeCycleStatisticalResource().featuredUntilDate(), QueryVersion.class,
+                            false);
                 default:
                     throw toRestExceptionParameterIncorrect(propertyNameCriteria.name());
             }

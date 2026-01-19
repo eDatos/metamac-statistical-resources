@@ -74,6 +74,7 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
         target.getMediator().clear();
         target.getMediator().addAll(externalItemDoCollectionToDtoCollection(source.getMediator()));
         target.setNewnessUntilDate(dateDoToDto(source.getNewnessUntilDate()));
+        target.setFeaturedUntilDate(dateDoToDto(source.getFeaturedUntilDate()));
 
         target.setReplaces(relatedResourceDoToDto(source.getReplaces()));
         // Is replaced_by is filled in higher level resource mapper
@@ -118,6 +119,8 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
 
         target.setPublicationStreamStatus(source.getPublicationStreamStatus());
         target.setXStreamStatus(source.getXStreamStatus());
+        target.setNewnessUntilDate(dateDoToDto(source.getNewnessUntilDate()));
+        target.setFeaturedUntilDate(dateDoToDto(source.getFeaturedUntilDate()));
     }
 
     @Override

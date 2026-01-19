@@ -39,7 +39,9 @@
         {"name" : "replacesVersion", "type" : ["null", "RelatedResourceAvro"]}, 
         {"name" : "isReplacedByVersion", "type" : ["null", "RelatedResourceAvro"]},
         
-        {"name" : "maintainer", "type" : ["null", "ExternalItemAvro"]} 
+        {"name" : "maintainer", "type" : ["null", "ExternalItemAvro"]},
+        {"name" : "newnessUntilDate" , "type" : ["null", "DatetimeAvro"]},
+        {"name" : "featuredUntilDate" , "type" : ["null", "DatetimeAvro"]}
      ]
  },
  {

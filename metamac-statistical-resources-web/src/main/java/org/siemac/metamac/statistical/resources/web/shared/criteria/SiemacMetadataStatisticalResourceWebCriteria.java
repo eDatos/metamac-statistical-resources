@@ -10,7 +10,8 @@ public class SiemacMetadataStatisticalResourceWebCriteria extends LifeCycleStati
 
     private String                  titleAlternative;
     private String                  keywords;
-    private Date                    newnessUtilDate;
+    private Date                    newnessUntilDate;
+    private Date                    featuredUntilDate;
     private StreamMessageStatusEnum publicationStreamStatus;
 
     public SiemacMetadataStatisticalResourceWebCriteria() {
@@ -33,16 +34,16 @@ public class SiemacMetadataStatisticalResourceWebCriteria extends LifeCycleStati
         return keywords;
     }
 
-    public Date getNewnessUtilDate() {
-        return newnessUtilDate;
+    public Date getNewnessUntilDate() {
+        return newnessUntilDate;
     }
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
     }
 
-    public void setNewnessUtilDate(Date newnessUtilDate) {
-        this.newnessUtilDate = newnessUtilDate;
+    public void setNewnessUntilDate(Date newnessUntilDate) {
+        this.newnessUntilDate = newnessUntilDate;
     }
 
     public StreamMessageStatusEnum getPublicationStreamStatus() {
@@ -52,4 +53,13 @@ public class SiemacMetadataStatisticalResourceWebCriteria extends LifeCycleStati
     public void setPublicationStreamStatus(StreamMessageStatusEnum publicationStreamStatus) {
         this.publicationStreamStatus = publicationStreamStatus;
     }
+
+    public Date getFeaturedUntilDate() {
+        return featuredUntilDate;
+    }
+
+    public void setFeaturedUntilDate(Date featuredUntilDate) {
+        this.featuredUntilDate = featuredUntilDate;
+    }
+
 }

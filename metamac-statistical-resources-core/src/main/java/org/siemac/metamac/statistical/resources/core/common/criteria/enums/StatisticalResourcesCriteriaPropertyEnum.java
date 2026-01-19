@@ -28,6 +28,7 @@ public enum StatisticalResourcesCriteriaPropertyEnum {
     TITLE_ALTERNATIVE,
     KEYWORDS,
     NEWNESS_UNTIL_DATE,
+    FEATURED_UNTIL_DATE,
 
     // DatasetResource
     DATASET_GEOGRAPHIC_GRANULARITY_URN,

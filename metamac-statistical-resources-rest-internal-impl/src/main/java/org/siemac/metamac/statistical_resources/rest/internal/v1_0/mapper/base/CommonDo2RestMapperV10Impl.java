@@ -377,7 +377,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setPublisherContributors(toResourcesExternalItemsSrm(source.getPublisherContributor(), selectedLanguages));
         target.setMediators(toResourcesExternalItemsSrm(source.getMediator(), selectedLanguages));
         target.setNewnessUntilDate(toDate(source.getNewnessUntilDate()));
-
+        target.setFeaturedUntilDate(toDate(source.getFeaturedUntilDate()));
         // note: hasPart, isPartOf: in concrete mappers
 
         toCommonMetadata(source, target, selectedLanguages);
