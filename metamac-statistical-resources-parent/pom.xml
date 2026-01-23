@@ -5,14 +5,14 @@
 	<parent>
 		<groupId>org.siemac.metamac</groupId>
 		<artifactId>metamac-parent</artifactId>
-		<version>5.1.2</version>
+		<version>5.1.4-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
 
 	<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 	<artifactId>metamac-statistical-resources-parent</artifactId>
-	<version>10.19.1-SNAPSHOT</version>
+	<version>10.20.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>METAMAC :: STATISTICAL RESOURCES :: PARENT</name>
 	<description>METAMAC :: STATISTICAL RESOURCES :: PARENT</description>
@@ -31,11 +31,11 @@
 	</repositories>
 
 	<properties>
-        <metamac-statistical-resources-rest-api-common.version>2.11.2-SNAPSHOT</metamac-statistical-resources-rest-api-common.version>
+        <metamac-statistical-resources-rest-api-common.version>2.12.0</metamac-statistical-resources-rest-api-common.version>
 		<metamac-common-metadata-rest-external-api.version>4.0.0</metamac-common-metadata-rest-external-api.version>
 		<metamac-core-common.version>8.7.3-SNAPSHOT</metamac-core-common.version>
 		<metamac-rest-api.version>2.3.1</metamac-rest-api.version>
-		<metamac-rest-common.version>2.8.2</metamac-rest-common.version>
+		<metamac-rest-common.version>2.8.3-SNAPSHOT</metamac-rest-common.version>
 		<metamac-srm-rest-internal-api.version>3.5.0</metamac-srm-rest-internal-api.version>
 		<metamac-srm-rest-external-api.version>3.6.0</metamac-srm-rest-external-api.version>
 		<metamac-sso-client.version>4.11.3-SNAPSHOT</metamac-sso-client.version>
