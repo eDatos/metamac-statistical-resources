@@ -1,7 +1,11 @@
 package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -229,9 +233,50 @@ public class TwitterPostUtils {
      */
     private String buildMessageFromTemplate(QueryVersion query, Entry<String, ObservationExtendedDto> entry, ServiceContext ctx) throws MetamacException {
         String temporalDimensionValue = getTemporalDimensionValueName(entry.getValue(), ctx);
+        String formattedData = formatNumericValue(entry.getValue().getPrimaryMeasure());
         String decoded = query.getXTemplate().replace("{periodo}", temporalDimensionValue);
-        decoded = Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure() != null ? entry.getValue().getPrimaryMeasure() : " "), new Whitelist());
-        return Parser.unescapeEntities(decoded, true);
+        decoded = decoded.replace("{datos}", formattedData);
+
+        // Preserve line breaks before Jsoup cleaning (Jsoup removes them)
+        String newlinePlaceholder = "{{NEWLINE}}";
+        decoded = decoded.replace("\r\n", newlinePlaceholder).replace("\n", newlinePlaceholder).replace("\r", newlinePlaceholder);
+
+        decoded = Jsoup.clean(decoded, new Whitelist());
+        decoded = Parser.unescapeEntities(decoded, true);
+
+        // Restore line breaks
+        decoded = decoded.replace(newlinePlaceholder, "\n");
+
+        return decoded;
+    }
+
+    /**
+     * Format a numeric string with Spanish locale (thousands separator: '.', decimal separator: ',').
+     * If the value is not a valid number, returns it unchanged.
+     *
+     * @param value The numeric string to format
+     * @return Formatted number string or original value if not a number
+     */
+    private String formatNumericValue(String value) {
+        if (StringUtils.isBlank(value)) {
+            return " ";
+        }
+
+        try {
+            // Parse the number (handles both integer and decimal values)
+            BigDecimal number = new BigDecimal(value.trim());
+
+            // Format with Spanish locale (thousands: '.', decimal: ',')
+            DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(new Locale("es", "ES"));
+            formatter.setGroupingUsed(true);
+            formatter.setMaximumFractionDigits(number.scale() > 0 ? number.scale() : 0);
+            formatter.setMinimumFractionDigits(0);
+
+            return formatter.format(number);
+        } catch (NumberFormatException e) {
+            // Not a valid number, return original value
+            return value;
+        }
     }
 
     /**
