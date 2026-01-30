@@ -46,6 +46,7 @@ import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginat
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDateItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomIntegerItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextAreaItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
@@ -143,8 +144,11 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         return purposeTypeSelectorItem;
     }
 
-    private CustomTextItem createXTemplate() {
-        CustomTextItem xTemplate = new CustomTextItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+    private CustomTextAreaItem createXTemplate() {
+        CustomTextAreaItem xTemplate = new CustomTextAreaItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+        xTemplate.setHeight(80);
+        xTemplate.setTextBoxStyle("textItem");
+        xTemplate.setRedrawOnChange(false);
         xTemplate.setShowIfCondition(getXTemplateTextItem());
         return xTemplate;
     }
@@ -156,7 +160,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
             @Override
             public void onChanged(ChangedEvent event) {
-                CustomTextItem xTemplate = (CustomTextItem) getItem(QueryDS.X_TEMPLATE);
+                CustomTextAreaItem xTemplate = (CustomTextAreaItem) getItem(QueryDS.X_TEMPLATE);
                 xTemplate.setRequired(true);
                 PurposeDto purpose = CommonUtils.getPurpose(((CustomSelectItem) getItem(QueryDS.PURPOSE_TYPE)).getValueAsString());
                 if (purpose == null || !StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(purpose.getIdentifier())) {
@@ -461,7 +465,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
 
         ExternalItemDto maintainer = getValueAsExternalItemDto(QueryDS.MAINTAINER);
         RelatedResourceDto datasetVersion = getRelatedResourceValue(getItem(QueryDS.RELATED_DATASET_VERSION));
-        CustomTextItem xTemplate = createXTemplate();
+        CustomTextAreaItem xTemplate = createXTemplate();
         
         CustomSelectItem purpose = createPurpose();
         List<FormItem> fields = createComponents(queryDto);
