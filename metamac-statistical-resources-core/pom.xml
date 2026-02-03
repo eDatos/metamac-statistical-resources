@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.siemac.metamac.metamac-sso</groupId>
             <artifactId>metamac-sso-client</artifactId>
-            <version>${metamac-sso.version}</version>
+            <version>${metamac-sso-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.siemac.metamac</groupId>
