@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>10.20.1-SNAPSHOT</version>
+        <version>10.21.1-SNAPSHOT</version>
         <relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 
@@ -44,7 +44,7 @@
         <dependency>
             <groupId>org.siemac.metamac.metamac-sso</groupId>
             <artifactId>metamac-sso-client</artifactId>
-            <version>${metamac-sso.version}</version>
+            <version>${metamac-sso-client.version}</version>
         </dependency>
         <dependency>
             <groupId>org.siemac.metamac</groupId>
