@@ -47,6 +47,7 @@
     	<metamac-srm-kafka.version>7.0.0</metamac-srm-kafka.version>
 
 
+
 		<metamac-statistical-resources.baseDir>${basedir}/..</metamac-statistical-resources.baseDir>
 		<metamac-statistical-resources.etcDir>${metamac-statistical-resources.baseDir}/etc</metamac-statistical-resources.etcDir>
 
