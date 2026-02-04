@@ -1200,6 +1200,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
     }
 
+    @Override
+    public void testUpdateDatasetsLastUpdatedByDsd() throws Exception {
+        // NOTHING TO DO
+    }
+
     @Test
     @MetamacMock({DATASET_VERSION_37_WITH_SINGLE_DATASOURCE_IN_OPERATION_0001_NAME, DATASET_VERSION_38_WITH_SINGLE_DATASOURCE_IN_OPERATION_0001_NAME})
     public void testImportDatasourcesInStatisticalOperationImportationTaskInProgress() throws Exception {

@@ -442,4 +442,9 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkProcessDataViewAdjustmentInRepository(List<MetamacExceptionItem> exceptions) throws MetamacException {
         // NOTHING
     }
+
+    public static void checkUpdateDatasetsLastUpdatedByDsd(String dsdUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(dsdUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(timestamp, ServiceExceptionParameters.DATASET_VERSION__LAST_UPDATED, exceptions);
+    }
 }

@@ -2376,6 +2376,35 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
+    public void updateDatasetsLastUpdatedByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
+        if (dsdUrn == null || dsdUrn.trim().isEmpty()) {
+            return;
+        }
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
+            .withProperty(DatasetVersionProperties.relatedDsd().urn()).eq(dsdUrn)
+            .distinctRoot()
+            .build();
+
+        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
+
+        int updatedCount = 0;
+        DateTime dateTime = new DateTime(timestamp);
+        for (DatasetVersion dataset : affectedDatasets) {
+            try {
+                dataset.getSiemacMetadataStatisticalResource().setLastUpdated(dateTime);
+                log.debug("Updating dataset {}", dataset.getSiemacMetadataStatisticalResource().getUrn());
+                datasetVersionRepository.save(dataset);
+                updatedCount++;
+            } catch (Exception e) {
+                log.error("Failed to update dataset: {}", dataset.getSiemacMetadataStatisticalResource().getUrn(), e);
+            }
+        }
+
+        log.info("Updated {} of {} datasets with DSD URN {} to {}", new Object[]{updatedCount, affectedDatasets.size(), dsdUrn, dateTime.toDateTimeISO()});
+    }
+
+    @Override
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
         DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
         updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange); 

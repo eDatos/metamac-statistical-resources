@@ -36,6 +36,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.srm.core.stream.message.CodelistAvro;
 import org.siemac.metamac.srm.core.stream.message.ConceptSchemeAvro;
+import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
@@ -86,6 +87,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private static final String               CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME = "statistical_resources_consumer_jaxi_publication_2";
     private static final String               CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME             = "statistical_resources_consumer_jaxi_publication_1";
     private static final String               CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME       = "statistical_resources_consumer_codelist_publication_1";
+    private static final String               CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME                  = "statistical_resources_consumer_dsd_publication_1";
     private static final String               KAFKA_FAILED_CACHE_NAME                                   = "kafkaFailed";
 
     @Override
@@ -102,7 +104,8 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 
                 futuresMap.put(CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME, startConsumerForCodelistTopic(ac));
                 futuresMap.put(CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME, startConsumerForConceptSchemeTopic(ac));
-                
+                futuresMap.put(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ac));
+
                 String externalPublicationTopicName = getExternalDatasetPublicationTopic();
                 if (externalPublicationTopicName != null && Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, externalPublicationTopicName))) {
                 futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(ac, externalPublicationTopicName));
@@ -388,6 +391,19 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    private Future<?> startConsumerForDsdTopic(ApplicationContext context) throws MetamacException {
+        String topicDsdPublication = statisticalResourcesConfiguration.retrieveKafkaTopicDsdPublication();
+        KafkaConsumerThread<DataStructureDefinitionAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
+        KafkaConsumer<String, DataStructureDefinitionAvro> consumerFromBegin = createDsdConsumerFromCurrentOffset(topicDsdPublication, CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME);
+        consumerThread.setConsumer(consumerFromBegin);
+        consumerThread.setTopicName(topicDsdPublication);
+        consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
+        consumerThread.setNoticesRestInternalService(noticesRestInternalService);
+        consumerThread.setKafkaFailedMessagesCache(kafkaFailedMessagesCache);
+        return threadPoolTaskExecutor.submit(consumerThread);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Future<?> startConsumerForCodelistTopic(ApplicationContext context) throws MetamacException {
         String topicCodelistPublication = statisticalResourcesConfiguration.retrieveKafkaTopicCodelistsPublication();
         KafkaConsumerThread<CodelistAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
@@ -463,6 +479,13 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return kafkaConsumer;
     }
 
+    private KafkaConsumer<String, DataStructureDefinitionAvro> createDsdConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
+        KafkaConsumer<String, DataStructureDefinitionAvro> kafkaConsumer = new KafkaConsumer<>(
+                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomDsdPublicationMessagesGroup()));
+        kafkaConsumer.subscribe(Collections.singletonList(topic));
+        return kafkaConsumer;
+    }
+
     class KeepAliveKafkaThread implements Runnable {
 
         @Override
@@ -476,19 +499,20 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                             LOGGER.info("El consumidor " + entry.getKey() + " se ha desconectado. Planificando otro consumidor para el mismo Topic...");
                             try {
                                 if (CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-
                                     futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME,
                                             startConsumerForExternalDatasetPublicationTopic(ApplicationContextProvider.getApplicationContext(), externalPublicationTopicName));
                                 }
 
                                 if (CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-
                                     futuresMap.put(CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME, startConsumerForCodelistTopic(ApplicationContextProvider.getApplicationContext()));
                                 }
 
                                 if (CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-
                                     futuresMap.put(CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME, startConsumerForConceptSchemeTopic(ApplicationContextProvider.getApplicationContext()));
+                                }
+
+                                if (CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+                                    futuresMap.put(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ApplicationContextProvider.getApplicationContext()));
                                 }
 
                             } catch (Exception e) {

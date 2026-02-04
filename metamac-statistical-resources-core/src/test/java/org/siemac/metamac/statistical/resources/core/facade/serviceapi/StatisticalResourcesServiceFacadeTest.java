@@ -4360,6 +4360,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     }
 
     @Override
+    public void testProcessSrmDsdKafkaMessage() throws Exception {
+        // // Without test in facade
+    }
+
+    @Override
     public void testExportAttributesTsv() throws Exception {
         // // Without test in facade
 

@@ -17,6 +17,7 @@ import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.srm.core.stream.message.CodelistAvro;
 import org.siemac.metamac.srm.core.stream.message.ConceptSchemeAvro;
+import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
@@ -118,7 +119,7 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
                 try {
                     ServiceContext serviceContext = createServiceContext(logMessage);
 
-                    updateByKafkaMessage(serviceContext, record.value(), record.key());
+                    updateByKafkaMessage(serviceContext, record);
 
                     commitSync(record);
                 } catch (Exception e) {
@@ -138,11 +139,14 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
         }
     }
 
-    public void updateByKafkaMessage(ServiceContext ctx, SpecificRecordBase message, String recordKey) throws MetamacException {
-        if (message instanceof DatasetAvro) {
-            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
-        } else if (message instanceof CodelistAvro || message instanceof ConceptSchemeAvro) {
-            statisticalResourcesServiceFacade.processSrmResourcesKafkaMessage(ctx, message);
+    public void updateByKafkaMessage(ServiceContext ctx, ConsumerRecord<String, T> record) throws MetamacException {
+        if (record.value() instanceof DatasetAvro) {
+            statisticalResourcesServiceFacade.updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, record.value());
+        } else if (record.value() instanceof CodelistAvro || record.value() instanceof ConceptSchemeAvro) {
+            statisticalResourcesServiceFacade.processSrmResourcesKafkaMessage(ctx, record.value());
+        } else if (record.value() instanceof DataStructureDefinitionAvro) {
+            statisticalResourcesServiceFacade.processSrmDsdKafkaMessage(ctx, record.value(), record.
+                    timestamp());
         }
     }
 

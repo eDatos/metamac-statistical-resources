@@ -31,6 +31,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStr
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.utils.SecurityUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDo2DtoMapper;
@@ -2618,6 +2619,13 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.CREATE_OR_UPDATE_SRM_RESOURCE, externalItemDto.getUrn());
         }
+    }
+
+    @Override
+    public void processSrmDsdKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
+        DataStructureDefinitionAvro dsd = (DataStructureDefinitionAvro) message;
+        String dsdUrn = dsd.getUrn();
+        getDatasetService().updateDatasetsLastUpdatedByDsd(ctx, dsdUrn, timestamp);
     }
 
 }

@@ -16,6 +16,7 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     final String STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
     final String STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP         = "STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP";
     final String STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP   = "STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP";
+    final String STATISTICAL_RESOURCES_CUSTOM_DSD_PUBLICATION_MESSAGES_GROUP              = "STATISTICAL_RESOURCES_CUSTOM_DSD_PUBLICATION_MESSAGES_GROUP";
 
     @Override
     public Map<KeyDotEnum, String> retrieveDotCodeMapping() throws MetamacException {
@@ -136,6 +137,11 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     @Override
     public String retrieveKafkaCustomConceptSchemePublicationMessagesGroup() throws MetamacException {
         return STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP;
+    }
+
+    @Override
+    public String retrieveKafkaCustomDsdPublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_CUSTOM_DSD_PUBLICATION_MESSAGES_GROUP;
     }
 
     @Override
