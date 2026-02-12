@@ -74,6 +74,8 @@ import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multid
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.multidataset.MultidatasetsRest2DoMapper;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query.QueriesDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.query.QueriesRest2DoMapper;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.annotation.Cacheable;
+import org.siemac.metamac.statistical_resources.rest.external.v1_0.annotation.Cacheable.ResourceType;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources.ResourcesDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources.ResourcesRest2DoMapper;
 import org.slf4j.Logger;
@@ -159,6 +161,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.DATASET)
     public Dataset retrieveDataset(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
@@ -172,6 +175,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.DATASET)
     public JsonStatData retrieveDatasetJsonStat(Exportation exportationBody, String agencyID, String resourceID, String version, List<String> lang, String fields, String granularity) {
 
         try {
@@ -192,6 +196,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.DATASET)
     public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
@@ -205,17 +210,20 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.DATASET)
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity,
             boolean isTransposed) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity, isTransposed);
     }
 
     @Override
+    @Cacheable(ResourceType.DATASET)
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.CSV, granularity, false);
     }
 
     @Override
+    @Cacheable(ResourceType.DATASET)
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity, false);
     }
@@ -348,16 +356,19 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.QUERY)
     public Response retrieveQueryTSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.TSV, granularity, false);
     }
 
     @Override
+    @Cacheable(ResourceType.QUERY)
     public Response retrieveQueryCSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.CSV, granularity, false);
     }
 
     @Override
+    @Cacheable(ResourceType.QUERY)
     public Response retrieveQueryXLSX(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity, false);
     }
@@ -420,6 +431,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.COLLECTION)
     public Collection retrieveCollection(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             PublicationVersion publicationVersion = commonService.retrievePublicationVersion(agencyID, resourceID);
@@ -445,6 +457,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.QUERY)
     public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
@@ -468,6 +481,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.QUERY)
     public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
@@ -495,6 +509,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @Cacheable(ResourceType.MULTIDATASET)
     public Multidataset retrieveMultidataset(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             MultidatasetVersion multidatasetVersion = commonService.retrieveMultidatasetVersion(agencyID, resourceID);

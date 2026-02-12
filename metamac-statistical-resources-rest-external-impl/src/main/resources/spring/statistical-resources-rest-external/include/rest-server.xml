@@ -55,7 +55,7 @@
             <bean class="org.apache.cxf.jaxrs.provider.jsonp.JsonpInInterceptor">
                 <property name="callbackParam" value="_callback"/>
             </bean>
-            <ref bean="datasetVersionCacheRequestInterceptorImpl"/>
+            <ref bean="cacheRequestInterceptor"/>
         </jaxrs:inInterceptors>
         <jaxrs:outInterceptors>
             <bean class="org.apache.cxf.jaxrs.provider.jsonp.JsonpPreStreamInterceptor">

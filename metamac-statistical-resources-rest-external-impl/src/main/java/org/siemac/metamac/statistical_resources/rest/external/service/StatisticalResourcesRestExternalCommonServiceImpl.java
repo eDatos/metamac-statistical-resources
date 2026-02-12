@@ -232,6 +232,20 @@ public class StatisticalResourcesRestExternalCommonServiceImpl implements Statis
     }
 
     @Override
+    public MultidatasetVersion retrieveMultidatasetVersionWithCubes(String agencyID, String resourceID) {
+        try {
+            MultidatasetVersion multidatasetVersion = retrieveMultidatasetVersion(agencyID, resourceID);
+            if (multidatasetVersion != null) {
+                // Force initialization of cubes collection within transaction
+                multidatasetVersion.getCubes().size();
+            }
+            return multidatasetVersion;
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    @Override
     public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
             return findMultidatasetVersionsCommon(agencyID, null, conditionalCriteria, pagingParameter);
