@@ -165,6 +165,10 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             target.setStatisticalOperation(commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getSiemacMetadataStatisticalResource().getStatisticalOperation(), selectedLanguages,
                     externalRestObjectsMapper));
         }
+        boolean includeDescription = containsField(parsedFields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_DESCRIPTION);
+        if (includeDescription) {
+            target.setDescription(commonDo2RestMapper.toInternationalString(source.getLifeCycleStatisticalResource().getDescription(),selectedLanguages));
+        }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
 
         return target;
