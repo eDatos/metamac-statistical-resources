@@ -20,6 +20,7 @@ import org.siemac.metamac.statistical.resources.web.client.widgets.forms.Navigat
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.CodeItemListItem;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.fields.RelatedResourceLinkItem;
 import org.siemac.metamac.web.common.client.view.handlers.BaseUiHandlers;
+import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextAreaItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ExternalItemLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.ViewTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.ExternalItemListItem;
@@ -57,7 +58,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
         ViewTextItem purposeType = new ViewTextItem(QueryDS.PURPOSE_TYPE, getConstants().purpose());
         fields.add(purposeType);
-        ViewTextItem twitterTemplate = new ViewTextItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
+        ViewTextAreaItem twitterTemplate = new ViewTextAreaItem(QueryDS.X_TEMPLATE, getConstants().twitterTemplate());
         twitterTemplate.setShowIfCondition(getXTemplateTextItem());
         FormItemIcon infoIcon = new FormItemIcon();
         infoIcon.setSrc(GlobalResources.RESOURCE.info().getURL());
@@ -118,7 +119,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));
         setValue(QueryDS.TYPE, CommonUtils.getQueryTypeName(queryDto));
         setValue(QueryDS.PURPOSE_TYPE, CommonUtils.getPurposeName(queryDto.getPurpose()));
-        setValue(QueryDS.X_TEMPLATE, queryDto.getXTemplate());
+        setValue(QueryDS.X_TEMPLATE, formatXTemplateForDisplay(queryDto.getXTemplate()));
         if (isLatestData) {
             setValue(QueryDS.LATEST_N_DATA, queryDto.getLatestDataNumber());
         }
@@ -149,6 +150,13 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
     private boolean isTemporalDimension(String dimensionId) {
         return StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dimensionId);
+    }
+
+    private String formatXTemplateForDisplay(String xTemplate) {
+        if (xTemplate != null) {
+            return xTemplate.replace("\n", "<br>");
+        }
+        return null;
     }
 
     private FormItemIfFunction getXTemplateTextItem() {
