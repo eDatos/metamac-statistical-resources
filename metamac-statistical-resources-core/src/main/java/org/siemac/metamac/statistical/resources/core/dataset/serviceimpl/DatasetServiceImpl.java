@@ -2413,6 +2413,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         for (DatasetVersion dataset : affectedDatasets) {
             try {
                 dataset.getSiemacMetadataStatisticalResource().setLastUpdated(dateTime);
+                dataset.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
                 log.debug("Updating dataset {}", dataset.getSiemacMetadataStatisticalResource().getUrn());
                 datasetVersionRepository.save(dataset);
                 updatedCount++;
