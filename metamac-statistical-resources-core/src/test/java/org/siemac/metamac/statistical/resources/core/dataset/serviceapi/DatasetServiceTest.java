@@ -1205,6 +1205,11 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         // NOTHING TO DO
     }
 
+    @Override
+    public void testUpdateDatasetsLastUpdatedByOperation() throws Exception {
+        // NOTHING TO DO
+    }
+
     @Test
     @MetamacMock({DATASET_VERSION_37_WITH_SINGLE_DATASOURCE_IN_OPERATION_0001_NAME, DATASET_VERSION_38_WITH_SINGLE_DATASOURCE_IN_OPERATION_0001_NAME})
     public void testImportDatasourcesInStatisticalOperationImportationTaskInProgress() throws Exception {

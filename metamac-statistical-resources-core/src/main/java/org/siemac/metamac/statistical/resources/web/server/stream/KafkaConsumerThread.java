@@ -21,6 +21,7 @@ import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
+import org.siemac.metamac.statistical.operations.core.stream.messages.OperationAvro;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
@@ -146,6 +147,9 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             statisticalResourcesServiceFacade.processSrmResourcesKafkaMessage(ctx, record.value());
         } else if (record.value() instanceof DataStructureDefinitionAvro) {
             statisticalResourcesServiceFacade.processSrmDsdKafkaMessage(ctx, record.value(), record.
+                    timestamp());
+        } else if (record.value() instanceof OperationAvro) {
+            statisticalResourcesServiceFacade.processOperationKafkaMessage(ctx, record.value(), record.
                     timestamp());
         }
     }

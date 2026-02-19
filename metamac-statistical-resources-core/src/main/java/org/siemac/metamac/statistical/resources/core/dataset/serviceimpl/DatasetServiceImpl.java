@@ -2377,6 +2377,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateDatasetsLastUpdatedByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
+        log.debug("Updating datasets by DSD {}", dsdUrn);
         if (dsdUrn == null || dsdUrn.trim().isEmpty()) {
             return;
         }
@@ -2386,6 +2387,25 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .distinctRoot()
             .build();
 
+        updateDatasetsLastUpdateDateByCriteria(dsdUrn, timestamp, conditions);
+    }
+
+    @Override
+    public void updateDatasetsLastUpdatedByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
+        log.debug("Updating datasets by operation {}", operationUrn);
+        if (operationUrn == null || operationUrn.trim().isEmpty()) {
+            return;
+        }
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
+            .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn)
+            .distinctRoot()
+            .build();
+
+        updateDatasetsLastUpdateDateByCriteria(operationUrn, timestamp, conditions);
+    }
+
+    private void updateDatasetsLastUpdateDateByCriteria(String resourceUrn, long timestamp, List<ConditionalCriteria> conditions) {
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
 
         int updatedCount = 0;
@@ -2401,13 +2421,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             }
         }
 
-        log.info("Updated {} of {} datasets with DSD URN {} to {}", new Object[]{updatedCount, affectedDatasets.size(), dsdUrn, dateTime.toDateTimeISO()});
+        log.info("Updated {} of {} datasets with URN {} to {}", new Object[]{updatedCount, affectedDatasets.size(), resourceUrn, dateTime.toDateTimeISO()});
     }
 
     @Override
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
-        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
-        updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange); 
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);
+        updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange);
     }
     
     private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {

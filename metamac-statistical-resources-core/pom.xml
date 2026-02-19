@@ -42,6 +42,11 @@
             <version>${metamac-srm-kafka.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.siemac.metamac.metamac-statistical-operations</groupId>
+            <artifactId>metamac-statistical-operations-kafka</artifactId>
+            <version>${metamac-statistical-operations-kafka.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.siemac.metamac.metamac-sso</groupId>
             <artifactId>metamac-sso-client</artifactId>
             <version>${metamac-sso-client.version}</version>

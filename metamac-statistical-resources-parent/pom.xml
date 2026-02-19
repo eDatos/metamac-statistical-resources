@@ -45,6 +45,7 @@
 		<metamac-web-common.version>5.17.1</metamac-web-common.version>
 		<metamac-notifications-rest-internal-api.version>3.7.1</metamac-notifications-rest-internal-api.version>
     	<metamac-srm-kafka.version>7.0.0</metamac-srm-kafka.version>
+    	<metamac-statistical-operations-kafka.version>5.1.2</metamac-statistical-operations-kafka.version>
 
 
 

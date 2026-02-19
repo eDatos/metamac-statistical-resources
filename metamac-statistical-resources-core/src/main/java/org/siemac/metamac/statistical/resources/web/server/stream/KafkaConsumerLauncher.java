@@ -40,6 +40,7 @@ import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
 import org.siemac.metamac.sso.client.SsoClientConstants;
+import org.siemac.metamac.statistical.operations.core.stream.messages.OperationAvro;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
@@ -88,6 +89,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private static final String               CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME             = "statistical_resources_consumer_jaxi_publication_1";
     private static final String               CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME       = "statistical_resources_consumer_codelist_publication_1";
     private static final String               CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME                  = "statistical_resources_consumer_dsd_publication_1";
+    private static final String               CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME            = "statistical_resources_consumer_operation_publication_1";
     private static final String               KAFKA_FAILED_CACHE_NAME                                   = "kafkaFailed";
 
     @Override
@@ -105,6 +107,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 futuresMap.put(CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME, startConsumerForCodelistTopic(ac));
                 futuresMap.put(CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME, startConsumerForConceptSchemeTopic(ac));
                 futuresMap.put(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ac));
+                futuresMap.put(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME, startConsumerForOperationTopic(ac));
 
                 String externalPublicationTopicName = getExternalDatasetPublicationTopic();
                 if (externalPublicationTopicName != null && Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, externalPublicationTopicName))) {
@@ -404,6 +407,19 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    private Future<?> startConsumerForOperationTopic(ApplicationContext context) throws MetamacException {
+        String topicOperationPublication = statisticalResourcesConfiguration.retrieveKafkaTopicOperationsPublication();
+        KafkaConsumerThread<OperationAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
+        KafkaConsumer<String, OperationAvro> consumerFromBegin = createOperationConsumerFromCurrentOffset(topicOperationPublication, CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME);
+        consumerThread.setConsumer(consumerFromBegin);
+        consumerThread.setTopicName(topicOperationPublication);
+        consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
+        consumerThread.setNoticesRestInternalService(noticesRestInternalService);
+        consumerThread.setKafkaFailedMessagesCache(kafkaFailedMessagesCache);
+        return threadPoolTaskExecutor.submit(consumerThread);
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Future<?> startConsumerForCodelistTopic(ApplicationContext context) throws MetamacException {
         String topicCodelistPublication = statisticalResourcesConfiguration.retrieveKafkaTopicCodelistsPublication();
         KafkaConsumerThread<CodelistAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
@@ -486,6 +502,13 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return kafkaConsumer;
     }
 
+    private KafkaConsumer<String, OperationAvro> createOperationConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
+        KafkaConsumer<String, OperationAvro> kafkaConsumer = new KafkaConsumer<>(
+                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomOperationPublicationMessagesGroup()));
+        kafkaConsumer.subscribe(Collections.singletonList(topic));
+        return kafkaConsumer;
+    }
+
     class KeepAliveKafkaThread implements Runnable {
 
         @Override
@@ -513,6 +536,10 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
                                 if (CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
                                     futuresMap.put(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ApplicationContextProvider.getApplicationContext()));
+                                }
+
+                                if (CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+                                    futuresMap.put(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ApplicationContextProvider.getApplicationContext()));
                                 }
 
                             } catch (Exception e) {
