@@ -103,6 +103,7 @@ public class DataManipulateTest extends StatisticalResourcesBaseTest {
     public static final String               DATA_PX_ECB_EXR_RG                  = "/px/ecb_exr_rg.px";
 
     public static final String               DATA_TSV_ECB_EXR_RG                 = "/tsv/ecb_exr_rg.tsv";
+    public static final String               DATA_TSV_ECB_EXR_RG_COMMA_DECIMALS  = "/tsv/ecb_exr_rg_comma_decimals.tsv";
 
     public static final String               URN_DSD_ECB_EXR_RG                  = "urn:sdmx:org.sdmx.infomodel.datastructure.DataStructure=ECB:ECB_EXR_RG(1.0)";
 
@@ -417,6 +418,59 @@ public class DataManipulateTest extends StatisticalResourcesBaseTest {
                         FileDescriptor fileDescriptorDto = new FileDescriptor();
                         fileDescriptorDto.setFileName(StringUtils.substringAfterLast(DATA_TSV_ECB_EXR_RG, "/"));
                         fileDescriptorDto.setFile(new File(DataManipulateTest.class.getResource(DATA_TSV_ECB_EXR_RG).toURI()));
+                        fileDescriptorDto.setDatasetFileFormatEnum(DatasetFileFormatEnum.CSV);
+                        taskInfoDataset.addFile(fileDescriptorDto);
+                    }
+
+                    jobKey = taskService.planifyImportationDataset(getServiceContextWithoutPrincipal(), taskInfoDataset);
+
+                } catch (MetamacException e) {
+                    e.printStackTrace();
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+                logger.info("-- doInTransactionWithoutResult -- expects transaction commit");
+            }
+        });
+
+        // Wait until the job is finished
+        waitUntilJobFinished(true);
+
+        DatasetRepositoryDto datasetRepositoryDto = datasetRepositoriesServiceFacade.retrieveDatasetRepository(datasetVersionUrn);
+
+        assertNotNull(datasetRepositoryDto);
+    }
+
+    @Test
+    @MetamacMock({DATASET_01_BASIC_NAME, DATASET_VERSION_01_BASIC_NAME})
+    public void testImportCsvDatasourceWithCommaDecimals() throws Exception {
+
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        final String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        final DatasetVersion resource = datasetService.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
+
+        createDatasetRepository(datasetVersionUrn, URN_DSD_ECB_EXR_RG);
+
+        // New Transaction: Because the job needs persisted data
+        final TransactionTemplate tt = new TransactionTemplate(transactionManager);
+        tt.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        tt.execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            public void doInTransactionWithoutResult(TransactionStatus status) {
+                try {
+
+                    TaskInfoDataset taskInfoDataset = new TaskInfoDataset();
+                    taskInfoDataset.setStoreAlternativeRepresentations(true);
+                    taskInfoDataset.setDataStructureUrn(URN_DSD_ECB_EXR_RG);
+                    taskInfoDataset.setDatasetVersionId(datasetVersionUrn);
+                    taskInfoDataset.setDatasetUrn(resource.getDataset().getIdentifiableStatisticalResource().getUrn());
+
+                    // File 01
+                    {
+                        FileDescriptor fileDescriptorDto = new FileDescriptor();
+                        fileDescriptorDto.setFileName(StringUtils.substringAfterLast(DATA_TSV_ECB_EXR_RG_COMMA_DECIMALS, "/"));
+                        fileDescriptorDto.setFile(new File(DataManipulateTest.class.getResource(DATA_TSV_ECB_EXR_RG_COMMA_DECIMALS).toURI()));
                         fileDescriptorDto.setDatasetFileFormatEnum(DatasetFileFormatEnum.CSV);
                         taskInfoDataset.addFile(fileDescriptorDto);
                     }
