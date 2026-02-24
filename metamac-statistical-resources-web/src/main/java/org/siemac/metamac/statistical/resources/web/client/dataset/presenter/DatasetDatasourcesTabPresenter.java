@@ -277,8 +277,8 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
     }
 
     @Override
-    public void exportDatasources(String urn) {
-        dispatcher.execute(new ExportDatasourcesAction(urn, DecimalSeparatorTypeEnum.POINT), new WaitingAsyncCallbackHandlingError<ExportDatasourcesResult>(this) {
+    public void exportDatasources(String urn, DecimalSeparatorTypeEnum decimalSeparator) {
+        dispatcher.execute(new ExportDatasourcesAction(urn, decimalSeparator), new WaitingAsyncCallbackHandlingError<ExportDatasourcesResult>(this) {
 
             @Override
             public void onWaitSuccess(ExportDatasourcesResult result) {
