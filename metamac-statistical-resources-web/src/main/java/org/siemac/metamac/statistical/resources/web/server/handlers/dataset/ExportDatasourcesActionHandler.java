@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.dataset;
 
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DecimalSeparatorTypeEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasourcesResult;
@@ -25,7 +26,8 @@ public class ExportDatasourcesActionHandler extends SecurityActionHandler<Export
     @Override
     public ExportDatasourcesResult executeSecurityAction(ExportDatasourcesAction action) throws ActionException {
         try {
-            String fileName = statisticalResourcesServiceFacade.exportDatasourcesTsv(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionUrn());
+            boolean useCommaDecimalSeparator = DecimalSeparatorTypeEnum.COMMA.equals(action.getDecimalSeparator());
+            String fileName = statisticalResourcesServiceFacade.exportDatasourcesTsv(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionUrn(), useCommaDecimalSeparator);
             return new ExportDatasourcesResult(fileName);
         } catch (MetamacException e) {
             throw WebExceptionUtils.createMetamacWebException(e);

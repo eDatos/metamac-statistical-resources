@@ -9,6 +9,7 @@ import java.util.Map;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
+import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DecimalSeparatorTypeEnum;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesDefaults;
@@ -277,7 +278,7 @@ public class DatasetDatasourcesTabPresenter extends Presenter<DatasetDatasources
 
     @Override
     public void exportDatasources(String urn) {
-        dispatcher.execute(new ExportDatasourcesAction(urn), new WaitingAsyncCallbackHandlingError<ExportDatasourcesResult>(this) {
+        dispatcher.execute(new ExportDatasourcesAction(urn, DecimalSeparatorTypeEnum.POINT), new WaitingAsyncCallbackHandlingError<ExportDatasourcesResult>(this) {
 
             @Override
             public void onWaitSuccess(ExportDatasourcesResult result) {
