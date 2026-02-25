@@ -1933,7 +1933,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             private String getAttributeIdentifier(String item, List<ExternalItem> externalItems) {
                 // If there is an external item with the same value for the code attribute as the one passed in the item parameter,
-                // the identifier assigned will be the latter because the title of the attribute will be extracted from the title of the external item.
+                // the identifier assigned will be the latter because the title of the attribute will be getRelatedPublications from the title of the external item.
                 if (CollectionUtils.isNotEmpty(externalItems)) {
                     ExternalItem externalItem = MetamacCollectionUtils.find(externalItems, new ExternalItemEqualsIdentifierPredicate(item));
                     if (externalItem != null && externalItem.getTitle().getLocalisedLabel(locale) != null) {
@@ -2479,9 +2479,24 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         for (Cube cube : cubes) {
             PublicationVersion publicationVersion = cube.getElementLevel().getPublicationVersion();
             publications.add(publicationVersion);
+            publications.addAll(getRelatedPublications(publicationVersion));
         }
 
         log.debug("Found {} unique publications linked to affected datasets, queries and multidatasets", publications.size());
+        return publications;
+    }
+
+    private Set<PublicationVersion> getRelatedPublications(PublicationVersion publicationVersion) {
+        Set<PublicationVersion> publications = new HashSet<>();
+        List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
+            .withProperty(CubeProperties.publication().id()).eq(publicationVersion.getId())
+            .distinctRoot()
+            .build();
+
+        List<Cube> publicationCubesAssociated = cubeRepository.findByCondition(cubeConditions);
+        for (Cube relatedCube : publicationCubesAssociated) {
+            publications.add(relatedCube.getElementLevel().getPublicationVersion());
+        }
         return publications;
     }
 
