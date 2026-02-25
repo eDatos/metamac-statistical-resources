@@ -45,7 +45,7 @@ public class CacheRequestInterceptor extends AbstractPhaseInterceptor<Message> {
             HttpServletRequest request = (HttpServletRequest) message.get(AbstractHTTPDestination.HTTP_REQUEST);
 
             String httpMethod = request.getMethod();
-            if (!"GET".equals(httpMethod)) {
+            if (!"GET".equals(httpMethod) && !"HEAD".equals(httpMethod)) {
                 return;
             }
 
