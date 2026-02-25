@@ -443,12 +443,12 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         // NOTHING
     }
 
-    public static void checkUpdateDatasetsLastUpdatedByDsd(String dsdUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
+    public static void checkUpdateResourcesLastUpdateByDsd(String dsdUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(dsdUrn, ServiceExceptionParameters.DATASOURCE__URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(timestamp, ServiceExceptionParameters.DATASET_VERSION__LAST_UPDATED, exceptions);
     }
 
-    public static void checkUpdateDatasetsLastUpdatedByOperation(String operationUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
+    public static void checkUpdateResourcesLastUpdateByOperation(String operationUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(operationUrn, ServiceExceptionParameters.STATISTICAL_OPERATION_URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(timestamp, ServiceExceptionParameters.DATASET_VERSION__LAST_UPDATED, exceptions);
     }

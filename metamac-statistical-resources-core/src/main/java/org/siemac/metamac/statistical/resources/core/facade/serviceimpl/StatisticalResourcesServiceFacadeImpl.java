@@ -2627,7 +2627,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void processSrmDsdKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
         DataStructureDefinitionAvro dsd = (DataStructureDefinitionAvro) message;
         String dsdUrn = dsd.getUrn();
-        getDatasetService().updateDatasetsLastUpdatedByDsd(ctx, dsdUrn, timestamp);
+        getDatasetService().updateResourcesLastUpdateByDsd(ctx, dsdUrn, timestamp);
     }
 
 
@@ -2635,6 +2635,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void processOperationKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
         OperationAvro operation = (OperationAvro) message;
         String operationUrn = operation.getUrn();
-        getDatasetService().updateDatasetsLastUpdatedByOperation(ctx, operationUrn, timestamp);
+        getDatasetService().updateResourcesLastUpdateByOperation(ctx, operationUrn, timestamp);
     }
 }

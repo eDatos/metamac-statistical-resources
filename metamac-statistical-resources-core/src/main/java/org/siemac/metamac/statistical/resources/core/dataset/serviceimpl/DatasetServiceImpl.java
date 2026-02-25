@@ -2397,7 +2397,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void updateDatasetsLastUpdatedByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
+    public void updateResourcesLastUpdateByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
         log.debug("Updating datasets by DSD {}", dsdUrn);
         if (dsdUrn == null || dsdUrn.trim().isEmpty()) {
             return;
@@ -2408,11 +2408,12 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .distinctRoot()
             .build();
 
-        updateRelatedResources(dsdUrn, timestamp, conditions);
+        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
+        updateRelatedResources(affectedDatasets, timestamp);
     }
 
     @Override
-    public void updateDatasetsLastUpdatedByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
+    public void updateResourcesLastUpdateByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
         log.debug("Updating datasets by operation {}", operationUrn);
         if (operationUrn == null || operationUrn.trim().isEmpty()) {
             return;
@@ -2423,11 +2424,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .distinctRoot()
             .build();
 
-        updateRelatedResources(operationUrn, timestamp, conditions);
+        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
+        updateRelatedResources(affectedDatasets, timestamp);
     }
 
-    private void updateRelatedResources(String resourceUrn, long timestamp, List<ConditionalCriteria> conditions) {
-        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
+    private void updateRelatedResources(List<DatasetVersion> affectedDatasets, long timestamp) {
         Set<QueryVersion> affectedQueries = getAffectedQueries(affectedDatasets);
         Set<MultidatasetVersion> affectedMultidatasets = getAffectedMultidatasets(affectedDatasets, affectedQueries);
         Set<PublicationVersion> affectedPublications = getAffectedPublications(affectedDatasets, affectedQueries, affectedMultidatasets);
@@ -2449,6 +2450,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 .build();
 
             cubes.addAll(cubeRepository.findByCondition(cubeConditions));
+
+            log.debug("Found {} cubes linked to dataset version {}", cubes.size(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         }
 
         for (QueryVersion queryVersion : affectedQueries) {
@@ -2458,6 +2461,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 .build();
 
             cubes.addAll(cubeRepository.findByCondition(cubeConditions));
+
+            log.debug("Found {} cubes linked to query version {}", cubes.size(), queryVersion.getLifeCycleStatisticalResource().getUrn());
         }
 
         for (MultidatasetVersion multidatasetVersion : affectedMultidatasets) {
@@ -2467,6 +2472,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 .build();
 
             cubes.addAll(cubeRepository.findByCondition(cubeConditions));
+
+            log.debug("Found {} cubes linked to multidataset version {}", cubes.size(), multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         }
 
         for (Cube cube : cubes) {
@@ -2474,6 +2481,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             publications.add(publicationVersion);
         }
 
+        log.debug("Found {} unique publications linked to affected datasets, queries and multidatasets", publications.size());
         return publications;
     }
 
@@ -2487,6 +2495,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 .build();
 
             cubes.addAll(multidatasetCubeRepository.findByCondition(cubeConditions));
+
+            log.debug("Found {} multidataset cubes linked to dataset version {}", cubes.size(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
         }
 
         for (QueryVersion queryVersion : affectedQueries) {
@@ -2496,6 +2506,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 .build();
 
             cubes.addAll(multidatasetCubeRepository.findByCondition(cubeConditions));
+
+            log.debug("Found {} multidataset cubes linked to query version {}", cubes.size(), queryVersion.getLifeCycleStatisticalResource().getUrn());
         }
 
         for (MultidatasetCube cube : cubes) {
@@ -2503,6 +2515,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             multidatasets.add(multidatasetVersion);
         }
 
+        log.debug("Found {} unique multidatasets linked to affected datasets and queries", multidatasets.size());
         return multidatasets;
     }
 
@@ -2514,7 +2527,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             allQueries.addAll(queriesLinkedToDatasetVersion);
             allQueries.addAll(queriesLinkedToDataset);
+
+            log.debug("Found {} queries linked to dataset version {} and {} queries linked to dataset {}",
+                    new Object[]{queriesLinkedToDatasetVersion.size(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn(),
+                            queriesLinkedToDataset.size(), datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn()});
         }
+
+        log.debug("Found {} unique queries linked to affected datasets", allQueries.size());
         return allQueries;
     }
 
