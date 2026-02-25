@@ -42,7 +42,6 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemRes
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
-import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -104,6 +103,11 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCubeRepository;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
+import org.siemac.metamac.statistical.resources.core.publication.domain.CubeProperties;
+import org.siemac.metamac.statistical.resources.core.publication.domain.CubeRepository;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
@@ -185,6 +189,12 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private MultidatasetVersionRepository             multidatasetVersionRepository;
+
+    @Autowired
+    private CubeRepository                            cubeRepository;
+
+    @Autowired
+    private PublicationVersionRepository              publicationVersionRepository;
 
     @Autowired
     private QueryService                              queryService;
@@ -2419,11 +2429,81 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private void updateRelatedResources(String resourceUrn, long timestamp, List<ConditionalCriteria> conditions) {
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
         Set<QueryVersion> affectedQueries = getAffectedQueries(affectedDatasets);
+        Set<MultidatasetVersion> affectedMultidatasets = getAffectedMultidatasets(affectedDatasets, affectedQueries);
+        Set<PublicationVersion> affectedPublications = getAffectedPublications(affectedDatasets, affectedQueries, affectedMultidatasets);
         DateTime dateTime = new DateTime(timestamp);
 
-        updateDatasetsLastUpdateDateByCriteria(resourceUrn, dateTime, affectedDatasets);
+        updateDatasetsLastUpdateDateByCriteria(affectedDatasets, dateTime);
         updateQueriesLastUpdatedDate(affectedQueries, dateTime);
-        updateMultidatasetsLastUpdatedDate(affectedDatasets, affectedQueries, dateTime);
+        updateMultidatasetsLastUpdatedDate(affectedMultidatasets, dateTime);
+        updatePublicationsLastUpdatedDate(affectedPublications, dateTime);
+    }
+
+    private Set<PublicationVersion> getAffectedPublications(List<DatasetVersion> affectedDatasets, Set<QueryVersion> affectedQueries, Set<MultidatasetVersion> affectedMultidatasets) {
+        Set<PublicationVersion> publications = new HashSet<>();
+        Set<Cube> cubes = new HashSet<>();
+        for (DatasetVersion datasetVersion : affectedDatasets) {
+            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
+                .withProperty(CubeProperties.dataset().id()).eq(datasetVersion.getDataset().getId())
+                .distinctRoot()
+                .build();
+
+            cubes.addAll(cubeRepository.findByCondition(cubeConditions));
+        }
+
+        for (QueryVersion queryVersion : affectedQueries) {
+            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
+                .withProperty(CubeProperties.query().id()).eq(queryVersion.getQuery().getId())
+                .distinctRoot()
+                .build();
+
+            cubes.addAll(cubeRepository.findByCondition(cubeConditions));
+        }
+
+        for (MultidatasetVersion multidatasetVersion : affectedMultidatasets) {
+            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
+                .withProperty(CubeProperties.multidataset().id()).eq(multidatasetVersion.getMultidataset().getId())
+                .distinctRoot()
+                .build();
+
+            cubes.addAll(cubeRepository.findByCondition(cubeConditions));
+        }
+
+        for (Cube cube : cubes) {
+            PublicationVersion publicationVersion = cube.getElementLevel().getPublicationVersion();
+            publications.add(publicationVersion);
+        }
+
+        return publications;
+    }
+
+    private Set<MultidatasetVersion> getAffectedMultidatasets(List<DatasetVersion> affectedDatasets, Set<QueryVersion> affectedQueries) {
+        Set<MultidatasetVersion> multidatasets = new HashSet<>();
+        Set<MultidatasetCube> cubes = new HashSet<>();
+        for (DatasetVersion datasetVersion : affectedDatasets) {
+            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(MultidatasetCube.class)
+                .withProperty(MultidatasetCubeProperties.dataset().id()).eq(datasetVersion.getDataset().getId())
+                .distinctRoot()
+                .build();
+
+            cubes.addAll(multidatasetCubeRepository.findByCondition(cubeConditions));
+        }
+
+        for (QueryVersion queryVersion : affectedQueries) {
+            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(MultidatasetCube.class)
+                .withProperty(MultidatasetCubeProperties.query().id()).eq(queryVersion.getQuery().getId())
+                .distinctRoot()
+                .build();
+
+            cubes.addAll(multidatasetCubeRepository.findByCondition(cubeConditions));
+        }
+
+        for (MultidatasetCube cube : cubes) {
+            MultidatasetVersion multidatasetVersion = cube.getMultidatasetVersion();
+            multidatasets.add(multidatasetVersion);
+        }
+
+        return multidatasets;
     }
 
     private Set<QueryVersion> getAffectedQueries(List<DatasetVersion> affectedDatasets) {
@@ -2438,7 +2518,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return allQueries;
     }
 
-    private void updateDatasetsLastUpdateDateByCriteria(String resourceUrn, DateTime dateTime, List<DatasetVersion> affectedDatasets) {
+    private void updateDatasetsLastUpdateDateByCriteria(List<DatasetVersion> affectedDatasets, DateTime dateTime) {
         int updatedCount = 0;
         for (DatasetVersion dataset : affectedDatasets) {
             try {
@@ -2451,7 +2531,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             }
         }
 
-        log.info("Updated {} of {} datasets with URN {} to {}", new Object[]{updatedCount, affectedDatasets.size(), resourceUrn, dateTime.toDateTimeISO()});
+        log.info("Updated {} of {} datasets to {}", new Object[]{updatedCount, affectedDatasets.size(), dateTime.toDateTimeISO()});
     }
 
     private void updateQueriesLastUpdatedDate(Set<QueryVersion> affectedQueries, DateTime dateTime) {
@@ -2466,51 +2546,42 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 log.error("Failed to update query: {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), e);
             }
         }
-        log.info("Updated {} of {} queries linked to dataset URN {} to {}",
+        log.info("Updated {} of {} queries to {}",
                  new Object[]{updatedQueryCount, affectedQueries.size(), dateTime.toDateTimeISO()});
     }
 
-    private void updateMultidatasetsLastUpdatedDate(List<DatasetVersion> affectedDatasets, Set<QueryVersion> affectedQueries, DateTime dateTime) {
+    private void updateMultidatasetsLastUpdatedDate(Set<MultidatasetVersion> affectedMultidatasets, DateTime dateTime) {
         int updatedMultidatasetCount = 0;
 
-        for (DatasetVersion datasetVersion : affectedDatasets) {
-            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(MultidatasetCube.class)
-                .withProperty(MultidatasetCubeProperties.dataset().id()).eq(datasetVersion.getDataset().getId())
-                .distinctRoot()
-                .build();
-
-            List<MultidatasetCube> cubes = multidatasetCubeRepository.findByCondition(cubeConditions);
-
-            updatedMultidatasetCount = getUpdatedMultidatasetCount(cubes, dateTime, datasetVersion.getSiemacMetadataStatisticalResource(), updatedMultidatasetCount);
-        }
-
-        for (QueryVersion queryVersion : affectedQueries) {
-            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(MultidatasetCube.class)
-                .withProperty(MultidatasetCubeProperties.query().id()).eq(queryVersion.getQuery().getId())
-                .distinctRoot()
-                .build();
-
-            List<MultidatasetCube> cubes = multidatasetCubeRepository.findByCondition(cubeConditions);
-
-            updatedMultidatasetCount = getUpdatedMultidatasetCount(cubes, dateTime, queryVersion.getLifeCycleStatisticalResource(), updatedMultidatasetCount);
-        }
-
-        log.info("Updated {} multidatasets linked to updated datasets to {}", new Object[]{updatedMultidatasetCount, dateTime.toDateTimeISO()});
-    }
-
-    private int getUpdatedMultidatasetCount(List<MultidatasetCube> cubes, DateTime dateTime, LifeCycleStatisticalResource queryVersion, int updatedMultidatasetCount) {
-        for (MultidatasetCube cube : cubes) {
-            MultidatasetVersion multidatasetVersion = cube.getMultidatasetVersion();
+        for (MultidatasetVersion multidatasetVersion : affectedMultidatasets) {
             try {
                 multidatasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(dateTime);
-                log.debug("Updating multidataset {} linked to resource {}", multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn(), queryVersion.getUrn());
+                log.debug("Updating multidataset {}", multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
                 multidatasetVersionRepository.save(multidatasetVersion);
                 updatedMultidatasetCount++;
             } catch (Exception e) {
                 log.error("Failed to update multidataset: {}", multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn(), e);
             }
         }
-        return updatedMultidatasetCount;
+
+        log.info("Updated {} of {} multidatasets to {}",
+                 new Object[]{updatedMultidatasetCount, affectedMultidatasets.size(), dateTime.toDateTimeISO()});
+    }
+
+    private void updatePublicationsLastUpdatedDate(Set<PublicationVersion> affectedPublications, DateTime dateTime) {
+        int updatedPublicationCount = 0;
+        for (PublicationVersion publicationVersion : affectedPublications) {
+            try {
+                publicationVersion.getSiemacMetadataStatisticalResource().setLastUpdate(dateTime);
+                log.debug("Updating publication {} linked to resource", publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
+                publicationVersionRepository.save(publicationVersion);
+                updatedPublicationCount++;
+            } catch (Exception e) {
+                log.error("Failed to update publication: {}", publicationVersion.getSiemacMetadataStatisticalResource().getUrn(), e);
+            }
+        }
+
+        log.info("Updated {} of {} publications linked to updated datasets to {}", new Object[]{updatedPublicationCount, affectedPublications.size(), dateTime.toDateTimeISO()});
     }
 
     @Override
