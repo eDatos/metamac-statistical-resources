@@ -1,26 +1,14 @@
 package org.siemac.metamac.statistical.resources.core.dataset.serviceimpl;
 
-import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
-import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCollection;
-import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
+import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
+import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
+import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -139,15 +127,26 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
-import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
-import es.ibestat.jaxi.stream.messages.DatasetAvro;
-import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
+import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCollection;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
 
 /**
  * Implementation of DatasetService.
@@ -2368,7 +2367,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // @formatter:off
 
         PagedResult<DatasetVersion> datasetResult =  datasetVersionRepository.findByCondition(conditions, paging);
-        
+
         if ( datasetResult.getValues() != null && !datasetResult.getValues().isEmpty() && datasetResult.getValues().size() == 1) {
             return datasetResult.getValues().get(0);
         }
@@ -2387,7 +2386,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .distinctRoot()
             .build();
 
-        updateDatasetsLastUpdateDateByCriteria(dsdUrn, timestamp, conditions);
+        updateRelatedResources(dsdUrn, timestamp, conditions);
     }
 
     @Override
@@ -2402,18 +2401,22 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .distinctRoot()
             .build();
 
-        updateDatasetsLastUpdateDateByCriteria(operationUrn, timestamp, conditions);
+        updateRelatedResources(operationUrn, timestamp, conditions);
     }
 
-    private void updateDatasetsLastUpdateDateByCriteria(String resourceUrn, long timestamp, List<ConditionalCriteria> conditions) {
+    private void updateRelatedResources(String resourceUrn, long timestamp, List<ConditionalCriteria> conditions) {
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-
-        int updatedCount = 0;
         DateTime dateTime = new DateTime(timestamp);
+
+        updateDatasetsLastUpdateDateByCriteria(resourceUrn, dateTime, affectedDatasets);
+        updateQueriesLastUpdatedDate(affectedDatasets, dateTime);
+    }
+
+    private void updateDatasetsLastUpdateDateByCriteria(String resourceUrn, DateTime dateTime, List<DatasetVersion> affectedDatasets) {
+        int updatedCount = 0;
         for (DatasetVersion dataset : affectedDatasets) {
             try {
                 dataset.getSiemacMetadataStatisticalResource().setLastUpdated(dateTime);
-                dataset.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
                 log.debug("Updating dataset {}", dataset.getSiemacMetadataStatisticalResource().getUrn());
                 datasetVersionRepository.save(dataset);
                 updatedCount++;
@@ -2425,6 +2428,31 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         log.info("Updated {} of {} datasets with URN {} to {}", new Object[]{updatedCount, affectedDatasets.size(), resourceUrn, dateTime.toDateTimeISO()});
     }
 
+    private void updateQueriesLastUpdatedDate(List<DatasetVersion> affectedDatasets, DateTime dateTime) {
+        int updatedQueryCount = 0;
+        for (DatasetVersion datasetVersion : affectedDatasets) {
+            List<QueryVersion> queriesLinkedToDatasetVersion = queryVersionRepository.findLinkedToFixedDatasetVersion(datasetVersion.getId());
+            List<QueryVersion> queriesLinkedToDataset = queryVersionRepository.findLinkedToDataset(datasetVersion.getDataset().getId());
+
+            Set<QueryVersion> allQueries = new HashSet<>();
+            allQueries.addAll(queriesLinkedToDatasetVersion);
+            allQueries.addAll(queriesLinkedToDataset);
+
+            for (QueryVersion queryVersion : allQueries) {
+                try {
+                    queryVersion.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
+                    log.debug("Updating query {} linked to dataset {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                    queryVersionRepository.save(queryVersion);
+                    updatedQueryCount++;
+                } catch (Exception e) {
+                    log.error("Failed to update query: {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), e);
+                }
+            }
+            log.info("Updated {} of {} queries linked to dataset URN {} to {}",
+                     new Object[]{updatedQueryCount, allQueries.size(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dateTime.toDateTimeISO()});
+        }
+    }
+
     @Override
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
         DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);
@@ -2433,13 +2461,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     
     private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
         datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
-        
+
         datasetServiceInvocationValidator.checkUpdateDatasetVersionInGroup(ctx, datasetVersion, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-        
+
         DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
-        updateDatasetVersion(ctx, datasetVersion);   
+        updateDatasetVersion(ctx, datasetVersion);
         updateDatasetVersionCategorisations(ctx, datasetVersion, DatasetVersionUpdateUtils.copyCategorisations(datasetVersionMetadataToChange.getCategorisations()));
-        
+
     }
 
     private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {
@@ -2497,17 +2525,17 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
              datasetRepositoriesServiceFacade.findAttributesInstancesWithDatasetAttachmentLevel(datasetVersionUrn, fileName);
-            
+
             DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
 
             List<String> languages = configurationService.retrieveLanguages();
-  
+
             fileName = manipulateCsvDataService.exportCsvAttributes(dataStructure, datasetVersion,  languages);
- 
+
         } catch (Exception e) {
             throw new MetamacException(e, ServiceExceptionType.ATTRIBUTES_EXPORT_ERROR, e.getMessage());
-        } 
-        
+        }
+
         return fileName;
-    }    
+    }
 }
