@@ -738,12 +738,12 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
+    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException {
 
         // Security
         DatasetsSecurityUtils.canExportDatasourcesTsv(ctx);
 
-        return getDatasetService().exportDatasourcesTsv(ctx, datasetVersionUrn);
+        return getDatasetService().exportDatasourcesTsv(ctx, datasetVersionUrn, useCommaDecimalSeparator);
     }
 
     @Override

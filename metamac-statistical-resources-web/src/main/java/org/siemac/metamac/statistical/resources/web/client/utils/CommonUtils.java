@@ -32,6 +32,7 @@ import org.siemac.metamac.statistical.resources.core.enume.constraint.domain.Key
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.AttributeRelationshipTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.AttributeRepresentationTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DecimalSeparatorTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.NextVersionTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
@@ -63,7 +64,7 @@ public class CommonUtils {
     private static String                               metamacPortalBaseUrl;
     private static Integer                              maxNumberOfUpdatedDatasetInGroup;
     private static Map<String, StatisticOfficialityDto> statisticOfficialitiesMap;
-    private static Map<String, PurposeDto> purposesMap;
+    private static Map<String, PurposeDto>              purposesMap;
 
     // -----------------------------------------------------------------------------------------
     // DATASET CONSTRAINTS
@@ -539,7 +540,7 @@ public class CommonUtils {
             CommonUtils.statisticOfficialitiesMap.put(officiality.getIdentifier(), officiality);
         }
     }
-    
+
     // -----------------------------------------------------------------------------------------
     // PURPOSES
     // -----------------------------------------------------------------------------------------
@@ -733,6 +734,18 @@ public class CommonUtils {
         return dataSourceTypeEnum != null ? getCoreMessages().getString(getCoreMessages().dataSourceTypeEnum() + dataSourceTypeEnum.getName()) : null;
     }
 
+    public static LinkedHashMap<String, String> getDecimalSeparatorTypeHashMap() {
+        LinkedHashMap<String, String> result = new LinkedHashMap<String, String>();
+        for (DecimalSeparatorTypeEnum value : DecimalSeparatorTypeEnum.values()) {
+            result.put(value.name(), getDecimalSeparatorName(value));
+        }
+        return result;
+    }
+
+    private static String getDecimalSeparatorName(DecimalSeparatorTypeEnum decimalSeparatorTypeEnum) {
+        return decimalSeparatorTypeEnum != null ? getCoreMessages().getString(getCoreMessages().decimalSeparatorTypeEnum() + decimalSeparatorTypeEnum.getName()) : null;
+    }
+
     public static LinkedHashMap<String, String> getDateFormatTypeHashMap() {
         LinkedHashMap<String, String> dateFormatTypeHashMap = new LinkedHashMap<String, String>();
         for (DateFormatTypeEnum a : DateFormatTypeEnum.values()) {
@@ -781,6 +794,5 @@ public class CommonUtils {
     public static void setMaxNumberOfUpdatedDatasetInGroup(Integer maxNumberOfUpdatedDatasetInGroup) {
         CommonUtils.maxNumberOfUpdatedDatasetInGroup = maxNumberOfUpdatedDatasetInGroup;
     }
-
 
 }
