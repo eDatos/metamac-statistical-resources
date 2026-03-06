@@ -2411,8 +2411,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
-        datasetServiceInvocationValidator.checkExportDatasourcesTsv(ctx,datasetVersionUrn);
+    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException {
+        datasetServiceInvocationValidator.checkExportDatasourcesTsv(ctx, datasetVersionUrn, useCommaDecimalSeparator);
         FileOutputStream outputStreamObservations = null;
         String fileName = "";
         try {
@@ -2427,7 +2427,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
 
-            PlainTextExporter exporter = new PlainTextExporter(observations, null, null, null);
+            PlainTextExporter exporter = new PlainTextExporter(observations, null, null, null, useCommaDecimalSeparator);
 
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, ManipulateDataUtils.getLocaleDatasourceIdentificationAttribute());
 

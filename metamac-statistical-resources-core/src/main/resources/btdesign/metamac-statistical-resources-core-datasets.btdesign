@@ -63,7 +63,7 @@ Application DatasetsStatisticalResources {
 			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			"Export datasources to TSV"
-			String exportDatasourcesTsv(String datasetVersionUrn) throws MetamacException;
+			String exportDatasourcesTsv(String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException;
 			"Export dataset, dimension and group attributes to TSV"
 			String exportAttributesTsv(String datasetVersionUrn) throws MetamacException;
     		

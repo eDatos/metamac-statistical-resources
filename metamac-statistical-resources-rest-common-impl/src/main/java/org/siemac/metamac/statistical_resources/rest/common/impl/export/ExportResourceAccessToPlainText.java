@@ -37,7 +37,7 @@ public class ExportResourceAccessToPlainText {
             final File tmpFileObservations = File.createTempFile(filename, format.getExtension());
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
             org.siemac.metamac.statistical.resources.core.export.PlainTextExporter plainTextTransposedExporter = new org.siemac.metamac.statistical.resources.core.export.PlainTextExporter(
-                    null, tabularDataDto, dimensionsFilter, geographicCodes);
+                    null, tabularDataDto, dimensionsFilter, geographicCodes, false);
             plainTextTransposedExporter.writeObservations(outputStreamObservations);
 
             return Response.ok(new DeleteOnCloseFileInputStream(tmpFileObservations), format.getMimeType()).header("Content-Disposition", getContentDisposition(filename, format.getExtension()))
