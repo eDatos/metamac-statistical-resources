@@ -1559,6 +1559,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             jaxiDatasetVersionAvro = (DatasetAvro) message;
         }
 
+        if (!hasValidStatisticalOperation(jaxiDatasetVersionAvro)) {
+            return;
+        }
+
         geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
         if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
             List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
@@ -1581,6 +1585,16 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             }
 
         }
+    }
+
+    private boolean hasValidStatisticalOperation(DatasetAvro jaxiDatasetVersionAvro) {
+        if (jaxiDatasetVersionAvro.getStatisticalOperation() == null || jaxiDatasetVersionAvro.getStatisticalOperation().getCode() == null) {
+            String datasetUrn = jaxiDatasetVersionAvro.getUrn();
+            log.error("Dataset with null statistical operation received from Kafka. Dataset URN: {}", datasetUrn);
+            noticesRestInternalService.createExternalPublicationNullOperationErrorBackgroundNotification(datasetUrn);
+            return false;
+        }
+        return true;
     }
 
     @Override
