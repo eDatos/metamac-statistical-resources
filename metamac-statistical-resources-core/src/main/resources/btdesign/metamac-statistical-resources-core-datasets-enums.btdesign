@@ -23,8 +23,13 @@ Application DatasetsStatisticalResourcesEnums {
 		}
 		
 		enum DataSourceTypeEnum {
-			FILE, 
+			FILE,
 			DATABASE;
+		}
+
+		enum DecimalSeparatorTypeEnum {
+			POINT,
+			COMMA;
 		}
 	}
 }

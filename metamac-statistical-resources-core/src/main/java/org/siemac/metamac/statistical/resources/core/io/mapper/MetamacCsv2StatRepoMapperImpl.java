@@ -36,7 +36,7 @@ public class MetamacCsv2StatRepoMapperImpl implements MetamacCsv2StatRepoMapper 
         observationExtendedDto.getCodesDimension().addAll(processKeyOfObservation(observation.getCodesDimensions()));
 
         // Data
-        observationExtendedDto.setPrimaryMeasure(StringUtils.isEmpty(observation.getObservationValue()) ? null : observation.getObservationValue());
+        observationExtendedDto.setPrimaryMeasure(StringUtils.isEmpty(observation.getObservationValue()) ? null : observation.getObservationValue().replace(',', '.'));
 
         // Attributes
         observationExtendedDto.addAttribute(ManipulateDataUtils.createDataSourceIdentificationAttribute(observationExtendedDto.getCodesDimension(), datasourceId)); // Add identification datasource

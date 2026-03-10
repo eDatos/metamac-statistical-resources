@@ -1093,6 +1093,20 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             task = retrieveTaskByJob(ctx, createJobKeyForImportationResource(taskInfoDataset.getDatasetVersionId()).getName());
 
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, taskInfoDataset.getDatasetVersionId());
+
+            if (ProcStatusEnum.PUBLISHED.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())) {
+                // Delete failed entry
+                logger.info("Rollback importation task not executed because the dataset is published. Urn: {}", taskInfoDataset.getDatasetVersionId());
+                deleteFailedTask(task);
+
+                getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_RECOVERY_JOB_ROLLBACK_PUBLISHED_DATASET,
+                        ServiceNoticeMessage.DATABASE_IMPORT_DATASET_RECOVERY_JOB_ROLLBACK_PUBLISHED_DATASET_ALERT, taskInfoDataset.getDatasetVersionId(), MetamacRolesEnum.ADMINISTRADOR);
+
+                return;
+
+            }
+
             String fileNames = task.getExtensionPoint();
             String[] names = fileNames.split("\\" + JobUtil.SERIALIZATION_SEPARATOR);
             for (int i = 1; i < names.length; i++) {
@@ -1111,10 +1125,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                         internationalStringDto);
             }
 
-            // Delete failed entry
-            logger.info("Deleting failed task starting");
-            getTaskRepository().delete(task);
-            logger.info("Deleting failed task finished");
+            deleteFailedTask(task);
         } catch (ApplicationException e) {
             if (task != null && DatasetRepositoryExceptionCodeEnum.DATASET_NOT_EXISTS.name().equals(e.getErrorCode())) {
                 getTaskRepository().delete(task);
@@ -1124,6 +1135,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.error("Error while perform a recovery in dataset", e);
         }
 
+    }
+
+    private void deleteFailedTask(Task task) {
+        // Delete failed entry
+        logger.info("Deleting failed task starting");
+        getTaskRepository().delete(task);
+        logger.info("Deleting failed task finished");
     }
 
     @Override

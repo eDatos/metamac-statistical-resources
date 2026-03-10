@@ -10,6 +10,7 @@ import java.util.Map;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DecimalSeparatorTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasourceDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.model.record.DatasourceRecord;
@@ -17,6 +18,7 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.presenter.Dat
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetDatasourcesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.CreateDatabaseDatasourceWindow;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ExportDatasourcesWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DatasourceMainFormLayout;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DeleteAttributesConfirmationWindow;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.ImportDatasourceWithMappingWindow;
@@ -302,13 +304,27 @@ public class DatasetDatasourcesTabViewImpl extends ViewWithUiHandlers<DatasetDat
             exportDatasourcesButton = new CustomToolStripButton(getConstants().actionExportDatasources(),
                     org.siemac.metamac.web.common.client.resources.GlobalResources.RESOURCE.exportResource().getURL());
             exportDatasourcesButton.setVisible(Boolean.TRUE);
+
+            final ExportDatasourcesWindow exportDatasourcesWindow = new ExportDatasourcesWindow();
+
+            exportDatasourcesWindow.getSaveButtonHandlers().addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() { // NOSONAR
+
+                @Override
+                public void onClick(com.smartgwt.client.widgets.form.fields.events.ClickEvent event) {
+                    DecimalSeparatorTypeEnum separator = exportDatasourcesWindow.getDecimalSeparator();
+                    exportDatasourcesWindow.hide();
+                    getUiHandlers().exportDatasources(datasetVersionDto.getUrn(), separator);
+                }
+            });
+
             exportDatasourcesButton.addClickHandler(new ClickHandler() {
 
                 @Override
                 public void onClick(ClickEvent event) {
-                    getUiHandlers().exportDatasources(datasetVersionDto.getUrn());
+                    exportDatasourcesWindow.show();
                 }
             });
+
             return exportDatasourcesButton;
         }
 

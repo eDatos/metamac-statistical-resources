@@ -1,7 +1,11 @@
 package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils;
 
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -45,16 +49,16 @@ import io.github.redouane59.twitter.signature.TwitterCredentials;
 @Component
 public class TwitterPostUtils {
 
-    private static final Logger              logger = LoggerFactory.getLogger(TwitterPostUtils.class);
+    private static final Logger               logger = LoggerFactory.getLogger(TwitterPostUtils.class);
 
     @Autowired
-    private QueryVersionRepository           queryVersionRepository;
+    private QueryVersionRepository            queryVersionRepository;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
+    private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
 
     @Autowired
-    private TranslationService               translationService;
+    private TranslationService                translationService;
 
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
@@ -90,8 +94,7 @@ public class TwitterPostUtils {
 
         for (QueryVersion queryVersion : queriesDataset) {
             try {
-                if (queryVersion.getPurposes() != null
-                        && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryVersion.getPurposes().getIdentifier())) {
+                if (queryVersion.getPurposes() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(queryVersion.getPurposes().getIdentifier())) {
                     TwitterPostError error = postTwitterForQueryVersion(ctx, queryVersion, datasetVersion);
                     if (error != null) {
                         result.addError(error);
@@ -171,8 +174,7 @@ public class TwitterPostUtils {
 
         // Get observations from dataset repository
         List<ConditionDimensionDto> conditions = generateConditions(queryVersion.getSelection(), temporalCodes);
-        Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(),
-                conditions);
+        Map<String, ObservationExtendedDto> observations = datasetRepositoriesServiceFacade.findObservationsExtendedByDimensions(datasetVersion.getDatasetRepositoryId(), conditions);
 
         // Send tweet
         return sendTweetToTwitter(ctx, queryVersion, observations);
@@ -192,9 +194,9 @@ public class TwitterPostUtils {
         }
 
         // Create Twitter client and post tweet
-        TwitterClient twitterClient = new TwitterClient(TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken())
-                .accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret()).apiKey(configurationService.retrieveTwitterApiKey())
-                .apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
+        TwitterClient twitterClient = new TwitterClient(
+                TwitterCredentials.builder().accessToken(configurationService.retrieveTwitterAccessToken()).accessTokenSecret(configurationService.retrieveTwitterAccesTokenSecret())
+                        .apiKey(configurationService.retrieveTwitterApiKey()).apiSecretKey(configurationService.retrieveTwitterApiSecretKey()).build());
         twitterClient.setAutomaticRetry(false);
 
         Tweet tweet = twitterClient.postTweet(xPublication);
@@ -229,9 +231,52 @@ public class TwitterPostUtils {
      */
     private String buildMessageFromTemplate(QueryVersion query, Entry<String, ObservationExtendedDto> entry, ServiceContext ctx) throws MetamacException {
         String temporalDimensionValue = getTemporalDimensionValueName(entry.getValue(), ctx);
+        String formattedData = formatNumericValue(entry.getValue().getPrimaryMeasure());
         String decoded = query.getXTemplate().replace("{periodo}", temporalDimensionValue);
-        decoded = Jsoup.clean(decoded.replace("{datos}", entry.getValue().getPrimaryMeasure() != null ? entry.getValue().getPrimaryMeasure() : " "), new Whitelist());
-        return Parser.unescapeEntities(decoded, true);
+        decoded = decoded.replace("{datos}", formattedData);
+
+        // Preserve line breaks before Jsoup cleaning (Jsoup removes them)
+        String newlinePlaceholder = "{{NEWLINE}}";
+        decoded = decoded.replace("\r\n", newlinePlaceholder).replace("\n", newlinePlaceholder).replace("\r", newlinePlaceholder);
+
+        decoded = Jsoup.clean(decoded, new Whitelist());
+        decoded = Parser.unescapeEntities(decoded, true);
+
+        // Restore line breaks
+        decoded = decoded.replace(newlinePlaceholder, "\n");
+
+        return decoded;
+    }
+
+    /**
+     * Format a numeric string with default system locale (Example for Spanish/Catalan: thousands separator: '.', decimal separator: ',').
+     * If the value is not a valid number, returns it unchanged.
+     *
+     * @param value The numeric string to format
+     * @return Formatted number string or original value if not a number
+     * @throws MetamacException
+     */
+    private String formatNumericValue(String value) throws MetamacException {
+        if (StringUtils.isBlank(value)) {
+            return " ";
+        }
+
+        try {
+            // Parse the number (handles both integer and decimal values)
+            BigDecimal number = new BigDecimal(value.trim());
+
+            Locale defaultLanguage = configurationService.retrieveLanguageDefaultLocale();
+
+            DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(defaultLanguage);
+            formatter.setGroupingUsed(true);
+            formatter.setMaximumFractionDigits(number.scale() > 0 ? number.scale() : 0);
+            formatter.setMinimumFractionDigits(0);
+
+            return formatter.format(number);
+        } catch (NumberFormatException e) {
+            // Not a valid number, return original value
+            return value;
+        }
     }
 
     /**
@@ -250,8 +295,7 @@ public class TwitterPostUtils {
     /**
      * Calculate the data size for the query selection.
      */
-    private int calculateDataSize(List<QuerySelectionItem> querySelectionItems, DatasetVersion datasetVersion, QueryVersion queryVersion, List<String> temporalCodesOutput)
-            throws MetamacException {
+    private int calculateDataSize(List<QuerySelectionItem> querySelectionItems, DatasetVersion datasetVersion, QueryVersion queryVersion, List<String> temporalCodesOutput) throws MetamacException {
         int dataSize = 1;
         for (QuerySelectionItem selectionItem : querySelectionItems) {
             if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(selectionItem.getDimension())) {
@@ -326,11 +370,9 @@ public class TwitterPostUtils {
      * Check if the version rationale type allows Twitter posting.
      */
     private boolean checkVersionRationaleTypeEnum(DatasetVersion resource) {
-        if (resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes() != null
-                && !resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes().isEmpty()) {
+        if (resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes() != null && !resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes().isEmpty()) {
             for (VersionRationaleType versionRationaleType : resource.getSiemacMetadataStatisticalResource().getVersionRationaleTypes()) {
-                if (VersionRationaleTypeEnum.MINOR_DATA_UPDATE.equals(versionRationaleType.getValue())
-                        || VersionRationaleTypeEnum.MINOR_SERIES_UPDATE.equals(versionRationaleType.getValue())) {
+                if (VersionRationaleTypeEnum.MINOR_DATA_UPDATE.equals(versionRationaleType.getValue()) || VersionRationaleTypeEnum.MINOR_SERIES_UPDATE.equals(versionRationaleType.getValue())) {
                     return true;
                 }
             }
@@ -360,8 +402,9 @@ public class TwitterPostUtils {
      * Result object containing the outcome of Twitter posting operations.
      */
     public static class TwitterPostResult {
-        private boolean                  skipped = false;
-        private List<TwitterPostError>   errors  = new ArrayList<TwitterPostError>();
+
+        private boolean                skipped = false;
+        private List<TwitterPostError> errors  = new ArrayList<TwitterPostError>();
 
         public boolean isSkipped() {
             return skipped;
@@ -388,9 +431,10 @@ public class TwitterPostUtils {
      * Error information for Twitter posting failures.
      */
     public static class TwitterPostError {
-        private QueryVersion        queryVersion;
+
+        private QueryVersion         queryVersion;
         private TwitterPostErrorType errorType;
-        private Exception           exception;
+        private Exception            exception;
 
         private TwitterPostError(QueryVersion queryVersion, TwitterPostErrorType errorType, Exception exception) {
             this.queryVersion = queryVersion;
