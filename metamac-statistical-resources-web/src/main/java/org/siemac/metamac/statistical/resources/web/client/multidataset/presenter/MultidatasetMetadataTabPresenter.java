@@ -323,7 +323,7 @@ public class MultidatasetMetadataTabPresenter
 
                     @Override
                     public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
-                        fireSuccessMessage(getMessages().publicationUpdateGeoCacheBackgroundInProgress());
+                        fireSuccessMessage(getMessages().multidatasetUpdateGeoCacheBackgroundInProgress());
                     }
                 });
     }

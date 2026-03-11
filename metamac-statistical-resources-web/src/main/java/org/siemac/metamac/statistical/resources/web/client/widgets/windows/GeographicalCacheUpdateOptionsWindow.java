@@ -28,7 +28,6 @@ import com.smartgwt.client.widgets.toolbar.ToolStripButton;
 public class GeographicalCacheUpdateOptionsWindow extends Window {
 
     protected static final int             FORM_ITEM_CUSTOM_WIDTH  = 450;
-    protected static final int             FORM_ITEM_CUSTOM_HEIGTH = 290;
 
     protected ToolStripButton              updateCacheButton;
     protected ToolStripButton              cancelUpdateButton;
@@ -38,7 +37,7 @@ public class GeographicalCacheUpdateOptionsWindow extends Window {
     public GeographicalCacheUpdateOptionsWindow(String title, String message) {
         super();
         setWidth(FORM_ITEM_CUSTOM_WIDTH);
-        setHeight(FORM_ITEM_CUSTOM_HEIGTH);
+        setAutoSize(true);
         setTitle(title);
         setShowMinimizeButton(false);
         setIsModal(true);
@@ -80,7 +79,7 @@ public class GeographicalCacheUpdateOptionsWindow extends Window {
 
         updateCacheButton = new ToolStripButton(MetamacWebCommon.getConstants().accept(), RESOURCE.success().getURL());
 
-        cancelUpdateButton = new ToolStripButton(MetamacWebCommon.getConstants().actionCancel(), RESOURCE.close().getURL());
+        cancelUpdateButton = new ToolStripButton(MetamacWebCommon.getConstants().actionCancel(), RESOURCE.cancelListGrid().getURL());
         cancelUpdateButton.addClickHandler(new ClickHandler() {
 
             @Override
