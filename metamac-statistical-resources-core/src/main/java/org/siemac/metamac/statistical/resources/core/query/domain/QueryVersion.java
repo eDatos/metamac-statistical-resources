@@ -3,6 +3,8 @@ package org.siemac.metamac.statistical.resources.core.query.domain;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.cache.domain.CacheableResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 
 /**
@@ -14,9 +16,13 @@ import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
  */
 @Entity
 @Table(name = "TB_QUERIES_VERSIONS")
-public class QueryVersion extends QueryVersionBase implements HasLifecycle {
+public class QueryVersion extends QueryVersionBase implements HasLifecycle, CacheableResource {
     private static final long serialVersionUID = 1L;
 
     public QueryVersion() {
+    }
+
+    public DateTime getLastModifiedDate() {
+        return getLifeCycleStatisticalResource().getLastUpdated();
     }
 }
