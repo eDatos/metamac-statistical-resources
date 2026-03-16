@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 @Service
 public class StatisticalResourcesCacheableResourceServiceImpl implements CacheableResourceService {
     private static final Logger logger = LoggerFactory.getLogger(StatisticalResourcesCacheableResourceServiceImpl.class);
@@ -28,7 +30,10 @@ public class StatisticalResourcesCacheableResourceServiceImpl implements Cacheab
     }
 
     @Override
-    public DateTime getLastModifiedDate(Class<? extends CacheableResource> resourceType, String agencyID, String resourceID, String version) {
+    public DateTime getLastModifiedDate(Class<? extends CacheableResource> resourceType, Map<String, String> pathParams) {
+        String agencyID = pathParams.get("agencyID");
+        String resourceID = pathParams.get("resourceID");
+        String version = pathParams.get("version");
         try {
             CacheableResource resource = null;
             if (DatasetVersion.class.isAssignableFrom(resourceType)) {
@@ -42,10 +47,7 @@ public class StatisticalResourcesCacheableResourceServiceImpl implements Cacheab
             }
 
             if (resource != null) {
-                DateTime lastModified = resource.getLastModifiedDate();
-                if (lastModified != null) {
-                    return lastModified;
-                }
+                return resource.getLastModifiedDate();
             }
         } catch (Exception e) {
             logger.warn("Error getting last modified date for resource " + resourceID + " (parsed as " + resourceType + ")", e);
