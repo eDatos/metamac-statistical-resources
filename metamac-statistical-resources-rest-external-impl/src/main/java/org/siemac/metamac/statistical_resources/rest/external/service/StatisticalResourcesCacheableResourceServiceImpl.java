@@ -1,8 +1,8 @@
 package org.siemac.metamac.statistical_resources.rest.external.service;
 
 import org.joda.time.DateTime;
-import org.siemac.metamac.core.common.cache.domain.CacheableResource;
-import org.siemac.metamac.core.common.cache.service.CacheableResourceService;
+import org.siemac.metamac.rest.common.domain.CacheableResource;
+import org.siemac.metamac.rest.service.cache.CacheableResourceService;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;

@@ -4,7 +4,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 import org.joda.time.DateTime;
-import org.siemac.metamac.core.common.cache.domain.CacheableResource;
+import org.siemac.metamac.rest.common.domain.CacheableResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 
