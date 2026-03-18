@@ -34,7 +34,8 @@ import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.Datas
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasourceMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DimensionRepresentationMappingMockFactory;
-import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCovVarElementCacheDatasetVersionFactory;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheByRelatedResourceMockFactory;
+import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetCubeMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetVersionMockFactory;
@@ -53,9 +54,9 @@ import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.core.RowMapper;
 
 public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
-    private static Logger       logger              = LoggerFactory.getLogger(StatisticalResourcesBaseTest.class);
 
-    
+    private static Logger                                   logger                                    = LoggerFactory.getLogger(StatisticalResourcesBaseTest.class);
+
     protected static String                                 EMPTY                                     = StringUtils.EMPTY;
 
     protected static Long                                   ID_NOT_EXISTS                             = Long.valueOf(-1);
@@ -85,8 +86,9 @@ public abstract class StatisticalResourcesBaseTest extends MetamacBaseTest {
 
     protected StatisticOfficialityMockFactory               statisticOfficialityMockFactory           = StatisticOfficialityMockFactory.getInstance();
 
-    protected GeoCovVarElementCacheDatasetVersionFactory     geoCovVarElementCacheDatasetVersionFactory = GeoCovVarElementCacheDatasetVersionFactory.getInstance();
-    
+    protected GeoCacheResourceMockFactory                   geoCacheResourceFactory                   = GeoCacheResourceMockFactory.getInstance();
+    protected GeoCacheByRelatedResourceMockFactory          geoCacheByRelatedResourceFactory          = GeoCacheByRelatedResourceMockFactory.getInstance();
+
     @Rule
     public MockAnnotationRule                               mockRule                                  = new MockAnnotationRule();
 

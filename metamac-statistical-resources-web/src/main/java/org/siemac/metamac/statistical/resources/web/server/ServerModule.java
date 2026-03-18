@@ -86,6 +86,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.publication.
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.GetVersionsOfPublicationActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.SavePublicationStructureElementActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.SavePublicationVersionActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.publication.UpdateGeoCacheRelatedResourceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.UpdatePublicationStructureElementLocationActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.UpdatePublicationVersionProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.publication.UpdatePublicationVersionsProcStatusActionHandler;
@@ -102,6 +103,7 @@ import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValues
 import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CopyDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatabaseDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDatasetCategorisationsAction;
@@ -338,7 +340,9 @@ public class ServerModule extends HandlerModule {
 
         bindHandler(LoadConfigurationPropertiesAction.class, LoadConfigurationPropertiesActionHandler.class);
 
+        // GEOGRAPHICAL CACHE
         bindHandler(UpdateGeographicCoverageVariableElementsCacheAction.class, UpdateGeographicCoverageVariableElementsCacheActionHandler.class);
+        bindHandler(UpdateGeoCacheRelatedResourceAction.class, UpdateGeoCacheRelatedResourceActionHandler.class);
 
         // This action should be removed to use CAS authentication
         bindHandler(MockCASUserAction.class, MockCASUserActionHandler.class);

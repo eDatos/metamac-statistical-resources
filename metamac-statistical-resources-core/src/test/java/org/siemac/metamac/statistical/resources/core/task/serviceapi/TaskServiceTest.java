@@ -195,4 +195,29 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     @Override
     public void testScheduleResendKafkaDatasetMessageJob() throws Exception {
     }
+
+    @Override
+    public void testPlanifyUpdateGeographicalCacheRelatedResource() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testProcessUpdateGeographicalCacheRelatedResourceTask() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testExistUpdateGeoCacheRelatedResourcesTaskInResource() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testExistsGeoCacheTasksByTaskName() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testProcessRetryGeographicalCacheTask() throws Exception {
+        // No test
+    }
 }

@@ -101,7 +101,7 @@ public class StatisticalResourcesRestExternalFacadeV10CollectionsTest extends St
     }
 
     public String getFindCollectionsUri(String agencyID, String query, String limit, String offset, String langs) throws Exception {
-        return getFindResourcesUri(StatisticalResourcesRestExternalConstants.LINK_SUBPATH_COLLECTIONS, agencyID, null, query, limit, offset, langs);
+        return getFindResourcesUri(StatisticalResourcesRestExternalConstants.LINK_SUBPATH_COLLECTIONS, agencyID, null, query, limit, offset, langs, null);
     }
 
 }

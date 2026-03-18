@@ -356,7 +356,7 @@ public class StatisticalResourcesRestInternalFacadeV10DatasetsTest extends Stati
     }
 
     public String getFindDatasetsUri(String agencyID, String resourceID, String query, String limit, String offset, String langs) throws Exception {
-        return getFindResourcesUri(StatisticalResourcesRestInternalConstants.LINK_SUBPATH_DATASETS, agencyID, resourceID, query, limit, offset, langs);
+        return getFindResourcesUri(StatisticalResourcesRestInternalConstants.LINK_SUBPATH_DATASETS, agencyID, resourceID, query, limit, offset, langs, null);
     }
 
 }

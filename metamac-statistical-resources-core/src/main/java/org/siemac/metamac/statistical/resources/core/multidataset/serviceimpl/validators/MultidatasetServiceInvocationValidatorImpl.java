@@ -147,11 +147,23 @@ public class MultidatasetServiceInvocationValidatorImpl extends BaseInvocationVa
         StatisticalResourcesValidationUtils.checkMetadataRequired(multidatasetVersion.getVersion(), ServiceExceptionParameters.MULTIDATASET_VERSION__VERSION, exceptions);
     }
 
+    public static void checkUpdateGeographicalCache(MultidatasetVersion multidatasetVersion, List<MetamacExceptionItem> exceptions) {
+        checkExistingMultidatasetVersion(multidatasetVersion, exceptions);
+    }
+
     private static void checkMultidatasetVersion(MultidatasetVersion multidatasetVersion, List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
 
     public static void checkFindMultidatasetsByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
+    public static void checkUpdateAllGeographicalCache(boolean mustWaitForRelatedResourcesUpdate, List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
+    public static void checkUpdateAllExternalGeographicalCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
 

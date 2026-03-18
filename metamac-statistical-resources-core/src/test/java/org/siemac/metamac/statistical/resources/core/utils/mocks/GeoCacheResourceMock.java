@@ -1,20 +1,21 @@
 package org.siemac.metamac.statistical.resources.core.utils.mocks;
 
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesPersistedDoMocks;
 
-public class GeoCovVarElementCacheDatasetVersionMock extends GeoCovVarElementCacheDatasetVersion {
+public class GeoCacheResourceMock extends GeoCacheResource {
 
     private static final long serialVersionUID = -289909094976654068L;
 
     private Integer           sequentialId;
 
-    public GeoCovVarElementCacheDatasetVersionMock() {
+    public GeoCacheResourceMock() {
+
     }
 
-    public static GeoCovVarElementCacheDatasetVersionMock buildBasicSingleVersionWithSequence(int sequenceId) {
-        GeoCovVarElementCacheDatasetVersionMock instance = new GeoCovVarElementCacheDatasetVersionMock();
+    public static GeoCacheResourceMock buildBasicSingleVersionWithSequence(int sequenceId) {
+        GeoCacheResourceMock instance = new GeoCacheResourceMock();
         instance.setSequentialId(sequenceId);
         instance.setIsLastVersion(true);
         return instance;
@@ -29,9 +30,8 @@ public class GeoCovVarElementCacheDatasetVersionMock extends GeoCovVarElementCac
     }
 
     public void setStatisticalOperationCode(String operationCode) {
-        ExternalItem operation =  StatisticalResourcesPersistedDoMocks.mockStatisticalOperationExternalItem(operationCode);
+        ExternalItem operation = StatisticalResourcesPersistedDoMocks.mockStatisticalOperationExternalItem(operationCode);
         this.setOperationCode(operation.getCode());
-        this.setOperationTitle(operation.getTitle());
         this.setOperationUrn(operation.getUrn());
     }
 }

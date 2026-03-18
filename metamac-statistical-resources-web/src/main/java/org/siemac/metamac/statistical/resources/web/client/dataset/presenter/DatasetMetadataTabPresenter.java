@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -295,8 +296,8 @@ public class DatasetMetadataTabPresenter extends StatisticalResourceMetadataBase
 
     @Override
     public void updateGeocoverageCache(DatasetVersionDto dataset) {
-        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction.Builder().datasetVersionDto(dataset).build(),
-                new WaitingAsyncCallbackHandlingError<UpdateGeographicCoverageVariableElementsCacheResult>(this) {
+        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction.Builder(new ArrayList<StatisticalResourceTypeEnum>(), new ArrayList<StatisticalResourceTypeEnum>())
+                .datasetVersionDto(dataset).build(), new WaitingAsyncCallbackHandlingError<UpdateGeographicCoverageVariableElementsCacheResult>(this) {
 
                     @Override
                     public void onWaitSuccess(UpdateGeographicCoverageVariableElementsCacheResult result) {

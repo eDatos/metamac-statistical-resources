@@ -12,6 +12,7 @@ import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.utils.shared.MetamacPortalWebUtils;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.LoggedInGatekeeper;
@@ -25,6 +26,8 @@ import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMess
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendStreamMessageResult;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.ResendXMessageResult;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceAction;
+import org.siemac.metamac.statistical.resources.web.shared.base.UpdateGeoCacheRelatedResourceResult;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageResult;
@@ -115,6 +118,8 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
         void showUnauthorizedResourceWarningMessage();
 
         void setTemporalCodesForField(GetTemporalGranularitiesByDatasetResult result);
+
+        void setInformationLabelContents(QueryVersionDto queryVersionDto);
     }
 
     @Inject
@@ -399,6 +404,19 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
         }
     }
 
+    @Override
+    public void updateGeoCacheRelatedResources(final QueryVersionDto queryVersionDto) {
+        dispatcher.execute(new UpdateGeoCacheRelatedResourceAction(queryVersionDto.getUrn(), StatisticalResourceTypeEnum.QUERY),
+                new WaitingAsyncCallbackHandlingError<UpdateGeoCacheRelatedResourceResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(UpdateGeoCacheRelatedResourceResult result) {
+                        fireSuccessMessage(getMessages().queryUpdateGeoCacheBackgroundInProgress());
+                        retrieveQuery(queryVersionDto.getUrn());
+                    }
+                });
+    }
+
     private void showMessageAfterResourceLifeCycleUpdate(UpdateQueryVersionProcStatusResult result, String message) {
         CommonUtils.showMessageAfterResourceLifeCycleUpdate(QueryPresenter.this, result.getNotificationException(), message);
     }
@@ -431,12 +449,14 @@ public class QueryPresenter extends Presenter<QueryPresenter.QueryView, QueryPre
 
     @Override
     public void retrieveTemporalCodesForField(int firstResult, int maxResults, String datasetUrn, MetamacWebCriteria webCriteria) {
-        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(firstResult, maxResults, datasetUrn, webCriteria), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
+        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(firstResult, maxResults, datasetUrn, webCriteria),
+                new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
 
-            @Override
-            public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
-                getView().setTemporalCodesForField(result);
-            }
-        });
+                    @Override
+                    public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
+                        getView().setTemporalCodesForField(result);
+                    }
+                });
     }
+
 }

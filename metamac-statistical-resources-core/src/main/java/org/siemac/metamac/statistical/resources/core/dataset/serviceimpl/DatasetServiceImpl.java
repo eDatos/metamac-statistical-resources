@@ -1,14 +1,26 @@
 package org.siemac.metamac.statistical.resources.core.dataset.serviceimpl;
 
-import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
-import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
-import es.ibestat.jaxi.stream.messages.DatasetAvro;
-import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
+import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
+import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCollection;
+import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.CollectionUtils;
@@ -62,7 +74,19 @@ import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesCo
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
 import org.siemac.metamac.statistical.resources.core.dataset.checks.DatasetMetadataEditionChecks;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.*;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CategorisationProperties;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceProperties;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUpdateUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
@@ -77,9 +101,9 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.NextVersionType
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
-import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.domain.TemporalAttributeValues;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetFromDatabaseJob;
@@ -87,11 +111,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateCs
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
-import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCubeRepository;
-import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
-import org.siemac.metamac.statistical.resources.core.publication.domain.CubeRepository;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
@@ -103,7 +123,6 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
-import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
@@ -123,16 +142,15 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.util.*;
-
-import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
-import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCollection;
-import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getUrnsFromRelatedResourceResults;
+import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
+import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
+import es.ibestat.jaxi.stream.messages.DatasetAvro;
+import es.ibestat.jaxi.stream.messages.PublicationAvro;
 
 /**
  * Implementation of DatasetService.
@@ -155,22 +173,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private SrmRestInternalService                    srmRestInternalService;
 
     @Autowired
-    StatisticalOperationsRestInternalService          statisticalOperationsRestInternalService;
-
-    @Autowired
     private QueryVersionRepository                    queryVersionRepository;
-
-    @Autowired
-    private MultidatasetCubeRepository                multidatasetCubeRepository;
-
-    @Autowired
-    private MultidatasetVersionRepository             multidatasetVersionRepository;
-
-    @Autowired
-    private CubeRepository                            cubeRepository;
-
-    @Autowired
-    private PublicationVersionRepository              publicationVersionRepository;
 
     @Autowired
     private QueryService                              queryService;
@@ -207,10 +210,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private PlatformTransactionManager                platformTransactionManager;
 
     @Autowired
-    GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
+    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
+    CacheService                                      cacheService;
 
     @Autowired
     private ManipulateCsvDataService                  manipulateCsvDataService;
@@ -737,20 +740,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         PagedResult<DatasetVersion> datasetVersionPagedResult = getDatasetVersionRepository().findByCondition(conditions, pagingParameter);
         return datasetVersionPagedResult;
-    }
-
-    @Override
-    public PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
-            throws MetamacException {
-        // Validations
-        datasetServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions, pagingParameter);
-
-        // Find
-        conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
-        pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
-
-        return geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
-
     }
 
     @Override
@@ -1507,7 +1496,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateGeographicCoverageFromSpatialAttribute(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
-        DsdAttribute spatialAttribute = DsdProcessor.getSpatialAttributeFromDsd(srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn()));
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
+        DsdAttribute spatialAttribute = DsdProcessor.getSpatialAttributeFromDsd(dataStructure);
+
+        if (spatialAttribute == null) {
+            return;
+        }
+
         AttributeValue spatialAttributeValue = getSpatialAttributeValueFromDsdAttribute(datasetVersion, spatialAttribute);
 
         if (spatialAttributeValue != null) {
@@ -1522,6 +1517,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     }
                 }
             }
+        } else {
+            List<ExternalItem> codeItems = processExternalItemsCodeFromSpatialAttribute(datasetVersion, spatialAttribute);
+            datasetVersion.getGeographicCoverage().clear();
+            datasetVersion.getGeographicCoverage().addAll(codeItems);
         }
     }
 
@@ -1543,74 +1542,28 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         updateAllGeocoverageCache(ctx, datasetVersions);
     }
 
-    @Override
-    public void updateAllGeographicExternalCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
-        datasetServiceInvocationValidator.checkUpdateAllGeographicCoverageVariableElementsCache(ctx);
-
-        updateAllExternalGeocoverageCache(ctx);
-    }
-
-    private void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+    private void updateGeographicCoverageExternalPublicationCacheByResource(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
-        DatasetAvro jaxiDatasetVersionAvro = null;
+
         if (message instanceof DatasetAvro) {
-            jaxiDatasetVersionAvro = (DatasetAvro) message;
-        }
-
-        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
-        if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
-            List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
-                    exceptionItems);
-            if (exceptionItems.isEmpty()) {
-                InternationalString datasetTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getTitle());
-                InternationalString operationTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getStatisticalOperation().getTitle());
-
-                for (ExternalItem variableElement : externalItemGeographicCoverage) {
-                    GeoCovVarElementCacheDatasetVersion result = updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, datasetTitle, operationTitle, variableElement);
-                    if (datasetTitle.getId() == null) {
-                        datasetTitle = result.getTitle();
-                        operationTitle = result.getOperationTitle();
-                    }
-                }
-            } else {
-                MetamacException metamacException = new MetamacException();
-                metamacException.getExceptionItems().addAll(exceptionItems);
-                throw metamacException;
-            }
-
+            cacheService.updateDatasetExternalPublicationCache(ctx, (DatasetAvro) message);
+        } else if (message instanceof PublicationAvro) {
+            cacheService.updateCollectionExternalPublicationCache(ctx, (PublicationAvro) message);
         }
     }
 
     @Override
-    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+    public void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
 
         getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
 
             @Override
             protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                updateGeographicCoverageExternalPublicationCache(ctx, message);
+                updateGeographicCoverageExternalPublicationCacheByResource(ctx, message);
                 return null;
             }
         });
-    }
-
-    private GeoCovVarElementCacheDatasetVersion updateGeographicCoverageVariableElementsCache(DatasetAvro jaxiDatasetVersionAvro, InternationalString datasetTitle, InternationalString operationTitle,
-            ExternalItem variableElement) {
-        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
-        geoCovVarElementCacheDatasetVersion.setCode(jaxiDatasetVersionAvro.getCode());
-        geoCovVarElementCacheDatasetVersion.setUrn(jaxiDatasetVersionAvro.getUrn());
-        geoCovVarElementCacheDatasetVersion.setTitle(datasetTitle);
-        geoCovVarElementCacheDatasetVersion.setOperationCode(jaxiDatasetVersionAvro.getStatisticalOperation().getCode());
-        geoCovVarElementCacheDatasetVersion.setOperationUrn(jaxiDatasetVersionAvro.getStatisticalOperation().getUrn());
-        geoCovVarElementCacheDatasetVersion.setOperationTitle(operationTitle);
-        geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
-        geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.TRUE);
-        geoCovVarElementCacheDatasetVersion.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
-        geoCovVarElementCacheDatasetVersion.setIsLastVersion(true);
-        geoCovVarElementCacheDatasetVersion.setIsActivated(true);
-        return geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
 
     private TransactionTemplate getTransactionTemplate() {
@@ -1660,18 +1613,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void updateAllExternalGeocoverageCache(ServiceContext ctx) throws MetamacException {
-
-        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
-
-            @Override
-            protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                updateExternalGeocoverageCache(ctx);
-                return null;
-            }
-        });
-    }
-
     abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
         @Override
@@ -1700,18 +1641,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDatasetVersionId(datasetVersionUrn);
         taskInfo.setDatasetUrn(datasetUrn);
         taskService.planifyUpdateGeocoverageCache(ctx, taskInfo, sendNotification);
-    }
-
-    private void updateExternalGeocoverageCache(ServiceContext ctx) throws MetamacException {
-
-        String resource = JobUtil.createJobNameForUpdateExternalGeocoverageCache();
-
-        if (getTaskService().existUpdateExternalGeocoverageCacheTaskInResource(ctx)) {
-            throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, resource);
-        }
-
-        TaskInfoDataset taskInfo = new TaskInfoDataset();
-        taskService.planifyUpdateExternalGeocoverageCache(ctx, taskInfo);
     }
 
     private void checkNotTasksInProgress(ServiceContext ctx, String datasetUrn) throws MetamacException {
@@ -2062,6 +1991,24 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     }
                 }
             }
+        }
+        return items;
+    }
+
+    private List<ExternalItem> processExternalItemsCodeFromSpatialAttribute(DatasetVersion resource, DsdAttribute spatialAttribute) throws MetamacException {
+        List<ExternalItem> items = new ArrayList<>();
+        List<CodeDimension> codes = filterCodesFromAttribute(resource, resource.getDatasetRepositoryId(), spatialAttribute.getComponentId());
+        List<String> codesIdentifiers = mapCodeDimensionsToCodeIdentifiers(codes);
+        List<ExternalItem> attributeItems = buildExternalItemsBasedOnCodeIdentifiers(codesIdentifiers, spatialAttribute);
+        // Avoid repeat items
+        for (ExternalItem item : attributeItems) {
+            if (!StatisticalResourcesCollectionUtils.isExternalItemInCollection(attributeItems, item)) {
+                items.add(item);
+            }
+        }
+
+        if (items.isEmpty()) {
+            items.addAll(attributeItems);
         }
         return items;
     }
@@ -2504,8 +2451,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
-        datasetServiceInvocationValidator.checkExportDatasourcesTsv(ctx,datasetVersionUrn);
+    public String exportDatasourcesTsv(ServiceContext ctx, String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException {
+        datasetServiceInvocationValidator.checkExportDatasourcesTsv(ctx, datasetVersionUrn, useCommaDecimalSeparator);
         FileOutputStream outputStreamObservations = null;
         String fileName = "";
         try {
@@ -2520,7 +2467,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             outputStreamObservations = new FileOutputStream(tmpFileObservations);
 
-            PlainTextExporter exporter = new PlainTextExporter(observations, null, null, null);
+            PlainTextExporter exporter = new PlainTextExporter(observations, null, null, null, useCommaDecimalSeparator);
 
             exporter.writeObservationsAndAttributesWithObservationAttachmentLevel(outputStreamObservations, ManipulateDataUtils.getLocaleDatasourceIdentificationAttribute());
 

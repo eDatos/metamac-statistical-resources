@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
@@ -37,8 +38,11 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensio
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.query.QueryLifecycleService;
@@ -47,8 +51,10 @@ import org.siemac.metamac.statistical.resources.core.query.domain.PurposeReposit
 import org.siemac.metamac.statistical.resources.core.query.domain.Query;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.validators.QueryServiceInvocationValidator;
+import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesVersionUtils;
@@ -88,7 +94,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     private PurposeRepository                         purposeRepository;
 
     @Autowired
-    private LifeCycleStatisticalResourceGeneratedCode    lifeCycleStatisticalResourceGeneratedCode;
+    private LifeCycleStatisticalResourceGeneratedCode lifeCycleStatisticalResourceGeneratedCode;
 
     public QueryServiceImpl() {
     }
@@ -155,7 +161,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     @Override
     public QueryVersion createQueryVersion(ServiceContext ctx, QueryVersion queryVersion, ExternalItem statisticalOperation) throws MetamacException {
         // Validations
-        
+
         checkStatisticalOperationAndSetCode(queryVersion, statisticalOperation);
         queryServiceInvocationValidator.checkCreateQueryVersion(ctx, queryVersion, statisticalOperation);
 
@@ -193,11 +199,13 @@ public class QueryServiceImpl extends QueryServiceImplBase {
     private String assignCode(String statisticalOperatioUrn, String statisticalOperationCode) throws MetamacException {
         return lifeCycleStatisticalResourceGeneratedCode.fillGeneratedCodeForCreateSiemacMetadataResource(statisticalOperatioUrn, statisticalOperationCode);
     }
-    
+
     @Override
     public QueryVersion updateQueryVersion(ServiceContext ctx, QueryVersion queryVersion) throws MetamacException {
         // Validations
         queryServiceInvocationValidator.checkUpdateQueryVersion(ctx, queryVersion);
+
+        checkNotTasksInProgress(ctx, queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn());
 
         // Check procStatus
         ProcStatusValidator.checkQueryVersionCanBeEdited(queryVersion);
@@ -214,7 +222,13 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         checkQueryCompatibility(ctx, queryVersion);
 
         // Repository operation
-        return getQueryVersionRepository().save(queryVersion);
+        QueryVersion queryVersionSaved = getQueryVersionRepository().save(queryVersion);
+
+        if (ProcStatusEnumUtils.isInAnyProcStatus(queryVersionSaved, ProcStatusEnum.PUBLISHED)) {
+            updateGeographicalCacheInJob(ctx, queryVersionSaved, true);
+        }
+
+        return queryVersionSaved;
 
     }
 
@@ -250,6 +264,11 @@ public class QueryServiceImpl extends QueryServiceImplBase {
             query.getVersions().remove(queryVersion);
             getQueryVersionRepository().delete(queryVersion);
         }
+    }
+
+    @Override
+    public void updateGeographicalCache(ServiceContext ctx, QueryVersion queryVersion) throws MetamacException {
+        updateGeographicalCacheInJob(ctx, queryVersion, true);
     }
 
     private void updateReplacedVersionIsReplacedByVersion(QueryVersion queryVersion) {
@@ -429,9 +448,47 @@ public class QueryServiceImpl extends QueryServiceImplBase {
         return datasetVersionRepository.retrieveLastVersion(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
     }
 
+    private void updateGeographicalCacheInJob(ServiceContext ctx, QueryVersion queryVersion, boolean sendNotification) throws MetamacException {
+        ProcStatusValidator.checkStatisticalResourceStructureCanBeCached(queryVersion);
+
+        String publicationUrn = queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn();
+        String publicationVersionUrn = queryVersion.getLifeCycleStatisticalResource().getUrn();
+
+        checkNotTasksInProgress(ctx, publicationVersionUrn);
+
+        TaskInfoResources taskInfo = new TaskInfoResources();
+        taskInfo.setVersionId(publicationVersionUrn);
+        taskInfo.setUrn(publicationUrn);
+        taskInfo.setResourceType(StatisticalResourceTypeEnum.QUERY.name());
+        getTaskService().planifyUpdateGeographicalCacheRelatedResource(ctx, taskInfo, sendNotification);
+
+    }
+
+    private void checkNotTasksInProgress(ServiceContext ctx, String pulicationUrn) throws MetamacException {
+        if (getTaskService().existsTaskForResource(ctx, pulicationUrn)) {
+            throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, pulicationUrn);
+        }
+    }
+
     @Override
     public List<Purpose> findPurposes(ServiceContext ctx) throws MetamacException {
         return purposeRepository.findAll();
     }
 
+    public void updateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
+        queryServiceInvocationValidator.checkUpdateAllGeographicalCache(ctx);
+        List<QueryVersion> lastVersionPublicatedQueries = retrievePublishedLastVersionQueries();
+        for (QueryVersion queryVersion : lastVersionPublicatedQueries) {
+            updateGeographicalCacheInJob(ctx, queryVersion, false);
+        }
+
+    }
+
+    private List<QueryVersion> retrievePublishedLastVersionQueries() throws MetamacException {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus())
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().validTo()).isNull().distinctRoot().build();
+        return getQueryVersionRepository().findByCondition(criteria);
+
+    }
 }

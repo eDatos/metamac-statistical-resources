@@ -17,6 +17,7 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.Lifec
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.multidataset.utils.MultidatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
@@ -37,6 +38,9 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
 
     @Autowired
     private QueryVersionRepository         queryVersionRepository;
+
+    @Autowired
+    private MultidatasetService            multidatasetService;
 
     @Override
     protected String getResourceMetadataName() throws MetamacException {
@@ -92,6 +96,11 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
     @Override
     protected void applySendToPublishedCurrentResource(ServiceContext ctx, MultidatasetVersion resource, MultidatasetVersion previousResource) throws MetamacException {
         resource.setFormatExtentResources(resource.getCubes().size());
+        updateGeoCache(ctx, resource);
+    }
+
+    private void updateGeoCache(ServiceContext ctx, MultidatasetVersion resource) throws MetamacException {
+        multidatasetService.updateGeographicalCache(ctx, resource);
     }
 
     @Override

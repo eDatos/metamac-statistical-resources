@@ -1369,11 +1369,6 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
     }
 
-    @Override
-    public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
-        // no optimistic locking in this operation
-    }
-
     // ------------------------------------------------------------
     // CUBE
     // ------------------------------------------------------------
@@ -2056,7 +2051,18 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     }
 
     @Override
+    public void testUpdateGeoCacheRelatedResource() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
     public void testProcessSrmResourcesKafkaMessage() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testUpdateGeographicCoverageExternalPublicationCache() throws Exception {
         // no optimistic locking in this operation
 
     }

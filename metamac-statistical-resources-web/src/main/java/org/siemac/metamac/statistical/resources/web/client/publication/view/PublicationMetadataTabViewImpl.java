@@ -274,6 +274,15 @@ public class PublicationMetadataTabViewImpl extends StatisticalResourceMetadataB
                 getUiHandlers().previewData(publicationVersionDto);
             }
         });
+
+        mainFormLayout.getUpdateGeoCacheRelatedResource().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().updateGeoCacheRelatedResources(publicationVersionDto);
+            }
+        });
+
     }
 
     private void createViewForm() {
@@ -554,4 +563,5 @@ public class PublicationMetadataTabViewImpl extends StatisticalResourceMetadataB
     protected SiemacMetadataLanguageEditionForm getLanguageEditionForm() {
         return languageEditionForm;
     }
+
 }

@@ -12,13 +12,15 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 
 public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceImpl implements StatisticalResourcesConfiguration {
 
-    final String STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP        = "STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
-    final String STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
-    final String STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP         = "STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP";
-    final String STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP   = "STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP";
+    final String        STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP           = "STATISTICAL_RESOURCES_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
+    final String        STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP    = "STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_DATASET_PUBLICATION_MESSAGES_GROUP";
+    final String        STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP            = "STATISTICAL_RESOURCES_CUSTOM_CODELIST_PUBLICATION_MESSAGES_GROUP";
+    final String        STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP      = "STATISTICAL_RESOURCES_CUSTOM_CONCEPT_SCHEME_PUBLICATION_MESSAGES_GROUP";
     final String STATISTICAL_RESOURCES_CUSTOM_DSD_PUBLICATION_MESSAGES_GROUP              = "STATISTICAL_RESOURCES_CUSTOM_DSD_PUBLICATION_MESSAGES_GROUP";
     final String STATISTICAL_RESOURCES_CUSTOM_OPERATION_PUBLICATION_MESSAGES_GROUP        = "STATISTICAL_RESOURCES_CUSTOM_OPERATION_PUBLICATION_MESSAGES_GROUP";
     final String STATISTICAL_RESOURCES_CUSTOM_DATASET_PUBLICATION_MESSAGES_GROUP          = "STATISTICAL_RESOURCES_CUSTOM_DATASET_PUBLICATION_MESSAGES_GROUP";
+    static final String STATISTICAL_RESOURCES_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP        = "STATISTICAL_RESOURCES_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP";
+    static final String STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP = "STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP";
 
     @Override
     public Map<KeyDotEnum, String> retrieveDotCodeMapping() throws MetamacException {
@@ -68,6 +70,18 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     @Override
     public boolean retriveDatabaseDatasetImportJobIsEnabled() {
         return environmentConfigurationProperties.getBoolean(StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED, Boolean.FALSE);
+    }
+
+    @Override
+    public Integer retrieveQuartzTriggerDelayForGeoCacheUpdate() throws MetamacException {
+        String delay = retrieveProperty(StatisticalResourcesConfigurationConstants.QUARTZ_TRIGGER_DELAY_FOR_GEOGRAPHIC_COVERAGE_CACHE);
+        return Integer.valueOf(delay);
+    }
+
+    @Override
+    public Integer retrieveQuartzTriggerDelayForRecoveryGeoCache() throws MetamacException {
+        String delay = retrieveProperty(StatisticalResourcesConfigurationConstants.QUARTZ_TRIGGER_DELAY_FOR_RECOVERY_GEOGRAPHIC_COVERAGE_CACHE);
+        return Integer.valueOf(delay);
     }
 
     @Override
@@ -159,5 +173,15 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     @Override
     public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE);
+    }
+
+    @Override
+    public String retrieveKafkaExternalCollectionPublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP;
+    }
+
+    @Override
+    public String retrieveKafkaCustomExternalCollectionPublicationMessagesGroup() throws MetamacException {
+        return STATISTICAL_RESOURCES_CUSTOM_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_GROUP;
     }
 }

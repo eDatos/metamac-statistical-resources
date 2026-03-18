@@ -137,7 +137,11 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
 
     @Override
     protected void applySendToPublishedCurrentResource(ServiceContext ctx, QueryVersion resource, QueryVersion previousResource) throws MetamacException {
-        // nothing to do
+        updateGeoCache(ctx, resource);
+    }
+
+    private void updateGeoCache(ServiceContext ctx, QueryVersion resource) throws MetamacException {
+        queryService.updateGeographicalCache(ctx, resource);
     }
 
     @Override

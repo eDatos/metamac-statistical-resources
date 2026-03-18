@@ -28,16 +28,19 @@ public class PlainTextExporter {
     private final TabularDataDto                      tabularDataDto;
     private final DimensionsFilter                    dimensionsFilter;
     private final List<String>                        geographicCodes;
+    private final boolean                             useCommaDecimalSeparator;
     int                                               temporalDimensionIndex     = -1;
     int                                               geographicalDimensionIndex = -1;
     private PrintWriter                               printWriter;
     private String                                    lang;
 
-    public PlainTextExporter(Map<String, ObservationExtendedDto> observations, TabularDataDto tabularDataDto, DimensionsFilter dimensionsFilter, List<String> geographicCodes) {
+    public PlainTextExporter(Map<String, ObservationExtendedDto> observations, TabularDataDto tabularDataDto, DimensionsFilter dimensionsFilter, List<String> geographicCodes,
+            boolean useCommaDecimalSeparator) {
         this.observations = observations;
         this.tabularDataDto = tabularDataDto;
         this.dimensionsFilter = dimensionsFilter;
         this.geographicCodes = geographicCodes;
+        this.useCommaDecimalSeparator = useCommaDecimalSeparator;
     }
 
     public void writeObservations(OutputStream os) throws MetamacException {
@@ -145,13 +148,16 @@ public class PlainTextExporter {
     }
 
     private List<String> getObservations(Map<String, List<String>> datasourceColumns) {
-        List<String> observationLines = new ArrayList<>();
+        List<String> observationLines = new ArrayList<String>();
         int maxLines = datasourceColumns.get(HEADER_OBSERVATION).size();
 
         for (int i = 0; i < maxLines; i++) {
             StringBuilder line = new StringBuilder();
-            for (List<String> column : datasourceColumns.values()) {
-                String value = column.get(i) != null ? column.get(i) : "";
+            for (Map.Entry<String, List<String>> columnEntry : datasourceColumns.entrySet()) {
+                String value = columnEntry.getValue().get(i) != null ? columnEntry.getValue().get(i) : "";
+                if (useCommaDecimalSeparator && HEADER_OBSERVATION.equals(columnEntry.getKey()) && !value.isEmpty()) {
+                    value = value.replace('.', ',');
+                }
                 line.append(line.length() == 0 ? value : (SEPARATOR + value));
             }
             observationLines.add(line.toString());

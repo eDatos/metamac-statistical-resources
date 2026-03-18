@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 import com.gwtplatform.dispatch.shared.ActionException;
 
 @Component
-public class UpdateGeographicCoverageVariableElementsCacheActionHandler extends SecurityActionHandler<UpdateGeographicCoverageVariableElementsCacheAction, UpdateGeographicCoverageVariableElementsCacheResult> {
+public class UpdateGeographicCoverageVariableElementsCacheActionHandler
+        extends
+            SecurityActionHandler<UpdateGeographicCoverageVariableElementsCacheAction, UpdateGeographicCoverageVariableElementsCacheResult> {
 
     @Autowired
     private StatisticalResourcesServiceFacade statisticalResourcesServiceFacade;
@@ -28,7 +30,8 @@ public class UpdateGeographicCoverageVariableElementsCacheActionHandler extends 
             if (action.getDatasetVersionDto() != null) {
                 statisticalResourcesServiceFacade.updateGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), action.getDatasetVersionDto().getUrn());
             } else {
-                statisticalResourcesServiceFacade.updateAllGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext());
+                statisticalResourcesServiceFacade.updateAllGeographicCoverageVariableElementsCache(ServiceContextHolder.getCurrentServiceContext(), action.getResourcesToUpdate(),
+                        action.getExternalResourcesToUpdate());
             }
             return new UpdateGeographicCoverageVariableElementsCacheResult.Builder().datasetVersionDto(action.getDatasetVersionDto()).build();
         } catch (MetamacException e) {

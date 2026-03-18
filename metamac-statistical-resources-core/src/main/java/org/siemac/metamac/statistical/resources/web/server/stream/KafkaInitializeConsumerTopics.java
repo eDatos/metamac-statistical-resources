@@ -19,7 +19,6 @@ import org.apache.kafka.common.errors.TopicExistsException;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 
-
 public class KafkaInitializeConsumerTopics {
 
     protected static final Log               LOGGER             = LogFactory.getLog(KafkaInitializeConsumerTopics.class);
@@ -37,7 +36,6 @@ public class KafkaInitializeConsumerTopics {
         TOPIC_DEFAULT_SETTINGS = new HashMap<>();
         TOPIC_DEFAULT_SETTINGS.put(RETENTION_MS, "-1");
     };
-
 
     public static List<NewTopic> propagateCreationOfTopics(StatisticalResourcesConfiguration statisticalResourcesConfiguration) throws MetamacException {
         List<NewTopic> availableTopics = new ArrayList<>();
@@ -68,8 +66,10 @@ public class KafkaInitializeConsumerTopics {
             // The topic can not be enabled in some environments.
             String topicNameDatasetExternalPublication = statisticalResourcesConfiguration.retrieveKafkaTopicExternalDatasetPublication();
             topics.add(createTopic(topicNameDatasetExternalPublication));
+            String topicNameCollectionExternalPublication = statisticalResourcesConfiguration.retrieveKafkaTopicExternalCollectionPublication();
+            topics.add(createTopic(topicNameCollectionExternalPublication));
         } catch (Exception e) {
-            LOGGER.info("retrieveKafkaTopicExternalDatasetPublication not found. Check if must exists in common metadata");
+            LOGGER.info("retrieveKafkaTopicExternalDatasetPublication or retrieveKafkaTopicExternalCollectionPublication not found. Check if must exists in common metadata");
         }
 
         return topics;
@@ -87,19 +87,19 @@ public class KafkaInitializeConsumerTopics {
         // excludes nonexistent topics
         List<NewTopic> availableTopics = new ArrayList<>();
         try {
-        ListTopicsResult listTopics = adminClient.listTopics();
-        Set<String> names = listTopics.names().get();
-        for (NewTopic topic : topics) {
-           if (names.contains(topic.name())) {
-               availableTopics.add(topic);
-           }
-        }
-        } catch(Exception e) {
+            ListTopicsResult listTopics = adminClient.listTopics();
+            Set<String> names = listTopics.names().get();
+            for (NewTopic topic : topics) {
+                if (names.contains(topic.name())) {
+                    availableTopics.add(topic);
+                }
+            }
+        } catch (Exception e) {
             LOGGER.info("error to get list available topics");
         }
         return availableTopics;
     }
-    
+
     private static List<NewTopic> createTopics(Properties kafkaProperties, List<NewTopic> topics, CreateTopicsOptions topicsOptions) {
         List<NewTopic> availableTopics = new ArrayList<>();
         try (AdminClient adminClient = AdminClient.create(kafkaProperties)) {

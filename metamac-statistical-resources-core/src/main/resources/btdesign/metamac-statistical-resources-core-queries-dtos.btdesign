@@ -14,6 +14,9 @@ Application QueriesStatisticalResourcesDto {
 			- @RelatedResourceDto relatedDatasetVersion;
 			- @QueryStatusEnum status;
 			- @QueryTypeEnum type;
+			
+			// If a task related with the query is being executed in background
+			Boolean isTaskInBackground;
 		}
 
 		DataTransferObject QueryVersionDto extends @LifeCycleStatisticalResourceDto {
@@ -30,6 +33,9 @@ Application QueriesStatisticalResourcesDto {
 			- @PurposeDto purpose
 			String xTemplate;
 			Boolean isDsdChanged;
+			
+			// If a task related with the query is being executed in background
+			Boolean isTaskInBackground;
 		}
 		
 		DataTransferObject SelectionItemDto {

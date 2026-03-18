@@ -1,18 +1,27 @@
 package org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.resources;
 
+import java.math.BigInteger;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.search.criteria.mapper.SculptorCriteria2RestCriteria;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceStatisticalResourceBase;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithRelatedResources;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourceWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resources;
+import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.ResourcesWithStatisticalOperation;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.invocation.StatisticalOperationsRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
@@ -29,26 +38,80 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
     private StatisticalOperationsRestExternalFacade statisticalOperationsRestExternalFacade;
 
     @Override
-    public Resources toResources(PagedResult<GeoCovVarElementCacheDatasetVersion> sources, String query, String orderBy, Integer limit, List<String> selectedLanguages) throws RestException {
+    public Resources toResources(PagedResult<GeoCacheByRelatedResource> sources, String query, String orderBy, Integer limit, List<String> cacheResourcesUrnWithSelectedCriteria,
+            List<String> selectedLanguages, Set<String> parsedFields) throws RestException {
 
         Resources targets = new Resources();
         targets.setKind(StatisticalResourcesRestExternalConstants.KIND_RESOURCES);
 
         // Pagination
-        String baseLink = toResourcesLink(TypeExternalArtefactsEnum.DATASET.getName());
+        String baseLink = toResourcesLink(TypeExternalArtefactsEnum.STATISTICAL_RESOURCES_RESOURCE.getName());
         SculptorCriteria2RestCriteria.toPagedResult(sources, targets, query, orderBy, limit, baseLink);
 
-        Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles = statisticalOperationsRestExternalFacade.getOperationTitles(null);
+        Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles = new HashMap<>();
+        if (parsedFields.contains(StatisticalResourcesRestConstants.FIELD_INCLUDE_OPERATION_TITLE)) {
+            operationTitles = statisticalOperationsRestExternalFacade.getOperationTitles(null);
+        }
 
         // Values
-        for (GeoCovVarElementCacheDatasetVersion source : sources.getValues()) {
-            ResourceWithStatisticalOperation target = toResource(source, operationTitles, selectedLanguages);
-            targets.getResources().add(target);
+        for (GeoCacheByRelatedResource source : sources.getValues()) {
+            ResourceWithRelatedResources resourceWithRelatedResources = new ResourceWithRelatedResources();
+
+            ResourceWithStatisticalOperation mainResource = toResource(source, operationTitles, selectedLanguages);
+            resourceWithRelatedResources.setMainResource(mainResource);
+
+            ResourcesWithStatisticalOperation resources = toRelatedResources(source, operationTitles, selectedLanguages, cacheResourcesUrnWithSelectedCriteria);
+
+            resourceWithRelatedResources.setRelatedResources(resources);
+
+            targets.getResources().add(resourceWithRelatedResources);
         }
         return targets;
     }
 
-    private ResourceWithStatisticalOperation toResource(GeoCovVarElementCacheDatasetVersion source, Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles,
+    private ResourcesWithStatisticalOperation toRelatedResources(GeoCacheByRelatedResource source, Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles,
+            List<String> selectedLanguages, List<String> cacheResourcesUrnWithTerritory) {
+        ResourcesWithStatisticalOperation resources = new ResourcesWithStatisticalOperation();
+
+        if (source != null && source.getRelatedResources() != null) {
+            for (GeoCacheResource geoCacheResource : source.getRelatedResources()) {
+                if (cacheResourcesUrnWithTerritory.isEmpty() || cacheResourcesUrnWithTerritory.contains(geoCacheResource.getUrn())) {
+
+                    ResourceWithStatisticalOperation relatedResource = toResource(geoCacheResource, operationTitles, selectedLanguages);
+                    resources.getResources().add(relatedResource);
+                }
+
+            }
+            resources.setTotal(BigInteger.valueOf(resources.getResources().size()));
+
+        }
+
+        return resources;
+    }
+
+    private ResourceWithStatisticalOperation toResource(GeoCacheByRelatedResource source, Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles,
+            List<String> selectedLanguages) {
+        if (source == null) {
+            return null;
+        }
+        ResourceWithStatisticalOperation target = new ResourceWithStatisticalOperation();
+        target.setId(source.getCode());
+        target.setUrn(getCollectionUrnWithoutVersion(source.getUrn()));
+        target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
+        target.setKind(StatisticalResourcesRestExternalConstants.KIND_COLLECTION);
+        target.setSelfLink(toResourceSelfLink(source.getUrn(), TypeExternalArtefactsEnum.COLLECTION.getName()));
+        target.setVisualizerHtmlLink(source.getHtmlLink());
+        target.setStatisticalOperation(toStatisticalOperationResource(source.getOperationCode(), source.getOperationUrn(), operationTitles, selectedLanguages));
+
+        return target;
+    }
+
+    private String getCollectionUrnWithoutVersion(String urn) {
+        String[] params = UrnUtils.splitUrnItem(urn, false);
+        return GeneratorUrnUtils.generateSiemacStatisticalResourceCollectionUrn(new String[]{params[0]}, params[1]);
+    }
+
+    private ResourceWithStatisticalOperation toResource(GeoCacheResource source, Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles,
             List<String> selectedLanguages) {
         if (source == null) {
             return null;
@@ -57,22 +120,45 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         target.setId(source.getCode());
         target.setUrn(source.getUrn());
         target.setName(commonDo2RestMapper.toInternationalString(source.getTitle(), selectedLanguages));
-        target.setKind(StatisticalResourcesRestExternalConstants.KIND_RESOURCE);
-        target.setSelfLink(toDatasetSelfLink(source.getUrn(), TypeExternalArtefactsEnum.DATASET.getName()));
+
+        getMetadataRelatedResourceByResourceType(target, source.getType(), source.getUrn());
+
         target.setVisualizerHtmlLink(source.getHtmlLink());
-        target.setStatisticalOperation(toStatisticalOperationResource(source, operationTitles, selectedLanguages));
+        target.setStatisticalOperation(toStatisticalOperationResource(source.getOperationCode(), source.getOperationUrn(), operationTitles, selectedLanguages));
 
         return target;
     }
 
-    private ResourceStatisticalResourceBase toStatisticalOperationResource(GeoCovVarElementCacheDatasetVersion source,
+    private void getMetadataRelatedResourceByResourceType(ResourceWithStatisticalOperation target, String type, String urnResource) {
+        StatisticalResourceTypeEnum typeResource = StatisticalResourceTypeEnum.valueOf(type);
+        String kind = StatisticalResourcesRestExternalConstants.BLANK;
+        String typeExternalArtefact = StatisticalResourcesRestExternalConstants.BLANK;
+        if (StatisticalResourceTypeEnum.DATASET.equals(typeResource)) {
+            kind = StatisticalResourcesRestExternalConstants.KIND_DATASET;
+            typeExternalArtefact = TypeExternalArtefactsEnum.DATASET.getName();
+        } else if (StatisticalResourceTypeEnum.QUERY.equals(typeResource)) {
+            kind = StatisticalResourcesRestExternalConstants.KIND_QUERY;
+            typeExternalArtefact = TypeExternalArtefactsEnum.QUERY.getName();
+        } else if (StatisticalResourceTypeEnum.MULTIDATASET.equals(typeResource)) {
+            kind = StatisticalResourcesRestExternalConstants.KIND_MULTIDATASET;
+            typeExternalArtefact = TypeExternalArtefactsEnum.MULTIDATASET.getName();
+        }
+
+        target.setKind(kind);
+        target.setSelfLink(toResourceSelfLink(urnResource, typeExternalArtefact));
+
+    }
+
+    private ResourceStatisticalResourceBase toStatisticalOperationResource(String codeOperation, String urnOperation,
             Map<String, org.siemac.metamac.rest.common.v1_0.domain.InternationalString> operationTitles, List<String> selectedLanguages) {
         ResourceStatisticalResourceBase target = new ResourceStatisticalResourceBase();
-        target.setId(source.getOperationCode());
-        target.setUrn(source.getOperationUrn());
+        target.setId(codeOperation);
+        target.setUrn(urnOperation);
 
-        org.siemac.metamac.rest.common.v1_0.domain.InternationalString operationTitle = operationTitles.get(source.getOperationCode());
-        target.setName(operationTitle != null ? operationTitle : commonDo2RestMapper.toInternationalString(source.getOperationTitle(), selectedLanguages));
+        if (!operationTitles.isEmpty()) {
+            org.siemac.metamac.rest.common.v1_0.domain.InternationalString operationTitle = operationTitles.get(codeOperation);
+            target.setName(operationTitle);
+        }
 
         target.setKind(TypeExternalArtefactsEnum.STATISTICAL_OPERATION.getValue());
         return target;
@@ -83,7 +169,7 @@ public class ResourcesDo2RestMapperV10Impl implements ResourcesDo2RestMapperV10 
         return commonDo2RestMapper.toResourceLink(resourceSubpath, null, null, null);
     }
 
-    private ResourceLink toDatasetSelfLink(String urn, String typeResource) {
+    private ResourceLink toResourceSelfLink(String urn, String typeResource) {
         String[] params = UrnUtils.splitUrnItem(urn, false);
         String agencyId = params[0];
         String resourceId = params[1];

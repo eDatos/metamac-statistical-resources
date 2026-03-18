@@ -22,9 +22,14 @@ import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatis
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResourceProperties.SiemacMetadataStatisticalResourceProperty;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResourceProperties;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
+import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceProperties;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -57,6 +62,9 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
     @Autowired
     private MultidatasetService   multidatasetService;
 
+    @Autowired
+    private CacheService          cacheService;
+
     @Override
     public DatasetVersion retrieveDatasetVersion(String agencyID, String resourceID, String version) {
         try {
@@ -77,7 +85,7 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
             throw manageException(e);
         }
     }
-    
+
     @Override
     public Boolean checkDatasetVersion(String agencyID, String resourceID, String version) {
         try {
@@ -113,29 +121,91 @@ public class StatisticalResourcesRestInternalCommonServiceImpl implements Statis
     }
 
     @Override
-    public PagedResult<GeoCovVarElementCacheDatasetVersion> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
+    public PagedResult<GeoCacheResource> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter) {
         try {
             return findResourcesCommon(conditionalCriteria, pagingParameter);
         } catch (Exception e) {
             throw manageException(e);
         }
     }
-    
-    private PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery,
-            PagingParameter pagingParameter) throws MetamacException {
+
+    private PagedResult<GeoCacheResource> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter) throws MetamacException {
+
+        List<ConditionalCriteria> conditionalCriteria = addConditionalCriteriasToResources(conditionalCriteriaQuery);
+
+        // Find
+        return cacheService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
+    }
+
+    @Override
+    public List<GeoCacheResource> findResources(List<ConditionalCriteria> conditionalCriteria) {
+        try {
+            return findResourcesCommon(conditionalCriteria);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private List<GeoCacheResource> findResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery) throws MetamacException {
+
+        List<ConditionalCriteria> conditionalCriteria = addConditionalCriteriasToResources(conditionalCriteriaQuery);
+        // Find
+        return cacheService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria);
+    }
+
+    private List<ConditionalCriteria> addConditionalCriteriasToResources(List<ConditionalCriteria> conditionalCriteriaQuery) {
+        // Criteria to find by criteria
+        List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
+        if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
+            conditionalCriteria.addAll(conditionalCriteriaQuery);
+        } else {
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).distinctRoot().build());
+        }
+
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.isLastVersion()).eq(true).buildSingle());
+        // only activated records are available
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheResource.class).withProperty(GeoCacheResourceProperties.isActivated()).eq(true).buildSingle());
+
+        return conditionalCriteria;
+    }
+
+    @Override
+    public PagedResult<GeoCacheByRelatedResource> findRelatedGeoResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter,
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
+        try {
+            return findRelatedGeoResourcesCommon(conditionalCriteria, pagingParameter, statisticalResourceTypeEnum);
+        } catch (Exception e) {
+            throw manageException(e);
+        }
+    }
+
+    private PagedResult<GeoCacheByRelatedResource> findRelatedGeoResourcesCommon(List<ConditionalCriteria> conditionalCriteriaQuery, PagingParameter pagingParameter,
+            StatisticalResourceTypeEnum statisticalResourceTypeEnum) throws MetamacException {
 
         // Criteria to find by criteria
         List<ConditionalCriteria> conditionalCriteria = new ArrayList<ConditionalCriteria>();
         if (CollectionUtils.isNotEmpty(conditionalCriteriaQuery)) {
             conditionalCriteria.addAll(conditionalCriteriaQuery);
         } else {
-            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).distinctRoot().build());
+            conditionalCriteria.addAll(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).distinctRoot().build());
         }
-     
+
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.type())
+                .eq(statisticalResourceTypeEnum.getName()).buildSingle());
+        conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.isActivated()).eq(true).buildSingle());
+
+        if (StatisticalResourceTypeEnum.COLLECTION.equals(statisticalResourceTypeEnum)) {
+            // only collections need to retrieve their resources. Others do not need them. The performance will be better if they do not check these filters because the lazy related resources object
+            // will not be activated.
+            conditionalCriteria.add(ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.relatedResources().isLastVersion())
+                    .eq(true).buildSingle());
+            conditionalCriteria.add(
+                    ConditionalCriteriaBuilder.criteriaFor(GeoCacheByRelatedResource.class).withProperty(GeoCacheByRelatedResourceProperties.relatedResources().isActivated()).eq(true).buildSingle());
+        }
         // Find
-        return datasetService.findResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
+        return cacheService.findGeoRelatedResourcesByCondition(SERVICE_CONTEXT, conditionalCriteria, pagingParameter);
     }
-    
+
     @Override
     public PublicationVersion retrievePublicationVersion(String agencyID, String resourceID) {
         try {

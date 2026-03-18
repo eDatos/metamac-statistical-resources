@@ -9,4 +9,8 @@
         <constructor-arg value="org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService" />
     </bean>
 
+    <bean id="cacheService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService" />
+    </bean>
+
 </beans>

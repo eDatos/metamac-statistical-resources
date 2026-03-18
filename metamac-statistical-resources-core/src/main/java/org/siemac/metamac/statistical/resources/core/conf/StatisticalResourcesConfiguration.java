@@ -21,6 +21,10 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
 
     public String retrieveCronExpressionForGeograficCoverageCacheClear() throws MetamacException;
 
+    public Integer retrieveQuartzTriggerDelayForGeoCacheUpdate() throws MetamacException;
+
+    public Integer retrieveQuartzTriggerDelayForRecoveryGeoCache() throws MetamacException;
+
     public boolean retriveDatabaseDatasetImportJobIsEnabled();
 
     public String retrieveDbDataViewsRole() throws MetamacException;
@@ -28,6 +32,8 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public String retrieveKafkaExternalDatasetPublicationMessagesGroup() throws MetamacException;
 
     public String retrieveKafkaCustomExternalDatasetPublicationMessagesGroup() throws MetamacException;
+
+    public String retrieveKafkaCustomExternalCollectionPublicationMessagesGroup() throws MetamacException;
 
     public String retrieveKafkaCustomDsdPublicationMessagesGroup() throws MetamacException;
 
@@ -50,4 +56,6 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
     public boolean retrieveTwitterSentEnable() throws MetamacException;
 
     public String retrieveTwitterAccesTokenSecret() throws MetamacException;
+    public String retrieveKafkaExternalCollectionPublicationMessagesGroup() throws MetamacException;
+
 }

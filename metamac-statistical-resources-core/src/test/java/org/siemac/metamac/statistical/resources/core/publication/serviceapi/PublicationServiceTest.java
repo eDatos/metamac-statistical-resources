@@ -28,6 +28,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_07_OPERATION_0001_CODE_000003_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_105_LAST_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_11_OPERATION_0002_CODE_MAX_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_12_DRAFT_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_13_PRODUCTION_VALIDATION_NAME;
@@ -61,6 +62,7 @@ import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.siemac.edatos.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.common.test.utils.MetamacAsserts;
 import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -1596,7 +1598,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
 
         assertRelaxedEqualsCube(expected, actual);
     }
-   
+
     @Test
     @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testCreateCubeUrlFormatError() throws Exception {
@@ -1610,7 +1612,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
             assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
         }
     }
-    
+
     @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME, DATASET_03_BASIC_WITH_2_DATASET_VERSIONS_NAME})
     public void testCreateCubeErrorParameterRequiredPublicationVersionUrn() throws Exception {
@@ -2056,7 +2058,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         assertNull(actual.getPublication());
         assertEquals(expectedUrl, actual.getUrl());
     }
-    
+
     @Test
     @MetamacMock({PUBLICATION_VERSION_102_WITH_COMPLEX_STRUCTURE_FOR_URL_PUBLICATION})
     public void testUpdateCubeUrlFormatError() throws Exception {
@@ -2071,7 +2073,7 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
             assertEquals(CommonServiceExceptionType.METADATA_INVALID_URL.getCode(), e.getExceptionItems().get(0).getCode());
         }
     }
-    
+
     @SuppressWarnings("static-access")
     @Test
     @MetamacMock({PUBLICATION_VERSION_22_WITH_COMPLEX_STRUCTURE_DRAFT_NAME})
@@ -2575,6 +2577,31 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
 
         assertEquals(1, publications.getTotalRows());
         assertEquals(result.getIdentifiableStatisticalResource().getUrn(), publications.getValues().get(0).getIdentifiableStatisticalResource().getUrn());
-        
+
+    }
+
+    @Override
+    public void testUpdateGeographicalCache() throws Exception {
+        // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
+
+    }
+
+    @Test
+    @Override
+
+    @MetamacMock({PUBLICATION_VERSION_105_LAST_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS})
+    public void testGetPublicationLastVersionPublished() throws Exception {
+        PublicationVersion publicationVersion = publicationVersionMockFactory.retrieveMock(PUBLICATION_VERSION_105_LAST_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS);
+        String[] urnMembers = UrnUtils.splitUrnItemScheme(publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
+
+        PublicationVersion lastPublicationVersion = publicationService.getPublicationLastVersionPublished(getServiceContextWithoutPrincipal(), urnMembers[0], urnMembers[1]);
+        assertEquals(publicationVersion.getSiemacMetadataStatisticalResource().getUrn(), lastPublicationVersion.getSiemacMetadataStatisticalResource().getUrn());
+
+    }
+
+    @Override
+    public void testUpdateAllGeographicalCache() throws Exception {
+        // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
+
     }
 }

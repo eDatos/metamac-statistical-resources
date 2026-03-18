@@ -20,6 +20,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
+import org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService;
 import org.siemac.metamac.statistical.resources.core.publication.utils.PublicationVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.publication.utils.PublicationsUtils;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -44,6 +45,9 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
 
     @Autowired
     private MultidatasetVersionRepository  multidatasetVersionRepository;
+
+    @Autowired
+    private PublicationService             publicationService;
 
     @Override
     protected String getResourceMetadataName() throws MetamacException {
@@ -101,6 +105,11 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
         resource.setFormatExtentResources(resource.getChildrenAllLevels().size());
         resource.getHasPart().clear();
         resource.getHasPart().addAll(PublicationsUtils.computeHasPart(resource));
+        updateGeoCache(ctx, resource);
+    }
+
+    private void updateGeoCache(ServiceContext ctx, PublicationVersion resource) throws MetamacException {
+        publicationService.updateGeographicalCache(ctx, resource);
     }
 
     @Override

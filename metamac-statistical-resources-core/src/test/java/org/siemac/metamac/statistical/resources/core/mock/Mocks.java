@@ -40,6 +40,21 @@ public class Mocks {
     // LIST OF CODES
     // --------------------------------------------------------------------
 
+    public static Codes mock_CL_AREA_ES() {
+        Codes codes = new Codes();
+
+        codes.getCodes().add(SrmMockUtils.buildCode("0", "35003", "en", "MUN_ANTIGUA"));
+        codes.getCodes().add(SrmMockUtils.buildCode("1", "35007", "en", "MUN_BETANCURIA"));
+        codes.getCodes().add(SrmMockUtils.buildCode("2", "35014", "en", "MUN_OLIVA"));
+        codes.getCodes().add(SrmMockUtils.buildCode("3", "35015", "en", "MUN_PAJARA"));
+        codes.getCodes().add(SrmMockUtils.buildCode("4", "35017", "en", "MUN_PUERTO_ROSARIO"));
+        codes.getCodes().add(SrmMockUtils.buildCode("5", "ES704_0", "en", "GEO_OTROS"));
+        codes.getCodes().add(SrmMockUtils.buildCode("6", "35030", "en", "MUN_TUINEJE"));
+        codes.getCodes().add(SrmMockUtils.buildCode("7", "ES704", "en", "ISLA_FUERTEVENTURA"));
+
+        return codes;
+    }
+
     public static Codes mock_CL_DECIMALS() {
         Codes codes = new Codes();
 
