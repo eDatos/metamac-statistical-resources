@@ -458,6 +458,11 @@ public class CacheServiceImpl extends CacheServiceImplBase {
     
     @Override
     public void updateDatasetExternalPublicationCache(ServiceContext ctx, DatasetAvro jaxiDatasetVersionAvro) throws MetamacException {
+        
+        if (!hasValidStatisticalOperation(jaxiDatasetVersionAvro)) {
+            return;
+        }
+        
         List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
         List<GeoCacheResource> geoCacheResourcesDisabled = disabledResourceByUrn(ctx, jaxiDatasetVersionAvro.getUrn());
 
@@ -475,6 +480,16 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             }
 
         }
+    }
+    
+    private boolean hasValidStatisticalOperation(DatasetAvro jaxiDatasetVersionAvro) {
+        if (jaxiDatasetVersionAvro.getStatisticalOperation() == null || jaxiDatasetVersionAvro.getStatisticalOperation().getCode() == null) {
+            String datasetUrn = jaxiDatasetVersionAvro.getUrn();
+            logger.error("Dataset with null statistical operation received from Kafka. Dataset URN: {}", datasetUrn);
+            noticesRestInternalService.createExternalPublicationNullOperationErrorBackgroundNotification(datasetUrn);
+            return false;
+        }
+        return true;
     }
     
     private void buildExternalItemFromJaxiExternalPublication(DatasetAvro jaxiDatasetVersionAvro, GeoCacheResource geoCacheResource, 

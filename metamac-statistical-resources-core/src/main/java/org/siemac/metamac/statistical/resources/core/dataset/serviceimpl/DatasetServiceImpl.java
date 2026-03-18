@@ -1546,38 +1546,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         } else if (message instanceof PublicationAvro) {
             cacheService.updateCollectionExternalPublicationCache(ctx, (PublicationAvro) message);
         }
-
-    if (!hasValidStatisticalOperation(jaxiDatasetVersionAvro)) {
-            return;
-        }
-
-        cacheService.disabledResourceByUrn(ctx, jaxiDatasetVersionAvro.getUrn());
-
-        if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
-            List<GeoCacheTerritoriesByGeoCacheResource> territories = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService,
-                    noticesRestInternalService, exceptionItems);
-            if (exceptionItems.isEmpty()) {
-                InternationalString datasetTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getTitle());
-                GeoCacheResource geoCacheResource = cacheService.updateGeoCacheExternalResource(ctx, jaxiDatasetVersionAvro, datasetTitle);
-                geoCacheResource.getTerritories().addAll(territories);
-
-            } else {
-                MetamacException metamacException = new MetamacException();
-                metamacException.getExceptionItems().addAll(exceptionItems);
-                throw metamacException;
-            }
-
-        }
-    }
-
-    private boolean hasValidStatisticalOperation(DatasetAvro jaxiDatasetVersionAvro) {
-        if (jaxiDatasetVersionAvro.getStatisticalOperation() == null || jaxiDatasetVersionAvro.getStatisticalOperation().getCode() == null) {
-            String datasetUrn = jaxiDatasetVersionAvro.getUrn();
-            log.error("Dataset with null statistical operation received from Kafka. Dataset URN: {}", datasetUrn);
-            noticesRestInternalService.createExternalPublicationNullOperationErrorBackgroundNotification(datasetUrn);
-            return false;
-        }
-        return true;
     }
 
     @Override
