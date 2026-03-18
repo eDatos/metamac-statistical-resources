@@ -17,6 +17,7 @@ public class ServiceNoticeMessage {
     public static final String UPDATE_GEOCACHE_RELATED_RESOURCES_JOB_ERROR                           = "notice_message.resources.action.update_geo_cache_related.error";
     public static final String RESOURCE_RECEIVED_FROM_KAFKA_ERROR                                    = "notice_message.resources.message.received_from_kafka.error";
     public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_ERROR                   = "notice_message.resources.message.update_geocoverage_cache_get_messages_from_kafka.error";
+    public static final String UPDATE_GEOCOVERAGE_CACHE_EXTERNAL_PUBLICATION_NULL_OPERATION_ERROR    = "notice_message.resources.message.update_geocoverage_cache_get_messages_from_kafka.null_operation.error";
     public static final String DATABASE_IMPORT_DATASET_RECOVERY_JOB_ROLLBACK_PUBLISHED_DATASET_ALERT = "notice_message.resources.message.import_dataset_database_job.alert";
 
     // Stream messaging
