@@ -25,4 +25,5 @@ public class ServiceNoticeAction {
     public static final String CREATE_REPLACE_DATASET_ERROR                                    = "notice_message.resources.action.create_replace_dataset.error";
     public static final String ASSIGN_ROLE_PERMISSIONS_DATASET_ERROR                           = "notice_message.resources.action.assign_role_permissions_dataset.error";
 
+    public static final String UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED                     = "notice_message.resources.cache.update_last_update_resource.error";
 }

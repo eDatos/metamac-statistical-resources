@@ -29,6 +29,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
+import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
@@ -43,6 +44,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemRes
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -87,6 +89,7 @@ import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtil
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCubeRepository;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.publication.domain.CubeRepository;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -2416,10 +2419,16 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 messagingService.sendMessage(dataset);
                 updatedCount++;
             } catch (Exception e) {
+                notifyLastUpdateResourceError(e, dataset.getLifeCycleStatisticalResource());
                 log.error("Failed to update dataset: {}", dataset.getSiemacMetadataStatisticalResource().getUrn(), e);
             }
         }
         log.info("Updated {} of {} datasets to {}", new Object[]{updatedCount, affectedDatasets.size(), dateTime.toDateTimeISO()});
+    }
+
+    private void notifyLastUpdateResourceError(Exception e, LifeCycleStatisticalResource resource) {
+        MetamacException metamacException = new MetamacException(e, ServiceExceptionType.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, resource.getUrn());
+        getNoticesRestInternalService().createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, metamacException);
     }
 
     @Override
@@ -2452,7 +2461,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                 messagingService.sendMessage(queryVersion);
                 updatedQueryCount++;
             } catch (Exception e) {
-
+                notifyLastUpdateResourceError(e, queryVersion.getLifeCycleStatisticalResource());
                 log.error("Failed to update query: {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), e);
             }
         }
@@ -2543,5 +2552,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
 
         return fileName;
+    }
+
+    private NoticesRestInternalService getNoticesRestInternalService() {
+        return (NoticesRestInternalService) ApplicationContextProvider.getApplicationContext().getBean(NoticesRestInternalService.BEAN_ID);
     }
 }

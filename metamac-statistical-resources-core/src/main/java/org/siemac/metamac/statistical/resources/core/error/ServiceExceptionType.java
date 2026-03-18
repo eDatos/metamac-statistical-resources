@@ -432,4 +432,7 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType ATTRIBUTES_EXPORT_ERROR_PROCESSING                                                          = create(
             "exception.resources.dataset.export.attributes_processing");
 
+    // Update of resource last update cache process
+    public static final CommonServiceExceptionType UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED                                                 = create(
+            "exception.resources.cache.update_last_update_resource.error");
 }
