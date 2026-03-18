@@ -25,26 +25,31 @@ Application DatasetsStatisticalResources {
     		executeRecoveryImportationAttributes(String recoveryJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the duplication task"
     		executeDuplicationTask(String duplicationJobKey, @TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
-    		"Perform the update geographical coverage cache task"
-    		executeUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
-    		"Perform the update geographical coverage cache task for external publications"
-    		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
-    		executeResendPublishedDatasetsKafkaMessageTask() throws MetamacException;
-	
+    	
     		"Perform the database dataset pooling task"
     		executeDatabaseDatasetPollingTask()  throws MetamacException;
     		"Import a set of files provided by urn as attributes in a datasetVersion"
     		importAttributesInDatasetVersion(String dataVersionUrn, @TaskInfoDataset taskInfoDataset) throws MetamacException;
 			"Schedule database dataset polling job"
 			scheduleDatabaseDatasetPollingJob();
-				
+			boolean existsGeoCacheTasksByTaskName(List<String> taskNames) throws MetamacException;
+			
+			// GEOGRAPHICAL CACHE 
+			"Perform the update geographical coverage cache task"
+    		executeUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
+    		"Perform the update geographical coverage cache task for external publications"
+    		executeUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
+    		"Perform the update geographical coverage cache for related resources task"
+    		executeUpdateGeographicalCacheRelatedResourceTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
+    		executeResendPublishedDatasetsKafkaMessageTask() throws MetamacException;
 			"Perform geographic coverage cache clear task"
     		executeGeographicCoverageCacheClearTask()  throws MetamacException;
 			"Schedule geographic coverage cache clear"
-			scheduleGeographicCoverageCacheClearJob();
-			
+			scheduleGeographicCoverageCacheClearJob();	
 			"Schedule resend published dataset kafka message job"
 			scheduleResendKafkaDatasetMessageJob();
+			executeRecoveryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource) throws MetamacException; 
+			
 			
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
@@ -70,10 +75,6 @@ Application DatasetsStatisticalResources {
 			String planifyRecoveryImportAttributes(@TaskInfoDataset taskInfoDataset, Boolean notifyToUser) throws MetamacException;
 			"Plannify a scheduled task to recovery import"
             String planifyDuplicationDataset(@TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
-			"Plannify a scheduled task to update the geographical coverage cache"
-            String planifyUpdateGeocoverageCache(@TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException;
-            "Plannify a scheduled task to update the geographical coverage cache for external datasets"
-            String planifyUpdateExternalGeocoverageCache(@TaskInfoDataset taskInfoDataset) throws MetamacException;
 			"Perform the importation task"
     		processImportationTask(String importationJobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Import a set of files provided by urn as attributes in a datasetVersion"
@@ -86,15 +87,33 @@ Application DatasetsStatisticalResources {
     		processRollbackImportationAttributesTask(String recoveryJobKey, @TaskInfoDataset taskInfoDataset);
     		"Perform the duplication task"
     		processDuplicationTask(String duplicationJobKey, @TaskInfoDataset taskInfoDataset, String newDatasetId, ListMapping datasourceMappings) throws MetamacException;
-    		"Perform the geographical coverage cache update task"
+       		"Perform the database dataset polling task"
+    		processDatabaseDatasetPollingTask() throws MetamacException;
+    		
+    		// GEOGRAPHICAL CACHE
+    		
+    		//plannify 
+    		"Plannify a scheduled task to update the geographical coverage cache"
+            String planifyUpdateGeocoverageCache(@TaskInfoDataset taskInfoDataset, boolean sendNotification) throws MetamacException;
+            "Plannify a scheduled task to update the geographical coverage cache for external datasets"
+            String planifyUpdateExternalGeocoverageCache(@TaskInfoResources taskInfoResources) throws MetamacException;
+        	"Plannify a scheduled task to update the geographical cache for a related resources"
+            String planifyUpdateGeographicalCacheRelatedResource(@TaskInfoResources taskInfoResources, boolean sendNotification) throws MetamacException;
+                		    
+            //process
+            "Perform the geographical coverage cache update task"
     		processUpdateGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
     		"Perform the geographical coverage cache update task for external datasets"
-    		processUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoDataset taskInfoDataset) throws MetamacException;
-    		"Perform the database dataset polling task"
-    		processDatabaseDatasetPollingTask() throws MetamacException;   		
+    		processUpdateExternalGeocoverageCacheTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
+    		"Perform the geographical coverage cache update task for related cache resource"
+    		processUpdateGeographicalCacheRelatedResourceTask(String jobKey, @TaskInfoResources taskInfoResource) throws MetamacException;        		
     		"Perform the geographic coverage cache clear task"
     		processGeographicCoverageCacheClearTask() throws MetamacException;
- 	 		
+    		"Perform a rollback in a importation task"
+    		processRetryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource);
+    	    		
+    		boolean existsGeoCacheTasksByTaskName(List<String> taskNames) throws MetamacException;    		
+ 		
      		"Check if exists any kind of job task in the @param resourceId"
     		boolean existsTaskForResource(String resourceId) throws MetamacException;
     
@@ -109,12 +128,15 @@ Application DatasetsStatisticalResources {
 
 			"Check if exists a update geocoverage cache job task in the @param resourceId"
 			boolean existUpdateGeocoverageCacheTaskInResource(String resourceId) throws MetamacException;
+
+			"Check if exists a update geo cache related resource job task in the @param resourceId"
+			boolean existUpdateGeoCacheRelatedResourcesTaskInResource(String resourceId) throws MetamacException;
 			
 			"Check if exists a import attributes job task in the @param resourceId"
 			boolean existsTaskImportAttributes(String resourceId) throws MetamacException;
 			
 			"Check if exists a update geocoverage cache job task for external datasets"
-			boolean existUpdateExternalGeocoverageCacheTaskInResource() throws MetamacException;
+			boolean existUpdateExternalGeocoverageCacheTaskInResource(String resourceType) throws MetamacException;
 			
 			"Check if exists an db importation job task in the @param resourceId"
     		boolean existDatabaseImportationTaskInResource(String resourceId) throws MetamacException;

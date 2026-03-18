@@ -1,8 +1,12 @@
 package org.siemac.metamac.statistical.resources.core.utils;
 
+import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnByDots;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -136,5 +140,24 @@ public class StatisticalResourcesExternalItemUtils {
         externalItemDto.setTitle(getInternationalStringDtoFromInternationalString(resource.getName()));
         externalItemDto.setManagementAppUrl(resource.getManagementAppLink());
         return externalItemDto;
+    }
+
+    public static String getCodelistFromCodeUrn(String urn) {
+        if (urn == null) {
+            return null;
+        }
+
+        // e.g.: urn:sdmx:org.sdmx.infomodel.codelist.Code=ISTAC:CL_AREA_ES70_DS_20111120(01.000).ES70 is converted to
+        // [urn:sdmx:org, sdmx, infomodel, codelist, Code=ISTAC:CL_AREA_ES70_DS_20111120(01.000), ES70]
+        // The use of LinkedList is because Arrays.asList returns a fixed-size list
+        List<String> splittedByDotUrn = new LinkedList<>(Arrays.asList(splitUrnByDots(urn)));
+
+        int lastElementIndex = splittedByDotUrn.size() - 1;
+        if (lastElementIndex >= 0) {
+            // remove the element corresponding to the code id
+            splittedByDotUrn.remove(lastElementIndex);
+        }
+
+        return String.join(".", splittedByDotUrn);
     }
 }

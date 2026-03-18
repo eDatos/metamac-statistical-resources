@@ -4,6 +4,7 @@ import org.siemac.metamac.statistical.resources.core.dto.publication.Publication
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.security.shared.SharedSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.LifecycleClientSecurityUtils;
 
 public class PublicationClientSecurityUtils extends LifecycleClientSecurityUtils {
@@ -217,6 +218,19 @@ public class PublicationClientSecurityUtils extends LifecycleClientSecurityUtils
             return false;
         }
         return SharedPublicationsSecurityUtils.canDeleteCube(getMetamacPrincipal(), getCurrentStatisticalOperationCode(), publicationProcStatus);
+    }
+
+    public static boolean canUpdateGeoCacheRelatedResource(PublicationVersionDto dto) {
+        if (!isPublished(dto.getProcStatus())) {
+            return false;
+        }
+
+        // check is the last version published
+        if (dto.getValidTo() != null) {
+            return false;
+        }
+
+        return SharedSecurityUtils.canUpdateGeoCacheRelatedResource(getMetamacPrincipal());
     }
 
 }

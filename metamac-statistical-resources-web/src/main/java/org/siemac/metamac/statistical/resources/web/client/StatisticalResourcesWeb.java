@@ -67,7 +67,8 @@ public class StatisticalResourcesWeb extends MetamacSecurityEntryPoint {
 
     @Override
     protected String[] getPropertiesToLoad() {
-        return new String[]{ConfigurationConstants.WEB_APPLICATION_PORTAL_INTERNAL_WEB_VISUALIZER, ConfigurationConstants.MAX_PERMITTED_DATASET_TO_UPDATE_IN_GROUP};
+        return new String[]{ConfigurationConstants.WEB_APPLICATION_PORTAL_INTERNAL_WEB_VISUALIZER, ConfigurationConstants.MAX_PERMITTED_DATASET_TO_UPDATE_IN_GROUP,
+                ConfigurationConstants.KAFKA_TOPIC_EXTERNAL_DATASETS, ConfigurationConstants.KAFKA_TOPIC_EXTERNAL_COLLECTION};
     }
 
     @Override
@@ -75,8 +76,12 @@ public class StatisticalResourcesWeb extends MetamacSecurityEntryPoint {
         super.setConfigurationProperties(propertyValues);
         String metamacPortalBaseUrl = propertyValues.get(ConfigurationConstants.WEB_APPLICATION_PORTAL_INTERNAL_WEB_VISUALIZER);
         String maxDatasetsInGroup = propertyValues.get(ConfigurationConstants.MAX_PERMITTED_DATASET_TO_UPDATE_IN_GROUP);
+        String externalDatasetTopicName = propertyValues.get(ConfigurationConstants.KAFKA_TOPIC_EXTERNAL_DATASETS);
+        String externalCollectionTopicName = propertyValues.get(ConfigurationConstants.KAFKA_TOPIC_EXTERNAL_COLLECTION);
         CommonUtils.setMaxNumberOfUpdatedDatasetInGroup(Integer.parseInt(maxDatasetsInGroup));
         CommonUtils.setMetamacPortalBaseUrl(metamacPortalBaseUrl);
+        CommonUtils.setExternalCollectionTopicName(externalCollectionTopicName);
+        CommonUtils.setExternalDatasetTopicName(externalDatasetTopicName);
     }
 
     public static MetamacPrincipal getCurrentUser() {

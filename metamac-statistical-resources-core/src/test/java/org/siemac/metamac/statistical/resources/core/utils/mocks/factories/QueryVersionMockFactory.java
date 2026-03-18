@@ -121,6 +121,8 @@ public class QueryVersionMockFactory extends StatisticalResourcesMockFactory<Que
 
     public static final String             QUERY_VERSION_60_MAXIMUM_MINOR_VERSION_REACHED                                                                             = "QUERY_VERSION_60_MAXIMUM_MINOR_VERSION_REACHED";
 
+    public static final String             QUERY_VERSION_FOR_CACHE_RESOURCE                                                                                           = "QUERY_VERSION_FOR_CACHE_RESOURCE";
+
     private static QueryVersionMockFactory instance                                                                                                                   = null;
 
     private QueryVersionMockFactory() {
@@ -420,6 +422,30 @@ public class QueryVersionMockFactory extends StatisticalResourcesMockFactory<Que
         StatisticalResourcesPersistedDoMocks.mockDatasetVersionCoverages(publishedVersion);
         // new dimension to make it incompatible
         publishedVersion.addDimensionsCoverage(new CodeDimension("DIM_NEW", "CODE01"));
+        StatisticalResourcesPersistedDoMocks.computeCoverageRelatedMetadata(publishedVersion);
+
+        DatasetVersion lastVersion = dataset.getVersions().get(1);
+        StatisticalResourcesPersistedDoMocks.mockDatasetVersionCoverages(lastVersion);
+        StatisticalResourcesPersistedDoMocks.computeCoverageRelatedMetadata(publishedVersion);
+
+        setQuerySelectionBasedOnDatasetVersion(queryMock, lastVersion);
+
+        QueryLifecycleTestUtils.prepareToPublished(queryMock);
+        return queryMock;
+    }
+
+    public static QueryVersion getQueryVersionForCacheResource(boolean isLastVersion) {
+
+        QueryVersionMock queryMock = buildQueryVersionMockSimple("Q01_geo_cache");
+        queryMock.getLifeCycleStatisticalResource().setValidFrom(new DateTime().plusDays(2));
+        queryMock.getLifeCycleStatisticalResource().setLastVersion(isLastVersion);
+        queryMock.setQuery(QueryMockFactory.generateQueryWithoutGeneratedVersion());
+
+        Dataset dataset = DatasetMockFactory.createPublishedAndNotVisibleVersionsForDataset(1, new DateTime().plusDays(3));
+        queryMock.setDataset(dataset);
+
+        DatasetVersion publishedVersion = dataset.getVersions().get(0);
+        StatisticalResourcesPersistedDoMocks.mockDatasetVersionCoverages(publishedVersion);
         StatisticalResourcesPersistedDoMocks.computeCoverageRelatedMetadata(publishedVersion);
 
         DatasetVersion lastVersion = dataset.getVersions().get(1);

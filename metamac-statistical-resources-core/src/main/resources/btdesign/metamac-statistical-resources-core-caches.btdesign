@@ -1,0 +1,121 @@
+import "classpath:/btdesign/metamac-statistical-resources-core-base.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-base.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-base-enums.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-publications.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-multidatasets.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-datasets.btdesign"
+
+Application CacheStatisticalResources { 
+	basePackage=unused
+
+	Module domain_cache {
+		basePackage=org.siemac.metamac.statistical.resources.core.geocache
+		
+		// ----------------------------------------------------------------
+		// 							SERVICES
+		// ----------------------------------------------------------------
+
+		
+		Service CacheService {
+			> @GeoCacheResourceRepository
+			> @GeoCacheTerritoriesByGeoCacheResourceRepository
+			> @GeoCacheByRelatedResourceRepository
+			> @GeoCacheResourcesByRelatedResourceRepository
+		
+			//CACHE RESOURCES
+			
+			"updates"
+			@GeoCacheResource updateGeoCacheExternalResource(DatasetAvro jaxiDatasetVersionAvro, @InternationalString datasetTitle)
+            List<@GeoCacheResource> updateAllGeoCacheResourcesByUrn(String resourceUrn, String resourceVersionUrn);
+            updateCollectionExternalPublicationCache(PublicationAvro jaxiPublicationVersionAvro) throws MetamacException;
+            updateDatasetExternalPublicationCache(DatasetAvro jaxiDatasetVersionAvro) throws MetamacException;
+            processGeoCacheRelatedCollection(@PublicationVersion publicationVersion, boolean isLastVersionPublished, String urn) throws MetamacException;
+            processGeoCacheRelatedMultidataset(@MultidatasetVersion multidatasetVersion, boolean isLastVersionPublished, String urn) throws MetamacException; 
+            @GeoCacheResource processUpdateGeoCacheResource(@LifeCycleStatisticalResource lifeCycleResource, String urnResource, @StatisticalResourceTypeEnum statisticalResourceTypeEnum, List<@ExternalItem> geographicCoverage,
+            boolean isLastVersionPublished) throws MetamacException;
+            updateAllGeographicExternalCoverageVariableElementsCache(List<@StatisticalResourceTypeEnum> externalResourcesToUpdate) throws MetamacException;
+                        
+            "deletes"
+            List<@GeoCacheResource> disabledResourceByUrn(String resourceUrn);
+            deleteDisabledCacheEntries();
+            deleteRelatedResourceOldVersions(String resourceUrn);
+                        
+            //retrieves
+            @GeoCacheResource retrieveGeoCacheResourceByUrn(String resourceUrn);
+            "Finds resource from cache by criteria"
+            PagedResult<@GeoCacheResource> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+            List<@GeoCacheResource> findResourcesByCondition(List<ConditionalCriteria> conditions)  throws MetamacException;
+            PagedResult<@GeoCacheByRelatedResource> findGeoRelatedResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+        
+		}
+	    
+	    	
+		// ----------------------------------------------------------------
+		// 							ENTITIES
+		// ---------------------------------------------------------------- 
+		
+	Entity GeoCacheResource {
+			databaseTable="TB_GEO_CACHE_RESOURCE"
+			hint="idSequence=GEO_CACHE_RESOURCE"
+
+			Long id not nullable key;
+			String code databaseColumn="code" not nullable;
+			String urn databaseColumn="urn" not nullable;
+			String type databaseColumn="type" not nullable;
+			- @InternationalString title cascade="all" fetch="lazy" databaseColumn="title_fk" nullable;
+			String operationCode databaseColumn="operation_code";
+			String operationUrn databaseColumn="operation_urn";
+			String htmlLink databaseColumn="htmlLink";
+			boolean isExternalSource databaseColumn="is_external_source" not nullable;
+			boolean isLastVersion databaseColumn="is_last_version" not nullable;
+			boolean isActivated databaseColumn="is_activated" not nullable;
+	
+			- Bag<@ExternalItem> territories cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_TERRITORIES_BY_GEO_CACHE_RESOURCE" databaseColumn="VARIABLE_ELEMENT_FK" databaseJoinColumn="geo_cache_resource_fk";
+	
+			"Last update to optimistic locking"
+			DateTimeTZ updateDate nullable;
+			
+			Repository GeoCacheResourceRepository {
+				save;
+				delete;	
+				deleteAll();
+				findByCondition;
+				findByCondition(PagingParameter pagingParameter);
+				disabledByResourceVersionUrn(String resourceVersionUrn);
+				@GeoCacheResource retrieveByResourceVersionUrn(String resourceVersionUrn) throws MetamacException;
+				@GeoCacheResource retrieveByResourceVersionUrn(String resourceVersionUrn, boolean filterOnlyActivated) throws MetamacException;
+			}
+		}
+	
+	Entity GeoCacheByRelatedResource {
+			databaseTable="TB_GEO_CACHE_RELATED_RESOURCE"
+			hint="idSequence=GEO_CACHE_RELATED_RESOURCE"
+			
+    		Long id not nullable key;
+			String code databaseColumn="code" not nullable;
+			String urn databaseColumn="urn" not nullable;
+			String type databaseColumn="type" not nullable;
+			- @InternationalString title cascade="all" fetch="lazy" databaseColumn="title_fk" nullable;
+			String operationCode databaseColumn="operation_code";
+			String operationUrn databaseColumn="operation_urn";
+			String htmlLink databaseColumn="htmlLink";
+			boolean isExternalSource databaseColumn="is_external_source" not nullable;
+			boolean isLastVersion databaseColumn="is_last_version" not nullable;
+			boolean isActivated databaseColumn="is_activated" not nullable;
+			
+			- Set<@GeoCacheResource> relatedResources cascade="none" fetch="lazy" databaseJoinTable="TB_GEO_CACHE_RESOURCE_BY_RELATED_RESOURCE" databaseColumn="GEO_CACHE_RESOURCE_FK" databaseJoinColumn="GEO_CACHE_RELATED_RESOURCE_FK";
+	
+			"Last update to optimistic locking"
+			DateTimeTZ updateDate nullable;
+
+    		Repository GeoCacheByRelatedResourceRepository {
+    			save;
+				delete;	
+    		    findByCondition;
+				findByCondition(PagingParameter pagingParameter);
+    			findByQuery;
+    		}	
+    	}	    
+	}
+}

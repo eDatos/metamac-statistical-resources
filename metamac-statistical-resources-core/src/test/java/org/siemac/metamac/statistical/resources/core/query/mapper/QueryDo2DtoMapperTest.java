@@ -9,7 +9,6 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_03_BASIC_ORDERED_02_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_05_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_15_PUBLISHED_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +63,7 @@ public class QueryDo2DtoMapperTest extends StatisticalResourcesBaseTest {
         expected.add(queryVersionMockFactory.retrieveMock(QUERY_VERSION_05_BASIC_NAME));
         expected.add(queryVersionMockFactory.retrieveMock(QUERY_VERSION_01_WITH_SELECTION_NAME));
 
-        List<QueryVersionBaseDto> actual = queryDo2DtoMapper.queryVersionDoListToDtoList(expected);
+        List<QueryVersionBaseDto> actual = queryDo2DtoMapper.queryVersionDoListToDtoList(getServiceContextWithoutPrincipal(), expected);
 
         assertEquals(expected.size(), actual.size());
         assertEqualsQueryVersionDoAndDtoCollection(expected, actual);

@@ -10,4 +10,9 @@
 	
 	<entry key="metamac.statistical_resources.bbbd.data_views_role">STAT_RESOURCES_DATA_ROLE_TEST</entry>
     <entry key="metamac.statistical_resources.rest.api_key">niQPxZJ656do4NhiptWLsz1DFFzyKvSAbamyrWsq8FC</entry>
+
+<entry key="metamac.statistical_resources.bbbd.data_views_role">STAT_RESOURCES_DATA_ROLE_TEST</entry>
+
+ <entry key="metamac.portal.web.external.visualizer">http://istac.es/portal-web</entry>
+
 </properties>
