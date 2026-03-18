@@ -2072,6 +2072,11 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     }
 
     @Override
+    public void testProcessDatasetVersionKafkaMessage() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
     public void testExportAttributesTsv() throws Exception {
         // no optimistic locking in this operation
     }

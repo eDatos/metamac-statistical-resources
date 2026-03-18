@@ -1201,12 +1201,17 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     @Override
-    public void testUpdateResourcesLastUpdateByDsd() throws Exception {
+    public void testUpdateDatasetVersionsLastUpdateByDsd() throws Exception {
         // NOTHING TO DO
     }
 
     @Override
-    public void testUpdateResourcesLastUpdateByOperation() throws Exception {
+    public void testUpdateDatasetVersionsLastUpdateByOperation() throws Exception {
+        // NOTHING TO DO
+    }
+
+    @Override
+    public void testUpdateQueryVersionsLastUpdateByDatasetVersion() throws Exception {
         // NOTHING TO DO
     }
 

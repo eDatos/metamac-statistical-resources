@@ -96,6 +96,8 @@ public class StreamMessagingServiceKafkaImpl<K, V extends SpecificRecordBase> im
                 return statisticalResourcesConfig.retrieveKafkaTopicCollectionPublication();
             case MULTIDATASET:
                 return "multidatasetTopic"; // TODO METAMAC-2715 - Realizar la notificación a Kafka de los recursos Multidataset
+            case QUERY:
+                return statisticalResourcesConfig.retrieveKafkaTopicQueryPublication();
             default:
                 return null;
         }

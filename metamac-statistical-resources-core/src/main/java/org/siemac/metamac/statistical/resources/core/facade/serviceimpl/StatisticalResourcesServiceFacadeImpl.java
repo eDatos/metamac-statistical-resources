@@ -133,6 +133,8 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatas
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetVersionAvro;
+import org.siemac.metamac.statistical.resources.core.stream.messages.QueryVersionAvro;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2627,7 +2629,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void processSrmDsdKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
         DataStructureDefinitionAvro dsd = (DataStructureDefinitionAvro) message;
         String dsdUrn = dsd.getUrn();
-        getDatasetService().updateResourcesLastUpdateByDsd(ctx, dsdUrn, timestamp);
+        getDatasetService().updateDatasetVersionsLastUpdateByDsd(ctx, dsdUrn, timestamp);
     }
 
 
@@ -2635,6 +2637,19 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void processOperationKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
         OperationAvro operation = (OperationAvro) message;
         String operationUrn = operation.getUrn();
-        getDatasetService().updateResourcesLastUpdateByOperation(ctx, operationUrn, timestamp);
+        getDatasetService().updateDatasetVersionsLastUpdateByOperation(ctx, operationUrn, timestamp);
+    }
+
+    @Override
+    public void processDatasetVersionKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
+        DatasetVersionAvro datasetVersion = (DatasetVersionAvro) message;
+        String datasetUrn = datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn();
+        String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource()
+                                                 .getLifecycleStatisticalResource()
+                                                 .getVersionableStatisticalResource()
+                                                 .getNameableStatisticalResource()
+                                                 .getIdentifiableStatisticalResource()
+                                                 .getUrn();
+        getDatasetService().updateQueryVersionsLastUpdateByDatasetVersion(ctx, datasetUrn, datasetVersionUrn, timestamp);
     }
 }

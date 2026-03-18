@@ -76,8 +76,9 @@ Application DatasetsStatisticalResources {
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
     		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
-    		updateResourcesLastUpdateByDsd(String dsdUrn, long timestamp) throws MetamacException;
-    		updateResourcesLastUpdateByOperation(String operationUrn, long timestamp) throws MetamacException;
+    		updateDatasetVersionsLastUpdateByDsd(String dsdUrn, long timestamp) throws MetamacException;
+    		updateDatasetVersionsLastUpdateByOperation(String operationUrn, long timestamp) throws MetamacException;
+    		updateQueryVersionsLastUpdateByDatasetVersion(String datasetUrn, String datasetVersionUrn, long timestamp) throws MetamacException;
 
     		// Datasets
     		"Finds datasets by criteria"

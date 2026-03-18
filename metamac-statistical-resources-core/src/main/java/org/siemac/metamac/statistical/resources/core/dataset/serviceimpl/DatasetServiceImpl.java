@@ -9,6 +9,7 @@ import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import es.ibestat.jaxi.stream.messages.DatasetAvro;
 import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -59,21 +60,7 @@ import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesCo
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsService;
 import org.siemac.metamac.statistical.resources.core.dataset.checks.DatasetMetadataEditionChecks;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.AttributeValue;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.CategorisationProperties;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.Dataset;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceProperties;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.*;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUpdateUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
@@ -98,20 +85,16 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateCs
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
-import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCube;
-import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCubeProperties;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetCubeRepository;
-import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
-import org.siemac.metamac.statistical.resources.core.publication.domain.CubeProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.CubeRepository;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.security.DatasetsSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingService;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
@@ -142,17 +125,7 @@ import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 import static org.siemac.metamac.core.common.util.MetamacCollectionUtils.isInCollection;
@@ -238,6 +211,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private ManipulateCsvDataService                  manipulateCsvDataService;
+
+    @Autowired
+    protected StreamMessagingService<String, SpecificRecord> messagingService;
 
     // ------------------------------------------------------------------------
     // DATASOURCES
@@ -2397,7 +2373,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void updateResourcesLastUpdateByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
+    public void updateDatasetVersionsLastUpdateByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
         log.debug("Updating datasets by DSD {}", dsdUrn);
         if (dsdUrn == null || dsdUrn.trim().isEmpty()) {
             return;
@@ -2409,11 +2385,11 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .build();
 
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        updateRelatedResources(affectedDatasets, timestamp);
+        updateDatasetsLastUpdateDate(affectedDatasets, timestamp);
     }
 
     @Override
-    public void updateResourcesLastUpdateByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
+    public void updateDatasetVersionsLastUpdateByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
         log.debug("Updating datasets by operation {}", operationUrn);
         if (operationUrn == null || operationUrn.trim().isEmpty()) {
             return;
@@ -2425,197 +2401,62 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .build();
 
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        updateRelatedResources(affectedDatasets, timestamp);
+        updateDatasetsLastUpdateDate(affectedDatasets, timestamp);
     }
 
-    private void updateRelatedResources(List<DatasetVersion> affectedDatasets, long timestamp) {
-        Set<QueryVersion> affectedQueries = getAffectedQueries(affectedDatasets);
-        Set<MultidatasetVersion> affectedMultidatasets = getAffectedMultidatasets(affectedDatasets, affectedQueries);
-        Set<PublicationVersion> affectedPublications = getAffectedPublications(affectedDatasets, affectedQueries, affectedMultidatasets);
+    private void updateDatasetsLastUpdateDate(List<DatasetVersion> affectedDatasets, long timestamp) {
         DateTime dateTime = new DateTime(timestamp);
-
-        updateDatasetsLastUpdateDateByCriteria(affectedDatasets, dateTime);
-        updateQueriesLastUpdatedDate(affectedQueries, dateTime);
-        updateMultidatasetsLastUpdatedDate(affectedMultidatasets, dateTime);
-        updatePublicationsLastUpdatedDate(affectedPublications, dateTime);
-    }
-
-    private Set<PublicationVersion> getAffectedPublications(List<DatasetVersion> affectedDatasets, Set<QueryVersion> affectedQueries, Set<MultidatasetVersion> affectedMultidatasets) {
-        Set<PublicationVersion> publications = new HashSet<>();
-        Set<Cube> cubes = new HashSet<>();
-        for (DatasetVersion datasetVersion : affectedDatasets) {
-            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
-                .withProperty(CubeProperties.dataset().id()).eq(datasetVersion.getDataset().getId())
-                .distinctRoot()
-                .build();
-
-            cubes.addAll(cubeRepository.findByCondition(cubeConditions));
-
-            log.debug("Found {} cubes linked to dataset version {}", cubes.size(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-        }
-
-        for (QueryVersion queryVersion : affectedQueries) {
-            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
-                .withProperty(CubeProperties.query().id()).eq(queryVersion.getQuery().getId())
-                .distinctRoot()
-                .build();
-
-            cubes.addAll(cubeRepository.findByCondition(cubeConditions));
-
-            log.debug("Found {} cubes linked to query version {}", cubes.size(), queryVersion.getLifeCycleStatisticalResource().getUrn());
-        }
-
-        for (MultidatasetVersion multidatasetVersion : affectedMultidatasets) {
-            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
-                .withProperty(CubeProperties.multidataset().id()).eq(multidatasetVersion.getMultidataset().getId())
-                .distinctRoot()
-                .build();
-
-            cubes.addAll(cubeRepository.findByCondition(cubeConditions));
-
-            log.debug("Found {} cubes linked to multidataset version {}", cubes.size(), multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-        }
-
-        for (Cube cube : cubes) {
-            PublicationVersion publicationVersion = cube.getElementLevel().getPublicationVersion();
-            publications.add(publicationVersion);
-            publications.addAll(getRelatedPublications(publicationVersion));
-        }
-
-        log.debug("Found {} unique publications linked to affected datasets, queries and multidatasets", publications.size());
-        return publications;
-    }
-
-    private Set<PublicationVersion> getRelatedPublications(PublicationVersion publicationVersion) {
-        Set<PublicationVersion> publications = new HashSet<>();
-        List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(Cube.class)
-            .withProperty(CubeProperties.publication().id()).eq(publicationVersion.getId())
-            .distinctRoot()
-            .build();
-
-        List<Cube> publicationCubesAssociated = cubeRepository.findByCondition(cubeConditions);
-        for (Cube relatedCube : publicationCubesAssociated) {
-            publications.add(relatedCube.getElementLevel().getPublicationVersion());
-        }
-        return publications;
-    }
-
-    private Set<MultidatasetVersion> getAffectedMultidatasets(List<DatasetVersion> affectedDatasets, Set<QueryVersion> affectedQueries) {
-        Set<MultidatasetVersion> multidatasets = new HashSet<>();
-        Set<MultidatasetCube> cubes = new HashSet<>();
-        for (DatasetVersion datasetVersion : affectedDatasets) {
-            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(MultidatasetCube.class)
-                .withProperty(MultidatasetCubeProperties.dataset().id()).eq(datasetVersion.getDataset().getId())
-                .distinctRoot()
-                .build();
-
-            cubes.addAll(multidatasetCubeRepository.findByCondition(cubeConditions));
-
-            log.debug("Found {} multidataset cubes linked to dataset version {}", cubes.size(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-        }
-
-        for (QueryVersion queryVersion : affectedQueries) {
-            List<ConditionalCriteria> cubeConditions = ConditionalCriteriaBuilder.criteriaFor(MultidatasetCube.class)
-                .withProperty(MultidatasetCubeProperties.query().id()).eq(queryVersion.getQuery().getId())
-                .distinctRoot()
-                .build();
-
-            cubes.addAll(multidatasetCubeRepository.findByCondition(cubeConditions));
-
-            log.debug("Found {} multidataset cubes linked to query version {}", cubes.size(), queryVersion.getLifeCycleStatisticalResource().getUrn());
-        }
-
-        for (MultidatasetCube cube : cubes) {
-            MultidatasetVersion multidatasetVersion = cube.getMultidatasetVersion();
-            multidatasets.add(multidatasetVersion);
-        }
-
-        log.debug("Found {} unique multidatasets linked to affected datasets and queries", multidatasets.size());
-        return multidatasets;
-    }
-
-    private Set<QueryVersion> getAffectedQueries(List<DatasetVersion> affectedDatasets) {
-        Set<QueryVersion> allQueries = new HashSet<>();
-        for (DatasetVersion datasetVersion : affectedDatasets) {
-            List<QueryVersion> queriesLinkedToDatasetVersion = queryVersionRepository.findLinkedToFixedDatasetVersion(datasetVersion.getId());
-            List<QueryVersion> queriesLinkedToDataset = queryVersionRepository.findLinkedToDataset(datasetVersion.getDataset().getId());
-
-            allQueries.addAll(queriesLinkedToDatasetVersion);
-            allQueries.addAll(queriesLinkedToDataset);
-
-            log.debug("Found {} queries linked to dataset version {} and {} queries linked to dataset {}",
-                    new Object[]{queriesLinkedToDatasetVersion.size(), datasetVersion.getSiemacMetadataStatisticalResource().getUrn(),
-                            queriesLinkedToDataset.size(), datasetVersion.getDataset().getIdentifiableStatisticalResource().getUrn()});
-        }
-
-        log.debug("Found {} unique queries linked to affected datasets", allQueries.size());
-        return allQueries;
-    }
-
-    private void updateDatasetsLastUpdateDateByCriteria(List<DatasetVersion> affectedDatasets, DateTime dateTime) {
         int updatedCount = 0;
         for (DatasetVersion dataset : affectedDatasets) {
             try {
-                dataset.getSiemacMetadataStatisticalResource().setLastUpdated(dateTime);
+                dataset.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
+                dataset.getLifeCycleStatisticalResource().setLastUpdatedBy("system");
                 log.debug("Updating dataset {}", dataset.getSiemacMetadataStatisticalResource().getUrn());
                 datasetVersionRepository.save(dataset);
+                messagingService.sendMessage(dataset);
                 updatedCount++;
             } catch (Exception e) {
                 log.error("Failed to update dataset: {}", dataset.getSiemacMetadataStatisticalResource().getUrn(), e);
             }
         }
-
         log.info("Updated {} of {} datasets to {}", new Object[]{updatedCount, affectedDatasets.size(), dateTime.toDateTimeISO()});
     }
 
-    private void updateQueriesLastUpdatedDate(Set<QueryVersion> affectedQueries, DateTime dateTime) {
+    @Override
+    public void updateQueryVersionsLastUpdateByDatasetVersion(ServiceContext ctx, String datasetUrn, String datasetVersionUrn, long timestamp) {
+        log.debug("Updating queries by dataset {}", datasetVersionUrn);
+        if (datasetVersionUrn == null || datasetVersionUrn.trim().isEmpty()) {
+            return;
+        }
+
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class)
+            .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn)
+            .or()
+            .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn)
+            .distinctRoot()
+            .build();
+
+        List<QueryVersion> affectedQueries = queryVersionRepository.findByCondition(conditions);
+        updateQueriesLastUpdatedDate(affectedQueries, timestamp);
+    }
+
+    private void updateQueriesLastUpdatedDate(List<QueryVersion> affectedQueries, long timestamp) {
+        DateTime dateTime = new DateTime(timestamp);
         int updatedQueryCount = 0;
         for (QueryVersion queryVersion : affectedQueries) {
             try {
                 queryVersion.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
+                queryVersion.getLifeCycleStatisticalResource().setLastUpdatedBy("system");
                 log.debug("Updating query {} linked to dataset {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), dateTime);
                 queryVersionRepository.save(queryVersion);
+                messagingService.sendMessage(queryVersion);
                 updatedQueryCount++;
             } catch (Exception e) {
+
                 log.error("Failed to update query: {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), e);
             }
         }
-        log.info("Updated {} of {} queries to {}",
-                 new Object[]{updatedQueryCount, affectedQueries.size(), dateTime.toDateTimeISO()});
-    }
-
-    private void updateMultidatasetsLastUpdatedDate(Set<MultidatasetVersion> affectedMultidatasets, DateTime dateTime) {
-        int updatedMultidatasetCount = 0;
-
-        for (MultidatasetVersion multidatasetVersion : affectedMultidatasets) {
-            try {
-                multidatasetVersion.getSiemacMetadataStatisticalResource().setLastUpdate(dateTime);
-                log.debug("Updating multidataset {}", multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-                multidatasetVersionRepository.save(multidatasetVersion);
-                updatedMultidatasetCount++;
-            } catch (Exception e) {
-                log.error("Failed to update multidataset: {}", multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn(), e);
-            }
-        }
-
-        log.info("Updated {} of {} multidatasets to {}",
-                 new Object[]{updatedMultidatasetCount, affectedMultidatasets.size(), dateTime.toDateTimeISO()});
-    }
-
-    private void updatePublicationsLastUpdatedDate(Set<PublicationVersion> affectedPublications, DateTime dateTime) {
-        int updatedPublicationCount = 0;
-        for (PublicationVersion publicationVersion : affectedPublications) {
-            try {
-                publicationVersion.getSiemacMetadataStatisticalResource().setLastUpdate(dateTime);
-                log.debug("Updating publication {} linked to resource", publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
-                publicationVersionRepository.save(publicationVersion);
-                updatedPublicationCount++;
-            } catch (Exception e) {
-                log.error("Failed to update publication: {}", publicationVersion.getSiemacMetadataStatisticalResource().getUrn(), e);
-            }
-        }
-
-        log.info("Updated {} of {} publications linked to updated datasets to {}", new Object[]{updatedPublicationCount, affectedPublications.size(), dateTime.toDateTimeISO()});
+        log.info("Updated {} of {} queries to {}", new Object[]{updatedQueryCount, affectedQueries.size(), dateTime.toDateTimeISO()});
     }
 
     @Override
