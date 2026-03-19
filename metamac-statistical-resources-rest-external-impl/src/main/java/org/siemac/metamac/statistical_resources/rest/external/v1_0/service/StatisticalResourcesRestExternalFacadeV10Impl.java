@@ -431,7 +431,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    @CacheableMethod(PublicationVersion.class)
     public Collection retrieveCollection(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             PublicationVersion publicationVersion = commonService.retrievePublicationVersion(agencyID, resourceID);
@@ -509,7 +508,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
-    @CacheableMethod(MultidatasetVersion.class)
     public Multidataset retrieveMultidataset(String agencyID, String resourceID, List<String> lang, String fields) {
         try {
             MultidatasetVersion multidatasetVersion = commonService.retrieveMultidatasetVersion(agencyID, resourceID);
