@@ -2361,6 +2361,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             try {
                 dataset.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
                 dataset.getLifeCycleStatisticalResource().setLastUpdatedBy("system");
+                dataset.setPatch(dataset.getPatch() + 1);
                 log.debug("Updating dataset {}", dataset.getSiemacMetadataStatisticalResource().getUrn());
                 datasetVersionRepository.save(dataset);
                 messagingService.sendMessage(dataset);

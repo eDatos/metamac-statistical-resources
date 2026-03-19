@@ -27,6 +27,15 @@ El script se encuentra en la carpeta [etc/changes-from-release/10.23.0/db/geogra
 * Desde ibestat se debe lanzar la actualización masiva de colecciones de JAXI. 
 - Ibestat lanzará el envío masivo de colecciones de JAXI después de la subida (no necesariamente el mismo día)
 
+* Se ha añadido la columna `PATCH` a la tabla `TB_DATASETS_VERSIONS`. Ejecutar el script de migración:
+  `etc/changes-from-release/10.23.0/db/statistical-resources/20260319_add_patch_column_to_datasets_versions.sql`
+
+* Se debe resetear el schema registry para el topic `DATASET_PUBLICATIONS` debido a que se ha modificado el schema Avro:
+  ```shell
+  curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+  ```
+* Se han de borrar los mensajes existentes en el topic `DATASET_PUBLICATIONS` (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
+
 ## 10.19.0 a 10.20.0
 
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
