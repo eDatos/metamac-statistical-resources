@@ -11,7 +11,7 @@
 ## 10.23.0 a 10.23.1-SNAPSHOT
 * **BREAKING CHANGE.** Se elimina la tabla caché actual y se añade un nuevo modelo de datos de caché. La salida de la API de los recursos para eTerritorios cambia por completo para ahora devolver colecciones y sus recursos asociados. ATENCIÓN! Esta subida debe ir conjunta con los cambios en eTerritorios así como los cambios realizados desde IBESTAT (izertis) en la que envián las colecciones de JAXI a un nuevo topic de kafka y exponen un endpoint para devolvernos la estructura de árbol de cada colección (capítulos...)
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.23.0/db] 
-**Atención!!** No ejecutar el script que se encuentra dentro de la carpeta "geographical-cache-migration" en este momento.
+**Atención!!** No ejecutar el script que se encuentra dentro de la carpeta "geographical-cache-migration" a la vez que los demás, antes del despliegue. En su lugar, debe ejecutarse una vez se ha desplegado con éxito la aplicación.
 
 * Se añade nuevo topic JAXI_COLLECTIONS_PUBLICATIONS para recibir los mensajes con los metadatos de publicaciones (colecciones) de JAXI. El schema-registry se ha guardado en la siguiente ruta [etc/kafka/JAXI_COLLECTIONS_PUBLICATIONS-value.json] No es necesario crearlo manualmente. Al llegar el primer mensaje al topic se crea automáticamente.
 
