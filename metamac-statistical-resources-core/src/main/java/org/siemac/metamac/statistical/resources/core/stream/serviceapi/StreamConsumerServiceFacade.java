@@ -6,5 +6,6 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 public interface StreamConsumerServiceFacade {
 
     public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx) throws MetamacException;
+    public void updateGeographicalCacheExternalCollections(ServiceContext ctx) throws MetamacException;
 
 }

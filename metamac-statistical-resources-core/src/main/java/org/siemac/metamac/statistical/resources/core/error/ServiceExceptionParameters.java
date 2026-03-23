@@ -42,7 +42,6 @@ public class ServiceExceptionParameters extends ServiceExceptionBaseParameters {
     public static final String       CUBE_URL                                 = "parameter.resources.cube_url";
     public static final String       STRUCTURE_FILE_URL                       = "parameter.resources.structure_file_url";
     public static final String       STRUCTURE_FILE_LANGUAGE                  = "parameter.resources.structure_file_language";
-    
 
     // Query
     public static final String       QUERY_URN                                = "parameter.resources.query_urn";
@@ -62,7 +61,7 @@ public class ServiceExceptionParameters extends ServiceExceptionBaseParameters {
     public static final String       TASK_INFO_DATASET_FILES                  = "parameter.resources.files";
     public static final String       TASK_DATASOURCE_ID                       = "parameter.resources.datasource_id";
     public static final String       TASK                                     = "parameter.resources.task";
-    public static final String       TASK_DATASET_JOB_KEY                     = "parameter.resources.job_key";
+    public static final String       TASK_RESOURCES_JOB_KEY                   = "parameter.resources.job_key";
     public static final String       NOTIFY_TO_USER                           = "parameter.resources.notify_to_user";
 
     // Files

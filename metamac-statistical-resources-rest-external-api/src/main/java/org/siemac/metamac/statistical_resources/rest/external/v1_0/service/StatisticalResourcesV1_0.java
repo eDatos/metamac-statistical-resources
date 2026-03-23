@@ -162,7 +162,7 @@ public interface StatisticalResourcesV1_0 {
     @Produces({"application/xml", "application/json"})
     @Path("resources")
     Resources findResources(@QueryParam("query") String query, @QueryParam("orderBy") String orderBy, @QueryParam("limit") String limit, @QueryParam("offset") String offset,
-            @QueryParam("lang") List<String> lang);
+            @QueryParam("lang") List<String> lang, @QueryParam("fields") String fields);
 
     @HEAD
     @Path("datasets/{agencyID}/{resourceID}/{version}")

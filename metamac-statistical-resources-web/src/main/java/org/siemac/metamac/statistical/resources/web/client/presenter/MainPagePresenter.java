@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
 import org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb;
 import org.siemac.metamac.statistical.resources.web.client.enums.StatisticalResourcesToolStripButtonEnum;
@@ -260,24 +261,25 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
     }
 
     @Override
-    public void updateGeographicCoverageVariableElementsCache() {
+    public void updateGeographicCoverageVariableElementsCache(List<StatisticalResourceTypeEnum> resourcesToUpdate, List<StatisticalResourceTypeEnum> externalResourcesToUpdate) {
         final InformationWindow informationWindow = getView().showInformationMessage(StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCache(),
                 StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCacheInProgress());
-        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction.Builder().build(), new AsyncCallback<UpdateGeographicCoverageVariableElementsCacheResult>() {
+        dispatcher.execute(new UpdateGeographicCoverageVariableElementsCacheAction.Builder(resourcesToUpdate, externalResourcesToUpdate).build(),
+                new AsyncCallback<UpdateGeographicCoverageVariableElementsCacheResult>() {
 
-            @Override
-            public void onFailure(Throwable caught) {
-                logger.log(Level.WARNING, "Could not update geographic coverage variable elements cache", caught);
-                informationWindow.hide();
-                ShowMessageEvent.fireErrorMessage(MainPagePresenter.this, caught);
-            }
+                    @Override
+                    public void onFailure(Throwable caught) {
+                        logger.log(Level.WARNING, "Could not update geographic coverage variable elements cache", caught);
+                        informationWindow.hide();
+                        ShowMessageEvent.fireErrorMessage(MainPagePresenter.this, caught);
+                    }
 
-            @Override
-            public void onSuccess(UpdateGeographicCoverageVariableElementsCacheResult result) {
-                logger.log(Level.INFO, "Update of geographic coverage variable elements cache successful");
-                ShowMessageEvent.fireSuccessMessage(MainPagePresenter.this, StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCacheSuccessful());
-            }
-        });
+                    @Override
+                    public void onSuccess(UpdateGeographicCoverageVariableElementsCacheResult result) {
+                        logger.log(Level.INFO, "Update of geographic coverage variable elements cache successful");
+                        ShowMessageEvent.fireSuccessMessage(MainPagePresenter.this, StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCacheSuccessful());
+                    }
+                });
     }
 
     private void hideMessages() {

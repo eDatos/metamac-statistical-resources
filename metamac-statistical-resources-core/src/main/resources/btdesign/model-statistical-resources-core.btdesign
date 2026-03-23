@@ -24,6 +24,8 @@ import "classpath:/btdesign/metamac-statistical-resources-core-multidatasets-dto
 import "classpath:/btdesign/metamac-statistical-resources-core-constraints-enums.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-constraints-dtos.btdesign"
 
+import "classpath:/btdesign/metamac-statistical-resources-core-caches.btdesign"
+
 import "classpath:/btdesign/metamac-statistical-resources-core-facades.btdesign"
 
 Application StatisticalResources {

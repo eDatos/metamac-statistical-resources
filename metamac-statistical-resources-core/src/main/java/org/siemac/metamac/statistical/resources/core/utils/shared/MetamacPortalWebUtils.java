@@ -38,6 +38,27 @@ public class MetamacPortalWebUtils {
         return builder.toString();
     }
 
+    public static String buildResourceUrlByType(StatisticalResourceTypeEnum type, String maintainerCode, String code, String version, String urlBase) throws IllegalArgumentException {
+        String result;
+        switch (type) {
+            case DATASET:
+                result = buildDatasetVersionUrl(maintainerCode, code, version, urlBase);
+                break;
+            case QUERY:
+                result = buildQueryVersionUrl(maintainerCode, code, urlBase);
+                break;
+            case MULTIDATASET:
+                result = buildMultidatasetVersionUrl(maintainerCode, code, urlBase);
+                break;
+            case COLLECTION:
+                result = buildPublicationVersionUrl(maintainerCode, code, urlBase);
+                break;
+            default:
+                throw new IllegalArgumentException("StatisticalResourceTypeEnum " + type + " not valid.");
+        }
+        return result;
+    }
+
     public static String buildDatasetVersionUrl(String maintainerCode, String code, String version, String urlBase) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         builder.append(buildEndpointUrl(urlBase));

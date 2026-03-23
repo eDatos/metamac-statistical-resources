@@ -2326,11 +2326,6 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         // no test
     }
 
-    @Override
-    public void testUpdateGeographicCoverageExternalPublicationVariableElementsCache() throws Exception {
-        // no test
-    }
-
     // ------------------------------------------------------------------------
     // CATEGORISATIONS
     // ------------------------------------------------------------------------
@@ -4350,6 +4345,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     @Override
     public void testResendPublishedQueryVersionXMessage() throws Exception {
         // // Without test in facade
+    }
+
+@Override
+     public void testUpdateGeoCacheRelatedResource() throws Exception {
+        // // Without test in facade
 
     }
 
@@ -4357,6 +4357,11 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     public void testProcessSrmResourcesKafkaMessage() throws Exception {
         // // Without test in facade
 
+    }
+
+    @Override
+    public void testUpdateGeographicCoverageExternalPublicationCache() throws Exception {
+        // // Without test in facade
     }
 
     @Override

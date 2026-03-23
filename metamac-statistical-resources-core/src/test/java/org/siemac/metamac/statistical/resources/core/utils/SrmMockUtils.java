@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
+import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.rest.common.v1_0.domain.InternationalString;
 import org.siemac.metamac.rest.common.v1_0.domain.LocalisedString;
 import org.siemac.metamac.rest.common.v1_0.domain.ResourceLink;
@@ -38,6 +39,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TimeDim
 public class SrmMockUtils {
 
     private static final String DEFAULT_LOCALE = "es";
+    private static final String URN_PREFIX     = "urn:uuid:";
 
     // -------------------------------------------------------------------------------------
     // COMMON
@@ -169,18 +171,23 @@ public class SrmMockUtils {
     public static CodeResourceInternal buildCode(String id, String name, String lang, String variableElementCode) {
         CodeResourceInternal code = new CodeResourceInternal();
         code.setId(id);
-        code.setUrn("urn:uuid:" + id);
+        code.setUrn(URN_PREFIX + id);
         code.setUrnProvider("urn:uuid:provider:" + id);
         code.setSelfLink(buildResourceLink(TypeExternalArtefactsEnum.CODE));
         code.setName(buildInternationalStringResource(name, lang));
         code.setKind(TypeExternalArtefactsEnum.CODE.getValue());
-        code.setVariableElement(buildVariableElementRef(variableElementCode));
+        code.setVariableElement(buildVariableElementRef(variableElementCode, "variableX", lang));
         return code;
     }
 
-    public static ResourceInternal buildVariableElementRef(String codeId) {
+    public static ResourceInternal buildVariableElementRef(String codeId, String variableId, String lang) {
         ResourceInternal ref = new ResourceInternal();
         ref.setId(codeId);
+        ref.setUrn(GeneratorUrnUtils.generateSiemacStructuralResourcesVariableElementUrn(variableId, codeId));
+        ref.setKind(TypeExternalArtefactsEnum.VARIABLE_ELEMENT.getValue());
+        ref.setManagementAppLink("http://srm/variableElement/" + codeId);
+        ref.setSelfLink(buildResourceLink(TypeExternalArtefactsEnum.VARIABLE_ELEMENT));
+        ref.setName(buildInternationalStringResource("name_" + codeId, lang));
         return ref;
     }
 

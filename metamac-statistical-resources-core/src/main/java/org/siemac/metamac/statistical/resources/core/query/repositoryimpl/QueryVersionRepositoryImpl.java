@@ -112,6 +112,14 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
     }
 
     @Override
+    public List<QueryVersion> findQueriesPublishedLinkedToDataset(String datasetUrn) {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn())
+                .eq(datasetUrn).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).and()
+                .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().lastVersion()).eq(Boolean.TRUE).build();
+        return findByCondition(conditions);
+    }
+
+    @Override
     public List<RelatedResourceResult> retrieveIsPartOf(QueryVersion queryVersion) throws MetamacException {
         return retrieveIsPartOf(queryVersion, false);
     }

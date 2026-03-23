@@ -81,6 +81,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
@@ -328,7 +329,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Transform
         List<QueryVersionBaseDto> queries = new ArrayList<QueryVersionBaseDto>();
         for (QueryVersion version : queryVersions) {
-            queries.add(queryDo2DtoMapper.queryVersionDoToBaseDto(version));
+            queries.add(queryDo2DtoMapper.queryVersionDoToBaseDto(ctx, version));
         }
         return queries;
     }
@@ -371,7 +372,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         List<QueryVersion> queryVersions = getQueryService().retrieveQueryVersions(ctx);
 
         // Transform
-        List<QueryVersionBaseDto> queriesDto = queryDo2DtoMapper.queryVersionDoListToDtoList(queryVersions);
+        List<QueryVersionBaseDto> queriesDto = queryDo2DtoMapper.queryVersionDoListToDtoList(ctx, queryVersions);
 
         return queriesDto;
     }
@@ -424,7 +425,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         PagedResult<QueryVersion> result = getQueryService().findQueryVersionsByCondition(ctx, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
         // Transform
-        MetamacCriteriaResult<QueryVersionBaseDto> metamacCriteriaResult = queryVersionSculptorCriteria2MetamacCriteriaMapper.pageResultToMetamacCriteriaResultQuery(result,
+        MetamacCriteriaResult<QueryVersionBaseDto> metamacCriteriaResult = queryVersionSculptorCriteria2MetamacCriteriaMapper.pageResultToMetamacCriteriaResultQuery(ctx, result,
                 sculptorCriteria.getPageSize());
 
         return metamacCriteriaResult;
@@ -471,7 +472,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         QueryVersion queryVersion = queryLifecycleService.sendToProductionValidation(ctx, queryVersionDto.getUrn());
 
         // Transform
-        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(queryVersion);
+        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(ctx, queryVersion);
 
         return queryVersionDto;
     }
@@ -505,7 +506,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         QueryVersion queryVersion = queryLifecycleService.sendToDiffusionValidation(ctx, queryVersionDto.getUrn());
 
         // Transform
-        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(queryVersion);
+        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(ctx, queryVersion);
 
         return queryVersionDto;
     }
@@ -539,7 +540,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         QueryVersion queryVersion = queryLifecycleService.sendToValidationRejected(ctx, queryVersionDto.getUrn());
 
         // Transform
-        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(queryVersion);
+        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(ctx, queryVersion);
 
         return queryVersionDto;
     }
@@ -573,7 +574,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         QueryVersion queryVersion = queryLifecycleService.sendToPublished(ctx, queryVersionDto.getUrn());
 
         // Transform
-        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(queryVersion);
+        queryVersionDto = queryDo2DtoMapper.queryVersionDoToBaseDto(ctx, queryVersion);
 
         return queryVersionDto;
     }
@@ -591,7 +592,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         queryLifecycleService.sendNewVersionPublishedStreamMessageByResource(ctx, queryVersion);
 
         // Transform
-        return queryDo2DtoMapper.queryVersionDoToBaseDto(queryVersion);
+        return queryDo2DtoMapper.queryVersionDoToBaseDto(ctx, queryVersion);
     }
 
     @Override
@@ -622,7 +623,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         QueryVersion queryVersion = queryLifecycleService.versioning(ctx, queryVersionDto.getUrn(), versionType);
 
         // Transform
-        return queryDo2DtoMapper.queryVersionDoToBaseDto(queryVersion);
+        return queryDo2DtoMapper.queryVersionDoToBaseDto(ctx, queryVersion);
     }
 
     // ------------------------------------------------------------------------
@@ -1332,31 +1333,52 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
+    public void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx, List<StatisticalResourceTypeEnum> resourcesToUpdate, List<StatisticalResourceTypeEnum> externalResourcesToUpdate)
+            throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
         logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
 
-        // Operate
-        getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+        updateAllGeographicCoverageVariableElementsCache(ctx, resourcesToUpdate);
 
         logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - existing dataset : {} ", new DateTime());
 
-        logger.info("Execution start - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+        getCacheService().updateAllGeographicExternalCoverageVariableElementsCache(ctx, externalResourcesToUpdate);
+    }
 
-        getDatasetService().updateAllGeographicExternalCoverageVariableElementsCache(ctx);
+    private void updateAllGeographicCoverageVariableElementsCache(ServiceContext ctx, List<StatisticalResourceTypeEnum> resourcesToUpdate) throws MetamacException {
 
-        logger.info("Execution end - updateAllGeographicCoverageVariableElementsCache - jaxi dataset : {} ", new DateTime());
+        boolean mustWait = resourcesToUpdate.contains(StatisticalResourceTypeEnum.DATASET) || resourcesToUpdate.contains(StatisticalResourceTypeEnum.QUERY);
 
+        for (StatisticalResourceTypeEnum resourceType : resourcesToUpdate) {
+            switch (resourceType) {
+                case DATASET:
+                    getDatasetService().updateAllGeographicCoverageVariableElementsCache(ctx);
+                    break;
+                case QUERY:
+                    getQueryService().updateAllGeographicalCache(ctx);
+                    break;
+                case MULTIDATASET:
+                    getMultidatasetService().updateAllGeographicalCache(ctx, mustWait);
+                    break;
+                case COLLECTION:
+                    mustWait = mustWait || resourcesToUpdate.contains(StatisticalResourceTypeEnum.MULTIDATASET);
+                    getPublicationService().updateAllGeographicalCache(ctx, mustWait);
+                    break;
+                default:
+                    throw MetamacExceptionBuilder.builder().withPrincipalException(new MetamacExceptionItem(ServiceExceptionType.UPDATE_GEOCOVERAGE_CACHE_RESOURCE_NOT_FOUND, resourceType.getName()))
+                            .build();
+            }
+        }
     }
 
     @Override
-    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+    public void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
 
-        getDatasetService().updateGeographicCoverageExternalPublicationVariableElementsCache(ctx, message);
+        getDatasetService().updateGeographicCoverageExternalPublicationCache(ctx, message);
     }
 
     private DsdAttribute getDatasetVersionAttribute(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
@@ -1365,6 +1387,25 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DataStructure dsd = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
 
         return DsdProcessor.getAttribute(dsd, attributeId);
+    }
+
+    @Override
+    public void updateGeoCacheRelatedResource(ServiceContext ctx, String resourceUrn, StatisticalResourceTypeEnum resourceType) throws MetamacException {
+
+        // Security
+        DatasetsSecurityUtils.canUpdateGeoCacheRelatedResource(ctx);
+
+        if (StatisticalResourceTypeEnum.COLLECTION.equals(resourceType)) {
+            PublicationVersion publicationVersion = getPublicationService().retrievePublicationVersionByUrn(ctx, resourceUrn);
+            getPublicationService().updateGeographicalCache(ctx, publicationVersion);
+        } else if (StatisticalResourceTypeEnum.MULTIDATASET.equals(resourceType)) {
+            MultidatasetVersion multidatasetVersion = getMultidatasetService().retrieveMultidatasetVersionByUrn(ctx, resourceUrn);
+            getMultidatasetService().updateGeographicalCache(ctx, multidatasetVersion);
+        } else if (StatisticalResourceTypeEnum.QUERY.equals(resourceType)) {
+            QueryVersion queryVersion = getQueryService().retrieveQueryVersionByUrn(ctx, resourceUrn);
+
+            this.getQueryService().updateGeographicalCache(ctx, queryVersion);
+        }
     }
 
     @Override

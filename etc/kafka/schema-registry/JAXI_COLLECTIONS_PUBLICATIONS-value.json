@@ -1,0 +1,207 @@
+{
+  "type": "record",
+  "name": "PublicationAvro",
+  "namespace": "es.ibestat.jaxi.stream.messages",
+  "fields": [
+    {
+      "name": "code",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "urn",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "statisticalOperation",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "ExternalItemAvro",
+          "fields": [
+            {
+              "name": "code",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "codeNested",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "urn",
+              "type": [
+                "null",
+                "string"
+              ]
+            },
+            {
+              "name": "type",
+              "type": [
+                "null",
+                {
+                  "type": "enum",
+                  "name": "TypeExternalArtefactsEnumAvro",
+                  "symbols": [
+                    "CATEGORY",
+                    "CATEGORY_SCHEME",
+                    "CODELIST",
+                    "CODE",
+                    "CONCEPT_SCHEME",
+                    "CONCEPT",
+                    "DIMENSION",
+                    "STATISTICAL_OPERATION",
+                    "VARIABLE_ELEMENT",
+					"DATASET"
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "title",
+              "type": [
+                "null",
+                {
+                  "type": "record",
+                  "name": "InternationalStringAvro",
+                  "fields": [
+                    {
+                      "name": "localisedStrings",
+                      "type": [
+                        "null",
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "record",
+                            "name": "InternationalStringItemAvro",
+                            "fields": [
+                              {
+                                "name": "locale",
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              },
+                              {
+                                "name": "label",
+                                "type": [
+                                  "null",
+                                  "string"
+                                ]
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "title",
+      "type": [
+        "null",
+        "InternationalStringAvro"
+      ]
+    },
+    {
+      "name": "titleAlternative",
+      "type": [
+        "null",
+        "InternationalStringAvro"
+      ]
+    },
+    {
+      "name": "publicationDate",
+      "type": [
+        "null",
+        {
+          "type": "record",
+          "name": "DatetimeAvro",
+          "fields": [
+            {
+              "name": "instant",
+              "type": "long"
+            },
+            {
+              "name": "timezone",
+              "type": [
+                "null",
+                "string"
+              ],
+              "default": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "archivationDate",
+      "type": [
+        "null",
+        "DatetimeAvro"
+      ]
+    },
+    {
+      "name": "lastVersion",
+      "type": [
+        "null",
+        "boolean"
+      ]
+    },
+    {
+      "name": "procStatus",
+      "type": [
+        "null",
+        {
+          "type": "enum",
+          "name": "ProcStatusEnumAvro",
+          "symbols": [
+            "PUBLISHED",
+            "ARCHIVED"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "resources",
+      "type": [
+        "null",
+        {
+          "type": "array",
+          "items": "ExternalItemAvro"
+        }
+      ]
+    },
+    {
+      "name": "htmlLink",
+      "type": [
+        "null",
+        "string"
+      ]
+    },
+    {
+      "name": "jsonLink",
+      "type": [
+        "null",
+        "string"
+      ]
+    }
+  ]
+}

@@ -273,6 +273,15 @@ public class MultidatasetMetadataTabViewImpl extends StatisticalResourceMetadata
                 getUiHandlers().previewData(multidatasetVersionDto);
             }
         });
+
+        mainFormLayout.getUpdateGeoCacheRelatedResource().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                getUiHandlers().updateGeoCacheRelatedResources(multidatasetVersionDto);
+            }
+        });
+
     }
 
     private void createViewForm() {

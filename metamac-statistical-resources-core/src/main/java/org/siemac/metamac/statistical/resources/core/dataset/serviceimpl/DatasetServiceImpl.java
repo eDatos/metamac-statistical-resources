@@ -82,8 +82,6 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasourceProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.GeoCovVarElementCacheDatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.validators.DatasetServiceInvocationValidator;
@@ -100,6 +98,7 @@ import org.siemac.metamac.statistical.resources.core.enume.utils.NextVersionType
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
+import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
@@ -119,7 +118,6 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
-import org.siemac.metamac.statistical.resources.core.task.utils.JobUtil;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesCollectionUtils;
@@ -147,7 +145,7 @@ import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 import es.ibestat.jaxi.stream.messages.DatasetAvro;
-import es.ibestat.jaxi.stream.messages.ProcStatusEnumAvro;
+import es.ibestat.jaxi.stream.messages.PublicationAvro;
 
 /**
  * Implementation of DatasetService.
@@ -210,10 +208,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private PlatformTransactionManager                platformTransactionManager;
 
     @Autowired
-    GeoCovVarElementCacheDatasetVersionRepository     geoCovVarElementCacheDatasetVersionRepository;
+    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade          datasetRepositoriesServiceFacade;
+    CacheService                                      cacheService;
 
     @Autowired
     private ManipulateCsvDataService                  manipulateCsvDataService;
@@ -737,20 +735,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         PagedResult<DatasetVersion> datasetVersionPagedResult = getDatasetVersionRepository().findByCondition(conditions, pagingParameter);
         return datasetVersionPagedResult;
-    }
-
-    @Override
-    public PagedResult<GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(ServiceContext ctx, List<ConditionalCriteria> conditions, PagingParameter pagingParameter)
-            throws MetamacException {
-        // Validations
-        datasetServiceInvocationValidator.checkFindResourcesByCondition(ctx, conditions, pagingParameter);
-
-        // Find
-        conditions = CriteriaUtils.initConditions(conditions, DatasetVersion.class);
-        pagingParameter = CriteriaUtils.initPagingParameter(pagingParameter);
-
-        return geoCovVarElementCacheDatasetVersionRepository.findByCondition(conditions, pagingParameter);
-
     }
 
     @Override
@@ -1507,7 +1491,13 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateGeographicCoverageFromSpatialAttribute(ServiceContext ctx, DatasetVersion datasetVersion) throws MetamacException {
-        DsdAttribute spatialAttribute = DsdProcessor.getSpatialAttributeFromDsd(srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn()));
+        DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
+        DsdAttribute spatialAttribute = DsdProcessor.getSpatialAttributeFromDsd(dataStructure);
+
+        if (spatialAttribute == null) {
+            return;
+        }
+
         AttributeValue spatialAttributeValue = getSpatialAttributeValueFromDsdAttribute(datasetVersion, spatialAttribute);
 
         if (spatialAttributeValue != null) {
@@ -1522,6 +1512,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     }
                 }
             }
+        } else {
+            List<ExternalItem> codeItems = processExternalItemsCodeFromSpatialAttribute(datasetVersion, spatialAttribute);
+            datasetVersion.getGeographicCoverage().clear();
+            datasetVersion.getGeographicCoverage().addAll(codeItems);
         }
     }
 
@@ -1543,74 +1537,28 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         updateAllGeocoverageCache(ctx, datasetVersions);
     }
 
-    @Override
-    public void updateAllGeographicExternalCoverageVariableElementsCache(ServiceContext ctx) throws MetamacException {
-        datasetServiceInvocationValidator.checkUpdateAllGeographicCoverageVariableElementsCache(ctx);
-
-        updateAllExternalGeocoverageCache(ctx);
-    }
-
-    private void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+    private void updateGeographicCoverageExternalPublicationCacheByResource(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
         // Security
         DatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(ctx);
-        List<MetamacExceptionItem> exceptionItems = new ArrayList<MetamacExceptionItem>();
-        DatasetAvro jaxiDatasetVersionAvro = null;
+
         if (message instanceof DatasetAvro) {
-            jaxiDatasetVersionAvro = (DatasetAvro) message;
-        }
-
-        geoCovVarElementCacheDatasetVersionRepository.disabledByDatasetVersionUrn(jaxiDatasetVersionAvro.getUrn());
-        if (ProcStatusEnumAvro.PUBLISHED.equals(jaxiDatasetVersionAvro.getProcStatus())) {
-            List<ExternalItem> externalItemGeographicCoverage = restMapper.buildExternalItemFromJaxiExternalPublication(jaxiDatasetVersionAvro, srmRestInternalService, noticesRestInternalService,
-                    exceptionItems);
-            if (exceptionItems.isEmpty()) {
-                InternationalString datasetTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getTitle());
-                InternationalString operationTitle = restMapper.getInternationalStringFromInternationalStringAvro(jaxiDatasetVersionAvro.getStatisticalOperation().getTitle());
-
-                for (ExternalItem variableElement : externalItemGeographicCoverage) {
-                    GeoCovVarElementCacheDatasetVersion result = updateGeographicCoverageVariableElementsCache(jaxiDatasetVersionAvro, datasetTitle, operationTitle, variableElement);
-                    if (datasetTitle.getId() == null) {
-                        datasetTitle = result.getTitle();
-                        operationTitle = result.getOperationTitle();
-                    }
-                }
-            } else {
-                MetamacException metamacException = new MetamacException();
-                metamacException.getExceptionItems().addAll(exceptionItems);
-                throw metamacException;
-            }
-
+            cacheService.updateDatasetExternalPublicationCache(ctx, (DatasetAvro) message);
+        } else if (message instanceof PublicationAvro) {
+            cacheService.updateCollectionExternalPublicationCache(ctx, (PublicationAvro) message);
         }
     }
 
     @Override
-    public void updateGeographicCoverageExternalPublicationVariableElementsCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
+    public void updateGeographicCoverageExternalPublicationCache(ServiceContext ctx, SpecificRecordBase message) throws MetamacException {
 
         getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
 
             @Override
             protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                updateGeographicCoverageExternalPublicationCache(ctx, message);
+                updateGeographicCoverageExternalPublicationCacheByResource(ctx, message);
                 return null;
             }
         });
-    }
-
-    private GeoCovVarElementCacheDatasetVersion updateGeographicCoverageVariableElementsCache(DatasetAvro jaxiDatasetVersionAvro, InternationalString datasetTitle, InternationalString operationTitle,
-            ExternalItem variableElement) {
-        GeoCovVarElementCacheDatasetVersion geoCovVarElementCacheDatasetVersion = new GeoCovVarElementCacheDatasetVersion();
-        geoCovVarElementCacheDatasetVersion.setCode(jaxiDatasetVersionAvro.getCode());
-        geoCovVarElementCacheDatasetVersion.setUrn(jaxiDatasetVersionAvro.getUrn());
-        geoCovVarElementCacheDatasetVersion.setTitle(datasetTitle);
-        geoCovVarElementCacheDatasetVersion.setOperationCode(jaxiDatasetVersionAvro.getStatisticalOperation().getCode());
-        geoCovVarElementCacheDatasetVersion.setOperationUrn(jaxiDatasetVersionAvro.getStatisticalOperation().getUrn());
-        geoCovVarElementCacheDatasetVersion.setOperationTitle(operationTitle);
-        geoCovVarElementCacheDatasetVersion.setVariableElement(variableElement);
-        geoCovVarElementCacheDatasetVersion.setIsExternalSource(Boolean.TRUE);
-        geoCovVarElementCacheDatasetVersion.setHtmlLink(jaxiDatasetVersionAvro.getHtmlLink());
-        geoCovVarElementCacheDatasetVersion.setIsLastVersion(true);
-        geoCovVarElementCacheDatasetVersion.setIsActivated(true);
-        return geoCovVarElementCacheDatasetVersionRepository.save(geoCovVarElementCacheDatasetVersion);
     }
 
     private TransactionTemplate getTransactionTemplate() {
@@ -1660,18 +1608,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         }
     }
 
-    private void updateAllExternalGeocoverageCache(ServiceContext ctx) throws MetamacException {
-
-        getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Void>() {
-
-            @Override
-            protected Void doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                updateExternalGeocoverageCache(ctx);
-                return null;
-            }
-        });
-    }
-
     abstract static class MetamacExceptionTransactionCallback<T> implements TransactionCallback<T> {
 
         @Override
@@ -1700,18 +1636,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         taskInfo.setDatasetVersionId(datasetVersionUrn);
         taskInfo.setDatasetUrn(datasetUrn);
         taskService.planifyUpdateGeocoverageCache(ctx, taskInfo, sendNotification);
-    }
-
-    private void updateExternalGeocoverageCache(ServiceContext ctx) throws MetamacException {
-
-        String resource = JobUtil.createJobNameForUpdateExternalGeocoverageCache();
-
-        if (getTaskService().existUpdateExternalGeocoverageCacheTaskInResource(ctx)) {
-            throw new MetamacException(ServiceExceptionType.TASKS_IN_PROGRESS, resource);
-        }
-
-        TaskInfoDataset taskInfo = new TaskInfoDataset();
-        taskService.planifyUpdateExternalGeocoverageCache(ctx, taskInfo);
     }
 
     private void checkNotTasksInProgress(ServiceContext ctx, String datasetUrn) throws MetamacException {
@@ -2062,6 +1986,24 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
                     }
                 }
             }
+        }
+        return items;
+    }
+
+    private List<ExternalItem> processExternalItemsCodeFromSpatialAttribute(DatasetVersion resource, DsdAttribute spatialAttribute) throws MetamacException {
+        List<ExternalItem> items = new ArrayList<>();
+        List<CodeDimension> codes = filterCodesFromAttribute(resource, resource.getDatasetRepositoryId(), spatialAttribute.getComponentId());
+        List<String> codesIdentifiers = mapCodeDimensionsToCodeIdentifiers(codes);
+        List<ExternalItem> attributeItems = buildExternalItemsBasedOnCodeIdentifiers(codesIdentifiers, spatialAttribute);
+        // Avoid repeat items
+        for (ExternalItem item : attributeItems) {
+            if (!StatisticalResourcesCollectionUtils.isExternalItemInCollection(attributeItems, item)) {
+                items.add(item);
+            }
+        }
+
+        if (items.isEmpty()) {
+            items.addAll(attributeItems);
         }
         return items;
     }

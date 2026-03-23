@@ -3,11 +3,11 @@ package org.siemac.metamac.statistical.resources.core.security.shared;
 import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.ADMINISTRADOR;
 import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.ANY_ROLE_ALLOWED;
 import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.JEFE_PRODUCCION;
+import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.LECTOR;
 import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.TECNICO_APOYO_DIFUSION;
 import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.TECNICO_APOYO_PRODUCCION;
 import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.TECNICO_DIFUSION;
 import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.TECNICO_PRODUCCION;
-import static org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum.LECTOR;
 
 import org.siemac.metamac.sso.client.MetamacPrincipal;
 import org.siemac.metamac.sso.client.MetamacPrincipalAccess;
@@ -18,7 +18,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalRes
 public class SharedSecurityUtils {
 
     protected static final StatisticalResourcesRoleEnum[] PRODUCTION_ROLES             = {StatisticalResourcesRoleEnum.JEFE_PRODUCCION, StatisticalResourcesRoleEnum.TECNICO_PRODUCCION,
-            StatisticalResourcesRoleEnum.TECNICO_APOYO_PRODUCCION                      };
+            StatisticalResourcesRoleEnum.TECNICO_APOYO_PRODUCCION};
 
     protected static final StatisticalResourcesRoleEnum[] PRODUCTION_ROLES_WITH_READER = {StatisticalResourcesRoleEnum.JEFE_PRODUCCION, StatisticalResourcesRoleEnum.TECNICO_PRODUCCION,
             StatisticalResourcesRoleEnum.TECNICO_APOYO_PRODUCCION, StatisticalResourcesRoleEnum.LECTOR};
@@ -188,4 +188,7 @@ public class SharedSecurityUtils {
         return isAdministrador(metamacPrincipal);
     }
 
+    public static boolean canUpdateGeoCacheRelatedResource(MetamacPrincipal metamacPrincipal) {
+        return isAdministrador(metamacPrincipal);
+    }
 }

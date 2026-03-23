@@ -1,6 +1,7 @@
 package org.siemac.metamac.statistical.resources.core.utils.mocks.templates;
 
 import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnItem;
+import static org.siemac.edatos.core.common.util.shared.UrnUtils.splitUrnWithoutPrefixItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOff
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersionUtils;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
@@ -818,15 +820,37 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
         officiality.setVersion(0L);
     }
 
-    public static String getHtmlLink(String urn) {
-        String htmlLink = "";
+    public static String getHtmlLink(String urn, StatisticalResourceTypeEnum statisticalResourceTypeEnum) {
+        if (StatisticalResourceTypeEnum.QUERY.equals(statisticalResourceTypeEnum)) {
+            return getQueryHtmlLink(urn);
+        } else if (StatisticalResourceTypeEnum.DATASET.equals(statisticalResourceTypeEnum)) {
+            return getDatasetHtmlLink(urn);
+        } else if (StatisticalResourceTypeEnum.COLLECTION.equals(statisticalResourceTypeEnum)) {
+            return getCollectionHtmlLink(urn);
+        }
+        return null;
+    }
+
+    private static String getDatasetHtmlLink(String urn) {
         String[] splitUrnItem = splitUrnItem(urn);
         String agencyID = splitUrnItem[0];
-        String[] agenciesID = agencyID.contains(".") ? agencyID.split(".") : new String[]{agencyID};
         String resourceID = splitUrnItem[1];
         String version = splitUrnItem[2];
-
         return StatisticalResourcesPersistedDoMocks.mockPortalDatasetHtmlLink(agencyID, resourceID, version);
+    }
+
+    private static String getQueryHtmlLink(String urn) {
+        String[] splitUrnItem = splitUrnWithoutPrefixItem(urn);
+        String agencyID = splitUrnItem[0];
+        String resourceID = splitUrnItem[1];
+        return StatisticalResourcesPersistedDoMocks.mockPortalQueryHtmlLink(agencyID, resourceID);
+    }
+
+    private static String getCollectionHtmlLink(String urn) {
+        String[] splitUrnItem = splitUrnWithoutPrefixItem(urn);
+        String agencyID = splitUrnItem[0];
+        String resourceID = splitUrnItem[1];
+        return StatisticalResourcesPersistedDoMocks.mockPortalCollectionHtmlLink(agencyID, resourceID);
     }
 
 }

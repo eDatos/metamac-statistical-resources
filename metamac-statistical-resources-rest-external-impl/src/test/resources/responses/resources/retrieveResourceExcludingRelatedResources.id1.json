@@ -1,0 +1,115 @@
+{
+	"resource": [
+		{
+			"mainResource": {
+				"id": "collection1",
+				"kind": "statisticalResources#collection",
+				"name": {
+					"text": [
+						{
+							"value": "title-collection1 en Espanol",
+							"lang": "es"
+						}
+					]
+				},
+				"selfLink": {
+					"kind": "statisticalResources#resource",
+					"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/collection1/01.000#collection"
+				},
+				"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection1",
+				"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=publication&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection1#",
+				"statisticalOperation": {
+					"id": "collection1",
+					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=KfhbgAf2l9",
+					"kind": "statisticalOperations#operation"
+				}
+			},
+			"relatedResources": {
+				"resource": [
+					{
+						"id": "dataset1",
+						"kind": "statisticalResources#dataset",
+						"name": {
+							"text": [
+								{
+									"value": "title-dataset1 en Espanol",
+									"lang": "es"
+								}
+							]
+						},
+						"selfLink": {
+							"kind": "statisticalResources#resource",
+							"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset1/01.000#dataset"
+						},
+						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset1(01.000)",
+						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset1&version=01.000#",
+						"statisticalOperation": {
+							"id": "OXuuAIV6Xp",
+							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=OXuuAIV6Xp",
+							"kind": "statisticalOperations#operation"
+						}
+					}
+				],
+				"total": 1
+			}
+		},
+		{
+			"mainResource": {
+				"id": "collection2",
+				"kind": "statisticalResources#collection",
+				"name": {
+					"text": [
+						{
+							"value": "title-collection2 en Espanol",
+							"lang": "es"
+						}
+					]
+				},
+				"selfLink": {
+					"kind": "statisticalResources#resource",
+					"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/collection2/01.000#collection"
+				},
+				"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection2",
+				"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=publication&agencyId=urn&resourceId=siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:collection2#",
+				"statisticalOperation": {
+					"id": "collection2",
+					"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=k00HF0Z51t",
+					"kind": "statisticalOperations#operation"
+				}
+			},
+			"relatedResources": {
+				"resource": [
+					{
+						"id": "dataset2",
+						"kind": "statisticalResources#dataset",
+						"name": {
+							"text": [
+								{
+									"value": "title-dataset2 en Espanol",
+									"lang": "es"
+								}
+							]
+						},
+						"selfLink": {
+							"kind": "statisticalResources#resource",
+							"href": "http://data.istac.es/apis/statistical-resources/v1.0/resources/agency1/dataset2/01.000#dataset"
+						},
+						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=agency1:dataset2(01.000)",
+						"visualizerHtmlLink": "http://localhost:8080/statistical-visualizer/visualizer/data.html?resourceType=dataset&agencyId=agency1&resourceId=dataset2&version=01.000#",
+						"statisticalOperation": {
+							"id": "U29DhBE05q",
+							"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=U29DhBE05q",
+							"kind": "statisticalOperations#operation"
+						}
+					}
+				],
+				"total": 1
+			}
+		}
+	],
+	"kind": "statisticalResources#resources",
+	"total": 20,
+	"limit": 25,
+	"offset": 2,
+	"selfLink": "http://data.istac.es/apis/statistical-resources/v1.0/resources?query=GEOCOV_VARELEM_ID EQ 'variableElement01' &limit=25&offset=2#statistical_resources_resource"
+}
