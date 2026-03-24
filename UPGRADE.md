@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 10.23.0 a 10.23.1-SNAPSHOT
+## 10.23.0 a 11.0.0
 * **BREAKING CHANGE.** Se elimina la tabla caché actual y se añade un nuevo modelo de datos de caché. La salida de la API de los recursos para eTerritorios cambia por completo para ahora devolver colecciones y sus recursos asociados. ATENCIÓN! Esta subida debe ir conjunta con los cambios en eTerritorios así como los cambios realizados desde IBESTAT (izertis) en la que envián las colecciones de JAXI a un nuevo topic de kafka y exponen un endpoint para devolvernos la estructura de árbol de cada colección (capítulos...)
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.23.0/db] 
 **Atención!!** No ejecutar el script que se encuentra dentro de la carpeta "geographical-cache-migration" a la vez que los demás, antes del despliegue. En su lugar, debe ejecutarse una vez se ha desplegado con éxito la aplicación.
