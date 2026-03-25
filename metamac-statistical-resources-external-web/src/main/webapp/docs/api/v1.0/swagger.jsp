@@ -1192,21 +1192,23 @@
          "type":"object",
          "title":"ResourcesWithRelatedResources",
          "allOf":[       
-     			{
-               "$ref":"#/definitions/ListBase"
-            	},
-               "properties":{       
-                  "resource":{
-                     "xml":{
-                        "namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
-                     },
-                     "description":"${msg['api.doc.swagger.definitions.ResourcesWithRelatedResources.properties.resource.description']}",
-                     "type":"array",
-                     "items":{
-                        "$ref":"#/definitions/ResourceWithRelatedResources"
-                     }
-                  }
-               }
+     		{
+     			"$ref":"#/definitions/ListBase"
+            },
+            {
+            	"properties":{
+            		"resource":{
+            			"xml":{
+            				"namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+            			},
+            			"description":"${msg['api.doc.swagger.definitions.ResourcesWithRelatedResources.properties.resource.description']}",
+            			"type":"array",
+            			"items":{
+            				"$ref":"#/definitions/ResourceWithRelatedResources"
+            			}
+            		}
+            	}
+            }
          ],
          "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
       },      
