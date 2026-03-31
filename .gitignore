@@ -142,3 +142,5 @@ Desktop.ini
 /target/
 /bin/
 metamac-statistical-resources-core/claude-core.md
+.claude
+**/CLAUDE.local.md
