@@ -201,6 +201,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
     public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
+    public static final int                   RECOVERY_JOB_PRIORITY                         = 10;
 
     @Autowired
     private TaskServiceInvocationValidator    taskServiceInvocationValidator;
@@ -592,7 +593,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                                         .build();
         // @formatter:on
 
-        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryImportTriggerKey).startAt(futureDate(10, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+        SimpleTrigger recoveryImportTrigger = newTrigger().withIdentity(recoveryImportTriggerKey).startAt(futureDate(DEFAULT_QUARTZ_TRIGGER_DELAY, IntervalUnit.SECOND))
+                .withPriority(RECOVERY_JOB_PRIORITY).withSchedule(simpleSchedule()).build();
 
         try {
             sched.scheduleJob(recoveryImportJob, recoveryImportTrigger);
