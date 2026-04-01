@@ -10,7 +10,7 @@ public enum IstacTimeGranularityCodeEnum {
         */
         YEARLY("YEARLY", "A"),
         BIYEARLY("BIYEARLY", "S"),
-        QUARTERLY("QUATERLY", "Q"),
+        QUARTERLY("QUARTERLY", "Q"),
         FOUR_MONTHLY("FOUR_MONTHLY","T"),
         MONTHLY("MONTHLY","M"),
         WEEKLY("WEEKLY","W"),
@@ -40,6 +40,8 @@ public enum IstacTimeGranularityCodeEnum {
                     return YEARLY;
                 case "S":
                     return BIYEARLY;
+                case "Q":
+                    return QUARTERLY;
                 case "T":
                     return FOUR_MONTHLY;
                 case "M":

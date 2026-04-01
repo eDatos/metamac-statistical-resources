@@ -136,7 +136,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         if (includeMetadata || (includeData && (dimensionsFilter.getTemporalDimensionValuesIds() != null && !dimensionsFilter.getTemporalDimensionValuesIds().isEmpty())
                 || (dimensionsFilter.getGeographicDimensionValuesIds() != null && !(dimensionsFilter.getGeographicDimensionValuesIds().isEmpty())
                         || (source.getTemporalGranularities() != null && !source.getTemporalGranularities().isEmpty())))) {
-            Map<String, List<String>> effectiveDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, relatedDataset);
+            Map<String, List<String>> effectiveDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQueryFilteredByLabels(source, relatedDataset, dimensionsFilter);
 
             dimensions = commonDo2RestMapper.toDimensions(relatedDataset.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, effectiveDimensionValuesToDataByDimension,
                     selectedLanguages, null, dimensionsFilter);
@@ -353,7 +353,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             return null;
         }
         DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionFilter(dimensions);
-        Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion);
+        Map<String, List<String>> effectiveQueryDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQuery(source, datasetVersion, dimensionsFilter);
         Map<String, List<String>> effectiveSelectionValues = calculateEffectiveSelectionValues(selectedDimensions, effectiveQueryDimensionValuesToDataByDimension);
         Map<String, List<String>> effectiveDimensionValuesToDataByDimension = StatisticalResourcesRestImplCommonUtils.filterDimensions(effectiveQueryDimensionValuesToDataByDimension,
                 effectiveSelectionValues);
@@ -440,6 +440,49 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             default:
                 throw commonDo2RestMapper.buildRestException("QueryTypeEnum unsupported: " + source);
         }
+    }
+
+    // For toQuery(): filters by granularity labels (metadata context)
+    private Map<String, List<String>> calculateEffectiveDimensionValuesToQueryFilteredByLabels(QueryVersion queryVersion, DatasetVersion datasetVersion, DimensionsFilter dimensionsFilter)
+            throws MetamacException {
+        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(queryVersion.getSelection().size());
+        for (QuerySelectionItem selection : queryVersion.getSelection()) {
+            String dimensionId = selection.getDimension();
+            List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
+            if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
+                List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
+                temporalCoverageCodes = StatisticalResourcesRestImplCommonUtils.filterTemporalCoverageByGranularityLabels(temporalCoverageCodes, dimensionsFilter);
+                List<String> dimensionValues = TemporalDimensionUtils.calculateEffectiveTemporalDimensionValuesToQuery(queryVersion, temporalCoverageCodes, selectionCodes);
+                dimensionValuesSelected.put(dimensionId, dimensionValues);
+            } else {
+                dimensionValuesSelected.put(dimensionId, selectionCodes);
+            }
+        }
+        return dimensionValuesSelected;
+    }
+
+    // For toQueryData(): filters by actual period codes (data context)
+    private Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion queryVersion, DatasetVersion datasetVersion, DimensionsFilter dimensionsFilter) throws MetamacException {
+        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(queryVersion.getSelection().size());
+        for (QuerySelectionItem selection : queryVersion.getSelection()) {
+            String dimensionId = selection.getDimension();
+            List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
+            if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
+                List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
+                temporalCoverageCodes = StatisticalResourcesRestImplCommonUtils.filterTemporalCoverageByGranularity(temporalCoverageCodes, dimensionsFilter);
+                List<String> dimensionValues = TemporalDimensionUtils.calculateEffectiveTemporalDimensionValuesToQuery(queryVersion, temporalCoverageCodes, selectionCodes);
+                List<String> filteredDimensionValues = new ArrayList<String>();
+                for (String value : dimensionValues) {
+                    if (temporalCoverageCodes.contains(value)) {
+                        filteredDimensionValues.add(value);
+                    }
+                }
+                dimensionValuesSelected.put(dimensionId, filteredDimensionValues);
+            } else {
+                dimensionValuesSelected.put(dimensionId, selectionCodes);
+            }
+        }
+        return dimensionValuesSelected;
     }
 
     // calculateEffectiveSelectionValues, calculateEffectiveDimensionValuesToQuery and calculateEffectiveDimensionValuesToDataset are similar, except that
