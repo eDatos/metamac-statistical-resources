@@ -381,7 +381,11 @@ public class CacheServiceImpl extends CacheServiceImplBase {
             List<MetamacExceptionItem> exceptionItems = new ArrayList<>();
             
             for (RelatedResource relatedResource : publicationVersion.getHasPart()) {
-                createRelatedResourceByCacheResourceByTypeAndUrn(geoCacheRelatedResource, urn, getRelatedResourceUrnFromRelatedResource(relatedResource), exceptionItems);
+                String relatedResourceUrn = getRelatedResourceUrnFromRelatedResource(relatedResource);
+                if (relatedResourceUrn == null) {
+                    continue;
+                }
+                createRelatedResourceByCacheResourceByTypeAndUrn(geoCacheRelatedResource, urn, relatedResourceUrn, exceptionItems);
             }
 
             sendMessageException(ServiceNoticeAction.UPDATE_GEOCOVERAGE_CACHE_COLLECTION_PUBLICATION, exceptionItems);
