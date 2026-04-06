@@ -956,6 +956,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             // After versioning, it's necessary to update the task info because there is a new version of the dataset. The importation task should be applied to this.
             updateImportationTaskInfo(datasetVersionUrn, taskInfoDataset);
 
+            // Update the extensionPoint in the persisted task so the recovery job targets the new draft version, not the published one.
+            updateTaskExtensionPointWithEffectiveDatasetVersion(ctx, importationJobKey, datasetVersionUrn);
+
             executeImportationTask(ctx, importationJobKey, taskInfoDataset);
 
             updateMetadataDatasetVersion(ctx, datasetVersionUrn, taskInfoDataset);
@@ -1021,6 +1024,28 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private void updateImportationTaskInfo(String datasetVersionUrn, TaskInfoDataset taskInfoDataset) {
         logger.debug("Updating task with the new dataset {}", datasetVersionUrn);
         taskInfoDataset.setDatasetVersionId(datasetVersionUrn);
+    }
+
+    private void updateTaskExtensionPointWithEffectiveDatasetVersion(ServiceContext ctx, String importationJobKey, String newDatasetVersionUrn) {
+        try {
+            getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
+
+                @Override
+                protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
+                    Task task = retrieveTaskByJob(ctx, importationJobKey);
+                    if (task != null && task.getExtensionPoint() != null) {
+                        String extensionPoint = task.getExtensionPoint();
+                        int separatorIndex = extensionPoint.indexOf(JobUtil.SERIALIZATION_SEPARATOR);
+                        String updatedExtensionPoint = separatorIndex >= 0 ? newDatasetVersionUrn + extensionPoint.substring(separatorIndex) : newDatasetVersionUrn;
+                        task.setExtensionPoint(updatedExtensionPoint);
+                        updateTask(ctx, task);
+                    }
+                    return null;
+                }
+            });
+        } catch (Exception e) {
+            logger.error("Could not update task extensionPoint with new dataset version {}", newDatasetVersionUrn, e);
+        }
     }
 
     private void executeImportationTask(ServiceContext ctx, String importationJobKey, TaskInfoDataset taskInfoDataset) {
@@ -1150,22 +1175,25 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             task = retrieveTaskByJob(ctx, createJobKeyForImportationResource(taskInfoDataset.getDatasetVersionId()).getName());
 
-            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, taskInfoDataset.getDatasetVersionId());
+            // names[0] is the effective dataset version URN (may differ from taskInfoDataset if automatic versioning happened before the failure)
+            String fileNames = task.getExtensionPoint();
+            String[] names = fileNames.split("\\" + JobUtil.SERIALIZATION_SEPARATOR);
+            String effectiveDatasetVersionId = names[0];
+
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, effectiveDatasetVersionId);
 
             if (ProcStatusEnum.PUBLISHED.equals(datasetVersion.getLifeCycleStatisticalResource().getProcStatus())) {
                 // Delete failed entry
-                logger.info("Rollback importation task not executed because the dataset is published. Urn: {}", taskInfoDataset.getDatasetVersionId());
+                logger.info("Rollback importation task not executed because the dataset is published. Urn: {}", effectiveDatasetVersionId);
                 deleteFailedTask(task);
 
                 getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_RECOVERY_JOB_ROLLBACK_PUBLISHED_DATASET,
-                        ServiceNoticeMessage.DATABASE_IMPORT_DATASET_RECOVERY_JOB_ROLLBACK_PUBLISHED_DATASET_ALERT, taskInfoDataset.getDatasetVersionId(), MetamacRolesEnum.ADMINISTRADOR);
+                        ServiceNoticeMessage.DATABASE_IMPORT_DATASET_RECOVERY_JOB_ROLLBACK_PUBLISHED_DATASET_ALERT, effectiveDatasetVersionId, MetamacRolesEnum.ADMINISTRADOR);
 
                 return;
 
             }
 
-            String fileNames = task.getExtensionPoint();
-            String[] names = fileNames.split("\\" + JobUtil.SERIALIZATION_SEPARATOR);
             for (int i = 1; i < names.length; i++) {
                 String dataSourceId = Datasource.generateDataSourceId(names[i], task.getCreatedDate());
 
@@ -1176,9 +1204,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 internationalStringDto.addText(localisedStringDto);
 
                 logger.info("Rollback importation task is trying to delete observations by attribute instance value. Dataset = {}, Datasource = {}",
-                        new Object[]{taskInfoDataset.getDatasetVersionId(), dataSourceId});
+                        new Object[]{effectiveDatasetVersionId, dataSourceId});
 
-                datasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(taskInfoDataset.getDatasetVersionId(), StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
+                datasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(effectiveDatasetVersionId, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
                         internationalStringDto);
             }
 
