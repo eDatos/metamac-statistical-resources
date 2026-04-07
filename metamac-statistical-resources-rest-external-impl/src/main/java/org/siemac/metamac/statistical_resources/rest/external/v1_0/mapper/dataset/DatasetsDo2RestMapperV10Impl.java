@@ -224,19 +224,7 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
 
     @Override
     public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
-        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(selectedDimensions.size());
-        for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
-            String dimensionId = selectedDimension.getKey();
-            List<String> selectedValues = selectedDimension.getValue();
-            if (isTemporalDimension(dimensionId)) {
-                List<String> temporalCoverageValues = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
-                List<String> effectiveValues = StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
-                dimensionValuesSelected.put(dimensionId, effectiveValues);
-            } else {
-                dimensionValuesSelected.put(dimensionId, selectedValues);
-            }
-        }
-        return dimensionValuesSelected;
+        return calculateEffectiveDimensionValuesToDataset(selectedDimensions, datasetVersion, null);
     }
 
     @Override

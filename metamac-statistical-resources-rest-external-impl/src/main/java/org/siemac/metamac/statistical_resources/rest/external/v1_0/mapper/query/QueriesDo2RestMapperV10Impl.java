@@ -506,18 +506,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
     }
 
     public Map<String, List<String>> calculateEffectiveDimensionValuesToQuery(QueryVersion source, DatasetVersion datasetVersion) throws MetamacException {
-        Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(source.getSelection().size());
-        for (QuerySelectionItem selection : source.getSelection()) {
-            String dimensionId = selection.getDimension();
-            List<String> selectionCodes = commonDo2RestMapper.codeItemToString(selection.getCodes());
-            if (StatisticalResourcesRestImplCommonUtils.isTemporalDimension(dimensionId)) {
-                List<String> temporalCoverageCodes = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
-                List<String> dimensionValues = TemporalDimensionUtils.calculateEffectiveTemporalDimensionValuesToQuery(source, temporalCoverageCodes, selectionCodes);
-                dimensionValuesSelected.put(dimensionId, dimensionValues);
-            } else {
-                dimensionValuesSelected.put(dimensionId, selectionCodes);
-            }
-        }
-        return dimensionValuesSelected;
+        return calculateEffectiveDimensionValuesToQuery(source, datasetVersion, null);
     }
 }

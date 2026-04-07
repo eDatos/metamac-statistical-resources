@@ -174,7 +174,7 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
      * Metadata context: temporalDimensionValuesIds contains granularity labels (e.g. "Q").
      * Also respects temporalDimensionValuesQueriesIds (query-own granularities).
      */
-    public static List<String> filterTemporalCoverageByGranularityLabels(List<String> values, DimensionsFilter dimensionsFilter) {
+    public static List<String> filterTemporalCoverageByGranularityLabels(List<String> values, DimensionsFilter dimensionsFilter) throws MetamacException {
         if (CollectionUtils.isEmpty(values) || dimensionsFilter == null) {
             return values;
         }
@@ -187,15 +187,11 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         }
         List<String> filtered = new ArrayList<String>();
         for (String periodCode : values) {
-            try {
-                String label = IstacTimeUtils.guessTimeGranularity(periodCode).getLabel();
-                boolean matchesQuery = !hasQueryFilter || queriesIds.contains(label);
-                boolean matchesValues = !hasValuesFilter || valuesIds.contains(label);
-                if (matchesQuery && matchesValues) {
-                    filtered.add(periodCode);
-                }
-            } catch (Exception e) {
-                // Ignore unrecognizable periods
+            String label = IstacTimeUtils.guessTimeGranularity(periodCode).getLabel();
+            boolean matchesQuery = !hasQueryFilter || queriesIds.contains(label);
+            boolean matchesValues = !hasValuesFilter || valuesIds.contains(label);
+            if (matchesQuery && matchesValues) {
+                filtered.add(periodCode);
             }
         }
         return filtered;
