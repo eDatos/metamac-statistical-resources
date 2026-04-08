@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 		<artifactId>metamac-statistical-resources-parent</artifactId>
-		<version>11.0.1-SNAPSHOT</version>
+		<version>11.1.1-SNAPSHOT</version>
 		<relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
 	</parent>
 
@@ -67,13 +67,6 @@
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-xc</artifactId>
 			<version>${jackson.version}</version>
-		</dependency>
-
-		<!-- FOR JSONP -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-extension-providers</artifactId>
-			<version>${cxf.version}</version>
 		</dependency>
 
 		<!-- Spring -->
