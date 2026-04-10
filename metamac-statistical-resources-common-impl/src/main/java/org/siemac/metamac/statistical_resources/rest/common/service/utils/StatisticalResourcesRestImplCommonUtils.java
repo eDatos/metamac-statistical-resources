@@ -14,6 +14,7 @@ import java.util.regex.Matcher;
 
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.ListUtils;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -21,7 +22,9 @@ import org.siemac.metamac.core.common.util.SdmxTimeUtils;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
+import org.siemac.metamac.statistical.resources.core.common.domain.DimensionsFilter;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
+import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,6 +147,54 @@ public final class StatisticalResourcesRestImplCommonUtils extends StatisticalRe
         Collections.reverse(partialResults);
 
         return partialResults;
+    }
+
+    /**
+     * Filters the temporal coverage keeping only the periods whose code is in
+     * dimensionsFilter.temporalDimensionValuesIds.
+     * Data context: temporalDimensionValuesIds contains actual period codes (e.g. "2025Q4").
+     */
+    public static List<String> filterTemporalCoverageByGranularity(List<String> values, DimensionsFilter dimensionsFilter) {
+        if (CollectionUtils.isEmpty(values) || dimensionsFilter == null
+                || CollectionUtils.isEmpty(dimensionsFilter.getTemporalDimensionValuesIds())) {
+            return values;
+        }
+        List<String> filtered = new ArrayList<String>();
+        for (String value : values) {
+            if (dimensionsFilter.getTemporalDimensionValuesIds().contains(value)) {
+                filtered.add(value);
+            }
+        }
+        return filtered;
+    }
+
+    /**
+     * Filters the temporal coverage keeping only the periods whose granularity label
+     * matches the dimensionsFilter.
+     * Metadata context: temporalDimensionValuesIds contains granularity labels (e.g. "Q").
+     * Also respects temporalDimensionValuesQueriesIds (query-own granularities).
+     */
+    public static List<String> filterTemporalCoverageByGranularityLabels(List<String> values, DimensionsFilter dimensionsFilter) throws MetamacException {
+        if (CollectionUtils.isEmpty(values) || dimensionsFilter == null) {
+            return values;
+        }
+        List<String> queriesIds = dimensionsFilter.getTemporalDimensionValuesQueriesIds();
+        List<String> valuesIds = dimensionsFilter.getTemporalDimensionValuesIds();
+        boolean hasQueryFilter = !CollectionUtils.isEmpty(queriesIds);
+        boolean hasValuesFilter = !CollectionUtils.isEmpty(valuesIds);
+        if (!hasQueryFilter && !hasValuesFilter) {
+            return values;
+        }
+        List<String> filtered = new ArrayList<String>();
+        for (String periodCode : values) {
+            String label = IstacTimeUtils.guessTimeGranularity(periodCode).getLabel();
+            boolean matchesQuery = !hasQueryFilter || queriesIds.contains(label);
+            boolean matchesValues = !hasValuesFilter || valuesIds.contains(label);
+            if (matchesQuery && matchesValues) {
+                filtered.add(periodCode);
+            }
+        }
+        return filtered;
     }
 
     public static boolean isTemporalDimension(String dimensionId) {
