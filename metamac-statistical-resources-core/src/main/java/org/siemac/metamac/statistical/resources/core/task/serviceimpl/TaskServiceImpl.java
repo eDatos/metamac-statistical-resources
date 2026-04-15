@@ -959,6 +959,10 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             // Update the extensionPoint in the persisted task so the recovery job targets the new draft version, not the published one.
             updateTaskExtensionPointWithEffectiveDatasetVersion(ctx, importationJobKey, datasetVersionUrn);
 
+            if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+                updateDatabaseDatasourceIdentifierForNewVersion(ctx, datasetVersionUrn);
+            }
+
             executeImportationTask(ctx, importationJobKey, taskInfoDataset);
 
             updateMetadataDatasetVersion(ctx, datasetVersionUrn, taskInfoDataset);
@@ -978,6 +982,18 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         sendNotification(ctx, datasetVersionUrn);
 
         updateGeographicCoverageVariableElementsCache(ctx, datasetVersionUrn, procNextStatus);
+    }
+
+    /**
+     * After automatic versioning of a DB-import dataset, the new datasource has a new code (assigned by changeDatasourcesCodesAndUrns).
+     * Update DATABASE_IMPORT_JOB_DATASOURCE_IDENTIFIER in the ServiceContext so that the incremental import stores observations with the correct code.
+     */
+    private void updateDatabaseDatasourceIdentifierForNewVersion(ServiceContext ctx, String newDatasetVersionUrn) throws MetamacException {
+        DatasetVersion newDatasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, newDatasetVersionUrn);
+        if (!newDatasetVersion.getDatasources().isEmpty()) {
+            Datasource newDatasource = newDatasetVersion.getDatasources().iterator().next();
+            ctx.setProperty(ImportDatasetFromDatabaseJob.DATABASE_IMPORT_JOB_DATASOURCE_IDENTIFIER, newDatasource.getIdentifiableStatisticalResource().getCode());
+        }
     }
 
     private void sendNotification(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
