@@ -17,7 +17,7 @@
         <!-- Pool sizing: configurable via TB_DATA_CONFIGURATIONS, default 12 -->
         <property name="maxActive"          value="${metamac.statistical_resources.db.pool.maxActive:12}" />
         <!-- Fail fast instead of queuing indefinitely (default: -1); configurable via TB_DATA_CONFIGURATIONS -->
-        <property name="maxWait"            value="${metamac.statistical_resources.db.pool.maxWait:30000}" />
+        <property name="maxWait"            value="${metamac.statistical_resources.db.pool.maxWait:60000}" />
     </bean>
 
     <bean id="dataSourceDatasetRepository" class="org.siemac.edatos.core.common.datasource.EdatosBasicDataSource" destroy-method="close">
@@ -28,7 +28,7 @@
         <!-- Pool sizing: configurable via TB_DATA_CONFIGURATIONS, default 12 -->
         <property name="maxActive"          value="${metamac.statistical_resources.repo.db.pool.maxActive:12}" />
         <!-- Fail fast instead of queuing indefinitely (default: -1); configurable via TB_DATA_CONFIGURATIONS -->
-        <property name="maxWait"            value="${metamac.statistical_resources.repo.db.pool.maxWait:30000}" />
+        <property name="maxWait"            value="${metamac.statistical_resources.repo.db.pool.maxWait:60000}" />
     </bean>
 
     <bean id="dataSourceDatabaseImportRepository" class="org.siemac.edatos.core.common.datasource.EdatosBasicDataSource" destroy-method="close">
