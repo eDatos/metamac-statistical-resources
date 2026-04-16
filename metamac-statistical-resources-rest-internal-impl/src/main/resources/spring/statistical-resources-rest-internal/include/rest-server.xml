@@ -48,18 +48,6 @@
             <ref bean="xstreamPlainTextProvider" />
             <ref bean="wadlGenerator" />
         </jaxrs:providers>
-
-        <!-- JSONP -->
-        <jaxrs:inInterceptors>
-            <bean class="org.apache.cxf.jaxrs.provider.jsonp.JsonpInInterceptor">
-                <property name="callbackParam" value="_callback"/>
-            </bean>
-        </jaxrs:inInterceptors>
-        <jaxrs:outInterceptors>
-            <bean class="org.apache.cxf.jaxrs.provider.jsonp.JsonpPreStreamInterceptor">
-            </bean>
-            <bean class="org.apache.cxf.jaxrs.provider.jsonp.JsonpPostStreamInterceptor" />
-        </jaxrs:outInterceptors>
     </jaxrs:server>
 
     <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
