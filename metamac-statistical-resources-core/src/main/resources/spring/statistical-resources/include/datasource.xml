@@ -14,19 +14,28 @@
         <property name="url"                value="${metamac.statistical_resources.db.url}" />
         <property name="username"           value="${metamac.statistical_resources.db.username}" />
         <property name="password"           value="${metamac.statistical_resources.db.password}" />
+        <!-- Pool sizing: configurable via TB_DATA_CONFIGURATIONS, default 12 -->
+        <property name="maxActive"          value="${metamac.statistical_resources.db.pool.maxActive:12}" />
+        <!-- Fail fast instead of queuing indefinitely (default: -1); configurable via TB_DATA_CONFIGURATIONS -->
+        <property name="maxWait"            value="${metamac.statistical_resources.db.pool.maxWait:30000}" />
     </bean>
-    
+
     <bean id="dataSourceDatasetRepository" class="org.siemac.edatos.core.common.datasource.EdatosBasicDataSource" destroy-method="close">
         <property name="driverClassName"    value="${metamac.statistical_resources.repo.db.driver_name}" />
         <property name="url"                value="${metamac.statistical_resources.repo.db.url}" />
         <property name="username"           value="${metamac.statistical_resources.repo.db.username}" />
         <property name="password"           value="${metamac.statistical_resources.repo.db.password}" />
+        <!-- Pool sizing: configurable via TB_DATA_CONFIGURATIONS, default 12 -->
+        <property name="maxActive"          value="${metamac.statistical_resources.repo.db.pool.maxActive:12}" />
+        <!-- Fail fast instead of queuing indefinitely (default: -1); configurable via TB_DATA_CONFIGURATIONS -->
+        <property name="maxWait"            value="${metamac.statistical_resources.repo.db.pool.maxWait:30000}" />
     </bean>
-    
+
     <bean id="dataSourceDatabaseImportRepository" class="org.siemac.edatos.core.common.datasource.EdatosBasicDataSource" destroy-method="close">
         <property name="driverClassName"    value="${metamac.statistical_resources.data_import.db.driver_name}" />
         <property name="url"                value="${metamac.statistical_resources.data_import.db.url}" />
         <property name="username"           value="${metamac.statistical_resources.data_import.db.username}" />
-        <property name="password"           value="${metamac.statistical_resources.data_import.db.password}" />       
+        <property name="password"           value="${metamac.statistical_resources.data_import.db.password}" />
+        <!-- Batch/import usage: keep defaults (maxActive=8, maxWait=-1), low concurrency background jobs only -->
     </bean>
 </beans>
