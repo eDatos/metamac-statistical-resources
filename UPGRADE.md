@@ -8,6 +8,10 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 11.1.0 a 11.1.x.SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/11.1.0/db/common-metadata/postgresql/] 
+
 ## 10.23.0 a 11.0.0
 * **BREAKING CHANGE.** Se elimina la tabla caché actual y se añade un nuevo modelo de datos de caché. La salida de la API de los recursos para eTerritorios cambia por completo para ahora devolver colecciones y sus recursos asociados. ATENCIÓN! Esta subida debe ir conjunta con los cambios en eTerritorios así como los cambios realizados desde IBESTAT (izertis) en la que envián las colecciones de JAXI a un nuevo topic de kafka y exponen un endpoint para devolvernos la estructura de árbol de cada colección (capítulos...)
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.23.0/db] 
