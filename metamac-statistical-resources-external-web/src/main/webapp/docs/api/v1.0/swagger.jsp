@@ -2837,11 +2837,11 @@
       "ExportationDimensionFilters": {
       	"type": "object",
       	"title": "DimensionFilters",
-      	"description": "Si la dimensión es temporal, se le podrán aplicar los siguientes filtros",
+      	"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.description']}",
       	"properties": {
         	"range": {
           		"type": "object",
-          		"description": "range incluirá el listado de valores entre start y end, ambos incluidos. Si alguno de los filtros no se incluye, se considerará un rango abierto",
+          		"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.properties.range.description']}",
           		"properties": {
             		"start": {
               			"type": "string",
@@ -2854,12 +2854,12 @@
           		},
           		"last": {
             		"type": "integer",
-            		"description": "range incluirá los últimos n valores de entre los disponibles",
+            		"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.properties.last.description']}",
             		"example": 4
           		},
           		"after": {
             		"type": "string",
-            		"description": "after incluirá las fechas posteriores a la definida, incluida ella misma",
+            		"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.properties.after.description']}",
             		"example": "2009"
           		}
           	}
@@ -2874,7 +2874,7 @@
       },
       "ExportationDimensionValues": {
       	"type": "object",
-      	"description": "La propiedad dimensionValues es opcional. Si no se define, tomará todos los valores posibles para la dimensión",
+      	"description": "${msg['api.doc.swagger.definitions.exportationDimensionValues.description']}",
       	"properties": {
         	"dimensionValue": {
           	"$ref": "#/definitions/ExportationDimensionValue"
@@ -2895,7 +2895,7 @@
       			},
       			"position": {
       				"type": "integer",
-            		"description": "La propiedad position determina donde se dibuja la dimensión. Las dimensiones de lado izquierdo toman valores consecutivos empezando en 0, menores de 20. Y las dimensiones de cabecera toman valores consecutivos empezando en 20, menores de 40. Es opcional y si no se pone, tomará el valor predeterminado",
+      				"description": "${msg['api.doc.swagger.definitions.exportationDimension.properties.position.description']}",
             		"example": "21"
             	},
             	"dimensionValues": {
