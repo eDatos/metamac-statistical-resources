@@ -19,9 +19,10 @@
 
     <tx:advice id="txAdvice" transaction-manager="txManager">
         <tx:attributes>
-            <!-- all methods starting with 'get' or 'find' are read-only -->
+            <!-- all methods starting with 'get', 'find' or 'retrieve' are read-only -->
             <tx:method name="get*" read-only="true" />
             <tx:method name="find*" read-only="true" />
+            <tx:method name="retrieve*" read-only="true" />
             <!-- all other methods are transactional and ApplicationException will cause rollback -->
             <tx:method name="*" read-only="false" rollback-for="org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException, org.siemac.metamac.core.common.exception.MetamacException" />
         </tx:attributes>
