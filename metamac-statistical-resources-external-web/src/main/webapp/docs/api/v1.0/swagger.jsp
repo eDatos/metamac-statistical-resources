@@ -2952,7 +2952,7 @@
       	"allOf": [
       		{
       			"properties": {
-      				"datasetSelection": {
+      				"selection": {
       					"type": "object",
       					"properties": {
       						"dimensions": {
