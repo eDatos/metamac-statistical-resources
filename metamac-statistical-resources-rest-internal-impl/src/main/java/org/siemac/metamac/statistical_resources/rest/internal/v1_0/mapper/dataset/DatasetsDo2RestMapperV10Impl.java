@@ -201,20 +201,19 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
         if (source == null) {
             return null;
         }
-        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getMeasureDimensionFilter(dimensions); //Filter for measure dimensions
-        Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source);
-        //pasar dimensions toData filtrado solo medida enum de medida cuando es el tsv extendido
+        DimensionsFilter dimensionsFilter = commonDo2RestMapper.getDimensionFilter(dimensions);
+        Map<String, List<String>> effectiveSelectionValues = calculateEffectiveDimensionValuesToDataset(dimensionValuesSelected, source, dimensionsFilter);
         return commonDo2RestMapper.toData(source, dsdProcessorResult, effectiveSelectionValues, selectedLanguages, checkEmptyData, dimensionsFilter);
     }
 
-    @Override
-    public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
+    private Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion, DimensionsFilter dimensionsFilter) {
         Map<String, List<String>> dimensionValuesSelected = new HashMap<String, List<String>>(selectedDimensions.size());
         for (Entry<String, List<String>> selectedDimension : selectedDimensions.entrySet()) {
             String dimensionId = selectedDimension.getKey();
             List<String> selectedValues = selectedDimension.getValue();
             if (isTemporalDimension(dimensionId)) {
                 List<String> temporalCoverageValues = commonDo2RestMapper.temporalCoverageToString(datasetVersion.getTemporalCoverage());
+                temporalCoverageValues = StatisticalResourcesRestImplCommonUtils.filterTemporalCoverageByGranularity(temporalCoverageValues, dimensionsFilter);
                 List<String> effectiveValues = StatisticalResourcesRestImplCommonUtils.calculateEffectiveTemporalSelectionValues(temporalCoverageValues, selectedValues);
                 dimensionValuesSelected.put(dimensionId, effectiveValues);
             } else {
@@ -222,6 +221,11 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
             }
         }
         return dimensionValuesSelected;
+    }
+
+    @Override
+    public Map<String, List<String>> calculateEffectiveDimensionValuesToDataset(Map<String, List<String>> selectedDimensions, DatasetVersion datasetVersion) {
+        return calculateEffectiveDimensionValuesToDataset(selectedDimensions, datasetVersion, null);
     }
 
     @Override

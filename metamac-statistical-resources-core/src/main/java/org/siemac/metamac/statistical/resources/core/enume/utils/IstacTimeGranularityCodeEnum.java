@@ -5,54 +5,58 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 
 public enum IstacTimeGranularityCodeEnum {
 
-        /**
-        * List of results in the order of bigger to smaller.
-        */
-        YEARLY("YEARLY", "A"),
-        BIYEARLY("BIYEARLY", "S"),
-        QUARTERLY("QUATERLY", "Q"),
-        FOUR_MONTHLY("FOUR_MONTHLY","T"),
-        MONTHLY("MONTHLY","M"),
-        WEEKLY("WEEKLY","W"),
-        DAILY("DAILY","D"),
-        HOURLY("HOURLY","H");
+    /**
+     * List of results in the order of bigger to smaller.
+     */
 
-        private final String label;
-        private final String code;
-        /**
-         */
-        IstacTimeGranularityCodeEnum(String code, String label) {
-            this.label = label;
-            this.code = code;
-        }
+    YEARLY("YEARLY", "A"),
+    BIYEARLY("BIYEARLY", "S"),
+    FOUR_MONTHLY("FOUR_MONTHLY", "T"),
+    QUARTERLY("QUARTERLY", "Q"),
+    MONTHLY("MONTHLY", "M"),
+    WEEKLY("WEEKLY", "W"),
+    DAILY("DAILY", "D"),
+    HOURLY("HOURLY", "H");
 
-        public String getLabel() {
-            return label;
-        }
+    private final String label;
+    private final String code;
 
-        public String getCode() {
-            return code;
-        }
+    /**
+     */
+    IstacTimeGranularityCodeEnum(String code, String label) {
+        this.label = label;
+        this.code = code;
+    }
 
-        public IstacTimeGranularityCodeEnum getIstacTimeGranularityCodeEnumByCode(String code) throws MetamacException {
-            switch (code) {
-                case "Y":
-                    return YEARLY;
-                case "S":
-                    return BIYEARLY;
-                case "T":
-                    return FOUR_MONTHLY;
-                case "M":
-                    return MONTHLY;
-                case "W":
-                    return WEEKLY;
-                case "D":
-                    return DAILY;
-                case "H":
-                    return HOURLY;
-                default:
-                    throw new MetamacException(CommonServiceExceptionType.PARAMETER_INCORRECT, code);
-                    
-            }
+    public String getLabel() {
+        return label;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public IstacTimeGranularityCodeEnum getIstacTimeGranularityCodeEnumByCode(String code) throws MetamacException {
+        switch (code) {
+            case "Y":
+                return YEARLY;
+            case "S":
+                return BIYEARLY;
+            case "T":
+                return FOUR_MONTHLY;
+            case "Q":
+                return QUARTERLY;
+            case "M":
+                return MONTHLY;
+            case "W":
+                return WEEKLY;
+            case "D":
+                return DAILY;
+            case "H":
+                return HOURLY;
+            default:
+                throw new MetamacException(CommonServiceExceptionType.PARAMETER_INCORRECT, code);
+
         }
+    }
 }
