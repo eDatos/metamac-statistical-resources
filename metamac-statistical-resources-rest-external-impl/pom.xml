@@ -69,13 +69,6 @@
 			<version>${jackson.version}</version>
 		</dependency>
 
-		<!-- FOR JSONP -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-rs-extension-providers</artifactId>
-			<version>${cxf.version}</version>
-		</dependency>
-
 		<!-- Spring -->
 		<dependency>
 			<groupId>org.springframework</groupId>

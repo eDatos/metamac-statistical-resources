@@ -421,6 +421,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     private int deleteDatasourceData(String datasetId, Datasource datasource) throws MetamacException {
+        if (datasetId == null) {
+            return 0;
+        }
         try {
             InternationalStringDto internationalStringDto = new InternationalStringDto();
             LocalisedStringDto localisedStringDto = new LocalisedStringDto();

@@ -2332,7 +2332,9 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         List<String> temporalGranularitiesCodes = new ArrayList<>();
         for (String temporalGranularity : temporalGranularities) {
             try {
-                StringUtils.isNotBlank(temporalGranularity);
+                if (StringUtils.isBlank(temporalGranularity)) {
+                    continue;
+                }
                 IstacTimeGranularityCodeEnum istacTimeGranularityCodeEnum = IstacTimeGranularityCodeEnum.valueOf(temporalGranularity);
                 temporalGranularitiesCodes.add(istacTimeGranularityCodeEnum.getLabel());
             } catch (Exception e) {
