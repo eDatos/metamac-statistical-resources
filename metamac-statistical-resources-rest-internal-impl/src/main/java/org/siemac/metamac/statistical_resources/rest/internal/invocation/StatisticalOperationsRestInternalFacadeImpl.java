@@ -31,7 +31,7 @@ public class StatisticalOperationsRestInternalFacadeImpl implements StatisticalO
 
     @Override
     public Operation retrieveOperation(String operationCode) {
-        return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().retrieveOperationById(operationCode);
+        return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().retrieveOperationById(operationCode, null);
     }
 
     @Override
