@@ -2100,22 +2100,22 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public void processDatabaseDatasetPollingTask(ServiceContext ctx) throws MetamacException {
         taskServiceInvocationValidator.checkProcessDatabaseDatasetPollingTask(ctx);
 
-        DateTime executionDate = new DateTime();
+            DateTime executionDate = new DateTime();
 
-        List<DatasetVersion> datasetsVersions = retrieveDatabaseDatasets(ctx);
+                List<DatasetVersion> datasetsVersions = retrieveDatabaseDatasets(ctx);
 
-        if (!CollectionUtils.isEmpty(datasetsVersions)) {
-            for (DatasetVersion datasetVersion : datasetsVersions) {
-                if (!CollectionUtils.isEmpty(datasetVersion.getDatasources())) {
-                    updateDataFromDatasources(ctx, executionDate, datasetVersion);
+                if (!CollectionUtils.isEmpty(datasetsVersions)) {
+                    for (DatasetVersion datasetVersion : datasetsVersions) {
+                        if (!CollectionUtils.isEmpty(datasetVersion.getDatasources())) {
+                            updateDataFromDatasources(ctx, executionDate, datasetVersion);
+                        } else {
+                            logger.debug("There are no datasources configured yet for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                        }
+                    }
+
                 } else {
-                    logger.debug("There are no datasources configured yet for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                    logger.debug("There are no database datasets configured yet");
                 }
-            }
-
-        } else {
-            logger.debug("There are no database datasets configured yet");
-        }
     }
 
     @Override
@@ -2162,6 +2162,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
     
     private void updateDataFromDatasources(ServiceContext ctx, DateTime executionDate, DatasetVersion datasetVersion) {
+        
+        if (configurationService.retriveDatabaseDatasetImportJobIsEnabled()) {
+            logger.warn("Update data from dataset is disabled. Check " + StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED
+                                + " property value in environment.xml file in case you want to enable it");
+            return;
+        }
+        
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         for (Datasource datasource : datasetVersion.getDatasources()) {
