@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -50,48 +51,65 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
         String sqlQuery = buildQuery(tableName, columnsName, filterColumnName, filterValue);
         logger.debug(sqlQuery);
 
-        return jdbcTemplate.query(sqlQuery, new ObservationMapper(columnsName));
+        try {
+            return jdbcTemplate.query(sqlQuery, new ObservationMapper(columnsName));
+        } catch (DataAccessException e) {
+            logger.error("Error accessing database for table: {}", tableName, e);
+            MetamacException exception = new MetamacException();
+            exception.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.DB_IMPORT_DATASET_JOB_ERROR));
+            throw exception;
+        }
     }
 
     @Override
     public boolean checkTableExists(String tableName) {
-        return StringUtils.isNotBlank(tableName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
+        try {
+            return StringUtils.isNotBlank(tableName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
 
-            @Override
-            public Boolean doInConnection(Connection con) throws SQLException {
-                boolean found = Boolean.FALSE;
+                @Override
+                public Boolean doInConnection(Connection con) throws SQLException {
+                    boolean found = Boolean.FALSE;
 
-                DatabaseMetaData databaseMetaData = con.getMetaData();
+                    DatabaseMetaData databaseMetaData = con.getMetaData();
 
-                ResultSet resultSet = databaseMetaData.getTables(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), null);
+                    ResultSet resultSet = databaseMetaData.getTables(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), null);
 
-                while (resultSet.next() && !found) {
-                    found = StringUtils.equalsIgnoreCase(resultSet.getString("TABLE_NAME"), tableName);
+                    while (resultSet.next() && !found) {
+                        found = StringUtils.equalsIgnoreCase(resultSet.getString("TABLE_NAME"), tableName);
+                    }
+                    return found;
                 }
-                return found;
-            }
-        });
+            });
+        } catch (DataAccessException e) {
+            logger.error("Error checking if table exists: {}", tableName, e);
+            return false;
+        }
     }
 
     @Override
     public boolean checkTableHasColumn(String tableName, String columnName) {
-        return StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(columnName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
+        try {
+            return StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(columnName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
 
-            @Override
-            public Boolean doInConnection(Connection con) throws SQLException {
-                boolean found = Boolean.FALSE;
+                @Override
+                public Boolean doInConnection(Connection con) throws SQLException {
+                    boolean found = Boolean.FALSE;
 
-                DatabaseMetaData databaseMetaData = con.getMetaData();
+                    DatabaseMetaData databaseMetaData = con.getMetaData();
 
-                ResultSet resultSet = databaseMetaData.getColumns(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), getNonCaseSensitiveIdentifier(databaseMetaData, columnName));
+                    ResultSet resultSet = databaseMetaData.getColumns(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), getNonCaseSensitiveIdentifier(databaseMetaData, columnName));
 
-                while (resultSet.next() && !found) {
-                    found = StringUtils.equalsIgnoreCase(resultSet.getString("COLUMN_NAME"), columnName);
+                    while (resultSet.next() && !found) {
+                        found = StringUtils.equalsIgnoreCase(resultSet.getString("COLUMN_NAME"), columnName);
+                    }
+
+                    return found;
                 }
-
-                return found;
-            }
-        });
+            });
+        } catch (DataAccessException e) {
+            logger.error("Error checking if table has column: {}", tableName + " - " + columnName, e);
+            return false;
+        }
     }
 
     private void checkGetObservations(String tableName, List<String> columnsName, String filterColumnName, DateTime filterValue) throws MetamacException {
