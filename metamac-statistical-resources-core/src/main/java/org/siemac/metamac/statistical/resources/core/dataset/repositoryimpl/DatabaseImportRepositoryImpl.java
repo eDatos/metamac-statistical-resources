@@ -22,12 +22,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository(DatabaseImportRepository.BEAN_ID)
+@Lazy
 public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
 
     private static Logger logger = LoggerFactory.getLogger(DatabaseImportRepositoryImpl.class);
@@ -35,6 +37,7 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
     private JdbcTemplate  jdbcTemplate;
 
     @Autowired
+    @Lazy
     @Qualifier("dataSourceDatabaseImportRepository")
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
