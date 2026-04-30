@@ -40,6 +40,12 @@
   <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/translator.js" type='text/javascript'></script>
   <script src="<%=org.siemac.metamac.core.common.util.swagger.SwaggerUtils.getResourceBaseURL(request)%>/swagger-ui/lang/<%=locale %>.js" type='text/javascript'></script>  
   
+  <style>
+    .swagger-section .swagger-ui-wrap table.fullwidth {
+        table-layout: fixed;
+    }
+  </style>  
+  
   <script type="text/javascript">
     $(function () {
       var url = window.location.search.match(/url=([^&]+)/);
