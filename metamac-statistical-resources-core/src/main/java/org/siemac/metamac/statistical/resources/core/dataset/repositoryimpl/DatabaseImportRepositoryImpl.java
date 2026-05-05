@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -62,7 +63,7 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
     }
 
     @Override
-    public boolean checkTableExists(String tableName) {
+    public boolean checkTableExists(final String tableName) throws MetamacException {
         try {
             return StringUtils.isNotBlank(tableName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
 
@@ -80,13 +81,13 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
                     return found;
                 }
             });
-        } catch (DataAccessException e) {
-            throw new RuntimeException("Error checking if table exists: " + tableName, e);
+        } catch (Exception e) {
+            throw new MetamacException(e, CommonServiceExceptionType.UNKNOWN, "Error checking if table exists");
         }
     }
 
     @Override
-    public boolean checkTableHasColumn(String tableName, String columnName) {
+    public boolean checkTableHasColumn(final String tableName, final String columnName) throws MetamacException {
         try {
             return StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(columnName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
 
@@ -106,7 +107,7 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
                 }
             });
         } catch (DataAccessException e) {
-            throw new RuntimeException("Error checking if table has column:" + tableName + " - " + columnName, e);
+            throw new MetamacException(e, CommonServiceExceptionType.UNKNOWN, "Error checking if table has column");
         }
     }
 
