@@ -81,8 +81,7 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
                 }
             });
         } catch (DataAccessException e) {
-            logger.error("Error checking if table exists: {}", tableName, e);
-            return false;
+            throw new RuntimeException("Error checking if table exists: " + tableName, e);
         }
     }
 
@@ -107,8 +106,7 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
                 }
             });
         } catch (DataAccessException e) {
-            logger.error("Error checking if table has column: {}", tableName + " - " + columnName, e);
-            return false;
+            throw new RuntimeException("Error checking if table has column:" + tableName + " - " + columnName, e);
         }
     }
 
