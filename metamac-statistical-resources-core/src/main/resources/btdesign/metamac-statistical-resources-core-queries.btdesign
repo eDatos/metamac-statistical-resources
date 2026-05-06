@@ -3,6 +3,10 @@ import "classpath:/btdesign/metamac-statistical-resources-core-datasets.btdesign
 import "classpath:/btdesign/metamac-statistical-resources-core-queries-enums.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
 
+import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-tasks-dtos.btdesign"
+import "classpath:/btdesign/metamac-statistical-resources-core-tasks.btdesign"
+
 Application QueriesStatisticalResources {
 	basePackage=unused
 
@@ -16,6 +20,8 @@ Application QueriesStatisticalResources {
 		Service QueryService {
 			> @QueryRepository
 			> @QueryVersionRepository
+			> @TaskService
+			> @CacheService
 			
 			"Retrieve query by urn"
     		@QueryVersion retrieveQueryVersionByUrn(String urn) throws MetamacException;
@@ -43,6 +49,10 @@ Application QueriesStatisticalResources {
     		List<@Query> findQueriesByCondition(List<ConditionalCriteria> conditions)  throws MetamacException;
     		// Purposes
     		List<@Purpose> findPurposes() throws MetamacException;
+    		
+    		// geographical coverage cache
+    		updateGeographicalCache(@QueryVersion queryVersion) throws MetamacException;
+    		updateAllGeographicalCache() throws MetamacException;
 		}  
 
 
@@ -154,6 +164,7 @@ Application QueriesStatisticalResources {
 				List<@QueryVersion> findLinkedToFixedDatasetVersion(Long datasetVersionId);
 				List<@QueryVersion> findLinkedToDataset(Long datasetId);
 				List<@QueryVersion> findQueriesPublishedLinkedToDataset(Long datasetId);
+				List<@QueryVersion> findQueriesPublishedLinkedToDataset(String datasetUrn);
 				//Is part of
 				List<RelatedResourceResult> retrieveIsPartOf(@QueryVersion queryVersion) throws MetamacException;  
 				List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(@QueryVersion queryVersion) throws MetamacException;

@@ -10,6 +10,10 @@
         <constructor-arg value="org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService" />
     </bean>
     
+    <bean id="cacheService" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService" />
+    </bean>
+    
     <bean id="publicationService" class="org.mockito.Mockito" factory-method="mock">
         <constructor-arg value="org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService" />
     </bean>
@@ -40,6 +44,10 @@
     
     <bean id="multidatasetVersionRepository" class="org.mockito.Mockito" factory-method="mock">
         <constructor-arg value="org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository" />
+    </bean>
+    
+     <bean id="geoCacheResourceRepository" class="org.mockito.Mockito" factory-method="mock">
+        <constructor-arg value="org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResourceRepository" />
     </bean>
     
     <bean id="datasetRepositoriesServiceFacade" class="org.mockito.Mockito" factory-method="mock">

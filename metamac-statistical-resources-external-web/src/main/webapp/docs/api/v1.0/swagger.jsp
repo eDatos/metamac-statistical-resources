@@ -1186,8 +1186,60 @@
                }
             }
          ],
-         "description":"${msg['api.doc.swagger.definitions.resources.description']}"
+         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
       },
+    "ResourcesWithRelatedResources":{
+         "type":"object",
+         "title":"ResourcesWithRelatedResources",
+         "allOf":[       
+     		{
+     			"$ref":"#/definitions/ListBase"
+            },
+            {
+            	"properties":{
+            		"resource":{
+            			"xml":{
+            				"namespace":"http://www.siemac.org/metamac/rest/common/v1.0/domain"
+            			},
+            			"description":"${msg['api.doc.swagger.definitions.ResourcesWithRelatedResources.properties.resource.description']}",
+            			"type":"array",
+            			"items":{
+            				"$ref":"#/definitions/ResourceWithRelatedResources"
+            			}
+            		}
+            	}
+            }
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
+      },      
+      "ResourceWithRelatedResources":{
+         "type":"object",
+         "title":"ResourceWithRelatedResources",
+         "allOf":[
+            {            
+            "properties":{
+                  "mainResource":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ResourceWithRelatedResources.properties.mainResource.description']}",
+                     "$ref":"#/definitions/ResourceWithStatisticalOperation"
+                  },
+                  "relatedResource":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/statistical-resources/rest/common/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.ResourceWithRelatedResources.properties.relatedResource.description']}",
+                     "type":"array",
+                     "items":{
+                        "$ref":"#/definitions/ResourcesWithStatisticalOperation"
+                     }
+                  }
+               }
+             }  
+         ],
+         "description":"${msg['api.doc.swagger.definitions.Resources.description']}"
+      },       
       "Data":{
          "type":"object",
          "title":"Data",
@@ -2770,6 +2822,152 @@
             }
          },
          "description":"${msg['api.doc.swagger.definitions.constraintDimensionRepresentations.description']}"
+      },
+      "LabelVisualisationMode": {
+      	"type": "string",
+      	"title": "LabelVisualisationMode",
+      	"enum": [
+        	"CODE",
+        	"LABEL",
+        	"CODE_AND_LABEL"
+      	],
+      	"description": "",
+      	"example": "LABEL"
+      },
+      "ExportationDimensionFilters": {
+      	"type": "object",
+      	"title": "DimensionFilters",
+      	"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.description']}",
+      	"properties": {
+        	"range": {
+          		"type": "object",
+          		"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.properties.range.description']}",
+          		"properties": {
+            		"start": {
+              			"type": "string",
+              			"example": "2010-M01"
+            		},
+            		"end": {
+              			"type": "string",
+              			"example": "2011-M02"
+            		}
+          		},
+          		"last": {
+            		"type": "integer",
+            		"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.properties.last.description']}",
+            		"example": 4
+          		},
+          		"after": {
+            		"type": "string",
+            		"description": "${msg['api.doc.swagger.definitions.exportationDimensionFilters.properties.after.description']}",
+            		"example": "2009"
+          		}
+          	}
+        }
+      },
+      "ExportationDimensionValue": {
+      	"type":"array",
+      	"items": {
+        	"type":"string",
+        	"example": "INDICE_OCUPACION_PLAZAS"
+      	}
+      },
+      "ExportationDimensionValues": {
+      	"type": "object",
+      	"description": "${msg['api.doc.swagger.definitions.exportationDimensionValues.description']}",
+      	"properties": {
+        	"dimensionValue": {
+          	"$ref": "#/definitions/ExportationDimensionValue"
+        	}
+      	}
+      },
+      "ExportationDimension": {
+      	"type": "array",
+      	"items": {
+      		"type": "object",
+      		"properties": {
+      			"dimensionId": {
+      				"type": "string",
+      				"example": "TIME_PERIOD"
+      			},
+      			"labelVisualisationMode": {
+      				"$ref": "#/definitions/LabelVisualisationMode"
+      			},
+      			"position": {
+      				"type": "integer",
+      				"description": "${msg['api.doc.swagger.definitions.exportationDimension.properties.position.description']}",
+            		"example": "21"
+            	},
+            	"dimensionValues": {
+            		"$ref": "#/definitions/ExportationDimensionValues"
+            	},
+            	"dimensionFilters": {
+            		"$ref": "#/definitions/ExportationDimensionFilters"
+            	}
+            }
+        },
+        "example": [
+        	{
+        		"dimensionId": "INDICADORES",
+          		"labelVisualisationMode": "LABEL",
+          		"position": 20,
+          		"dimensionValues": {
+            		"dimensionValue": ["INDICE_OCUPACION_PLAZAS"]
+            	}
+        	},
+        	{
+        		"dimensionId": "TIME_PERIOD",
+          		"labelVisualisationMode": "LABEL",
+          		"position": 21,
+          		"dimensionFilters": {
+            		"range": {
+            			"start": "2010-M01",
+            			"end": "2011-M02"
+            		},
+            		"last": 4,
+            		"after": "2009"
+            	}
+        	},
+        	{
+        		"dimensionId": "CATEGORIA_ALOJAMIENTO",
+          		"labelVisualisationMode": "LABEL",
+          		"position": 0,
+          		"dimensionValues": {
+            		"dimensionValue": ["TOTAL"]
+          		}
+        	},
+        	{
+          		"dimensionId": "DESTINO_ALOJAMIENTO",
+          		"labelVisualisationMode": "LABEL",
+          		"position": 1,
+          		"dimensionValues": {
+            		"dimensionValue": ["EL_HIERRO", "LA_PALMA", "LA_GOMERA", "TENERIFE", "GRAN_CANARIA", "FUERTEVENTURA", "LANZAROTE"]
+          		}
+        	}
+        ]
+      },
+      "Exportation": {
+      	"type": "object",
+      	"title": "Exportation",
+      	"allOf": [
+      		{
+      			"properties": {
+      				"selection": {
+      					"type": "object",
+      					"properties": {
+      						"dimensions": {
+      							"type": "object",
+      							"properties": {
+      								"dimension": {
+      									"$ref": "#/definitions/ExportationDimension"
+      								}
+      							}
+      						}
+      					}
+      				}
+      			}
+      		}
+      	]
       }
    },
    "paths":{
@@ -3902,12 +4100,19 @@
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.query.description']}"
+               },
+               {
+                  "name":"fields",
+                  "in":"query",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.parameters.fields.description']}"
                }
             ],
             "responses":{
                "200":{
                   "schema":{
-                     "$ref":"#/definitions/ResourcesWithStatisticalOperation"
+                     "description":"${msg['api.doc.swagger.paths.v1.0.resources.get.responses.200.schema.description']}",
+                     "$ref":"#/definitions/ResourcesWithRelatedResources"
                   },
                   "headers":{
 

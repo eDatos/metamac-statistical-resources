@@ -8,6 +8,29 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 11.1.0 a 11.1.1
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/11.1.0/db/common-metadata/postgresql/] 
+
+## 10.23.0 a 11.0.0
+* **BREAKING CHANGE.** Se elimina la tabla caché actual y se añade un nuevo modelo de datos de caché. La salida de la API de los recursos para eTerritorios cambia por completo para ahora devolver colecciones y sus recursos asociados. ATENCIÓN! Esta subida debe ir conjunta con los cambios en eTerritorios así como los cambios realizados desde IBESTAT (izertis) en la que envián las colecciones de JAXI a un nuevo topic de kafka y exponen un endpoint para devolvernos la estructura de árbol de cada colección (capítulos...)
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/10.23.0/db] 
+**Atención!!** No ejecutar el script que se encuentra dentro de la carpeta "geographical-cache-migration" a la vez que los demás, antes del despliegue. En su lugar, debe ejecutarse una vez se ha desplegado con éxito la aplicación.
+
+* Se añade nuevo topic JAXI_COLLECTIONS_PUBLICATIONS para recibir los mensajes con los metadatos de publicaciones (colecciones) de JAXI. El schema-registry se ha guardado en la siguiente ruta [etc/kafka/JAXI_COLLECTIONS_PUBLICATIONS-value.json] No es necesario crearlo manualmente. Al llegar el primer mensaje al topic se crea automáticamente.
+
+* Se debe realizar una migración del viejo modelo de caché a las nuevas tablas. Así se traspasará el contenido de "tb_geocov_varelem_cache_datasets_versions" al nuevo modelo de dato. Se hará copia de seguridad y se borrará dicha tabla.
+El script se encuentra en la carpeta [etc/changes-from-release/10.23.0/db/geographical-cache-migration] Seguir los pasos que se indican en dicho script.
+
+* Se debe lanzar la actualización de caché masiva para los recursos que no tenían caché hasta ahora. Serán recursos de eDatos:
+  - Consultas
+  - Multidatasets
+  - Colecciones
+  Dado que la incorporación a la caché de colecciones depende de que estén ya incorporados los multidatasets y consultas. Y los multidatasets de que estén incorporadas las consultas, se ha incorporado un retardo para los dos últimos para esperar a que terminen los primeros. Se configura con el parámetro "metamac.statistical_resources.geo_cache_update.quartz_scheduler" establecido por defecto a 30 minutos. Eso se multiplica por 2 (es decir 1 horas) que será el tiempo que se espera para que termine el anterior.  Este se puede establecer en un tiempo menor si se prevee que el proceso sea más rápido. Habrá que estudiar. En PRE IBESTAT
+
+* Desde ibestat se debe lanzar la actualización masiva de colecciones de JAXI. 
+- Ibestat lanzará el envío masivo de colecciones de JAXI después de la subida (no necesariamente el mismo día)
+
 ## 10.19.0 a 10.20.0
 
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
@@ -110,6 +133,7 @@ Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orde
 
 ## 9.0.3 a 9.1.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/9.0.3/db]
+          
 
 ## 8.4.0 a 9.0.0
 * **BREAKING CHANGE.** Se quita el formato XLS ya que es un formato con bastantes limitaciones y no se debe usar. Se usa XLSX

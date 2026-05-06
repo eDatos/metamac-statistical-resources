@@ -61,11 +61,19 @@ public class JobUtil {
         return TaskServiceImpl.PREFIX_JOB_DUPLICATION_DATA + resourceId;
     }
 
+    public static String createJobNameForRecoveryGeographicalCache(String resourceId) {
+        return TaskServiceImpl.PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE + resourceId;
+    }
+
     public static String createJobNameForUpdateGeocoverageCache(String resourceId) {
         return TaskServiceImpl.PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE + resourceId;
     }
 
-    public static String createJobNameForUpdateExternalGeocoverageCache() {
-        return TaskServiceImpl.PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE;
+    public static String createJobNameForUpdateExternalGeocoverageCache(String resourceType) {
+        return TaskServiceImpl.PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE + resourceType;
+    }
+
+    public static String createJobNameForUpdateGeoCacheRelatedResources(String resourceId) {
+        return TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + resourceId;
     }
 }

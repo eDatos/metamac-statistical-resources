@@ -7,6 +7,7 @@ import org.siemac.metamac.statistical.resources.core.dto.BasicVersionableStatist
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 
 public abstract class ProcStatusValidator extends ProcStatusForActionsConstants {
 
@@ -49,6 +50,10 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
         ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForEditQueryVersion);
     }
 
+    public static void checkStatisticalResourceStructureCanBeCached(QueryVersion resource) throws MetamacException {
+        ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForSendResourceToVersion);
+    }
+
     // --------------------------------------------------------------------
     // DatasetVersion
     // --------------------------------------------------------------------
@@ -56,7 +61,7 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
         if (basicVersionableStatisticalResourceDto == null || !Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle())) {
             ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForImportDatasourcesInDatasetVersion);
         }
-        
+
         if (basicVersionableStatisticalResourceDto != null && Boolean.TRUE.equals(basicVersionableStatisticalResourceDto.getAutomaticLifeCicle())) {
             ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForImportZipDatasources);
         }
@@ -69,10 +74,18 @@ public abstract class ProcStatusValidator extends ProcStatusForActionsConstants 
         ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForEditPublicationStructure);
     }
 
+    public static void checkStatisticalResourceStructureCanBeCached(PublicationVersion resource) throws MetamacException {
+        ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForSendResourceToVersion);
+    }
+
     // --------------------------------------------------------------------
     // MultidatasetVersion
     // --------------------------------------------------------------------
     public static void checkStatisticalResourceStructureCanBeEdited(MultidatasetVersion resource) throws MetamacException {
         ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForEditMultidatasetStructure);
+    }
+
+    public static void checkStatisticalResourceStructureCanBeCached(MultidatasetVersion resource) throws MetamacException {
+        ProcStatusEnumUtils.checkPossibleProcStatus(resource, procStatusForSendResourceToVersion);
     }
 }

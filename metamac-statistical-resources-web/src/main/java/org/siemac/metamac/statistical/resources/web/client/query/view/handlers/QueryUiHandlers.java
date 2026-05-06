@@ -41,4 +41,8 @@ public interface QueryUiHandlers extends BaseUiHandlers {
     void resendXMessage(QueryVersionDto queryVersionDto);
     // Time codes
     void retrieveTemporalCodesForField(int firstResult, int maxResults, String datasetUrn, MetamacWebCriteria webCriteria);
+
+    // GEOGRAPHICAL CACHE
+
+    void updateGeoCacheRelatedResources(QueryVersionDto queryVersionDto);
 }

@@ -1129,4 +1129,16 @@ public class MultidatasetServiceTest extends StatisticalResourcesBaseTest implem
         assertEquals(1, multidatasets.getTotalRows());
         assertEquals(result.getIdentifiableStatisticalResource().getUrn(), multidatasets.getValues().get(0).getIdentifiableStatisticalResource().getUrn());
     }
+
+    @Override
+    public void testUpdateGeographicalCache() throws Exception {
+        // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
+
+    }
+
+    @Override
+    public void testUpdateAllGeographicalCache() throws Exception {
+        // NOTHING TO DO
+
+    }
 }

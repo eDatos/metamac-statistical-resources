@@ -1352,7 +1352,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         return createDatasetVersionFromTemplate(buildDatasetVersionWithSequenceAndVersion(sequentialId, version));
     }
 
-    private static DatasetVersionMock buildDatasetVersionWithSequenceAndVersion(Integer sequentialId, String version) {
+    public static DatasetVersionMock buildDatasetVersionWithSequenceAndVersion(Integer sequentialId, String version) {
         DatasetVersionMock template = new DatasetVersionMock();
         template.setSequentialId(sequentialId);
         template.setVersionLogic(version);

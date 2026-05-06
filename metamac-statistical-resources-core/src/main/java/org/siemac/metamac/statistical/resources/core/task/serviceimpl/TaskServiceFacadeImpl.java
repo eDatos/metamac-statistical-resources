@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.task.domain.Task;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
+import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskProperties;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.slf4j.Logger;
@@ -60,8 +61,13 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     }
 
     @Override
-    public void executeUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoDataset taskInfoDataset) throws MetamacException {
-        taskservice.processUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoDataset);
+    public void executeUpdateGeographicalCacheRelatedResourceTask(ServiceContext ctx, String jobKey, TaskInfoResources taskInfoResource) throws MetamacException {
+        taskservice.processUpdateGeographicalCacheRelatedResourceTask(ctx, jobKey, taskInfoResource);
+    }
+
+    @Override
+    public void executeUpdateExternalGeocoverageCacheTask(ServiceContext ctx, String jobKey, TaskInfoResources taskInfoResource) throws MetamacException {
+        taskservice.processUpdateExternalGeocoverageCacheTask(ctx, jobKey, taskInfoResource);
     }
 
     @Override
@@ -133,6 +139,17 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     @Override
     public void scheduleResendKafkaDatasetMessageJob(ServiceContext ctx) {
         taskservice.scheduleResendKafkaDatasetMessageJob(ctx);
+    }
+
+    @Override
+    public boolean existsGeoCacheTasksByTaskName(ServiceContext ctx, List<String> taskNames) throws MetamacException {
+        return taskservice.existsGeoCacheTasksByTaskName(ctx, taskNames);
+    }
+
+    @Override
+    public void executeRecoveryGeographicalCacheTask(ServiceContext ctx, String recoveryJobKey, TaskInfoResources taskInfoResource) throws MetamacException {
+        taskservice.processRetryGeographicalCacheTask(ctx, recoveryJobKey, taskInfoResource);
 
     }
+
 }

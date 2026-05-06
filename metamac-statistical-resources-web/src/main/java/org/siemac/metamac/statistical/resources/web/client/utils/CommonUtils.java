@@ -63,6 +63,8 @@ public class CommonUtils {
 
     private static String                               metamacPortalBaseUrl;
     private static Integer                              maxNumberOfUpdatedDatasetInGroup;
+    private static String                               externalDatasetTopicName;
+    private static String                               externalCollectionTopicName;
     private static Map<String, StatisticOfficialityDto> statisticOfficialitiesMap;
     private static Map<String, PurposeDto>              purposesMap;
 
@@ -793,6 +795,22 @@ public class CommonUtils {
 
     public static void setMaxNumberOfUpdatedDatasetInGroup(Integer maxNumberOfUpdatedDatasetInGroup) {
         CommonUtils.maxNumberOfUpdatedDatasetInGroup = maxNumberOfUpdatedDatasetInGroup;
+    }
+
+    public static String getExternalDatasetTopicName() {
+        return externalDatasetTopicName;
+    }
+
+    public static void setExternalDatasetTopicName(String externalDatasetTopicName) {
+        CommonUtils.externalDatasetTopicName = externalDatasetTopicName;
+    }
+
+    public static String getExternalCollectionTopicName() {
+        return externalCollectionTopicName;
+    }
+
+    public static void setExternalCollectionTopicName(String externalCollectionTopicName) {
+        CommonUtils.externalCollectionTopicName = externalCollectionTopicName;
     }
 
 }

@@ -7,6 +7,7 @@ import "classpath:/btdesign/metamac-statistical-resources-core-common.btdesign"
 import "classpath:/btdesign/metamac-statistical-resources-core-datasets-enums.btdesign"
 import "classpath:/btdesign/metamac-core-common-enum.btdesign"
 
+import "classpath:/btdesign/metamac-statistical-resources-core-caches.btdesign"
 
 Application DatasetsStatisticalResources { 
 	basePackage=unused
@@ -58,9 +59,7 @@ Application DatasetsStatisticalResources {
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Calculate table size"
-			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
-			"Finds resource from cache by criteria"
-			PagedResult<@GeoCovVarElementCacheDatasetVersion> findResourcesByCondition(List<ConditionalCriteria> conditions, PagingParameter pagingParameter)  throws MetamacException;
+			Long calculateTableSize(DatasetVersion resource) throws MetamacException;		
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			"Export datasources to TSV"
 			String exportDatasourcesTsv(String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException;
@@ -126,9 +125,8 @@ Application DatasetsStatisticalResources {
     		// Geocoverage variable elements cache
     		void updateGeographicCoverageVariableElementsCache(@DatasetVersion datasetVersion) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache() throws MetamacException;
-    		void updateAllGeographicExternalCoverageVariableElementsCache() throws MetamacException;
-    		void updateGeographicCoverageExternalPublicationVariableElementsCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
-    		
+    		void updateGeographicCoverageExternalPublicationCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
+	
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
     		List<@DatasetVersion> retrievePublishedLastVersionDatasets() throws MetamacException;
     		@DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId) throws MetamacException;
@@ -455,36 +453,7 @@ Application DatasetsStatisticalResources {
 				findByCondition;
 				@DimensionRepresentationMapping findByDatasetAndDatasourceFilename(String datasetUrn, String datasourceFilename) throws MetamacException;
 			}
-    	}
-
-		Entity GeoCovVarElementCacheDatasetVersion {
-			databaseTable = "TB_GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
-			hint="idSequence=GEOCOV_VARELEM_CACHE_DATASETS_VERSIONS"
-			!auditable
-			!optimisticLocking
-
-			Long id not nullable key;
-			String code databaseColumn="code" not nullable;
-			String urn databaseColumn="urn" not nullable;
-			- @InternationalString title cascade="persist,merge" fetch="eager" databaseColumn="title_fk" nullable;
-			- @ExternalItem variableElement cascade="all-delete-orphan" fetch="lazy" databaseColumn="variable_element_fk" not nullable;
-			String operationCode databaseColumn="operation_code";
-			String operationUrn databaseColumn="operation_urn";
-			- @InternationalString operationTitle cascade="persist,merge" fetch="eager" databaseColumn="operation_title_fk" nullable;
-			String htmlLink databaseColumn="htmlLink";
-			boolean isExternalSource databaseColumn="is_external_source" not nullable;
-			boolean isLastVersion databaseColumn="is_last_version" not nullable;
-			boolean isActivated databaseColumn="is_activated" not nullable;
-			Repository GeoCovVarElementCacheDatasetVersionRepository {
-				save;
-				delete;	
-				deleteAll();
-				findByCondition;
-				findByCondition(PagingParameter pagingParameter);
-				disabledByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
-				List<@GeoCovVarElementCacheDatasetVersion> retrieveByDatasetVersionUrn(String datasetVersionUrn) throws MetamacException;
-			}
-		}
-
+    	}  	
+    
 	}
 }

@@ -4,6 +4,7 @@ import org.siemac.metamac.statistical.resources.core.dto.multidataset.Multidatas
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.security.shared.SharedSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.LifecycleClientSecurityUtils;
 
 public class MultidatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
@@ -167,6 +168,19 @@ public class MultidatasetClientSecurityUtils extends LifecycleClientSecurityUtil
             return false;
         }
         return SharedMultidatasetsSecurityUtils.canDeleteMultidatasetCube(getMetamacPrincipal(), getCurrentStatisticalOperationCode(), multidatasetProcStatus);
+    }
+
+    public static boolean canUpdateGeoCacheRelatedResource(MultidatasetVersionDto dto) {
+        if (!isPublished(dto.getProcStatus())) {
+            return false;
+        }
+
+        // check is the last version published
+        if (dto.getValidTo() != null) {
+            return false;
+        }
+
+        return SharedSecurityUtils.canUpdateGeoCacheRelatedResource(getMetamacPrincipal());
     }
 
 }

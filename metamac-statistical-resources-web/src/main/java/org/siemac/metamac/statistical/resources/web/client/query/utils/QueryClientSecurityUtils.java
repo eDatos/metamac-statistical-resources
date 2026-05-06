@@ -4,6 +4,7 @@ import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseD
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
+import org.siemac.metamac.statistical.resources.core.security.shared.SharedSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.base.utils.LifecycleClientSecurityUtils;
 
 public class QueryClientSecurityUtils extends LifecycleClientSecurityUtils {
@@ -130,5 +131,18 @@ public class QueryClientSecurityUtils extends LifecycleClientSecurityUtils {
             return false;
         }
         return SharedQueriesSecurityUtils.canVersionQueryVersion(getMetamacPrincipal(), getCurrentStatisticalOperationCode());
+    }
+
+    public static boolean canUpdateGeoCacheRelatedResource(QueryVersionDto dto) {
+        if (!isPublished(dto.getProcStatus())) {
+            return false;
+        }
+
+        // check is the last version published
+        if (dto.getValidTo() != null) {
+            return false;
+        }
+
+        return SharedSecurityUtils.canUpdateGeoCacheRelatedResource(getMetamacPrincipal());
     }
 }
