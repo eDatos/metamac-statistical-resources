@@ -150,7 +150,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
                         || (source.getTemporalGranularities() != null && !source.getTemporalGranularities().isEmpty())))) {
             Map<String, List<String>> effectiveDimensionValuesToDataByDimension = calculateEffectiveDimensionValuesToQueryFilteredByLabels(source, relatedDataset, dimensionsFilter);
             dimensions = commonDo2RestMapper.toDimensions(relatedDataset.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, effectiveDimensionValuesToDataByDimension,
-                    selectedLanguages, null, dimensionsFilter);
+                    selectedLanguages, fields, dimensionsFilter);
         }
         if (includeMetadata) {
             target.setMetadata(toQueryMetadata(source, relatedDataset, dsdProcessorResult, selectedLanguages, dimensions));
@@ -187,7 +187,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         dimensionsFilter.setTemporalDimensionValuesQueriesIds(getTemporalGranularities(source.getTemporalGranularities()));
         List<String> selectedLanguages = Collections.singletonList(selectedLanguage);
         Dimensions dimensions = commonDo2RestMapper.toDimensions(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult,
-                calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, null, dimensionsFilter);
+                calculateEffectiveDimensionValuesToQuery(source, datasetVersion), selectedLanguages, parsedFields, dimensionsFilter);
         Data data = toQueryData(source, datasetVersion, dsdProcessorResult, selectedDimensions, selectedLanguages, dimensions);
 
         Attributes attributes = commonDo2RestMapper.toAttributes(datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), dsdProcessorResult, selectedLanguages);
