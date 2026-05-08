@@ -8,21 +8,24 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 11.1.0 a 11.1.1-SNAPSHOT
+## 11.2.0 a 11.2.1-SNAPSHOT
+
+* Se ha añadido la columna `PATCH` a la tabla `TB_DATASETS_VERSIONS`. Ejecutar el script de migración:
+  `etc/changes-from-release/11.1.1/db/statistical-resources/20260319_add_patch_column_to_datasets_versions.sql`
+
+* Se debe resetear el schema registry para el topic `DATASET_PUBLICATIONS` debido a que se ha modificado el schema Avro:
+  ```shell
+  curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+  ```
+* Se han de borrar los mensajes existentes en el topic `DATASET_PUBLICATIONS` (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
 
 * Esta versión requiere de modificaciones en el HAproxy y Apache, según corresponda, para que los headers que ahora
   sirve la aplicación para el cacheo de las peticiones no se vean sobrescritos. Concretammente, se deben modificar las 
   siguientes líneas:
   * **Apache**
-    * Modificar
+    * Se debe añadir la siguiente regla a los entornos afectados y por la URL adecuada:
         ```
-        Header set Cache-Control "no-cache,no-store,must-revalidate" env=!IGNORE_SET_CACHE
-        Header set Pragma no-cache env=!IGNORE_SET_CACHE
-        ```
-        por
-        ```
-        Header setifempty Cache-Control "no-cache,no-store,must-revalidate" env=!IGNORE_SET_CACHE
-        Header setifempty Pragma no-cache env=!IGNORE_SET_CACHE
+        RewriteRule ^/statistical-resources(.*) - [ENV=SET_IGNORE_CACHE]
         ```
   * **HAproxy**
     * Modificar
@@ -38,6 +41,9 @@
       http-response set-header Cache-Control "no-cache,no-store,must-revalidate" unless has_cache_control
       http-response set-header Pragma "no-cache" unless has_cache_control
       ```
+## 11.1.0 a 11.1.1
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/11.1.0/db/common-metadata/postgresql/] 
 
 ## 10.23.0 a 11.0.0
 * **BREAKING CHANGE.** Se elimina la tabla caché actual y se añade un nuevo modelo de datos de caché. La salida de la API de los recursos para eTerritorios cambia por completo para ahora devolver colecciones y sus recursos asociados. ATENCIÓN! Esta subida debe ir conjunta con los cambios en eTerritorios así como los cambios realizados desde IBESTAT (izertis) en la que envián las colecciones de JAXI a un nuevo topic de kafka y exponen un endpoint para devolvernos la estructura de árbol de cada colección (capítulos...)
@@ -57,15 +63,6 @@ El script se encuentra en la carpeta [etc/changes-from-release/10.23.0/db/geogra
 
 * Desde ibestat se debe lanzar la actualización masiva de colecciones de JAXI. 
 - Ibestat lanzará el envío masivo de colecciones de JAXI después de la subida (no necesariamente el mismo día)
-
-* Se ha añadido la columna `PATCH` a la tabla `TB_DATASETS_VERSIONS`. Ejecutar el script de migración:
-  `etc/changes-from-release/10.23.0/db/statistical-resources/20260319_add_patch_column_to_datasets_versions.sql`
-
-* Se debe resetear el schema registry para el topic `DATASET_PUBLICATIONS` debido a que se ha modificado el schema Avro:
-  ```shell
-  curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
-  ```
-* Se han de borrar los mensajes existentes en el topic `DATASET_PUBLICATIONS` (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
 
 ## 10.19.0 a 10.20.0
 
