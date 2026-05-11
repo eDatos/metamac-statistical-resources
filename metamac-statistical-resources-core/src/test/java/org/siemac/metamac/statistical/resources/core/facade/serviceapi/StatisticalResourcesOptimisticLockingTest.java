@@ -1360,6 +1360,30 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     }
 
     @Override
+    public void testCreateGranularityAttributeInstance() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
+    public void testUpdateGranularityAttributeInstance() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
+    public void testDeleteGranularityAttributeInstance() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
+    public void testRetrieveGranularityAttributeInstances() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
     public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
         // no optimistic locking in this operation
     }

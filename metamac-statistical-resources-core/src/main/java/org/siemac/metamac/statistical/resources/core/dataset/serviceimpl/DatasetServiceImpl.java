@@ -138,6 +138,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
@@ -1318,6 +1319,64 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             return statisticsDatasetRepositoriesServiceFacade.findAttributesInstances(datasetVersion.getDatasetRepositoryId(), attributeId);
         } catch (ApplicationException e) {
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error retrieve attribute instances in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public GranularityAttributeInstanceDto createGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto) throws MetamacException {
+        // Validations
+        datasetServiceInvocationValidator.checkCreateGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
+
+        // Retrieve the datasetVersion to get the datasetRepositoryId
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
+        // Create granularity attribute instance
+        try {
+            return statisticsDatasetRepositoriesServiceFacade.createGranularityAttributeInstance(datasetVersion.getDatasetRepositoryId(), granularityAttributeInstanceDto);
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error creating granularity attribute instance in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public GranularityAttributeInstanceDto updateGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto) throws MetamacException {
+        // Validations
+        datasetServiceInvocationValidator.checkUpdateGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
+
+        // Update granularity attribute instance
+        try {
+            return statisticsDatasetRepositoriesServiceFacade.updateGranularityAttributeInstance(granularityAttributeInstanceDto);
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error updating granularity attribute instance in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void deleteGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, String uuid) throws MetamacException {
+        // Validations
+        datasetServiceInvocationValidator.checkDeleteGranularityAttributeInstance(ctx, datasetVersionUrn, uuid);
+
+        // Delete granularity attribute instance
+        try {
+            statisticsDatasetRepositoriesServiceFacade.deleteGranularityAttributeInstance(uuid);
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error deleting granularity attribute instance in datasetRepository " + uuid + ". Details: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public List<GranularityAttributeInstanceDto> retrieveGranularityAttributeInstances(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
+        // Validations
+        datasetServiceInvocationValidator.checkRetrieveGranularityAttributeInstances(ctx, datasetVersionUrn, attributeId);
+
+        // Retrieve the datasetVersion to get the datasetRepositoryId
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
+        // Retrieve the granularity attribute instances
+        try {
+            return statisticsDatasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetVersion.getDatasetRepositoryId(), attributeId);
+        } catch (ApplicationException e) {
+            throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error retrieving granularity attribute instances in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
         }
     }
 

@@ -138,6 +138,13 @@ Application DatasetsStatisticalResourcesDto {
 			CodeDimensionMap codeDimensions;
 			-@AttributeValueDto value;
         }
+
+        DataTransferObject DsdGranularityAttributeInstanceDto extends @IdentityDto {
+        	String attributeId;
+			CodeDimensionMap codesByDimension;
+			GranularityCodeMap granularityCodesByDimension;
+			-@AttributeValueDto value;
+        }
         
         DataTransferObject AttributeValueDto extends @IdentityDto {
         	- @ExternalItemDto externalItemValue;

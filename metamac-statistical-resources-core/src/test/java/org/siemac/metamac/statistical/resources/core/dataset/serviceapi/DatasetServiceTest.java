@@ -1669,6 +1669,34 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
     @Override
     @Test
+    public void testCreateGranularityAttributeInstance() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
+    @Test
+    public void testUpdateGranularityAttributeInstance() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
+    @Test
+    public void testDeleteGranularityAttributeInstance() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
+    @Test
+    public void testRetrieveGranularityAttributeInstances() throws Exception {
+        // TODO EDATOS-5165 PENDING DEVELOP
+
+    }
+
+    @Override
+    @Test
     public void testRetrieveCoverageForDatasetVersionAttribute() throws Exception {
         // TODO: Implement (METAMAC-2143)
 
