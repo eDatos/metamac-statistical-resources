@@ -6,13 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.web.client.dataset.utils.DatasetClientSecurityUtils;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetAttributesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.model.record.DsdAttributeInstanceRecord;
+import org.siemac.metamac.statistical.resources.web.client.model.record.DsdGranularityAttributeInstanceRecord;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.StatisticalResourcesRecordUtils;
 
@@ -29,6 +32,8 @@ public class AttributePanel extends VLayout {
     private AttributeMainFormLayout        mainFormLayout;
 
     private DsdAttributeDto                dsdAttributeDto;
+    private String                         datasetVersionUrn;
+    private String                         selectedGranularityUuidForRefresh;
 
     private DatasetAttributesTabUiHandlers uiHandlers;
 
@@ -41,9 +46,15 @@ public class AttributePanel extends VLayout {
 
             @Override
             public void onRecordClick(RecordClickEvent event) {
-                if (event.getFieldNum() > 0 && event.getRecord() instanceof DsdAttributeInstanceRecord) {
-                    DsdAttributeInstanceDto dsdAttributeInstanceDto = ((DsdAttributeInstanceRecord) event.getRecord()).getDsdAttributeInstanceDto();
-                    mainFormLayout.showInstance(dsdAttributeDto, dsdAttributeInstanceDto);
+                if (event.getFieldNum() > 0) {
+                    if (event.getRecord() instanceof DsdAttributeInstanceRecord) {
+                        DsdAttributeInstanceDto dsdAttributeInstanceDto = ((DsdAttributeInstanceRecord) event.getRecord()).getDsdAttributeInstanceDto();
+                        mainFormLayout.showInstance(dsdAttributeDto, dsdAttributeInstanceDto);
+                    } else if (event.getRecord() instanceof DsdGranularityAttributeInstanceRecord) {
+                        DsdGranularityAttributeInstanceDto dto = ((DsdGranularityAttributeInstanceRecord) event.getRecord()).getDto();
+                        mainFormLayout.showGranularityInstance(dsdAttributeDto, dto);
+                        getUiHandlers().retrieveTemporalGranularitiesForAttribute(datasetVersionUrn);
+                    }
                 }
             }
         });
@@ -64,12 +75,28 @@ public class AttributePanel extends VLayout {
             }
         });
 
+        instancesSectionStack.getNewGranularityInstanceButton().addClickHandler(new ClickHandler() {
+
+            @Override
+            public void onClick(ClickEvent event) {
+                DsdGranularityAttributeInstanceDto dto = createNewGranularityAttributeInstance();
+                mainFormLayout.showGranularityInstance(dsdAttributeDto, dto);
+                getUiHandlers().retrieveTemporalGranularitiesForAttribute(datasetVersionUrn);
+            }
+        });
+
         instancesSectionStack.getConfirmDeleteButton().addClickHandler(new ClickHandler() {
 
             @Override
             public void onClick(ClickEvent event) {
-                List<String> uuids = instancesSectionStack.getSelectedAttributeInstancesUuids();
-                getUiHandlers().deleteAttributeInstances(dsdAttributeDto, uuids);
+                List<String> valueUuids = instancesSectionStack.getSelectedValueInstancesUuids();
+                List<String> granularityUuids = instancesSectionStack.getSelectedGranularityInstancesUuids();
+                if (!valueUuids.isEmpty()) {
+                    getUiHandlers().deleteAttributeInstances(dsdAttributeDto, valueUuids);
+                }
+                if (!granularityUuids.isEmpty()) {
+                    getUiHandlers().deleteGranularityAttributeInstances(dsdAttributeDto, granularityUuids);
+                }
             }
         });
 
@@ -104,9 +131,16 @@ public class AttributePanel extends VLayout {
 
         addMember(mainFormLayout);
     }
+    public void setDatasetVersionUrn(String datasetVersionUrn) {
+        this.datasetVersionUrn = datasetVersionUrn;
+    }
+
     public void showAttributeInstances(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
 
         this.dsdAttributeDto = dsdAttributeDto;
+        if (!CommonUtils.supportsGranularityAttributeInstances(dsdAttributeDto)) {
+            instancesSectionStack.setCanCreateGranularity(false);
+        }
 
         hideInstances();
         if (CommonUtils.hasDatasetRelationshipType(dsdAttributeDto)) {
@@ -128,18 +162,41 @@ public class AttributePanel extends VLayout {
             if (instancesSectionStack.getListGrid().getSelectedRecords() != null && instancesSectionStack.getListGrid().getSelectedRecords().length > 0) {
                 ListGridRecord[] attributeInstances = instancesSectionStack.getListGrid().getSelectedRecords();
                 if (attributeInstances.length == 1 && (CommonUtils.hasDimensionRelationshipType(dsdAttributeDto) || CommonUtils.hasGroupRelationshipType(dsdAttributeDto))) {
-                    instancesSectionStack.getListGrid().setData(StatisticalResourcesRecordUtils.getDsdAttributeInstanceRecords(dsdAttributeInstanceDtos, dsdAttributeDto));
+                    instancesSectionStack.getListGrid().setData(instancesSectionStack.getValueRecords(dsdAttributeDto, dsdAttributeInstanceDtos));
 
-                    DsdAttributeInstanceRecord dsdAttributeInstanceRecordUpdated = (DsdAttributeInstanceRecord) instancesSectionStack
-                            .getSelectedAttributeInstance(((DsdAttributeInstanceRecord) attributeInstances[0]).getUuid());
+                    if (attributeInstances[0] instanceof DsdAttributeInstanceRecord) {
+                        DsdAttributeInstanceRecord dsdAttributeInstanceRecordUpdated = (DsdAttributeInstanceRecord) instancesSectionStack
+                                .getSelectedAttributeInstance(((DsdAttributeInstanceRecord) attributeInstances[0]).getUuid());
 
-                    mainFormLayout.showInstance(dsdAttributeDto, dsdAttributeInstanceRecordUpdated.getDsdAttributeInstanceDto());
-
-                    instancesSectionStack.getListGrid().selectRecord(dsdAttributeInstanceRecordUpdated);
+                        if (dsdAttributeInstanceRecordUpdated != null) {
+                            mainFormLayout.showInstance(dsdAttributeDto, dsdAttributeInstanceRecordUpdated.getDsdAttributeInstanceDto());
+                            instancesSectionStack.getListGrid().selectRecord(dsdAttributeInstanceRecordUpdated);
+                        }
+                    } else if (attributeInstances[0] instanceof DsdGranularityAttributeInstanceRecord) {
+                        selectedGranularityUuidForRefresh = ((DsdGranularityAttributeInstanceRecord) attributeInstances[0]).getUuid();
+                    }
 
                 }
             }
         }
+    }
+
+    public void setGranularityAttributeInstances(DsdAttributeDto dsdAttributeDto, List<DsdGranularityAttributeInstanceDto> granularityInstances) {
+        instancesSectionStack.addGranularityInstances(dsdAttributeDto, granularityInstances);
+        if (selectedGranularityUuidForRefresh != null) {
+            ListGridRecord granularityRecord = instancesSectionStack.getSelectedGranularityInstance(selectedGranularityUuidForRefresh);
+            if (granularityRecord instanceof DsdGranularityAttributeInstanceRecord) {
+                DsdGranularityAttributeInstanceDto dto = ((DsdGranularityAttributeInstanceRecord) granularityRecord).getDto();
+                mainFormLayout.showGranularityInstance(dsdAttributeDto, dto);
+                instancesSectionStack.getListGrid().selectRecord(granularityRecord);
+                getUiHandlers().retrieveTemporalGranularitiesForAttribute(datasetVersionUrn);
+            }
+            selectedGranularityUuidForRefresh = null;
+        }
+    }
+
+    public void setTemporalGranularities(List<ExternalItemDto> granularities) {
+        mainFormLayout.setTemporalGranularities(granularities);
     }
 
     public void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverage) {
@@ -178,6 +235,12 @@ public class AttributePanel extends VLayout {
         return attributeInstance;
     }
 
+    private DsdGranularityAttributeInstanceDto createNewGranularityAttributeInstance() {
+        DsdGranularityAttributeInstanceDto dto = new DsdGranularityAttributeInstanceDto();
+        dto.setAttributeId(dsdAttributeDto.getIdentifier());
+        return dto;
+    }
+
     public void setUiHandlers(DatasetAttributesTabUiHandlers uiHandlers) {
         this.uiHandlers = uiHandlers;
         mainFormLayout.setUiHandlers(uiHandlers);
@@ -214,5 +277,9 @@ public class AttributePanel extends VLayout {
 
         mainFormLayout.setCanEdit(canUpdateAttributeInstance);
         mainFormLayout.setCanDelete(canDeleteAttributeInstance);
+    }
+
+    public void updateGranularityButtonVisibility(boolean hasTemporalDimension, boolean canCreate) {
+        instancesSectionStack.setCanCreateGranularity(hasTemporalDimension && canCreate);
     }
 }

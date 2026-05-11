@@ -9,6 +9,7 @@ import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.DataSourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
@@ -63,6 +64,9 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
                 if (event.getSelectedRecord() instanceof DsdAttributeRecord) {
                     DsdAttributeDto dsdAttributeDto = ((DsdAttributeRecord) event.getSelectedRecord()).getDsdAttributeDto();
                     if (!CommonUtils.hasObservationRelationshipType(dsdAttributeDto)) {
+                        boolean supportsGranularityInstances = CommonUtils.supportsGranularityAttributeInstances(dsdAttributeDto);
+                        boolean canCreate = DatasetClientSecurityUtils.canCreateAttributeInstance(datasetVersionDto);
+                        attributePanel.updateGranularityButtonVisibility(supportsGranularityInstances, canCreate);
                         getUiHandlers().retrieveAttributeInstances(dsdAttributeDto);
                     } else {
                         attributePanel.hide();
@@ -95,6 +99,7 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     public void setAttributes(DatasetVersionDto datasetVersionDto, List<DsdAttributeDto> attributes) {
         listGrid.setData(StatisticalResourcesRecordUtils.getDsdAttributeRecords(attributes));
         attributePanel.updateButtonsVisibility(datasetVersionDto);
+        attributePanel.setDatasetVersionUrn(datasetVersionDto.getUrn());
         this.datasetVersionDto = datasetVersionDto;
         attributesListPanel.updateButtonsVisibility();
         createImportAttributesWithMappingWindow(datasetVersionDto.getUrn());
@@ -109,6 +114,16 @@ public class DatasetAttributesTabViewImpl extends ViewWithUiHandlers<DatasetAttr
     @Override
     public void setAttributeInstancesForRefresh(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos) {
         attributePanel.resetDataAttributeInstance(dsdAttributeDto, dsdAttributeInstanceDtos);
+    }
+
+    @Override
+    public void setGranularityAttributeInstances(DsdAttributeDto dsdAttributeDto, List<DsdGranularityAttributeInstanceDto> instances) {
+        attributePanel.setGranularityAttributeInstances(dsdAttributeDto, instances);
+    }
+
+    @Override
+    public void setTemporalGranularities(List<ExternalItemDto> granularities) {
+        attributePanel.setTemporalGranularities(granularities);
     }
 
     @Override

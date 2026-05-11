@@ -137,10 +137,11 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import es.gobcan.istac.edatos.dataset.repository.domain.DatasetRepositoryExceptionCodeEnum;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
-import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DatasetRepositoryDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.DimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
@@ -1334,6 +1335,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             return statisticsDatasetRepositoriesServiceFacade.createGranularityAttributeInstance(datasetVersion.getDatasetRepositoryId(), granularityAttributeInstanceDto);
         } catch (ApplicationException e) {
+            if (isGranularityAttributeInstanceIllegalArgumentException(e)) {
+                throw new MetamacException(e, ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED);
+            }
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error creating granularity attribute instance in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
         }
     }
@@ -1343,12 +1347,21 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // Validations
         datasetServiceInvocationValidator.checkUpdateGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
 
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
         // Update granularity attribute instance
         try {
             return statisticsDatasetRepositoriesServiceFacade.updateGranularityAttributeInstance(granularityAttributeInstanceDto);
         } catch (ApplicationException e) {
+            if (isGranularityAttributeInstanceIllegalArgumentException(e)) {
+                throw new MetamacException(e, ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED);
+            }
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error updating granularity attribute instance in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
         }
+    }
+
+    private boolean isGranularityAttributeInstanceIllegalArgumentException(ApplicationException e) {
+        return e != null && DatasetRepositoryExceptionCodeEnum.ILLEGAL_ARGUMENT.name().equals(e.getErrorCode());
     }
 
     @Override

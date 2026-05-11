@@ -50,6 +50,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.is_required_by_not_visible_query");
     public static final CommonServiceExceptionType DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN                                                  = create(
             "exception.resources.dataset_version.observational_time_period_pattern");
+    public static final CommonServiceExceptionType GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED                                                         = create(
+            "exception.resources.dataset_version.granularity_attribute_instance_cant_be_saved");
 
     // Datasource
     public static final CommonServiceExceptionType DATASOURCE_NOT_FOUND                                                                                = create(

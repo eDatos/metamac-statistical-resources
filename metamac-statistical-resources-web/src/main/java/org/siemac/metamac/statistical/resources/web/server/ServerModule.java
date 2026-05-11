@@ -13,6 +13,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Crea
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteCategorisationsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasetAttributeInstancesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasetConstraintActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteGranularityAttributeInstancesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasetVersionsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.DeleteDatasourcesNotUsedActionHandler;
@@ -22,6 +23,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.Expo
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetCodelistsWithVariableActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributeInstancesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetAttributesActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetGranularityAttributeInstancesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetCategorisationsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetConstraintActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetDatasetDimensionCoverageActionHandler;
@@ -38,6 +40,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetI
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetMultipleDatasetVersionsActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.GetVersionsOfDatasetActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasetAttributeInstanceActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveGranularityAttributeInstanceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasetVersionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveDatasourceActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.dataset.SaveRegionActionHandler;
@@ -111,6 +114,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.CreateDataset
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteCategorisationsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetConstraintAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteGranularityAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetVersionsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasourcesNotUsedAction;
@@ -120,6 +124,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportDatasou
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetCodelistsWithVariableAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetGranularityAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetCategorisationsAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetConstraintAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionCoverageAction;
@@ -137,6 +142,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetMultipleDa
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetVersionsOfDatasetAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetAttributeInstanceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetVersionAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveGranularityAttributeInstanceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasourceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveRegionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateDatasetVersionMetadataInGroupAction;
@@ -275,6 +281,9 @@ public class ServerModule extends HandlerModule {
         bindHandler(GetDatasetAttributeInstancesAction.class, GetDatasetAttributeInstancesActionHandler.class);
         bindHandler(SaveDatasetAttributeInstanceAction.class, SaveDatasetAttributeInstanceActionHandler.class);
         bindHandler(DeleteDatasetAttributeInstancesAction.class, DeleteDatasetAttributeInstancesActionHandler.class);
+        bindHandler(GetGranularityAttributeInstancesAction.class, GetGranularityAttributeInstancesActionHandler.class);
+        bindHandler(SaveGranularityAttributeInstanceAction.class, SaveGranularityAttributeInstanceActionHandler.class);
+        bindHandler(DeleteGranularityAttributeInstancesAction.class, DeleteGranularityAttributeInstancesActionHandler.class);
         bindHandler(GetDatasetCategorisationsAction.class, GetDatasetCategorisationsActionHandler.class);
         bindHandler(CreateDatasetCategorisationsAction.class, CreateDatasetCategorisationsActionHandler.class);
         bindHandler(DeleteCategorisationsAction.class, DeleteCategorisationsActionHandler.class);
