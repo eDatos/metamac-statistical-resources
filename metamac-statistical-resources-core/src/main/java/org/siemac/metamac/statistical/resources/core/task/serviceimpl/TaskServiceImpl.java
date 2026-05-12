@@ -2205,7 +2205,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, new HashMap<>(), Boolean.FALSE);
 
                     logger.info("Planned a database import for dataset {} generated file: {} ", datasetVersionUrn, csvFile.getName());
-                    sendDatabaseImportationSuccessNotification(datasetVersion, tableName, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
                 } else {
                     logger.debug("There are no new observations in table {} for dataset {}", tableName, datasetVersionUrn);
                 }
@@ -2214,6 +2213,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, e, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
             } catch (Exception e) {
                 logger.error("An unexpected error has occurred trying to do a database import for dataset {}", datasetVersionUrn, e);
+                MetamacException metamacException = MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(ExceptionHelper.excMessage(e))
+                        .build();
+                sendDatabaseImportationErrorNotification(ctx, datasetVersionUrn, metamacException, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION, MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
             }
         }
     }
