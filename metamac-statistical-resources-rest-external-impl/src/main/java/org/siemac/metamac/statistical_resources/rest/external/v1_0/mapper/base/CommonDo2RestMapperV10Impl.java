@@ -1369,24 +1369,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
 
         // Enrich coverage with values contributed by granularity attribute instances
-        try {
-            List<GranularityAttributeInstanceDto> granularityInstances = datasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetRepositoryId, attribute.getComponentId());
-            if (!CollectionUtils.isEmpty(granularityInstances)) {
-                for (GranularityAttributeInstanceDto instance : granularityInstances) {
-                    if (instance.getValue() == null) {
-                        continue;
-                    }
-                    String valueId = instance.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
-                    if (StringUtils.isNotBlank(valueId) && !coveragesById.containsKey(valueId)) {
-                        AttributeValue av = new AttributeValue(attribute.getComponentId(), valueId);
-                        allCoverages.add(av);
-                        coveragesById.put(valueId, av);
-                    }
-                }
-            }
-        } catch (Exception e) {
-            logger.warn("Could not fetch granularity attribute instances for coverage of attribute: " + attribute.getComponentId(), e);
-        }
+        enrichCoverageWithGranularityInstances(datasetRepositoryId, attribute, allCoverages, coveragesById);
 
         if (allCoverages.isEmpty()) {
             return null;
@@ -1405,6 +1388,27 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
         return targets;
+    }
+
+    private void enrichCoverageWithGranularityInstances(String datasetRepositoryId, DsdAttribute attribute, List<AttributeValue> allCoverages, Map<String, AttributeValue> coveragesById) {
+        try {
+            List<GranularityAttributeInstanceDto> granularityInstances = datasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetRepositoryId, attribute.getComponentId());
+            if (!CollectionUtils.isEmpty(granularityInstances)) {
+                for (GranularityAttributeInstanceDto instance : granularityInstances) {
+                    if (instance.getValue() == null) {
+                        continue;
+                    }
+                    String valueId = instance.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
+                    if (StringUtils.isNotBlank(valueId) && !coveragesById.containsKey(valueId)) {
+                        AttributeValue av = new AttributeValue(attribute.getComponentId(), valueId);
+                        allCoverages.add(av);
+                        coveragesById.put(valueId, av);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Could not fetch granularity attribute instances for coverage of attribute: " + attribute.getComponentId(), e);
+        }
     }
 
     private EnumeratedAttributeValues toEnumeratedAttributeValuesFromCodelist(Map<String, AttributeValue> coveragesById, String codelistUrn, DsdComponentType attributeType,
