@@ -348,6 +348,9 @@ External service clients in `metamac-statistical-resources-core`:
 
 Update endpoint configuration in `environment.xml`
 
+### Code formatting:
+Use the Eclipse formatter defined in the following path: FILL_ME
+
 ### Nomenclatura y Código
 
 - **Idioma del código**: SIEMPRE en inglés
