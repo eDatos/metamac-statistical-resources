@@ -5,6 +5,7 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.NameableStatisticalResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
+import org.siemac.metamac.statistical.resources.core.dto.publication.ChapterDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.CubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.publication.PublicationVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
@@ -20,10 +21,12 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetStatistic
 import org.siemac.metamac.statistical.resources.web.shared.multidataset.GetMultidatasetsResult;
 import org.siemac.metamac.statistical.resources.web.shared.publication.GetPublicationsResult;
 import org.siemac.metamac.statistical.resources.web.shared.query.GetQueriesResult;
+import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.widgets.actions.search.SearchPaginatedAction;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
+import org.siemac.metamac.web.common.client.widgets.form.fields.CustomCheckboxItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomLinkItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomSelectItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
@@ -126,6 +129,16 @@ public class PublicationStructureElementPanel extends VLayout {
 
         ViewTextItem urn = new ViewTextItem(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
 
+        ViewTextItem opening = new ViewTextItem(ElementLevelDS.OPENING, getConstants().publicationStructureElementOpening());
+        opening.setShowIfCondition(new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                // Only show if the form containts a chapter
+                return element != null && !(element instanceof CubeDto);
+            }
+        });
+
         CustomLinkItem dataset = new CustomLinkItem(ElementLevelDS.DATASET, getConstants().dataset());
         dataset.setShowIfCondition(getIsNotEmptyFormItemIfFunction());
         dataset.addClickHandler(new com.smartgwt.client.widgets.form.fields.events.ClickHandler() {
@@ -162,7 +175,7 @@ public class PublicationStructureElementPanel extends VLayout {
         ViewTextItem url = new ViewTextItem(ElementLevelDS.URL, getConstants().url());
         url.setShowIfCondition(getIsNotEmptyFormItemIfFunction());
         
-        form.setFields(title, description, urn, dataset, query, multidataset, collection, url);
+        form.setFields(title, description, urn, opening, dataset, query, multidataset, collection, url);
         mainFormLayout.addViewCanvas(form);
     }
 
@@ -190,6 +203,16 @@ public class PublicationStructureElementPanel extends VLayout {
         MultiLanguageRichTextEditorItem description = new MultiLanguageRichTextEditorItem(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
 
         ViewTextItem urn = new ViewTextItem(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
+
+        CustomCheckboxItem opening = new CustomCheckboxItem(ElementLevelDS.OPENING, getConstants().publicationStructureElementOpening());
+        opening.setShowIfCondition(new FormItemIfFunction() {
+
+            @Override
+            public boolean execute(FormItem item, Object value, DynamicForm form) {
+                // Only show if the form containts a chapter
+                return element != null && !(element instanceof CubeDto);
+            }
+        });
 
         CustomSelectItem resourceTypeToLink = new CustomSelectItem(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeToLink());
         resourceTypeToLink.setValueMap(CommonUtils.getStatisticalResourceTypeThatCanBeAddIntoACubeInPublicationHashMap());
@@ -280,7 +303,7 @@ public class PublicationStructureElementPanel extends VLayout {
             }
         });
         
-        editionForm.setFields(title, description, urn, resourceTypeToLink, dataset, query, multidataset, collection, url);
+        editionForm.setFields(title, description, urn, opening, resourceTypeToLink, dataset, query, multidataset, collection, url);
         mainFormLayout.getEditionFormLayout().setHeight(300);
         mainFormLayout.addEditionCanvas(editionForm);
     }
@@ -336,11 +359,13 @@ public class PublicationStructureElementPanel extends VLayout {
             form.setValue(ElementLevelDS.COLLECTION, cubeDto.getCollectionUrn());
             form.setValue(ElementLevelDS.URL, cubeDto.getUrl());
         } else {
+            ChapterDto chapterDto = (ChapterDto) element;
             form.setValue(ElementLevelDS.DATASET, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.QUERY, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.MULTIDATASET, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.COLLECTION, StringUtils.EMPTY);
             form.setValue(ElementLevelDS.URL, StringUtils.EMPTY);
+            form.setValue(ElementLevelDS.OPENING, Boolean.TRUE.equals(chapterDto.getOpening()) ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no());
         }
 
         form.markForRedraw();
@@ -374,12 +399,14 @@ public class PublicationStructureElementPanel extends VLayout {
             setCollectionInEditionForm(cubeDto.getCollectionUrn());
             setUrlInEditionForm(cubeDto.getUrl());
         } else {
+            ChapterDto chapterDto = (ChapterDto) element;
             editionForm.setValue(ElementLevelDS.RESOURCE_TYPE_TO_LINK, StringUtils.EMPTY);
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.DATASET)).clearValue();
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.QUERY)).clearValue();
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.MULTIDATASET)).clearValue();
             ((CustomLinkItem) editionForm.getItem(ElementLevelDS.COLLECTION)).clearValue();
             ((CustomTextItem) editionForm.getItem(ElementLevelDS.URL)).clearValue();
+            editionForm.setValue(ElementLevelDS.OPENING, Boolean.TRUE.equals(chapterDto.getOpening()));
         }
 
         editionForm.markForRedraw();
@@ -415,6 +442,10 @@ public class PublicationStructureElementPanel extends VLayout {
 
         element.setTitle(editionForm.getValueAsInternationalStringDto(ElementLevelDS.TITLE));
         element.setDescription(editionForm.getValueAsInternationalStringDto(ElementLevelDS.DESCRIPTION));
+
+        if (!(element instanceof CubeDto)) {
+            ((ChapterDto) element).setOpening(((CustomCheckboxItem) editionForm.getItem(ElementLevelDS.OPENING)).getValueAsBoolean());
+        }
 
         if (element instanceof CubeDto) {
             if (StatisticalResourceTypeEnum.DATASET.name().equals(editionForm.getValueAsString(ElementLevelDS.RESOURCE_TYPE_TO_LINK))) {
