@@ -92,6 +92,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
     protected Tree                              tree;
     protected TreeGridField                     titleField;
+    protected TreeGridField                     openingField;
     protected TreeGridField                     urnField;
     protected TreeGridField                     resourceField;
     protected TreeGridField                     resourceTypeField;
@@ -215,6 +216,12 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
             }
         });
 
+        openingField = new TreeGridField(ElementLevelDS.OPENING, getConstants().publicationStructureElementOpening());
+        openingField.setShowHover(false);
+        openingField.setCanFilter(false);
+        openingField.setCanSort(false);
+        openingField.setWidth(100);
+
         orderField = new TreeGridField(ElementLevelDS.ORDER_IN_LEVEL, getConstants().publicationStructureElementOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
         orderField.setCanSort(true);
@@ -227,7 +234,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(titleField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
+        setFields(titleField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, openingField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);
