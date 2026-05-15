@@ -191,6 +191,9 @@ Application PublicationsStatisticalResources {
         	
         	- @NameableStatisticalResource nameableStatisticalResource databaseColumn="STATISTICAL_RESOURCE_FK" not nullable cascade="all";
 
+			"Opening"
+			Boolean opening not nullable;
+
 			// Relations
             "Element level"
             - @ElementLevel elementLevel cascade="none" not nullable inverse <-> chapter;
