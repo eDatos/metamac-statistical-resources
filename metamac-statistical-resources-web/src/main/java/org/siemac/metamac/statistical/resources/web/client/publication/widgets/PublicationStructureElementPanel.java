@@ -135,7 +135,7 @@ public class PublicationStructureElementPanel extends VLayout {
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 // Only show if the form containts a chapter
-                return element != null && !(element instanceof CubeDto);
+                return element != null && (element instanceof ChapterDto);
             }
         });
 
@@ -210,7 +210,7 @@ public class PublicationStructureElementPanel extends VLayout {
             @Override
             public boolean execute(FormItem item, Object value, DynamicForm form) {
                 // Only show if the form containts a chapter
-                return element != null && !(element instanceof CubeDto);
+                return element != null && (element instanceof ChapterDto);
             }
         });
 
