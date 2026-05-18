@@ -181,6 +181,23 @@ public class DimensionCoverageValuesSelectionItem extends CustomCanvasItem {
         }
     }
 
+    public void syncTemporalToSummary(String dimensionId, List<CodeItemDto> items) {
+        if (selectedDimensionValuesListGrid.getRecordList() != null) {
+            Map<String, String> criteria = new HashMap<String, String>();
+            criteria.put(CodeItemDS.DIMENSION_ID, dimensionId);
+            Record[] existing = selectedDimensionValuesListGrid.getRecordList().findAll(criteria);
+            if (existing != null) {
+                for (Record record : existing) {
+                    selectedDimensionValuesListGrid.removeData(record);
+                }
+            }
+        }
+        for (CodeItemDto item : items) {
+            CodeItemRecord record = StatisticalResourcesRecordUtils.getCodeItemRecord(dimensionId, item);
+            selectedDimensionValuesListGrid.addData(record);
+        }
+    }
+
     private class DimensionsListGridItem extends CustomCanvasItem {
 
         protected BaseCustomListGrid customListGrid;

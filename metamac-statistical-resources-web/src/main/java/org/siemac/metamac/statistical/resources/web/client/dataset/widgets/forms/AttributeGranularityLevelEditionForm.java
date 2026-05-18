@@ -14,30 +14,38 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDt
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.web.client.constants.StatisticalResourceWebConstants;
+import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.DatasetDS;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetAttributesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.DimensionCoverageValuesSelectionItem;
 import org.siemac.metamac.statistical.resources.web.client.model.ds.DsdGranularityAttributeInstanceDS;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.DatasetAttibuteUtils;
-import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.utils.InternationalStringUtils;
 import org.siemac.metamac.web.common.client.utils.RecordUtils;
-import org.siemac.metamac.web.common.client.widgets.BaseCustomListGrid;
-import org.siemac.metamac.web.common.client.widgets.CustomListGridField;
 import org.siemac.metamac.web.common.client.widgets.form.GroupDynamicForm;
 import org.siemac.metamac.web.common.client.widgets.form.fields.CustomTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.MultiLanguageTextItem;
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemSimpleItem;
+import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchMultiExternalItemSimpleItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
+import com.google.gwt.core.client.JavaScriptObject;
+import com.google.gwt.core.client.Scheduler;
+import com.smartgwt.client.data.Record;
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.fields.FormItem;
+import com.smartgwt.client.widgets.layout.Layout;
 
 public class AttributeGranularityLevelEditionForm extends GroupDynamicForm {
 
-    private DatasetAttributesTabUiHandlers        uiHandlers;
-    private DsdAttributeDto                       dsdAttributeDto;
-    private DsdGranularityAttributeInstanceDto    dto;
-    private String                                temporalDimensionId;
+    private DatasetAttributesTabUiHandlers          uiHandlers;
+    private DsdAttributeDto                         dsdAttributeDto;
+    private DsdGranularityAttributeInstanceDto      dto;
+    private String                                  temporalDimensionId;
+
+    private SearchMultiExternalItemSimpleItem        temporalGranularitiesItem;
+    private DimensionCoverageValuesSelectionItem     dimensionCoverageItem;
+    private List<ExternalItemDto>                    availableTemporalGranularities;
 
     public AttributeGranularityLevelEditionForm() {
         super("GranularityAttribute");
@@ -59,15 +67,37 @@ public class AttributeGranularityLevelEditionForm extends GroupDynamicForm {
     private void buildForm(DsdAttributeDto dsdAttributeDto, DsdGranularityAttributeInstanceDto dto) {
         List<FormItem> fields = new ArrayList<FormItem>();
 
-        List<String> dimensionIds = new ArrayList<String>();
-        dimensionIds.add(temporalDimensionId);
-        List<String> nonTemporalDimIds = CommonUtils.getNonTemporalDimensionIds(dsdAttributeDto);
-        dimensionIds.addAll(nonTemporalDimIds);
+        // Temporal granularity selector (SearchMultiExternalItemSimpleItem with CODE+TITLE+URN)
+        temporalGranularitiesItem = new SearchMultiExternalItemSimpleItem(DatasetDS.TEMPORAL_GRANULARITY, getConstants().datasetTemporalGranularities(),
+                StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
+            @Override
+            protected void retrieveResources(int firstResult, int maxResults, MetamacWebCriteria webCriteria) {
+                if (availableTemporalGranularities != null) {
+                    setResources(availableTemporalGranularities, 0, availableTemporalGranularities.size());
+                }
+            }
 
-        DimensionCoverageValuesSelectionItem dimensionCoverageItem = new DimensionCoverageValuesSelectionItem(
-                DsdGranularityAttributeInstanceDS.GRANULARITY_CODES, getConstants().datasetAttributeDimensionValuesSelection(), dimensionIds, true);
+            @Override
+            public void setExternalItems(List<ExternalItemDto> items) {
+                super.setExternalItems(items);
+                syncTemporalGranularitiesToSummary(items);
+            }
+        };
+        applyTemporalGranularitiesAlignment(temporalGranularitiesItem);
+        temporalGranularitiesItem.setColSpan(4);
+        temporalGranularitiesItem.setRequired(true);
+        temporalGranularitiesItem.getListGrid().setAnimateRemoveRecord(false);
+        hookRemoveRecordClick(temporalGranularitiesItem.getListGrid().getOrCreateJsObj());
+        fields.add(temporalGranularitiesItem);
+
+        // Non-temporal dimensions + summary grid
+        List<String> nonTemporalDimIds = CommonUtils.getNonTemporalDimensionIds(dsdAttributeDto);
+        dimensionCoverageItem = new DimensionCoverageValuesSelectionItem(
+                DsdGranularityAttributeInstanceDS.GRANULARITY_CODES, getConstants().datasetAttributeDimensionValuesSelection(), nonTemporalDimIds, true);
         dimensionCoverageItem.setColSpan(4);
-        dimensionCoverageItem.setRequired(true);
+        if (!nonTemporalDimIds.isEmpty()) {
+            dimensionCoverageItem.setRequired(true);
+        }
         fields.add(dimensionCoverageItem);
 
         if (!nonTemporalDimIds.isEmpty()) {
@@ -103,6 +133,16 @@ public class AttributeGranularityLevelEditionForm extends GroupDynamicForm {
         setFields(fields.toArray(new FormItem[fields.size()]));
     }
 
+    private void applyTemporalGranularitiesAlignment(SearchMultiExternalItemSimpleItem item) {
+        Canvas canvas = item.getCanvas();
+        if (canvas instanceof Layout) {
+            ((Layout) canvas).setLayoutMargin(10);
+            ((Layout) canvas).setMembersMargin(0);
+        } else if (canvas != null) {
+            canvas.setPadding(10);
+        }
+    }
+
     private SearchExternalItemSimpleItem createEnumeratedValueItem(String name, String title) {
         return new SearchExternalItemSimpleItem(name, title, StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS) {
 
@@ -114,66 +154,66 @@ public class AttributeGranularityLevelEditionForm extends GroupDynamicForm {
     }
 
     public void setTemporalGranularities(List<ExternalItemDto> granularities) {
-        FormItem item = getItem(DsdGranularityAttributeInstanceDS.GRANULARITY_CODES);
-        if (!(item instanceof DimensionCoverageValuesSelectionItem) || granularities == null) {
+        if (temporalGranularitiesItem == null || granularities == null) {
             return;
         }
-        DimensionCoverageValuesSelectionItem selectionItem = (DimensionCoverageValuesSelectionItem) item;
-        List<CodeItemDto> temporalGranularities = new ArrayList<CodeItemDto>(granularities.size());
-        for (ExternalItemDto granularity : granularities) {
-            temporalGranularities.add(new CodeItemDto(granularity.getCode(), granularity.getTitle() != null ? InternationalStringUtils.getLocalisedString(granularity.getTitle())
-                    : granularity.getCode()));
-        }
-        selectionItem.setDimensionCoverageValues(temporalDimensionId, temporalGranularities);
+        availableTemporalGranularities = granularities;
 
+        List<ExternalItemDto> selected = new ArrayList<ExternalItemDto>();
         if (dto != null && dto.getGranularityCodesByDimension() != null) {
             List<String> selectedCodes = dto.getGranularityCodesByDimension().get(temporalDimensionId);
-            if (selectedCodes != null && !selectedCodes.isEmpty()) {
-                List<CodeItemDto> selectedGranularities = new ArrayList<CodeItemDto>();
-                for (CodeItemDto temporalGranularity : temporalGranularities) {
-                    if (selectedCodes.contains(temporalGranularity.getCode())) {
-                        selectedGranularities.add(temporalGranularity);
+            if (selectedCodes != null) {
+                for (ExternalItemDto granularity : granularities) {
+                    if (selectedCodes.contains(granularity.getCode())) {
+                        selected.add(granularity);
                     }
                 }
-                selectionItem.selectDimensionCodes(temporalDimensionId, selectedGranularities);
             }
         }
+        temporalGranularitiesItem.setExternalItems(selected);
+        temporalGranularitiesItem.storeValue(selected.isEmpty() ? null : new Record());
     }
 
     public void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverages) {
-        FormItem item = getItem(DsdGranularityAttributeInstanceDS.GRANULARITY_CODES);
-        if (item instanceof DimensionCoverageValuesSelectionItem) {
-            DimensionCoverageValuesSelectionItem selectionItem = (DimensionCoverageValuesSelectionItem) item;
-            Map<String, List<CodeItemDto>> codeDimensions = dto.getCodesByDimension() != null ? dto.getCodesByDimension() : new HashMap<String, List<CodeItemDto>>();
-            for (String dimensionId : dimensionsCoverages.keySet()) {
-                List<CodeItemDto> selectedCodes = codeDimensions.get(dimensionId) != null ? codeDimensions.get(dimensionId) : new ArrayList<CodeItemDto>();
-                selectionItem.setDimensionCoverageValues(dimensionId, dimensionsCoverages.get(dimensionId));
-                selectionItem.selectDimensionCodes(dimensionId, selectedCodes);
-            }
+        if (dimensionCoverageItem == null) {
+            return;
+        }
+        Map<String, List<CodeItemDto>> codeDimensions = dto.getCodesByDimension() != null ? dto.getCodesByDimension() : new HashMap<String, List<CodeItemDto>>();
+        for (String dimensionId : dimensionsCoverages.keySet()) {
+            List<CodeItemDto> selectedCodes = codeDimensions.get(dimensionId) != null ? codeDimensions.get(dimensionId) : new ArrayList<CodeItemDto>();
+            dimensionCoverageItem.setDimensionCoverageValues(dimensionId, dimensionsCoverages.get(dimensionId));
+            dimensionCoverageItem.selectDimensionCodes(dimensionId, selectedCodes);
         }
     }
 
-    public DsdGranularityAttributeInstanceDto getDsdGranularityAttributeInstanceDto() {
-        Map<String, List<CodeItemDto>> allSelectedCodeDimensions = new HashMap<String, List<CodeItemDto>>();
-        FormItem dimItem = getItem(DsdGranularityAttributeInstanceDS.GRANULARITY_CODES);
-        if (dimItem instanceof DimensionCoverageValuesSelectionItem) {
-            allSelectedCodeDimensions = ((DimensionCoverageValuesSelectionItem) dimItem).getSelectedCodeDimensions();
+    @Override
+    public Boolean validate(boolean validateHiddenFields) {
+        if (temporalGranularitiesItem != null) {
+            List<ExternalItemDto> items = temporalGranularitiesItem.getExternalItemDtos();
+            temporalGranularitiesItem.storeValue(items != null && !items.isEmpty() ? new Record() : null);
         }
+        return super.validate(validateHiddenFields);
+    }
 
-        List<String> selectedCodes = new ArrayList<String>();
-        List<CodeItemDto> temporalCodes = allSelectedCodeDimensions.get(temporalDimensionId);
-        if (temporalCodes != null) {
-            for (CodeItemDto temporalCode : temporalCodes) {
-                selectedCodes.add(temporalCode.getCode());
+    public DsdGranularityAttributeInstanceDto getDsdGranularityAttributeInstanceDto() {
+        // Temporal granularity codes from the search item
+        List<String> selectedTemporalCodes = new ArrayList<String>();
+        if (temporalGranularitiesItem != null) {
+            List<ExternalItemDto> selectedItems = temporalGranularitiesItem.getExternalItemDtos();
+            if (selectedItems != null) {
+                for (ExternalItemDto item : selectedItems) {
+                    selectedTemporalCodes.add(item.getCode());
+                }
             }
         }
-
         Map<String, List<String>> granularityCodesByDimension = new HashMap<String, List<String>>();
-        granularityCodesByDimension.put(temporalDimensionId, selectedCodes);
+        granularityCodesByDimension.put(temporalDimensionId, selectedTemporalCodes);
         dto.setGranularityCodesByDimension(granularityCodesByDimension);
 
-        Map<String, List<CodeItemDto>> codesByDimension = new HashMap<String, List<CodeItemDto>>(allSelectedCodeDimensions);
-        codesByDimension.remove(temporalDimensionId);
+        // Non-temporal dimension codes from the coverage item
+        Map<String, List<CodeItemDto>> codesByDimension = dimensionCoverageItem != null
+                ? dimensionCoverageItem.getSelectedCodeDimensions()
+                : new HashMap<String, List<CodeItemDto>>();
         dto.setCodesByDimension(codesByDimension);
 
         // Value
@@ -189,6 +229,48 @@ public class AttributeGranularityLevelEditionForm extends GroupDynamicForm {
         dto.setValue(valueDto);
 
         return dto;
+    }
+
+    private native void hookRemoveRecordClick(JavaScriptObject listGridJsObj) /*-{
+        var form = this;
+        var original = listGridJsObj.removeRecordClick;
+        listGridJsObj.removeRecordClick = $entry(function(rowNum, record) {
+            if (original) {
+                original.apply(this, arguments);
+            } else {
+                this.removeData(record);
+            }
+            form.@org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeGranularityLevelEditionForm::onGranularityRemoved()();
+        });
+    }-*/;
+
+    private void onGranularityRemoved() {
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+            @Override
+            public void execute() {
+                if (temporalGranularitiesItem == null) {
+                    return;
+                }
+                List<ExternalItemDto> current = temporalGranularitiesItem.getExternalItemDtos();
+                temporalGranularitiesItem.storeValue(current != null && !current.isEmpty() ? new Record() : null);
+                syncTemporalGranularitiesToSummary(current);
+            }
+        });
+    }
+
+    private void syncTemporalGranularitiesToSummary(List<ExternalItemDto> selected) {
+        if (dimensionCoverageItem == null) {
+            return;
+        }
+        List<CodeItemDto> codeItems = new ArrayList<CodeItemDto>();
+        if (selected != null) {
+            for (ExternalItemDto item : selected) {
+                String title = item.getTitle() != null ? InternationalStringUtils.getLocalisedString(item.getTitle()) : item.getCode();
+                codeItems.add(new CodeItemDto(item.getCode(), title));
+            }
+        }
+        dimensionCoverageItem.syncTemporalToSummary(temporalDimensionId, codeItems);
     }
 
     public DsdAttributeDto getDsdAttributeDto() {

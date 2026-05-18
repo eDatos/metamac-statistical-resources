@@ -2384,6 +2384,8 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
         granularityCodes.put("TIME_PERIOD", Arrays.asList("A"));
         inputDto.setGranularityCodesByDimension(granularityCodes);
+        inputDto.setValue(new org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto());
+        inputDto.getValue().setStringValue("updated-value");
         Map<String, List<String>> codesByDimension = new HashMap<String, List<String>>();
         codesByDimension.put("DIM_01", Arrays.asList("CODE_01"));
 

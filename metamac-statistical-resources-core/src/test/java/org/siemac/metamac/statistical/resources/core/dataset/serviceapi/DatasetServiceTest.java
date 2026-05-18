@@ -1682,6 +1682,9 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
         granularityCodes.put("TIME_PERIOD", Arrays.asList("A", "Q"));
         inputDto.setGranularityCodesByDimension(granularityCodes);
+        es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto inputValue = new es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto();
+        inputValue.addText(new es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto("es", "test-value"));
+        inputDto.setValue(inputValue);
 
         GranularityAttributeInstanceDto returnedDto = new GranularityAttributeInstanceDto();
         returnedDto.setUuid("uuid-granularity-01");
@@ -1751,6 +1754,9 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
         granularityCodes.put("TIME_PERIOD", Arrays.asList("A"));
         inputDto.setGranularityCodesByDimension(granularityCodes);
+        es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto inputValue = new es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto();
+        inputValue.addText(new es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto("es", "updated-value"));
+        inputDto.setValue(inputValue);
 
         GranularityAttributeInstanceDto returnedDto = new GranularityAttributeInstanceDto();
         returnedDto.setUuid("uuid-granularity-existing");
