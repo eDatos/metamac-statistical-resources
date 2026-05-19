@@ -68,11 +68,11 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     private static final int                 SPLIT_DATA_FACTOR            = 5000;
 
     private PrintWriter                      printWriter;
-    private static final String              HEADER_ATTRIBUTE_ID          = "ATTRIBUTE_ID";
-    private static final String              HEADER_INSTANCE_TYPE         = "INSTANCE_TYPE";
-    private static final String              HEADER_DIMENSIONS            = "DIMENSIONS";
-    private static final String              HEADER_DIMENSION_VALUES      = "DIMENSION_VALUES";
-    private static final String              HEADER_PREFIX_ATTRIBUTE_VALUE = "ATTRIBUTE_VALUE";
+    private static final String              HEADER_ATTRIBUTE_ID          = "ID_ATRIBUTO";
+    private static final String              HEADER_INSTANCE_TYPE         = "TIPO_INSTANCIA";
+    private static final String              HEADER_DIMENSIONS            = "DIMENSIONES";
+    private static final String              HEADER_DIMENSION_VALUES      = "VALORES_DIMENSION";
+    private static final String              HEADER_PREFIX_ATTRIBUTE_VALUE = "VALOR_ATRIBUTO";
     private static final String              HEADER_PREFIX_LANGUAGE       = "#";
     private static final String              EMPTY                        = "";
     private static final String              DIMENSION_VALUES_SEPARATOR   = ", ";
@@ -115,14 +115,14 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
     @Override
     public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId,
-            ServiceContext ctx, String datasetVersionUrn, List<String> validLanguages) throws Exception {
+            ServiceContext ctx, String datasetVersionUrn, List<String> validLanguages, List<String> validGranularityCodes, String temporalGranularityCodelistUrn) throws Exception {
         InputStream is = null;
         try {
             // Parse Csv
             String charsetName = FileUtils.guessCharset(csvFile);
             is = new FileInputStream(csvFile);
 
-            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure, validLanguages);
+            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure, validLanguages, validGranularityCodes, temporalGranularityCodelistUrn);
 
             List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos = new ArrayList<>();
             List<DsdGranularityAttributeInstanceDto> granularityInstanceDtos = new ArrayList<>();

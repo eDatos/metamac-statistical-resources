@@ -41,20 +41,29 @@ public class CsvAttributesParser {
     private static final int           COLUMN_DIMENSION_VALUES                   = 3;
     private static final int           COLUMN_ATTRIBUTE_VALUE                    = 4;
     public static final String         TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
+    private static final String        HEADER_INSTANCE_TYPE                      = "TIPO_INSTANCIA";
     private List<String>               idsDimensions                             = new ArrayList<>();
     private List<String>               idsAttributes                             = new ArrayList<>();
     private Map<String, Boolean>       isMultilingualByIdAttribute               = new HashMap<>();
     private List<MetamacExceptionItem> exceptions                                = new ArrayList<>();
     private String                     timeDimensionId                           = null;
     private String                     lastInstanceType                          = null;
+    private List<String>               validGranularityCodes                     = new ArrayList<>();
+    private String                     temporalGranularityCodelistUrn            = null;
+    private boolean                    legacyFormat                              = false;
 
-    public CsvAttributesParser(InputStream pxStream, String charsetName, char separator, DataStructure dataStructure, List<String> validLanguages) throws Exception {
+    public CsvAttributesParser(InputStream pxStream, String charsetName, char separator, DataStructure dataStructure, List<String> validLanguages, List<String> validGranularityCodes,
+            String temporalGranularityCodelistUrn) throws Exception {
         BufferedReader bufferedReader = getBufferedReader(pxStream, charsetName);
         csvReader = new CSVReader(bufferedReader, separator);
         headers = readDefinition(csvReader);
         if (validLanguages != null) {
             this.validLanguages = validLanguages;
         }
+        if (validGranularityCodes != null) {
+            this.validGranularityCodes = validGranularityCodes;
+        }
+        this.temporalGranularityCodelistUrn = temporalGranularityCodelistUrn;
         initializeIdsDsdDimensions(dataStructure);
         initializeIdsDsdAttributes(dataStructure);
     }
@@ -85,7 +94,23 @@ public class CsvAttributesParser {
         if (isEmptyLine(headers)) {
             throw new Exception("[Incorrect header] Header not found");
         }
+        if (isLegacyFormat(headers)) {
+            legacyFormat = true;
+            headers = normalizeToCurrentFormat(headers, HEADER_INSTANCE_TYPE);
+        }
         return headers;
+    }
+
+    private boolean isLegacyFormat(String[] headers) {
+        return headers.length < 2 || !HEADER_INSTANCE_TYPE.equals(headers[COLUMN_INSTANCE_TYPE]);
+    }
+
+    private String[] normalizeToCurrentFormat(String[] original, String instanceTypeValue) {
+        String[] normalized = new String[original.length + 1];
+        normalized[COLUMN_ID_ATTRIBUTE] = original[COLUMN_ID_ATTRIBUTE];
+        normalized[COLUMN_INSTANCE_TYPE] = instanceTypeValue;
+        System.arraycopy(original, 1, normalized, 2, original.length - 1);
+        return normalized;
     }
 
     private static boolean isEmptyLine(String[] line) {
@@ -97,6 +122,9 @@ public class CsvAttributesParser {
         String[] line = csvReader.readNext();
         if (line == null) {
             return null;
+        }
+        if (legacyFormat) {
+            line = normalizeToCurrentFormat(line, "");
         }
         String idAttribute = line[COLUMN_ID_ATTRIBUTE];
         String instanceType = line[COLUMN_INSTANCE_TYPE];
@@ -307,7 +335,12 @@ public class CsvAttributesParser {
             String[] rawCodes = line[COLUMN_DIMENSION_VALUES].split(", ");
             List<String> codesList = new ArrayList<String>();
             for (String code : rawCodes) {
-                codesList.add(code.trim());
+                String trimmedCode = code.trim();
+                if (!validGranularityCodes.isEmpty() && !validGranularityCodes.contains(trimmedCode)) {
+                    exceptions.add(new MetamacExceptionItem(ServiceExceptionType.IMPORTATION_ATTRIBUTES_GRANULARITY_CODE_INVALID, trimmedCode, temporalGranularityCodelistUrn));
+                } else {
+                    codesList.add(trimmedCode);
+                }
             }
             Map<String, List<String>> granularityCodesByDimension = dto.getGranularityCodesByDimension();
             if (granularityCodesByDimension == null) {

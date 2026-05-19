@@ -1336,7 +1336,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             return statisticsDatasetRepositoriesServiceFacade.createGranularityAttributeInstance(datasetVersion.getDatasetRepositoryId(), granularityAttributeInstanceDto);
         } catch (ApplicationException e) {
             if (isGranularityAttributeInstanceIllegalArgumentException(e)) {
-                throw new MetamacException(e, ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED);
+                throw new MetamacException(e, ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED, granularityAttributeInstanceDto.getAttributeId());
             }
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error creating granularity attribute instance in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
         }
@@ -1354,7 +1354,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             return statisticsDatasetRepositoriesServiceFacade.updateGranularityAttributeInstance(granularityAttributeInstanceDto);
         } catch (ApplicationException e) {
             if (isGranularityAttributeInstanceIllegalArgumentException(e)) {
-                throw new MetamacException(e, ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED);
+                throw new MetamacException(e, ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED, granularityAttributeInstanceDto.getAttributeId());
             }
             throw new MetamacException(e, ServiceExceptionType.UNKNOWN, "Error updating granularity attribute instance in datasetRepository " + datasetVersionUrn + ". Details: " + e.getMessage());
         }
