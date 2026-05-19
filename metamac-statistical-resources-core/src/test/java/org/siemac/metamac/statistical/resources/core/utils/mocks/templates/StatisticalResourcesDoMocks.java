@@ -191,6 +191,7 @@ public abstract class StatisticalResourcesDoMocks extends MetamacMocks {
 
         // Metadata
         chapter.setNameableStatisticalResource(mockNameableStatisticalResorce(TypeRelatedResourceEnum.CHAPTER));
+        chapter.setOpening(Boolean.TRUE);
 
         return chapter;
     }

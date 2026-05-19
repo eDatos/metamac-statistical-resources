@@ -336,6 +336,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         chapter.getElementLevel().setChapter(chapter);
         chapter.getElementLevel().setOrderInLevel(orderInLevel);
         chapter.getElementLevel().setParent(parent);
+        chapter.setOpening(Boolean.TRUE);
         return createChapter(ctx, publicationVersionUrn, chapter);
     }
 
