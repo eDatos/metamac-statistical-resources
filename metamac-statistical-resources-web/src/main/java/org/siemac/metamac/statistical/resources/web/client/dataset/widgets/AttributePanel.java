@@ -123,7 +123,11 @@ public class AttributePanel extends VLayout {
 
             @Override
             public void onClick(ClickEvent event) {
-                if (mainFormLayout.getDsdAttributeInstanceDto() != null) {
+                if (mainFormLayout.getDsdGranularityAttributeInstanceDto() != null) {
+                    List<String> uuids = new ArrayList<String>();
+                    uuids.add(mainFormLayout.getDsdGranularityAttributeInstanceDto().getUuid());
+                    getUiHandlers().deleteGranularityAttributeInstances(dsdAttributeDto, uuids);
+                } else if (mainFormLayout.getDsdAttributeInstanceDto() != null) {
                     getUiHandlers().deleteAttributeInstance(dsdAttributeDto, mainFormLayout.getDsdAttributeInstanceDto());
                 }
             }

@@ -100,6 +100,8 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
             attributeDatasetLevelEditionForm.setTranslationsShowed(translationsShowed);
             attributeDimensionOrGroupLevelForm.setTranslationsShowed(translationsShowed);
             attributeDimensionOrGroupLevelEditionForm.setTranslationsShowed(translationsShowed);
+            attributeGranularityLevelForm.setTranslationsShowed(translationsShowed);
+            attributeGranularityLevelEditionForm.setTranslationsShowed(translationsShowed);
         }
     }
 
@@ -110,6 +112,7 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
     public void showInstance(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         hideAllForms();
         this.dsdAttributeInstanceDto = dsdAttributeInstanceDto;
+        this.dsdGranularityAttributeInstanceDto = null;
 
         boolean canDeleteBck = canDelete;
 
@@ -167,6 +170,7 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
     public void showGranularityInstance(DsdAttributeDto dsdAttributeDto, DsdGranularityAttributeInstanceDto dto) {
         hideAllForms();
         this.dsdGranularityAttributeInstanceDto = dto;
+        this.dsdAttributeInstanceDto = null;
 
         createMode = dto.getUuid() == null;
         boolean canDeleteBck = canDelete;
@@ -186,8 +190,14 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
 
         canDelete = canDeleteBck;
 
-        getTranslateToolStripButton().hide();
         show();
+
+        if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+            getTranslateToolStripButton().show();
+            setTranslation();
+        } else {
+            getTranslateToolStripButton().hide();
+        }
     }
 
     private void hideAllForms() {

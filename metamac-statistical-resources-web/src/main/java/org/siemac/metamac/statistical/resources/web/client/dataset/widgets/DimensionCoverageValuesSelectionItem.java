@@ -139,6 +139,10 @@ public class DimensionCoverageValuesSelectionItem extends CustomCanvasItem {
         return dimensionsListGridItem;
     }
 
+    public void storeCurrentValue() {
+        storeValue(buildRecordForForm());
+    }
+
     // To use form validation we trick the form using appropiate record or null
     private Record buildRecordForForm() {
         for (String dimensionId : dimensionIds) {

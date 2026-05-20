@@ -192,6 +192,9 @@ public class AttributeGranularityLevelEditionForm extends GroupDynamicForm {
             List<ExternalItemDto> items = temporalGranularitiesItem.getExternalItemDtos();
             temporalGranularitiesItem.storeValue(items != null && !items.isEmpty() ? new Record() : null);
         }
+        if (dimensionCoverageItem != null) {
+            dimensionCoverageItem.storeCurrentValue();
+        }
         return super.validate(validateHiddenFields);
     }
 
