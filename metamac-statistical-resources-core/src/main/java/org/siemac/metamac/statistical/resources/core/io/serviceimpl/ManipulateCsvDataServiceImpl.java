@@ -38,6 +38,7 @@ import org.siemac.metamac.statistical.resources.core.io.domain.TemporalAttribute
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.CsvAttributesParser;
+import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.utils.AttributesUtils;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,12 +69,12 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     private static final int                 SPLIT_DATA_FACTOR            = 5000;
 
     private PrintWriter                      printWriter;
-    private static final String              HEADER_ATTRIBUTE_ID          = "ID_ATRIBUTO";
-    private static final String              HEADER_INSTANCE_TYPE         = "TIPO_INSTANCIA";
-    private static final String              HEADER_DIMENSIONS            = "DIMENSIONES";
-    private static final String              HEADER_DIMENSION_VALUES      = "VALORES_DIMENSION";
-    private static final String              HEADER_PREFIX_ATTRIBUTE_VALUE = "VALOR_ATRIBUTO";
-    private static final String              HEADER_PREFIX_LANGUAGE       = "#";
+    private static final String              HEADER_ATTRIBUTE_ID           = ManipulateDataUtils.HEADER_ATTRIBUTE_ID;
+    private static final String              HEADER_INSTANCE_TYPE          = ManipulateDataUtils.HEADER_INSTANCE_TYPE;
+    private static final String              HEADER_DIMENSIONS             = ManipulateDataUtils.HEADER_DIMENSIONS;
+    private static final String              HEADER_DIMENSION_VALUES       = ManipulateDataUtils.HEADER_DIMENSION_VALUES;
+    private static final String              HEADER_PREFIX_ATTRIBUTE_VALUE = ManipulateDataUtils.HEADER_PREFIX_ATTRIBUTE_VALUE;
+    private static final String              HEADER_PREFIX_LANGUAGE        = ManipulateDataUtils.HEADER_LANGUAGE_SEPARATOR;
     private static final String              EMPTY                        = "";
     private static final String              DIMENSION_VALUES_SEPARATOR   = ", ";
 

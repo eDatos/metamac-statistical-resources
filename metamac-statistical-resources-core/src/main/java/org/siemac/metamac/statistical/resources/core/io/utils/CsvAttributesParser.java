@@ -40,8 +40,6 @@ public class CsvAttributesParser {
     private static final int           COLUMN_DIMENSION_NAME                     = 2;
     private static final int           COLUMN_DIMENSION_VALUES                   = 3;
     private static final int           COLUMN_ATTRIBUTE_VALUE                    = 4;
-    public static final String         TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR = "#";
-    private static final String        HEADER_INSTANCE_TYPE                      = "TIPO_INSTANCIA";
     private List<String>               idsDimensions                             = new ArrayList<>();
     private List<String>               idsAttributes                             = new ArrayList<>();
     private Map<String, Boolean>       isMultilingualByIdAttribute               = new HashMap<>();
@@ -96,13 +94,13 @@ public class CsvAttributesParser {
         }
         if (isLegacyFormat(headers)) {
             legacyFormat = true;
-            headers = normalizeToCurrentFormat(headers, HEADER_INSTANCE_TYPE);
+            headers = normalizeToCurrentFormat(headers, ManipulateDataUtils.HEADER_INSTANCE_TYPE);
         }
         return headers;
     }
 
     private boolean isLegacyFormat(String[] headers) {
-        return headers.length < 2 || !HEADER_INSTANCE_TYPE.equals(headers[COLUMN_INSTANCE_TYPE]);
+        return headers.length < 2 || !ManipulateDataUtils.HEADER_INSTANCE_TYPE.equals(headers[COLUMN_INSTANCE_TYPE]);
     }
 
     private String[] normalizeToCurrentFormat(String[] original, String instanceTypeValue) {
@@ -212,7 +210,7 @@ public class CsvAttributesParser {
 
         for (int i = COLUMN_ATTRIBUTE_VALUE; i < line.length; i++) {
             if (!StringUtils.isBlank(line[i])) {
-                String[] columnSplited = StringUtils.splitPreserveAllTokens(this.headers[i], TSV_HEADER_INTERNATIONAL_STRING_SEPARATOR);
+                String[] columnSplited = StringUtils.splitPreserveAllTokens(this.headers[i], ManipulateDataUtils.HEADER_LANGUAGE_SEPARATOR);
 
                 if (i == COLUMN_ATTRIBUTE_VALUE && !checkMultilingualHeader(columnSplited, idAttribute)) {
                     return attributeValue;
