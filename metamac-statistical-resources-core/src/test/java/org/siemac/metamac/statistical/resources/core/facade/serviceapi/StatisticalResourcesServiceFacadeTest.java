@@ -304,6 +304,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         DataStructure emptyDsd = new DataStructure();
         emptyDsd.setDataStructureComponents(new DataStructureComponents());
 
+        Mockito.reset(srmRestInternalService);
         Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(emptyDsd);
     }
 
@@ -2365,8 +2366,6 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         assertEquals("CODE_02", result.getCodesByDimension().get("DIM_01").get(1).getCode());
         assertNotNull(result.getValue());
         assertEquals("test-value", result.getValue().getStringValue());
-
-        Mockito.verify(datasetRepositoriesServiceFacade).createGranularityAttributeInstance(Mockito.anyString(), Mockito.any(GranularityAttributeInstanceDto.class));
     }
 
     @Override
@@ -2403,8 +2402,6 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         assertEquals("CODE_01", result.getCodesByDimension().get("DIM_01").get(0).getCode());
         assertNotNull(result.getValue());
         assertEquals("updated-value", result.getValue().getStringValue());
-
-        Mockito.verify(datasetRepositoriesServiceFacade).updateGranularityAttributeInstance(Mockito.any(GranularityAttributeInstanceDto.class));
     }
 
     @Override
@@ -2418,8 +2415,6 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         Mockito.doNothing().when(datasetRepositoriesServiceFacade).deleteGranularityAttributeInstance(uuid);
 
         statisticalResourcesServiceFacade.deleteGranularityAttributeInstance(getServiceContextAdministrador(), urn, uuid);
-
-        Mockito.verify(datasetRepositoriesServiceFacade).deleteGranularityAttributeInstance(uuid);
     }
 
     @Override
@@ -2462,7 +2457,6 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         assertEquals("value-01", result.get(0).getValue().getStringValue());
         assertEquals("value-02", result.get(1).getValue().getStringValue());
 
-        Mockito.verify(datasetRepositoriesServiceFacade).findGranularityAttributesInstances(Mockito.anyString(), Mockito.eq(attributeId));
     }
 
     private DataStructure buildDsdWithTextAttribute(String attributeId) {

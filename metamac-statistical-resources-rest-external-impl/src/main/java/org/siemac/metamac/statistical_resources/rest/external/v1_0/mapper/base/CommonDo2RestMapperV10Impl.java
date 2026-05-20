@@ -97,6 +97,7 @@ import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUt
 import org.siemac.metamac.statistical.resources.core.utils.SafeCalculatorUtils;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
+import org.siemac.metamac.statistical_resources.rest.common.impl.utils.GranularityAttributeResolver;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
@@ -1832,7 +1833,7 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         // Add granularity attribute instances as fallback (concrete instances take precedence)
         List<GranularityAttributeInstanceDto> granularitySources = datasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetId, attributeId);
         if (!CollectionUtils.isEmpty(granularitySources)) {
-            Map<String, AttributeInstanceBasicDto> granularityByCodeDimensions = buildGranularityAttributesByCodeDimensions(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, granularitySources);
+            Map<String, AttributeInstanceBasicDto> granularityByCodeDimensions = GranularityAttributeResolver.buildGranularityAttributesByCodeDimensions(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, granularitySources);
             for (Map.Entry<String, AttributeInstanceBasicDto> entry : granularityByCodeDimensions.entrySet()) {
                 if (!attributesByCodeDimensions.containsKey(entry.getKey())) {
                     attributesByCodeDimensions.put(entry.getKey(), entry.getValue());
@@ -1850,70 +1851,6 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         toDataCommon(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, dataProcessor);
 
         return dataProcessor;
-    }
-
-    private Map<String, AttributeInstanceBasicDto> buildGranularityAttributesByCodeDimensions(List<String> attributeDimensionsOrdered,
-            Map<String, List<String>> dimensionsCodesSelectedEffective, List<GranularityAttributeInstanceDto> granularityInstances) throws Exception {
-        Map<String, AttributeInstanceBasicDto> result = new HashMap<String, AttributeInstanceBasicDto>();
-        for (GranularityAttributeInstanceDto instance : granularityInstances) {
-            if (instance.getGranularityCodesByDimension() == null || instance.getGranularityCodesByDimension().isEmpty()) {
-                continue;
-            }
-            List<List<String>> codesPerDimension = new ArrayList<List<String>>();
-            boolean hasMatchingCodes = true;
-            for (String dimId : attributeDimensionsOrdered) {
-                if (instance.getGranularityCodesByDimension().containsKey(dimId)) {
-                    // Temporal dimension: find temporal codes matching the specified granularities
-                    List<String> granularityCodes = instance.getGranularityCodesByDimension().get(dimId);
-                    List<String> allTemporalCodes = dimensionsCodesSelectedEffective.get(dimId);
-                    List<String> matchingCodes = new ArrayList<String>();
-                    if (allTemporalCodes != null) {
-                        for (String temporalCode : allTemporalCodes) {
-                            IstacTimeGranularityCodeEnum granularity = org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils.guessTimeGranularity(temporalCode);
-                            if (granularity != null && granularityCodes.contains(granularity.getLabel())) {
-                                matchingCodes.add(temporalCode);
-                            }
-                        }
-                    }
-                    if (matchingCodes.isEmpty()) {
-                        hasMatchingCodes = false;
-                        break;
-                    }
-                    codesPerDimension.add(matchingCodes);
-                } else {
-                    // Non-temporal dimension: use the specific codes stored in the instance
-                    List<String> codes = instance.getCodesByDimension() != null ? instance.getCodesByDimension().get(dimId) : null;
-                    if (codes == null || codes.isEmpty()) {
-                        List<String> allCodes = dimensionsCodesSelectedEffective.get(dimId);
-                        codesPerDimension.add(allCodes != null ? allCodes : new ArrayList<String>());
-                    } else {
-                        codesPerDimension.add(codes);
-                    }
-                }
-            }
-            if (!hasMatchingCodes) {
-                continue;
-            }
-            addGranularityKeyCombinations(result, instance, codesPerDimension, 0, new ArrayList<String>());
-        }
-        return result;
-    }
-
-    private void addGranularityKeyCombinations(Map<String, AttributeInstanceBasicDto> result, GranularityAttributeInstanceDto instance,
-            List<List<String>> codesPerDimension, int dimIndex, List<String> currentCodes) {
-        if (dimIndex == codesPerDimension.size()) {
-            String key = StringUtils.join(currentCodes, KEY_DIMENSIONS_SEPARATOR);
-            if (!result.containsKey(key)) {
-                result.put(key, instance);
-            }
-            return;
-        }
-        List<String> codes = codesPerDimension.get(dimIndex);
-        for (String code : codes) {
-            currentCodes.add(code);
-            addGranularityKeyCombinations(result, instance, codesPerDimension, dimIndex + 1, currentCodes);
-            currentCodes.remove(currentCodes.size() - 1);
-        }
     }
 
     private List<ConditionDimensionDto> generateConditions(Map<String, List<String>> dimensions) {
