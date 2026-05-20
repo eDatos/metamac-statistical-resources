@@ -1735,7 +1735,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
             datasetService.createGranularityAttributeInstance(getServiceContextWithoutPrincipal(), urn, inputDto);
             fail("Expected overlap exception");
         } catch (MetamacException e) {
-            assertEqualsMetamacExceptionItem(ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED, 0, null, e.getExceptionItems().get(0));
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED, 1, new Serializable[]{"ATTR_01"}, e.getExceptionItems().get(0));
         }
     }
 
