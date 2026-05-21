@@ -42,3 +42,6 @@ CREATE INDEX pk_tb_stat_resources_title_alternative_fk ON tb_stat_resources USIN
 CREATE INDEX pk_tb_stat_resources_title_fk ON tb_stat_resources USING btree (title_fk);
 CREATE INDEX pk_tb_stat_resources_version_rationale_fk ON tb_stat_resources USING btree (version_rationale_fk);
 CREATE INDEX pk_tb_translations_title_fk ON tb_translations USING btree (title_fk);
+
+-- From 8.4.0 (20240425_create_table_tb_temporal_granularity_selection.sql)
+CREATE INDEX pk_tb_temporal_granularity_selection_fk ON tb_temporal_granularity_selection USING btree (temporal_granularity_fk);
