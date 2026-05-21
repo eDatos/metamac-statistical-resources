@@ -45,3 +45,6 @@ CREATE INDEX pk_tb_translations_title_fk ON tb_translations USING btree (title_f
 
 -- From 8.4.0 (20240425_create_table_tb_temporal_granularity_selection.sql)
 CREATE INDEX pk_tb_temporal_granularity_selection_fk ON tb_temporal_granularity_selection USING btree (temporal_granularity_fk);
+
+-- From 10.12.0 (20250212_create_purpose_tables_and_x_template_relations.sql)
+CREATE INDEX pk_tb_purposes_description_fk ON tb_purposes USING btree (description_fk);
