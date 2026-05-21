@@ -48,3 +48,11 @@ CREATE INDEX pk_tb_temporal_granularity_selection_fk ON tb_temporal_granularity_
 
 -- From 10.12.0 (20250212_create_purpose_tables_and_x_template_relations.sql)
 CREATE INDEX pk_tb_purposes_description_fk ON tb_purposes USING btree (description_fk);
+
+-- From 10.23.0 (1_20242208_create_tables_collection_cache.sql)
+CREATE INDEX pk_tb_geo_cache_resource_urn ON tb_geo_cache_resource (urn);
+CREATE INDEX pk_tb_geo_cache_resource_title_fk ON tb_geo_cache_resource (title_fk);
+CREATE INDEX pk_tb_geo_cache_related_resource_urn ON tb_geo_cache_related_resource (urn);
+CREATE INDEX pk_tb_geo_cache_related_resource_title_fk ON tb_geo_cache_related_resource (title_fk);
+CREATE INDEX ix_tb_geo_cache_resource_by_related_resource ON tb_geo_cache_resource_by_related_resource (geo_cache_resource_fk);
+CREATE INDEX pk_tb_territories_by_geo_cache_resource_geo_cache_resource_fk ON tb_territories_by_geo_cache_resource (geo_cache_resource_fk);
