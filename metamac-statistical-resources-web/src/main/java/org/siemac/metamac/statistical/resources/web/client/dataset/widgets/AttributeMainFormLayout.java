@@ -227,6 +227,14 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
         attributeGranularityLevelEditionForm.setUiHandlers(uiHandlers);
     }
 
+    @Override
+    public void setEditionMode() {
+        super.setEditionMode();
+        // Force redraw of edition forms to recover from SmartGWT 3.0 issue where CanvasItems
+        // set via setFields() while the parent layout was hidden are not rendered when re-shown.
+        editionFormLayout.markForRedraw();
+    }
+
     public DatasetAttributesTabUiHandlers getUiHandlers() {
         return uiHandlers;
     }

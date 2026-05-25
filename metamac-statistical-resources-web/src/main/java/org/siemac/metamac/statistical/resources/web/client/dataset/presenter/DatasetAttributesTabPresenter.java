@@ -47,8 +47,8 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetAt
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetAttributeInstanceResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveGranularityAttributeInstanceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveGranularityAttributeInstanceResult;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetAction;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesByDatasetResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCodesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCodesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListAction;
@@ -305,10 +305,10 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
 
     @Override
     public void retrieveTemporalGranularitiesForAttribute(String urn) {
-        dispatcher.execute(new GetTemporalGranularitiesByDatasetAction(0, 0, urn, new MetamacWebCriteria()), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesByDatasetResult>(this) {
+        dispatcher.execute(new GetTemporalGranularitiesListAction(0, 0, new MetamacWebCriteria()), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesListResult>(this) {
 
             @Override
-            public void onWaitSuccess(GetTemporalGranularitiesByDatasetResult result) {
+            public void onWaitSuccess(GetTemporalGranularitiesListResult result) {
                 getView().setTemporalGranularities(result.getTemporalGranularities());
             }
         });
