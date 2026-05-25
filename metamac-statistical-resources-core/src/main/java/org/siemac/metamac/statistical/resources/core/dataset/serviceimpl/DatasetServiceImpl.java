@@ -1324,7 +1324,8 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public GranularityAttributeInstanceDto createGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto) throws MetamacException {
+    public GranularityAttributeInstanceDto createGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto)
+            throws MetamacException {
         // Validations
         datasetServiceInvocationValidator.checkCreateGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
 
@@ -1343,11 +1344,10 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public GranularityAttributeInstanceDto updateGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto) throws MetamacException {
+    public GranularityAttributeInstanceDto updateGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto)
+            throws MetamacException {
         // Validations
         datasetServiceInvocationValidator.checkUpdateGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
-
-        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
         // Update granularity attribute instance
         try {
