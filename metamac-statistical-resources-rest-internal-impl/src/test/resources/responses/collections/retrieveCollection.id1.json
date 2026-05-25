@@ -543,9 +543,11 @@
 		"nodes": {
 			"node": [
 				{
+					"opening": true,
 					"nodes": {
 						"node": [
 							{
+								"opening": true,
 								"nodes": {
 									"node": [
 										{
@@ -605,6 +607,7 @@
 								}
 							},
 							{
+								"opening": true,
 								"nodes": {
 									"node": [
 										{
@@ -742,6 +745,7 @@
 					}
 				},
 				{
+					"opening": true,
 					"nodes": {
 						"node": [
 							{
@@ -801,6 +805,7 @@
 					}
 				},
 				{
+					"opening": true,
 					"name": {
 						"text": [
 							{

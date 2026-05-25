@@ -26,6 +26,7 @@
                 <ns2:description>
                     <cdomain:text xml:lang="es">description-resource-CgEIt4B0Zt en Espanol</cdomain:text>
                 </ns2:description>
+                <ns2:opening>true</ns2:opening>
                 <ns2:nodes>
                     <ns2:node xsi:type="ns2:Chapter">
                         <ns2:name>
@@ -34,6 +35,7 @@
                         <ns2:description>
                             <cdomain:text xml:lang="es">description-resource-LZT01iDAFs en Espanol</cdomain:text>
                         </ns2:description>
+                        <ns2:opening>true</ns2:opening>
                         <ns2:nodes>
                             <ns2:node xsi:type="ns2:Table">
 <ns2:name>
@@ -62,6 +64,7 @@
                         <ns2:description>
                             <cdomain:text xml:lang="es">description-resource-ZNJISeYZ1s en Espanol</cdomain:text>
                         </ns2:description>
+                        <ns2:opening>true</ns2:opening>
                         <ns2:nodes>
                             <ns2:node xsi:type="ns2:Table">
 <ns2:name>
@@ -121,6 +124,7 @@
                 <ns2:description>
                     <cdomain:text xml:lang="es">description-resource-p3JqUivN6Q en Espanol</cdomain:text>
                 </ns2:description>
+                <ns2:opening>true</ns2:opening>
                 <ns2:nodes>
                     <ns2:node xsi:type="ns2:Table">
                         <ns2:name>
@@ -149,6 +153,7 @@
                 <ns2:description>
                     <cdomain:text xml:lang="es">description-resource-tfeqBFOITu en Espanol</cdomain:text>
                 </ns2:description>
+                <ns2:opening>true</ns2:opening>
             </ns2:node>
             <ns2:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns2:Table">
                 <ns2:name>
