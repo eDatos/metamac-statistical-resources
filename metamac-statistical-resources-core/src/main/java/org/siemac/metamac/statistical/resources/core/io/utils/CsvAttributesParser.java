@@ -48,7 +48,6 @@ public class CsvAttributesParser {
     private String                     lastInstanceType                          = null;
     private List<String>               validGranularityCodes                     = new ArrayList<>();
     private String                     temporalGranularityCodelistUrn            = null;
-    private boolean                    legacyFormat                              = false;
 
     public CsvAttributesParser(InputStream pxStream, String charsetName, char separator, DataStructure dataStructure, List<String> validLanguages, List<String> validGranularityCodes,
             String temporalGranularityCodelistUrn) throws Exception {
@@ -92,23 +91,10 @@ public class CsvAttributesParser {
         if (isEmptyLine(headers)) {
             throw new Exception("[Incorrect header] Header not found");
         }
-        if (isLegacyFormat(headers)) {
-            legacyFormat = true;
-            headers = normalizeToCurrentFormat(headers, ManipulateDataUtils.HEADER_INSTANCE_TYPE);
+        if (headers.length < 2 || !ManipulateDataUtils.HEADER_INSTANCE_TYPE.equals(headers[COLUMN_INSTANCE_TYPE])) {
+            throw new Exception("[Incorrect header] Missing required column '" + ManipulateDataUtils.HEADER_INSTANCE_TYPE + "'");
         }
         return headers;
-    }
-
-    private boolean isLegacyFormat(String[] headers) {
-        return headers.length < 2 || !ManipulateDataUtils.HEADER_INSTANCE_TYPE.equals(headers[COLUMN_INSTANCE_TYPE]);
-    }
-
-    private String[] normalizeToCurrentFormat(String[] original, String instanceTypeValue) {
-        String[] normalized = new String[original.length + 1];
-        normalized[COLUMN_ID_ATTRIBUTE] = original[COLUMN_ID_ATTRIBUTE];
-        normalized[COLUMN_INSTANCE_TYPE] = instanceTypeValue;
-        System.arraycopy(original, 1, normalized, 2, original.length - 1);
-        return normalized;
     }
 
     private static boolean isEmptyLine(String[] line) {
@@ -120,9 +106,6 @@ public class CsvAttributesParser {
         String[] line = csvReader.readNext();
         if (line == null) {
             return null;
-        }
-        if (legacyFormat) {
-            line = normalizeToCurrentFormat(line, "");
         }
         String idAttribute = line[COLUMN_ID_ATTRIBUTE];
         String instanceType = line[COLUMN_INSTANCE_TYPE];

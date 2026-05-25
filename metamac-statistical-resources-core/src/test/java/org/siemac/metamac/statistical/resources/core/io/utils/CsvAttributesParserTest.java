@@ -26,8 +26,7 @@ import org.siemac.metamac.statistical.resources.core.utils.SrmMockUtils;
 /**
  * Unit tests for {@link CsvAttributesParser}.
  * Tests cover:
- * - Parsing new format (with TIPO_INSTANCIA column)
- * - Backward compatibility with legacy format (without TIPO_INSTANCIA column)
+ * - Parsing TSV format with TIPO_INSTANCIA column
  * - Validation of granularity codes against the default frequency classification
  * - Error accumulation across multiple rows
  */
@@ -39,9 +38,8 @@ public class CsvAttributesParserTest {
 
     private static final List<String> VALID_GRANULARITY_CODES = Arrays.asList("A", "S", "Q", "M", "W", "D");
 
-    // TSV column header lines
+    // TSV column header line
     private static final String       NEW_FORMAT_HEADER       = "ID_ATRIBUTO\tTIPO_INSTANCIA\tDIMENSIONES\tVALORES_DIMENSION\tVALOR_ATRIBUTO#es";
-    private static final String       LEGACY_FORMAT_HEADER    = "ID_ATRIBUTO\tDIMENSIONES\tVALORES_DIMENSION\tVALOR_ATRIBUTO#es";
 
     // ─── Test helpers ────────────────────────────────────────────────────────────
 
@@ -134,40 +132,6 @@ public class CsvAttributesParserTest {
         assertEquals(Arrays.asList("A", "Q"), granularityInstances.get(0).getGranularityCodesByDimension().get(TIME_DIMENSION_ID));
     }
 
-    // ─── Legacy format (backward compatibility) ──────────────────────────────────
-
-    @Test
-    public void testLegacyFormat_parsedAsValueInstance() throws Exception {
-        // Old TSV format without TIPO_INSTANCIA column
-        String tsv = LEGACY_FORMAT_HEADER + "\n" + ATTRIBUTE_ID + "\t" + TIME_DIMENSION_ID + "\t2010\ttest-value";
-
-        CsvAttributesParser parser = buildParser(tsv, VALID_GRANULARITY_CODES, CODELIST_URN);
-
-        List<DsdAttributeInstanceDto> valueInstances = new ArrayList<>();
-        List<DsdGranularityAttributeInstanceDto> granularityInstances = new ArrayList<>();
-        parseAllLines(parser, valueInstances, granularityInstances);
-
-        assertTrue(parser.getExceptions().isEmpty());
-        assertEquals(1, valueInstances.size());
-        assertTrue(granularityInstances.isEmpty());
-        assertEquals(ATTRIBUTE_ID, valueInstances.get(0).getAttributeId());
-    }
-
-    @Test
-    public void testLegacyFormat_multipleRows() throws Exception {
-        String tsv = LEGACY_FORMAT_HEADER + "\n" + ATTRIBUTE_ID + "\t" + TIME_DIMENSION_ID + "\t2010\tvalue-2010\n" + ATTRIBUTE_ID + "\t" + TIME_DIMENSION_ID + "\t2011\tvalue-2011";
-
-        CsvAttributesParser parser = buildParser(tsv, VALID_GRANULARITY_CODES, CODELIST_URN);
-
-        List<DsdAttributeInstanceDto> valueInstances = new ArrayList<>();
-        List<DsdGranularityAttributeInstanceDto> granularityInstances = new ArrayList<>();
-        parseAllLines(parser, valueInstances, granularityInstances);
-
-        assertTrue(parser.getExceptions().isEmpty());
-        assertEquals(2, valueInstances.size());
-        assertTrue(granularityInstances.isEmpty());
-    }
-
     // ─── Granularity code validation ─────────────────────────────────────────────
 
     @Test
@@ -247,6 +211,19 @@ public class CsvAttributesParserTest {
             fail("Expected exception for missing header");
         } catch (Exception e) {
             assertTrue(e.getMessage().contains("Header not found"));
+        }
+    }
+
+    @Test
+    public void testLegacyFormatWithoutInstanceTypeColumn_throwsException() {
+        // Old TSV format without TIPO_INSTANCIA column is no longer accepted
+        String legacyHeader = "ID_ATRIBUTO\tDIMENSIONES\tVALORES_DIMENSION\tVALOR_ATRIBUTO#es";
+        String tsv = legacyHeader + "\n" + ATTRIBUTE_ID + "\t" + TIME_DIMENSION_ID + "\t2010\ttest-value";
+        try {
+            buildParser(tsv, VALID_GRANULARITY_CODES, CODELIST_URN);
+            fail("Expected exception for missing TIPO_INSTANCIA column");
+        } catch (Exception e) {
+            assertTrue(e.getMessage().contains("TIPO_INSTANCIA"));
         }
     }
 
