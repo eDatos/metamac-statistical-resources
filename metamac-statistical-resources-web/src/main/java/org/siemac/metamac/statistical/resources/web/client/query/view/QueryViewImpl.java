@@ -143,11 +143,17 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
     }
 
     @Override
-    public void setQueryDto(QueryVersionDto queryDto) {
+    public void setQueryDto(final QueryVersionDto queryDto) {
         clearWarningLabel();
         setInformationLabelContents(queryDto);
-        queryFormPanel.setQuery(queryDto);
-        queryFormPanel.show();
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+
+            @Override
+            public void execute() {
+                queryFormPanel.setQuery(queryDto);
+                queryFormPanel.show();
+            }
+        });
     }
 
     @Override
@@ -529,9 +535,15 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
             queryVersionDto.setMaintainer(StatisticalResourcesDefaults.defaultAgency);
 
             mainFormLayout.setTitleLabelContents(getConstants().queryNew());
-            mainFormLayout.setEditionMode();
             fillViewForm(queryVersionDto);
-            fillEditionForm(queryVersionDto);
+
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                @Override
+                public void execute() {
+                    fillEditionForm(queryVersionDto);
+                    mainFormLayout.setEditionMode();
+                }
+            });
 
             mainFormLayout.redraw();
             show();
@@ -590,6 +602,7 @@ public class QueryViewImpl extends ViewWithUiHandlers<QueryUiHandlers> implement
 
             // WORKAROUND, this form is continuously rebuilt
             mainFormLayout.removeEditionCanvas(productionDescriptorsEditionForm);
+            productionDescriptorsEditionForm = new QueryProductionDescriptorsEditionForm();
             productionDescriptorsEditionForm.setUiHandlers(getUiHandlers());
             productionDescriptorsEditionForm.setQueryDto(queryVersionDto);
             productionDescriptorsEditionForm.setRequiredTitleSuffix(requiredFieldsToNextProcStatus);
