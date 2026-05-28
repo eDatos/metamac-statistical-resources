@@ -271,4 +271,13 @@ public class TaskServiceInvocationValidatorImpl {
     public static void checkProcessRetryGeographicalCacheTask(String jobKey, TaskInfoResources taskInfoResource, List<MetamacExceptionItem> exceptions) throws MetamacException {
         StatisticalResourcesValidationUtils.checkParameterRequired(jobKey, ServiceExceptionParameters.TASK_RESOURCES_JOB_KEY, exceptions);
     }
+
+    public static void checkPlanifyUpdateResourceLastUpdate(String resourceUrn, long timestamp, boolean sendNotification, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(resourceUrn, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
+    }
+
+    public static void checkProcessUpdateResourceLastUpdateTask(String taskName, String resourceUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(taskName, ServiceExceptionParameters.TASK_RESOURCES_JOB_KEY, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(resourceUrn, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
+    }
 }

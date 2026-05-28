@@ -26,7 +26,6 @@ import org.siemac.metamac.statistical.resources.core.constants.StatisticalResour
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourcesRoleEnum;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
-import org.siemac.metamac.statistical.resources.core.stream.messages.DatasetVersionAvro;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -151,8 +150,6 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             statisticalResourcesServiceFacade.processSrmDsdKafkaMessage(ctx, record.value(), record.timestamp());
         } else if (record.value() instanceof OperationAvro) {
             statisticalResourcesServiceFacade.processOperationKafkaMessage(ctx, record.value(), record.timestamp());
-        } else if (record.value() instanceof DatasetVersionAvro) {
-            statisticalResourcesServiceFacade.processDatasetVersionKafkaMessage(ctx, record.value(), record.timestamp());
         }
     }
 

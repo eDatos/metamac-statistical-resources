@@ -2241,4 +2241,9 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         // Clean up
         exportedFile.delete();
     }
+
+    @Override
+    public void testUpdateResourceLastUpdateByUrn() throws Exception {
+        // TODO: implement test
+    }
 }

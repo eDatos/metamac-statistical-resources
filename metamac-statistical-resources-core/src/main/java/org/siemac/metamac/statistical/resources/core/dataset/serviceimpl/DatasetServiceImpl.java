@@ -130,6 +130,7 @@ import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesV
 import org.siemac.metamac.statistical.resources.core.utils.predicates.CodeDimensionEqualsIdentifierPredicate;
 import org.siemac.metamac.statistical.resources.core.utils.predicates.ExternalItemEqualsIdentifierPredicate;
 import org.siemac.metamac.statistical.resources.core.utils.shared.DatasetAttibuteSharedUtils;
+import org.siemac.metamac.statistical.resources.core.utils.shared.StatisticalResourcesUrnParserUtils;
 import org.siemac.metamac.statistical.resources.core.utils.transformers.CodeDimensionToCodeStringTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -2327,7 +2328,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateDatasetVersionsLastUpdateByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
-        log.debug("Updating datasets by DSD {}", dsdUrn);
+        log.info("Updating resources by DSD {}", dsdUrn);
         if (dsdUrn == null || dsdUrn.trim().isEmpty()) {
             return;
         }
@@ -2338,12 +2339,12 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .build();
 
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        updateDatasetsLastUpdateDate(affectedDatasets, timestamp);
+        planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
     }
 
     @Override
     public void updateDatasetVersionsLastUpdateByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
-        log.debug("Updating datasets by operation {}", operationUrn);
+        log.info("Updating resources by operation {}", operationUrn);
         if (operationUrn == null || operationUrn.trim().isEmpty()) {
             return;
         }
@@ -2354,7 +2355,68 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             .build();
 
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        updateDatasetsLastUpdateDate(affectedDatasets, timestamp);
+        planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
+    }
+
+    private void planifyAffectedResourcesLastUpdate(ServiceContext ctx, List<DatasetVersion> affectedDatasets, long timestamp) {
+        Set<String> affectedUrns = new HashSet<String>();
+        for (DatasetVersion dataset : affectedDatasets) {
+            affectedUrns.add(dataset.getSiemacMetadataStatisticalResource().getUrn());
+            String datasetUrn = dataset.getDataset().getIdentifiableStatisticalResource().getUrn();
+            String datasetVersionUrn = dataset.getSiemacMetadataStatisticalResource().getUrn();
+            List<String> queryUrns = collectAffectedQueryUrns(datasetUrn, datasetVersionUrn);
+            affectedUrns.addAll(queryUrns);
+        }
+
+        for (String urn : affectedUrns) {
+            try {
+                taskService.planifyUpdateResourceLastUpdate(ctx, urn, timestamp, true);
+            } catch (MetamacException e) {
+                log.error("Failed to planify last update job for resource {}", urn, e);
+            }
+        }
+
+        log.info("Planified {} lastUpdate update jobs for affected resources", affectedUrns.size());
+    }
+
+    private List<String> collectAffectedQueryUrns(String datasetUrn, String datasetVersionUrn) {
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class)
+            .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn)
+            .or()
+            .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn)
+            .distinctRoot()
+            .build();
+
+        List<QueryVersion> affectedQueries = queryVersionRepository.findByCondition(conditions);
+        List<String> urns = new ArrayList<String>();
+        for (QueryVersion query : affectedQueries) {
+            urns.add(query.getLifeCycleStatisticalResource().getUrn());
+        }
+        return urns;
+    }
+
+    @Override
+    public void updateResourceLastUpdateByUrn(ServiceContext ctx, String resourceUrn, long timestamp) throws MetamacException {
+        DateTime dateTime = new DateTime(timestamp);
+        StatisticalResourceTypeEnum resourceType = StatisticalResourcesUrnParserUtils.getResourceType(resourceUrn);
+        if (StatisticalResourceTypeEnum.DATASET.equals(resourceType)) {
+            DatasetVersion datasetVersion = datasetVersionRepository.retrieveByUrn(resourceUrn);
+            datasetVersion.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
+            datasetVersion.getLifeCycleStatisticalResource().setLastUpdatedBy("system");
+            datasetVersion.setPatch(datasetVersion.getPatch() + 1);
+            log.debug("Updating lastUpdated for dataset {}", resourceUrn);
+            datasetVersionRepository.save(datasetVersion);
+            messagingService.sendMessage(datasetVersion);
+        } else if (StatisticalResourceTypeEnum.QUERY.equals(resourceType)) {
+            QueryVersion queryVersion = queryVersionRepository.retrieveByUrn(resourceUrn);
+            queryVersion.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
+            queryVersion.getLifeCycleStatisticalResource().setLastUpdatedBy("system");
+            log.debug("Updating lastUpdated for query {}", resourceUrn);
+            queryVersionRepository.save(queryVersion);
+            messagingService.sendMessage(queryVersion);
+        } else {
+            throw new MetamacException(ServiceExceptionType.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, resourceUrn);
+        }
     }
 
     private void updateDatasetsLastUpdateDate(List<DatasetVersion> affectedDatasets, long timestamp) {

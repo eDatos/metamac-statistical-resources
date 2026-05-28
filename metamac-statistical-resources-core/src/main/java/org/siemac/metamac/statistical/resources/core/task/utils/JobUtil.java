@@ -76,4 +76,8 @@ public class JobUtil {
     public static String createJobNameForUpdateGeoCacheRelatedResources(String resourceId) {
         return TaskServiceImpl.PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES + resourceId;
     }
+
+    public static String createJobNameForUpdateResourceLastUpdate(String resourceUrn) {
+        return TaskServiceImpl.PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE + resourceUrn;
+    }
 }

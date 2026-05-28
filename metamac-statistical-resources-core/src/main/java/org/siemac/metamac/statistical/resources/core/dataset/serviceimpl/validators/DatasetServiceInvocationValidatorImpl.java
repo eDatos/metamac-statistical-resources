@@ -458,4 +458,8 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(timestamp, ServiceExceptionParameters.QUERY_VERSION__LAST_UPDATED, exceptions);
     }
+
+    public static void checkUpdateResourceLastUpdateByUrn(String resourceUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkParameterRequired(resourceUrn, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
+    }
 }

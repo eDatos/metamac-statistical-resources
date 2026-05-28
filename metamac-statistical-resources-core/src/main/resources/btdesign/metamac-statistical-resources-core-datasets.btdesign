@@ -133,6 +133,8 @@ Application DatasetsStatisticalResources {
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
     		List<@DatasetVersion> retrievePublishedLastVersionDatasets() throws MetamacException;
     		@DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId) throws MetamacException;
+    		"Update the last update date of a resource identified by its URN"
+    		updateResourceLastUpdateByUrn(String resourceUrn, long timestamp) throws MetamacException;
   		}
 
 
