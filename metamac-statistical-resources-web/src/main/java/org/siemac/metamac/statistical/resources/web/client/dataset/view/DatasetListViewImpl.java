@@ -33,6 +33,7 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVer
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsWithoutVersionPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationsPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
@@ -395,13 +396,8 @@ public class DatasetListViewImpl extends StatisticalResourceUpdateMultipleResour
     }
 
     @Override
-    public void setStatisticalOperationsForDsdSelectionInSearchSection(List<ExternalItemDto> results) {
-        searchSectionStack.setStatisticalOperationsForDsdSelection(results);
-    }
-
-    @Override
-    public void setDsdsForSearchSection(GetDsdsPaginatedListResult result) {
-        searchSectionStack.setDsds(result);
+    public void setDsdsWithoutVersionForSearchSection(GetDsdsWithoutVersionPaginatedListResult result) {
+        searchSectionStack.setDsdsWithoutVersion(result);
     }
 
     @Override
