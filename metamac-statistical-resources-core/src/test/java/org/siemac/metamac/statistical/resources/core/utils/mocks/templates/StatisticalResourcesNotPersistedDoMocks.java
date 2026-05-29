@@ -66,7 +66,7 @@ public class StatisticalResourcesNotPersistedDoMocks extends StatisticalResource
             mockQuerySelectionFromDatasetVersion(queryVersion, getDatasetVersionInQueryVersion(queryVersion));
         }
 
-        queryVersion.setType(QueryTypeEnum.FIXED);
+        queryVersion.setQueryType(QueryTypeEnum.FIXED);
 
         return queryVersion;
     }
@@ -102,7 +102,7 @@ public class StatisticalResourcesNotPersistedDoMocks extends StatisticalResource
 
     public QueryVersion mockQueryVersionLatestDataWithTimeSelectionNotEmpty(DatasetVersion datasetVersion) {
         QueryVersion queryVersion = mockQueryVersionWithDatasetVersion(datasetVersion, true);
-        queryVersion.setType(QueryTypeEnum.LATEST_DATA);
+        queryVersion.setQueryType(QueryTypeEnum.LATEST_DATA);
         queryVersion.setLatestDataNumber(5);
         {
             QuerySelectionItem querySelectionItem = new QuerySelectionItem();

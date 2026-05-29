@@ -73,7 +73,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         queryVersionDto.setCode(mockString(8));
 
         queryVersionDto.setRelatedDatasetVersion(mockPersistedRelatedResourceDatasetVersionDto(datasetVersion));
-        queryVersionDto.setType(QueryTypeEnum.FIXED);
+        queryVersionDto.setQueryType(QueryTypeEnum.FIXED);
 
         Map<String, List<CodeItemDto>> selection = new HashMap<String, List<CodeItemDto>>();
         selection.put("SEX", Arrays.asList(mockCodeItemDto("FEMALE", "Female")));

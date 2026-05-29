@@ -178,8 +178,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
             mockQuerySelectionFromDatasetVersion(queryVersion, getDatasetVersionInQueryVersion(queryVersion));
         }
 
-        if (queryVersion.getType() == null) {
-            queryVersion.setType(QueryTypeEnum.FIXED);
+        if (queryVersion.getQueryType() == null) {
+            queryVersion.setQueryType(QueryTypeEnum.FIXED);
         }
 
         return queryVersion;

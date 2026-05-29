@@ -303,7 +303,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         setValue(LifeCycleResourceDS.MAINTAINER, queryDto.getMaintainer());
         setValue(LifeCycleResourceDS.MAINTAINER_VIEW, queryDto.getMaintainer());
 
-        String typeStr = queryDto.getType() != null ? queryDto.getType().name() : null;
+        String typeStr = queryDto.getQueryType() != null ? queryDto.getQueryType().name() : null;
         setValue(QueryDS.TYPE, typeStr);
         String purposeType = queryDto.getPurpose() != null ? queryDto.getPurpose().getIdentifier() : null;
         setValue(QueryDS.PURPOSE_TYPE, purposeType);
@@ -328,7 +328,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         queryDto.setMaintainer(getValueAsExternalItemDto(SiemacMetadataDS.MAINTAINER));
         queryDto.setRelatedDatasetVersion(getRelatedResourceValue(getItem(QueryDS.RELATED_DATASET_VERSION)));
 
-        queryDto.setType(queryType);
+        queryDto.setQueryType(queryType);
 
         boolean isLatestData = QueryTypeEnum.LATEST_DATA.equals(queryType);
 
@@ -520,7 +520,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
         }
         setValue(QueryDS.MAINTAINER, maintainer);
         QueryRelatedDatasetUtils.setRelatedDataset(datasetVersion, getItem(QueryDS.RELATED_DATASET_VERSION));
-        if (hasTemporalDimension && QueryTypeEnum.LATEST_DATA.equals(queryDto.getType())) {
+        if (hasTemporalDimension && QueryTypeEnum.LATEST_DATA.equals(queryDto.getQueryType())) {
             setValue(QueryDS.LATEST_N_DATA, queryDto.getLatestDataNumber());
         }
         this.markForRedraw();

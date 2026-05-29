@@ -10,8 +10,8 @@
 
 ## 11.2.0 a 11.2.1-SNAPSHOT
 
-* Se ha añadido la columna `PATCH` a la tabla `TB_DATASETS_VERSIONS`. Ejecutar el script de migración:
-  `etc/changes-from-release/11.1.1/db/statistical-resources/20260319_add_patch_column_to_datasets_versions.sql`
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
+  * [etc/changes-from-release/11.2.0/db](etc/changes-from-release/11.2.0/db)
 
 * Se debe resetear el schema registry para el topic `DATASET_PUBLICATIONS` debido a que se ha modificado el schema Avro:
   ```shell
