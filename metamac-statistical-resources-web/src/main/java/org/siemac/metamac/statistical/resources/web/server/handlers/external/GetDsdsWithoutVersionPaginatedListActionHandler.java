@@ -1,8 +1,5 @@
 package org.siemac.metamac.statistical.resources.web.server.handlers.external;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.siemac.edatos.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.web.server.rest.SrmRestInternalFacade;
@@ -32,16 +29,9 @@ public class GetDsdsWithoutVersionPaginatedListActionHandler extends SecurityAct
 
         ExternalItemsResult result = srmRestInternalFacade.findDsds(action.getFirstResult(), action.getMaxResults(), dsdCriteria);
 
-        List<ExternalItemDto> strippedItems = stripVersionFromUrns(result.getExternalItemDtos());
-        return new GetDsdsWithoutVersionPaginatedListResult(strippedItems, result.getFirstResult(), result.getTotalResults());
-    }
-
-    private List<ExternalItemDto> stripVersionFromUrns(List<ExternalItemDto> items) {
-        List<ExternalItemDto> stripped = new ArrayList<ExternalItemDto>();
-        for (ExternalItemDto item : items) {
+        for (ExternalItemDto item : result.getExternalItemDtos()) {
             item.setUrn(UrnUtils.removeVersion(item.getUrn()));
-            stripped.add(item);
         }
-        return stripped;
+        return new GetDsdsWithoutVersionPaginatedListResult(result.getExternalItemDtos(), result.getFirstResult(), result.getTotalResults());
     }
 }
