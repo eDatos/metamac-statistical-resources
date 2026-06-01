@@ -90,6 +90,7 @@ Application BaseStatisticalResources {
 			- Bag<@VersionRationaleType> versionRationaleTypes cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_SR_VRATIONALE_TYPES";
 			- @InternationalString versionRationale nullable cascade="all" databaseColumn="VERSION_RATIONALE_FK";
 			- @NextVersionTypeEnum nextVersion nullable;
+			Integer patch nullable;
 		}
 
 		Entity LifeCycleStatisticalResource extends @VersionableStatisticalResource {

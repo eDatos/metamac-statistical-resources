@@ -256,9 +256,6 @@ Application DatasetsStatisticalResources {
 			Integer formatExtentDimensions nullable;
 			//Number of cells defined in the DSD
 			Long formatExtentTableSize nullable;
-			//Number of data updates since last publish
-			Integer patch not nullable;
-
 			//Publishing descriptors
 
 			//public date of next update

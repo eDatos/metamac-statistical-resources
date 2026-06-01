@@ -317,8 +317,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
 
         datasetVersion.setKeepAllData(Boolean.TRUE);
         datasetVersion.setDataSourceType(DataSourceTypeEnum.FILE);
-        if (datasetVersion.getPatch() == null) {
-            datasetVersion.setPatch(0);
+        if (datasetVersion.getSiemacMetadataStatisticalResource().getPatch() == null) {
+            datasetVersion.getSiemacMetadataStatisticalResource().setPatch(0);
         }
 
         return datasetVersion;

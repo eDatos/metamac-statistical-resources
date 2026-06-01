@@ -419,7 +419,7 @@ public class MappersMockUtils {
         mockExternalItemList(d.getGeographicGranularities());
         mockExternalItemList(d.getTemporalGranularities());
         mockExternalItemList(d.getStatisticalUnit());
-        d.setPatch(0);
+        d.getSiemacMetadataStatisticalResource().setPatch(0);
         return d;
     }
 
