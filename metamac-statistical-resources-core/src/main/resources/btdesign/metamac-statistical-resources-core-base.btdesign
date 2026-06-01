@@ -62,6 +62,7 @@ Application BaseStatisticalResources {
 
 			String code nullable;
 			String urn nullable length="4000";
+			- @StatisticalResourceTypeEnum type nullable;
             - @XStreamStatusEnum xStreamStatus nullable;
 			Repository IdentifiableStatisticalResourceRepository {
 				findByCondition;
@@ -100,7 +101,7 @@ Application BaseStatisticalResources {
 			gap
 
 			- @ProcStatusEnum procStatus nullable;
-			
+
 			DateTimeTZ creationDate nullable;
 			String creationUser nullable;
 			DateTimeTZ productionValidationDate nullable;
@@ -122,6 +123,8 @@ Application BaseStatisticalResources {
 			- @ExternalItem maintainer cascade="all" fetch="lazy" databaseColumn="MAINTAINER_FK" nullable;
 			
 			Repository LifeCycleStatisticalResourceRepository {
+			    findByCondition;
+				@LifeCycleStatisticalResource retrieveByUrn(String urn) throws MetamacException;
 				String findLastUsedCodeForResourceType(String operationUrn);
 			}
 		}
@@ -146,9 +149,6 @@ Application BaseStatisticalResources {
 			
 			//COMMON METADATA
 			- @ExternalItem commonMetadata cascade="all" databaseColumn="COMMON_METADATA_FK" nullable fetch="lazy";
-			
-			//CLASS DESCRIPTORS
-			- @StatisticalResourceTypeEnum type nullable;
 			
 			//PRODUCTION DESCRIPTORS
 			- @ExternalItem creator cascade="all" databaseColumn="CREATOR_FK" nullable fetch="lazy";

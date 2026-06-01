@@ -14,6 +14,7 @@ import org.siemac.edatos.core.common.util.shared.StringUtils;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.validators.BaseInvocationValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
@@ -453,13 +454,9 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
         StatisticalResourcesValidationUtils.checkParameterRequired(timestamp, ServiceExceptionParameters.DATASET_VERSION__LAST_UPDATED, exceptions);
     }
 
-    public static void checkUpdateQueryVersionsLastUpdateByDatasetVersion(String datasetUrn, String datasetVersionUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
-        StatisticalResourcesValidationUtils.checkParameterRequired(datasetUrn, ServiceExceptionParameters.DATASET_URN, exceptions);
-        StatisticalResourcesValidationUtils.checkParameterRequired(datasetVersionUrn, ServiceExceptionParameters.DATASET_VERSION_URN, exceptions);
-        StatisticalResourcesValidationUtils.checkParameterRequired(timestamp, ServiceExceptionParameters.QUERY_VERSION__LAST_UPDATED, exceptions);
-    }
-
-    public static void checkUpdateResourceLastUpdateByUrn(String resourceUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
-        StatisticalResourcesValidationUtils.checkParameterRequired(resourceUrn, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
+    public static void checkUpdateResourceLastUpdate(LifeCycleStatisticalResource resource, long timestamp, List<MetamacExceptionItem> exceptions) {
+        // FIXME
+        StatisticalResourcesValidationUtils.checkParameterRequired(resource, ServiceExceptionParameters.DATASET, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(timestamp, ServiceExceptionParameters.DATASET_VERSION__LAST_UPDATED, exceptions);
     }
 }

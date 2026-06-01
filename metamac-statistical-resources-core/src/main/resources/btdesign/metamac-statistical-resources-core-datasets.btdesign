@@ -77,7 +77,6 @@ Application DatasetsStatisticalResources {
     		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
     		updateDatasetVersionsLastUpdateByDsd(String dsdUrn, long timestamp) throws MetamacException;
     		updateDatasetVersionsLastUpdateByOperation(String operationUrn, long timestamp) throws MetamacException;
-    		updateQueryVersionsLastUpdateByDatasetVersion(String datasetUrn, String datasetVersionUrn, long timestamp) throws MetamacException;
 
     		// Datasets
     		"Finds datasets by criteria"
@@ -133,8 +132,8 @@ Application DatasetsStatisticalResources {
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
     		List<@DatasetVersion> retrievePublishedLastVersionDatasets() throws MetamacException;
     		@DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId) throws MetamacException;
-    		"Update the last update date of a resource identified by its URN"
-    		updateResourceLastUpdateByUrn(String resourceUrn, long timestamp) throws MetamacException;
+    		"Update the last update date and patch counter of a resource"
+    		updateResourceLastUpdate(@LifeCycleStatisticalResource resource, long timestamp) throws MetamacException;
   		}
 
 

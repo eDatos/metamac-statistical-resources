@@ -1190,7 +1190,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     }
 
     @Override
-    public void testUpdateQueryVersionsLastUpdateByDatasetVersion() throws Exception {
+    public void testUpdateResourceLastUpdate() throws Exception {
         // NOTHING TO DO
     }
 
@@ -2242,8 +2242,4 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         exportedFile.delete();
     }
 
-    @Override
-    public void testUpdateResourceLastUpdateByUrn() throws Exception {
-        // TODO: implement test
-    }
 }

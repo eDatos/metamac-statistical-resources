@@ -23,15 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -79,6 +71,11 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Content
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceProperties;
+import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -208,6 +205,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private TaskServiceInvocationValidator    taskServiceInvocationValidator;
+
+    @Autowired
+    private LifeCycleStatisticalResourceRepository lifeCycleStatisticalResourceRepository;
 
     @Autowired
     private MetamacSdmx2StatRepoMapper        metamac2StatRepoMapper;
@@ -795,8 +795,17 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     @Override
     public void processUpdateResourceLastUpdateTask(ServiceContext ctx, String taskName, String resourceUrn, long timestamp) throws MetamacException {
         taskServiceInvocationValidator.checkProcessUpdateResourceLastUpdateTask(ctx, taskName, resourceUrn, timestamp);
-        getDatasetService().updateResourceLastUpdateByUrn(ctx, resourceUrn, timestamp);
+        LifeCycleStatisticalResource resource = resolveLifeCycleStatisticalResource(resourceUrn);
+        getDatasetService().updateResourceLastUpdate(ctx, resource, timestamp);
         markTaskAsFinished(ctx, taskName);
+    }
+
+    private LifeCycleStatisticalResource resolveLifeCycleStatisticalResource(String resourceUrn) throws MetamacException {
+        try {
+            return lifeCycleStatisticalResourceRepository.retrieveByUrn(resourceUrn);
+        } catch (MetamacException e) {
+            throw new MetamacException(e, ServiceExceptionType.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, resourceUrn);
+        }
     }
 
     @Override
