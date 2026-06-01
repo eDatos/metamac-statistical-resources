@@ -56,7 +56,6 @@ import org.siemac.metamac.statistical.resources.core.base.components.SiemacStati
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.base.domain.StatisticalResourceRepository;
-import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -112,7 +111,6 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.V
 import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
-import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.security.DatasetsSecurityUtils;
@@ -2325,85 +2323,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
             return datasetResult.getValues().get(0);
         }
         return null;
-    }
-
-    @Override
-    public void updateDatasetVersionsLastUpdateByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
-        log.info("Updating resources by DSD {}", dsdUrn);
-        if (dsdUrn == null || dsdUrn.trim().isEmpty()) {
-            return;
-        }
-
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-            .withProperty(DatasetVersionProperties.relatedDsd().urn()).eq(dsdUrn)
-            .distinctRoot()
-            .build();
-
-        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
-    }
-
-    @Override
-    public void updateDatasetVersionsLastUpdateByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
-        log.info("Updating resources by operation {}", operationUrn);
-        if (operationUrn == null || operationUrn.trim().isEmpty()) {
-            return;
-        }
-
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-            .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn)
-            .distinctRoot()
-            .build();
-
-        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
-    }
-
-    private void planifyAffectedResourcesLastUpdate(ServiceContext ctx, List<DatasetVersion> affectedDatasets, long timestamp) {
-        Set<String> affectedUrns = new HashSet<String>();
-        for (DatasetVersion dataset : affectedDatasets) {
-            affectedUrns.add(dataset.getSiemacMetadataStatisticalResource().getUrn());
-            String datasetUrn = dataset.getDataset().getIdentifiableStatisticalResource().getUrn();
-            String datasetVersionUrn = dataset.getSiemacMetadataStatisticalResource().getUrn();
-            List<String> queryUrns = collectAffectedQueryUrns(datasetUrn, datasetVersionUrn);
-            affectedUrns.addAll(queryUrns);
-        }
-
-        for (String urn : affectedUrns) {
-            try {
-                taskService.planifyUpdateResourceLastUpdate(ctx, urn, timestamp, true);
-            } catch (MetamacException e) {
-                log.error("Failed to planify last update job for resource {}", urn, e);
-            }
-        }
-
-        log.info("Planified {} lastUpdate update jobs for affected resources", affectedUrns.size());
-    }
-
-    private List<String> collectAffectedQueryUrns(String datasetUrn, String datasetVersionUrn) {
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class)
-            .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn)
-            .or()
-            .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn)
-            .distinctRoot()
-            .build();
-
-        List<QueryVersion> affectedQueries = queryVersionRepository.findByCondition(conditions);
-        List<String> urns = new ArrayList<String>();
-        for (QueryVersion query : affectedQueries) {
-            urns.add(query.getLifeCycleStatisticalResource().getUrn());
-        }
-        return urns;
-    }
-
-    @Override
-    public void updateResourceLastUpdate(ServiceContext ctx, LifeCycleStatisticalResource resource, long timestamp) throws MetamacException {
-        DateTime dateTime = new DateTime(timestamp);
-        resource.setLastUpdated(dateTime);
-        resource.setLastUpdatedBy("system");
-        resource.setPatch(resource.getPatch() + 1);
-        statisticalResourceRepository.save(resource);
-        messagingService.sendMessage(resource);
     }
 
     @Override

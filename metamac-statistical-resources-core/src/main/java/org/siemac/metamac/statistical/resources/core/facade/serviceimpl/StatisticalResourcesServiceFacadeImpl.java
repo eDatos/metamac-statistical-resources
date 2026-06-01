@@ -35,6 +35,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Resourc
 import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.utils.SecurityUtils;
 import org.siemac.metamac.statistical.operations.core.stream.messages.OperationAvro;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -93,6 +94,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestI
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -134,7 +136,6 @@ import org.siemac.metamac.statistical.resources.core.security.shared.SharedDatas
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedMultidatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedPublicationsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.security.shared.SharedQueriesSecurityUtils;
-import org.siemac.metamac.statistical.resources.core.stream.messages.QueryVersionAvro;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -266,6 +267,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
+
+    @Autowired
+    private ResourceCacheInvalidationService                          resourceCacheInvalidationService;
 
     @Autowired
     private DatasetRepositoriesServiceFacade                          datasetRepositoriesServiceFacade;
@@ -2669,7 +2673,7 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void processSrmDsdKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
         DataStructureDefinitionAvro dsd = (DataStructureDefinitionAvro) message;
         String dsdUrn = dsd.getUrn();
-        getDatasetService().updateDatasetVersionsLastUpdateByDsd(ctx, dsdUrn, timestamp);
+        resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByDsd(ctx, dsdUrn, timestamp);
     }
 
 
@@ -2677,7 +2681,6 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     public void processOperationKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
         OperationAvro operation = (OperationAvro) message;
         String operationUrn = operation.getUrn();
-        getDatasetService().updateDatasetVersionsLastUpdateByOperation(ctx, operationUrn, timestamp);
+        resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByOperation(ctx, operationUrn, timestamp);
     }
-
 }

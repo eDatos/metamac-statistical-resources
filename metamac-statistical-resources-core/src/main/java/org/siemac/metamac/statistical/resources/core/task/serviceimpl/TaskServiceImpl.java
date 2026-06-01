@@ -71,9 +71,6 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Content
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
-import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
-import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceProperties;
-import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -99,6 +96,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalRes
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.DatasetFileFormatEnum;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
@@ -123,6 +121,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocov
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -244,6 +243,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private LifecycleService<DatasetVersion>  datasetLifecycleService;
+
+    @Autowired
+    private ResourceCacheInvalidationService resourceCacheInvalidationService;
 
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
@@ -796,7 +798,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public void processUpdateResourceLastUpdateTask(ServiceContext ctx, String taskName, String resourceUrn, long timestamp) throws MetamacException {
         taskServiceInvocationValidator.checkProcessUpdateResourceLastUpdateTask(ctx, taskName, resourceUrn, timestamp);
         LifeCycleStatisticalResource resource = resolveLifeCycleStatisticalResource(resourceUrn);
-        getDatasetService().updateResourceLastUpdate(ctx, resource, timestamp);
+        resourceCacheInvalidationService.updateResourceLastUpdate(ctx, resource, timestamp);
         markTaskAsFinished(ctx, taskName);
     }
 

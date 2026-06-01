@@ -59,7 +59,7 @@ Application DatasetsStatisticalResources {
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Calculate table size"
-			Long calculateTableSize(DatasetVersion resource) throws MetamacException;		
+			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			"Export datasources to TSV"
 			String exportDatasourcesTsv(String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException;
@@ -75,8 +75,6 @@ Application DatasetsStatisticalResources {
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
     		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
-    		updateDatasetVersionsLastUpdateByDsd(String dsdUrn, long timestamp) throws MetamacException;
-    		updateDatasetVersionsLastUpdateByOperation(String operationUrn, long timestamp) throws MetamacException;
 
     		// Datasets
     		"Finds datasets by criteria"
@@ -132,8 +130,6 @@ Application DatasetsStatisticalResources {
     		void updateGeographicCoverageFromSpatialAttribute(@DatasetVersion datasetVersion) throws MetamacException;
     		List<@DatasetVersion> retrievePublishedLastVersionDatasets() throws MetamacException;
     		@DatasetVersion getDatasetLastVersionPublishedByDatasetUrn(String agencyId, String resourceId) throws MetamacException;
-    		"Update the last update date and patch counter of a resource"
-    		updateResourceLastUpdate(@LifeCycleStatisticalResource resource, long timestamp) throws MetamacException;
   		}
 
 
