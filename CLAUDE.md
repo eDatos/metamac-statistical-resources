@@ -69,6 +69,10 @@ cd metamac-statistical-resources-rest-internal-api
 mvn clean generate-sources
 ```
 
+DO NOT TRY to manually edit generated code in `src/generated/java` - it will be overwritten on the
+next build. Instead, extend generated base classes in `src/main/java` or edit btdesign files
+directly, depending on the feature you want to implement.
+
 ## Module Architecture
 
 The project consists of 12 modules organized by layer and responsibility:
