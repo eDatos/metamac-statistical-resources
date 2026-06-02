@@ -9,6 +9,7 @@
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
 ## 11.4.0 a 11.4.1-SNAPSHOT
+* Eliminar topic ficticio DUMMY_PUBLICATIONS de entornos donde lo tengan: DEMO, PRE-ISTAC Y PRO-ISTAC.
 * Ejecutar los scripts creados en el proyecto  edatos-dataset-repository sobre la base de datos statistical-resources-data: etc/changes-from-release/3.6.0/db/edatos-dataset-repository/postgresql
 
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 

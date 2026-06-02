@@ -89,15 +89,16 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Map<String, Future<?>>            futuresMap;
 
     private Cache                             kafkaFailedMessagesCache;
-    private static final String               CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME     = "statistical_resources_consumer_jaxi_publication_1";
-    private static final String               CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME = "statistical_resources_consumer_jaxi_publication_2";
-    private static final String               CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME             = "statistical_resources_consumer_jaxi_publication_1";
-    private static final String               CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME       = "statistical_resources_consumer_codelist_publication_1";
-    private static final String               CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME                  = "statistical_resources_consumer_dsd_publication_1";
-    private static final String               CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME            = "statistical_resources_consumer_operation_publication_1";
-    private static final String               CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME  = "statistical_resources_consumer_jaxi_collection_publication_1";
+    private static final String               CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME        = "statistical_resources_consumer_jaxi_publication_1";
+    private static final String               CONSUMER_EXTERNAL_DATASET_PUBLICATION_CUSTOM_MESSAGE_NAME    = "statistical_resources_consumer_jaxi_publication_2";
+    private static final String               CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME                = "statistical_resources_consumer_codelist_publication_1";
+    private static final String               CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME          = "statistical_resources_consumer_concept_scheme_publication_1";
+
+    private static final String               CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME                     = "statistical_resources_consumer_dsd_publication_1";
+    private static final String               CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME               = "statistical_resources_consumer_operation_publication_1";
+    private static final String               CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME     = "statistical_resources_consumer_jaxi_collection_publication_1";
     private static final String               CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_CUSTOM_MESSAGE_NAME = "statistical_resources_consumer_jaxi_collection_publication_2";
-    private static final String               KAFKA_FAILED_CACHE_NAME                                   = "kafkaFailed";
+    private static final String               KAFKA_FAILED_CACHE_NAME                                      = "kafkaFailed";
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -533,7 +534,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         }
     }
 
-     @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked", "rawtypes"})
     private Future<?> startConsumerForExternalDatasetPublicationTopic(ApplicationContext context, String externalPublicationTopicName, String clientId) throws MetamacException {
         String topicJaxiPublication = externalPublicationTopicName;
         KafkaConsumerThread<DatasetAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
@@ -597,45 +598,45 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
 
             while (alwaysWithDelay(1000)) {
 
-                    for (Map.Entry<String, Future<?>> entry : futuresMap.entrySet()) {
-                        if (entry.getValue().isDone()) {
-                            LOGGER.info("El consumidor " + entry.getKey() + " se ha desconectado. Planificando otro consumidor para el mismo Topic...");
-                            try {
-                                if (CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-                                    futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(
-                                            ApplicationContextProvider.getApplicationContext(), externalDatasetPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME));
-                                }
-
-                                if (CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-
-                                    futuresMap.put(CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalCollectionPublicationTopic(
-                                            ApplicationContextProvider.getApplicationContext(), externalCollectionPublicationTopicName, CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME));
-                                }
-
-                                if (CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-                                    futuresMap.put(CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME, startConsumerForCodelistTopic(ApplicationContextProvider.getApplicationContext()));
-                                }
-
-                                if (CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-                                    futuresMap.put(CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME, startConsumerForConceptSchemeTopic(ApplicationContextProvider.getApplicationContext()));
-                                }
-
-                                if (CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-                                    futuresMap.put(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ApplicationContextProvider.getApplicationContext()));
-                                }
-
-                                if (CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-                                    futuresMap.put(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME, startConsumerForOperationTopic(ApplicationContextProvider.getApplicationContext()));
-                                }
-
-                            } catch (Exception e) {
-                                long retyrMS = 6000;
-                                LOGGER.error("Imposible replanificar consumidores de Kafka. Volviendolo a intentar en " + retyrMS + "ms", e);
-                                alwaysWithDelay(60000);
+                for (Map.Entry<String, Future<?>> entry : futuresMap.entrySet()) {
+                    if (entry.getValue().isDone()) {
+                        LOGGER.info("El consumidor " + entry.getKey() + " se ha desconectado. Planificando otro consumidor para el mismo Topic...");
+                        try {
+                            if (CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+                                futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(
+                                        ApplicationContextProvider.getApplicationContext(), externalDatasetPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME));
                             }
+
+                            if (CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+
+                                futuresMap.put(CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalCollectionPublicationTopic(
+                                        ApplicationContextProvider.getApplicationContext(), externalCollectionPublicationTopicName, CONSUMER_EXTERNAL_COLLECTION_PUBLICATION_MESSAGES_1_NAME));
+                            }
+
+                            if (CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+                                futuresMap.put(CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME, startConsumerForCodelistTopic(ApplicationContextProvider.getApplicationContext()));
+                            }
+
+                            if (CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+                                futuresMap.put(CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME, startConsumerForConceptSchemeTopic(ApplicationContextProvider.getApplicationContext()));
+                            }
+
+                            if (CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+                                futuresMap.put(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ApplicationContextProvider.getApplicationContext()));
+                            }
+
+                            if (CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
+                                futuresMap.put(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME, startConsumerForOperationTopic(ApplicationContextProvider.getApplicationContext()));
+                            }
+
+                        } catch (Exception e) {
+                            long retyrMS = 6000;
+                            LOGGER.error("Imposible replanificar consumidores de Kafka. Volviendolo a intentar en " + retyrMS + "ms", e);
+                            alwaysWithDelay(60000);
                         }
                     }
                 }
+            }
         }
 
         private boolean alwaysWithDelay(long timeout) {
