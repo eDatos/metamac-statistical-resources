@@ -20,7 +20,7 @@
 * Se han de borrar los mensajes existentes en el topic `DATASET_PUBLICATIONS` (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
 
 * Esta versión requiere de modificaciones en el HAproxy y Apache, según corresponda, para que los headers que ahora
-  sirve la aplicación para el cacheo de las peticiones no se vean sobrescritos. Concretammente, se deben modificar las 
+  sirve la aplicación para el cacheo de las peticiones no se vean sobrescritos. Concretamente, se deben modificar las 
   siguientes líneas:
   * **Apache**
     * Se debe añadir la siguiente regla a los entornos afectados y por la URL adecuada:
