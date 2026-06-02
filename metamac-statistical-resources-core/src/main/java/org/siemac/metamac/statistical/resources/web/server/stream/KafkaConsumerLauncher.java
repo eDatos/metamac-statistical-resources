@@ -644,7 +644,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                                 }
 
                                 if (CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME.equals(entry.getKey())) {
-                                    futuresMap.put(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ApplicationContextProvider.getApplicationContext()));
+                                    futuresMap.put(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME, startConsumerForOperationTopic(ApplicationContextProvider.getApplicationContext()));
                                 }
 
                             } catch (Exception e) {
