@@ -16,6 +16,7 @@ import org.siemac.metamac.statistical.resources.core.constants.StatisticalResour
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimensionRepository;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.utils.AttributesUtils;
@@ -24,7 +25,9 @@ import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesE
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceBasicDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 
 @Component(StatRepoDto2StatisticalResourcesDtoMapper.BEAN_ID)
 public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDto2StatisticalResourcesDtoMapper {
@@ -54,7 +57,7 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
         return targets;
     }
 
-    private AttributeValueDto attributeInstanceValue2AttributeValueDto(DsdAttribute dsdAttribute, AttributeInstanceDto source) throws MetamacException {
+    private AttributeValueDto attributeInstanceValue2AttributeValueDto(DsdAttribute dsdAttribute, AttributeInstanceBasicDto source) throws MetamacException {
         String attrValue = source.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
         AttributeValueDto attributeValueDto = new AttributeValueDto();
         if (dsdAttribute.getCodelistRepresentationUrn() != null) {
@@ -94,6 +97,41 @@ public class StatRepoDto2StatisticalResourcesDtoMapperImpl implements StatRepoDt
         for (String dimensionId : source.getCodesByDimension().keySet()) {
             List<CodeItemDto> codeItems = new ArrayList<CodeItemDto>();
             for (String codeDimIdentifier : source.getCodesByDimension().get(dimensionId)) {
+                codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionIdAndIdentifier(datasetVersionId, dimensionId, codeDimIdentifier)));
+            }
+            target.put(dimensionId, codeItems);
+        }
+        return target;
+    }
+
+    @Override
+    public DsdGranularityAttributeInstanceDto granularityAttributeInstanceDtoToDsdGranularityAttributeInstanceDto(Long datasetVersionId, DsdAttribute dsdAttribute, GranularityAttributeInstanceDto source) throws MetamacException {
+        DsdGranularityAttributeInstanceDto target = new DsdGranularityAttributeInstanceDto();
+        target.setAttributeId(source.getAttributeId());
+        target.setUuid(source.getUuid());
+        target.setCodesByDimension(granularityCodesByDimensionToCodeItemMap(datasetVersionId, source.getCodesByDimension()));
+        target.setGranularityCodesByDimension(source.getGranularityCodesByDimension());
+        target.setValue(attributeInstanceValue2AttributeValueDto(dsdAttribute, source));
+        return target;
+    }
+
+    @Override
+    public List<DsdGranularityAttributeInstanceDto> granularityAttributeInstanceDtosToDsdGranularityAttributeInstanceDtos(Long datasetVersionId, DsdAttribute dsdAttribute, List<GranularityAttributeInstanceDto> sources) throws MetamacException {
+        List<DsdGranularityAttributeInstanceDto> targets = new ArrayList<DsdGranularityAttributeInstanceDto>(sources.size());
+        for (GranularityAttributeInstanceDto source : sources) {
+            targets.add(granularityAttributeInstanceDtoToDsdGranularityAttributeInstanceDto(datasetVersionId, dsdAttribute, source));
+        }
+        return targets;
+    }
+
+    private Map<String, List<CodeItemDto>> granularityCodesByDimensionToCodeItemMap(Long datasetVersionId, Map<String, List<String>> codesByDimension) throws MetamacException {
+        if (codesByDimension == null) {
+            return null;
+        }
+        Map<String, List<CodeItemDto>> target = new HashMap<String, List<CodeItemDto>>();
+        for (String dimensionId : codesByDimension.keySet()) {
+            List<CodeItemDto> codeItems = new ArrayList<CodeItemDto>();
+            for (String codeDimIdentifier : codesByDimension.get(dimensionId)) {
                 codeItems.add(new CodeItemDto(codeDimIdentifier, codeDimensionRepository.findTitleForDatasetVersionByDimensionIdAndIdentifier(datasetVersionId, dimensionId, codeDimIdentifier)));
             }
             target.put(dimensionId, codeItems);

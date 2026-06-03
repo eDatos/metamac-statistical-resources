@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsMetamacExceptionItem;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDay;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsInternationalStringDto;
@@ -193,13 +194,17 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeRelationship;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureComponents;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TextFormat;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.common.criteria.enums.StatisticalResourcesCriteriaOrderEnum;
 import org.siemac.metamac.statistical.resources.core.common.criteria.enums.StatisticalResourcesCriteriaPropertyEnum;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
@@ -212,6 +217,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionMainCoveragesDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepresentationMappingDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionBaseDto;
@@ -242,6 +248,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelection
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
 import org.siemac.metamac.statistical.resources.core.utils.DataMockUtils;
+import org.siemac.metamac.statistical.resources.core.utils.SrmMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticalResourcesMockFactory;
@@ -254,6 +261,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -284,6 +294,9 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
 
     @Autowired
+    private DatasetVersionRepository          datasetVersionRepository;
+
+    @Autowired
     StreamMessagingServiceFacade              streamMessagingServiceFacade;
 
     @Before
@@ -291,6 +304,7 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
         DataStructure emptyDsd = new DataStructure();
         emptyDsd.setDataStructureComponents(new DataStructureComponents());
 
+        Mockito.reset(srmRestInternalService);
         Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(emptyDsd);
     }
 
@@ -2314,6 +2328,160 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     public void testRetrieveAttributeInstances() throws Exception {
         // TODO testRetrieveAttributeInstances (METAMAC-2143)
 
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testCreateGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(buildDsdWithTextAttribute("ATTR_01"));
+
+        DsdGranularityAttributeInstanceDto inputDto = new DsdGranularityAttributeInstanceDto();
+        inputDto.setAttributeId("ATTR_01");
+        Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
+        granularityCodes.put("TIME_PERIOD", Arrays.asList("A", "Q"));
+        inputDto.setGranularityCodesByDimension(granularityCodes);
+        inputDto.setValue(new org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto());
+        inputDto.getValue().setStringValue("value");
+        Map<String, List<String>> codesByDimension = new HashMap<String, List<String>>();
+        codesByDimension.put("DIM_01", Arrays.asList("CODE_01", "CODE_02"));
+
+        GranularityAttributeInstanceDto returnedDto = buildGranularityInstanceDto("uuid-granularity-01", "ATTR_01", granularityCodes, codesByDimension, "test-value");
+        Mockito.when(datasetRepositoriesServiceFacade.createGranularityAttributeInstance(Mockito.anyString(), Mockito.any(GranularityAttributeInstanceDto.class))).thenReturn(returnedDto);
+
+        DsdGranularityAttributeInstanceDto result = statisticalResourcesServiceFacade.createGranularityAttributeInstance(getServiceContextAdministrador(), urn, inputDto);
+
+        assertNotNull(result);
+        assertEquals("ATTR_01", result.getAttributeId());
+        assertEquals("uuid-granularity-01", result.getUuid());
+        assertEquals(Arrays.asList("A", "Q"), result.getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertNotNull(result.getCodesByDimension());
+        assertEquals(1, result.getCodesByDimension().size());
+        assertEquals("CODE_01", result.getCodesByDimension().get("DIM_01").get(0).getCode());
+        assertEquals("CODE_02", result.getCodesByDimension().get("DIM_01").get(1).getCode());
+        assertNotNull(result.getValue());
+        assertEquals("test-value", result.getValue().getStringValue());
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testUpdateGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(buildDsdWithTextAttribute("ATTR_01"));
+
+        DsdGranularityAttributeInstanceDto inputDto = new DsdGranularityAttributeInstanceDto();
+        inputDto.setUuid("uuid-granularity-existing");
+        inputDto.setAttributeId("ATTR_01");
+        Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
+        granularityCodes.put("TIME_PERIOD", Arrays.asList("A"));
+        inputDto.setGranularityCodesByDimension(granularityCodes);
+        inputDto.setValue(new org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto());
+        inputDto.getValue().setStringValue("updated-value");
+        Map<String, List<String>> codesByDimension = new HashMap<String, List<String>>();
+        codesByDimension.put("DIM_01", Arrays.asList("CODE_01"));
+
+        GranularityAttributeInstanceDto returnedDto = buildGranularityInstanceDto("uuid-granularity-existing", "ATTR_01", granularityCodes, codesByDimension, "updated-value");
+        Mockito.when(datasetRepositoriesServiceFacade.updateGranularityAttributeInstance(Mockito.any(GranularityAttributeInstanceDto.class))).thenReturn(returnedDto);
+
+        DsdGranularityAttributeInstanceDto result = statisticalResourcesServiceFacade.updateGranularityAttributeInstance(getServiceContextAdministrador(), urn, inputDto);
+
+        assertNotNull(result);
+        assertEquals("ATTR_01", result.getAttributeId());
+        assertEquals("uuid-granularity-existing", result.getUuid());
+        assertEquals(Arrays.asList("A"), result.getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertNotNull(result.getCodesByDimension());
+        assertEquals(1, result.getCodesByDimension().size());
+        assertEquals("CODE_01", result.getCodesByDimension().get("DIM_01").get(0).getCode());
+        assertNotNull(result.getValue());
+        assertEquals("updated-value", result.getValue().getStringValue());
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testDeleteGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        String uuid = "uuid-granularity-to-delete";
+
+        Mockito.doNothing().when(datasetRepositoriesServiceFacade).deleteGranularityAttributeInstance(uuid);
+
+        statisticalResourcesServiceFacade.deleteGranularityAttributeInstance(getServiceContextAdministrador(), urn, uuid);
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testRetrieveGranularityAttributeInstances() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        String attributeId = "ATTR_01";
+        Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(buildDsdWithTextAttribute(attributeId));
+
+        Map<String, List<String>> codes1 = new HashMap<String, List<String>>();
+        codes1.put("TIME_PERIOD", Arrays.asList("A", "Q"));
+        Map<String, List<String>> dimensions1 = new HashMap<String, List<String>>();
+        dimensions1.put("DIM_01", Arrays.asList("CODE_01"));
+        Map<String, List<String>> codes2 = new HashMap<String, List<String>>();
+        codes2.put("TIME_PERIOD", Arrays.asList("M"));
+        Map<String, List<String>> dimensions2 = new HashMap<String, List<String>>();
+        dimensions2.put("DIM_02", Arrays.asList("CODE_11", "CODE_12"));
+        List<GranularityAttributeInstanceDto> expectedList = Arrays.asList(
+                buildGranularityInstanceDto("uuid-granularity-01", attributeId, codes1, dimensions1, "value-01"),
+                buildGranularityInstanceDto("uuid-granularity-02", attributeId, codes2, dimensions2, "value-02"));
+
+        Mockito.when(datasetRepositoriesServiceFacade.findGranularityAttributesInstances(Mockito.anyString(), Mockito.eq(attributeId))).thenReturn(expectedList);
+
+        List<DsdGranularityAttributeInstanceDto> result = statisticalResourcesServiceFacade.retrieveGranularityAttributeInstances(getServiceContextAdministrador(), urn, attributeId);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("uuid-granularity-01", result.get(0).getUuid());
+        assertEquals("uuid-granularity-02", result.get(1).getUuid());
+        assertEquals(Arrays.asList("A", "Q"), result.get(0).getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertEquals(Arrays.asList("M"), result.get(1).getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertEquals("CODE_01", result.get(0).getCodesByDimension().get("DIM_01").get(0).getCode());
+        assertEquals("CODE_11", result.get(1).getCodesByDimension().get("DIM_02").get(0).getCode());
+        assertEquals("CODE_12", result.get(1).getCodesByDimension().get("DIM_02").get(1).getCode());
+        assertEquals("value-01", result.get(0).getValue().getStringValue());
+        assertEquals("value-02", result.get(1).getValue().getStringValue());
+
+    }
+
+    private DataStructure buildDsdWithTextAttribute(String attributeId) {
+        DataStructure dsd = new DataStructure();
+        DataStructureComponents components = new DataStructureComponents();
+        dsd.setDataStructureComponents(components);
+        AttributeRelationship relationship = new AttributeRelationship();
+        relationship.setPrimaryMeasure("OBS_VALUE");
+        Attributes attributes = new Attributes();
+        attributes.getAttributes().add(SrmMockUtils.buildTimeAttribute(attributeId, new TextFormat(), relationship));
+        components.setAttributes(attributes);
+        return dsd;
+    }
+
+    private GranularityAttributeInstanceDto buildGranularityInstanceDto(String uuid, String attributeId, Map<String, List<String>> granularityCodes,
+            Map<String, List<String>> codesByDimension, String value) {
+        GranularityAttributeInstanceDto dto = new GranularityAttributeInstanceDto();
+        dto.setUuid(uuid);
+        dto.setAttributeId(attributeId);
+        dto.setGranularityCodesByDimension(granularityCodes);
+        dto.setCodesByDimension(codesByDimension);
+        InternationalStringDto internationalStringDto = new InternationalStringDto();
+        internationalStringDto.addText(new LocalisedStringDto("es", value));
+        dto.setValue(internationalStringDto);
+        return dto;
     }
 
     @Override
