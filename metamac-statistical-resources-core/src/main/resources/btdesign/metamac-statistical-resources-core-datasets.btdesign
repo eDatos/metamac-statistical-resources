@@ -59,7 +59,7 @@ Application DatasetsStatisticalResources {
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Calculate table size"
-			Long calculateTableSize(DatasetVersion resource) throws MetamacException;		
+			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			"Export datasources to TSV"
 			String exportDatasourcesTsv(String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException;
@@ -75,9 +75,6 @@ Application DatasetsStatisticalResources {
     		importDatabaseDatasourcesInDatasetVersion(String datasetVersionUrn, List<URL> fileUrls,  Map<String,String> dimensionRepresentationMapping, boolean storeDimensionRepresentationMapping) throws MetamacException;
     		createDatabaseDatasourceInDatasetVersion(String datasetVersionUrn, String tableName) throws MetamacException;
     		MetamacException importDatasourcesInStatisticalOperation(String statisticalOperationUrn, List<URL> fileUrls, @BasicVersionableStatisticalResourceDto basicVersionableStatisticalResourceDto) throws MetamacException;
-    		updateDatasetVersionsLastUpdateByDsd(String dsdUrn, long timestamp) throws MetamacException;
-    		updateDatasetVersionsLastUpdateByOperation(String operationUrn, long timestamp) throws MetamacException;
-    		updateQueryVersionsLastUpdateByDatasetVersion(String datasetUrn, String datasetVersionUrn, long timestamp) throws MetamacException;
 
     		// Datasets
     		"Finds datasets by criteria"
@@ -254,9 +251,6 @@ Application DatasetsStatisticalResources {
 			Integer formatExtentDimensions nullable;
 			//Number of cells defined in the DSD
 			Long formatExtentTableSize nullable;
-			//Number of data updates since last publish
-			Integer patch not nullable;
-
 			//Publishing descriptors
 
 			//public date of next update

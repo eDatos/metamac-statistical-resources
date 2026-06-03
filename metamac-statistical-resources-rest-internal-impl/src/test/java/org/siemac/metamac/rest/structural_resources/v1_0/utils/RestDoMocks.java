@@ -245,7 +245,7 @@ public class RestDoMocks {
     }
 
     private void mockQueryVersionFixed(QueryVersion target) {
-        target.setType(QueryTypeEnum.FIXED);
+        target.setQueryType(QueryTypeEnum.FIXED);
         target.addSelection(mockQuerySelectionItem("GEO_DIM",
                 Arrays.asList("santa-cruz-tenerife", "tenerife", "la-laguna", "santa-cruz", "la-palma", "los-llanos-de-aridane", "las-palmas-gran-canaria", "fuerteventura")));
         target.addSelection(mockQuerySelectionItem("measure01", Arrays.asList("measure01-conceptScheme01-concept01", "measure01-conceptScheme01-concept02", "measure01-conceptScheme01-concept05")));
@@ -254,7 +254,7 @@ public class RestDoMocks {
         target.setLatestDataNumber(null);
     }
     private void mockQueryVersionFixedWithoutAllParents(QueryVersion target) {
-        target.setType(QueryTypeEnum.FIXED);
+        target.setQueryType(QueryTypeEnum.FIXED);
         target.addSelection(
                 mockQuerySelectionItem("GEO_DIM", Arrays.asList("santa-cruz-tenerife", "tenerife", "la-laguna", "santa-cruz", "los-llanos-de-aridane", "las-palmas-gran-canaria", "fuerteventura")));
         target.addSelection(mockQuerySelectionItem("measure01", Arrays.asList("measure01-conceptScheme01-concept01", "measure01-conceptScheme01-concept02", "measure01-conceptScheme01-concept05")));
@@ -263,7 +263,7 @@ public class RestDoMocks {
         target.setLatestDataNumber(null);
     }
     private void mockQueryVersionAutoincremental(QueryVersion target) {
-        target.setType(QueryTypeEnum.AUTOINCREMENTAL);
+        target.setQueryType(QueryTypeEnum.AUTOINCREMENTAL);
         target.addSelection(mockQuerySelectionItem("GEO_DIM", Arrays.asList("santa-cruz-tenerife", "las-palmas-gran-canaria")));
         target.addSelection(mockQuerySelectionItem("measure01", Arrays.asList("measure01-conceptScheme01-concept01", "measure01-conceptScheme01-concept02", "measure01-conceptScheme01-concept05")));
         target.addSelection(mockQuerySelectionItem("dim01", Arrays.asList("dim01-codelist01-code01")));
@@ -274,7 +274,7 @@ public class RestDoMocks {
         target.setLatestDataNumber(null);
     }
     private void mockQueryVersionLatestData(QueryVersion target) {
-        target.setType(QueryTypeEnum.LATEST_DATA);
+        target.setQueryType(QueryTypeEnum.LATEST_DATA);
         target.addSelection(mockQuerySelectionItem("GEO_DIM", Arrays.asList("santa-cruz-tenerife", "las-palmas-gran-canaria")));
         target.addSelection(mockQuerySelectionItem("measure01", Arrays.asList("measure01-conceptScheme01-concept01", "measure01-conceptScheme01-concept02", "measure01-conceptScheme01-concept05")));
         target.addSelection(mockQuerySelectionItem("dim01", Arrays.asList("dim01-codelist01-code01")));

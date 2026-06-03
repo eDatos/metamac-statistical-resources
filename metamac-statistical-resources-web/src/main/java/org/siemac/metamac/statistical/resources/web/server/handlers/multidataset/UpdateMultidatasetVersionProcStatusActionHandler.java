@@ -71,8 +71,7 @@ public class UpdateMultidatasetVersionProcStatusActionHandler extends UpdateReso
             }
 
             try {
-                ResourceNotificationDto notificationDto = new ResourceNotificationDto.Builder(action.getMultidatasetVersionToUpdateProcStatus(), StatisticalResourceTypeEnum.MULTIDATASET,
-                        lifeCycleAction).updatedResource(multidatasetVersionDto).reasonOfRejection(action.getReasonOfRejection()).build();
+                ResourceNotificationDto notificationDto = new ResourceNotificationDto.Builder(action.getMultidatasetVersionToUpdateProcStatus(), lifeCycleAction).updatedResource(multidatasetVersionDto).reasonOfRejection(action.getReasonOfRejection()).build();
                 noticesRestInternalFacade.createLifeCycleNotification(ServiceContextHolder.getCurrentServiceContext(), notificationDto);
             } catch (MetamacWebException e) {
                 return new UpdateMultidatasetVersionProcStatusResult.Builder(multidatasetVersionDto).notificationException(e).build();

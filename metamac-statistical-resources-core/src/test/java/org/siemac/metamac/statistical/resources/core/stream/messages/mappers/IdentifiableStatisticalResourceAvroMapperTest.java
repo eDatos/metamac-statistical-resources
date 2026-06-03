@@ -6,6 +6,7 @@ import static org.junit.Assert.assertThat;
 
 import org.junit.Test;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.stream.messages.IdentifiableStatisticalResourceAvro;
 
 public class IdentifiableStatisticalResourceAvroMapperTest {

@@ -94,6 +94,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -118,6 +119,7 @@ import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -147,6 +149,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
+import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingService;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DataMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
@@ -169,7 +172,8 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/statistical-resources/include/dataset-repository-mockito.xml", "classpath:spring/statistical-resources/include/task-mockito.xml",
-        "classpath:spring/statistical-resources/include/rest-services-mockito.xml", "classpath:spring/statistical-resources/applicationContext-test.xml"})
+        "classpath:spring/statistical-resources/include/rest-services-mockito.xml", "classpath:spring/statistical-resources/include/stream-messaging-service-mockito.xml",
+        "classpath:spring/statistical-resources/applicationContext-test.xml"})
 @TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
 @Transactional
 
@@ -190,6 +194,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     @Autowired
     private TaskService                      taskService;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         // Remove cglib from mock
@@ -1177,21 +1182,6 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
         List<URL> urls = Arrays.asList(buildURLForFile(fileForDatasetVersion37), buildURLForFile(fileForDatasetVersion38));
         datasetService.importDatasourcesInStatisticalOperation(getServiceContextWithoutPrincipal(), statisticalOperationCode, urls, new BasicVersionableStatisticalResourceDto());
-    }
-
-    @Override
-    public void testUpdateDatasetVersionsLastUpdateByDsd() throws Exception {
-        // NOTHING TO DO
-    }
-
-    @Override
-    public void testUpdateDatasetVersionsLastUpdateByOperation() throws Exception {
-        // NOTHING TO DO
-    }
-
-    @Override
-    public void testUpdateQueryVersionsLastUpdateByDatasetVersion() throws Exception {
-        // NOTHING TO DO
     }
 
     @Test
@@ -2241,4 +2231,5 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         // Clean up
         exportedFile.delete();
     }
+
 }

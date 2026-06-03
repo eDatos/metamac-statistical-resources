@@ -87,7 +87,7 @@
         ]
       },
       {
-        "name": "type",
+        "name": "queryType",
         "type": [
           "null",
           "QueryTypeEnumAvro"

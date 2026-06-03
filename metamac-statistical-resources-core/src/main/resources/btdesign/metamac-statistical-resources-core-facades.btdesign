@@ -177,7 +177,6 @@ Application FacadeStatisticalResources {
     		void processSrmResourcesKafkaMessage(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
     		void processSrmDsdKafkaMessage(org.apache.avro.specific.SpecificRecordBase message, long timestamp) throws MetamacException;
     		void processOperationKafkaMessage(org.apache.avro.specific.SpecificRecordBase message, long timestamp) throws MetamacException;
-    		void processDatasetVersionKafkaMessage(org.apache.avro.specific.SpecificRecordBase message, long timestamp) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache(List<@StatisticalResourceTypeEnum> resourcesToUpdate, List<@StatisticalResourceTypeEnum> externalResourcesToUpdate) throws MetamacException;
     		void updateGeographicCoverageExternalPublicationCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
 

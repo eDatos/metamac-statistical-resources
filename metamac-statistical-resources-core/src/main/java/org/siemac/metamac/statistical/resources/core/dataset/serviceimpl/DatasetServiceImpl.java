@@ -41,7 +41,6 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
-import org.siemac.metamac.core.common.util.ApplicationContextProvider;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.core.common.util.MetamacCollectionUtils;
@@ -56,7 +55,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemRes
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
-import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.base.domain.StatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -111,9 +110,7 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateCs
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
-import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
-import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.security.DatasetsSecurityUtils;
@@ -162,6 +159,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private IdentifiableStatisticalResourceRepository identifiableStatisticalResourceRepository;
+
+    @Autowired
+    private StatisticalResourceRepository             statisticalResourceRepository;
 
     @Autowired
     private DatasetServiceInvocationValidator         datasetServiceInvocationValidator;
@@ -2326,100 +2326,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     @Override
-    public void updateDatasetVersionsLastUpdateByDsd(ServiceContext ctx, String dsdUrn, long timestamp) {
-        log.debug("Updating datasets by DSD {}", dsdUrn);
-        if (dsdUrn == null || dsdUrn.trim().isEmpty()) {
-            return;
-        }
-
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-            .withProperty(DatasetVersionProperties.relatedDsd().urn()).eq(dsdUrn)
-            .distinctRoot()
-            .build();
-
-        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        updateDatasetsLastUpdateDate(affectedDatasets, timestamp);
-    }
-
-    @Override
-    public void updateDatasetVersionsLastUpdateByOperation(ServiceContext ctx, String operationUrn, long timestamp) {
-        log.debug("Updating datasets by operation {}", operationUrn);
-        if (operationUrn == null || operationUrn.trim().isEmpty()) {
-            return;
-        }
-
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-            .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn)
-            .distinctRoot()
-            .build();
-
-        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        updateDatasetsLastUpdateDate(affectedDatasets, timestamp);
-    }
-
-    private void updateDatasetsLastUpdateDate(List<DatasetVersion> affectedDatasets, long timestamp) {
-        DateTime dateTime = new DateTime(timestamp);
-        int updatedCount = 0;
-        for (DatasetVersion dataset : affectedDatasets) {
-            try {
-                dataset.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
-                dataset.getLifeCycleStatisticalResource().setLastUpdatedBy("system");
-                dataset.setPatch(dataset.getPatch() + 1);
-                log.debug("Updating dataset {}", dataset.getSiemacMetadataStatisticalResource().getUrn());
-                datasetVersionRepository.save(dataset);
-                messagingService.sendMessage(dataset);
-                updatedCount++;
-            } catch (Exception e) {
-                notifyLastUpdateResourceError(e, dataset.getLifeCycleStatisticalResource());
-                log.error("Failed to update dataset: {}", dataset.getSiemacMetadataStatisticalResource().getUrn(), e);
-            }
-        }
-        log.info("Updated {} of {} datasets to {}", new Object[]{updatedCount, affectedDatasets.size(), dateTime.toDateTimeISO()});
-    }
-
-    private void notifyLastUpdateResourceError(Exception e, LifeCycleStatisticalResource resource) {
-        MetamacException metamacException = new MetamacException(e, ServiceExceptionType.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, resource.getUrn());
-        getNoticesRestInternalService().createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, metamacException);
-    }
-
-    @Override
-    public void updateQueryVersionsLastUpdateByDatasetVersion(ServiceContext ctx, String datasetUrn, String datasetVersionUrn, long timestamp) {
-        log.debug("Updating queries by dataset {}", datasetVersionUrn);
-        if (datasetVersionUrn == null || datasetVersionUrn.trim().isEmpty()) {
-            return;
-        }
-
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class)
-            .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn)
-            .or()
-            .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn)
-            .distinctRoot()
-            .build();
-
-        List<QueryVersion> affectedQueries = queryVersionRepository.findByCondition(conditions);
-        updateQueriesLastUpdatedDate(affectedQueries, timestamp);
-    }
-
-    private void updateQueriesLastUpdatedDate(List<QueryVersion> affectedQueries, long timestamp) {
-        DateTime dateTime = new DateTime(timestamp);
-        int updatedQueryCount = 0;
-        for (QueryVersion queryVersion : affectedQueries) {
-            try {
-                queryVersion.getLifeCycleStatisticalResource().setLastUpdated(dateTime);
-                queryVersion.getLifeCycleStatisticalResource().setLastUpdatedBy("system");
-                log.debug("Updating query {} linked to dataset {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), dateTime);
-                queryVersionRepository.save(queryVersion);
-                messagingService.sendMessage(queryVersion);
-                updatedQueryCount++;
-            } catch (Exception e) {
-                notifyLastUpdateResourceError(e, queryVersion.getLifeCycleStatisticalResource());
-                log.error("Failed to update query: {}", queryVersion.getLifeCycleStatisticalResource().getUrn(), e);
-            }
-        }
-        log.info("Updated {} of {} queries to {}", new Object[]{updatedQueryCount, affectedQueries.size(), dateTime.toDateTimeISO()});
-    }
-
-    @Override
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
         DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);
         updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange);
@@ -2505,7 +2411,4 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         return fileName;
     }
 
-    private NoticesRestInternalService getNoticesRestInternalService() {
-        return (NoticesRestInternalService) ApplicationContextProvider.getApplicationContext().getBean(NoticesRestInternalService.BEAN_ID);
-    }
 }

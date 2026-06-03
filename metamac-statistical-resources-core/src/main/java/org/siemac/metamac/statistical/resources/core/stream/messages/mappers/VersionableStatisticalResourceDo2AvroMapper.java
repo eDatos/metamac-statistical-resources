@@ -16,7 +16,7 @@ public class VersionableStatisticalResourceDo2AvroMapper {
                     .setNextVersion(NextVersionTypeEnumDo2AvroMapper.do2Avro(source.getNextVersion())).setNextVersionDate(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getNextVersionDate()))
                     .setValidFrom(DateTimeDo2AvroMapper.do2Avro(source.getValidFrom())).setVersionRationale(InternationalStringDo2AvroMapper.do2Avro(source.getVersionRationale()))
                     .setValidTo(DateTimeDo2AvroMapper.do2Avro(source.getValidTo())).setVersionLogic(source.getVersionLogic())
-                    .setVersionRationaleTypes(VersionRationaleTypeEnumDo2AvroMapper.do2Avro(source.getVersionRationaleTypes())).build();
+                    .setVersionRationaleTypes(VersionRationaleTypeEnumDo2AvroMapper.do2Avro(source.getVersionRationaleTypes())).setPatch(source.getPatch()).build();
         }
         return target;
     }

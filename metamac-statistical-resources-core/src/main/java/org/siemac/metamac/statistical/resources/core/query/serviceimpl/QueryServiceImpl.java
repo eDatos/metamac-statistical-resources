@@ -434,7 +434,7 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
     protected boolean checkQueryType(QueryVersion queryVersion, List<String> dimensionIds) {
         if (!dimensionIds.contains(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID)) {
-            if (!QueryTypeEnum.FIXED.equals(queryVersion.getType())) {
+            if (!QueryTypeEnum.FIXED.equals(queryVersion.getQueryType())) {
                 return false;
             }
         }

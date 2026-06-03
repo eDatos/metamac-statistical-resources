@@ -25,7 +25,7 @@ public class IdentifiableStatisticalResourceDo2AvroMapper {
             try {
                 String operationsApiExternalEndpoint = getConfigurationService().retrieveStatisticalOperationsExternalApiUrlBase();
                 target = IdentifiableStatisticalResourceAvro.newBuilder().setCode(source.getCode()).setUrn(source.getUrn())
-                    .setStatisticalOperation(ExternalItemDo2AvroMapper.do2Avro(source.getStatisticalOperation(), operationsApiExternalEndpoint)).build();
+                    .setType(StatisticalResourceTypeEnumDo2AvroMapper.do2Avro(source.getType())).setStatisticalOperation(ExternalItemDo2AvroMapper.do2Avro(source.getStatisticalOperation(), operationsApiExternalEndpoint)).build();
             } catch (MetamacException e) {
                
             }

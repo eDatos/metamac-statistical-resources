@@ -37,7 +37,7 @@ public class QueryVersioningCopyUtils {
         target.setQuery(source.getQuery());
 
         target.setStatus(source.getStatus());
-        target.setType(source.getType());
+        target.setQueryType(source.getQueryType());
 
         target.setLatestDataNumber(source.getLatestDataNumber());
 

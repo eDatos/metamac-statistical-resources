@@ -112,4 +112,9 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testExecuteRecoveryGeographicalCacheTask() throws Exception {
         // No test
     }
+
+    @Override
+    public void testExecuteUpdateResourceLastUpdateTask() throws Exception {
+        // No test
+    }
 }

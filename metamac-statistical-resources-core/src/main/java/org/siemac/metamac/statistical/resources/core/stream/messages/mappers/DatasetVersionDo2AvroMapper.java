@@ -57,7 +57,7 @@ public class DatasetVersionDo2AvroMapper {
                 .setGeographicGranularities(geoGranList).setTemporalGranularities(temporalGranList).setStatisticalUnit(statisticalUnitList)
                 .setIsPartOf(AvroMapperUtils.relatedResourceList2Avro(AvroMapperUtils.getDatasetVersionRepository().retrieveIsPartOf(source)))
                 .setVisualizerHtmlLink(getDatasetVersionVisualizerHtmlLink(source, urlBaseExternalVisualizer)).setFormatExtentObservations(source.getFormatExtentObservations())
-                .setPatch(source.getPatch()).build();
+                .build();
         return target;
     }
 

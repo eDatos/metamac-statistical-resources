@@ -14,6 +14,7 @@ import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.c
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateExternalGeocoverageCache;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeoCacheRelatedResources;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeocoverageCache;
+import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateResourceLastUpdate;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -78,6 +79,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Content
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -122,8 +125,10 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImpo
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -200,11 +205,15 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_JOB_IMPORT_ATTRIBUTES                  = "job_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
+    public static final String                PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE        = "job_update_resource_last_update_";
     public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
     public static final int                   RECOVERY_JOB_PRIORITY                         = 10;
 
     @Autowired
     private TaskServiceInvocationValidator    taskServiceInvocationValidator;
+
+    @Autowired
+    private LifeCycleStatisticalResourceRepository lifeCycleStatisticalResourceRepository;
 
     @Autowired
     private MetamacSdmx2StatRepoMapper        metamac2StatRepoMapper;
@@ -241,6 +250,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private LifecycleService<DatasetVersion>  datasetLifecycleService;
+
+    @Autowired
+    private ResourceCacheInvalidationService resourceCacheInvalidationService;
 
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
@@ -745,6 +757,64 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         return jobKey.getName();
+    }
+
+    @Override
+    public void planifyUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException {
+        taskServiceInvocationValidator.checkPlanifyUpdateResourceLastUpdate(ctx, resourceUrn, timestamp, sendNotification);
+
+        String taskName = createJobNameForUpdateResourceLastUpdate(resourceUrn);
+        JobKey jobKey = createJobKeyForUpdateResourceLastUpdate(resourceUrn);
+        TriggerKey triggerKey = createTriggerKeyForUpdateResourceLastUpdate(resourceUrn);
+
+        try {
+            checkSameJobNotExists(jobKey);
+
+            // @formatter:off
+            JobDetail job = newJob(UpdateResourceLastUpdateJob.class)
+                    .withIdentity(jobKey)
+                    .usingJobData(UpdateResourceLastUpdateJob.RESOURCE_URN, resourceUrn)
+                    .usingJobData(UpdateResourceLastUpdateJob.TIMESTAMP, timestamp)
+                    .usingJobData(UpdateResourceLastUpdateJob.USER, ctx.getUserId())
+                    .usingJobData(UpdateResourceLastUpdateJob.TASK_NAME, taskName)
+                    .usingJobData(UpdateResourceLastUpdateJob.SEND_NOTIFICATION, sendNotification)
+                    .requestRecovery()
+                    .build();
+            // @formatter:on
+
+            Task task = new Task(taskName);
+            task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
+            task.setExtensionPoint(resourceUrn);
+            createTask(ctx, task);
+
+            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(DEFAULT_QUARTZ_TRIGGER_DELAY, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+
+            try {
+                Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+                sched.scheduleJob(job, trigger);
+            } catch (SchedulerException e) {
+                logger.error("PlanifyUpdateResourceLastUpdate: the job with key " + jobKey.getName() + " has failed", e);
+            }
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
+        }
+    }
+
+    @Override
+    public void processUpdateResourceLastUpdateTask(ServiceContext ctx, String taskName, String resourceUrn, long timestamp) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessUpdateResourceLastUpdateTask(ctx, taskName, resourceUrn, timestamp);
+        LifeCycleStatisticalResource resource = resolveLifeCycleStatisticalResource(resourceUrn);
+        resourceCacheInvalidationService.updateResourceLastUpdate(ctx, resource, timestamp);
+        markTaskAsFinished(ctx, taskName);
+    }
+
+    private LifeCycleStatisticalResource resolveLifeCycleStatisticalResource(String resourceUrn) throws MetamacException {
+        try {
+            return lifeCycleStatisticalResourceRepository.retrieveByUrn(resourceUrn);
+        } catch (MetamacException e) {
+            throw new MetamacException(e, ServiceExceptionType.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, resourceUrn);
+        }
     }
 
     @Override
@@ -1914,6 +1984,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private TriggerKey createTriggerKeyForUpdateExternalGeocoverageCache(String resourceType) {
         return new TriggerKey(createJobNameForUpdateExternalGeocoverageCache(resourceType), GROUP_EXTERNAL_CACHE);
+    }
+
+    private JobKey createJobKeyForUpdateResourceLastUpdate(String resourceUrn) {
+        return new JobKey(createJobNameForUpdateResourceLastUpdate(resourceUrn));
+    }
+
+    private TriggerKey createTriggerKeyForUpdateResourceLastUpdate(String resourceUrn) {
+        return new TriggerKey(createJobNameForUpdateResourceLastUpdate(resourceUrn));
     }
 
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {

@@ -76,7 +76,7 @@ public class UpdateDatasetVersionsProcStatusActionHandler extends UpdateResource
                         break;
                 }
 
-                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(datasetVersionToUpdate, StatisticalResourceTypeEnum.DATASET, lifeCycleAction)
+                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(datasetVersionToUpdate, lifeCycleAction)
                         .updatedResource(updatedDatasetVersionBaseDto).reasonOfRejection(action.getReasonOfRejection()).build();
                 notificationsToSend.add(notification);
 

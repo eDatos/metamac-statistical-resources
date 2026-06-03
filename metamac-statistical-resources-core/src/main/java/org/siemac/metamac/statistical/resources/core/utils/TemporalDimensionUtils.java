@@ -14,7 +14,7 @@ public class TemporalDimensionUtils {
 
     public static List<String> calculateEffectiveTemporalDimensionValuesToQuery(QueryVersion queryVersion, List<String> temporalCoverageCodes, List<String> selectionCodes) throws MetamacException {
         List<String> sortedTemporalCoverageCodes = sortTimeListFromRecentToOldest(temporalCoverageCodes);
-        QueryTypeEnum type = queryVersion.getType();
+        QueryTypeEnum type = queryVersion.getQueryType();
         if (QueryTypeEnum.FIXED.equals(type)) {
             // We return exactly the selected codes, but first, we sort them so all three methods (FIXED, AUTOINCREMENTAL and LATEST_DATA) return the same order, equal to the coverage
             return sortTimeListFromRecentToOldest(selectionCodes);
