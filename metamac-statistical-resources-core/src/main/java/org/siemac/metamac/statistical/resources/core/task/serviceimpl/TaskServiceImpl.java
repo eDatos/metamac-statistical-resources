@@ -1757,6 +1757,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             String datasetVersionUrn = extractDatasetVersionUrnFromImportationAttributesJobKey(jobKey);
             TaskInfoDataset recoveryTaskInfo = setDatasetDataToPlanifyRecovery(ctx, task, datasetVersionUrn);
             planifyRecoveryImportAttributes(ctx, recoveryTaskInfo, Boolean.TRUE);
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
+            setTaskToFailed(ctx, task);
         }
     }
 
@@ -1879,6 +1881,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } else if (jobKey.startsWith(PREFIX_JOB_IMPORT_ATTRIBUTES)) {
             TaskInfoDataset recoveryTaskInfo = setTaskInfoToPlanifyRecovery(ctx, datasetVersionId, datasetUrn, task);
             planifyRecoveryImportAttributes(ctx, recoveryTaskInfo, Boolean.FALSE);
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
+            setTaskToFailed(ctx, task);
         }
     }
 
