@@ -792,8 +792,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             try {
                 Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
                 sched.scheduleJob(job, trigger);
+                logger.info("PlanifyUpdateResourceLastUpdate: the job with key {} was planified", jobKey.getName());
             } catch (SchedulerException e) {
-                logger.error("PlanifyUpdateResourceLastUpdate: the job with key " + jobKey.getName() + " has failed", e);
+                logger.error("PlanifyUpdateResourceLastUpdate: the job with key {} has failed", jobKey.getName(), e);
             }
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)

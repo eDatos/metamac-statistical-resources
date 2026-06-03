@@ -99,6 +99,7 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
             affectedUrns.addAll(queryUrns);
         }
 
+        LOGGER.info("Planning last update job for {} affected resources", affectedUrns.size());
         for (String urn : affectedUrns) {
             try {
                 taskService.planifyUpdateResourceLastUpdate(ctx, urn, timestamp, true);
@@ -106,8 +107,6 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
                 LOGGER.error("Failed to planify last update job for resource {}", urn, e);
             }
         }
-
-        LOGGER.info("Planified {} lastUpdate update jobs for affected resources", affectedUrns.size());
     }
 
     private List<String> getAffectedQueryUrns(String datasetUrn, String datasetVersionUrn) {
