@@ -95,6 +95,13 @@ public class AttributeDimensionOrGroupLevelEditionForm extends AttributeDimensio
     }
 
     public void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverages) {
+        if (dsdAttributeInstanceDto == null || dsdAttributeInstanceDto.getCodeDimensions() == null) {
+            return;
+        }
+        DimensionCoverageValuesSelectionItem dimensionValues = (DimensionCoverageValuesSelectionItem) getItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES);
+        if (dimensionValues == null) {
+            return;
+        }
         Map<String, List<CodeItemDto>> dimensionCodes = dsdAttributeInstanceDto.getCodeDimensions();
 
         List<CodeItemDto> selectedCodes = new ArrayList<CodeItemDto>();
@@ -102,7 +109,6 @@ public class AttributeDimensionOrGroupLevelEditionForm extends AttributeDimensio
             if (dimensionCodes != null && dimensionCodes.get(dimensionId) != null) {
                 selectedCodes = dimensionCodes.get(dimensionId);
             }
-            DimensionCoverageValuesSelectionItem dimensionValues = (DimensionCoverageValuesSelectionItem) getItem(DsdAttributeInstanceDS.DIMENSION_SELECTION_VALUES);
             dimensionValues.setDimensionCoverageValues(dimensionId, dimensionsCoverages.get(dimensionId));
             dimensionValues.selectDimensionCodes(dimensionId, selectedCodes);
         }

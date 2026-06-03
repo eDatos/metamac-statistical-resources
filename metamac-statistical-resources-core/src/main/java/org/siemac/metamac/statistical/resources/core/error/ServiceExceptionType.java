@@ -50,6 +50,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.is_required_by_not_visible_query");
     public static final CommonServiceExceptionType DATASET_OBSERVATION_NONENUMERATED_TEMPORAL_PATTERN                                                  = create(
             "exception.resources.dataset_version.observational_time_period_pattern");
+    public static final CommonServiceExceptionType GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED                                                         = create(
+            "exception.resources.dataset_version.granularity_attribute_instance_cant_be_saved");
 
     // Datasource
     public static final CommonServiceExceptionType DATASOURCE_NOT_FOUND                                                                                = create(
@@ -322,6 +324,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.attribute.importation.attribute_invalid_multilingual_header_invalid_language");
     public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_FILE_EMPTY                                                                   = create(
             "exception.resources.attribute.importation.file_empty");
+    public static final CommonServiceExceptionType IMPORTATION_ATTRIBUTES_GRANULARITY_CODE_INVALID                                                     = create(
+            "exception.resources.attribute.importation.granularity_code_invalid");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_CODE_ENUM_NOT_VALID                                                                = create(
             "exception.resources.dataset.importation.attribute_code_enumeration_not_valid");
     public static final CommonServiceExceptionType IMPORTATION_ATTR_NOT_MATCH                                                                          = create(

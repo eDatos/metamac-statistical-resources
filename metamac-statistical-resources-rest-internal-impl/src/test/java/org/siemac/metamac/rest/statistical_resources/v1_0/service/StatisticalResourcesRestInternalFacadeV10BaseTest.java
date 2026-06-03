@@ -111,6 +111,7 @@ import org.siemac.metamac.statistical_resources.rest.internal.v1_0.service.Stati
 import org.springframework.context.ApplicationContext;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
@@ -1019,6 +1020,24 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         return conditionalCriteria != null ? (String) conditionalCriteria.getFirstOperant() : null;
     }
 
+    private void mockRetrieveDatasetVersionByUrn() throws MetamacException {
+        when(datasetService.retrieveDatasetVersionByUrn(any(ServiceContext.class), any(String.class))).thenAnswer(new Answer<DatasetVersion>() {
+
+            @Override
+            public DatasetVersion answer(InvocationOnMock invocation) throws Throwable {
+                String urn = (String) invocation.getArguments()[1];
+                if (StringUtils.isBlank(urn)) {
+                    return null;
+                }
+                return restDoMocks.mockDatasetVersion(AGENCY_1, DATASET_1_CODE, VERSION_1);
+            }
+        });
+    }
+
+    private void mockFindGranularityAttributesInstances() throws Exception {
+        when(datasetRepositoriesServiceFacade.findGranularityAttributesInstances(any(String.class), any(String.class))).thenReturn(new ArrayList<GranularityAttributeInstanceDto>());
+    }
+
     private void resetMocks() throws Exception {
         datasetService = applicationContext.getBean(DatasetService.class);
         reset(datasetService);
@@ -1057,6 +1076,8 @@ public abstract class StatisticalResourcesRestInternalFacadeV10BaseTest extends 
         mockFindAttributesInstancesWithDatasetAttachmentLevel();
         mockFindAttributesInstancesWithDimensionAttachmentLevelDenormalized();
         mockFindAttributesInstancesWithDatasetAttachmentLevelForMultilingualValues();
+        mockRetrieveDatasetVersionByUrn();
+        mockFindGranularityAttributesInstances();
         mockDatasetVersionRepository();
         mockPublicationVersionRepository();
 

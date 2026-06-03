@@ -1360,6 +1360,30 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     }
 
     @Override
+    public void testCreateGranularityAttributeInstance() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testUpdateGranularityAttributeInstance() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testDeleteGranularityAttributeInstance() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testRetrieveGranularityAttributeInstances() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
     public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
         // no optimistic locking in this operation
     }

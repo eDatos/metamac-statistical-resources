@@ -139,6 +139,10 @@ public class DimensionCoverageValuesSelectionItem extends CustomCanvasItem {
         return dimensionsListGridItem;
     }
 
+    public void storeCurrentValue() {
+        storeValue(buildRecordForForm());
+    }
+
     // To use form validation we trick the form using appropiate record or null
     private Record buildRecordForForm() {
         for (String dimensionId : dimensionIds) {
@@ -178,6 +182,23 @@ public class DimensionCoverageValuesSelectionItem extends CustomCanvasItem {
                 }
             }
 
+        }
+    }
+
+    public void syncTemporalToSummary(String dimensionId, List<CodeItemDto> items) {
+        if (selectedDimensionValuesListGrid.getRecordList() != null) {
+            Map<String, String> criteria = new HashMap<String, String>();
+            criteria.put(CodeItemDS.DIMENSION_ID, dimensionId);
+            Record[] existing = selectedDimensionValuesListGrid.getRecordList().findAll(criteria);
+            if (existing != null) {
+                for (Record record : existing) {
+                    selectedDimensionValuesListGrid.removeData(record);
+                }
+            }
+        }
+        for (CodeItemDto item : items) {
+            CodeItemRecord record = StatisticalResourcesRecordUtils.getCodeItemRecord(dimensionId, item);
+            selectedDimensionValuesListGrid.addData(record);
         }
     }
 

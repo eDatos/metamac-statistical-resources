@@ -172,6 +172,14 @@ Application FacadeStatisticalResources {
     		deleteAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
     		"Retrieve attribute instances given the dataset version URN and the attribute Id"
     		List<@DsdAttributeInstanceDto> retrieveAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
+    		"Create a granularity attribute instance"
+    		@DsdGranularityAttributeInstanceDto createGranularityAttributeInstance(String datasetVersionUrn, @DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException;
+    		"Update a granularity attribute instance"
+    		@DsdGranularityAttributeInstanceDto updateGranularityAttributeInstance(String datasetVersionUrn, @DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException;
+    		"Delete a granularity attribute instance"
+    		deleteGranularityAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
+    		"Retrieve granularity attribute instances given the dataset version URN and the attribute Id"
+    		List<@DsdGranularityAttributeInstanceDto> retrieveGranularityAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
     		// Other actions
     		void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn) throws MetamacException;
     		void processSrmResourcesKafkaMessage(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;

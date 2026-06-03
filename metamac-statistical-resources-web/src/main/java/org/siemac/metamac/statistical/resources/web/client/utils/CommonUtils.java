@@ -28,6 +28,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.TemporalCodeDt
 import org.siemac.metamac.statistical.resources.core.dto.query.PurposeDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionBaseDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.enume.constraint.domain.KeyPartTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.AttributeRelationshipTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.dataset.domain.AttributeRepresentationTypeEnum;
@@ -636,6 +637,37 @@ public class CommonUtils {
 
     public static boolean hasGroupRelationshipType(DsdAttributeDto dsdAttributeDto) {
         return AttributeRelationshipTypeEnum.GROUP_RELATIONSHIP.equals(dsdAttributeDto.getAttributeRelationship().getRelationshipType());
+    }
+
+    public static boolean hasTemporalDimension(DsdAttributeDto dsdAttributeDto) {
+        if (hasDimensionRelationshipType(dsdAttributeDto)) {
+            return dsdAttributeDto.getAttributeRelationship().getDimensions().contains(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
+        } else if (hasGroupRelationshipType(dsdAttributeDto)) {
+            return dsdAttributeDto.getAttributeRelationship().getGroupDimensions().contains(StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID);
+        }
+        return false;
+    }
+
+    public static boolean supportsGranularityAttributeInstances(DsdAttributeDto dsdAttributeDto) {
+        return dsdAttributeDto != null && hasTemporalDimension(dsdAttributeDto) && (hasDimensionRelationshipType(dsdAttributeDto) || hasGroupRelationshipType(dsdAttributeDto));
+    }
+
+    public static List<String> getNonTemporalDimensionIds(DsdAttributeDto dsdAttributeDto) {
+        List<String> result = new ArrayList<String>();
+        List<String> dims = null;
+        if (hasDimensionRelationshipType(dsdAttributeDto)) {
+            dims = dsdAttributeDto.getAttributeRelationship().getDimensions();
+        } else if (hasGroupRelationshipType(dsdAttributeDto)) {
+            dims = dsdAttributeDto.getAttributeRelationship().getGroupDimensions();
+        }
+        if (dims != null) {
+            for (String dim : dims) {
+                if (!StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(dim)) {
+                    result.add(dim);
+                }
+            }
+        }
+        return result;
     }
 
     // -----------------------------------------------------------------------------------------

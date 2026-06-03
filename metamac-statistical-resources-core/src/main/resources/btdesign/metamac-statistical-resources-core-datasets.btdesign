@@ -100,6 +100,14 @@ Application DatasetsStatisticalResources {
     		deleteAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
     		"Retrieve attrubibute instances"
     		List<AttributeInstanceDto> retrieveAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
+    		"Create granularity attribute instance"
+    		GranularityAttributeInstanceDto createGranularityAttributeInstance(String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto) throws MetamacException;
+    		"Update granularity attribute instance"
+    		GranularityAttributeInstanceDto updateGranularityAttributeInstance(String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto) throws MetamacException;
+    		"Delete granularity attribute instance"
+    		deleteGranularityAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
+    		"Retrieve granularity attribute instances"
+    		List<GranularityAttributeInstanceDto> retrieveGranularityAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
     		"Retrieve the coverage for a given attribute"
     		List<@AttributeValue> retrieveCoverageForDatasetVersionAttribute(String datasetVersionUrn, String dsdAttributeId) throws MetamacException;
     		

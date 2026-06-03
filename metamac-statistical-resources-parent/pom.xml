@@ -12,7 +12,7 @@
 
 	<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 	<artifactId>metamac-statistical-resources-parent</artifactId>
-	<version>11.3.1-SNAPSHOT</version>
+	<version>11.3.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>METAMAC :: STATISTICAL RESOURCES :: PARENT</name>
 	<description>METAMAC :: STATISTICAL RESOURCES :: PARENT</description>
@@ -53,7 +53,7 @@
 		<metamac-statistical-resources.etcDir>${metamac-statistical-resources.baseDir}/etc</metamac-statistical-resources.etcDir>
 
         <!-- EDATOS DATASET REPOSITORY -->
-        <edatos-dataset-repository.version>3.6.0</edatos-dataset-repository.version>
+        <edatos-dataset-repository.version>3.6.1-SNAPSHOT</edatos-dataset-repository.version>
         
 		<statistic-parser.version>2.1.0</statistic-parser.version>
 		<statistic-sdmx-srm-rest-external-api.version>4.10.0</statistic-sdmx-srm-rest-external-api.version>
