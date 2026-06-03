@@ -997,7 +997,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void sendNotification(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
-        if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+        if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+            sendDatabaseImportNotification(ctx, datasetVersionUrn);
+        } else {
 
             logger.debug("sendNotification dataset in zip import with automatic life cicle {}", datasetVersionUrn);
             getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
@@ -2344,6 +2346,20 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public void importDatabaseDatasourcesInDatasetVersion(ServiceContext ctx, String datasetVersionUrn, List<URL> fileUrls, Map<String, String> dimensionRepresentationMapping,
             boolean storeDimensionRepresentationMapping) throws MetamacException {
         datasetService.importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
+    }
+
+    private void sendDatabaseImportNotification(ServiceContext ctx, String datasetVersionUrn) {
+        logger.debug("sendNotification dataset in database import with automatic life cicle {}", datasetVersionUrn);
+        try {
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+            if (!datasetVersion.getDatasources().isEmpty()) {
+                String dataTable = datasetVersion.getDatasources().iterator().next().getSourceName();
+                sendDatabaseImportationSuccessNotification(datasetVersion, dataTable, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION,
+                        MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
+            }
+        } catch (Exception e) {
+            logger.error("Could not send success notification for database import of dataset {}", datasetVersionUrn, e);
+        }
     }
 
     private void sendDatabaseImportationSuccessNotification(DatasetVersion datasetVersion, String dataTable, MetamacRolesEnum... roles) {
