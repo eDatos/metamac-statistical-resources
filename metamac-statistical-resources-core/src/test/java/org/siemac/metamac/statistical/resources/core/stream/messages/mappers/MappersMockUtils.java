@@ -278,6 +278,7 @@ public class MappersMockUtils {
         // @formatter:off
         VersionableStatisticalResourceAvro target = VersionableStatisticalResourceAvro.newBuilder()
                 .setNameableStatisticalResource(mockNameableStatisticalResourceAvro())
+                .setPatch(0)
                 .setNextVersion(NextVersionTypeEnumDo2AvroMapper.do2Avro(EXPECTED_NEXT_VERSION_TYPE))
                 .setNextVersionDate(mockInternationalStringAvroFutureDate())
                 .setValidFrom(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
@@ -296,6 +297,7 @@ public class MappersMockUtils {
     public static VersionableStatisticalResource mockVersionableStatisticalResource() {
         VersionableStatisticalResource target = new VersionableStatisticalResource();
         target.setCode(EXPECTED_CODE);
+        target.setType(EXPECTED_TYPE);
         target.setStatisticalOperation(mockExternalItem());
         target.setTitle(mockInternationalString());
         target.setDescription(mockInternationalString());
@@ -307,6 +309,7 @@ public class MappersMockUtils {
         target.setNextVersion(EXPECTED_NEXT_VERSION_TYPE);
         target.setVersionLogic(EXPECTED_VERSION_LOGIC);
         target.addVersionRationaleType(new VersionRationaleType(VersionRationaleTypeEnum.MAJOR_CATEGORIES));
+        target.setPatch(0);
         return target;
     }
 
@@ -343,6 +346,8 @@ public class MappersMockUtils {
         target.addVersionRationaleType(new VersionRationaleType(VersionRationaleTypeEnum.MAJOR_CATEGORIES));
         target.setNewnessUntilDate(EXPECTED_PAST_DATE);
         target.setFeaturedUntilDate(EXPECTED_PAST_DATE);
+        target.setType(EXPECTED_TYPE);
+        target.setPatch(0);
         return target;
     }
 
@@ -530,7 +535,7 @@ public class MappersMockUtils {
         target.setResourceCreatedDate(EXPECTED_PAST_DATE);
         target.setSubtitle(mockInternationalString());
         target.setTitleAlternative(mockInternationalString());
-        target.setType(StatisticalResourceTypeEnum.COLLECTION);
+        target.setType(EXPECTED_TYPE);
         target.setUserModifiedKeywords(true);
         for (ExternalItem item : listExternalItem) {
             target.addContributor(item);
@@ -542,6 +547,7 @@ public class MappersMockUtils {
         }
         target.setNewnessUntilDate(EXPECTED_PAST_DATE);
         target.setFeaturedUntilDate(EXPECTED_PAST_DATE);
+        target.setPatch(0);
         return target;
     }
 
