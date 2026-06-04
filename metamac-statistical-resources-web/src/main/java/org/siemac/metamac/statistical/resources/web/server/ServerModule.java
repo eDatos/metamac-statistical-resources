@@ -59,6 +59,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.external.Get
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDataProviderPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDataProviderSchemesPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDsdsPaginatedListActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetDsdsWithoutVersionPaginatedListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetGeographicalGranularitiesListActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetLanguagesCodesActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.external.GetOrganisationUnitSchemesPaginatedListActionHandler;
@@ -160,6 +161,7 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsP
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsWithoutVersionPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetLanguagesCodesAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetOrganisationUnitSchemesPaginatedListAction;
@@ -238,6 +240,7 @@ public class ServerModule extends HandlerModule {
 
         // SRM
         bindHandler(GetDsdsPaginatedListAction.class, GetDsdsPaginatedListActionHandler.class);
+        bindHandler(GetDsdsWithoutVersionPaginatedListAction.class, GetDsdsWithoutVersionPaginatedListActionHandler.class);
         bindHandler(GetGeographicalGranularitiesListAction.class, GetGeographicalGranularitiesListActionHandler.class);
         bindHandler(GetTemporalGranularitiesListAction.class, GetTemporalGranularitiesListActionHandler.class);
         bindHandler(GetTemporalGranularitiesByDatasetAction.class, GetTemporalGranularitiesByDatasetActionHandler.class);
