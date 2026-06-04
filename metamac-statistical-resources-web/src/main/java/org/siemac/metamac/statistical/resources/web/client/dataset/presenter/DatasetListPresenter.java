@@ -42,6 +42,8 @@ import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProvi
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDataProviderSchemesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsWithoutVersionPaginatedListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsWithoutVersionPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetStatisticalOperationAction;
@@ -94,8 +96,7 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
         // Related resources
         void setGeographicGranularitiesForSearchSection(GetGeographicalGranularitiesListResult result);
         void setTemporalGranularitiesForSearchSection(GetTemporalGranularitiesListResult result);
-        void setStatisticalOperationsForDsdSelectionInSearchSection(List<ExternalItemDto> results);
-        void setDsdsForSearchSection(GetDsdsPaginatedListResult result);
+        void setDsdsWithoutVersionForSearchSection(GetDsdsWithoutVersionPaginatedListResult result);
         void setStatisticalOperationsForSearchSection(GetStatisticalOperationsPaginatedListResult result);
 
         // data provider y data provider schemes
@@ -325,23 +326,12 @@ public class DatasetListPresenter extends StatisticalResourceBaseListPresenter<D
     }
 
     @Override
-    public void retrieveStatisticalOperationsForDsdSelectionInSearchSection() {
-        dispatcher.execute(new GetStatisticalOperationsPaginatedListAction(0, Integer.MAX_VALUE, null), new WaitingAsyncCallbackHandlingError<GetStatisticalOperationsPaginatedListResult>(this) {
+    public void retrieveDsdsWithoutVersionForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria) {
+        dispatcher.execute(new GetDsdsWithoutVersionPaginatedListAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetDsdsWithoutVersionPaginatedListResult>(this) {
 
             @Override
-            public void onWaitSuccess(GetStatisticalOperationsPaginatedListResult result) {
-                getView().setStatisticalOperationsForDsdSelectionInSearchSection(result.getOperationsList());
-            }
-        });
-    }
-
-    @Override
-    public void retrieveDsdsForSearchSection(int firstResult, int maxResults, DsdWebCriteria criteria) {
-        dispatcher.execute(new GetDsdsPaginatedListAction(firstResult, maxResults, criteria), new WaitingAsyncCallbackHandlingError<GetDsdsPaginatedListResult>(this) {
-
-            @Override
-            public void onWaitSuccess(GetDsdsPaginatedListResult result) {
-                getView().setDsdsForSearchSection(result);
+            public void onWaitSuccess(GetDsdsWithoutVersionPaginatedListResult result) {
+                getView().setDsdsWithoutVersionForSearchSection(result);
             }
         });
     }

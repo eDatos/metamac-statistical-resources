@@ -47,8 +47,7 @@ public interface DatasetListUiHandlers extends NewStatisticalResourceUiHandlers 
     void retrieveStatisticalOperationsForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria);
     void retrieveGeographicGranularitiesForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria);
     void retrieveTemporalGranularitiesForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria);
-    void retrieveStatisticalOperationsForDsdSelectionInSearchSection();
-    void retrieveDsdsForSearchSection(int firstResult, int maxResults, DsdWebCriteria criteria);
+    void retrieveDsdsWithoutVersionForSearchSection(int firstResult, int maxResults, MetamacWebCriteria criteria);
 
     // DATA_PROVIDERS and SCHEMES
     void retrieveDataProviderSchemes(int firstResult, int maxResults, MetamacWebCriteria webCriteria, SiemacMetadataExternalField field);
