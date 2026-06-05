@@ -2002,7 +2002,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setExtensionPoint(resourceUrn);
             createTask(ctx, task);
 
-            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(DEFAULT_QUARTZ_TRIGGER_DELAY, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+            int defaultQuartzTriggerDelay = PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE.equals(jobPrefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 3600;
+            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(defaultQuartzTriggerDelay, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
 
             try {
                 Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
