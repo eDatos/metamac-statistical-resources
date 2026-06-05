@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
@@ -33,7 +33,7 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCacheInvalidationServiceImpl.class);
 
     @Autowired
-    private StreamMessagingService<String, SpecificRecord> messagingService;
+    private StreamMessagingService<String, SpecificRecordBase> messagingService;
 
     @Autowired
     private TaskService taskService;

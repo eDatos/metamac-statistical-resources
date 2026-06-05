@@ -94,7 +94,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.avro.specific.SpecificRecord;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.RandomStringUtils;
@@ -119,7 +118,6 @@ import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.constants.ProcStatusForActionsConstants;
-import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.SiemacMetadataStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.VersionableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -149,7 +147,6 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
-import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingService;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DataMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;

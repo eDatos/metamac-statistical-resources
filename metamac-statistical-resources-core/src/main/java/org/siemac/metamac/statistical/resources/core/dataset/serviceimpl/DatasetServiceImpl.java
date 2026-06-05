@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.avro.specific.SpecificRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -114,7 +113,6 @@ import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.security.DatasetsSecurityUtils;
-import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingService;
 import org.siemac.metamac.statistical.resources.core.task.domain.AlternativeEnumeratedRepresentation;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptor;
 import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorResult;
@@ -219,9 +217,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private ManipulateCsvDataService                  manipulateCsvDataService;
-
-    @Autowired
-    protected StreamMessagingService<String, SpecificRecord> messagingService;
 
     // ------------------------------------------------------------------------
     // DATASOURCES

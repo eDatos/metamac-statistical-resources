@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_05_BASIC_NAME;
 
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,11 +35,11 @@ public class ResourceCacheInvalidationServiceTest extends StatisticalResourcesBa
     private ResourceCacheInvalidationService resourceCacheInvalidationService;
 
     @Autowired
-    private StreamMessagingService<String, SpecificRecord> messagingService;
+    private StreamMessagingService<String, SpecificRecordBase> messagingService;
 
     @Before
     public void onBeforeTest() throws Exception {
-        messagingService = (StreamMessagingService<String, SpecificRecord>) (((org.springframework.aop.framework.Advised) messagingService).getTargetSource().getTarget());
+        messagingService = (StreamMessagingService<String, SpecificRecordBase>) (((org.springframework.aop.framework.Advised) messagingService).getTargetSource().getTarget());
         Mockito.reset(messagingService);
     }
 
