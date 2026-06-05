@@ -116,9 +116,9 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                 futuresMap.put(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME, startConsumerForDsdTopic(ac));
                 futuresMap.put(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME, startConsumerForOperationTopic(ac));
 
-                String externalPublicationTopicName = getExternalDatasetPublicationTopic();
-                if (externalPublicationTopicName != null && Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, externalPublicationTopicName))) {
-                futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(ac, externalPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME));
+                externalDatasetPublicationTopicName = getExternalDatasetPublicationTopic();
+                if (externalDatasetPublicationTopicName != null && Boolean.TRUE.equals(checkIsAvailableTopic(availableTopics, externalDatasetPublicationTopicName))) {
+                futuresMap.put(CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME, startConsumerForExternalDatasetPublicationTopic(ac, externalDatasetPublicationTopicName, CONSUMER_EXTERNAL_DATASET_PUBLICATION_MESSAGES_1_NAME));
                 }
 
                 externalCollectionPublicationTopicName = getExternalCollectionPublicationTopic();
