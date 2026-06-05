@@ -55,7 +55,11 @@ public class StreamMessagingServiceKafkaImpl implements StreamMessagingService<S
 
     @Override
     public void sendMessage(HasLifecycle message) throws MetamacException {
-        MessageBase<String, SpecificRecordBase> m = new AvroMessage<>(serializeKey(message), serializeMessage(message));
+        SpecificRecordBase serialized = serializeMessage(message);
+        if (serialized == null) {
+            return; // TODO METAMAC-2715 - Realizar la notificación a Kafka de los recursos Multidataset
+        }
+        MessageBase<String, SpecificRecordBase> m = new AvroMessage<>(serializeKey(message), serialized);
         String topic = getTopicByType(message);
         getProducer().sendMessage(m, topic);
     }
