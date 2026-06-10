@@ -463,7 +463,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Future<?> startConsumerForConceptSchemeTopic(ApplicationContext context) throws MetamacException {
         String topicConceptSchemePublication = statisticalResourcesConfiguration.retrieveKafkaTopicConceptSchemesPublication();
         KafkaConsumerThread<ConceptSchemeAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
-        KafkaConsumer<String, ConceptSchemeAvro> consumerFromBegin = createConceptSchemeConsumerFromCurrentOffset(topicConceptSchemePublication, CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME);
+        KafkaConsumer<String, ConceptSchemeAvro> consumerFromBegin = createConceptSchemeConsumerFromCurrentOffset(CONSUMER_CONCEPT_SCHEME_PUBLICATION_MESSAGES_1_NAME);
         consumerThread.setConsumer(consumerFromBegin);
         consumerThread.setTopicName(topicConceptSchemePublication);
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
@@ -502,7 +502,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Future<?> startConsumerForCodelistTopic(ApplicationContext context) throws MetamacException {
         String topicCodelistPublication = statisticalResourcesConfiguration.retrieveKafkaTopicCodelistsPublication();
         KafkaConsumerThread<CodelistAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
-        KafkaConsumer<String, CodelistAvro> consumerFromBegin = createCodelistConsumerFromCurrentOffset(topicCodelistPublication, CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME);
+        KafkaConsumer<String, CodelistAvro> consumerFromBegin = createCodelistConsumerFromCurrentOffset(CONSUMER_CODELIST_PUBLICATION_MESSAGES_1_NAME);
         consumerThread.setConsumer(consumerFromBegin);
         consumerThread.setTopicName(topicCodelistPublication);
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
@@ -515,7 +515,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Future<?> startConsumerForExternalCollectionPublicationTopic(ApplicationContext context, String externalPublicationTopicName, String clientId) throws MetamacException {
         String topicJaxiPublication = externalPublicationTopicName;
         KafkaConsumerThread<PublicationAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
-        KafkaConsumer<String, PublicationAvro> consumerFromBegin = createCollectionConsumerFromCurrentOffset(topicJaxiPublication, clientId);
+        KafkaConsumer<String, PublicationAvro> consumerFromBegin = createCollectionConsumerFromCurrentOffset(clientId);
         consumerThread.setConsumer(consumerFromBegin);
         consumerThread.setTopicName(topicJaxiPublication);
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
@@ -537,7 +537,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Future<?> startConsumerForExternalDatasetPublicationTopic(ApplicationContext context, String externalPublicationTopicName, String clientId) throws MetamacException {
         String topicJaxiPublication = externalPublicationTopicName;
         KafkaConsumerThread<DatasetAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
-        KafkaConsumer<String, DatasetAvro> consumerFromBegin = createConsumerFromCurrentOffset(topicJaxiPublication, clientId);
+        KafkaConsumer<String, DatasetAvro> consumerFromBegin = createConsumerFromCurrentOffset(clientId);
         consumerThread.setConsumer(consumerFromBegin);
         consumerThread.setTopicName(topicJaxiPublication);
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
@@ -558,7 +558,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 10000); // 10 s
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, 900000); // 15 min, Max time for Bussiness Logic execution of consumer thread
         props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, 1); // The maximum number of records returned in a single call to poll()
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.LATEST.toString().toLowerCase());
+        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, OffsetResetStrategy.EARLIEST.toString().toLowerCase());
 
         props.put(AbstractKafkaSchemaSerDeConfig.SCHEMA_REGISTRY_URL_CONFIG, statisticalResourcesConfiguration.retrieveKafkaSchemaRegistryUrl());
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
@@ -566,32 +566,20 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return props;
     }
 
-    private KafkaConsumer<String, DatasetAvro> createConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
-        KafkaConsumer<String, DatasetAvro> kafkaConsumer = new KafkaConsumer<>(
-                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaExternalDatasetPublicationMessagesGroup()));
-        kafkaConsumer.subscribe(Collections.singletonList(topic));
-        return kafkaConsumer;
+    private KafkaConsumer<String, DatasetAvro> createConsumerFromCurrentOffset(String clientId) throws MetamacException {
+        return new KafkaConsumer<>(getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaExternalDatasetPublicationMessagesGroup()));
     }
 
-   private KafkaConsumer<String, PublicationAvro> createCollectionConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
-        KafkaConsumer<String, PublicationAvro> kafkaConsumer = new KafkaConsumer<>(
-                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaExternalCollectionPublicationMessagesGroup()));
-        kafkaConsumer.subscribe(Collections.singletonList(topic));
-        return kafkaConsumer;
+    private KafkaConsumer<String, PublicationAvro> createCollectionConsumerFromCurrentOffset(String clientId) throws MetamacException {
+        return new KafkaConsumer<>(getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaExternalCollectionPublicationMessagesGroup()));
     }
 
-    private KafkaConsumer<String, CodelistAvro> createCodelistConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
-        KafkaConsumer<String, CodelistAvro> kafkaConsumer = new KafkaConsumer<>(
-                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomCodelistPublicationMessagesGroup()));
-        kafkaConsumer.subscribe(Collections.singletonList(topic));
-        return kafkaConsumer;
+    private KafkaConsumer<String, CodelistAvro> createCodelistConsumerFromCurrentOffset(String clientId) throws MetamacException {
+        return new KafkaConsumer<>(getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomCodelistPublicationMessagesGroup()));
     }
 
-    private KafkaConsumer<String, ConceptSchemeAvro> createConceptSchemeConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
-        KafkaConsumer<String, ConceptSchemeAvro> kafkaConsumer = new KafkaConsumer<>(
-                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomConceptSchemePublicationMessagesGroup()));
-        kafkaConsumer.subscribe(Collections.singletonList(topic));
-        return kafkaConsumer;
+    private KafkaConsumer<String, ConceptSchemeAvro> createConceptSchemeConsumerFromCurrentOffset(String clientId) throws MetamacException {
+        return new KafkaConsumer<>(getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomConceptSchemePublicationMessagesGroup()));
     }
 
     private KafkaConsumer<String, DataStructureDefinitionAvro> createDsdConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
