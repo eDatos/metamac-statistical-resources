@@ -6,12 +6,15 @@ import java.util.Map;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetAttributesTabUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeDatasetLevelEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeDatasetLevelForm;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeDimensionOrGroupLevelEditionForm;
 import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeDimensionOrGroupLevelForm;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeGranularityLevelEditionForm;
+import org.siemac.metamac.statistical.resources.web.client.dataset.widgets.forms.AttributeGranularityLevelForm;
 import org.siemac.metamac.web.common.client.widgets.form.InternationalMainFormLayout;
 
 import com.smartgwt.client.widgets.events.ClickEvent;
@@ -27,15 +30,17 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
     private AttributeDimensionOrGroupLevelForm        attributeDimensionOrGroupLevelForm;
     private AttributeDimensionOrGroupLevelEditionForm attributeDimensionOrGroupLevelEditionForm;
 
+    private AttributeGranularityLevelForm             attributeGranularityLevelForm;
+    private AttributeGranularityLevelEditionForm      attributeGranularityLevelEditionForm;
+
     private boolean                                   createMode;
     private DsdAttributeInstanceDto                   dsdAttributeInstanceDto;
+    private DsdGranularityAttributeInstanceDto        dsdGranularityAttributeInstanceDto;
 
     public AttributeMainFormLayout() {
         setCanEdit(true);
 
         bindMainFormLayoutEvents();
-
-        // DATASET LEVEL FORMS
 
         attributeDatasetLevelForm = new AttributeDatasetLevelForm();
         addViewCanvas(attributeDatasetLevelForm);
@@ -43,15 +48,17 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
         attributeDatasetLevelEditionForm = new AttributeDatasetLevelEditionForm();
         addEditionCanvas(attributeDatasetLevelEditionForm);
 
-        // DIMENSION LEVEL FORMS
-
         attributeDimensionOrGroupLevelForm = new AttributeDimensionOrGroupLevelForm();
         addViewCanvas(attributeDimensionOrGroupLevelForm);
 
         attributeDimensionOrGroupLevelEditionForm = new AttributeDimensionOrGroupLevelEditionForm();
         addEditionCanvas(attributeDimensionOrGroupLevelEditionForm);
 
-        // Bind events
+        attributeGranularityLevelForm = new AttributeGranularityLevelForm();
+        addViewCanvas(attributeGranularityLevelForm);
+
+        attributeGranularityLevelEditionForm = new AttributeGranularityLevelEditionForm();
+        addEditionCanvas(attributeGranularityLevelEditionForm);
 
         getSave().addClickHandler(new ClickHandler() {
 
@@ -63,7 +70,13 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
                     }
                 } else if (attributeDimensionOrGroupLevelEditionForm.isVisible()) {
                     if (attributeDimensionOrGroupLevelEditionForm.validate(false)) {
-                        getUiHandlers().saveAttributeInstance(attributeDimensionOrGroupLevelEditionForm.getDsdAttributeDto(), attributeDimensionOrGroupLevelEditionForm.getDsdAttributeInstanceDto());
+                        getUiHandlers().saveAttributeInstance(attributeDimensionOrGroupLevelEditionForm.getDsdAttributeDto(),
+                                attributeDimensionOrGroupLevelEditionForm.getDsdAttributeInstanceDto());
+                    }
+                } else if (attributeGranularityLevelEditionForm.isVisible()) {
+                    if (attributeGranularityLevelEditionForm.validate(false)) {
+                        getUiHandlers().saveGranularityAttributeInstance(attributeGranularityLevelEditionForm.getDsdAttributeDto(),
+                                attributeGranularityLevelEditionForm.getDsdGranularityAttributeInstanceDto());
                     }
                 }
             }
@@ -87,6 +100,8 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
             attributeDatasetLevelEditionForm.setTranslationsShowed(translationsShowed);
             attributeDimensionOrGroupLevelForm.setTranslationsShowed(translationsShowed);
             attributeDimensionOrGroupLevelEditionForm.setTranslationsShowed(translationsShowed);
+            attributeGranularityLevelForm.setTranslationsShowed(translationsShowed);
+            attributeGranularityLevelEditionForm.setTranslationsShowed(translationsShowed);
         }
     }
 
@@ -97,6 +112,7 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
     public void showInstance(DsdAttributeDto dsdAttributeDto, DsdAttributeInstanceDto dsdAttributeInstanceDto) {
         hideAllForms();
         this.dsdAttributeInstanceDto = dsdAttributeInstanceDto;
+        this.dsdGranularityAttributeInstanceDto = null;
 
         boolean canDeleteBck = canDelete;
 
@@ -151,16 +167,55 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
         show();
     }
 
+    public void showGranularityInstance(DsdAttributeDto dsdAttributeDto, DsdGranularityAttributeInstanceDto dto) {
+        hideAllForms();
+        this.dsdGranularityAttributeInstanceDto = dto;
+        this.dsdAttributeInstanceDto = null;
+
+        createMode = dto.getUuid() == null;
+        boolean canDeleteBck = canDelete;
+        setCanDelete(canDelete && !createMode);
+
+        attributeGranularityLevelForm.setAttribute(dsdAttributeDto, dto);
+        attributeGranularityLevelForm.show();
+
+        attributeGranularityLevelEditionForm.setAttribute(dsdAttributeDto, dto);
+        attributeGranularityLevelEditionForm.show();
+
+        if (createMode) {
+            setEditionMode();
+        } else {
+            setViewMode();
+        }
+
+        canDelete = canDeleteBck;
+
+        show();
+
+        if (Boolean.TRUE.equals(dsdAttributeDto.getAttributeRepresentation().getMultilingualType())) {
+            getTranslateToolStripButton().show();
+            setTranslation();
+        } else {
+            getTranslateToolStripButton().hide();
+        }
+    }
+
     private void hideAllForms() {
         attributeDatasetLevelForm.hide();
         attributeDatasetLevelEditionForm.hide();
         attributeDimensionOrGroupLevelForm.hide();
         attributeDimensionOrGroupLevelEditionForm.hide();
+        attributeGranularityLevelForm.hide();
+        attributeGranularityLevelEditionForm.hide();
         hide();
     }
 
     public DsdAttributeInstanceDto getDsdAttributeInstanceDto() {
         return dsdAttributeInstanceDto;
+    }
+
+    public DsdGranularityAttributeInstanceDto getDsdGranularityAttributeInstanceDto() {
+        return dsdGranularityAttributeInstanceDto;
     }
 
     public void setUiHandlers(DatasetAttributesTabUiHandlers uiHandlers) {
@@ -169,6 +224,15 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
         attributeDatasetLevelEditionForm.setUiHandlers(uiHandlers);
         attributeDimensionOrGroupLevelForm.setUiHandlers(uiHandlers);
         attributeDimensionOrGroupLevelEditionForm.setUiHandlers(uiHandlers);
+        attributeGranularityLevelEditionForm.setUiHandlers(uiHandlers);
+    }
+
+    @Override
+    public void setEditionMode() {
+        super.setEditionMode();
+        // Force redraw of edition forms to recover from SmartGWT 3.0 issue where CanvasItems
+        // set via setFields() while the parent layout was hidden are not rendered when re-shown.
+        editionFormLayout.markForRedraw();
     }
 
     public DatasetAttributesTabUiHandlers getUiHandlers() {
@@ -177,11 +241,14 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
 
     public void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverages) {
         attributeDimensionOrGroupLevelEditionForm.setDimensionsCoverageValues(dimensionsCoverages);
+        attributeGranularityLevelForm.setDimensionsCoverageValues(dimensionsCoverages);
+        attributeGranularityLevelEditionForm.setDimensionsCoverageValues(dimensionsCoverages);
     }
 
-    //
-    // RELATED RESOURCES
-    //
+    public void setTemporalGranularities(List<ExternalItemDto> granularities) {
+        attributeGranularityLevelForm.setTemporalGranularities(granularities);
+        attributeGranularityLevelEditionForm.setTemporalGranularities(granularities);
+    }
 
     public void setItemsForDatasetLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults) {
         attributeDatasetLevelEditionForm.setItemsForDatasetLevelAttributeValueSelection(externalItemDtos, firstResult, totalResults);
@@ -189,5 +256,6 @@ public class AttributeMainFormLayout extends InternationalMainFormLayout {
 
     public void setItemsForDimensionOrGroupLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults) {
         attributeDimensionOrGroupLevelEditionForm.setItemsForDimensionOrGroupLevelAttributeValueSelection(externalItemDtos, firstResult, totalResults);
+        attributeGranularityLevelEditionForm.setItemsForDimensionOrGroupLevelAttributeValueSelection(externalItemDtos, firstResult, totalResults);
     }
 }

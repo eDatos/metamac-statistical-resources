@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -96,6 +97,7 @@ import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUt
 import org.siemac.metamac.statistical.resources.core.utils.SafeCalculatorUtils;
 import org.siemac.metamac.statistical_resources.rest.common.StatisticalResourcesRestConstants;
 import org.siemac.metamac.statistical_resources.rest.common.impl.mappers.external.resources.ExternalRestObjectsMapper;
+import org.siemac.metamac.statistical_resources.rest.common.impl.utils.GranularityAttributeResolver;
 import org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Attribute;
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.AttributeAttachmentLevelType;
@@ -163,6 +165,7 @@ import org.springframework.stereotype.Component;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceBasicDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceObservationDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
@@ -589,9 +592,11 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         Attributes targets = new Attributes();
         try {
             List<String> datasetDimensionsOrdered = datasetService.retrieveDatasetVersionDimensionsIds(SERVICE_CONTEXT, datasetVersionUrn);
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(SERVICE_CONTEXT, datasetVersionUrn);
+            String datasetRepositoryId = datasetVersion.getDatasetRepositoryId();
 
             for (DsdAttribute source : sources) {
-                Attribute target = toAttribute(datasetVersionUrn, source, dsdProcessorResult, datasetDimensionsOrdered, selectedLanguages);
+                Attribute target = toAttribute(datasetVersionUrn, datasetRepositoryId, source, dsdProcessorResult, datasetDimensionsOrdered, selectedLanguages);
                 targets.getAttributes().add(target);
             }
         } catch (MetamacException e) {
@@ -1311,8 +1316,8 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
     }
 
-    private Attribute toAttribute(String datasetVersionUrn, DsdAttribute source, DsdProcessorResult dsdProcessorResult, List<String> datasetDimensionsOrdered, List<String> selectedLanguages)
-            throws MetamacException {
+    private Attribute toAttribute(String datasetVersionUrn, String datasetRepositoryId, DsdAttribute source, DsdProcessorResult dsdProcessorResult, List<String> datasetDimensionsOrdered,
+            List<String> selectedLanguages) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -1342,11 +1347,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         target.setType(ComponentType.valueOf(source.getType().name()));
 
         // Attributes values
-        target.setAttributeValues(toAttributeValues(datasetVersionUrn, source, selectedLanguages, dsdProcessorResult));
+        target.setAttributeValues(toAttributeValues(datasetVersionUrn, datasetRepositoryId, source, selectedLanguages, dsdProcessorResult));
         return target;
     }
 
-    private AttributeValues toAttributeValues(String datasetVersionUrn, DsdAttribute attribute, List<String> selectedLanguages, DsdProcessorResult dsdProcessorResult) throws MetamacException {
+    private AttributeValues toAttributeValues(String datasetVersionUrn, String datasetRepositoryId, DsdAttribute attribute, List<String> selectedLanguages, DsdProcessorResult dsdProcessorResult)
+            throws MetamacException {
         if (attribute == null) {
             return null;
         }
@@ -1354,13 +1360,20 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
             // Translate only representations or time attributes
             return null;
         }
+
+        // Get concrete coverage values
         List<AttributeValue> coverages = datasetService.retrieveCoverageForDatasetVersionAttribute(SERVICE_CONTEXT, datasetVersionUrn, attribute.getComponentId());
-        if (CollectionUtils.isEmpty(coverages)) {
-            return null;
-        }
-        Map<String, AttributeValue> coveragesById = new HashMap<String, AttributeValue>(coverages.size());
-        for (AttributeValue coverage : coverages) {
+        List<AttributeValue> allCoverages = new ArrayList<AttributeValue>(CollectionUtils.isEmpty(coverages) ? Collections.<AttributeValue>emptyList() : coverages);
+        Map<String, AttributeValue> coveragesById = new HashMap<String, AttributeValue>(allCoverages.size());
+        for (AttributeValue coverage : allCoverages) {
             coveragesById.put(coverage.getIdentifier(), coverage);
+        }
+
+        // Enrich coverage with values contributed by granularity attribute instances
+        enrichCoverageWithGranularityInstances(datasetRepositoryId, attribute, allCoverages, coveragesById);
+
+        if (allCoverages.isEmpty()) {
+            return null;
         }
 
         AttributeValues targets = null;
@@ -1369,13 +1382,34 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         } else if (attribute.getConceptSchemeRepresentationUrn() != null) {
             targets = toEnumeratedAttributeValuesFromConceptScheme(coveragesById, attribute.getConceptSchemeRepresentationUrn(), attribute.getType(), selectedLanguages, dsdProcessorResult);
         } else if (DsdComponentType.TEMPORAL.equals(attribute.getType())) {
-            targets = toNonEnumeratedAttributeValuesFromTextFormatType(coverages, attribute.getTextFormatRepresentation(), attribute.getType(), selectedLanguages);
+            targets = toNonEnumeratedAttributeValuesFromTextFormatType(allCoverages, attribute.getTextFormatRepresentation(), attribute.getType(), selectedLanguages);
         } else {
             logger.error("Attribute definition unsupported for attribute: " + attribute.getComponentId());
             org.siemac.metamac.rest.common.v1_0.domain.Exception exception = RestExceptionUtils.getException(RestServiceExceptionType.UNKNOWN);
             throw new RestException(exception, Status.INTERNAL_SERVER_ERROR);
         }
         return targets;
+    }
+
+    private void enrichCoverageWithGranularityInstances(String datasetRepositoryId, DsdAttribute attribute, List<AttributeValue> allCoverages, Map<String, AttributeValue> coveragesById) {
+        try {
+            List<GranularityAttributeInstanceDto> granularityInstances = datasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetRepositoryId, attribute.getComponentId());
+            if (!CollectionUtils.isEmpty(granularityInstances)) {
+                for (GranularityAttributeInstanceDto instance : granularityInstances) {
+                    if (instance.getValue() == null) {
+                        continue;
+                    }
+                    String valueId = instance.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE);
+                    if (StringUtils.isNotBlank(valueId) && !coveragesById.containsKey(valueId)) {
+                        AttributeValue av = new AttributeValue(attribute.getComponentId(), valueId);
+                        allCoverages.add(av);
+                        coveragesById.put(valueId, av);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            logger.warn("Could not fetch granularity attribute instances for coverage of attribute: " + attribute.getComponentId(), e);
+        }
     }
 
     private EnumeratedAttributeValues toEnumeratedAttributeValuesFromCodelist(Map<String, AttributeValue> coveragesById, String codelistUrn, DsdComponentType attributeType,
@@ -1790,14 +1824,26 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
     private DataProcessorForAttributeWithDimensionAttachmentLevel getDataProcessorForAttributeWithDimensionAttachmentLevel(String attributeId, List<String> attributeDimensions,
             List<String> datasetDimensionsOrdered, Map<String, List<String>> dimensionsCodesSelectedEffective, String datasetId) throws Exception {
 
-        // Find attributes
+        List<String> attributeDimensionsOrdered = toAttributeDimensionsOrdered(datasetDimensionsOrdered, attributeDimensions);
+
+        // Find concrete attribute instances
         List<AttributeInstanceDto> sources = datasetRepositoriesServiceFacade.findAttributesInstancesWithDimensionAttachmentLevelDenormalized(datasetId, attributeId, dimensionsCodesSelectedEffective);
-        if (CollectionUtils.isEmpty(sources)) {
-            return null;
+        Map<String, AttributeInstanceBasicDto> attributesByCodeDimensions = buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(attributeDimensionsOrdered, sources);
+
+        // Add granularity attribute instances as fallback (concrete instances take precedence)
+        List<GranularityAttributeInstanceDto> granularitySources = datasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetId, attributeId);
+        if (!CollectionUtils.isEmpty(granularitySources)) {
+            Map<String, AttributeInstanceBasicDto> granularityByCodeDimensions = GranularityAttributeResolver.buildGranularityAttributesByCodeDimensions(attributeDimensionsOrdered, dimensionsCodesSelectedEffective, granularitySources);
+            for (Map.Entry<String, AttributeInstanceBasicDto> entry : granularityByCodeDimensions.entrySet()) {
+                if (!attributesByCodeDimensions.containsKey(entry.getKey())) {
+                    attributesByCodeDimensions.put(entry.getKey(), entry.getValue());
+                }
+            }
         }
 
-        List<String> attributeDimensionsOrdered = toAttributeDimensionsOrdered(datasetDimensionsOrdered, attributeDimensions);
-        Map<String, AttributeInstanceDto> attributesByCodeDimensions = buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(attributeDimensionsOrdered, sources);
+        if (attributesByCodeDimensions.isEmpty()) {
+            return null;
+        }
 
         // Build data
         int dataSize = SafeCalculatorUtils.safeCalculateDataSize(attributeDimensions, dimensionsCodesSelectedEffective);
@@ -1914,9 +1960,12 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         return AttributesUtils.escapeValueToData(attributeValue);
     }
 
-    private Map<String, AttributeInstanceDto> buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(List<String> attributeDimensionsOrdered,
+    private Map<String, AttributeInstanceBasicDto> buildMapToAttributesWithDimensionAttachmentLevelDenormalizedByCodeDimensions(List<String> attributeDimensionsOrdered,
             List<AttributeInstanceDto> attributeInstances) {
-        Map<String, AttributeInstanceDto> attributesByCodeDimensions = new HashMap<String, AttributeInstanceDto>(attributeInstances.size());
+        if (CollectionUtils.isEmpty(attributeInstances)) {
+            return new HashMap<String, AttributeInstanceBasicDto>();
+        }
+        Map<String, AttributeInstanceBasicDto> attributesByCodeDimensions = new HashMap<String, AttributeInstanceBasicDto>(attributeInstances.size());
         for (AttributeInstanceDto attributeInstanceDto : attributeInstances) {
             StringBuilder key = new StringBuilder();
             for (int i = 0; i < attributeDimensionsOrdered.size(); i++) {
@@ -1984,17 +2033,17 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private class DataProcessorForAttributeWithDimensionAttachmentLevel extends DataProcessor {
 
-        private final Map<String, AttributeInstanceDto> attributesByCodeDimensions;
-        private final List<AttributeInstanceDto>        targets;
+        private final Map<String, AttributeInstanceBasicDto> attributesByCodeDimensions;
+        private final List<AttributeInstanceBasicDto>        targets;
 
-        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceDto> attributesByCodeDimensions, int dataSize) {
+        public DataProcessorForAttributeWithDimensionAttachmentLevel(Map<String, AttributeInstanceBasicDto> attributesByCodeDimensions, int dataSize) {
             this.attributesByCodeDimensions = attributesByCodeDimensions;
-            targets = new ArrayList<AttributeInstanceDto>(dataSize);
+            targets = new ArrayList<AttributeInstanceBasicDto>(dataSize);
         }
 
         @Override
         protected void processFullEntry(String key) {
-            AttributeInstanceDto attributeInstanceDto = attributesByCodeDimensions.get(key);
+            AttributeInstanceBasicDto attributeInstanceDto = attributesByCodeDimensions.get(key);
             targets.add(attributeInstanceDto);
         }
 
@@ -2004,17 +2053,15 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
         }
 
         public List<InternationalStringDto> getDataMultilingualAttributeForResponse() {
-            List<InternationalStringDto> attributeDimensionValues = new ArrayList<>();
-            for (AttributeInstanceDto attributeInstanceDto : targets) {
+            List<InternationalStringDto> attributeDimensionValues = new ArrayList<InternationalStringDto>();
+            for (AttributeInstanceBasicDto attributeInstanceDto : targets) {
                 if (attributeInstanceDto != null) {
                     attributeDimensionValues.add(InternationalStringUtils.copy(attributeInstanceDto.getValue(), true));
                 } else {
                     attributeDimensionValues.add(null);
                 }
             }
-
             return attributeDimensionValues;
-
         }
     }
 
@@ -2082,14 +2129,14 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private class DataAttributeWithDimensionAttachmentLevelIterator extends DataIterator {
 
-        public DataAttributeWithDimensionAttachmentLevelIterator(List<AttributeInstanceDto> list) {
+        public DataAttributeWithDimensionAttachmentLevelIterator(List<AttributeInstanceBasicDto> list) {
             super(list);
         }
 
         @Override
         protected String getValue(int position) {
             String value = null;
-            AttributeInstanceDto attributeInstanceDto = (AttributeInstanceDto) list.get(position);
+            AttributeInstanceBasicDto attributeInstanceDto = (AttributeInstanceBasicDto) list.get(position);
             if (attributeInstanceDto != null) {
                 value = toAttributeInstanceValueToData(attributeInstanceDto);
             }

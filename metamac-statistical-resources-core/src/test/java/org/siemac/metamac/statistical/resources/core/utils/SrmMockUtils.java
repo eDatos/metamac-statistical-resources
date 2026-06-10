@@ -13,6 +13,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attribu
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeQualifierType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeRelationship;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeUsageStatusType;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.CodeResourceInternal;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codelist;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Codes;
@@ -194,6 +195,26 @@ public class SrmMockUtils {
     // -------------------------------------------------------------------------------------
     // DSD
     // -------------------------------------------------------------------------------------
+
+    public static DataStructure buildDsdWithTimeDimensionAndTextAttribute(String timeDimensionId, String attributeId) {
+        DataStructure dsd = new DataStructure();
+        DataStructureComponents components = new DataStructureComponents();
+
+        TimeDimension timeDim = buildTimeDimension(timeDimensionId, DataType.REPORTING_YEAR);
+        Dimensions dimensions = new Dimensions();
+        dimensions.getDimensions().add(timeDim);
+        components.setDimensions(dimensions);
+
+        AttributeRelationship relationship = new AttributeRelationship();
+        relationship.getDimensions().add(timeDimensionId);
+        Attribute attr = buildTimeAttribute(attributeId, new TextFormat(), relationship);
+        Attributes attributes = new Attributes();
+        attributes.getAttributes().add(attr);
+        components.setAttributes(attributes);
+
+        dsd.setDataStructureComponents(components);
+        return dsd;
+    }
 
     public static DataStructure mockDsdWithGeoTimeAndMeasureDimensions(String urn, String geoId, String timeId, String measureId, ResourceInternal measureConceptSchemeReference,
             ResourceInternal geoCodelistReference) {

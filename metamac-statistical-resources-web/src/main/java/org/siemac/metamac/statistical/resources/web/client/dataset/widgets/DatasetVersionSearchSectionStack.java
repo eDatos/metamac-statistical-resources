@@ -8,11 +8,9 @@ import org.siemac.metamac.statistical.resources.web.client.dataset.model.ds.Data
 import org.siemac.metamac.statistical.resources.web.client.dataset.view.handlers.DatasetListUiHandlers;
 import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.widgets.SiemacMetadataResourceSearchSectionStack;
-import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleDsdPaginatedWindow;
 import org.siemac.metamac.statistical.resources.web.client.widgets.windows.search.SearchSingleItemWihtoutFilterWindow;
 import org.siemac.metamac.statistical.resources.web.shared.criteria.DatasetVersionWebCriteria;
-import org.siemac.metamac.statistical.resources.web.shared.criteria.DsdWebCriteria;
-import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsPaginatedListResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetDsdsWithoutVersionPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetGeographicalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
 import org.siemac.metamac.web.common.client.utils.RecordUtils;
@@ -22,6 +20,7 @@ import org.siemac.metamac.web.common.client.widgets.form.fields.CustomDatePicker
 import org.siemac.metamac.web.common.client.widgets.form.fields.external.SearchExternalItemLinkItem;
 import org.siemac.metamac.web.common.shared.criteria.MetamacWebCriteria;
 
+import com.smartgwt.client.widgets.Canvas;
 import com.smartgwt.client.widgets.form.fields.SelectItem;
 import com.smartgwt.client.widgets.form.fields.events.ClickEvent;
 import com.smartgwt.client.widgets.form.fields.events.ClickHandler;
@@ -30,7 +29,7 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
 
     private SearchSingleItemWihtoutFilterWindow searchGeographicGranularitiesWindow;
     private SearchSingleItemWihtoutFilterWindow searchTemporalGranularitiesWindow;
-    private SearchSingleDsdPaginatedWindow      searchDsdWindow;
+    private SearchSingleItemWihtoutFilterWindow searchDsdWindow;
 
     private DatasetListUiHandlers               uiHandlers;
 
@@ -47,7 +46,7 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
         CustomDateItem dateEnd = new CustomDateItem(DatasetDS.DATE_END, getConstants().datasetDateEnd());
         SearchExternalItemLinkItem dsd = createDsdItem(DatasetDS.RELATED_DSD, getConstants().datasetRelatedDSD());
         CustomDatePickerItem dateNextUpdate = createFieldDateNextUpdate();
-        
+
         SelectItem statisticOfficiality = new SelectItem(DatasetDS.STATISTIC_OFFICIALITY, getConstants().datasetStatisticOfficiality());
         statisticOfficiality.setValueMap(CommonUtils.getStatisticOfficialityHashMap());
 
@@ -178,13 +177,7 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
     }
     // DSD
 
-    public void setStatisticalOperationsForDsdSelection(java.util.List<ExternalItemDto> externalItemDtos) {
-        if (searchDsdWindow != null) {
-            searchDsdWindow.setStatisticalOperations(externalItemDtos);
-        }
-    }
-
-    public void setDsds(GetDsdsPaginatedListResult result) {
+    public void setDsdsWithoutVersion(GetDsdsWithoutVersionPaginatedListResult result) {
         if (searchDsdWindow != null) {
             searchDsdWindow.setResources(result.getDsdsList());
             searchDsdWindow.refreshSourcePaginationInfo(result.getFirstResultOut(), result.getDsdsList().size(), result.getTotalResults());
@@ -196,18 +189,23 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
         final SearchExternalItemLinkItem item = new SearchExternalItemLinkItem(name, title) {
 
             @Override
+            protected Canvas createCanvas() {
+                Canvas canvas = super.createCanvas();
+                canvas.setStyleName("relatedDsdSearchItemCanvas");
+                return canvas;
+            }
+
+            @Override
             public void onSearch() {
-                searchDsdWindow = new SearchSingleDsdPaginatedWindow(getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS,
-                        new SearchPaginatedAction<DsdWebCriteria>() {
+                searchDsdWindow = new SearchSingleItemWihtoutFilterWindow(getConstants().resourceSelection(), StatisticalResourceWebConstants.FORM_LIST_MAX_RESULTS,
+                        new SearchPaginatedAction<MetamacWebCriteria>() {
 
                             @Override
-                            public void retrieveResultSet(int firstResult, int maxResults, DsdWebCriteria criteria) {
-                                getUiHandlers().retrieveDsdsForSearchSection(firstResult, maxResults, criteria);
+                            public void retrieveResultSet(int firstResult, int maxResults, MetamacWebCriteria criteria) {
+                                getUiHandlers().retrieveDsdsWithoutVersionForSearchSection(firstResult, maxResults, criteria);
                             }
                         });
 
-                // Load resources (to populate the selection window)
-                getUiHandlers().retrieveStatisticalOperationsForDsdSelectionInSearchSection();
                 searchDsdWindow.retrieveItems();
 
                 searchDsdWindow.setSaveAction(new ClickHandler() {
@@ -233,7 +231,7 @@ public class DatasetVersionSearchSectionStack extends SiemacMetadataResourceSear
     public void retrieveStatisticalOperations(int firstResult, int maxResults, MetamacWebCriteria criteria) {
         getUiHandlers().retrieveStatisticalOperationsForSearchSection(firstResult, maxResults, criteria);
     }
-    
+
     private CustomDatePickerItem createFieldDateNextUpdate() {
         CustomDatePickerItem customDatePickerItem = new CustomDatePickerItem(DatasetDS.DATE_NEXT_UPDATE, getConstants().datasetDateNextUpdate(), false, false, CommonUtils.getDateFormatTypeHashMap());
         customDatePickerItem.defaultDateType();
