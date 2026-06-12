@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.web.server.utils;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.siemac.edatos.core.common.util.shared.UrnUtils;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaConjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaDisjunctionRestriction;
 import org.siemac.metamac.core.common.criteria.MetamacCriteriaPropertyRestriction;
@@ -301,7 +302,9 @@ public class MetamacWebCriteriaUtils {
 
     private static MetamacCriteriaRestriction buildDsdCriteria(DatasetVersionWebCriteria criteria) {
         if (StringUtils.isNotBlank(criteria.getDsdUrn())) {
-            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.DATASET_RELATED_DSD_URN.name(), criteria.getDsdUrn(), OperationType.EQ);
+            String dsdUrn = criteria.getDsdUrn();
+            OperationType operationType = UrnUtils.hasVersion(dsdUrn) ? OperationType.EQ : OperationType.LIKE;
+            return new MetamacCriteriaPropertyRestriction(StatisticalResourcesCriteriaPropertyEnum.DATASET_RELATED_DSD_URN.name(), dsdUrn, operationType);
         }
         return null;
     }

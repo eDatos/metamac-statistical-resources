@@ -25,17 +25,20 @@ import org.siemac.metamac.core.common.io.FileUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
+import org.siemac.metamac.statistical.resources.core.enume.utils.AttributeInstanceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor.DsdAttribute;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.CodeDimension;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.facade.serviceapi.StatisticalResourcesServiceFacade;
 import org.siemac.metamac.statistical.resources.core.io.domain.TemporalAttributeValues;
 import org.siemac.metamac.statistical.resources.core.io.mapper.MetamacCsv2StatRepoMapper;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
 import org.siemac.metamac.statistical.resources.core.io.utils.CsvAttributesParser;
+import org.siemac.metamac.statistical.resources.core.io.utils.ManipulateDataUtils;
 import org.siemac.metamac.statistical.resources.core.utils.AttributesUtils;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +50,7 @@ import com.arte.statistic.parser.csv.constants.CsvConstants;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceBasicDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.ObservationExtendedDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
@@ -65,11 +69,12 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     private static final int                 SPLIT_DATA_FACTOR            = 5000;
 
     private PrintWriter                      printWriter;
-    private static final String              HEADER_ID_ATTRIBUTE          = "ID_ATRIBUTO";
-    private static final String              HEADER_DIMENSIONES           = "DIMENSIONES";
-    private static final String              HEADER_VALORES_DIMENSIONES   = "VALORES_DIMENSION";
-    private static final String              HEADER_PREFIX_VALOR_ATRIBUTO = "VALOR_ATRIBUTO";
-    private static final String              HEADER_PREFIX_LANGUAGE       = "#";
+    private static final String              HEADER_ATTRIBUTE_ID           = ManipulateDataUtils.HEADER_ATTRIBUTE_ID;
+    private static final String              HEADER_INSTANCE_TYPE          = ManipulateDataUtils.HEADER_INSTANCE_TYPE;
+    private static final String              HEADER_DIMENSIONS             = ManipulateDataUtils.HEADER_DIMENSIONS;
+    private static final String              HEADER_DIMENSION_VALUES       = ManipulateDataUtils.HEADER_DIMENSION_VALUES;
+    private static final String              HEADER_PREFIX_ATTRIBUTE_VALUE = ManipulateDataUtils.HEADER_PREFIX_ATTRIBUTE_VALUE;
+    private static final String              HEADER_PREFIX_LANGUAGE        = ManipulateDataUtils.HEADER_LANGUAGE_SEPARATOR;
     private static final String              EMPTY                        = "";
     private static final String              DIMENSION_VALUES_SEPARATOR   = ", ";
 
@@ -111,32 +116,34 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
     @Override
     public void importCsvAttributes(File csvFile, DataStructure dataStructure, Map<String, List<CodeDimension>> codeDimensions, Map<String, List<ExternalItemDto>> externalItemsAttributeId,
-            ServiceContext ctx, String datasetVersionUrn, List<String> validLanguages) throws Exception {
+            ServiceContext ctx, String datasetVersionUrn, List<String> validLanguages, List<String> validGranularityCodes, String temporalGranularityCodelistUrn) throws Exception {
         InputStream is = null;
         try {
             // Parse Csv
             String charsetName = FileUtils.guessCharset(csvFile);
             is = new FileInputStream(csvFile);
 
-            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure, validLanguages);
+            CsvAttributesParser csvReader = new CsvAttributesParser(is, charsetName, CsvConstants.SEPARATOR_TAB, dataStructure, validLanguages, validGranularityCodes, temporalGranularityCodelistUrn);
 
             List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos = new ArrayList<>();
+            List<DsdGranularityAttributeInstanceDto> granularityInstanceDtos = new ArrayList<>();
 
             String idAttribute = "";
             for (int i = 0; i < SPLIT_DATA_FACTOR || idAttribute != null; i++) {
-                idAttribute = csvReader.nextLine(dsdAttributeInstanceDtos, codeDimensions, externalItemsAttributeId);
+                idAttribute = csvReader.nextLine(dsdAttributeInstanceDtos, granularityInstanceDtos, codeDimensions, externalItemsAttributeId);
             }
-            checkAttributeInstancesIsNotEmpty(dsdAttributeInstanceDtos);
+            checkAttributeInstancesIsNotEmpty(dsdAttributeInstanceDtos, granularityInstanceDtos);
             checkAnyErrorInTSV(csvReader);
             checkAttributeInstances(csvReader, datasetVersionUrn, dsdAttributeInstanceDtos, ctx);
             insertAttributes(ctx, datasetVersionUrn, dsdAttributeInstanceDtos);
+            insertGranularityAttributes(ctx, datasetVersionUrn, granularityInstanceDtos);
         } finally {
             IOUtils.closeQuietly(is);
         }
     }
 
-    private void checkAttributeInstancesIsNotEmpty(List<DsdAttributeInstanceDto> dsdAttributeInstancesDtos) throws MetamacException {
-        if (dsdAttributeInstancesDtos.isEmpty()) {
+    private void checkAttributeInstancesIsNotEmpty(List<DsdAttributeInstanceDto> dsdAttributeInstancesDtos, List<DsdGranularityAttributeInstanceDto> granularityInstanceDtos) throws MetamacException {
+        if (dsdAttributeInstancesDtos.isEmpty() && granularityInstanceDtos.isEmpty()) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.IMPORTATION_ATTRIBUTES_FILE_EMPTY).build();
         }
     }
@@ -241,7 +248,7 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     private void processDatasetLevelAttribute(DsdAttribute dsdAttribute, String attributeId, DatasetVersion datasetVersion, List<String> validLanguages) throws Exception {
         TemporalAttributeValues temporalAttributeValues = prepareTemporalValuesForDatasetLevel(dsdAttribute, attributeId, datasetVersion);
         if (hasNonEmptyValues(temporalAttributeValues, validLanguages)) {
-            exportWriteAttributeDimensionLine(attributeId, EMPTY, EMPTY, temporalAttributeValues, validLanguages, false);
+            exportWriteAttributeDimensionLine(attributeId, AttributeInstanceTypeEnum.VALUE.getValue(), EMPTY, EMPTY, temporalAttributeValues, validLanguages, false);
         }
     }
 
@@ -255,6 +262,14 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
                 writeAttributeInstanceForDimension(attributeId, attributeInstance, temporalAttributeValues, validLanguages);
             }
         }
+
+        List<GranularityAttributeInstanceDto> granularityInstances = datasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetVersion.getDatasetRepositoryId(), attributeId);
+        for (GranularityAttributeInstanceDto granularityInstance : granularityInstances) {
+            TemporalAttributeValues temporalAttributeValues = prepareTemporalValuesForGranularity(dsdAttribute, granularityInstance);
+            if (hasNonEmptyValues(temporalAttributeValues, validLanguages)) {
+                writeGranularityInstanceForDimension(attributeId, granularityInstance, temporalAttributeValues, validLanguages);
+            }
+        }
     }
 
     private void processGroupLevelAttribute(DsdAttribute dsdAttribute, String attributeId, DatasetVersion datasetVersion, List<String> validLanguages) throws Exception {
@@ -265,6 +280,14 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
             TemporalAttributeValues temporalAttributeValues = prepareTemporalValues(dsdAttribute, attributeInstance);
             if (hasNonEmptyValues(temporalAttributeValues, validLanguages)) {
                 writeAttributeInstanceForGroup(attributeId, attributeInstance, temporalAttributeValues, validLanguages);
+            }
+        }
+
+        List<GranularityAttributeInstanceDto> granularityInstances = datasetRepositoriesServiceFacade.findGranularityAttributesInstances(datasetVersion.getDatasetRepositoryId(), attributeId);
+        for (GranularityAttributeInstanceDto granularityInstance : granularityInstances) {
+            TemporalAttributeValues temporalAttributeValues = prepareTemporalValuesForGranularity(dsdAttribute, granularityInstance);
+            if (hasNonEmptyValues(temporalAttributeValues, validLanguages)) {
+                writeGranularityInstanceForGroup(attributeId, granularityInstance, temporalAttributeValues, validLanguages);
             }
         }
     }
@@ -317,7 +340,7 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
         String dimensionCode = firstEntry.getKey();
         List<String> dimensionCodeValues = firstEntry.getValue();
 
-        exportWriteAttributeDimensionLine(attributeId, dimensionCode, getDimensionValues(dimensionCodeValues), temporalAttributeValues, validLanguages, false);
+        exportWriteAttributeDimensionLine(attributeId, AttributeInstanceTypeEnum.VALUE.getValue(), dimensionCode, getDimensionValues(dimensionCodeValues), temporalAttributeValues, validLanguages, false);
     }
 
     private void writeAttributeInstanceForGroup(String attributeId, AttributeInstanceDto attributeInstance, TemporalAttributeValues temporalAttributeValues, List<String> validLanguages) {
@@ -332,16 +355,18 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
 
         boolean firstDimension = true;
         String tempAttributeId = attributeId;
+        String instanceType = AttributeInstanceTypeEnum.VALUE.getValue();
 
         for (Map.Entry<String, List<String>> entry : dimensionValueByDimension.entrySet()) {
             String dimensionCode = entry.getKey();
             List<String> dimensionCodeValues = entry.getValue();
 
-            exportWriteAttributeDimensionLine(tempAttributeId, dimensionCode, getDimensionValues(dimensionCodeValues), temporalAttributeValues, validLanguages, firstDimension);
+            exportWriteAttributeDimensionLine(tempAttributeId, instanceType, dimensionCode, getDimensionValues(dimensionCodeValues), temporalAttributeValues, validLanguages, firstDimension);
 
             if (firstDimension) {
                 firstDimension = false;
                 tempAttributeId = null;
+                instanceType = null;
             }
         }
     }
@@ -366,10 +391,10 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
         }
     }
 
-    private void exportWriteAttributeDimensionLine(String attributeId, String dimension, String dimensionValue, TemporalAttributeValues temporalAttributeValues, List<String> validLanguages,
-            boolean withoutValues) {
+    private void exportWriteAttributeDimensionLine(String attributeId, String instanceType, String dimension, String dimensionValue, TemporalAttributeValues temporalAttributeValues,
+            List<String> validLanguages, boolean withoutValues) {
         StringBuilder line = new StringBuilder();
-        appendBaseColumns(line, attributeId, dimension, dimensionValue);
+        appendBaseColumns(line, attributeId, instanceType, dimension, dimensionValue);
 
         if (withoutValues) {
             appendEmptyValues(line, validLanguages.size());
@@ -382,11 +407,13 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
         write(line.toString());
     }
 
-    private void appendBaseColumns(StringBuilder line, String attributeId, String dimension, String dimensionValue) {
+    private void appendBaseColumns(StringBuilder line, String attributeId, String instanceType, String dimension, String dimensionValue) {
         String escapedAttributeId = attributeId == null ? EMPTY : AttributesUtils.escapeValueForTsv(attributeId);
+        String escapedInstanceType = instanceType == null ? EMPTY : AttributesUtils.escapeValueForTsv(instanceType);
         String escapedDimension = dimension == null ? EMPTY : AttributesUtils.escapeValueForTsv(dimension);
         String escapedDimensionValue = dimensionValue == null ? EMPTY : AttributesUtils.escapeValueForTsv(dimensionValue);
-        line.append(escapedAttributeId).append(CsvConstants.SEPARATOR_TAB).append(escapedDimension).append(CsvConstants.SEPARATOR_TAB).append(escapedDimensionValue);
+        line.append(escapedAttributeId).append(CsvConstants.SEPARATOR_TAB).append(escapedInstanceType).append(CsvConstants.SEPARATOR_TAB).append(escapedDimension).append(CsvConstants.SEPARATOR_TAB)
+                .append(escapedDimensionValue);
     }
 
     private void appendEmptyValues(StringBuilder line, int languageCount) {
@@ -436,12 +463,12 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     }
 
     private String getExportHeader(List<String> validLanguages) {
-
         StringBuilder headerLine = new StringBuilder();
-        headerLine.append(HEADER_ID_ATTRIBUTE).append(CsvConstants.SEPARATOR_TAB).append(HEADER_DIMENSIONES).append(CsvConstants.SEPARATOR_TAB).append(HEADER_VALORES_DIMENSIONES);
+        headerLine.append(HEADER_ATTRIBUTE_ID).append(CsvConstants.SEPARATOR_TAB).append(HEADER_INSTANCE_TYPE).append(CsvConstants.SEPARATOR_TAB).append(HEADER_DIMENSIONS)
+                .append(CsvConstants.SEPARATOR_TAB).append(HEADER_DIMENSION_VALUES);
 
         for (String locale : validLanguages) {
-            headerLine.append(CsvConstants.SEPARATOR_TAB).append(HEADER_PREFIX_VALOR_ATRIBUTO).append(HEADER_PREFIX_LANGUAGE).append(locale);
+            headerLine.append(CsvConstants.SEPARATOR_TAB).append(HEADER_PREFIX_ATTRIBUTE_VALUE).append(HEADER_PREFIX_LANGUAGE).append(locale);
         }
         return headerLine.toString();
     }
@@ -494,5 +521,67 @@ public class ManipulateCsvDataServiceImpl implements ManipulateCsvDataService {
     private String toAttributeInstanceValueToData(AttributeInstanceBasicDto attributeDto) {
         String attributeValue = attributeDto.getValue().getLocalisedLabel(StatisticalResourcesConstants.DEFAULT_DATA_REPOSITORY_LOCALE); // all attributes has only one locale
         return AttributesUtils.escapeValueToData(attributeValue);
+    }
+
+    private TemporalAttributeValues prepareTemporalValuesForGranularity(DsdAttribute dsdAttribute, GranularityAttributeInstanceDto granularityInstance) {
+        TemporalAttributeValues temporalAttributeValues = new TemporalAttributeValues();
+        if (isTextFormatAttributeMultilingual(dsdAttribute)) {
+            if (granularityInstance != null && granularityInstance.getValue() != null) {
+                temporalAttributeValues.setInternationalStringValue(InternationalStringUtils.copy(granularityInstance.getValue(), true));
+            }
+            temporalAttributeValues.setMultilingualValue(true);
+        } else {
+            String value = toAttributeInstanceValueToData(granularityInstance);
+            List<String> values = new ArrayList<>();
+            values.add(value);
+            temporalAttributeValues.setValues(values);
+        }
+        return temporalAttributeValues;
+    }
+
+    private void writeGranularityInstanceForDimension(String attributeId, GranularityAttributeInstanceDto granularityInstance, TemporalAttributeValues temporalAttributeValues,
+            List<String> validLanguages) {
+        if (granularityInstance.getGranularityCodesByDimension() == null || granularityInstance.getGranularityCodesByDimension().isEmpty()) {
+            return;
+        }
+        Map.Entry<String, List<String>> entry = granularityInstance.getGranularityCodesByDimension().entrySet().iterator().next();
+        String dimensionCode = entry.getKey();
+        List<String> granularityCodes = entry.getValue();
+        exportWriteAttributeDimensionLine(attributeId, AttributeInstanceTypeEnum.GRANULARITY.getValue(), dimensionCode, getDimensionValues(granularityCodes), temporalAttributeValues, validLanguages, false);
+    }
+
+    private void writeGranularityInstanceForGroup(String attributeId, GranularityAttributeInstanceDto granularityInstance, TemporalAttributeValues temporalAttributeValues,
+            List<String> validLanguages) {
+        if (granularityInstance.getGranularityCodesByDimension() == null || granularityInstance.getGranularityCodesByDimension().isEmpty()) {
+            return;
+        }
+
+        boolean firstDimension = true;
+        String tempAttributeId = attributeId;
+        String instanceType = AttributeInstanceTypeEnum.GRANULARITY.getValue();
+
+        if (granularityInstance.getCodesByDimension() != null) {
+            for (Map.Entry<String, List<String>> entry : granularityInstance.getCodesByDimension().entrySet()) {
+                String dimensionCode = entry.getKey();
+                List<String> dimensionCodes = entry.getValue();
+                exportWriteAttributeDimensionLine(tempAttributeId, instanceType, dimensionCode, getDimensionValues(dimensionCodes), temporalAttributeValues, validLanguages, firstDimension);
+                if (firstDimension) {
+                    firstDimension = false;
+                    tempAttributeId = null;
+                    instanceType = null;
+                }
+            }
+        }
+
+        Map.Entry<String, List<String>> temporalEntry = granularityInstance.getGranularityCodesByDimension().entrySet().iterator().next();
+        String temporalDimCode = temporalEntry.getKey();
+        List<String> granularityCodes = temporalEntry.getValue();
+        exportWriteAttributeDimensionLine(tempAttributeId, instanceType, temporalDimCode, getDimensionValues(granularityCodes), temporalAttributeValues, validLanguages, firstDimension);
+    }
+
+    private void insertGranularityAttributes(ServiceContext ctx, String datasetVersionUrn, List<DsdGranularityAttributeInstanceDto> granularityInstanceDtos) throws MetamacException {
+        for (DsdGranularityAttributeInstanceDto dto : granularityInstanceDtos) {
+            statisticalResourcesServiceFacade.createGranularityAttributeInstance(ctx, datasetVersionUrn, dto);
+        }
     }
 }

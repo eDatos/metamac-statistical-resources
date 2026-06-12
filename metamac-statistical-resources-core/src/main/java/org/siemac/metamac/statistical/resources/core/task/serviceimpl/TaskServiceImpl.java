@@ -997,7 +997,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void sendNotification(ServiceContext ctx, String datasetVersionUrn) throws MetamacException {
-        if (!DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+        if (DatabaseDatasetImportUtils.isDatabaseDatasetImportJob(ctx)) {
+            sendDatabaseImportNotification(ctx, datasetVersionUrn);
+        } else {
 
             logger.debug("sendNotification dataset in zip import with automatic life cicle {}", datasetVersionUrn);
             getTransactionTemplate().execute(new MetamacExceptionTransactionCallback<Object>() {
@@ -2346,6 +2348,20 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         datasetService.importDatabaseDatasourcesInDatasetVersion(ctx, datasetVersionUrn, fileUrls, dimensionRepresentationMapping, storeDimensionRepresentationMapping);
     }
 
+    private void sendDatabaseImportNotification(ServiceContext ctx, String datasetVersionUrn) {
+        logger.debug("sendNotification dataset in database import with automatic life cicle {}", datasetVersionUrn);
+        try {
+            DatasetVersion datasetVersion = datasetService.retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+            if (!datasetVersion.getDatasources().isEmpty()) {
+                String dataTable = datasetVersion.getDatasources().iterator().next().getSourceName();
+                sendDatabaseImportationSuccessNotification(datasetVersion, dataTable, MetamacRolesEnum.ADMINISTRADOR, MetamacRolesEnum.JEFE_PRODUCCION,
+                        MetamacRolesEnum.TECNICO_PRODUCCION, MetamacRolesEnum.TECNICO_APOYO_PRODUCCION);
+            }
+        } catch (Exception e) {
+            logger.error("Could not send success notification for database import of dataset {}", datasetVersionUrn, e);
+        }
+    }
+
     private void sendDatabaseImportationSuccessNotification(DatasetVersion datasetVersion, String dataTable, MetamacRolesEnum... roles) {
         getNoticesRestInternalService().createDatabaseImportSuccessBackgroundNotification(datasetVersion, ServiceNoticeAction.DATABASE_IMPORT_DATASET_JOB, ServiceNoticeMessage.IMPORT_DATASET_DATABASE_JOB_OK, dataTable, roles);
     }
@@ -2399,8 +2415,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             List<DsdAttribute> dsdAttributes = DsdProcessor.getAttributes(dataStructure);
             Map<String, List<ExternalItemDto>> externalItemsAttributesId = getExternalItemsFromSrm(dsdAttributes);
             List<String> languages = configurationService.retrieveLanguages();
+            String temporalGranularityCodelistUrn = configurationService.retrieveDefaultCodelistTemporalGranularityUrn();
+            List<String> validGranularityCodes = getValidGranularityCodes(temporalGranularityCodelistUrn);
             for (FileDescriptor fileDescriptor : taskInfoDataset.getFiles()) {
-                manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile(), dataStructure, codeDimensions, externalItemsAttributesId, ctx, dataVersionUrn, languages);
+                manipulateCsvDataService.importCsvAttributes(fileDescriptor.getFile(), dataStructure, codeDimensions, externalItemsAttributesId, ctx, dataVersionUrn, languages,
+                        validGranularityCodes, temporalGranularityCodelistUrn);
             }
         } catch(MetamacException e) {
             throw e;
@@ -2428,6 +2447,18 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             }
         }
         return codes;
+    }
+
+    private List<String> getValidGranularityCodes(String temporalGranularityCodelistUrn) throws MetamacException {
+        List<String> validCodes = new ArrayList<>();
+        if (StringUtils.isBlank(temporalGranularityCodelistUrn)) {
+            return validCodes;
+        }
+        List<ExternalItemDto> granularityItems = StatisticalResourcesExternalItemUtils.buildExternalItemDtoFromCodes(srmRestInternalService.findCodes(temporalGranularityCodelistUrn, 0, null, ""));
+        for (ExternalItemDto item : granularityItems) {
+            validCodes.add(item.getCode());
+        }
+        return validCodes;
     }
     
     @Override
