@@ -1445,6 +1445,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         String code = siemacStatisticalResourceGeneratedCode.fillGeneratedCodeForCreateCategorisation(categorisation);
         String[] maintainerCodes = new String[]{categorisation.getMaintainer().getCodeNested()};
         categorisation.getVersionableStatisticalResource().setVersionLogic(StatisticalResourcesVersionUtils.INITIAL_VERSION);
+        categorisation.getVersionableStatisticalResource().setPatch(0);
         categorisation.getVersionableStatisticalResource().setCode(code);
         categorisation.getVersionableStatisticalResource().setUrn(GeneratorUrnUtils.generateSdmxCategorisationUrn(maintainerCodes, categorisation.getVersionableStatisticalResource().getCode(),
                 categorisation.getVersionableStatisticalResource().getVersionLogic()));

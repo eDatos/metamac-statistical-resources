@@ -273,7 +273,9 @@ public class StatisticalResourcesNotPersistedDoMocks extends StatisticalResource
 
     @Override
     protected void setSpecialCasesVersionableStatisticalResourceMock(VersionableStatisticalResource resource) {
-        // NOTHING
+        if (resource.getPatch() == null) {
+            resource.setPatch(0);
+        }
     }
 
     @Override

@@ -135,7 +135,6 @@ public class DatasetVersioningCopyUtils extends CommonVersioningCopyUtils {
         target.setFormatExtentObservations(source.getFormatExtentObservations());
         target.setFormatExtentDimensions(source.getFormatExtentDimensions());
         target.setFormatExtentTableSize(source.getFormatExtentTableSize());
-        target.getSiemacMetadataStatisticalResource().setPatch(0);
 
         target.setUpdateFrequency(copyExternalItem(source.getUpdateFrequency()));
 

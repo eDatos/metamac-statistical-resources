@@ -779,6 +779,9 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
         if (resource.getVersionLogic() == null) {
             resource.setVersionLogic(StatisticalResourcesMockFactory.INIT_VERSION);
         }
+        if (resource.getPatch() == null) {
+            resource.setPatch(0);
+        }
     }
 
     @Override
