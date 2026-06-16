@@ -14,12 +14,11 @@
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
   * [etc/changes-from-release/11.3.1/db](etc/changes-from-release/11.3.1/db)
 
-* Se debe resetear el schema registry para los topics de los cuatro recursos debido a que se ha modificado el schema Avro:
+* Se debe resetear el schema registry para los topics de los recursos debido a que se ha modificado el schema Avro:
   ```shell
   curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
-  curl -X DELETE http://localhost:8081/subjects/MULTIDATASET_PUBLICATIONS-value
   ```
 * Se han de borrar los mensajes existentes en los topics anteriores (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
 
