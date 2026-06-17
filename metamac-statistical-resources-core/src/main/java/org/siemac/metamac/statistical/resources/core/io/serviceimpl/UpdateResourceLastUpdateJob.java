@@ -62,7 +62,7 @@ public class UpdateResourceLastUpdateJob implements Job {
         } catch (MetamacException e) {
             logger.error("UpdateResourceLastUpdateJob: the last update job with key {} has failed", jobKey.getName(), e);
             if (sendNotification) {
-                getNoticesRestInternalService().createErrorBackgroundNotification(user, ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, e);
+                getNoticesRestInternalService().createErrorBackgroundNotification(ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, e);
             }
             try {
                 getTaskServiceFacade().markTaskAsFailed(serviceContext, taskName, resourceUrn, resourceUrn, e);
