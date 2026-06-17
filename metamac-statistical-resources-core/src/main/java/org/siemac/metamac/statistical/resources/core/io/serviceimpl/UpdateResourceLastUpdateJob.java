@@ -56,9 +56,9 @@ public class UpdateResourceLastUpdateJob implements Job {
         ServiceContext serviceContext = new ServiceContext(user, context.getFireInstanceId(), "statistical-resources-core");
 
         try {
-            logger.info("UpdateResourceLastUpdateJob: {} starting at {}", jobKey, new Date());
+            logger.debug("UpdateResourceLastUpdateJob: {} starting at {}", jobKey, new Date());
             getTaskServiceFacade().executeUpdateResourceLastUpdateTask(serviceContext, taskName, resourceUrn, timestamp);
-            logger.info("UpdateResourceLastUpdateJob: {} finished at {}", jobKey, new Date());
+            logger.debug("UpdateResourceLastUpdateJob: {} finished at {}", jobKey, new Date());
         } catch (MetamacException e) {
             logger.error("UpdateResourceLastUpdateJob: the last update job with key {} has failed", jobKey.getName(), e);
             if (sendNotification) {
