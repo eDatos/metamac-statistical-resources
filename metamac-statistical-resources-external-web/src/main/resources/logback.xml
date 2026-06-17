@@ -5,6 +5,7 @@
         <allowedRepetitions>5</allowedRepetitions>
         <cacheSize>500</cacheSize>
         <expireAfterWriteSeconds>900</expireAfterWriteSeconds>
+        <maxKeyLength>200</maxKeyLength>
     </turboFilter>
 
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
