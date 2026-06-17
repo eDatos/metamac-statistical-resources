@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE configuration>
-<configuration>
+<configuration xmlns="http://ch.qos.logback/xml/ns/logback">
     <turboFilter class="org.siemac.edatos.core.common.util.ExpiringDuplicateMessageFilter">
         <allowedRepetitions>5</allowedRepetitions>
         <cacheSize>500</cacheSize>
