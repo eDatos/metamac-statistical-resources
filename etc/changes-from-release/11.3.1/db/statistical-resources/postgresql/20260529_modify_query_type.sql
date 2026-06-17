@@ -7,6 +7,6 @@ RENAME COLUMN TYPE TO QUERY_TYPE;
 
 UPDATE TB_STAT_RESOURCES
 SET TYPE = 'QUERY'
-WHERE TYPE IS NULL;
+WHERE URN ILIKE 'urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query%';
 
 COMMIT;
