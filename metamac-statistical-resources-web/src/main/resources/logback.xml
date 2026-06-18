@@ -20,7 +20,12 @@
     <!-- Avoid logging warning Unable to proxy method ... -->
     <logger name="org.springframework.aop.framework.Cglib2AopProxy" level="ERROR" />
 
-    <logger name="org.siemac.metamac" level="TRACE"/>
+    <!-- Enables debug logging for task-related operations. Useful for checking planification of all the resources affected -->
+    <logger name="org.siemac.metamac.statistical.resources.core.task.serviceimpl.TaskServiceImpl" level="DEBUG"/>
+
+    <!-- Enables debug logging for update resource last update job. Useful  -->
+    <logger name="org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob" level="DEBUG"/>
+
     <root level="INFO">
         <appender-ref ref="STDOUT" />
     </root>
