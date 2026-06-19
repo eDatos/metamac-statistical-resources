@@ -4538,10 +4538,16 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     @MetamacMock({DATASET_VERSION_07_VALID_CODE_000001_NAME, DATASET_VERSION_08_VALID_CODE_000002_NAME, DATASET_VERSION_09_OPER_0001_CODE_000003_NAME})
     public void testUpdateDatasetVersionsLastUpdateByOperation() throws Exception {
         // DV07, DV08, DV09 all share operation OPERATION_01_CODE (C00025A). No linked queries.
-        // Querying by that operation URN should yield exactly 3 affected URNs, one per dataset version.
+        // Cache planification only affects PUBLISHED resources,
+        // so the three versions are forced to PUBLISHED. Querying by the operation URN should yield exactly 3 affected URNs.
         DatasetVersion dv07 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_07_VALID_CODE_000001_NAME);
         DatasetVersion dv08 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_08_VALID_CODE_000002_NAME);
         DatasetVersion dv09 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_09_OPER_0001_CODE_000003_NAME);
+
+        for (DatasetVersion datasetVersion : Arrays.asList(dv07, dv08, dv09)) {
+            datasetVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.PUBLISHED);
+            datasetVersionRepository.save(datasetVersion);
+        }
 
         String operationUrn = dv07.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn();
 

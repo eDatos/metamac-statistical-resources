@@ -17,6 +17,7 @@ import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCa
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
@@ -64,8 +65,12 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
             return;
         }
 
+        // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
+        //   dado que en el futuro cachearemos también la API interna y los recursos en otros estados
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
                                                                          .withProperty(DatasetVersionProperties.relatedDsd().urn()).eq(dsdUrn)
+                                                                         .and()
+                                                                         .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
                                                                          .distinctRoot()
                                                                          .build();
 
@@ -80,17 +85,21 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
             return;
         }
 
+        // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
+        //   dado que en el futuro cachearemos también la API interna y los recursos en otros estados
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-            .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn)
-            .distinctRoot()
-            .build();
+                                                                         .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn)
+                                                                         .and()
+                                                                         .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
+                                                                         .distinctRoot()
+                                                                         .build();
 
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
         planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
     }
 
     private void planifyAffectedResourcesLastUpdate(ServiceContext ctx, List<DatasetVersion> affectedDatasets, long timestamp) {
-        Set<String> affectedUrns = new HashSet<String>();
+        Set<String> affectedUrns = new HashSet<>();
         for (DatasetVersion dataset : affectedDatasets) {
             affectedUrns.add(dataset.getSiemacMetadataStatisticalResource().getUrn());
             String datasetUrn = dataset.getDataset().getIdentifiableStatisticalResource().getUrn();
@@ -110,10 +119,16 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
     }
 
     private List<String> getAffectedQueryUrns(String datasetUrn, String datasetVersionUrn) {
+        // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
+        //   dado que en el futuro cachearemos también la API interna y los recursos en otros estados
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class)
+                                                                         .lbrace()
                                                                          .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn)
                                                                          .or()
                                                                          .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn)
+                                                                         .rbrace()
+                                                                         .and()
+                                                                         .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
                                                                          .distinctRoot()
                                                                          .build();
 
