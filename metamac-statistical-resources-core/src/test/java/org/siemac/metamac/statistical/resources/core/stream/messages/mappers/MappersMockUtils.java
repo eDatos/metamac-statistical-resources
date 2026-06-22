@@ -348,6 +348,8 @@ public class MappersMockUtils {
         target.setFeaturedUntilDate(EXPECTED_PAST_DATE);
         target.setType(EXPECTED_TYPE);
         target.setPatch(0);
+        target.setLastUpdate(EXPECTED_PAST_DATE);
+
         return target;
     }
 
@@ -372,6 +374,7 @@ public class MappersMockUtils {
                 .setMaintainer(mockExternalItemStructuralResourcesAvro())
                 .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
                 .setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
+                .setLastUpdate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
                 .build();
         // @formatter:on
         return target;
@@ -452,7 +455,6 @@ public class MappersMockUtils {
                 .setKeywords(mockInternationalStringAvro())
                 .setLanguage(mockExternalItemStructuralResourcesAvro())
                 .setLanguages(listExternalItemStructuralResourcesAvro)
-                .setLastUpdate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_PAST_DATE))
                 .setMediators(listExternalItemStructuralResourcesAvro)
                 .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(EXPECTED_FUTURE_DATE)).setPublisherContributors(listExternalItemStructuralResourcesAvro)
                 .setPublishers(listExternalItemStructuralResourcesAvro)

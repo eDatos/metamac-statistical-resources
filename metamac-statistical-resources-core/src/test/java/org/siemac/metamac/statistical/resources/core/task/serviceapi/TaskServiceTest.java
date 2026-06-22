@@ -223,11 +223,13 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
 
     @Override
     public void testProcessUpdateResourceLastUpdateTask() throws Exception {
+    public void testPlanifyUpdateResourceBusinessLastUpdate() throws Exception {
         // No test
     }
 
     @Override
     public void testPlanifyUpdateResourceLastUpdate() throws Exception {
+    public void testProcessUpdateResourceBusinessLastUpdate() throws Exception {
         // No test
     }
 }

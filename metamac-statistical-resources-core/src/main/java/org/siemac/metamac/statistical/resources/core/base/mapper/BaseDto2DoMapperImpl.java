@@ -82,9 +82,6 @@ public class BaseDto2DoMapperImpl extends CommonDto2DoMapperImpl implements Base
         if (MetadataEditionChecks.canLanguageBeEdited(source.getId())) {
             target.setLanguage(externalItemDtoToDo(source.getLanguage(), target.getLanguage(), addParameter(metadataName, ServiceExceptionSingleParameters.LANGUAGE)));
         }
-        // Always Modifiable
-        target.setLastUpdate(new DateTime());
-
         languagesDtoListToDoListEnsuringLanguageIsContained(source.getLanguages(), target.getLanguages(), target.getLanguage(), addParameter(metadataName, ServiceExceptionSingleParameters.LANGUAGES));
 
         externalItemDtoCollectionToDoList(source.getStatisticalOperationInstances(), target.getStatisticalOperationInstances(),
@@ -253,6 +250,9 @@ public class BaseDto2DoMapperImpl extends CommonDto2DoMapperImpl implements Base
         
         target.setPublicationStreamStatus(source.getPublicationStreamStatus());
         target.setXStreamStatus(source.getXStreamStatus());
+
+        // Always update lastUpdate on save
+        target.setLastUpdate(new DateTime());
 
         // Other attributes are automatic, non modifiable
 

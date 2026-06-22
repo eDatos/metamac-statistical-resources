@@ -10,4 +10,6 @@ public interface QueryLifecycleService {
 
     public void checkLinkedDatasetOrDatasetVersionPublishedBeforeQuery(ServiceContext ctx, QueryVersion resource) throws MetamacException;
 
+    public void propagateLastUpdateForPublishedQuery(ServiceContext ctx, QueryVersion resource);
+
 }

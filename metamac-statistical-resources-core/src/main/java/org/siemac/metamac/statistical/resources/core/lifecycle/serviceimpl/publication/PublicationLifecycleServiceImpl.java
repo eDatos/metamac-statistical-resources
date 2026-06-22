@@ -9,6 +9,7 @@ import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -296,6 +297,10 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
+
+        planifyLastUpdatePropagation(ctx,
+                resource.getPublication().getIdentifiableStatisticalResource().getUrn(),
+                StatisticalResourceTypeEnum.COLLECTION);
     }
 
     @Override

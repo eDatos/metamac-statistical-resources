@@ -58,3 +58,13 @@ CREATE INDEX pk_tb_geo_cache_related_resource_urn ON tb_geo_cache_related_resour
 CREATE INDEX pk_tb_geo_cache_related_resource_title_fk ON tb_geo_cache_related_resource (title_fk);
 CREATE INDEX ix_tb_geo_cache_resource_by_related_resource ON tb_geo_cache_resource_by_related_resource (geo_cache_resource_fk);
 CREATE INDEX pk_tb_territories_by_geo_cache_resource_geo_cache_resource_fk ON tb_territories_by_geo_cache_resource (geo_cache_resource_fk);
+
+-- From 12.0.0 (20260622_create_indexes_bfs_last_update.sql)
+CREATE INDEX idx_tb_queries_versions_dataset_fk ON tb_queries_versions USING btree (dataset_fk);
+CREATE INDEX idx_tb_cubes_dataset_fk ON tb_cubes USING btree (dataset_fk);
+CREATE INDEX idx_tb_cubes_query_fk ON tb_cubes USING btree (query_fk);
+CREATE INDEX idx_tb_cubes_multidataset_fk ON tb_cubes USING btree (multidataset_fk);
+CREATE INDEX idx_tb_cubes_publication_fk ON tb_cubes USING btree (publication_fk);
+CREATE INDEX idx_tb_elements_levels_table_fk ON tb_elements_levels USING btree (table_fk);
+CREATE INDEX idx_tb_md_cubes_dataset_fk ON tb_md_cubes USING btree (dataset_fk);
+CREATE INDEX idx_tb_md_cubes_query_fk ON tb_md_cubes USING btree (query_fk);

@@ -149,7 +149,11 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     @Override
     public void executeRecoveryGeographicalCacheTask(ServiceContext ctx, String recoveryJobKey, TaskInfoResources taskInfoResource) throws MetamacException {
         taskservice.processRetryGeographicalCacheTask(ctx, recoveryJobKey, taskInfoResource);
+    }
 
+    @Override
+    public void executeUpdateResourceBusinessLastUpdateTask(ServiceContext ctx, String taskName, String resourceUrn, String resourceRootUrn, String resourceType, long timestamp) throws MetamacException {
+        taskservice.processUpdateResourceBusinessLastUpdate(ctx, taskName, resourceUrn, resourceRootUrn, resourceType, timestamp);
     }
 
     @Override

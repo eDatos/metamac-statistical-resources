@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.joda.time.DateTime;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -226,6 +227,8 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
         if (ProcStatusEnumUtils.isInAnyProcStatus(queryVersionSaved, ProcStatusEnum.PUBLISHED)) {
             updateGeographicalCacheInJob(ctx, queryVersionSaved, true);
+            queryVersionSaved.getLifeCycleStatisticalResource().setLastUpdate(new DateTime());
+            queryLifecycleService.propagateLastUpdateForPublishedQuery(ctx, queryVersionSaved);
         }
 
         return queryVersionSaved;

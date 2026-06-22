@@ -35,4 +35,11 @@ public class ServiceNoticeAction {
 
     public static final String UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED                     = "notice_message.resources.cache.update_last_update_resource.error";
     public static final String UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_NO_MORE_RETRIES           = "notice_message.resources.cache.update_last_update_resource.no_more_retries";
+    
+     // LAST UPDATE PROPAGATION
+    public static final String RESOURCE_UPDATE_LAST_UPDATE_PROPAGATION_FAILED                 = "notice_message.resources.action.update_last_update_propagation_failed";
+    public static final String BUSINESS_LAST_UPDATE_JOB_FAILED                                = "notice_message.resources.action.business_last_update_job_failed";
+    public static final String BUSINESS_LAST_UPDATE_JOB_NO_MORE_RETRIES                       = "notice_message.resources.action.business_last_update_job_no_more_retries";
+
+
 }

@@ -14,6 +14,7 @@ import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesCo
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
@@ -264,6 +265,17 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
+
+        planifyLastUpdatePropagation(ctx,
+                resource.getQuery().getIdentifiableStatisticalResource().getUrn(),
+                StatisticalResourceTypeEnum.QUERY);
+    }
+
+    @Override
+    public void propagateLastUpdateForPublishedQuery(ServiceContext ctx, QueryVersion resource) {
+        planifyLastUpdatePropagation(ctx,
+                resource.getQuery().getIdentifiableStatisticalResource().getUrn(),
+                StatisticalResourceTypeEnum.QUERY);
     }
 
     @Override

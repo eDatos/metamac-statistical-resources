@@ -215,4 +215,9 @@ public class MultidatasetVersionRepositoryTest extends StatisticalResourcesBaseT
         List<RelatedResourceResult> resources = multidatasetVersionRepository.retrieveIsPartOfOnlyLastPublished(multidatasetVersion);
         CommonAsserts.assertEqualsRelatedResourceResultCollectionToPublicationVersionCollection(Arrays.asList(publication), resources);
     }
+
+    @Override
+    public void testFindPublishedContainingResource() throws Exception {
+        // No test — tested via integration
+    }
 }

@@ -124,7 +124,8 @@ Application MultidatasetsStatisticalResources {
 				RelatedResourceResult retrieveIsReplacedByOnlyIfPublished(@MultidatasetVersion multidatasetVersion) throws MetamacException;
 				RelatedResourceResult retrieveIsReplacedBy(@MultidatasetVersion multidatasetVersion) throws MetamacException;
 				List<RelatedResourceResult> retrieveIsPartOf(@MultidatasetVersion multidatasetVersion) throws MetamacException;
-                List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(@MultidatasetVersion multidatasetVersion) throws MetamacException;										
+                List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(@MultidatasetVersion multidatasetVersion) throws MetamacException;
+				List<@MultidatasetVersion> findPublishedContainingResource(String resourceRootUrn, @StatisticalResourceTypeEnum containedResourceType);
 			}
 		}  
 		

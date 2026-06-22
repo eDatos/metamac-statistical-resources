@@ -48,9 +48,11 @@ Application DatasetsStatisticalResources {
 			scheduleGeographicCoverageCacheClearJob();	
 			"Schedule resend published dataset kafka message job"
 			scheduleResendKafkaDatasetMessageJob();
-			executeRecoveryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource) throws MetamacException; 
-			
-			
+			executeRecoveryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
+
+			"Perform the update resource business last update task"
+			executeUpdateResourceBusinessLastUpdateTask(String taskName, String resourceUrn, String resourceRootUrn, String resourceType, long timestamp) throws MetamacException;
+
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
 			
@@ -175,7 +177,12 @@ Application DatasetsStatisticalResources {
 			planifyUpdateResourceLastUpdate(String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException;
 			"Perform the update resource last update task"
 			processUpdateResourceLastUpdateTask(String taskName, String resourceUrn, long timestamp) throws MetamacException;
-		}
+
+			"Planify a scheduled task to update a resource business last update"
+			planifyUpdateResourceBusinessLastUpdate(String resourceUrn, String resourceRootUrn, String resourceType, long timestamp) throws MetamacException;
+			"Process the update resource business last update task"
+			processUpdateResourceBusinessLastUpdate(String taskName, String resourceUrn, String resourceRootUrn, String resourceType, long timestamp) throws MetamacException;
+}
 		
 		// ----------------------------------------------------------------
 		// 							ENTITIES

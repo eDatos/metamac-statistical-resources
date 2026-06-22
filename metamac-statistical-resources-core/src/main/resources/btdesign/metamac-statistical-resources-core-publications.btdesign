@@ -139,8 +139,7 @@ Application PublicationsStatisticalResources {
 				RelatedResourceResult retrieveIsReplacedByOnlyLastPublished(@PublicationVersion publicationVersion) throws MetamacException;
 				RelatedResourceResult retrieveIsReplacedByOnlyIfPublished(@PublicationVersion publicationVersion) throws MetamacException;
 				RelatedResourceResult retrieveIsReplacedBy(@PublicationVersion publicationVersion) throws MetamacException;
-				
-				
+				List<@PublicationVersion> findPublishedContainingResource(String resourceRootUrn, @StatisticalResourceTypeEnum containedResourceType);
 			}
 		}
 		
