@@ -228,8 +228,6 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
             }
         }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.QUERY, source.getLifeCycleStatisticalResource(), configurationService, false));
-        target.setNewnessUntilDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getNewnessUntilDate()));
-        target.setFeaturedUntilDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getFeaturedUntilDate()));
 
         return target;
     }
