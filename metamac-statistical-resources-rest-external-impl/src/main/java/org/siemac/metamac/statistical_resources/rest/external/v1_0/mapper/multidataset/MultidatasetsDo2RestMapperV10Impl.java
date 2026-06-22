@@ -146,6 +146,8 @@ public class MultidatasetsDo2RestMapperV10Impl implements MultidatasetsDo2RestMa
                     externalRestObjectsMapper));
         }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.MULTIDATASET, source.getLifeCycleStatisticalResource(), configurationService, false));
+        target.setNewnessUntilDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+        target.setFeaturedUntilDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
 
         return target;
     }

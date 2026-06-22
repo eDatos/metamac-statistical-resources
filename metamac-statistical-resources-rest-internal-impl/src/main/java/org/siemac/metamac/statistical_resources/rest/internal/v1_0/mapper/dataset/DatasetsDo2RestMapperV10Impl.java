@@ -285,6 +285,8 @@ public class DatasetsDo2RestMapperV10Impl implements DatasetsDo2RestMapperV10 {
                     externalRestObjectsMapper));
         }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.DATASET, source.getLifeCycleStatisticalResource(), configurationService, asLatest));
+        target.setNewnessUntilDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+        target.setFeaturedUntilDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
         return target;
     }
 

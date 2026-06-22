@@ -170,6 +170,8 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
             target.setDescription(commonDo2RestMapper.toInternationalString(source.getLifeCycleStatisticalResource().getDescription(),selectedLanguages));
         }
         target.setVisualizerHtmlLink(HtmlLinkUtil.getVisualizerHtmlLink(StatisticalResourceTypeEnum.COLLECTION, source.getLifeCycleStatisticalResource(), configurationService, false));
+        target.setNewnessUntilDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+        target.setFeaturedUntilDate(commonDo2RestMapper.toDate(source.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
 
         return target;
     }
