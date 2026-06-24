@@ -1037,7 +1037,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         QueryVersion queryMoreDimensionsAutoInc = null;
         {
             QueryVersionMock queryMock = buildQueryVersionMockSimpleWithFixedDatasetVersion("QUERY_01");
-            queryMock.setType(QueryTypeEnum.AUTOINCREMENTAL);
+            queryMock.setQueryType(QueryTypeEnum.AUTOINCREMENTAL);
             queryMock.addSelection(buildSelectionItemWithDimensionAndCodes("DIM_01", "D1_C01"));
             queryMock.addSelection(buildSelectionItemWithDimensionAndCodes("DIM_02", "D2_C01"));
             queryMock.addSelection(buildSelectionItemWithDimensionAndCodes("TIME_PERIOD", "2010", "2011"));
@@ -1048,7 +1048,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         QueryVersion queryLatestData = null;
         {
             QueryVersionMock queryMock = buildQueryVersionMockSimpleWithFixedDatasetVersion("QUERY_02");
-            queryMock.setType(QueryTypeEnum.LATEST_DATA);
+            queryMock.setQueryType(QueryTypeEnum.LATEST_DATA);
             queryMock.setLatestDataNumber(5);
             queryMock.addSelection(buildSelectionItemWithDimensionAndCodes("DIM_01", "D1_C01"));
             queryMock.addSelection(buildSelectionItemWithDimensionAndCodes("DIM_02", "D2_C01"));

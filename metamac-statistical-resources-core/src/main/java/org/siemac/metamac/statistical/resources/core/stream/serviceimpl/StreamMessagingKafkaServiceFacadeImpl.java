@@ -1,6 +1,6 @@
 package org.siemac.metamac.statistical.resources.core.stream.serviceimpl;
 
-import org.apache.avro.specific.SpecificRecord;
+import org.apache.avro.specific.SpecificRecordBase;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 public class StreamMessagingKafkaServiceFacadeImpl implements StreamMessagingServiceFacade {
 
     @Autowired
-    protected StreamMessagingService<String, SpecificRecord> messagingService;
+    protected StreamMessagingService<String, SpecificRecordBase> messagingService;
 
     @Autowired
     protected StatisticalResourcesConfiguration              statisticalResourcesConfig;

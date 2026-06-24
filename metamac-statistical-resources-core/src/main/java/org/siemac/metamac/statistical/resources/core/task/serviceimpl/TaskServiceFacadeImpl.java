@@ -152,4 +152,9 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
 
     }
 
+    @Override
+    public void executeUpdateResourceLastUpdateTask(ServiceContext ctx, String taskName, String resourceUrn, long timestamp) throws MetamacException {
+        taskservice.processUpdateResourceLastUpdateTask(ctx, taskName, resourceUrn, timestamp);
+    }
+
 }

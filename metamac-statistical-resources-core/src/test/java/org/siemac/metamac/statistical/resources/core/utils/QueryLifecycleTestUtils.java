@@ -110,8 +110,8 @@ public class QueryLifecycleTestUtils {
     }
 
     private static void prepareToLifecycleCommonQueryVersion(QueryVersion queryVersion) {
-        if (queryVersion.getType() == null) {
-            queryVersion.setType(QueryTypeEnum.FIXED);
+        if (queryVersion.getQueryType() == null) {
+            queryVersion.setQueryType(QueryTypeEnum.FIXED);
         }
         if (queryVersion.getStatus() == null) {
             queryVersion.setStatus(QueryStatusEnum.ACTIVE);

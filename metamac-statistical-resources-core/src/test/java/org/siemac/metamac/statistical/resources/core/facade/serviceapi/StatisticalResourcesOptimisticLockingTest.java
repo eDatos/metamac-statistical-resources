@@ -2073,7 +2073,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
 
     }
-    
+
     @Override
     public void testUpdateGeoCacheRelatedResource() throws Exception {
         // no optimistic locking in this operation
@@ -2089,6 +2089,16 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     public void testUpdateGeographicCoverageExternalPublicationCache() throws Exception {
         // no optimistic locking in this operation
 
+    }
+
+    @Override
+    public void testProcessSrmDsdKafkaMessage() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
+    public void testProcessOperationKafkaMessage() throws Exception {
+        // no optimistic locking in this operation
     }
 
     @Override

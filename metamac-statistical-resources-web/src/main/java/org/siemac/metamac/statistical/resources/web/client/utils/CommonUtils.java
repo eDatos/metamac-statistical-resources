@@ -269,11 +269,11 @@ public class CommonUtils {
     // -----------------------------------------------------------------------------------------
 
     public static String getQueryTypeName(QueryVersionDto queryDto) {
-        return queryDto != null && queryDto.getType() != null ? getQueryTypeName(queryDto.getType()) : null;
+        return queryDto != null && queryDto.getQueryType() != null ? getQueryTypeName(queryDto.getQueryType()) : null;
     }
 
     public static String getQueryTypeName(QueryVersionBaseDto queryDto) {
-        return queryDto != null && queryDto.getType() != null ? getQueryTypeName(queryDto.getType()) : null;
+        return queryDto != null && queryDto.getQueryType() != null ? getQueryTypeName(queryDto.getQueryType()) : null;
     }
 
     public static QueryTypeEnum getQueryTypeEnum(String value) {
@@ -792,7 +792,7 @@ public class CommonUtils {
 
     /**
      * Returns {@link LinkedHashMap} of {@link AnnotationTypeDto}
-     * 
+     *
      * @return
      */
     public static LinkedHashMap<String, String> getRestrictionsHashMap(List<ExternalItemDto> restrictions) {

@@ -235,7 +235,7 @@ public class QueryVersioningServiceTest extends StatisticalResourcesBaseTest {
         }
         assertEquals(previous.getQuery().getId(), next.getQuery().getId());
         assertEquals(previous.getStatus(), next.getStatus());
-        assertEquals(previous.getType(), next.getType());
+        assertEquals(previous.getQueryType(), next.getQueryType());
         assertEqualsSelection(previous.getSelection(), next.getSelection());
     }
 }

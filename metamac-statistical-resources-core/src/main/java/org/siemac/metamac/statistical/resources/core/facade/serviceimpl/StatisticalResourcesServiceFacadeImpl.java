@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.poi.ss.formula.functions.T;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -31,7 +32,10 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStr
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.utils.SecurityUtils;
+import org.siemac.metamac.statistical.operations.core.stream.messages.OperationAvro;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -91,6 +95,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestI
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -264,6 +269,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
+
+    @Autowired
+    private ResourceCacheInvalidationService                          resourceCacheInvalidationService;
 
     @Autowired
     private DatasetRepositoriesServiceFacade                          datasetRepositoriesServiceFacade;
@@ -2731,4 +2739,18 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         }
     }
 
+    @Override
+    public void processSrmDsdKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
+        DataStructureDefinitionAvro dsd = (DataStructureDefinitionAvro) message;
+        String dsdUrn = dsd.getUrn();
+        resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByDsd(ctx, dsdUrn, timestamp);
+    }
+
+
+    @Override
+    public void processOperationKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
+        OperationAvro operation = (OperationAvro) message;
+        String operationUrn = operation.getUrn();
+        resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByOperation(ctx, operationUrn, timestamp);
+    }
 }

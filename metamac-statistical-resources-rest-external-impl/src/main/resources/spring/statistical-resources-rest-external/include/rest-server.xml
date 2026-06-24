@@ -49,6 +49,13 @@
             <ref bean="xstreamPlainTextProvider" />
             <ref bean="wadlGenerator" />
         </jaxrs:providers>
+
+        <jaxrs:inInterceptors>
+            <ref bean="cacheRequestInterceptor"/>
+        </jaxrs:inInterceptors>
+        <jaxrs:outInterceptors>
+            <ref bean="cacheResponseInterceptor"/>
+        </jaxrs:outInterceptors>
     </jaxrs:server>
 
     <bean id="jaxbProvider" class="org.apache.cxf.jaxrs.provider.JAXBElementProvider">
