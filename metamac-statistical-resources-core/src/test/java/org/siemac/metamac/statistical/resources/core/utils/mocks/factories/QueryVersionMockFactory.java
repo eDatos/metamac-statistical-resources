@@ -175,7 +175,7 @@ public class QueryVersionMockFactory extends StatisticalResourcesMockFactory<Que
     private static QueryVersion getQueryVersion10ActiveLatestData5() {
         DatasetVersion datasetVersion04 = getDatasetVersionMock(DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME);
         QueryVersion queryVersion = createQueryWithDatasetVersion(datasetVersion04, true);
-        queryVersion.setType(QueryTypeEnum.LATEST_DATA);
+        queryVersion.setQueryType(QueryTypeEnum.LATEST_DATA);
         queryVersion.setLatestDataNumber(Integer.valueOf(5));
         queryVersion.getSelection().clear();
         queryVersion.addSelection(buildSelectionItemWithDimensionAndCodes("DIM01", "C01", "C02"));
@@ -572,7 +572,7 @@ public class QueryVersionMockFactory extends StatisticalResourcesMockFactory<Que
         for (String dimensionId : selectionItems.keySet()) {
             queryMock.addSelection(selectionItems.get(dimensionId));
         }
-        queryMock.setType(QueryTypeEnum.FIXED);
+        queryMock.setQueryType(QueryTypeEnum.FIXED);
     }
 
     // Public builders

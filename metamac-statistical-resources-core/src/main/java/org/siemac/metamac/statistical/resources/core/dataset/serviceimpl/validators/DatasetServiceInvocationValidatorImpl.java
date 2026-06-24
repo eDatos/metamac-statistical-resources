@@ -472,4 +472,5 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkProcessDataViewAdjustmentInRepository(List<MetamacExceptionItem> exceptions) throws MetamacException {
         // NOTHING
     }
+
 }

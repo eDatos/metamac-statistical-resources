@@ -98,6 +98,7 @@ public class BaseVersioningCopyUtils extends CommonVersioningCopyUtils {
         
         copyNameableStatisticalResource(source, target);
         target.setNextVersion(source.getNextVersion());
+        target.setPatch(source.getPatch());
         
         return target;
     }

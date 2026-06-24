@@ -144,7 +144,7 @@ public class NewQueryWindow extends CustomWindow {
         queryDto.setSelection(new HashMap<String, List<CodeItemDto>>());
         queryDto.setRelatedDatasetVersion(RelatedResourceUtils.getRelatedResourceFromExternalItemDto(form.getValueAsExternalItemDto(QueryDS.RELATED_DATASET_VERSION)));
         queryDto.setMaintainer(StatisticalResourcesDefaults.defaultAgency);
-        queryDto.setType(queryType);
+        queryDto.setQueryType(queryType);
 
         boolean isLatestData = QueryTypeEnum.LATEST_DATA.equals(queryType);
 

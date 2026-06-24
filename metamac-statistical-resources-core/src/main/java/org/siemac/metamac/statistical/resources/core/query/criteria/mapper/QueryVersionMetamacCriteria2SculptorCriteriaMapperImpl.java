@@ -82,7 +82,7 @@ public class QueryVersionMetamacCriteria2SculptorCriteriaMapperImpl implements Q
                 case QUERY_STATUS:
                     return new SculptorPropertyCriteria(QueryVersionProperties.status(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
                 case QUERY_TYPE:
-                    return new SculptorPropertyCriteria(QueryVersionProperties.type(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
+                    return new SculptorPropertyCriteria(QueryVersionProperties.queryType(), propertyRestriction.getEnumValue(), propertyRestriction.getOperationType());
                 case QUERY_RELATED_DATASET_URN: {
                     Property<QueryVersion> fixedDatasetVersionUrn = QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn();
                     Property<QueryVersion> urnOfAnyVersionInDataset = QueryVersionProperties.dataset().versions().siemacMetadataStatisticalResource().urn();

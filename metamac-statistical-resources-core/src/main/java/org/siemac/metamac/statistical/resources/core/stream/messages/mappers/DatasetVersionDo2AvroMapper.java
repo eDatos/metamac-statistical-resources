@@ -56,7 +56,8 @@ public class DatasetVersionDo2AvroMapper {
                 .setCategorisations(categorisations).setGeographicCoverage(geographicCoverageList).setTemporalCoverage(temporalCoverageList).setMeasureCoverage(measureCoverageList)
                 .setGeographicGranularities(geoGranList).setTemporalGranularities(temporalGranList).setStatisticalUnit(statisticalUnitList)
                 .setIsPartOf(AvroMapperUtils.relatedResourceList2Avro(AvroMapperUtils.getDatasetVersionRepository().retrieveIsPartOf(source)))
-                .setVisualizerHtmlLink(getDatasetVersionVisualizerHtmlLink(source, urlBaseExternalVisualizer)).setFormatExtentObservations(source.getFormatExtentObservations()).build();
+                .setVisualizerHtmlLink(getDatasetVersionVisualizerHtmlLink(source, urlBaseExternalVisualizer)).setFormatExtentObservations(source.getFormatExtentObservations())
+                .build();
         return target;
     }
 

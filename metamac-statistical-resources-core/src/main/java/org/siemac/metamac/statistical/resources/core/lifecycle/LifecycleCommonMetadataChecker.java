@@ -208,10 +208,10 @@ public class LifecycleCommonMetadataChecker {
         StatisticalResourcesValidationUtils.checkMetadataRequiredIncompatible(resource.getFixedDatasetVersion(), addParameter(metadataName, ServiceExceptionSingleParameters.FIXED_DATASET_VERSION),
                 resource.getDataset(), addParameter(metadataName, ServiceExceptionSingleParameters.DATASET), exceptionItems);
         checkMetadataRequired(resource.getStatus(), addParameter(metadataName, ServiceExceptionSingleParameters.STATUS), exceptionItems);
-        checkMetadataRequired(resource.getType(), addParameter(metadataName, ServiceExceptionSingleParameters.TYPE), exceptionItems);
+        checkMetadataRequired(resource.getQueryType(), addParameter(metadataName, ServiceExceptionSingleParameters.TYPE), exceptionItems);
         checkMetadataRequired(resource.getSelection(), addParameter(metadataName, ServiceExceptionSingleParameters.SELECTION), exceptionItems);
 
-        if (QueryTypeEnum.LATEST_DATA.equals(resource.getType())) {
+        if (QueryTypeEnum.LATEST_DATA.equals(resource.getQueryType())) {
             checkMetadataRequired(resource.getLatestDataNumber(), addParameter(metadataName, ServiceExceptionSingleParameters.LATEST_DATA_NUMBER), exceptionItems);
         }
     }

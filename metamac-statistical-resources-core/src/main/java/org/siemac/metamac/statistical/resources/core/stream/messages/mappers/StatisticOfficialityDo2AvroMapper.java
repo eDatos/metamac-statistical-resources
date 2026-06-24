@@ -9,6 +9,9 @@ public class StatisticOfficialityDo2AvroMapper {
     }
 
     public static StatisticOfficialityAvro do2Avro(StatisticOfficiality source) {
+        if (source == null) {
+            return null;
+        }
         StatisticOfficialityAvro target = StatisticOfficialityAvro.newBuilder().setDescription(InternationalStringDo2AvroMapper.do2Avro(source.getDescription())).setIdentifier(source.getIdentifier())
                 .build();
         return target;

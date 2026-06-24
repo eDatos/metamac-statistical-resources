@@ -3,7 +3,6 @@ package org.siemac.metamac.statistical.resources.web.server.dtos;
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceBaseDto;
-import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.enums.LifeCycleActionEnum;
 
 public class ResourceNotificationBaseDto extends BaseResourceNotificationDto<LifeCycleStatisticalResourceBaseDto> {
@@ -13,14 +12,12 @@ public class ResourceNotificationBaseDto extends BaseResourceNotificationDto<Lif
     public static class Builder {
 
         private final LifeCycleActionEnum                 lifeCycleAction;
-        private final StatisticalResourceTypeEnum         statisticalResourceType;
         private LifeCycleStatisticalResourceBaseDto       updatedResource;
         private final LifeCycleStatisticalResourceBaseDto previousResource;
         private String                                    reasonOfRejection;
 
-        public Builder(LifeCycleStatisticalResourceBaseDto previousResource, StatisticalResourceTypeEnum statisticalResourceType, LifeCycleActionEnum lifeCycleAction) {
+        public Builder(LifeCycleStatisticalResourceBaseDto previousResource, LifeCycleActionEnum lifeCycleAction) {
             this.previousResource = previousResource;
-            this.statisticalResourceType = statisticalResourceType;
             this.lifeCycleAction = lifeCycleAction;
         }
 
@@ -41,7 +38,7 @@ public class ResourceNotificationBaseDto extends BaseResourceNotificationDto<Lif
 
     public ResourceNotificationBaseDto(Builder builder) {
         lifeCycleAction = builder.lifeCycleAction;
-        statisticalResourceType = builder.statisticalResourceType;
+        statisticalResourceType = builder.previousResource.getType();
         updatedResource = builder.updatedResource;
         previousResource = builder.previousResource;
         reasonOfRejection = builder.reasonOfRejection;

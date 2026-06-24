@@ -117,7 +117,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
 
     private void checkPurposeAndXTemplate(QueryVersionDto source, QueryVersion target) throws MetamacException {
         if (source.getPurpose() != null) {
-            if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getType())) {
+            if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getQueryType())) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_PURPOSE_TYPE_NOT_COMPATIBLE).withMessageParameters(source.getUrn())
                 .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
@@ -183,7 +183,7 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         // Not mapped. It's automatically managed.
 
         // Type
-        target.setType(source.getType());
+        target.setQueryType(source.getQueryType());
 
         // Latest Data Number
         target.setLatestDataNumber(source.getLatestDataNumber());
