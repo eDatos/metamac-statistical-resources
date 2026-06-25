@@ -476,7 +476,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Future<?> startConsumerForDsdTopic(ApplicationContext context) throws MetamacException {
         String topicDsdPublication = statisticalResourcesConfiguration.retrieveKafkaTopicDsdPublication();
         KafkaConsumerThread<DataStructureDefinitionAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
-        KafkaConsumer<String, DataStructureDefinitionAvro> consumerFromBegin = createDsdConsumerFromCurrentOffset(topicDsdPublication, CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME);
+        KafkaConsumer<String, DataStructureDefinitionAvro> consumerFromBegin = createDsdConsumerFromCurrentOffset(CONSUMER_DSD_PUBLICATION_MESSAGES_1_NAME);
         consumerThread.setConsumer(consumerFromBegin);
         consumerThread.setTopicName(topicDsdPublication);
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
@@ -489,7 +489,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
     private Future<?> startConsumerForOperationTopic(ApplicationContext context) throws MetamacException {
         String topicOperationPublication = statisticalResourcesConfiguration.retrieveKafkaTopicOperationsPublication();
         KafkaConsumerThread<OperationAvro> consumerThread = (KafkaConsumerThread) context.getBean("kafkaConsumerThread");
-        KafkaConsumer<String, OperationAvro> consumerFromBegin = createOperationConsumerFromCurrentOffset(topicOperationPublication, CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME);
+        KafkaConsumer<String, OperationAvro> consumerFromBegin = createOperationConsumerFromCurrentOffset(CONSUMER_OPERATION_PUBLICATION_MESSAGES_1_NAME);
         consumerThread.setConsumer(consumerFromBegin);
         consumerThread.setTopicName(topicOperationPublication);
         consumerThread.setStatisticalServiceFacade(statisticalResourcesServiceFacade);
@@ -582,18 +582,12 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         return new KafkaConsumer<>(getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomConceptSchemePublicationMessagesGroup()));
     }
 
-    private KafkaConsumer<String, DataStructureDefinitionAvro> createDsdConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
-        KafkaConsumer<String, DataStructureDefinitionAvro> kafkaConsumer = new KafkaConsumer<>(
-                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomDsdPublicationMessagesGroup()));
-        kafkaConsumer.subscribe(Collections.singletonList(topic));
-        return kafkaConsumer;
+    private KafkaConsumer<String, DataStructureDefinitionAvro> createDsdConsumerFromCurrentOffset(String clientId) throws MetamacException {
+        return new KafkaConsumer<>(getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomDsdPublicationMessagesGroup()));
     }
 
-    private KafkaConsumer<String, OperationAvro> createOperationConsumerFromCurrentOffset(String topic, String clientId) throws MetamacException {
-        KafkaConsumer<String, OperationAvro> kafkaConsumer = new KafkaConsumer<>(
-                getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomOperationPublicationMessagesGroup()));
-        kafkaConsumer.subscribe(Collections.singletonList(topic));
-        return kafkaConsumer;
+    private KafkaConsumer<String, OperationAvro> createOperationConsumerFromCurrentOffset(String clientId) throws MetamacException {
+        return new KafkaConsumer<>(getConsumerProperties(clientId, statisticalResourcesConfiguration.retrieveKafkaCustomOperationPublicationMessagesGroup()));
     }
 
     class KeepAliveKafkaThread implements Runnable {
@@ -601,8 +595,7 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
         @Override
         public void run() {
 
-            if (externalDatasetPublicationTopicName != null || externalCollectionPublicationTopicName != null) {
-                while (alwaysWithDelay(1000)) {
+            while (alwaysWithDelay(1000)) {
 
                     for (Map.Entry<String, Future<?>> entry : futuresMap.entrySet()) {
                         if (entry.getValue().isDone()) {
@@ -643,7 +636,6 @@ public class KafkaConsumerLauncher implements ApplicationListener<ContextRefresh
                         }
                     }
                 }
-            }
         }
 
         private boolean alwaysWithDelay(long timeout) {
