@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RelatedResourcesCalculatorService {
+public class LastUpdatePropagationService {
 
     @Autowired
     private QueryVersionRepository        queryVersionRepository;
@@ -30,11 +30,11 @@ public class RelatedResourcesCalculatorService {
     @Autowired
     private MultidatasetVersionRepository multidatasetVersionRepository;
 
-    public Set<RelatedStatisticalResource> findRelatedResources(String resourceRootUrn, StatisticalResourceTypeEnum resourceType) {
+    public Set<PropagationTarget> findPropagationTargets(String resourceRootUrn, StatisticalResourceTypeEnum resourceType) {
         Set<String> visitedRootUrns = new HashSet<>();
         visitedRootUrns.add(resourceRootUrn);
 
-        Set<RelatedStatisticalResource> relatedResources = new LinkedHashSet<>();
+        Set<PropagationTarget> targets = new LinkedHashSet<>();
 
         Queue<ResourceRef> queue = new LinkedList<>();
         queue.add(new ResourceRef(null, resourceRootUrn, resourceType));
@@ -44,14 +44,14 @@ public class RelatedResourcesCalculatorService {
             List<ResourceRef> newRefs = findDirectlyRelatedResources(current.rootUrn, current.type);
 
             for (ResourceRef ref : newRefs) {
-                relatedResources.add(new RelatedStatisticalResource(ref.versionUrn, ref.rootUrn, ref.type));
+                targets.add(new PropagationTarget(ref.versionUrn, ref.rootUrn, ref.type));
                 if (visitedRootUrns.add(ref.rootUrn)) {
                     queue.add(ref);
                 }
             }
         }
 
-        return relatedResources;
+        return targets;
     }
 
     private List<ResourceRef> findDirectlyRelatedResources(String rootUrn, StatisticalResourceTypeEnum type) {
@@ -104,13 +104,13 @@ public class RelatedResourcesCalculatorService {
         }
     }
 
-    public static class RelatedStatisticalResource {
+    public static class PropagationTarget {
 
         private final String                      versionUrn;
         private final String                      rootUrn;
         private final StatisticalResourceTypeEnum type;
 
-        RelatedStatisticalResource(String versionUrn, String rootUrn, StatisticalResourceTypeEnum type) {
+        PropagationTarget(String versionUrn, String rootUrn, StatisticalResourceTypeEnum type) {
             this.versionUrn = versionUrn;
             this.rootUrn = rootUrn;
             this.type = type;
@@ -137,9 +137,9 @@ public class RelatedResourcesCalculatorService {
         public boolean equals(Object obj) {
             if (this == obj)
                 return true;
-            if (!(obj instanceof RelatedStatisticalResource))
+            if (!(obj instanceof PropagationTarget))
                 return false;
-            return versionUrn.equals(((RelatedStatisticalResource) obj).versionUrn);
+            return versionUrn.equals(((PropagationTarget) obj).versionUrn);
         }
     }
 
