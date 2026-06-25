@@ -25,8 +25,8 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.SiemacLifecycleCh
 import org.siemac.metamac.statistical.resources.core.lifecycle.SiemacLifecycleFiller;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleInvocationValidatorBase;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
-import org.siemac.metamac.statistical.resources.core.common.serviceimpl.AffectedResourcesResolver;
-import org.siemac.metamac.statistical.resources.core.common.serviceimpl.AffectedResourcesResolver.AffectedResource;
+import org.siemac.metamac.statistical.resources.core.common.serviceimpl.RelatedResourcesCalculatorService;
+import org.siemac.metamac.statistical.resources.core.common.serviceimpl.RelatedResourcesCalculatorService.RelatedStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -73,7 +73,7 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
     private NoticesRestInternalService     noticesRestInternalService;
 
     @Autowired
-    private AffectedResourcesResolver     affectedResourcesResolver;
+    private RelatedResourcesCalculatorService     relatedResourcesCalculatorService;
 
     private static final Logger           LOG = LoggerFactory.getLogger(LifecycleTemplateService.class);
 
@@ -508,12 +508,12 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
     protected void planifyLastUpdatePropagation(ServiceContext ctx, String resourceRootUrn, StatisticalResourceTypeEnum type) {
         try {
             long timestamp = System.currentTimeMillis();
-            Set<AffectedResource> affectedResources = affectedResourcesResolver.findAffectedResources(resourceRootUrn, type);
-            for (AffectedResource affected : affectedResources) {
+            Set<RelatedStatisticalResource> relatedResources = relatedResourcesCalculatorService.findRelatedResources(resourceRootUrn, type);
+            for (RelatedStatisticalResource related : relatedResources) {
                 try {
-                    taskService.planifyUpdateResourceBusinessLastUpdate(ctx, affected.getVersionUrn(), affected.getRootUrn(), affected.getType().name(), timestamp);
+                    taskService.planifyUpdateResourceBusinessLastUpdate(ctx, related.getVersionUrn(), related.getRootUrn(), related.getType().name(), timestamp);
                 } catch (MetamacException e) {
-                    LOG.error("Failed to planify business last update for {}", affected.getVersionUrn(), e);
+                    LOG.error("Failed to planify business last update for {}", related.getVersionUrn(), e);
                 }
             }
         } catch (Exception e) {

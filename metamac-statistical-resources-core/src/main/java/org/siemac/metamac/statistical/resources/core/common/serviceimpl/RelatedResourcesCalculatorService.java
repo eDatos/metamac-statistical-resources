@@ -19,43 +19,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class AffectedResourcesResolver {
+public class RelatedResourcesCalculatorService {
 
     @Autowired
     private QueryVersionRepository        queryVersionRepository;
 
     @Autowired
-    private PublicationVersionRepository   publicationVersionRepository;
+    private PublicationVersionRepository  publicationVersionRepository;
 
     @Autowired
-    private MultidatasetVersionRepository  multidatasetVersionRepository;
+    private MultidatasetVersionRepository multidatasetVersionRepository;
 
-    public Set<AffectedResource> findAffectedResources(String resourceRootUrn, StatisticalResourceTypeEnum resourceType) {
-        Set<String> visitedRootUrns = new HashSet<String>();
+    public Set<RelatedStatisticalResource> findRelatedResources(String resourceRootUrn, StatisticalResourceTypeEnum resourceType) {
+        Set<String> visitedRootUrns = new HashSet<>();
         visitedRootUrns.add(resourceRootUrn);
 
-        Set<AffectedResource> affectedResources = new LinkedHashSet<AffectedResource>();
+        Set<RelatedStatisticalResource> relatedResources = new LinkedHashSet<>();
 
-        Queue<ResourceRef> queue = new LinkedList<ResourceRef>();
+        Queue<ResourceRef> queue = new LinkedList<>();
         queue.add(new ResourceRef(null, resourceRootUrn, resourceType));
 
         while (!queue.isEmpty()) {
             ResourceRef current = queue.poll();
-            List<ResourceRef> newRefs = findDirectlyAffectedResources(current.rootUrn, current.type);
+            List<ResourceRef> newRefs = findDirectlyRelatedResources(current.rootUrn, current.type);
 
             for (ResourceRef ref : newRefs) {
-                affectedResources.add(new AffectedResource(ref.versionUrn, ref.rootUrn, ref.type));
+                relatedResources.add(new RelatedStatisticalResource(ref.versionUrn, ref.rootUrn, ref.type));
                 if (visitedRootUrns.add(ref.rootUrn)) {
                     queue.add(ref);
                 }
             }
         }
 
-        return affectedResources;
+        return relatedResources;
     }
 
-    private List<ResourceRef> findDirectlyAffectedResources(String rootUrn, StatisticalResourceTypeEnum type) {
-        List<ResourceRef> refs = new ArrayList<ResourceRef>();
+    private List<ResourceRef> findDirectlyRelatedResources(String rootUrn, StatisticalResourceTypeEnum type) {
+        List<ResourceRef> refs = new ArrayList<>();
 
         switch (type) {
             case DATASET:
@@ -83,19 +83,15 @@ public class AffectedResourcesResolver {
     private void addQueryRefs(String datasetRootUrn, List<ResourceRef> refs) {
         List<QueryVersion> queryVersions = queryVersionRepository.findQueriesPublishedLinkedToDataset(datasetRootUrn);
         for (QueryVersion queryVersion : queryVersions) {
-            refs.add(new ResourceRef(
-                    queryVersion.getLifeCycleStatisticalResource().getUrn(),
-                    queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn(),
-                    StatisticalResourceTypeEnum.QUERY));
+            refs.add(
+                    new ResourceRef(queryVersion.getLifeCycleStatisticalResource().getUrn(), queryVersion.getQuery().getIdentifiableStatisticalResource().getUrn(), StatisticalResourceTypeEnum.QUERY));
         }
     }
 
     private void addPublicationRefs(String rootUrn, StatisticalResourceTypeEnum containedType, List<ResourceRef> refs) {
         List<PublicationVersion> publicationVersions = publicationVersionRepository.findPublishedContainingResource(rootUrn, containedType);
         for (PublicationVersion publicationVersion : publicationVersions) {
-            refs.add(new ResourceRef(
-                    publicationVersion.getSiemacMetadataStatisticalResource().getUrn(),
-                    publicationVersion.getPublication().getIdentifiableStatisticalResource().getUrn(),
+            refs.add(new ResourceRef(publicationVersion.getSiemacMetadataStatisticalResource().getUrn(), publicationVersion.getPublication().getIdentifiableStatisticalResource().getUrn(),
                     StatisticalResourceTypeEnum.COLLECTION));
         }
     }
@@ -103,20 +99,18 @@ public class AffectedResourcesResolver {
     private void addMultidatasetRefs(String rootUrn, StatisticalResourceTypeEnum containedType, List<ResourceRef> refs) {
         List<MultidatasetVersion> multidatasetVersions = multidatasetVersionRepository.findPublishedContainingResource(rootUrn, containedType);
         for (MultidatasetVersion multidatasetVersion : multidatasetVersions) {
-            refs.add(new ResourceRef(
-                    multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn(),
-                    multidatasetVersion.getMultidataset().getIdentifiableStatisticalResource().getUrn(),
+            refs.add(new ResourceRef(multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn(), multidatasetVersion.getMultidataset().getIdentifiableStatisticalResource().getUrn(),
                     StatisticalResourceTypeEnum.MULTIDATASET));
         }
     }
 
-    public static class AffectedResource {
+    public static class RelatedStatisticalResource {
 
-        private final String                       versionUrn;
-        private final String                       rootUrn;
-        private final StatisticalResourceTypeEnum  type;
+        private final String                      versionUrn;
+        private final String                      rootUrn;
+        private final StatisticalResourceTypeEnum type;
 
-        AffectedResource(String versionUrn, String rootUrn, StatisticalResourceTypeEnum type) {
+        RelatedStatisticalResource(String versionUrn, String rootUrn, StatisticalResourceTypeEnum type) {
             this.versionUrn = versionUrn;
             this.rootUrn = rootUrn;
             this.type = type;
@@ -141,17 +135,19 @@ public class AffectedResourcesResolver {
 
         @Override
         public boolean equals(Object obj) {
-            if (this == obj) return true;
-            if (!(obj instanceof AffectedResource)) return false;
-            return versionUrn.equals(((AffectedResource) obj).versionUrn);
+            if (this == obj)
+                return true;
+            if (!(obj instanceof RelatedStatisticalResource))
+                return false;
+            return versionUrn.equals(((RelatedStatisticalResource) obj).versionUrn);
         }
     }
 
     private static class ResourceRef {
 
-        final String                       versionUrn;
-        final String                       rootUrn;
-        final StatisticalResourceTypeEnum  type;
+        final String                      versionUrn;
+        final String                      rootUrn;
+        final StatisticalResourceTypeEnum type;
 
         ResourceRef(String versionUrn, String rootUrn, StatisticalResourceTypeEnum type) {
             this.versionUrn = versionUrn;
