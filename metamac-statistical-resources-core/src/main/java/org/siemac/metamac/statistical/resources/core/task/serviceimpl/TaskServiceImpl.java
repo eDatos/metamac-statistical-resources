@@ -336,7 +336,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 logger.warn("Database dataset polling job is disabled. Check " + StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED
                         + " property value in environment.xml file in case you want to enable it");
             }
-
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling database dataset polling job", e);
         }
@@ -2210,23 +2209,32 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public void processDatabaseDatasetPollingTask(ServiceContext ctx) throws MetamacException {
-        taskServiceInvocationValidator.checkProcessDatabaseDatasetPollingTask(ctx);
+        try {
+            taskServiceInvocationValidator.checkProcessDatabaseDatasetPollingTask(ctx);
 
-        DateTime executionDate = new DateTime();
+            if (configurationService.retriveDatabaseDatasetImportJobIsEnabled()) {
 
-        List<DatasetVersion> datasetsVersions = retrieveDatabaseDatasets(ctx);
+                DateTime executionDate = new DateTime();
 
-        if (!CollectionUtils.isEmpty(datasetsVersions)) {
-            for (DatasetVersion datasetVersion : datasetsVersions) {
-                if (!CollectionUtils.isEmpty(datasetVersion.getDatasources())) {
-                    updateDataFromDatasources(ctx, executionDate, datasetVersion);
+                List<DatasetVersion> datasetsVersions = retrieveDatabaseDatasets(ctx);
+
+                if (!CollectionUtils.isEmpty(datasetsVersions)) {
+                    for (DatasetVersion datasetVersion : datasetsVersions) {
+                        if (!CollectionUtils.isEmpty(datasetVersion.getDatasources())) {
+                            updateDataFromDatasources(ctx, executionDate, datasetVersion);
+                        } else {
+                            logger.debug("There are no datasources configured yet for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                        }
+                    }
                 } else {
-                    logger.debug("There are no datasources configured yet for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                    logger.debug("There are no database datasets configured yet");
                 }
+            } else {
+                logger.warn("Database dataset polling job is disabled. Check " + StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED
+                        + " property value in environment.xml file in case you want to enable it");
             }
-
-        } else {
-            logger.debug("There are no database datasets configured yet");
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred processing database dataset polling task", e);
         }
     }
 
@@ -2274,6 +2282,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
     
     private void updateDataFromDatasources(ServiceContext ctx, DateTime executionDate, DatasetVersion datasetVersion) {
+
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         for (Datasource datasource : datasetVersion.getDatasources()) {
