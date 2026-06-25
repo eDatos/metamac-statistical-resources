@@ -13,6 +13,8 @@ import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
+import org.siemac.metamac.statistical.resources.core.common.serviceimpl.LastUpdatePropagationService;
+import org.siemac.metamac.statistical.resources.core.common.serviceimpl.LastUpdatePropagationService.PropagationTarget;
 import org.siemac.metamac.statistical.resources.core.common.utils.RelatedResourceUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
@@ -25,8 +27,6 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.SiemacLifecycleCh
 import org.siemac.metamac.statistical.resources.core.lifecycle.SiemacLifecycleFiller;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleInvocationValidatorBase;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
-import org.siemac.metamac.statistical.resources.core.common.serviceimpl.LastUpdatePropagationService;
-import org.siemac.metamac.statistical.resources.core.common.serviceimpl.LastUpdatePropagationService.PropagationTarget;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -73,7 +73,7 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
     private NoticesRestInternalService     noticesRestInternalService;
 
     @Autowired
-    private LastUpdatePropagationService          lastUpdatePropagationService;
+    private LastUpdatePropagationService   lastUpdatePropagationService;
 
     private static final Logger           LOG = LoggerFactory.getLogger(LifecycleTemplateService.class);
 

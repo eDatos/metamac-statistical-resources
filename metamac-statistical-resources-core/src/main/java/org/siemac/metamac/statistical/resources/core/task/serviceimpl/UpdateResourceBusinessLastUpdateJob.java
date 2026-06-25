@@ -68,7 +68,7 @@ public class UpdateResourceBusinessLastUpdateJob implements Job {
                 getNoticesRestInternalService().createErrorBackgroundNotification(null, ServiceNoticeAction.BUSINESS_LAST_UPDATE_JOB_FAILED, e);
             }
             try {
-                getTaskServiceFacade().markTaskAsFailed(serviceContext, taskName, resourceUrn, resourceUrn, e);
+                getTaskServiceFacade().markTaskAsFailed(serviceContext, taskName, resourceUrn, resourceRootUrn, e);
             } catch (Exception markError) {
                 logger.error("UpdateResourceBusinessLastUpdateJob: could not mark task " + jobKey.getName() + " as failed", markError);
             }
@@ -79,7 +79,7 @@ public class UpdateResourceBusinessLastUpdateJob implements Job {
                 getNoticesRestInternalService().createErrorBackgroundNotification(null, ServiceNoticeAction.BUSINESS_LAST_UPDATE_JOB_FAILED, metamacException);
             }
             try {
-                getTaskServiceFacade().markTaskAsFailed(serviceContext, taskName, resourceUrn, resourceUrn, metamacException);
+                getTaskServiceFacade().markTaskAsFailed(serviceContext, taskName, resourceUrn, resourceRootUrn, metamacException);
             } catch (Exception markError) {
                 logger.error("UpdateResourceBusinessLastUpdateJob: could not mark task " + jobKey.getName() + " as failed", markError);
             }
