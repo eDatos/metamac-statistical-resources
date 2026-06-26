@@ -2072,9 +2072,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         return extractResourceVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE);
     }
 
-    private String extractUrnFromRecoveryUpdateResourceBusinessLastUpdateJobKey(String jobKeyName) {
-        return extractResourceVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE);
-    }
 
     private void planifyRecoveryUpdateResourceBusinessLastUpdate(ServiceContext ctx, String resourceUrn, String resourceRootUrn) {
         try {
