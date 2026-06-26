@@ -1,5 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.server.stream;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +9,7 @@ import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.kafka.clients.consumer.CommitFailedException;
+import org.apache.kafka.clients.consumer.ConsumerRebalanceListener;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -78,6 +80,17 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
         LOGGER.info("Reading KAFKA topic: " + topicName);
 
         try {
+            consumer.subscribe(Collections.singletonList(topicName), new ConsumerRebalanceListener() {
+
+                @Override
+                public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+                }
+
+                @Override
+                public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                    seekToEndIfNoCommittedOffset(partitions);
+                }
+            });
 
             Map<Integer, Long> pendigOffsetsToCommit = new HashMap<Integer, Long>(); // K:partition, V:offset
 
@@ -171,6 +184,21 @@ public class KafkaConsumerThread<T extends SpecificRecordBase> implements Runnab
             return false;
         }
         return true;
+    }
+
+    // On first start (no stored offset), seeks to end and commits that position so Kafka registers the offset.
+    // Without this, auto.offset.reset=EARLIEST would reprocess all historical messages, and any restart before
+    // receiving a new message would leave CURRENT-OFFSET as '-', making lag monitoring impossible.
+    private void seekToEndIfNoCommittedOffset(Collection<TopicPartition> partitions) {
+        for (TopicPartition partition : partitions) {
+            OffsetAndMetadata committed = consumer.committed(partition);
+            if (committed == null) {
+                consumer.seekToEnd(Collections.singletonList(partition));
+                long endOffset = consumer.position(partition);
+                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(endOffset)));
+                LOGGER.info("Statistical resources. No committed offset found for " + partition + ". Seeking to end at offset " + endOffset);
+            }
+        }
     }
 
     private void sendErrorMessageIfNeccesary(ConsumerRecord<String, T> record) {
