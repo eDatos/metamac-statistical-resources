@@ -115,7 +115,7 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
     public List<QueryVersion> findQueriesPublishedLinkedToDataset(String datasetUrn) {
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn())
                 .eq(datasetUrn).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).and()
-                .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().lastVersion()).eq(Boolean.TRUE).build();
+                .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().validTo()).isNull().build();
         return findByCondition(conditions);
     }
 
