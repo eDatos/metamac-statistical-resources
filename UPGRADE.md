@@ -21,39 +21,30 @@
   ````
 * Se han de borrar los mensajes existentes en el topic DATASET_PUBLICATIONS:
   ```shell
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  DATASET_PUBLICATIONS --describe retention.ms
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --describe retention.ms
   ````
 * Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
   ```shell
-   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  DATASET_PUBLICATIONS --delete-config retention.ms --alter
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
   ```
 * Se han de borrar los mensajes existentes en el topic COLLECTION_PUBLICATIONS:
   ```shell
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  COLLECTION_PUBLICATIONS --describe retention.ms
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --describe retention.ms
   ````
 * Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
   ```shell
-   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
   ```
 * Se han de borrar los mensajes existentes en el topic QUERY_PUBLICATIONS:
   ```shell
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  QUERY_PUBLICATIONS --describe retention.ms
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --describe retention.ms
   ````
 * Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
   ```shell
-   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
-  QUERY_PUBLICATIONS --delete-config retention.ms --alter
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --delete-config retention.ms --alter
   ```
 
 ## 11.4.0 a 11.5.0

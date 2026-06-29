@@ -15,7 +15,6 @@ import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.c
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeoCacheRelatedResources;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeocoverageCache;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -81,6 +80,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimensi
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceRepository;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -125,10 +125,9 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImpo
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
-import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
-import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
@@ -189,112 +188,112 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 @Service("taskService")
 public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationListener<ContextRefreshedEvent> {
 
-    private static Logger                     logger                                                   = LoggerFactory.getLogger(TaskServiceImpl.class);
+    private static Logger                          logger                                                   = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    public static final String                SCHEDULER_INSTANCE_NAME                       = "StatisticalResourcesScheduler";
-    public static final String                PREFIX_JOB_IMPORT_DATA                        = "job_importdata_";
-    public static final String                PREFIX_JOB_DATABASE_IMPORT_DATA               = "job_databaseimportdata_";
-    public static final String                PREFIX_JOB_RECOVERY_IMPORT_DATA               = "job_recoveryimportdata_";
-    public static final String                PREFIX_JOB_DUPLICATION_DATA                   = "job_duplicationdata_";
-    public static final String                PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE           = "job_update_geocoverage_cache_";
-    public static final String                PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES = "job_update_geo_cache_related_resources_";
-    public static final String                PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE  = "job_update_external_geocoverage_cache_";
-    public static final String                PREFIX_TRIGGER_IMPORT_DATA                    = "trigger_importdata_";
-    public static final String                PREFIX_TRIGGER_RECOVERY_IMPORT_DATA           = "trigger_recoveryimportdata_";
-    public static final String                GROUP_IMPORTATION                             = "importation";
-    public static final String                GROUP_EXTERNAL_CACHE                          = "externalCacheUpdate";
-    public static final String                GROUP_GEOGRAPHICAL_CACHE                      = "geographicalCache";
-    public static final String                PREFIX_JOB_IMPORT_ATTRIBUTES                  = "job_import_attributes_";
-    public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
-    public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
-    public static final String                PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE        = "job_update_resource_last_update_";
-    public static final String                PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE = "job_recovery_update_resource_last_update_";
-    public static final String                PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE          = "job_update_resource_business_last_update_";
-    public static final String                PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE = "job_recovery_update_resource_business_last_update_";
-    public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
-    public static final int                   RECOVERY_JOB_PRIORITY                         = 10;
+    public static final String                     SCHEDULER_INSTANCE_NAME                                  = "StatisticalResourcesScheduler";
+    public static final String                     PREFIX_JOB_IMPORT_DATA                                   = "job_importdata_";
+    public static final String                     PREFIX_JOB_DATABASE_IMPORT_DATA                          = "job_databaseimportdata_";
+    public static final String                     PREFIX_JOB_RECOVERY_IMPORT_DATA                          = "job_recoveryimportdata_";
+    public static final String                     PREFIX_JOB_DUPLICATION_DATA                              = "job_duplicationdata_";
+    public static final String                     PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE                      = "job_update_geocoverage_cache_";
+    public static final String                     PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES            = "job_update_geo_cache_related_resources_";
+    public static final String                     PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE             = "job_update_external_geocoverage_cache_";
+    public static final String                     PREFIX_TRIGGER_IMPORT_DATA                               = "trigger_importdata_";
+    public static final String                     PREFIX_TRIGGER_RECOVERY_IMPORT_DATA                      = "trigger_recoveryimportdata_";
+    public static final String                     GROUP_IMPORTATION                                        = "importation";
+    public static final String                     GROUP_EXTERNAL_CACHE                                     = "externalCacheUpdate";
+    public static final String                     GROUP_GEOGRAPHICAL_CACHE                                 = "geographicalCache";
+    public static final String                     PREFIX_JOB_IMPORT_ATTRIBUTES                             = "job_import_attributes_";
+    public static final String                     PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES                    = "job_recovery_import_attributes_";
+    public static final String                     PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE                   = "job_recovery_geographical_cache_";
+    public static final String                     PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE                   = "job_update_resource_last_update_";
+    public static final String                     PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE          = "job_recovery_update_resource_last_update_";
+    public static final String                     PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE          = "job_update_resource_business_last_update_";
+    public static final String                     PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE = "job_recovery_update_resource_business_last_update_";
+    public static final int                        DEFAULT_QUARTZ_TRIGGER_DELAY                             = 10;
+    public static final int                        RECOVERY_JOB_PRIORITY                                    = 10;
 
     @Autowired
-    private TaskServiceInvocationValidator    taskServiceInvocationValidator;
+    private TaskServiceInvocationValidator         taskServiceInvocationValidator;
 
     @Autowired
     private LifeCycleStatisticalResourceRepository lifeCycleStatisticalResourceRepository;
 
     @Autowired
-    private MetamacSdmx2StatRepoMapper        metamac2StatRepoMapper;
+    private MetamacSdmx2StatRepoMapper             metamac2StatRepoMapper;
 
     @Autowired
-    private SrmRestInternalService            srmRestInternalService;
+    private SrmRestInternalService                 srmRestInternalService;
 
     @Autowired
-    StatisticalOperationsRestInternalService  statisticalOperationsRestInternalService;
+    StatisticalOperationsRestInternalService       statisticalOperationsRestInternalService;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
+    private DatasetRepositoriesServiceFacade       datasetRepositoriesServiceFacade;
 
     @Autowired
-    private ManipulatePxDataService           manipulatePxDataService;
+    private ManipulatePxDataService                manipulatePxDataService;
 
     @Autowired
-    private ManipulateCsvDataService          manipulateCsvDataService;
+    private ManipulateCsvDataService               manipulateCsvDataService;
 
     @Autowired
-    private ConstraintsService                constraintsService;
+    private ConstraintsService                     constraintsService;
 
     @Autowired
-    private DatasetService                    datasetService;
+    private DatasetService                         datasetService;
 
     @Autowired
-    private PublicationService                publicationService;
+    private PublicationService                     publicationService;
 
     @Autowired
-    private QueryService                      queryService;
+    private QueryService                           queryService;
 
     @Autowired
-    private MultidatasetService               multidatasetService;
+    private MultidatasetService                    multidatasetService;
 
     @Autowired
-    private LifecycleService<DatasetVersion>  datasetLifecycleService;
+    private LifecycleService<DatasetVersion>       datasetLifecycleService;
 
     @Autowired
-    private ResourceCacheInvalidationService resourceCacheInvalidationService;
+    private ResourceCacheInvalidationService       resourceCacheInvalidationService;
 
     @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private StatisticalResourcesConfiguration      configurationService;
 
     @Autowired
     @Qualifier("txManager")
-    private PlatformTransactionManager        platformTransactionManager;
+    private PlatformTransactionManager             platformTransactionManager;
 
     @Autowired
-    private DatasetVersionRepository          datasetVersionRepository;
+    private DatasetVersionRepository               datasetVersionRepository;
 
     @Autowired
-    private QueryVersionRepository            queryVersionRepository;
+    private QueryVersionRepository                 queryVersionRepository;
 
     @Autowired
-    private DatabaseImportRepository          databaseImportRepository;
+    private DatabaseImportRepository               databaseImportRepository;
 
     @Autowired
-    private NoticesRestInternalService        noticesRestInternalService;
+    private NoticesRestInternalService             noticesRestInternalService;
 
     @Autowired
-    StreamConsumerServiceFacade               streamConsumerServiceFacade;
+    StreamConsumerServiceFacade                    streamConsumerServiceFacade;
 
     @Autowired
-    CacheService                              cacheService;
+    CacheService                                   cacheService;
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
-    private CommonDto2DoMapper                dto2DoMapper;
+    private CommonDto2DoMapper                     dto2DoMapper;
 
     @Autowired
-    private PublicationVersionRepository      publicationVersionRepository;
+    private PublicationVersionRepository           publicationVersionRepository;
 
     @Autowired
-    private MultidatasetVersionRepository     multidatasetVersionRepository;
+    private MultidatasetVersionRepository          multidatasetVersionRepository;
 
-    private SchedulerFactory                  schedulerFactory                                         = null;
+    private SchedulerFactory                       schedulerFactory                                         = null;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -2041,10 +2040,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void sendUpdateResourceLastUpdateNoMoreRetriesNotification(ServiceContext ctx, String resourceUrn) {
-        MetamacException noMoreRetriesException = MetamacExceptionBuilder.builder()
-                .withExceptionItems(ServiceExceptionType.UPDATE_RESOURCE_LAST_UPDATE_JOB_NO_MORE_RETRIES)
-                .withMessageParameters(resourceUrn)
-                .build();
+        MetamacException noMoreRetriesException = MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UPDATE_RESOURCE_LAST_UPDATE_JOB_NO_MORE_RETRIES)
+                .withMessageParameters(resourceUrn).build();
         getNoticesRestInternalService().createErrorBackgroundNotification(ctx.getUserId(), ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_NO_MORE_RETRIES, noMoreRetriesException);
     }
 
@@ -2071,7 +2068,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private String extractUrnFromUpdateResourceBusinessLastUpdateJobKey(String jobKeyName) {
         return extractResourceVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE);
     }
-
 
     private void planifyRecoveryUpdateResourceBusinessLastUpdate(ServiceContext ctx, String resourceUrn, String resourceRootUrn) {
         try {
@@ -2738,7 +2734,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         JobKey jobKey = new JobKey(taskName);
         TriggerKey triggerKey = new TriggerKey("trigger_" + taskName);
 
-        int delayInSeconds = PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE.equals(prefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 100;
+        int delayInSeconds = PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE.equals(prefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 1800;
 
         try {
             JobDetail job = newJob(UpdateResourceBusinessLastUpdateJob.class)
