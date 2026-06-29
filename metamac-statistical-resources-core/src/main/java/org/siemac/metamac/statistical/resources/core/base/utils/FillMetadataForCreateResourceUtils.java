@@ -20,13 +20,11 @@ public final class FillMetadataForCreateResourceUtils {
     }
 
     public static void fillMetadataForCretateSiemacResource(SiemacMetadataStatisticalResource resource, ExternalItem statisticalOperation, StatisticalResourceTypeEnum type, ServiceContext ctx) {
-        fillMetadataForCreateLifeCycleResource(resource, statisticalOperation, ctx);
-
-        resource.setType(type);
+        fillMetadataForCreateLifeCycleResource(resource, statisticalOperation, type, ctx);
     }
 
-    public static void fillMetadataForCreateLifeCycleResource(LifeCycleStatisticalResource resource, ExternalItem statisticalOperation, ServiceContext ctx) {
-        fillMetadataForCreateVersionableResource(resource, statisticalOperation);
+    public static void fillMetadataForCreateLifeCycleResource(LifeCycleStatisticalResource resource, ExternalItem statisticalOperation, StatisticalResourceTypeEnum type, ServiceContext ctx) {
+        fillMetadataForCreateVersionableResource(resource, statisticalOperation, type);
 
         resource.setProcStatus(ProcStatusEnum.DRAFT);
         resource.setCreatedDate(new DateTime());
@@ -36,8 +34,8 @@ public final class FillMetadataForCreateResourceUtils {
         resource.setLastVersion(true);
     }
 
-    public static void fillMetadataForCreateVersionableResource(VersionableStatisticalResource resource, ExternalItem statisticalOperation) {
-        fillMetadataForCreateNameableResource(resource, statisticalOperation);
+    public static void fillMetadataForCreateVersionableResource(VersionableStatisticalResource resource, ExternalItem statisticalOperation, StatisticalResourceTypeEnum type) {
+        fillMetadataForCreateNameableResource(resource, statisticalOperation, type);
 
         resource.setVersionLogic(StatisticalResourcesVersionUtils.INITIAL_VERSION);
         resource.setPatch(0);
@@ -45,13 +43,13 @@ public final class FillMetadataForCreateResourceUtils {
         resource.addVersionRationaleType(new VersionRationaleType(VersionRationaleTypeEnum.MAJOR_NEW_RESOURCE));
     }
 
-    public static void fillMetadataForCreateNameableResource(IdentifiableStatisticalResource resource, ExternalItem statisticalOperation) {
-        fillMetadataForCreateIdentifiableResource(resource, statisticalOperation);
+    public static void fillMetadataForCreateNameableResource(IdentifiableStatisticalResource resource, ExternalItem statisticalOperation, StatisticalResourceTypeEnum type) {
+        fillMetadataForCreateIdentifiableResource(resource, statisticalOperation, type);
     }
 
-    public static void fillMetadataForCreateIdentifiableResource(IdentifiableStatisticalResource resource, ExternalItem statisticalOperation) {
+    public static void fillMetadataForCreateIdentifiableResource(IdentifiableStatisticalResource resource, ExternalItem statisticalOperation, StatisticalResourceTypeEnum type) {
         fillMetadataForCreateStatistiscalResource(resource, statisticalOperation);
-
+        resource.setType(type);
         // CODE and URN are setting in specific methods for each entity.
         // - Query Versions: fillMetadataForCreateQuery
         // - Datasets Versions and Publications Versions: just before saving, because the computation for code must be synchronized and this way, we minimize the synchronized block
