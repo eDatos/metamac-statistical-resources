@@ -40,7 +40,8 @@
          {"name" : "versionRationale" , "type" : ["null", "InternationalStringAvro"]},
          {"name" : "nextVersion" , "type" : ["null", "NextVersionTypeEnumAvro"]},
          {"name" : "versionLogic", "type" : ["null", "string" ]},
-         {"name" : "versionRationaleTypes", "type" : ["null", { "type" : "array", "items" : ["null", "VersionRationaleTypeEnumAvro"]}]}
+         {"name" : "versionRationaleTypes", "type" : ["null", { "type" : "array", "items" : ["null", "VersionRationaleTypeEnumAvro"]}]},
+         {"name" : "patch", "type": "int", "default": 0 }
      ]
  }
  ]

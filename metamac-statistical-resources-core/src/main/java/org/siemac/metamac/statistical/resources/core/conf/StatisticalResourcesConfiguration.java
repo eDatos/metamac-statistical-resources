@@ -35,6 +35,12 @@ public interface StatisticalResourcesConfiguration extends ConfigurationService 
 
     public String retrieveKafkaCustomExternalCollectionPublicationMessagesGroup() throws MetamacException;
 
+    public String retrieveKafkaCustomDsdPublicationMessagesGroup() throws MetamacException;
+
+    public String retrieveKafkaCustomOperationPublicationMessagesGroup() throws MetamacException;
+
+    public String retrieveKafkaCustomDatasetPublicationMessagesGroup() throws MetamacException;
+
     public String retrieveCronExpressionForResendPublishedDatasetKafkaMessage() throws MetamacException;
 
     public String retrieveKafkaCustomCodelistPublicationMessagesGroup() throws MetamacException;

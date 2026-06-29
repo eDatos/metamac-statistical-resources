@@ -8,9 +8,43 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 11.3.1 a 11.4.0
+## 11.4.0 a 11.4.1-SNAPSHOT
+* Eliminar topic ficticio DUMMY_PUBLICATIONS de entornos donde lo tengan: DEMO, PRE-ISTAC Y PRO-ISTAC.
 * Ejecutar los scripts creados en el proyecto  edatos-dataset-repository sobre la base de datos statistical-resources-data: etc/changes-from-release/3.6.0/db/edatos-dataset-repository/postgresql
 
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
+  * [etc/changes-from-release/11.4.0/db](etc/changes-from-release/11.4.0/db)
+
+* Se debe resetear el schema registry para los topics de los recursos debido a que se ha modificado el schema Avro:
+  ```shell
+  curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
+  ```
+* Se han de borrar los mensajes existentes en los topics anteriores (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
+
+* Esta versión requiere de modificaciones en el HAproxy y Apache, según corresponda, para que los headers que ahora
+  sirve la aplicación para el cacheo de las peticiones no se vean sobrescritos. Concretamente, se deben modificar las 
+  siguientes líneas:
+  * **Apache**
+    * Se debe añadir la siguiente regla a los entornos afectados y por la URL adecuada:
+        ```
+        RewriteRule ^/statistical-resources(.*) - [ENV=SET_IGNORE_CACHE]
+        ```
+  * **HAproxy**
+    * Modificar
+      ```
+      # Añade cabeceras de control de cache
+      http-response set-header Cache-Control "no-cache,no-store,must-revalidate"
+      http-response set-header Pragma "no-cache"
+      ```
+      por
+      ```
+      # Añade cabeceras de control de cacheo solo si no existen ya en la respuesta del backend
+      acl has_cache_control res.hdr(Cache-Control) -m found
+      http-response set-header Cache-Control "no-cache,no-store,must-revalidate" unless has_cache_control
+      http-response set-header Pragma "no-cache" unless has_cache_control
+      ```
 ## 11.1.0 a 11.1.1
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/11.1.0/db/common-metadata/postgresql/] 
@@ -42,47 +76,37 @@ Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orde
 
 * Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS debido a que se han modificado las
   propiedades de los mensajes que se publican en dicho topic:
-  ```shell 
+  ```bash
   curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
   curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
-
   ````
 * Se han de borrar los mensajes existentes en el topic DATASET_PUBLICATIONS:
-  ```shell 
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  DATASET_PUBLICATIONS --describe retention.ms
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --describe retention.ms
   ````
 * Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
   ```shell
-   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  DATASET_PUBLICATIONS --delete-config retention.ms --alter
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
   ```
 * Se han de borrar los mensajes existentes en el topic COLLECTION_PUBLICATIONS:
-  ```shell 
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  COLLECTION_PUBLICATIONS --describe retention.ms
-  ````
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --describe retention.ms
+  ```
 * Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
   ```shell
-   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
   ```
 * Se han de borrar los mensajes existentes en el topic QUERY_PUBLICATIONS:
-  ```shell 
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
-  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  QUERY_PUBLICATIONS --describe retention.ms
-  ````
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --describe retention.ms
+  ```
 * Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
   ```shell
-   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name 
-  QUERY_PUBLICATIONS --delete-config retention.ms --alter
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --delete-config retention.ms --alter
   ```
 
 ## 10.18.2 a 10.19.0

@@ -58,6 +58,8 @@ Application DatasetsStatisticalResources {
     		markTaskAsFailed(String job, String datasetVersionId, String datasetUrn, java.lang.Exception exception) throws MetamacException;
     		markTaskAsFinished(String job) throws MetamacException;
     		markAllInProgressTaskToFailed() throws MetamacException;
+    		"Perform the update resource last update task"
+    		executeUpdateResourceLastUpdateTask(String taskName, String resourceUrn, long timestamp) throws MetamacException;
 		}
 		
 		"Provides access to import data operations"
@@ -169,6 +171,10 @@ Application DatasetsStatisticalResources {
 			
 			"Resend kafka published last version dataset messages"
 			processResendKafkaDatasetMessageTask() throws MetamacException;
+			"Plannify a scheduled task to update a resource last update date"
+			planifyUpdateResourceLastUpdate(String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException;
+			"Perform the update resource last update task"
+			processUpdateResourceLastUpdateTask(String taskName, String resourceUrn, long timestamp) throws MetamacException;
 		}
 		
 		// ----------------------------------------------------------------

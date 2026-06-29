@@ -220,4 +220,14 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     public void testProcessRetryGeographicalCacheTask() throws Exception {
         // No test
     }
+
+    @Override
+    public void testProcessUpdateResourceLastUpdateTask() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testPlanifyUpdateResourceLastUpdate() throws Exception {
+        // No test
+    }
 }

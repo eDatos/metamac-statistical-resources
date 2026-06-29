@@ -126,7 +126,7 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
 
         // Set attributes that normally sets THE service and can not be null in database
         queryVersion.setStatus(QueryStatusEnum.ACTIVE);
-        queryVersion.setType(QueryTypeEnum.FIXED);
+        queryVersion.setQueryType(QueryTypeEnum.FIXED);
         queryVersion.setQuery(query);
 
         String queryCode = queryVersion.getLifeCycleStatisticalResource().getCode();
@@ -190,7 +190,7 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
 
         // Set attributes that normally sets de service and can not be null in database
         queryVersion.setStatus(QueryStatusEnum.ACTIVE);
-        queryVersion.setType(QueryTypeEnum.FIXED);
+        queryVersion.setQueryType(QueryTypeEnum.FIXED);
         queryVersion.setQuery(query);
 
         String queryCode = queryVersion.getLifeCycleStatisticalResource().getCode();

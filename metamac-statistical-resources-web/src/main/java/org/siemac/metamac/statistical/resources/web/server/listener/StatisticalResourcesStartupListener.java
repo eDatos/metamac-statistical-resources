@@ -1,10 +1,14 @@
 package org.siemac.metamac.statistical.resources.web.server.listener;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.siemac.metamac.core.common.constants.shared.ConfigurationConstants;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
 import org.siemac.metamac.web.common.server.listener.InternalApplicationStartupListener;
 
 public class StatisticalResourcesStartupListener extends InternalApplicationStartupListener {
+
+    private static final Log LOG = LogFactory.getLog(StatisticalResourcesStartupListener.class);
 
     @Override
     public void checkDatasourceProperties() {
@@ -21,10 +25,18 @@ public class StatisticalResourcesStartupListener extends InternalApplicationStar
         checkRequiredProperty(StatisticalResourcesConfigurationConstants.DB_REPOSITORY_PASSWORD);
 
         // DATASOURCE DB DATA IMPORT
-        checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_DRIVER_NAME);
-        checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_URL);
-        checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_USERNAME);
-        checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_PASSWORD);
+        checkDataImportDatasourceProperties();
+    }
+
+    private void checkDataImportDatasourceProperties() {
+        try {
+            checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_DRIVER_NAME);
+            checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_URL);
+            checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_USERNAME);
+            checkOptionalProperty(StatisticalResourcesConfigurationConstants.DB_DATA_IMPORT_PASSWORD);
+        } catch (Exception e) {
+            LOG.warn("Data import datasource properties not configured correctly, data import feature will be unavailable: " + e.getMessage());
+        }
     }
 
     @Override

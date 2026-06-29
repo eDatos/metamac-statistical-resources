@@ -52,7 +52,7 @@ public class QueryAsserts extends BaseAsserts {
         assertEqualsLifeCycleStatisticalResource(expected.getLifeCycleStatisticalResource(), actual.getLifeCycleStatisticalResource());
         DatasetsAsserts.assertEqualsDatasetVersion(expected.getFixedDatasetVersion(), actual.getFixedDatasetVersion());
         DatasetsAsserts.assertEqualsDataset(expected.getDataset(), actual.getDataset());
-        assertEquals(expected.getType(), actual.getType());
+        assertEquals(expected.getQueryType(), actual.getQueryType());
         assertEquals(expected.getLatestDataNumber(), actual.getLatestDataNumber());
         assertEqualsSelection(expected.getSelection(), actual.getSelection());
 
@@ -203,8 +203,8 @@ public class QueryAsserts extends BaseAsserts {
         assertEqualsNameableStatisticalResource(entity.getLifeCycleStatisticalResource(), dto, mapperEnum);
         assertEqualsRelatedDatasetVersionInQueryVersion(entity, dto.getRelatedDatasetVersion());
 
-        assertNotNull(entity.getType());
-        assertEquals(entity.getType(), dto.getType());
+        assertNotNull(entity.getQueryType());
+        assertEquals(entity.getQueryType(), dto.getQueryType());
 
         assertEquals(entity.getLatestDataNumber(), dto.getLatestDataNumber());
 
@@ -224,8 +224,8 @@ public class QueryAsserts extends BaseAsserts {
         assertEqualsNameableStatisticalResourceBase(entity.getLifeCycleStatisticalResource(), dto, mapperEnum);
         assertEqualsRelatedDatasetVersionInQueryVersion(entity, dto.getRelatedDatasetVersion());
 
-        assertNotNull(entity.getType());
-        assertEquals(entity.getType(), dto.getType());
+        assertNotNull(entity.getQueryType());
+        assertEquals(entity.getQueryType(), dto.getQueryType());
     }
 
     private static void assertEqualsSelection(List<QuerySelectionItem> entitySelection, Map<String, List<CodeItemDto>> dtoSelection, MapperEnum mapperEnum) {

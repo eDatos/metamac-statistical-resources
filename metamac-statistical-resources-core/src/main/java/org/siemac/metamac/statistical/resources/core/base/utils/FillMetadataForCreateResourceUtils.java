@@ -40,6 +40,7 @@ public final class FillMetadataForCreateResourceUtils {
         fillMetadataForCreateNameableResource(resource, statisticalOperation);
 
         resource.setVersionLogic(StatisticalResourcesVersionUtils.INITIAL_VERSION);
+        resource.setPatch(0);
         resource.getVersionRationaleTypes().clear();
         resource.addVersionRationaleType(new VersionRationaleType(VersionRationaleTypeEnum.MAJOR_NEW_RESOURCE));
     }

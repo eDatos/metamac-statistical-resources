@@ -49,7 +49,7 @@ public class QueryVersionDo2AvroMapper {
                 .setSelection(selectionToAvro(source.getSelection()))
                 .setRelatedDatasetVersion(relatedDatasetVersionAvro)
                 .setStatus(queryStatusEnumDoToAvro(source.getStatus()))
-                .setType(queryTypeEnumDoToAvro(source.getType()))
+                .setQueryType(queryTypeEnumDoToAvro(source.getQueryType()))
                 .setIsPartOf(AvroMapperUtils.relatedResourceList2Avro(queryVersionRepository.retrieveIsPartOf(source)))
                 .build();
         // @formatter:on
