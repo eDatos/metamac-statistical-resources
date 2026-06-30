@@ -435,7 +435,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     }
 
     private Chapter fillMetadataForCreateChapter(Chapter chapter, ExternalItem statisticalOperation) {
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(chapter.getNameableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(chapter.getNameableStatisticalResource(), statisticalOperation, null);
         chapter.fillCodeAndUrn();
         return chapter;
     }
@@ -509,7 +509,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     }
 
     private Cube fillMetadataForCreateCube(Cube cube, ExternalItem statisticalOperation) {
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(cube.getNameableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(cube.getNameableStatisticalResource(), statisticalOperation, null);
         cube.fillCodeAndUrn();
         return cube;
     }
@@ -590,7 +590,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
 
     private static void fillMetadataForCreatePublication(Publication publication, ExternalItem statisticalOperation) {
         publication.setIdentifiableStatisticalResource(new IdentifiableStatisticalResource());
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(publication.getIdentifiableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(publication.getIdentifiableStatisticalResource(), statisticalOperation, null);
     }
 
     private static void fillMetadataForCreatePublicationVersion(PublicationVersion publicationVersion, ExternalItem statisticalOperation, ServiceContext ctx) {
