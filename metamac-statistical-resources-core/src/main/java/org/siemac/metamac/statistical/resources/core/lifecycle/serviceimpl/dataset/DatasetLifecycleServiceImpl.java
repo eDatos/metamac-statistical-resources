@@ -373,7 +373,10 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
+    }
 
+    @Override
+    protected void planifyLastUpdatePropagationByResource(ServiceContext ctx, DatasetVersion resource) {
         planifyLastUpdatePropagation(ctx,
                 resource.getDataset().getIdentifiableStatisticalResource().getUrn(),
                 StatisticalResourceTypeEnum.DATASET);

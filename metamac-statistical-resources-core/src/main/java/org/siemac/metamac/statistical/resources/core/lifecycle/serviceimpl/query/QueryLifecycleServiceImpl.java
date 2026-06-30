@@ -265,7 +265,10 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
+    }
 
+    @Override
+    protected void planifyLastUpdatePropagationByResource(ServiceContext ctx, QueryVersion resource) {
         planifyLastUpdatePropagation(ctx,
                 resource.getQuery().getIdentifiableStatisticalResource().getUrn(),
                 StatisticalResourceTypeEnum.QUERY);

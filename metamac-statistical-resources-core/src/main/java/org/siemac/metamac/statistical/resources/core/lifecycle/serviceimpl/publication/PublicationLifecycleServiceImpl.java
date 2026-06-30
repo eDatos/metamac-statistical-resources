@@ -297,7 +297,10 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
+    }
 
+    @Override
+    protected void planifyLastUpdatePropagationByResource(ServiceContext ctx, PublicationVersion resource) {
         planifyLastUpdatePropagation(ctx,
                 resource.getPublication().getIdentifiableStatisticalResource().getUrn(),
                 StatisticalResourceTypeEnum.COLLECTION);

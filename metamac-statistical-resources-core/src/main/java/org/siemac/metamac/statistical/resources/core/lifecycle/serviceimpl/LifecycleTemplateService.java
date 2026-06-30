@@ -279,6 +279,7 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         }
 
         sendNewVersionPublishedStreamMessageByResource(ctx, resource);
+        planifyLastUpdatePropagationByResource(ctx, resource);
 
         return retrieveResourceByResource(resource);
     }
@@ -464,6 +465,8 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
     protected abstract String getResourceMetadataName() throws MetamacException;
 
     protected abstract String getResourceUrn(E resource);
+
+    protected abstract void planifyLastUpdatePropagationByResource(ServiceContext ctx, E resource);
 
     protected void createStreamMessageSentNotification(ServiceContext ctx, HasSiemacMetadata version) {
         if (version.getLifeCycleStatisticalResource().getPublicationStreamStatus() != StreamMessageStatusEnum.SENT) {
