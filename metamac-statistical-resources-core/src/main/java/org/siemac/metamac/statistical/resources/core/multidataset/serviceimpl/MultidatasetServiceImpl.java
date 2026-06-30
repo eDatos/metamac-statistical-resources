@@ -316,7 +316,7 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
     // ------------------------------------------------------------------------
     private static void fillMetadataForCreateMultidataset(Multidataset multidataset, ExternalItem statisticalOperation, ServiceContext ctx) {
         multidataset.setIdentifiableStatisticalResource(new IdentifiableStatisticalResource());
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(multidataset.getIdentifiableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(multidataset.getIdentifiableStatisticalResource(), statisticalOperation, null);
     }
 
     private static void fillMetadataForCreateMultidatasetVersion(MultidatasetVersion multidatasetVersion, ExternalItem statisticalOperation, ServiceContext ctx) {
@@ -433,7 +433,7 @@ public class MultidatasetServiceImpl extends MultidatasetServiceImplBase {
     }
 
     private MultidatasetCube fillMetadataForCreateMultidatasetCube(ServiceContext ctx, MultidatasetCube multidatasetcube, ExternalItem statisticalOperation) {
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(multidatasetcube.getNameableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(multidatasetcube.getNameableStatisticalResource(), statisticalOperation, null);
         multidatasetcube.fillCodeAndUrn();
         return multidatasetcube;
     }
