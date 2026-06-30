@@ -147,3 +147,4 @@ metamac-statistical-resources-core/claude-core.md
 .claude/settings.local.json
 .claude/commands/
 *.local.md
+/metamac-statistical-resources-core/src/main/resources/generator/sculptor-generator.properties
