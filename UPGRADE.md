@@ -8,10 +8,8 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 11.4.0 a 11.4.1-SNAPSHOT
+## 11.4.0 a 11.5.0
 * Eliminar topic ficticio DUMMY_PUBLICATIONS de entornos donde lo tengan: DEMO, PRE-ISTAC Y PRO-ISTAC.
-* Ejecutar los scripts creados en el proyecto  edatos-dataset-repository sobre la base de datos statistical-resources-data: etc/changes-from-release/3.6.0/db/edatos-dataset-repository/postgresql
-
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
   * [etc/changes-from-release/11.4.0/db](etc/changes-from-release/11.4.0/db)
 
@@ -29,7 +27,7 @@
   * **Apache**
     * Se debe añadir la siguiente regla a los entornos afectados y por la URL adecuada:
         ```
-        RewriteRule ^/statistical-resources(.*) - [ENV=SET_IGNORE_CACHE]
+        RewriteRule ^/statistical-resources(.*) - [ENV=IGNORE_SET_CACHE]
         ```
   * **HAproxy**
     * Modificar
@@ -45,6 +43,10 @@
       http-response set-header Cache-Control "no-cache,no-store,must-revalidate" unless has_cache_control
       http-response set-header Pragma "no-cache" unless has_cache_control
       ```
+
+## 11.3.1 a 11.4.0
+* Ejecutar los scripts creados en el proyecto  edatos-dataset-repository sobre la base de datos statistical-resources-data: etc/changes-from-release/3.6.0/db/edatos-dataset-repository/postgresql
+
 ## 11.1.0 a 11.1.1
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
   * Dejar para el final la ejecución de scripts de migración de la carpeta [etc/changes-from-release/11.1.0/db/common-metadata/postgresql/] 
