@@ -2734,7 +2734,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         JobKey jobKey = new JobKey(taskName);
         TriggerKey triggerKey = new TriggerKey("trigger_" + taskName);
 
-        int delayInSeconds = PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE.equals(prefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 1800;
+        int delayInSeconds;
+        if (PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE.equals(prefix)) {
+            delayInSeconds = DEFAULT_QUARTZ_TRIGGER_DELAY;
+        } else {
+            delayInSeconds = configurationService.retrieveQuartzTriggerDelayForRecoveryUpdateDates();
+        }
 
         try {
             JobDetail job = newJob(UpdateResourceBusinessLastUpdateJob.class)
