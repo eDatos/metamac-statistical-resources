@@ -1,7 +1,6 @@
 package org.siemac.metamac.statistical.resources.web.server.dtos;
 
 import org.siemac.metamac.statistical.resources.core.dto.LifeCycleStatisticalResourceDto;
-import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.enums.LifeCycleActionEnum;
 
 public class ResourceNotificationDto extends BaseResourceNotificationDto<LifeCycleStatisticalResourceDto> {
@@ -11,14 +10,12 @@ public class ResourceNotificationDto extends BaseResourceNotificationDto<LifeCyc
     public static class Builder {
 
         private final LifeCycleActionEnum             lifeCycleAction;
-        private final StatisticalResourceTypeEnum     statisticalResourceType;
         private LifeCycleStatisticalResourceDto       updatedResource;
         private final LifeCycleStatisticalResourceDto previousResource;
         private String                                reasonOfRejection;
 
-        public Builder(LifeCycleStatisticalResourceDto previousResource, StatisticalResourceTypeEnum statisticalResourceType, LifeCycleActionEnum lifeCycleAction) {
+        public Builder(LifeCycleStatisticalResourceDto previousResource, LifeCycleActionEnum lifeCycleAction) {
             this.previousResource = previousResource;
-            this.statisticalResourceType = statisticalResourceType;
             this.lifeCycleAction = lifeCycleAction;
         }
 
@@ -39,7 +36,7 @@ public class ResourceNotificationDto extends BaseResourceNotificationDto<LifeCyc
 
     public ResourceNotificationDto(Builder builder) {
         lifeCycleAction = builder.lifeCycleAction;
-        statisticalResourceType = builder.statisticalResourceType;
+        statisticalResourceType = builder.previousResource.getType();
         updatedResource = builder.updatedResource;
         previousResource = builder.previousResource;
         reasonOfRejection = builder.reasonOfRejection;

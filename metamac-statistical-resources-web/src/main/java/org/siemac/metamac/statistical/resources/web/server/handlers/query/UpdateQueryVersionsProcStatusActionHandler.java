@@ -73,7 +73,7 @@ public class UpdateQueryVersionsProcStatusActionHandler extends UpdateResourcePr
                         break;
                 }
 
-                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(queryVersionToUpdate, StatisticalResourceTypeEnum.QUERY, lifeCycleAction)
+                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(queryVersionToUpdate, lifeCycleAction)
                         .updatedResource(updatedQueryVersionBaseDto).reasonOfRejection(action.getReasonOfRejection()).build();
                 notificationsToSend.add(notification);
 

@@ -15,6 +15,7 @@ import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.c
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeoCacheRelatedResources;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeocoverageCache;
 
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -78,6 +79,8 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Content
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DimensionBase;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -122,8 +125,10 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImpo
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
@@ -200,11 +205,16 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_JOB_IMPORT_ATTRIBUTES                  = "job_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
     public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
+    public static final String                PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE        = "job_update_resource_last_update_";
+    public static final String                PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE = "job_recovery_update_resource_last_update_";
     public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
     public static final int                   RECOVERY_JOB_PRIORITY                         = 10;
 
     @Autowired
     private TaskServiceInvocationValidator    taskServiceInvocationValidator;
+
+    @Autowired
+    private LifeCycleStatisticalResourceRepository lifeCycleStatisticalResourceRepository;
 
     @Autowired
     private MetamacSdmx2StatRepoMapper        metamac2StatRepoMapper;
@@ -241,6 +251,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Autowired
     private LifecycleService<DatasetVersion>  datasetLifecycleService;
+
+    @Autowired
+    private ResourceCacheInvalidationService resourceCacheInvalidationService;
 
     @Autowired
     private StatisticalResourcesConfiguration configurationService;
@@ -323,7 +336,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 logger.warn("Database dataset polling job is disabled. Check " + StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED
                         + " property value in environment.xml file in case you want to enable it");
             }
-
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling database dataset polling job", e);
         }
@@ -745,6 +757,28 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         return jobKey.getName();
+    }
+
+    @Override
+    public void planifyUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException {
+        taskServiceInvocationValidator.checkPlanifyUpdateResourceLastUpdate(ctx, resourceUrn, timestamp, sendNotification);
+        scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, timestamp, sendNotification, PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE);
+    }
+
+    @Override
+    public void processUpdateResourceLastUpdateTask(ServiceContext ctx, String taskName, String resourceUrn, long timestamp) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessUpdateResourceLastUpdateTask(ctx, taskName, resourceUrn, timestamp);
+        LifeCycleStatisticalResource resource = resolveLifeCycleStatisticalResource(resourceUrn);
+        resourceCacheInvalidationService.updateResourceLastUpdate(ctx, resource, timestamp);
+        markTaskAsFinished(ctx, taskName);
+    }
+
+    private LifeCycleStatisticalResource resolveLifeCycleStatisticalResource(String resourceUrn) throws MetamacException {
+        try {
+            return lifeCycleStatisticalResourceRepository.retrieveByUrn(resourceUrn);
+        } catch (MetamacException e) {
+            throw new MetamacException(e, ServiceExceptionType.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED, resourceUrn);
+        }
     }
 
     @Override
@@ -1688,6 +1722,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             String datasetVersionUrn = extractDatasetVersionUrnFromImportationAttributesJobKey(jobKey);
             TaskInfoDataset recoveryTaskInfo = setDatasetDataToPlanifyRecovery(ctx, task, datasetVersionUrn);
             planifyRecoveryImportAttributes(ctx, recoveryTaskInfo, Boolean.TRUE);
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
+            String resourceUrn = extractUrnFromUpdateResourceLastUpdateJobKey(jobKey);
+            markTaskAsFinished(ctx, jobKey);
+            planifyRecoveryUpdateResourceLastUpdate(ctx, resourceUrn);
+        } else if (jobKey.startsWith(PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE)) {
+            String resourceUrn = extractUrnFromRecoveryUpdateResourceLastUpdateJobKey(jobKey);
+            markTaskAsFinished(ctx, jobKey);
+            sendUpdateResourceLastUpdateNoMoreRetriesNotification(ctx, resourceUrn);
         }
     }
 
@@ -1810,6 +1852,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } else if (jobKey.startsWith(PREFIX_JOB_IMPORT_ATTRIBUTES)) {
             TaskInfoDataset recoveryTaskInfo = setTaskInfoToPlanifyRecovery(ctx, datasetVersionId, datasetUrn, task);
             planifyRecoveryImportAttributes(ctx, recoveryTaskInfo, Boolean.FALSE);
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
+            markTaskAsFinished(ctx, jobKey);
+            planifyRecoveryUpdateResourceLastUpdate(ctx, datasetVersionId);
+        } else if (jobKey.startsWith(PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE)) {
+            markTaskAsFinished(ctx, jobKey);
+            sendUpdateResourceLastUpdateNoMoreRetriesNotification(ctx, datasetVersionId);
         }
     }
 
@@ -1916,6 +1964,67 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private TriggerKey createTriggerKeyForUpdateExternalGeocoverageCache(String resourceType) {
         return new TriggerKey(createJobNameForUpdateExternalGeocoverageCache(resourceType), GROUP_EXTERNAL_CACHE);
+    }
+
+    private String extractUrnFromUpdateResourceLastUpdateJobKey(String jobKeyName) {
+        return extractResourceVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE);
+    }
+
+    private String extractUrnFromRecoveryUpdateResourceLastUpdateJobKey(String jobKeyName) {
+        return extractResourceVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE);
+    }
+
+    private void planifyRecoveryUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn) throws MetamacException {
+        scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, System.currentTimeMillis(), Boolean.TRUE, PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE);
+    }
+
+    private void scheduleUpdateResourceLastUpdateJob(ServiceContext ctx, String resourceUrn, long timestamp, boolean sendNotification, String jobPrefix) throws MetamacException {
+        String taskName = jobPrefix + resourceUrn;
+        JobKey jobKey = new JobKey(taskName);
+        TriggerKey triggerKey = new TriggerKey(taskName);
+
+        try {
+            checkSameJobNotExists(jobKey);
+
+            // @formatter:off
+            JobDetail job = newJob(UpdateResourceLastUpdateJob.class)
+                    .withIdentity(jobKey)
+                    .usingJobData(UpdateResourceLastUpdateJob.RESOURCE_URN, resourceUrn)
+                    .usingJobData(UpdateResourceLastUpdateJob.TIMESTAMP, timestamp)
+                    .usingJobData(UpdateResourceLastUpdateJob.USER, ctx.getUserId())
+                    .usingJobData(UpdateResourceLastUpdateJob.TASK_NAME, taskName)
+                    .usingJobData(UpdateResourceLastUpdateJob.SEND_NOTIFICATION, sendNotification)
+                    .requestRecovery()
+                    .build();
+            // @formatter:on
+
+            Task task = new Task(taskName);
+            task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
+            task.setExtensionPoint(resourceUrn);
+            createTask(ctx, task);
+
+            int defaultQuartzTriggerDelay = PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE.equals(jobPrefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 3600;
+            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(defaultQuartzTriggerDelay, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+
+            try {
+                Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+                sched.scheduleJob(job, trigger);
+                logger.debug("UpdateResourceLastUpdateJob: the job with key {} was planified to be executed at {}", jobKey.getName(), new DateTime(trigger.getStartTime()));
+            } catch (SchedulerException e) {
+                logger.error("UpdateResourceLastUpdateJob: the job with key {} has failed to schedule", jobKey.getName(), e);
+            }
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
+        }
+    }
+
+    private void sendUpdateResourceLastUpdateNoMoreRetriesNotification(ServiceContext ctx, String resourceUrn) {
+        MetamacException noMoreRetriesException = MetamacExceptionBuilder.builder()
+                .withExceptionItems(ServiceExceptionType.UPDATE_RESOURCE_LAST_UPDATE_JOB_NO_MORE_RETRIES)
+                .withMessageParameters(resourceUrn)
+                .build();
+        getNoticesRestInternalService().createErrorBackgroundNotification(ctx.getUserId(), ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_NO_MORE_RETRIES, noMoreRetriesException);
     }
 
     private String extractDatasetVersionUrnFromImportationDatasetJobKey(String jobKeyName) {
@@ -2100,23 +2209,32 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     @Override
     public void processDatabaseDatasetPollingTask(ServiceContext ctx) throws MetamacException {
-        taskServiceInvocationValidator.checkProcessDatabaseDatasetPollingTask(ctx);
+        try {
+            taskServiceInvocationValidator.checkProcessDatabaseDatasetPollingTask(ctx);
 
-        DateTime executionDate = new DateTime();
+            if (configurationService.retriveDatabaseDatasetImportJobIsEnabled()) {
 
-        List<DatasetVersion> datasetsVersions = retrieveDatabaseDatasets(ctx);
+                DateTime executionDate = new DateTime();
 
-        if (!CollectionUtils.isEmpty(datasetsVersions)) {
-            for (DatasetVersion datasetVersion : datasetsVersions) {
-                if (!CollectionUtils.isEmpty(datasetVersion.getDatasources())) {
-                    updateDataFromDatasources(ctx, executionDate, datasetVersion);
+                List<DatasetVersion> datasetsVersions = retrieveDatabaseDatasets(ctx);
+
+                if (!CollectionUtils.isEmpty(datasetsVersions)) {
+                    for (DatasetVersion datasetVersion : datasetsVersions) {
+                        if (!CollectionUtils.isEmpty(datasetVersion.getDatasources())) {
+                            updateDataFromDatasources(ctx, executionDate, datasetVersion);
+                        } else {
+                            logger.debug("There are no datasources configured yet for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                        }
+                    }
                 } else {
-                    logger.debug("There are no datasources configured yet for dataset {}", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                    logger.debug("There are no database datasets configured yet");
                 }
+            } else {
+                logger.warn("Database dataset polling job is disabled. Check " + StatisticalResourcesConfigurationConstants.DATABASE_DATASET_IMPORT_ENABLED
+                        + " property value in environment.xml file in case you want to enable it");
             }
-
-        } else {
-            logger.debug("There are no database datasets configured yet");
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred processing database dataset polling task", e);
         }
     }
 
@@ -2164,6 +2282,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
     
     private void updateDataFromDatasources(ServiceContext ctx, DateTime executionDate, DatasetVersion datasetVersion) {
+
         String datasetVersionUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
 
         for (Datasource datasource : datasetVersion.getDatasources()) {

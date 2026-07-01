@@ -77,7 +77,7 @@ public class UpdateMultidatasetVersionsProcStatusActionHandler extends UpdateRes
                         break;
                 }
 
-                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(multidatasetVersionDto, StatisticalResourceTypeEnum.COLLECTION, lifeCycleAction)
+                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(multidatasetVersionDto, lifeCycleAction)
                         .updatedResource(updatedMultidatasetVersionBaseDto).reasonOfRejection(action.getReasonOfRejection()).build();
                 notificationsToSend.add(notification);
 

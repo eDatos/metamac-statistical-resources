@@ -40,8 +40,6 @@ public class BaseVersioningCopyUtils extends CommonVersioningCopyUtils {
         target.setKeywords(copyInternationalString(source.getKeywords()));
 
         // Class descriptor
-        target.setType(source.getType());
-
         target.setCommonMetadata(copyExternalItem(source.getCommonMetadata()));
         
         // Production descriptors
@@ -98,6 +96,7 @@ public class BaseVersioningCopyUtils extends CommonVersioningCopyUtils {
         
         copyNameableStatisticalResource(source, target);
         target.setNextVersion(source.getNextVersion());
+        target.setPatch(source.getPatch());
         
         return target;
     }
@@ -129,6 +128,7 @@ public class BaseVersioningCopyUtils extends CommonVersioningCopyUtils {
         }
         
         target.setCode(source.getCode());
+        target.setType(source.getType());
 
         copyStatisticalResource(source, target);
         

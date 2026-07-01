@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
+import org.siemac.metamac.core.common.exception.CommonServiceExceptionType;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
@@ -22,12 +23,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 @Repository(DatabaseImportRepository.BEAN_ID)
+@Lazy
 public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
 
     private static Logger logger = LoggerFactory.getLogger(DatabaseImportRepositoryImpl.class);
@@ -35,6 +39,7 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
     private JdbcTemplate  jdbcTemplate;
 
     @Autowired
+    @Lazy
     @Qualifier("dataSourceDatabaseImportRepository")
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -47,48 +52,63 @@ public class DatabaseImportRepositoryImpl implements DatabaseImportRepository {
         String sqlQuery = buildQuery(tableName, columnsName, filterColumnName, filterValue);
         logger.debug(sqlQuery);
 
-        return jdbcTemplate.query(sqlQuery, new ObservationMapper(columnsName));
+        try {
+            return jdbcTemplate.query(sqlQuery, new ObservationMapper(columnsName));
+        } catch (DataAccessException e) {
+            logger.error("Error accessing database for table: {}", tableName, e);
+            MetamacException exception = new MetamacException();
+            exception.setPrincipalException(new MetamacExceptionItem(ServiceExceptionType.DB_IMPORT_DATASET_JOB_ERROR));
+            throw exception;
+        }
     }
 
     @Override
-    public boolean checkTableExists(String tableName) {
-        return StringUtils.isNotBlank(tableName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
+    public boolean checkTableExists(final String tableName) throws MetamacException {
+        try {
+            return StringUtils.isNotBlank(tableName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
 
-            @Override
-            public Boolean doInConnection(Connection con) throws SQLException {
-                boolean found = Boolean.FALSE;
+                @Override
+                public Boolean doInConnection(Connection con) throws SQLException {
+                    boolean found = Boolean.FALSE;
 
-                DatabaseMetaData databaseMetaData = con.getMetaData();
+                    DatabaseMetaData databaseMetaData = con.getMetaData();
 
-                ResultSet resultSet = databaseMetaData.getTables(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), null);
+                    ResultSet resultSet = databaseMetaData.getTables(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), null);
 
-                while (resultSet.next() && !found) {
-                    found = StringUtils.equalsIgnoreCase(resultSet.getString("TABLE_NAME"), tableName);
+                    while (resultSet.next() && !found) {
+                        found = StringUtils.equalsIgnoreCase(resultSet.getString("TABLE_NAME"), tableName);
+                    }
+                    return found;
                 }
-                return found;
-            }
-        });
+            });
+        } catch (Exception e) {
+            throw new MetamacException(e, CommonServiceExceptionType.UNKNOWN, "Error checking if table exists");
+        }
     }
 
     @Override
-    public boolean checkTableHasColumn(String tableName, String columnName) {
-        return StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(columnName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
+    public boolean checkTableHasColumn(final String tableName, final String columnName) throws MetamacException {
+        try {
+            return StringUtils.isNotBlank(tableName) && StringUtils.isNotBlank(columnName) && jdbcTemplate.execute(new ConnectionCallback<Boolean>() {
 
-            @Override
-            public Boolean doInConnection(Connection con) throws SQLException {
-                boolean found = Boolean.FALSE;
+                @Override
+                public Boolean doInConnection(Connection con) throws SQLException {
+                    boolean found = Boolean.FALSE;
 
-                DatabaseMetaData databaseMetaData = con.getMetaData();
+                    DatabaseMetaData databaseMetaData = con.getMetaData();
 
-                ResultSet resultSet = databaseMetaData.getColumns(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), getNonCaseSensitiveIdentifier(databaseMetaData, columnName));
+                    ResultSet resultSet = databaseMetaData.getColumns(null, null, getNonCaseSensitiveIdentifier(databaseMetaData, tableName), getNonCaseSensitiveIdentifier(databaseMetaData, columnName));
 
-                while (resultSet.next() && !found) {
-                    found = StringUtils.equalsIgnoreCase(resultSet.getString("COLUMN_NAME"), columnName);
+                    while (resultSet.next() && !found) {
+                        found = StringUtils.equalsIgnoreCase(resultSet.getString("COLUMN_NAME"), columnName);
+                    }
+
+                    return found;
                 }
-
-                return found;
-            }
-        });
+            });
+        } catch (DataAccessException e) {
+            throw new MetamacException(e, CommonServiceExceptionType.UNKNOWN, "Error checking if table has column");
+        }
     }
 
     private void checkGetObservations(String tableName, List<String> columnsName, String filterColumnName, DateTime filterValue) throws MetamacException {

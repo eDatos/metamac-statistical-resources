@@ -33,4 +33,6 @@ public class ServiceNoticeAction {
     // GEOGRAPHICAL CACHE
     public static final String UPDATE_GEOGRAPHICAL_RELATED_CACHE_JOB                          = "notice_message.resources.action.update_geographical_related_cache_job";
 
+    public static final String UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED                     = "notice_message.resources.cache.update_last_update_resource.error";
+    public static final String UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_NO_MORE_RETRIES           = "notice_message.resources.cache.update_last_update_resource.no_more_retries";
 }

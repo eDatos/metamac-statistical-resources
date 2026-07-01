@@ -32,7 +32,8 @@ public class LifecycleStatisticalResourceDo2AvroMapper {
                     .setPublicationDate(DateTimeDo2AvroMapper.do2Avro(source.getPublicationDate())).setPublicationUser(source.getPublicationUser()).setLastVersion(source.getLastVersion())
                     .setProcStatus(ProcStatusEnumDo2AvroMapper.do2Avro(source.getProcStatus())).setReplacesVersion(RelatedResourceDo2AvroMapper.do2Avro(source.getReplacesVersion()))
                     .setIsReplacedByVersion(RelatedResourceDo2AvroMapper.do2Avro(source.getIsReplacedByVersion()))
-                    .setMaintainer(ExternalItemDo2AvroMapper.do2Avro(source.getMaintainer(), srmApiExternalEndpoint)).build();
+                    .setMaintainer(ExternalItemDo2AvroMapper.do2Avro(source.getMaintainer(), srmApiExternalEndpoint))
+                    .build();
         }
         return target;
     }

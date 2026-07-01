@@ -1,12 +1,25 @@
-{
-    "namespace": "org.siemac.metamac.statistical.resources.core.stream.messages",
-     "type": "record",
-     "name": "IdentifiableStatisticalResourceAvro",
-     "fields" : [
-         {"name" : "code" , "type" : ["null", "string"]},
-         {"name" : "urn" , "type" : ["null", "string"]},
-         {"name" : "statisticalOperation", "type" : ["null", "ExternalItemAvro"]}
-     ]
+[
+    {
+        "namespace": "org.siemac.metamac.statistical.resources.core.stream.messages",
+        "name": "StatisticalResourceTypeEnumAvro",
+        "type": "enum",
+        "symbols": [
+            "DATASET",
+            "COLLECTION",
+            "QUERY",
+            "MULTIDATASET",
+            "URL"
+        ]
+    },
+    {
+        "namespace": "org.siemac.metamac.statistical.resources.core.stream.messages",
+        "type": "record",
+        "name": "IdentifiableStatisticalResourceAvro",
+        "fields" : [
+            {"name" : "code" , "type" : ["null", "string"]},
+            {"name" : "urn" , "type" : ["null", "string"]},
+            {"name" : "type" , "type" : ["null", "StatisticalResourceTypeEnumAvro"]},
+            {"name" : "statisticalOperation", "type" : ["null", "ExternalItemAvro"]}
+        ]
  }
- 
- 
+]

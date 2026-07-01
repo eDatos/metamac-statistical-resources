@@ -77,7 +77,7 @@ public class DatabaseImportRepositoryTest extends StatisticalResourcesBaseTest {
     }
 
     @Test
-    public void testCheckTableExists() {
+    public void testCheckTableExists() throws MetamacException {
         assertTableExists(TABLE_NAME_FOR_TESTING);
         assertTableExists(TABLE_NAME_FOR_TESTING.toLowerCase());
         assertTableExists(TABLE_NAME_FOR_TESTING.toUpperCase());
@@ -92,7 +92,7 @@ public class DatabaseImportRepositoryTest extends StatisticalResourcesBaseTest {
     }
 
     @Test
-    public void testCheckTableHasColumns() {
+    public void testCheckTableHasColumns() throws MetamacException {
         assertTableHasColumn(TABLE_NAME_FOR_TESTING, COLUMN_NAME_FOR_TESTING);
         assertTableHasColumn(TABLE_NAME_FOR_TESTING, COLUMN_NAME_FOR_TESTING.toLowerCase());
         assertTableHasColumn(TABLE_NAME_FOR_TESTING, COLUMN_NAME_FOR_TESTING.toUpperCase());
@@ -212,19 +212,19 @@ public class DatabaseImportRepositoryTest extends StatisticalResourcesBaseTest {
         databaseImportRepository.getObservations(TABLE_NAME_WITH_DATA, COLUMN_LIST, "", new DateTime());
     }
 
-    private void assertTableExists(String tableName) {
+    private void assertTableExists(String tableName) throws MetamacException {
         assertTrue(databaseImportRepository.checkTableExists(tableName));
     }
 
-    private void assertTableNotExists(String tableName) {
+    private void assertTableNotExists(String tableName) throws MetamacException {
         assertFalse(databaseImportRepository.checkTableExists(tableName));
     }
 
-    private void assertTableHasColumn(String tableName, String columnName) {
+    private void assertTableHasColumn(String tableName, String columnName) throws MetamacException {
         assertTrue(databaseImportRepository.checkTableHasColumn(tableName, columnName));
     }
 
-    private void assertTableHasNotColumn(String tableName, String columnName) {
+    private void assertTableHasNotColumn(String tableName, String columnName) throws MetamacException {
         assertFalse(databaseImportRepository.checkTableHasColumn(tableName, columnName));
     }
 

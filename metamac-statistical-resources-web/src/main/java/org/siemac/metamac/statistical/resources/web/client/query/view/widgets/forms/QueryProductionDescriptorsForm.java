@@ -75,7 +75,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
     public void setQueryDto(QueryVersionDto queryDto) {
         List<FormItem> fields = createElements();
 
-        boolean isLatestData = QueryTypeEnum.LATEST_DATA.equals(queryDto.getType());
+        boolean isLatestData = QueryTypeEnum.LATEST_DATA.equals(queryDto.getQueryType());
 
         if (queryDto.getSelection() != null) {
 

@@ -1,8 +1,16 @@
 package org.siemac.metamac.statistical.resources.core.base.repositoryimpl;
 
-import javax.persistence.Query;
-
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceProperties;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.Query;
+import java.util.List;
+
+import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
 /**
  * Repository implementation for LifeCycleStatisticalResource
@@ -11,6 +19,25 @@ import org.springframework.stereotype.Repository;
 public class LifeCycleStatisticalResourceRepositoryImpl extends LifeCycleStatisticalResourceRepositoryBase {
     private static final String LINE_BREAK = "\r\n";
     public LifeCycleStatisticalResourceRepositoryImpl() {
+    }
+
+    @Override
+    public LifeCycleStatisticalResource retrieveByUrn(String urn) throws MetamacException {
+        // Prepare criteria
+        List<ConditionalCriteria> condition = criteriaFor(LifeCycleStatisticalResource.class).withProperty(LifeCycleStatisticalResourceProperties.urn()).eq(urn).distinctRoot().build();
+
+        // Find
+        List<LifeCycleStatisticalResource> result = findByCondition(condition);
+
+        // Check for unique result and return
+        if (result.isEmpty()) {
+            throw new MetamacException(ServiceExceptionType.IDENTIFIABLE_STATISTICAL_RESOURCE_NOT_FOUND, urn);
+        } else if (result.size() > 1) {
+            // Exists a database constraint that makes URN unique
+            throw new MetamacException(ServiceExceptionType.UNKNOWN, "More than one lifecycle resource with urn " + urn);
+        }
+
+        return result.get(0);
     }
 
     @Override

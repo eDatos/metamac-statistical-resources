@@ -54,8 +54,6 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
         target.setAbstractLogic(internationalStringDoToDto(source.getAbstractLogic()));
         target.setKeywords(internationalStringDoToDto(source.getKeywords()));
 
-        target.setType(source.getType());
-
         target.setCreator(externalItemDoToDto(source.getCreator()));
         target.getContributor().clear();
         target.getContributor().addAll(externalItemDoCollectionToDtoCollection(source.getContributor()));
@@ -200,6 +198,7 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
 
         target.setCode(source.getCode());
         target.setUrn(source.getUrn());
+        target.setType(source.getType());
     }
 
     @Override

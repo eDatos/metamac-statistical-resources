@@ -18,8 +18,8 @@
         {"name" : "statisticOfficiality", "type" : ["null", "StatisticOfficialityAvro"]},
         {"name" : "bibliographicCitation", "type" : ["null", "InternationalStringAvro"]},
         {"name" : "dimensionsCoverage", "type" : ["null", {"type" : "array", "items" : "CodeDimensionAvro"}]},
-        {"name" : "attributesCoverage", "type" : ["null", {"type" : "array", "items" : "AttributeValueAvro"}]}, 
-        {"name" : "categorisations", "type" : ["null", {"type" : "array", "items" : "CategorisationAvro"}]}, 
+        {"name" : "attributesCoverage", "type" : ["null", {"type" : "array", "items" : "AttributeValueAvro"}]},
+        {"name" : "categorisations", "type" : ["null", {"type" : "array", "items" : "CategorisationAvro"}]},
         {"name" : "geographicCoverage", "type" : ["null", {"type": "array", "items" : "ExternalItemAvro"}]},
         {"name" : "temporalCoverage", "type" : ["null", {"type": "array", "items" : "TemporalCodeAvro"}]},
         {"name" : "measureCoverage", "type" : ["null", {"type": "array", "items" : "ExternalItemAvro"}]},
@@ -28,6 +28,5 @@
         {"name" : "statisticalUnit", "type" : ["null", {"type": "array", "items" : "ExternalItemAvro"}]},
         {"name" : "isPartOf", "type" : ["null", {"type" : "array", "items": "RelatedResourceAvro"}]},
         {"name" : "visualizerHtmlLink", "type" : ["null", "string"]}
-        
     ]
 }

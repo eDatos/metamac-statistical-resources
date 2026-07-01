@@ -3,6 +3,8 @@ package org.siemac.metamac.statistical.resources.core.dataset.domain;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
+import org.joda.time.DateTime;
+import org.siemac.metamac.rest.common.domain.CacheableResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 
@@ -15,7 +17,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatis
  */
 @Entity
 @Table(name = "TB_DATASETS_VERSIONS")
-public class DatasetVersion extends DatasetVersionBase implements HasSiemacMetadata {
+public class DatasetVersion extends DatasetVersionBase implements HasSiemacMetadata, CacheableResource {
     private static final long serialVersionUID = 1L;
     
     public DatasetVersion() {
@@ -25,5 +27,8 @@ public class DatasetVersion extends DatasetVersionBase implements HasSiemacMetad
     public LifeCycleStatisticalResource getLifeCycleStatisticalResource() {
         return getSiemacMetadataStatisticalResource();
     }
-    
+
+    public DateTime getLastModifiedDate() {
+        return getLifeCycleStatisticalResource().getLastUpdated();
+    }
 }

@@ -19,6 +19,8 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.GeoCacheResourceMockFactory.GEO_COV_VAR_ELEMENT_CACHE_10_BY_RELATED_RESOURCE_QUERY;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_105_LAST_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_106_PREVIOUS_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_17_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_17_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.PublicationVersionMockFactory.PUBLICATION_VERSION_18_C1_WITH_STRUCTURE_FOR_PUBLICATION_VERSION_04_AND_LAST_VERSION_NAME;
@@ -122,10 +124,10 @@ public class PublicationMockFactory extends StatisticalResourcesMockFactory<Publ
         PublicationMock publication = createPublicationToAddVersions(1);
 
         PublicationVersion version01 = createPublicationVersionPublishedPreviousVersion(publication, INIT_VERSION, new DateTime().minusDays(2), null);
-        registerPublicationVersionMock(PUBLICATION_VERSION_03_FOR_PUBLICATION_03_NAME, version01);
+        registerPublicationVersionMock(PUBLICATION_VERSION_106_PREVIOUS_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS, version01);
 
         PublicationVersion version02 = createPublicationVersionLastVersionInStatus(publication, SECOND_VERSION, ProcStatusEnum.PUBLISHED);
-        registerPublicationVersionMock(PUBLICATION_VERSION_04_FOR_PUBLICATION_03_AND_LAST_VERSION_NAME, version02);
+        registerPublicationVersionMock(PUBLICATION_VERSION_105_LAST_VERSION_PUBLISHED_WITH_TWO_PUBLISHED_VERSIONS, version02);
 
         // Relations
         version02.getSiemacMetadataStatisticalResource().setReplacesVersion(StatisticalResourcesPersistedDoMocks.mockPublicationVersionRelated(version01));

@@ -11,7 +11,7 @@
             "PUBLISHED"
          ]
      }
-, 
+,
  {
     "namespace": "org.siemac.metamac.statistical.resources.core.stream.messages",
      "type": "record",

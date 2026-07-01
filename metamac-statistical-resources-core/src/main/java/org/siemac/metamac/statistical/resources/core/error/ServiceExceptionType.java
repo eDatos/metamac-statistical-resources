@@ -478,4 +478,15 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
     public static final CommonServiceExceptionType GEO_CACHE_RESOURCE_NOT_FOUND                                                                        = create(
             "exception.resources.geo_cache_resource.resource_not_found");
 
+    // Update of resource last update cache process
+    public static final CommonServiceExceptionType UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED                                                 = create(
+            "exception.resources.cache.update_last_update_resource.error");
+
+    // Update resource last update job
+    public static final CommonServiceExceptionType UPDATE_RESOURCE_LAST_UPDATE_JOB_ERROR                                                       = create(
+            "exception.resources.cache.update_last_update_resource.job_error");
+    public static final CommonServiceExceptionType UPDATE_RESOURCE_LAST_UPDATE_JOB_ERROR_AND_CANT_MARK_AS_ERROR                                = create(
+            "exception.resources.cache.update_last_update_resource.job_error_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType UPDATE_RESOURCE_LAST_UPDATE_JOB_NO_MORE_RETRIES                                           = create(
+            "exception.resources.cache.update_last_update_resource.job_no_more_retries");
 }

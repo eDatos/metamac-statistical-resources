@@ -288,7 +288,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         }
         target.setRelatedDataset(relatedDataset);
         target.setStatus(toQueryStatus(source.getStatus()));
-        target.setType(toQueryType(source.getType()));
+        target.setType(toQueryType(source.getQueryType()));
         target.setLatestDataNumber(source.getLatestDataNumber());
         target.setStatisticalOperation(
                 commonDo2RestMapper.toResourceExternalItemStatisticalOperations(source.getLifeCycleStatisticalResource().getStatisticalOperation(), selectedLanguages, externalRestObjectsMapper));

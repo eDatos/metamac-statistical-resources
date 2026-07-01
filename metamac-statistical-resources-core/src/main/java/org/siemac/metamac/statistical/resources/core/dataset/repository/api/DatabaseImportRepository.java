@@ -9,8 +9,8 @@ public interface DatabaseImportRepository {
 
     public static final String BEAN_ID = "databaseImportRepository";
 
-    public boolean checkTableExists(String tableName);
-    public boolean checkTableHasColumn(String tableName, String columnName);
+    public boolean checkTableExists(String tableName) throws MetamacException;
+    public boolean checkTableHasColumn(String tableName, String columnName) throws MetamacException;
 
     public List<String[]> getObservations(String tableName, List<String> columnsName, String filterColumnName, DateTime filterValue) throws MetamacException;
 

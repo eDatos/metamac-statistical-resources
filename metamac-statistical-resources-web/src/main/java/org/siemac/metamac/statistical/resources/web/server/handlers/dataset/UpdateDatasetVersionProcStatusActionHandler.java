@@ -67,7 +67,7 @@ public class UpdateDatasetVersionProcStatusActionHandler extends UpdateResourceP
             }
 
             try {
-                ResourceNotificationDto notificationDto = new ResourceNotificationDto.Builder(action.getDatasetVersionToUpdateProcStatus(), StatisticalResourceTypeEnum.DATASET, lifeCycleAction)
+                ResourceNotificationDto notificationDto = new ResourceNotificationDto.Builder(action.getDatasetVersionToUpdateProcStatus(), lifeCycleAction)
                         .updatedResource(datasetVersionDto).reasonOfRejection(action.getReasonOfRejection()).build();
                 noticesRestInternalFacade.createLifeCycleNotification(ServiceContextHolder.getCurrentServiceContext(), notificationDto);
             } catch (MetamacWebException e) {

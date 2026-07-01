@@ -67,13 +67,13 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
     public static QueryVersionDto mockQueryVersionDto(DatasetVersion datasetVersion) {
         QueryVersionDto queryVersionDto = new QueryVersionDto();
 
-        mockLifeCycleStatisticalResourceDto(queryVersionDto);
+        mockLifeCycleStatisticalResourceDto(queryVersionDto, StatisticalResourceTypeEnum.QUERY);
 
         // code is not setting in nameable becasuse some resources have generated code
         queryVersionDto.setCode(mockString(8));
 
         queryVersionDto.setRelatedDatasetVersion(mockPersistedRelatedResourceDatasetVersionDto(datasetVersion));
-        queryVersionDto.setType(QueryTypeEnum.FIXED);
+        queryVersionDto.setQueryType(QueryTypeEnum.FIXED);
 
         Map<String, List<CodeItemDto>> selection = new HashMap<String, List<CodeItemDto>>();
         selection.put("SEX", Arrays.asList(mockCodeItemDto("FEMALE", "Female")));
@@ -129,7 +129,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
     public static DatasourceDto mockDatasourceDto() {
         DatasourceDto datasourceDto = new DatasourceDto();
 
-        mockIdentifiableStatisticalResourceDto(datasourceDto);
+        mockIdentifiableStatisticalResourceDto(datasourceDto, null);
 
         datasourceDto.setCode(mockString(8));
         datasourceDto.setDatasetVersionUrn(URN_RELATED_RESOURCE_MOCK);
@@ -140,7 +140,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
     public static DatasourceDto mockDatasourceDto(String code, DatasetVersionDto datasetVersionDto) {
         DatasourceDto datasourceDto = new DatasourceDto();
 
-        mockIdentifiableStatisticalResourceDto(datasourceDto);
+        mockIdentifiableStatisticalResourceDto(datasourceDto, null);
 
         datasourceDto.setCode(code);
         datasourceDto.setDatasetVersionUrn(datasetVersionDto.getUrn());
@@ -294,7 +294,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         chapterDto.setOrderInLevel(Long.valueOf(2));
         chapterDto.setParentChapterUrn(parentChapterUrn);
 
-        mockNameableStatisticalResorceDto(chapterDto);
+        mockNameableStatisticalResorceDto(chapterDto, null);
 
         return chapterDto;
     }
@@ -328,7 +328,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         cubeDto.setOrderInLevel(Long.valueOf(2));
         cubeDto.setParentChapterUrn(parentChapterUrn);
 
-        mockNameableStatisticalResorceDto(cubeDto);
+        mockNameableStatisticalResorceDto(cubeDto, null);
 
         return cubeDto;
     }
@@ -365,7 +365,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         multidatasetCubeDto.setQueryUrn(queryUrn);
         multidatasetCubeDto.setOrderInMultidataset(Long.valueOf(2));
 
-        mockNameableStatisticalResorceDto(multidatasetCubeDto);
+        mockNameableStatisticalResorceDto(multidatasetCubeDto, null);
 
         return multidatasetCubeDto;
     }
@@ -390,7 +390,6 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         siemacMetadataStatisticalResourceDto.setTitleAlternative(mockInternationalStringDto());
         siemacMetadataStatisticalResourceDto.setAbstractLogic(mockInternationalStringDto());
         siemacMetadataStatisticalResourceDto.setKeywords(mockInternationalStringDto());
-        siemacMetadataStatisticalResourceDto.setType(type);
 
         siemacMetadataStatisticalResourceDto.setCreator(mockOrganizationUnitExternalItemDto());
         siemacMetadataStatisticalResourceDto.addDataProvider(mockDataProviderExternalItemDto());
@@ -413,10 +412,10 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
         siemacMetadataStatisticalResourceDto.setCopyrightedDate(mockDate().getYear());
         siemacMetadataStatisticalResourceDto.setAccessRights(mockInternationalStringDto());
 
-        mockLifeCycleStatisticalResourceDto(siemacMetadataStatisticalResourceDto);
+        mockLifeCycleStatisticalResourceDto(siemacMetadataStatisticalResourceDto, type);
     }
 
-    private static void mockLifeCycleStatisticalResourceDto(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto) {
+    private static void mockLifeCycleStatisticalResourceDto(LifeCycleStatisticalResourceDto lifeCycleStatisticalResourceDto, StatisticalResourceTypeEnum type) {
 
         lifeCycleStatisticalResourceDto.setCreationDate(new DateTime().toDate());
         lifeCycleStatisticalResourceDto.setCreationUser(mockString(10));
@@ -433,10 +432,10 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
 
         // Can not mock replacedByVersion and replacesVersion, we don't know the type of resource
 
-        mockVersionableStatisticalResourceDto(lifeCycleStatisticalResourceDto);
+        mockVersionableStatisticalResourceDto(lifeCycleStatisticalResourceDto, type);
     }
 
-    private static void mockVersionableStatisticalResourceDto(VersionableStatisticalResourceDto versionableStatisticalResourceDto) {
+    private static void mockVersionableStatisticalResourceDto(VersionableStatisticalResourceDto versionableStatisticalResourceDto, StatisticalResourceTypeEnum type) {
         versionableStatisticalResourceDto.setVersionLogic(StatisticalResourcesMockFactory.ANOTHER_NOT_INITIAL_VERSION);
         versionableStatisticalResourceDto.setNextVersionDate(CoreCommonUtil.jodaDateTime2IsoDate(new DateTime().toDate()));
         versionableStatisticalResourceDto.setValidFrom(new DateTime().toDate());
@@ -447,17 +446,18 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
 
         versionableStatisticalResourceDto.setNextVersion(NextVersionTypeEnum.NON_SCHEDULED_UPDATE);
 
-        mockNameableStatisticalResorceDto(versionableStatisticalResourceDto);
+        mockNameableStatisticalResorceDto(versionableStatisticalResourceDto, type);
     }
 
-    private static void mockNameableStatisticalResorceDto(NameableStatisticalResourceDto nameableResourceDto) {
+    private static void mockNameableStatisticalResorceDto(NameableStatisticalResourceDto nameableResourceDto, StatisticalResourceTypeEnum type) {
         nameableResourceDto.setTitle(mockInternationalStringDto());
         nameableResourceDto.setDescription(mockInternationalStringDto());
 
-        mockIdentifiableStatisticalResourceDto(nameableResourceDto);
+        mockIdentifiableStatisticalResourceDto(nameableResourceDto, type);
     }
 
-    private static void mockIdentifiableStatisticalResourceDto(IdentifiableStatisticalResourceDto resource) {
+    private static void mockIdentifiableStatisticalResourceDto(IdentifiableStatisticalResourceDto resource, StatisticalResourceTypeEnum type) {
+        resource.setType(type);
         mockStatisticalResourceDto(resource);
     }
 

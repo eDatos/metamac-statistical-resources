@@ -54,6 +54,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemRes
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
+import org.siemac.metamac.statistical.resources.core.base.domain.StatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.base.utils.FillMetadataForCreateResourceUtils;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
@@ -101,7 +102,6 @@ import org.siemac.metamac.statistical.resources.core.export.PlainTextExporter;
 import org.siemac.metamac.statistical.resources.core.geocache.serviceapi.CacheService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.NoticesRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
-import org.siemac.metamac.statistical.resources.core.invocation.service.StatisticalOperationsRestInternalService;
 import org.siemac.metamac.statistical.resources.core.invocation.utils.RestMapper;
 import org.siemac.metamac.statistical.resources.core.io.domain.TemporalAttributeValues;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ImportDatasetFromDatabaseJob;
@@ -161,6 +161,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     private IdentifiableStatisticalResourceRepository identifiableStatisticalResourceRepository;
 
     @Autowired
+    private StatisticalResourceRepository             statisticalResourceRepository;
+
+    @Autowired
     private DatasetServiceInvocationValidator         datasetServiceInvocationValidator;
 
     @Autowired
@@ -168,9 +171,6 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Autowired
     private SrmRestInternalService                    srmRestInternalService;
-
-    @Autowired
-    StatisticalOperationsRestInternalService          statisticalOperationsRestInternalService;
 
     @Autowired
     private QueryVersionRepository                    queryVersionRepository;
@@ -1445,6 +1445,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         String code = siemacStatisticalResourceGeneratedCode.fillGeneratedCodeForCreateCategorisation(categorisation);
         String[] maintainerCodes = new String[]{categorisation.getMaintainer().getCodeNested()};
         categorisation.getVersionableStatisticalResource().setVersionLogic(StatisticalResourcesVersionUtils.INITIAL_VERSION);
+        categorisation.getVersionableStatisticalResource().setPatch(0);
         categorisation.getVersionableStatisticalResource().setCode(code);
         categorisation.getVersionableStatisticalResource().setUrn(GeneratorUrnUtils.generateSdmxCategorisationUrn(maintainerCodes, categorisation.getVersionableStatisticalResource().getCode(),
                 categorisation.getVersionableStatisticalResource().getVersionLogic()));
@@ -1911,7 +1912,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
             private String getAttributeIdentifier(String item, List<ExternalItem> externalItems) {
                 // If there is an external item with the same value for the code attribute as the one passed in the item parameter,
-                // the identifier assigned will be the latter because the title of the attribute will be extracted from the title of the external item.
+                // the identifier assigned will be the latter because the title of the attribute will be getRelatedPublications from the title of the external item.
                 if (CollectionUtils.isNotEmpty(externalItems)) {
                     ExternalItem externalItem = MetamacCollectionUtils.find(externalItems, new ExternalItemEqualsIdentifierPredicate(item));
                     if (externalItem != null && externalItem.getTitle().getLocalisedLabel(locale) != null) {
@@ -2235,7 +2236,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private static void fillMetadataForCreateDatasource(Datasource datasource, DatasetVersion datasetVersion) {
         FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(datasource.getIdentifiableStatisticalResource(),
-                datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation());
+                datasetVersion.getSiemacMetadataStatisticalResource().getStatisticalOperation(), null);
 
         datasource.setDatasetVersion(datasetVersion);
         datasource.getIdentifiableStatisticalResource().setUrn(GeneratorUrnUtils.generateSiemacStatisticalResourceDatasourceUrn(datasource.getIdentifiableStatisticalResource().getCode()));
@@ -2274,7 +2275,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     private void fillMetadataForCreateDataset(ServiceContext ctx, Dataset dataset, ExternalItem statisticalOperation) {
         dataset.setIdentifiableStatisticalResource(new IdentifiableStatisticalResource());
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(dataset.getIdentifiableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(dataset.getIdentifiableStatisticalResource(), statisticalOperation, null);
     }
 
     private void fillMetadataForCreateDatasetVersion(ServiceContext ctx, DatasetVersion datasetVersion, ExternalItem statisticalOperation) {
@@ -2385,7 +2386,7 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         // @formatter:off
 
         PagedResult<DatasetVersion> datasetResult =  datasetVersionRepository.findByCondition(conditions, paging);
-        
+
         if ( datasetResult.getValues() != null && !datasetResult.getValues().isEmpty() && datasetResult.getValues().size() == 1) {
             return datasetResult.getValues().get(0);
         }
@@ -2394,19 +2395,19 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
     @Override
     public void updateDatasetVersionInGroup(ServiceContext ctx, DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException {
-        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);             
-        updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange); 
+        DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetUrnToChange);
+        updateDatasetVersionInGroupInline(ctx, datasetVersion, datasetVersionMetadataToChange);
     }
     
     private void updateDatasetVersionInGroupInline(ServiceContext ctx, DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
         datasetServiceInvocationValidator.checkUpdateDatasetVersion(ctx, datasetVersion);
-        
+
         datasetServiceInvocationValidator.checkUpdateDatasetVersionInGroup(ctx, datasetVersion, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-        
+
         DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
-        updateDatasetVersion(ctx, datasetVersion);   
+        updateDatasetVersion(ctx, datasetVersion);
         updateDatasetVersionCategorisations(ctx, datasetVersion, DatasetVersionUpdateUtils.copyCategorisations(datasetVersionMetadataToChange.getCategorisations()));
-        
+
     }
 
     private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {
@@ -2464,17 +2465,18 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
         try {
             DatasetVersion datasetVersion = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
              datasetRepositoriesServiceFacade.findAttributesInstancesWithDatasetAttachmentLevel(datasetVersionUrn, fileName);
-            
+
             DataStructure dataStructure = srmRestInternalService.retrieveDsdByUrn(datasetVersion.getRelatedDsd().getUrn());
 
             List<String> languages = configurationService.retrieveLanguages();
-  
+
             fileName = manipulateCsvDataService.exportCsvAttributes(dataStructure, datasetVersion,  languages);
- 
+
         } catch (Exception e) {
             throw new MetamacException(e, ServiceExceptionType.ATTRIBUTES_EXPORT_ERROR, e.getMessage());
-        } 
-        
+        }
+
         return fileName;
-    }    
+    }
+
 }

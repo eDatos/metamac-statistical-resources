@@ -128,7 +128,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         target.setStatus(source.getStatus());
 
         // Type
-        target.setType(source.getType());
+        target.setQueryType(source.getQueryType());
 
         // Identity
         target.setId(source.getId());
@@ -157,7 +157,7 @@ public class QueryDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements Query
         target.setStatus(source.getStatus());
 
         // Type
-        target.setType(source.getType());
+        target.setQueryType(source.getQueryType());
 
         // Latest data number
         target.setLatestDataNumber(source.getLatestDataNumber());
