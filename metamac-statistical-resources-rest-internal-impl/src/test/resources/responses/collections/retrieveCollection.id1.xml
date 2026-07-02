@@ -51,6 +51,7 @@
     </cdomain:name>
     <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=XIjXWXl0k8&amp;resourceId=ZX3Danc2ep_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
     <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=QADtfcEcul/datasets/dataset;id=OFX5jlshhU:ZX3Danc2ep_000001(01.000)</ns2:managementAppLink>
+    <ns2:newnessUntilDate>2013-09-02T15:04:05+01:00</ns2:newnessUntilDate>
 </ns2:dataset>
                             </ns2:node>
                         </ns2:nodes>
@@ -110,6 +111,7 @@
                             </cdomain:name>
                             <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=2pu7HjQdeJ&amp;resourceId=SDYfOzGftg_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
                             <ns2:managementAppLink>http://localhost:8080/statistical-resources-internal/#operations/operation;id=XlkJiS0dNJ/datasets/dataset;id=H63GQPAqSf:SDYfOzGftg_000001(01.000)</ns2:managementAppLink>
+                            <ns2:newnessUntilDate>2013-09-02T15:04:05+01:00</ns2:newnessUntilDate>
                         </ns2:dataset>
                     </ns2:node>
                 </ns2:nodes>
