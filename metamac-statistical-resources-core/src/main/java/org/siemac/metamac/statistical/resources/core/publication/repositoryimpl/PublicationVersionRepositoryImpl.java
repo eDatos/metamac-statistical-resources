@@ -215,7 +215,7 @@ public class PublicationVersionRepositoryImpl extends PublicationVersionReposito
 
         List<ConditionalCriteria> conditions = criteriaFor(PublicationVersion.class)
                 .withProperty(containedUrnProperty).eq(resourceRootUrn)
-                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().lastVersion()).eq(Boolean.TRUE)
+                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull()
                 .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
                 .distinctRoot()
                 .build();

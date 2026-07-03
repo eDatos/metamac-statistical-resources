@@ -274,7 +274,7 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
 
         List<ConditionalCriteria> conditions = criteriaFor(MultidatasetVersion.class)
                 .withProperty(containedUrnProperty).eq(resourceRootUrn)
-                .withProperty(MultidatasetVersionProperties.siemacMetadataStatisticalResource().lastVersion()).eq(Boolean.TRUE)
+                .withProperty(MultidatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull()
                 .withProperty(MultidatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
                 .distinctRoot()
                 .build();
