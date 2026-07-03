@@ -610,11 +610,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Security
         QueriesSecurityUtils.canVersionQueryVersion(ctx, queryVersionDto.getStatisticalOperation().getCode());
 
-        // Transform
-        QueryVersion queryVersion = queryDto2DoMapper.queryVersionDtoToDo(queryVersionDto);
-
         // Versioning
-        queryVersion = queryLifecycleService.versioning(ctx, queryVersion.getLifeCycleStatisticalResource().getUrn(), versionType);
+        QueryVersion queryVersion = queryLifecycleService.versioning(ctx, queryVersionDto.getUrn(), versionType);
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
         queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
@@ -1122,11 +1119,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Security
         DatasetsSecurityUtils.canVersionDataset(ctx, datasetVersionDto.getStatisticalOperation().getCode());
 
-        // Transform
-        DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionDto);
-
         // Versioning
-        datasetVersion = datasetLifecycleService.versioning(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), versionType);
+        DatasetVersion datasetVersion = datasetLifecycleService.versioning(ctx, datasetVersionDto.getUrn(), versionType);
 
         // Transform
         return datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersion);
@@ -1894,11 +1888,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Security
         PublicationsSecurityUtils.canVersionPublication(ctx, publicationVersionDto.getStatisticalOperation().getCode());
 
-        // Transform
-        PublicationVersion publicationVersion = publicationDto2DoMapper.publicationVersionDtoToDo(publicationVersionDto);
-
         // Versioning
-        publicationVersion = publicationLifecycleService.versioning(ctx, publicationVersion.getSiemacMetadataStatisticalResource().getUrn(), versionType);
+        PublicationVersion publicationVersion = publicationLifecycleService.versioning(ctx, publicationVersionDto.getUrn(), versionType);
 
         // Transform
         publicationVersionDto = publicationDo2DtoMapper.publicationVersionDoToDto(publicationVersion);
@@ -2547,11 +2538,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Security
         MultidatasetsSecurityUtils.canVersionMultidataset(ctx, multidatasetVersionDto.getStatisticalOperation().getCode());
 
-        // Transform
-        MultidatasetVersion multidatasetVersion = multidatasetDto2DoMapper.multidatasetVersionDtoToDo(multidatasetVersionDto);
-
         // Versioning
-        multidatasetVersion = multidatasetLifecycleService.versioning(ctx, multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn(), versionType);
+        MultidatasetVersion multidatasetVersion = multidatasetLifecycleService.versioning(ctx, multidatasetVersionDto.getUrn(), versionType);
 
         // Transform
         multidatasetVersionDto = multidatasetDo2DtoMapper.multidatasetVersionDoToDto(multidatasetVersion);
