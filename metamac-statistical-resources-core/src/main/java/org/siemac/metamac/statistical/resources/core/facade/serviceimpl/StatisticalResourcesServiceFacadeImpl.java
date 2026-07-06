@@ -27,6 +27,7 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.core.common.util.OptimisticLockingUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
@@ -91,7 +92,9 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalRes
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
@@ -615,6 +618,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Security
         QueriesSecurityUtils.canVersionQueryVersion(ctx, existing.getLifeCycleStatisticalResource().getStatisticalOperation().getCode());
 
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getLifeCycleStatisticalResource().getVersion(), queryVersionDto.getOptimisticLockingVersion());
+
         // Versioning
         QueryVersion queryVersion = queryLifecycleService.versioning(ctx, existing.getLifeCycleStatisticalResource().getUrn(), versionType);
         // Transform
@@ -1125,6 +1131,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         // Security
         DatasetsSecurityUtils.canVersionDataset(ctx, existing.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getSiemacMetadataStatisticalResource().getVersion(), datasetVersionDto.getOptimisticLockingVersion());
 
         // Versioning
         DatasetVersion datasetVersion = datasetLifecycleService.versioning(ctx, existing.getSiemacMetadataStatisticalResource().getUrn(), versionType);
@@ -1901,6 +1910,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Security
         PublicationsSecurityUtils.canVersionPublication(ctx, existing.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
 
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getSiemacMetadataStatisticalResource().getVersion(), publicationVersionDto.getOptimisticLockingVersion());
+
         // Versioning
         PublicationVersion publicationVersion = publicationLifecycleService.versioning(ctx, existing.getSiemacMetadataStatisticalResource().getUrn(), versionType);
 
@@ -2553,6 +2565,12 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Security
         MultidatasetsSecurityUtils.canVersionMultidataset(ctx, existing.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
 
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getSiemacMetadataStatisticalResource().getVersion(), multidatasetVersionDto.getOptimisticLockingVersion());
+
+        // Replaces the mapper check that validated the DTO before applying it to the entity
+        checkMultidatasetVersioningDtoMetadata(multidatasetVersionDto);
+
         // Versioning
         MultidatasetVersion multidatasetVersion = multidatasetLifecycleService.versioning(ctx, existing.getSiemacMetadataStatisticalResource().getUrn(), versionType);
 
@@ -2784,6 +2802,14 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         } catch (PublicationVersionNotFoundException e) {
             throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.PUBLICATION_VERSION_NOT_FOUND).withMessageParameters(urnForError)
                     .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
+    }
+
+    // Preserves the DTO validation previously performed by the mapper before it was bypassed
+    private void checkMultidatasetVersioningDtoMetadata(MultidatasetVersionDto multidatasetVersionDto) throws MetamacException {
+        if (multidatasetVersionDto.getFilteringDimension() == null) {
+            throw new MetamacException(ServiceExceptionType.METADATA_REQUIRED,
+                    ServiceExceptionParametersUtils.addParameter(ServiceExceptionParameters.MULTIDATASET_VERSION, ServiceExceptionSingleParameters.FILTERING_DIMENSION));
         }
     }
 
