@@ -1,20 +1,21 @@
 package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.query;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
+import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
-import org.siemac.metamac.statistical.resources.core.common.serviceapi.TranslationService;
-import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.enume.utils.QueryStatusEnumUtils;
@@ -25,8 +26,8 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.query.
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils.TwitterPostUtils;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
+import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.query.utils.QueryVersioningCopyUtils;
@@ -35,39 +36,25 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
-
 @Service("queryLifecycleService")
 public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVersion> implements QueryLifecycleService {
 
     @Autowired
-    private LifecycleCommonMetadataChecker    lifecycleCommonMetadataChecker;
+    private LifecycleCommonMetadataChecker lifecycleCommonMetadataChecker;
 
     @Autowired
-    private QueryVersionRepository            queryVersionRepository;
+    private QueryVersionRepository         queryVersionRepository;
 
     @Autowired
-    private PublicationVersionRepository      publicationVersionRepository;
+    private QueryService                   queryService;
 
     @Autowired
-    private QueryService                      queryService;
+    private DatasetVersionRepository       datasetVersionRepository;
 
     @Autowired
-    private TranslationService                translationService;
+    private TwitterPostUtils               twitterPostUtils;
 
-    @Autowired
-    private DatasetVersionRepository          datasetVersionRepository;
-
-    @Autowired
-    private StatisticalResourcesConfiguration configurationService;
-
-    @Autowired
-    private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
-
-    @Autowired
-    private TwitterPostUtils                  twitterPostUtils;
-
-    private static Logger                     logger = LoggerFactory.getLogger(QueryLifecycleServiceImpl.class);
+    private static Logger                  logger = LoggerFactory.getLogger(QueryLifecycleServiceImpl.class);
 
     @Override
     protected String getResourceMetadataName() throws MetamacException {
@@ -269,6 +256,42 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
     @Override
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
         // ONLY FOR DATASETS
+    }
+
+    @Override
+    public void reloadTopicStreamMessages(ServiceContext ctx) throws MetamacException {
+
+        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus())
+                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().validTo()).isNull().distinctRoot().build();
+        List<QueryVersion> queries = queryVersionRepository.findByCondition(criteria);
+
+        List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
+        int totalCount = 0;
+        int partialCount = 0;
+        logger.info("reload kafka topic for all published last version queries start at {} affected queries: {} ", new Date(), queries != null ? queries.size() : 0);
+
+        for (QueryVersion queryVersion : queries) {
+            try {
+                streamMessagingServiceFacade.sendReloadVersionPublished(queryVersion);
+                totalCount++;
+                partialCount++;
+                if (partialCount >= 100) {
+                    partialCount = 0;
+                    logger.info("processed queries {} at {}", totalCount, new Date());
+                }
+            } catch (MetamacException e) {
+                totalCount++;
+                partialCount++;
+                logger.info("error sending reload message for query {} ", queryVersion.getLifeCycleStatisticalResource().getUrn());
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_QUERY, queryVersion.getLifeCycleStatisticalResource().getUrn()));
+            }
+        }
+        if (!exceptionsItems.isEmpty()) {
+            MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
+            createStreamMessageResendSentSomeNotifications(exception);
+        }
+
+        logger.info("reload kafka topic for all published last version queries end at {}", new Date());
     }
 
     @Override

@@ -9,4 +9,8 @@ public interface StreamMessagingServiceFacade {
     public void sendNewVersionPublished(HasSiemacMetadata version) throws MetamacException;
 
     public void sendNewVersionPublished(QueryVersion version) throws MetamacException;
+
+    public void sendReloadVersionPublished(HasSiemacMetadata version) throws MetamacException;
+
+    public void sendReloadVersionPublished(QueryVersion version) throws MetamacException;
 }

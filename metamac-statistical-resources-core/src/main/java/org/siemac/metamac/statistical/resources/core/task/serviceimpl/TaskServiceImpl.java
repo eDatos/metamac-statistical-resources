@@ -122,6 +122,9 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateSd
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryGeographicalCacheResourceJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportAttributesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ReloadTopicDatasetJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ReloadTopicPublicationJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ReloadTopicQueryJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
@@ -250,7 +253,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private MultidatasetService               multidatasetService;
 
     @Autowired
-    private LifecycleService<DatasetVersion>  datasetLifecycleService;
+    private LifecycleService<DatasetVersion>      datasetLifecycleService;
+
+    @Autowired
+    private LifecycleService<PublicationVersion>  publicationLifecycleService;
+
+    @Autowired
+    private LifecycleService<QueryVersion>        queryLifecycleService;
 
     @Autowired
     private ResourceCacheInvalidationService resourceCacheInvalidationService;
@@ -2614,6 +2623,75 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling resend all published last version dataset kafka messages job", e);
+        }
+    }
+
+    @Override
+    public void processReloadKafkaTopicDatasetTask(ServiceContext ctx) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessReloadKafkaTopicDatasetTask(ctx);
+        datasetLifecycleService.reloadTopicStreamMessages(ctx);
+    }
+
+    @Override
+    public void processReloadKafkaTopicPublicationTask(ServiceContext ctx) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessReloadKafkaTopicPublicationTask(ctx);
+        publicationLifecycleService.reloadTopicStreamMessages(ctx);
+    }
+
+    @Override
+    public void processReloadKafkaTopicQueryTask(ServiceContext ctx) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessReloadKafkaTopicQueryTask(ctx);
+        queryLifecycleService.reloadTopicStreamMessages(ctx);
+    }
+
+    @Override
+    public void scheduleReloadTopicDatasetJob(ServiceContext ctx) throws MetamacException {
+        try {
+            taskServiceInvocationValidator.checkScheduleReloadTopicDatasetJob(ctx);
+
+            JobDetail job = newJob(ReloadTopicDatasetJob.class).build();
+            SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
+            Scheduler sched = schedulerFactory.getScheduler();
+            sched.scheduleJob(job, trigger);
+
+            logger.info("reload kafka topic for datasets job scheduled at {} ", new Date());
+
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling reload kafka topic for datasets job", e);
+        }
+    }
+
+    @Override
+    public void scheduleReloadTopicPublicationJob(ServiceContext ctx) throws MetamacException {
+        try {
+            taskServiceInvocationValidator.checkScheduleReloadTopicPublicationJob(ctx);
+
+            JobDetail job = newJob(ReloadTopicPublicationJob.class).build();
+            SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
+            Scheduler sched = schedulerFactory.getScheduler();
+            sched.scheduleJob(job, trigger);
+
+            logger.info("reload kafka topic for publications job scheduled at {} ", new Date());
+
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling reload kafka topic for publications job", e);
+        }
+    }
+
+    @Override
+    public void scheduleReloadTopicQueryJob(ServiceContext ctx) throws MetamacException {
+        try {
+            taskServiceInvocationValidator.checkScheduleReloadTopicQueryJob(ctx);
+
+            JobDetail job = newJob(ReloadTopicQueryJob.class).build();
+            SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
+            Scheduler sched = schedulerFactory.getScheduler();
+            sched.scheduleJob(job, trigger);
+
+            logger.info("reload kafka topic for queries job scheduled at {} ", new Date());
+
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling reload kafka topic for queries job", e);
         }
     }
 

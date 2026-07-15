@@ -13,8 +13,12 @@ public class PublicationVersionDo2AvroMapper {
     }
 
     public static PublicationVersionAvro do2Avro(PublicationVersion source) throws MetamacException {
+        return do2Avro(source, false);
+    }
+
+    public static PublicationVersionAvro do2Avro(PublicationVersion source, boolean reload) throws MetamacException {
         PublicationVersionAvro target = PublicationVersionAvro.newBuilder()
-                .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
+                .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource(), reload))
                 .setHasPart(RelatedResourceDo2AvroMapper.do2Avro(source.getHasPart())).setPublication(PublicationDo2AvroMapper.do2Avro(source.getPublication())).build();
         return target;
     }
