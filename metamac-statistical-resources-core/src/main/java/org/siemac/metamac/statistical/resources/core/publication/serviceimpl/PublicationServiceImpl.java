@@ -967,7 +967,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
             mustWaitForRelatedResourcesUpdate = true;
         }
         
-        List<PublicationVersion> lastVersionPublicatedCollections = retrievePublishedLastVersionPublications();
+        List<PublicationVersion> lastVersionPublicatedCollections = retrievePublishedLastVersionPublications(ctx);
         for (PublicationVersion publicationVersion : lastVersionPublicatedCollections) {
         updateGeographicalCacheInJob(ctx, publicationVersion, false, mustWaitForRelatedResourcesUpdate);
         }
@@ -982,7 +982,8 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         return getTaskService().existsGeoCacheTasksByTaskName(ctx, tasksName);
     }
     
-    private List<PublicationVersion> retrievePublishedLastVersionPublications() throws MetamacException {
+    @Override
+    public List<PublicationVersion> retrievePublishedLastVersionPublications(ServiceContext ctx) throws MetamacException {
 
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(PublicationVersion.class).withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus())
                 .eq(ProcStatusEnum.PUBLISHED).and().withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();

@@ -157,4 +157,8 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
     public static void checkFindPurposes(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
+
+    public static void checkRetrievePublishedLastVersionQueries(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
 }

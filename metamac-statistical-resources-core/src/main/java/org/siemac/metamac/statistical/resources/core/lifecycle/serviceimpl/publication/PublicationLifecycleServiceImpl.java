@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
-import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
@@ -17,6 +15,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -24,7 +23,6 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.ElementLevel;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
-import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService;
 import org.siemac.metamac.statistical.resources.core.publication.utils.PublicationVersioningCopyUtils;
@@ -321,10 +319,7 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
     @Override
     public void reloadTopicStreamMessages(ServiceContext ctx) throws MetamacException {
 
-        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(PublicationVersion.class)
-                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).and()
-                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();
-        List<PublicationVersion> publications = publicationVersionRepository.findByCondition(criteria);
+        List<PublicationVersion> publications = publicationService.retrievePublishedLastVersionPublications(ctx);
 
         List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
         int totalCount = 0;
@@ -349,7 +344,7 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
         }
         if (!exceptionsItems.isEmpty()) {
             MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
-            createStreamMessageResendSentSomeNotifications(exception);
+            createStreamMessageResendSentSomeNotifications(exception, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_PUBLICATIONS_MESSAGES);
         }
 
         logger.info("reload kafka topic for all published last version publications end at {}", new Date());

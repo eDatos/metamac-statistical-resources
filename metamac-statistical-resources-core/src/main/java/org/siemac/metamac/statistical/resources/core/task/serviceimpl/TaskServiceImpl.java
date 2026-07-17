@@ -210,6 +210,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
     public static final String                PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE        = "job_update_resource_last_update_";
     public static final String                PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE = "job_recovery_update_resource_last_update_";
+    public static final String                JOB_RELOAD_TOPIC_DATASET                      = "job_reload_topic_dataset";
+    public static final String                JOB_RELOAD_TOPIC_PUBLICATION                  = "job_reload_topic_publication";
+    public static final String                JOB_RELOAD_TOPIC_QUERY                        = "job_reload_topic_query";
     public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
     public static final int                   RECOVERY_JOB_PRIORITY                         = 10;
 
@@ -2649,13 +2652,18 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             taskServiceInvocationValidator.checkScheduleReloadTopicDatasetJob(ctx);
 
-            JobDetail job = newJob(ReloadTopicDatasetJob.class).build();
+            JobKey jobKey = new JobKey(JOB_RELOAD_TOPIC_DATASET);
+            checkSameJobNotExists(jobKey);
+
+            JobDetail job = newJob(ReloadTopicDatasetJob.class).withIdentity(jobKey).build();
             SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
-            Scheduler sched = schedulerFactory.getScheduler();
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
             sched.scheduleJob(job, trigger);
 
             logger.info("reload kafka topic for datasets job scheduled at {} ", new Date());
 
+        } catch (MetamacException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling reload kafka topic for datasets job", e);
         }
@@ -2666,13 +2674,18 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             taskServiceInvocationValidator.checkScheduleReloadTopicPublicationJob(ctx);
 
-            JobDetail job = newJob(ReloadTopicPublicationJob.class).build();
+            JobKey jobKey = new JobKey(JOB_RELOAD_TOPIC_PUBLICATION);
+            checkSameJobNotExists(jobKey);
+
+            JobDetail job = newJob(ReloadTopicPublicationJob.class).withIdentity(jobKey).build();
             SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
-            Scheduler sched = schedulerFactory.getScheduler();
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
             sched.scheduleJob(job, trigger);
 
             logger.info("reload kafka topic for publications job scheduled at {} ", new Date());
 
+        } catch (MetamacException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling reload kafka topic for publications job", e);
         }
@@ -2683,13 +2696,18 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             taskServiceInvocationValidator.checkScheduleReloadTopicQueryJob(ctx);
 
-            JobDetail job = newJob(ReloadTopicQueryJob.class).build();
+            JobKey jobKey = new JobKey(JOB_RELOAD_TOPIC_QUERY);
+            checkSameJobNotExists(jobKey);
+
+            JobDetail job = newJob(ReloadTopicQueryJob.class).withIdentity(jobKey).build();
             SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
-            Scheduler sched = schedulerFactory.getScheduler();
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
             sched.scheduleJob(job, trigger);
 
             logger.info("reload kafka topic for queries job scheduled at {} ", new Date());
 
+        } catch (MetamacException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling reload kafka topic for queries job", e);
         }

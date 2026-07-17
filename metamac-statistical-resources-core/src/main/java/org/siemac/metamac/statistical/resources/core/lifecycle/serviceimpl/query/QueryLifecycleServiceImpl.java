@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
-import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -25,9 +23,9 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMe
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.query.QueryLifecycleService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils.TwitterPostUtils;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
-import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.serviceapi.QueryService;
 import org.siemac.metamac.statistical.resources.core.query.utils.QueryVersioningCopyUtils;
@@ -261,9 +259,7 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
     @Override
     public void reloadTopicStreamMessages(ServiceContext ctx) throws MetamacException {
 
-        List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus())
-                .eq(ProcStatusEnum.PUBLISHED).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().validTo()).isNull().distinctRoot().build();
-        List<QueryVersion> queries = queryVersionRepository.findByCondition(criteria);
+        List<QueryVersion> queries = queryService.retrievePublishedLastVersionQueries(ctx);
 
         List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
         int totalCount = 0;
@@ -288,7 +284,7 @@ public class QueryLifecycleServiceImpl extends LifecycleTemplateService<QueryVer
         }
         if (!exceptionsItems.isEmpty()) {
             MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
-            createStreamMessageResendSentSomeNotifications(exception);
+            createStreamMessageResendSentSomeNotifications(exception, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_QUERIES_MESSAGES);
         }
 
         logger.info("reload kafka topic for all published last version queries end at {}", new Date());

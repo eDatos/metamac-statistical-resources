@@ -34,6 +34,7 @@ import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMe
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils.TwitterPostUtils;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
@@ -445,7 +446,7 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         }
         if (!exceptionsItems.isEmpty()) {
             MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
-            createStreamMessageResendSentSomeNotifications(exception);
+            createStreamMessageResendSentSomeNotifications(exception, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_DATASETS_MESSGES);
         }
 
         logger.info("{} all published last version dataset kafka messages end at {}", operation, new Date());
