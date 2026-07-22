@@ -2275,40 +2275,39 @@ public class CommonDo2RestMapperV10Impl implements CommonDo2RestMapperV10 {
 
     private InternationalString getUpdatedStatisticalOperationName(String operationCode, ExternalRestObjectsMapper externalRestObjectsMapper) {
 
-        InternationalString operationTitle = externalRestObjectsMapper.getOperationTitlesByCode().get(operationCode);
-
-        if (operationTitle == null) {
+        if (!externalRestObjectsMapper.getOperationTitlesByCode().containsKey(operationCode)) {
 
             Operation operation = statisticalOperationsRestInternalFacade.retrieveOperation(operationCode);
             if (operation != null) {
                 externalRestObjectsMapper.getOperationTitlesByCode().put(operationCode, operation.getName());
                 return operation.getName();
-
             }
+            // Store null explicitly to avoid repeating the HTTP call for a non-existent operation
+            externalRestObjectsMapper.getOperationTitlesByCode().put(operationCode, null);
             return null;
         }
 
-        return operationTitle;
+        return externalRestObjectsMapper.getOperationTitlesByCode().get(operationCode);
 
     }
 
     private InternationalString getUpdatedStatisticalOperationInstanceName(String operationId, String instanceId, ExternalRestObjectsMapper externalRestObjectsMapper) {
 
         String keyInstance = operationId + " - " + instanceId;
-        InternationalString operationInstanceTitle = externalRestObjectsMapper.getOperationInstancesTitlesByCode().get(keyInstance);
 
-        if (operationInstanceTitle == null) {
+        if (!externalRestObjectsMapper.getOperationInstancesTitlesByCode().containsKey(keyInstance)) {
 
             Instance instance = statisticalOperationsRestInternalFacade.retrieveInstanceById(operationId, instanceId);
             if (instance != null) {
                 externalRestObjectsMapper.getOperationInstancesTitlesByCode().put(keyInstance, instance.getName());
                 return instance.getName();
-
             }
+            // Store null explicitly to avoid repeating the HTTP call for a non-existent instance
+            externalRestObjectsMapper.getOperationInstancesTitlesByCode().put(keyInstance, null);
             return null;
         }
 
-        return operationInstanceTitle;
+        return externalRestObjectsMapper.getOperationInstancesTitlesByCode().get(keyInstance);
     }
 
     /*** SRM **/

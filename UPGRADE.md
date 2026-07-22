@@ -8,6 +8,14 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 11.X.X a 11.X.X-SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
+  * [etc/changes-from-release/11.x.x/db](etc/changes-from-release/11.x.x/db)
+  
+* Después de despliegue probar api PRO ISTAC https://datos.canarias.es/api/estadisticas/statistical-resources/v1.0/collections.json?fields=+statisticalOperation&limit=10000
+	* Antes 18 segundos de media
+	
+
 ## 11.4.0 a 11.5.0
 * Eliminar topic ficticio DUMMY_PUBLICATIONS de entornos donde lo tengan: DEMO, PRE-ISTAC Y PRO-ISTAC.
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
