@@ -35,7 +35,7 @@
 		<metamac-common-metadata-rest-external-api.version>4.6.2</metamac-common-metadata-rest-external-api.version>
 		<metamac-core-common.version>8.12.0</metamac-core-common.version>
 		<metamac-rest-api.version>2.3.2</metamac-rest-api.version>
-		<metamac-rest-common.version>2.10.1-SNAPSHOT</metamac-rest-common.version>
+		<metamac-rest-common.version>2.11.0</metamac-rest-common.version>
 		<metamac-srm-rest-internal-api.version>3.7.1</metamac-srm-rest-internal-api.version>
 		<metamac-srm-rest-external-api.version>3.8.1</metamac-srm-rest-external-api.version>
 		<metamac-sso-client.version>5.3.0</metamac-sso-client.version>
