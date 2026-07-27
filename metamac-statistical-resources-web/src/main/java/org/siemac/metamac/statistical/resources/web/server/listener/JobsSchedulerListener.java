@@ -13,13 +13,20 @@ import org.springframework.stereotype.Component;
 @Component
 public class JobsSchedulerListener implements ApplicationListener<ContextRefreshedEvent> {
 
-    private static Logger     logger = LoggerFactory.getLogger(JobsSchedulerListener.class);
+    private static Logger     logger      = LoggerFactory.getLogger(JobsSchedulerListener.class);
+
+    private boolean           initialized = false;
 
     @Autowired
     private TaskServiceFacade taskServiceFacade;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        if (initialized) {
+            return;
+        }
+        initialized = true;
+
         logger.debug("Scheduling jobs...");
         schedulingDatabaseDatasetPollingJob();
         schedulingGeographicCoverageCacheClearJob();
