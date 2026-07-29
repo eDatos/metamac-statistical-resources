@@ -279,8 +279,10 @@ public class TaskServiceInvocationValidatorImpl {
     public static void checkProcessUpdateResourceLastUpdateTask(String taskName, String resourceUrn, long timestamp, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(taskName, ServiceExceptionParameters.TASK_RESOURCES_JOB_KEY, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceUrn, ServiceExceptionParameters.TASK_INFO_RESOURCE_ID, exceptions);
-        
-          public static void checkPlanifyUpdateResourceBusinessLastUpdate(String resourceUrn, String resourceRootUrn, String resourceType, long timestamp, List<MetamacExceptionItem> exceptions) {
+
+    }
+
+    public static void checkPlanifyUpdateResourceBusinessLastUpdate(String resourceUrn, String resourceRootUrn, String resourceType, long timestamp, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceRootUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceType, ServiceExceptionParameters.STATISTICAL_RESOURCE_TYPE, exceptions);
@@ -292,7 +294,5 @@ public class TaskServiceInvocationValidatorImpl {
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceRootUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(resourceType, ServiceExceptionParameters.STATISTICAL_RESOURCE_TYPE, exceptions);
-    }
-
     }
 }

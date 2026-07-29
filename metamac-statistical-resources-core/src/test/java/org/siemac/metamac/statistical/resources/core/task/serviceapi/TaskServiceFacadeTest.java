@@ -115,6 +115,10 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
 
     @Override
     public void testExecuteUpdateResourceLastUpdateTask() throws Exception {
+        // No test
+    }
+
+    @Override
     public void testExecuteUpdateResourceBusinessLastUpdateTask() throws Exception {
         // No test
     }
