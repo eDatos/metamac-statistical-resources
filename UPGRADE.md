@@ -8,6 +8,14 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 11.6.0 a 11.6.1-SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
+  * [etc/changes-from-release/11.6.0/db](etc/changes-from-release/11.6.0/db)
+  
+* Después de despliegue probar api PRO ISTAC https://datos.canarias.es/api/estadisticas/statistical-resources/v1.0/collections.json?fields=+statisticalOperation&limit=10000
+	* Antes 18 segundos de media
+	
+
 ## 11.4.0 a 11.5.0
 * Eliminar topic ficticio DUMMY_PUBLICATIONS de entornos donde lo tengan: DEMO, PRE-ISTAC Y PRO-ISTAC.
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
@@ -16,7 +24,7 @@
 * Se debe resetear el schema registry para los topics de los recursos debido a que se ha modificado el schema Avro:
   ```shell
   curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
-  curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value?permanent=true
   curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
   ```
 * Se han de borrar los mensajes existentes en los topics anteriores (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
