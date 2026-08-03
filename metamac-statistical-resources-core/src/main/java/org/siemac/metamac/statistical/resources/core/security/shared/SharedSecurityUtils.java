@@ -191,4 +191,8 @@ public class SharedSecurityUtils {
     public static boolean canUpdateGeoCacheRelatedResource(MetamacPrincipal metamacPrincipal) {
         return isAdministrador(metamacPrincipal);
     }
+
+    public static boolean canResendAllKafkaMessages(MetamacPrincipal metamacPrincipal) {
+        return isAdministrador(metamacPrincipal);
+    }
 }

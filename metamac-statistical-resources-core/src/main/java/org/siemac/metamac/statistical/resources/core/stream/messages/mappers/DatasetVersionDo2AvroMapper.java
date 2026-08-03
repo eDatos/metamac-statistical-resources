@@ -35,6 +35,10 @@ public class DatasetVersionDo2AvroMapper {
     }
 
     public static DatasetVersionAvro do2Avro(DatasetVersion source, String urlBaseExternalVisualizer) throws MetamacException {
+        return do2Avro(source, urlBaseExternalVisualizer, false);
+    }
+
+    public static DatasetVersionAvro do2Avro(DatasetVersion source, String urlBaseExternalVisualizer, boolean reload) throws MetamacException {
         List<CodeDimensionAvro> dimensions = dimensionsCoverage2Avro(source);
         List<AttributeValueAvro> coverageList = attributesCoverage2Avro(source);
         List<CategorisationAvro> categorisations = categorisations2Avro(source);
@@ -46,7 +50,7 @@ public class DatasetVersionDo2AvroMapper {
         List<ExternalItemAvro> statisticalUnitList = statisticalUnitList2Avro(source);
         String srmApiExternalEndpoint = getConfigurationService().retrieveSrmExternalApiUrlBase();
         DatasetVersionAvro target = DatasetVersionAvro.newBuilder()
-                .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource()))
+                .setSiemacMetadataStatisticalResource(SiemacMetadataStatisticalResourceDo2AvroMapper.do2Avro(source.getSiemacMetadataStatisticalResource(), reload))
                 .setDateStart(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateStart())).setDateEnd(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateEnd()))
                 .setDatasetRepositoryId(source.getDatasetRepositoryId()).setFormatExtentDimensions(source.getFormatExtentDimensions()).setFormatExtentTableSize(source.getFormatExtentTableSize())
                 .setDateNextUpdate(AvroMapperUtils.toSdmxObservationalTimePeriod(source.getDateNextUpdate())).setUserModifiedDateNextUpdate(source.getUserModifiedDateNextUpdate())

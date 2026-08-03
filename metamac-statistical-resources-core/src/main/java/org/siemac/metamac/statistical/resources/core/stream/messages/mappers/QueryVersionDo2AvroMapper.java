@@ -34,6 +34,10 @@ public class QueryVersionDo2AvroMapper {
     private QueryVersionRepository   queryVersionRepository;
 
     public QueryVersionAvro queryVersionDoToAvro(QueryVersion source) throws MetamacException {
+        return queryVersionDoToAvro(source, false);
+    }
+
+    public QueryVersionAvro queryVersionDoToAvro(QueryVersion source, boolean reload) throws MetamacException {
         if (source == null) {
             return null;
         }
@@ -44,7 +48,7 @@ public class QueryVersionDo2AvroMapper {
 
         // @formatter:off
         QueryVersionAvro target = QueryVersionAvro.newBuilder()
-                .setLifecycleStatisticalResource(LifecycleStatisticalResourceDo2AvroMapper.do2Avro(source.getLifeCycleStatisticalResource()))
+                .setLifecycleStatisticalResource(LifecycleStatisticalResourceDo2AvroMapper.do2Avro(source.getLifeCycleStatisticalResource(), reload))
                 .setLatestDataNumber(source.getLatestDataNumber())
                 .setSelection(selectionToAvro(source.getSelection()))
                 .setRelatedDatasetVersion(relatedDatasetVersionAvro)

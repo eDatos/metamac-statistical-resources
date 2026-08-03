@@ -4,6 +4,8 @@
 /src/main/webapp/content/css/main.css
 target/
 environment-LOCAL.xml
+# Build artifact: copied from sculptor-generator.postgresql.properties during generate-sources
+**/sculptor-generator.properties
 
 ######################
 # Node

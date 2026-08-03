@@ -41,7 +41,8 @@
          {"name" : "nextVersion" , "type" : ["null", "NextVersionTypeEnumAvro"]},
          {"name" : "versionLogic", "type" : ["null", "string" ]},
          {"name" : "versionRationaleTypes", "type" : ["null", { "type" : "array", "items" : ["null", "VersionRationaleTypeEnumAvro"]}]},
-         {"name" : "patch", "type": "int", "default": 0 }
+         {"name" : "patch", "type": "int", "default": 0 },
+         {"name" : "reload", "type": "boolean", "default": false }
      ]
  }
  ]
