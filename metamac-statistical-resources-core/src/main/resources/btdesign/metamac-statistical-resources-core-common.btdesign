@@ -150,19 +150,19 @@ Application CommonStatisticalResources {
 			// Order
 			Integer dimOrder not nullable;
 			
-			String urnDimComponentFk not nullable length="4000";
-			
+			String urnDimComponentFk nullable length="4000";
+
 			"Not null when dimension is in heading"
-			- @DatasetVersion datasetVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_heading_fk" <-> headingDimensions;
+			- @DatasetVersion datasetVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="DATASET_VERSION_HEADING_FK" <-> headingDimensions;
 
 			"Not null when dimension is in stub"
-			- @DatasetVersion datasetVersionStub cascade="none" fetch="lazy" nullable databaseColumn="dataset_version_stub_fk" <-> stubDimensions;
-			
+			- @DatasetVersion datasetVersionStub cascade="none" fetch="lazy" nullable databaseColumn="DATASET_VERSION_STUB_FK" <-> stubDimensions;
+
 			"Not null when dimension is in heading"
-			- @QueryVersion queryVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="query_version_heading_fk" <-> headingDimensions;
+			- @QueryVersion queryVersionHeading cascade="none" fetch="lazy" nullable databaseColumn="QUERY_VERSION_HEADING_FK" <-> headingDimensions;
 
 			"Not null when dimension is in stub"
-			- @QueryVersion queryVersionStub cascade="none" fetch="lazy" nullable databaseColumn="query_version_stub_fk" <-> stubDimensions;
+			- @QueryVersion queryVersionStub cascade="none" fetch="lazy" nullable databaseColumn="QUERY_VERSION_STUB_FK" <-> stubDimensions;
 			
 		} 
 	}

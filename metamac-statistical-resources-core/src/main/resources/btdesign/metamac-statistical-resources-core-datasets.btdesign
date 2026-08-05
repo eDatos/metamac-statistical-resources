@@ -59,7 +59,7 @@ Application DatasetsStatisticalResources {
 			"Deletes dataset version. This must be last version and no published"
     		deleteDatasetVersion(String datasetVersionUrn) throws MetamacException;
 			"Calculate table size"
-			Long calculateTableSize(DatasetVersion resource) throws MetamacException;
+			Long calculateTableSize(@DatasetVersion resource) throws MetamacException;
 			void updateDatasetVersionInGroup(@DatasetVersion datasetVersionMetadataToChange, String datasetUrnToChange) throws MetamacException;
 			"Export datasources to TSV"
 			String exportDatasourcesTsv(String datasetVersionUrn, boolean useCommaDecimalSeparator) throws MetamacException;

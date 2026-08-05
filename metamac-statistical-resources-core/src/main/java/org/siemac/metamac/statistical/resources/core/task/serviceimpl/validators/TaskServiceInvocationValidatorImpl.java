@@ -222,6 +222,30 @@ public class TaskServiceInvocationValidatorImpl {
         // NOTHING TO DO HERE
     }
 
+    public static void checkProcessReloadKafkaTopicDatasetTask(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
+    public static void checkProcessReloadKafkaTopicPublicationTask(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
+    public static void checkProcessReloadKafkaTopicQueryTask(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
+    public static void checkScheduleReloadTopicDatasetJob(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
+    public static void checkScheduleReloadTopicPublicationJob(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
+    public static void checkScheduleReloadTopicQueryJob(List<MetamacExceptionItem> exceptions) {
+        // NOTHING TO DO HERE
+    }
+
     public static void checkProcessDataViewAdjustmentTask(List<MetamacExceptionItem> exceptions) {
         // NOTHING TO DO HERE
     }

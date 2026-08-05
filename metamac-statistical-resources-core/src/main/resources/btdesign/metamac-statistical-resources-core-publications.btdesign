@@ -73,6 +73,8 @@ Application PublicationsStatisticalResources {
 	   		// geographical coverage cache
     		updateGeographicalCache(@PublicationVersion publicationVersion) throws MetamacException;
     		updateAllGeographicalCache(boolean mustWaitForRelatedResourcesUpdate) throws MetamacException;
+
+    		List<@PublicationVersion> retrievePublishedLastVersionPublications() throws MetamacException;
 		}  
 
 
@@ -229,7 +231,7 @@ Application PublicationsStatisticalResources {
 			"Publication"
 			- @Publication publication cascade="none" nullable databaseColumn="PUBLICATION_FK";
 			
-			String url nullable databaseColumn="url";
+			String url nullable databaseColumn="url" length="1024";
             
 			"Provides access to Cube"
             Repository CubeRepository {

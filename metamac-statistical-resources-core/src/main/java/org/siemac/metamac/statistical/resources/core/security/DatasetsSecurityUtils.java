@@ -297,6 +297,12 @@ public class DatasetsSecurityUtils extends SecurityUtils {
         }
     }
 
+    public static void canResendAllKafkaMessages(ServiceContext ctx) throws MetamacException {
+        if (!SharedDatasetsSecurityUtils.canResendAllKafkaMessages(getMetamacPrincipal(ctx))) {
+            throwExceptionIfOperationNotAllowed(ctx);
+        }
+    }
+
     public static void canUpdateGeoCacheRelatedResource(ServiceContext ctx) throws MetamacException {
         if (!SharedDatasetsSecurityUtils.canUpdateGeoCacheRelatedResource(getMetamacPrincipal(ctx))) {
             throwExceptionIfOperationNotAllowed(ctx);

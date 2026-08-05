@@ -1,7 +1,10 @@
 package org.siemac.metamac.statistical_resources.rest.external.service;
 
+import javax.ws.rs.core.Response.Status;
+
 import org.joda.time.DateTime;
 import org.siemac.metamac.rest.common.domain.CacheableResource;
+import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.service.cache.CacheableResourceService;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -48,6 +51,12 @@ public class StatisticalResourcesCacheableResourceServiceImpl implements Cacheab
 
             if (resource != null) {
                 return resource.getLastModifiedDate();
+            }
+        } catch (RestException e) {
+            if (Status.NOT_FOUND.equals(e.getStatus())) {
+                logger.debug("Resource {} not found, skipping last modified date", resourceID);
+            } else {
+                logger.warn("Error getting last modified date for resource " + resourceID + " (parsed as " + resourceType + ")", e);
             }
         } catch (Exception e) {
             logger.warn("Error getting last modified date for resource " + resourceID + " (parsed as " + resourceType + ")", e);

@@ -48,6 +48,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Table;
 import org.siemac.metamac.statistical_resources.rest.external.StatisticalResourcesRestExternalConstants;
 import org.siemac.metamac.statistical_resources.rest.external.exception.RestServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.external.invocation.StatisticalOperationsRestExternalFacade;
 import org.siemac.metamac.statistical_resources.rest.external.service.utils.HtmlLinkUtil;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.external.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -86,9 +87,12 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     private PublicationVersionRepository      publicationVersionRepository;
 
     @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private StatisticalResourcesConfiguration       configurationService;
 
-    private static final Logger               logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
+    @Autowired
+    private StatisticalOperationsRestExternalFacade statisticalOperationsRestExternalFacade;
+
+    private static final Logger                     logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
 
     @Override
     public Collections toCollections(PagedResult<PublicationVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
@@ -102,6 +106,12 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         SculptorCriteria2RestCriteria.toPagedResult(sources, targets, query, orderBy, limit, baseLink);
 
         ExternalRestObjectsMapper externalRestObjectsMapper = new ExternalRestObjectsMapper();
+
+        // Pre-fetch all operation titles in one batch HTTP call instead of one per collection
+        boolean includeStatisticalOperation = containsField(parsedFields, StatisticalResourcesRestExternalConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+        if (includeStatisticalOperation) {
+            externalRestObjectsMapper.setOperationTitlesByCode(statisticalOperationsRestExternalFacade.getOperationTitles(null));
+        }
 
         // Values
         for (PublicationVersion source : sources.getValues()) {

@@ -489,8 +489,8 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         }
     }
 
-    protected void createStreamMessageResendSentSomeNotifications(MetamacException exceptions) {
+    protected void createStreamMessageResendSentSomeNotifications(MetamacException exceptions, String noticeAction) {
         // only for administrator users
-        noticesRestInternalService.createErrorBackgroundNotification(null, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_DATASETS_MESSGES, exceptions);
+        noticesRestInternalService.createErrorBackgroundNotification(null, noticeAction, exceptions);
     }
 }

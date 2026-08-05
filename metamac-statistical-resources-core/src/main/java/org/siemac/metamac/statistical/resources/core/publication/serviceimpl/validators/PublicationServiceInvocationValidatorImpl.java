@@ -303,4 +303,8 @@ public class PublicationServiceInvocationValidatorImpl extends BaseInvocationVal
     public static void checkUpdateAllExternalGeographicalCache(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
+
+    public static void checkRetrievePublishedLastVersionPublications(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
 }

@@ -33,6 +33,7 @@ public class StreamMessagingKafkaServiceFacadeImpl implements StreamMessagingSer
         }
     }
 
+    @Override
     public void sendNewVersionPublished(QueryVersion queryVersion) throws MetamacException {
         try {
             updateMessageStatus(queryVersion, StreamMessageStatusEnum.PENDING);
@@ -40,6 +41,24 @@ public class StreamMessagingKafkaServiceFacadeImpl implements StreamMessagingSer
             updateMessageStatus(queryVersion, StreamMessageStatusEnum.SENT);
         } catch (MetamacException e) {
             updateMessageStatus(queryVersion, StreamMessageStatusEnum.FAILED);
+            throw new MetamacException(e, ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER);
+        }
+    }
+
+    @Override
+    public void sendReloadVersionPublished(HasSiemacMetadata version) throws MetamacException {
+        try {
+            messagingService.sendReloadMessage(version);
+        } catch (MetamacException e) {
+            throw new MetamacException(e, ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER);
+        }
+    }
+
+    @Override
+    public void sendReloadVersionPublished(QueryVersion version) throws MetamacException {
+        try {
+            messagingService.sendReloadMessage(version);
+        } catch (MetamacException e) {
             throw new MetamacException(e, ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER);
         }
     }

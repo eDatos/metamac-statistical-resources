@@ -45,10 +45,22 @@ Application DatasetsStatisticalResources {
 			"Perform geographic coverage cache clear task"
     		executeGeographicCoverageCacheClearTask()  throws MetamacException;
 			"Schedule geographic coverage cache clear"
-			scheduleGeographicCoverageCacheClearJob();	
+			scheduleGeographicCoverageCacheClearJob();
 			"Schedule resend published dataset kafka message job"
 			scheduleResendKafkaDatasetMessageJob();
-			executeRecoveryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource) throws MetamacException; 
+			"Execute reload kafka topic for all published datasets task"
+			executeReloadKafkaTopicDatasetTask() throws MetamacException;
+			"Execute reload kafka topic for all published publications task"
+			executeReloadKafkaTopicPublicationTask() throws MetamacException;
+			"Execute reload kafka topic for all published queries task"
+			executeReloadKafkaTopicQueryTask() throws MetamacException;
+			"Schedule reload kafka topic for datasets job"
+			scheduleReloadTopicDatasetJob() throws MetamacException;
+			"Schedule reload kafka topic for publications job"
+			scheduleReloadTopicPublicationJob() throws MetamacException;
+			"Schedule reload kafka topic for queries job"
+			scheduleReloadTopicQueryJob() throws MetamacException;
+			executeRecoveryGeographicalCacheTask(String recoveryJobKey, @TaskInfoResources taskInfoResource) throws MetamacException;
 			
 			
 			"Send error notification for database importation task"
@@ -165,12 +177,24 @@ Application DatasetsStatisticalResources {
 			scheduleGeographicCoverageCacheClearJob();
 			"Schedule resend published dataset kafka message job"
 			scheduleResendKafkaDatasetMessageJob();
-			
+			"Schedule reload kafka topic for datasets job"
+			scheduleReloadTopicDatasetJob() throws MetamacException;
+			"Schedule reload kafka topic for publications job"
+			scheduleReloadTopicPublicationJob() throws MetamacException;
+			"Schedule reload kafka topic for queries job"
+			scheduleReloadTopicQueryJob() throws MetamacException;
+
 			"Send error notification for database importation task"
 			sendDatabaseImportationErrorNotification(String datasetVersionUrn, MetamacException metamacException);
-			
+
 			"Resend kafka published last version dataset messages"
 			processResendKafkaDatasetMessageTask() throws MetamacException;
+			"Reload kafka topic for all published datasets"
+			processReloadKafkaTopicDatasetTask() throws MetamacException;
+			"Reload kafka topic for all published publications"
+			processReloadKafkaTopicPublicationTask() throws MetamacException;
+			"Reload kafka topic for all published queries"
+			processReloadKafkaTopicQueryTask() throws MetamacException;
 			"Plannify a scheduled task to update a resource last update date"
 			planifyUpdateResourceLastUpdate(String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException;
 			"Perform the update resource last update task"

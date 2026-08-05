@@ -4,6 +4,8 @@
 /src/main/webapp/content/css/main.css
 target/
 environment-LOCAL.xml
+# Build artifact: copied from sculptor-generator.postgresql.properties during generate-sources
+**/sculptor-generator.properties
 
 ######################
 # Node
@@ -145,3 +147,4 @@ metamac-statistical-resources-core/claude-core.md
 .claude/settings.local.json
 .claude/commands/
 *.local.md
+/metamac-statistical-resources-core/src/main/resources/generator/sculptor-generator.properties

@@ -102,6 +102,7 @@ import org.siemac.metamac.statistical.resources.web.server.handlers.query.GetVer
 import org.siemac.metamac.statistical.resources.web.server.handlers.query.SaveQueryVersionActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.query.UpdateQueryVersionProcStatusActionHandler;
 import org.siemac.metamac.statistical.resources.web.server.handlers.query.UpdateQueryVersionsProcStatusActionHandler;
+import org.siemac.metamac.statistical.resources.web.server.handlers.task.ReloadKafkaTopicActionHandler;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetInitialValuesAction;
 import org.siemac.metamac.statistical.resources.web.shared.base.GetLatestResourceVersionAction;
@@ -203,6 +204,7 @@ import org.siemac.metamac.statistical.resources.web.shared.query.GetVersionsOfQu
 import org.siemac.metamac.statistical.resources.web.shared.query.SaveQueryVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.UpdateQueryVersionProcStatusAction;
 import org.siemac.metamac.statistical.resources.web.shared.query.UpdateQueryVersionsProcStatusAction;
+import org.siemac.metamac.statistical.resources.web.shared.task.ReloadKafkaTopicAction;
 import org.siemac.metamac.web.common.server.handlers.CloseSessionActionHandler;
 import org.siemac.metamac.web.common.server.handlers.GetLoginPageUrlActionHandler;
 import org.siemac.metamac.web.common.server.handlers.GetNavigationBarUrlActionHandler;
@@ -355,6 +357,9 @@ public class ServerModule extends HandlerModule {
         // GEOGRAPHICAL CACHE
         bindHandler(UpdateGeographicCoverageVariableElementsCacheAction.class, UpdateGeographicCoverageVariableElementsCacheActionHandler.class);
         bindHandler(UpdateGeoCacheRelatedResourceAction.class, UpdateGeoCacheRelatedResourceActionHandler.class);
+
+        // KAFKA TOPIC RELOAD
+        bindHandler(ReloadKafkaTopicAction.class, ReloadKafkaTopicActionHandler.class);
 
         // This action should be removed to use CAS authentication
         bindHandler(MockCASUserAction.class, MockCASUserActionHandler.class);

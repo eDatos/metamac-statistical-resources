@@ -8,6 +8,59 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 11.6.0 a 11.6.1-SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
+  * [etc/changes-from-release/11.6.0/db](etc/changes-from-release/11.6.0/db)
+  
+* Después de despliegue probar api PRO ISTAC https://datos.canarias.es/api/estadisticas/statistical-resources/v1.0/collections.json?fields=+statisticalOperation&limit=10000
+	* Antes 18 segundos de media
+	
+
+RELACIONADO CON SEARCH INDEXER
+
+* Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS debido a que se han modificado las
+  propiedades de los mensajes que se publican en dicho topic:
+  ```shell
+  curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value?permanent=true
+  curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value?permanent=true
+  curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value?permanent=true
+  ````
+* Se han de borrar los mensajes existentes en el topic DATASET_PUBLICATIONS:
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
+  DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
+  DATASET_PUBLICATIONS --describe retention.ms
+  ````
+* Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+  ```shell
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name  DATASET_PUBLICATIONS --delete-config retention.ms --alter
+  ```
+* Se han de borrar los mensajes existentes en el topic COLLECTION_PUBLICATIONS:
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
+  COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
+  COLLECTION_PUBLICATIONS --describe retention.ms
+  ````
+* Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+  ```shell
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name  COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
+  ```
+* Se han de borrar los mensajes existentes en el topic QUERY_PUBLICATIONS:
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
+  QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name
+  QUERY_PUBLICATIONS --describe retention.ms
+  ````
+* Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+  ```shell
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --delete-config retention.ms --alter
+  ```
+  
+* Con la nueva funcionalidad se han de recargar los tres topics anteriores. Pero esta tarea se deberá hacer después de ejecutar los pasos indicados en el UPGRADE de la app search-indexer donde primero hay que resetear el SOLR para los datos que vienen de eDatos. En ese UPGRADE se especifica lo que hay que hacer después de levantar la app.
+
 ## 11.4.0 a 11.5.0
 * Eliminar topic ficticio DUMMY_PUBLICATIONS de entornos donde lo tengan: DEMO, PRE-ISTAC Y PRO-ISTAC.
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
@@ -16,7 +69,7 @@
 * Se debe resetear el schema registry para los topics de los recursos debido a que se ha modificado el schema Avro:
   ```shell
   curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
-  curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value?permanent=true
   curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
   ```
 * Se han de borrar los mensajes existentes en los topics anteriores (ver instrucciones del paso 10.19.0 → 10.20.0 para la secuencia de comandos kafka-configs).
