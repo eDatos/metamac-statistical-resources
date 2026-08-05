@@ -14,9 +14,21 @@
             http://www.springframework.org/schema/aop   http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
             http://www.springframework.org/schema/tx   http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
+    <!-- Dedicated txAdvice for the REST external service layer (all operations are read-only).
+         no-rollback-for RestException prevents UnexpectedRollbackException when a resource is not
+         found during the cache pre-check (CacheRequestInterceptor PRE_INVOKE phase). -->
+    <tx:advice id="txAdviceRestExternal" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="get*"      read-only="true" no-rollback-for="org.siemac.metamac.rest.exception.RestException" />
+            <tx:method name="find*"     read-only="true" no-rollback-for="org.siemac.metamac.rest.exception.RestException" />
+            <tx:method name="retrieve*" read-only="true" no-rollback-for="org.siemac.metamac.rest.exception.RestException" />
+            <tx:method name="*"         read-only="true" />
+        </tx:attributes>
+    </tx:advice>
+
     <aop:config>
-        <aop:pointcut id="restServiceStatisticalResourcesExternal" expression="execution(public * org.siemac.metamac.statistical_resources.rest.external..service.*.*(..))" />  
-        <aop:advisor pointcut-ref="restServiceStatisticalResourcesExternal" advice-ref="txAdvice" order="1" />
-    </aop:config> 
+        <aop:pointcut id="restServiceStatisticalResourcesExternal" expression="execution(public * org.siemac.metamac.statistical_resources.rest.external..service.*.*(..))" />
+        <aop:advisor pointcut-ref="restServiceStatisticalResourcesExternal" advice-ref="txAdviceRestExternal" order="1" />
+    </aop:config>
 
 </beans>
