@@ -14,6 +14,7 @@ import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,8 @@ import org.springframework.transaction.annotation.Transactional;
 @TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
 @Transactional
 public class ResourceCacheInvalidationServiceTest extends StatisticalResourcesBaseTest {
+
+    private static final long TIMESTAMP = new DateTime(2020, 1, 15, 10, 30, 0, 0).getMillis();
 
     @Autowired
     private ResourceCacheInvalidationService resourceCacheInvalidationService;
@@ -50,14 +53,11 @@ public class ResourceCacheInvalidationServiceTest extends StatisticalResourcesBa
         LifeCycleStatisticalResource resource = datasetVersion.getLifeCycleStatisticalResource();
 
         resource.setPatch(3);
+        markAsLastPublishedVersion(resource);
 
-        long timestamp = new DateTime(2020, 1, 15, 10, 30, 0, 0).getMillis();
+        resourceCacheInvalidationService.updateResourceLastUpdate(getServiceContextWithoutPrincipal(), resource, TIMESTAMP);
 
-        resourceCacheInvalidationService.updateResourceLastUpdate(getServiceContextWithoutPrincipal(), resource, timestamp);
-
-        assertEquals(new DateTime(timestamp), resource.getLastUpdated());
-        assertEquals("system", resource.getLastUpdatedBy());
-        assertEquals(Integer.valueOf(4), resource.getPatch());
+        assertResourceLastUpdateIsUpdated(resource);
         Mockito.verify(messagingService).sendMessage(resource);
     }
 
@@ -68,14 +68,73 @@ public class ResourceCacheInvalidationServiceTest extends StatisticalResourcesBa
         LifeCycleStatisticalResource resource = queryVersion.getLifeCycleStatisticalResource();
 
         resource.setPatch(3);
+        markAsLastPublishedVersion(resource);
 
-        long timestamp = new DateTime(2020, 1, 15, 10, 30, 0, 0).getMillis();
+        resourceCacheInvalidationService.updateResourceLastUpdate(getServiceContextWithoutPrincipal(), resource, TIMESTAMP);
 
-        resourceCacheInvalidationService.updateResourceLastUpdate(getServiceContextWithoutPrincipal(), resource, timestamp);
+        assertResourceLastUpdateIsUpdated(resource);
+        Mockito.verify(messagingService).sendMessage(resource);
+    }
 
-        assertEquals(new DateTime(timestamp), resource.getLastUpdated());
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testUpdateResourceLastUpdateDoesNotSendMessageWhenVersionIsSuperseded() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        LifeCycleStatisticalResource resource = datasetVersion.getLifeCycleStatisticalResource();
+
+        resource.setPatch(3);
+        markAsSupersededPublishedVersion(resource);
+
+        resourceCacheInvalidationService.updateResourceLastUpdate(getServiceContextWithoutPrincipal(), resource, TIMESTAMP);
+
+        assertResourceLastUpdateIsUpdated(resource);
+        Mockito.verify(messagingService, Mockito.never()).sendMessage(resource);
+    }
+
+    @Test
+    @MetamacMock(QUERY_VERSION_05_BASIC_NAME)
+    public void testUpdateQueryVersionLastUpdateDoesNotSendMessageWhenVersionIsSuperseded() throws Exception {
+        QueryVersion queryVersion = queryVersionMockFactory.retrieveMock(QUERY_VERSION_05_BASIC_NAME);
+        LifeCycleStatisticalResource resource = queryVersion.getLifeCycleStatisticalResource();
+
+        resource.setPatch(3);
+        markAsSupersededPublishedVersion(resource);
+
+        resourceCacheInvalidationService.updateResourceLastUpdate(getServiceContextWithoutPrincipal(), resource, TIMESTAMP);
+
+        assertResourceLastUpdateIsUpdated(resource);
+        Mockito.verify(messagingService, Mockito.never()).sendMessage(resource);
+    }
+
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testUpdateResourceLastUpdateDoesNotSendMessageWhenVersionIsNotPublished() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        LifeCycleStatisticalResource resource = datasetVersion.getLifeCycleStatisticalResource();
+
+        resource.setPatch(3);
+        resource.setProcStatus(ProcStatusEnum.DRAFT);
+        resource.setValidTo(null);
+
+        resourceCacheInvalidationService.updateResourceLastUpdate(getServiceContextWithoutPrincipal(), resource, TIMESTAMP);
+
+        assertResourceLastUpdateIsUpdated(resource);
+        Mockito.verify(messagingService, Mockito.never()).sendMessage(resource);
+    }
+
+    private void markAsLastPublishedVersion(LifeCycleStatisticalResource resource) {
+        resource.setProcStatus(ProcStatusEnum.PUBLISHED);
+        resource.setValidTo(null);
+    }
+
+    private void markAsSupersededPublishedVersion(LifeCycleStatisticalResource resource) {
+        resource.setProcStatus(ProcStatusEnum.PUBLISHED);
+        resource.setValidTo(new DateTime(2019, 6, 1, 0, 0, 0, 0));
+    }
+
+    private void assertResourceLastUpdateIsUpdated(LifeCycleStatisticalResource resource) {
+        assertEquals(new DateTime(TIMESTAMP), resource.getLastUpdated());
         assertEquals("system", resource.getLastUpdatedBy());
         assertEquals(Integer.valueOf(4), resource.getPatch());
-        Mockito.verify(messagingService).sendMessage(resource);
     }
 }
