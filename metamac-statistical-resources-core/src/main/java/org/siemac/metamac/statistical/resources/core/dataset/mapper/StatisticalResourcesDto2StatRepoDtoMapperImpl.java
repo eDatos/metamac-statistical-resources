@@ -10,11 +10,13 @@ import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.core.utils.InternationalStringUtils;
 import org.springframework.stereotype.Component;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 
@@ -75,6 +77,19 @@ public class StatisticalResourcesDto2StatRepoDtoMapperImpl implements Statistica
             codes.add(codeItemDto.getCode());
         }
         return codes;
+    }
 
+    @Override
+    public GranularityAttributeInstanceDto dsdGranularityAttributeInstanceDtoToGranularityAttributeInstanceDto(DsdGranularityAttributeInstanceDto source) throws MetamacException {
+        if (source == null) {
+            return null;
+        }
+        GranularityAttributeInstanceDto target = new GranularityAttributeInstanceDto();
+        target.setAttributeId(source.getAttributeId());
+        target.setValue(attributeValueDtoToInternationalStringValue(source.getValue()));
+        target.setCodesByDimension(codeItemMapToStringMap(source.getCodesByDimension()));
+        target.setGranularityCodesByDimension(source.getGranularityCodesByDimension());
+        target.setUuid(source.getUuid());
+        return target;
     }
 }

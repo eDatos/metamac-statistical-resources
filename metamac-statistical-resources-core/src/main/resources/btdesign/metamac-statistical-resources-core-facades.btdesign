@@ -42,7 +42,7 @@ Application FacadeStatisticalResources {
 			> @QueryLifecyleService
 			> @MultidatasetLifecyleService
 			> @CacheService
-			
+
 			// QUERY VERSION
 			"Retrieves a query scheme by URN"
             @QueryVersionDto retrieveQueryVersionByUrn(String urn) throws MetamacException;
@@ -172,9 +172,19 @@ Application FacadeStatisticalResources {
     		deleteAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
     		"Retrieve attribute instances given the dataset version URN and the attribute Id"
     		List<@DsdAttributeInstanceDto> retrieveAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
+    		"Create a granularity attribute instance"
+    		@DsdGranularityAttributeInstanceDto createGranularityAttributeInstance(String datasetVersionUrn, @DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException;
+    		"Update a granularity attribute instance"
+    		@DsdGranularityAttributeInstanceDto updateGranularityAttributeInstance(String datasetVersionUrn, @DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException;
+    		"Delete a granularity attribute instance"
+    		deleteGranularityAttributeInstance(String datasetVersionUrn, String uuid) throws MetamacException;
+    		"Retrieve granularity attribute instances given the dataset version URN and the attribute Id"
+    		List<@DsdGranularityAttributeInstanceDto> retrieveGranularityAttributeInstances(String datasetVersionUrn, String attributeId) throws MetamacException;
     		// Other actions
     		void updateGeographicCoverageVariableElementsCache(String datasetVersionUrn) throws MetamacException;
     		void processSrmResourcesKafkaMessage(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
+    		void processSrmDsdKafkaMessage(org.apache.avro.specific.SpecificRecordBase message, long timestamp) throws MetamacException;
+    		void processOperationKafkaMessage(org.apache.avro.specific.SpecificRecordBase message, long timestamp) throws MetamacException;
     		void updateAllGeographicCoverageVariableElementsCache(List<@StatisticalResourceTypeEnum> resourcesToUpdate, List<@StatisticalResourceTypeEnum> externalResourcesToUpdate) throws MetamacException;
     		void updateGeographicCoverageExternalPublicationCache(org.apache.avro.specific.SpecificRecordBase message) throws MetamacException;
 
@@ -327,11 +337,11 @@ Application FacadeStatisticalResources {
     		@RegionValueDto saveRegionForContentConstraint(String contentConstraintUrn, @RegionValueDto regionValueDto, @DsdDimensionDto selectedDimensionDto, String datasetUrn) throws MetamacException;
     		"Remove region"
     		deleteRegion(String contentConstraintUrn, String regionCode) throws MetamacException;
-    		
-    		
+
+
     		// GEOGRAPHICAL CACHE
     		void updateGeoCacheRelatedResource(String resourceUrn, @StatisticalResourceTypeEnum resourceType) throws MetamacException;
-    	
+
 		}
 	}
 }

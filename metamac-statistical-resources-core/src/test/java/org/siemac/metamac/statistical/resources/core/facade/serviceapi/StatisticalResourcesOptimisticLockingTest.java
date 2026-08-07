@@ -1360,6 +1360,30 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     }
 
     @Override
+    public void testCreateGranularityAttributeInstance() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testUpdateGranularityAttributeInstance() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testDeleteGranularityAttributeInstance() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
+    public void testRetrieveGranularityAttributeInstances() throws Exception {
+        // no optimistic locking in this operation
+
+    }
+
+    @Override
     public void testUpdateGeographicCoverageVariableElementsCache() throws Exception {
         // no optimistic locking in this operation
     }
@@ -2049,7 +2073,7 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
         // no optimistic locking in this operation
 
     }
-    
+
     @Override
     public void testUpdateGeoCacheRelatedResource() throws Exception {
         // no optimistic locking in this operation
@@ -2065,6 +2089,16 @@ public class StatisticalResourcesOptimisticLockingTest extends StatisticalResour
     public void testUpdateGeographicCoverageExternalPublicationCache() throws Exception {
         // no optimistic locking in this operation
 
+    }
+
+    @Override
+    public void testProcessSrmDsdKafkaMessage() throws Exception {
+        // no optimistic locking in this operation
+    }
+
+    @Override
+    public void testProcessOperationKafkaMessage() throws Exception {
+        // no optimistic locking in this operation
     }
 
     @Override

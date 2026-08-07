@@ -365,7 +365,7 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
     @Test
     public void testQueryVersionCommonMetadataTypeLatestData() throws Exception {
         QueryVersion resource = new QueryVersion();
-        resource.setType(QueryTypeEnum.LATEST_DATA);
+        resource.setQueryType(QueryTypeEnum.LATEST_DATA);
 
         String params = buildCommaSeparatedString(ServiceExceptionParameters.QUERY_VERSION__FIXED_DATASET_VERSION, ServiceExceptionParameters.QUERY_VERSION__DATASET);
         String baseMetadata = ServiceExceptionParameters.QUERY_VERSION;
@@ -382,7 +382,7 @@ public class LifecycleCommonMetadataCheckerTest extends StatisticalResourcesBase
     @Test
     public void testQueryVersionCommonMetadataTypeAutoincremental() throws Exception {
         QueryVersion resource = new QueryVersion();
-        resource.setType(QueryTypeEnum.AUTOINCREMENTAL);
+        resource.setQueryType(QueryTypeEnum.AUTOINCREMENTAL);
 
         String params = buildCommaSeparatedString(ServiceExceptionParameters.QUERY_VERSION__FIXED_DATASET_VERSION, ServiceExceptionParameters.QUERY_VERSION__DATASET);
         String baseMetadata = ServiceExceptionParameters.QUERY_VERSION;

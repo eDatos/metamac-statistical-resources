@@ -69,6 +69,10 @@ cd metamac-statistical-resources-rest-internal-api
 mvn clean generate-sources
 ```
 
+DO NOT TRY to manually edit generated code in `src/generated/java` - it will be overwritten on the
+next build. Instead, extend generated base classes in `src/main/java` or edit btdesign files
+directly, depending on the feature you want to implement.
+
 ## Module Architecture
 
 The project consists of 12 modules organized by layer and responsibility:
@@ -293,6 +297,19 @@ InternationalString title = new InternationalString();
 title.addLocalizedString(new LocalizedString("es", "Título en español"));
 title.addLocalizedString(new LocalizedString("en", "Title in English"));
 ```
+
+### Catalan properties — apostrophe escaping
+
+`MessageFormat.format()` treats `'` as an escape character (consumed, not displayed).
+Rule depends on which code processes the template:
+
+| Key prefix | Processing path | Use |
+|---|---|---|
+| `notice_message.*`, `stream_message.*` with `{N}` | `NoticesRestInternalServiceImpl` → `MessageFormat.format()` direct | `''` |
+| `exception.*` in `messages-*_ca.properties` | GWT Path B: `WebTranslateExceptions` → plain `String.replace()` | `'` |
+| `*Messages_ca.properties` in `src/main/java/` | GWT `@Messages` interface — MessageFormat always applied | `''` |
+
+Example: `S''ha publicat {0}` (notice_message) vs `S'ha produït {0}` (exception).
 
 ## Code Locations
 

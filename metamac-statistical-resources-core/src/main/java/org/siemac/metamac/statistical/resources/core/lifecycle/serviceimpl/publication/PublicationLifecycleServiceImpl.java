@@ -1,9 +1,12 @@
 package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.publication;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.exception.MetamacException;
+import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
@@ -12,6 +15,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -25,11 +29,15 @@ import org.siemac.metamac.statistical.resources.core.publication.utils.Publicati
 import org.siemac.metamac.statistical.resources.core.publication.utils.PublicationsUtils;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service("publicationLifecycleService")
 public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<PublicationVersion> {
+
+    private static Logger                  logger = LoggerFactory.getLogger(PublicationLifecycleServiceImpl.class);
 
     @Autowired
     private LifecycleCommonMetadataChecker lifecycleCommonMetadataChecker;
@@ -300,12 +308,46 @@ public class PublicationLifecycleServiceImpl extends LifecycleTemplateService<Pu
 
     @Override
     public void checkTwitterPostActivatedAndPostTwit(ServiceContext ctx, PublicationVersion resource) {
-        //ONLY FOR DATASET
+        // ONLY FOR DATASET
     }
 
     @Override
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
         // ONLY FOR DATASETS
+    }
+
+    @Override
+    public void reloadTopicStreamMessages(ServiceContext ctx) throws MetamacException {
+
+        List<PublicationVersion> publications = publicationService.retrievePublishedLastVersionPublications(ctx);
+
+        List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
+        int totalCount = 0;
+        int partialCount = 0;
+        logger.info("reload kafka topic for all published last version publications start at {} affected publications: {} ", new Date(), publications != null ? publications.size() : 0);
+
+        for (PublicationVersion publicationVersion : publications) {
+            try {
+                streamMessagingServiceFacade.sendReloadVersionPublished(publicationVersion);
+                totalCount++;
+                partialCount++;
+                if (partialCount >= 100) {
+                    partialCount = 0;
+                    logger.info("processed publications {} at {}", totalCount, new Date());
+                }
+            } catch (MetamacException e) {
+                totalCount++;
+                partialCount++;
+                logger.info("error sending reload message for publication {} ", publicationVersion.getSiemacMetadataStatisticalResource().getUrn());
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_PUBLICATION, publicationVersion.getSiemacMetadataStatisticalResource().getUrn()));
+            }
+        }
+        if (!exceptionsItems.isEmpty()) {
+            MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
+            createStreamMessageResendSentSomeNotifications(exception, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_PUBLICATIONS_MESSAGES);
+        }
+
+        logger.info("reload kafka topic for all published last version publications end at {}", new Date());
     }
 
 }

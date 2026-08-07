@@ -30,6 +30,7 @@ import org.siemac.metamac.statistical.resources.core.task.domain.FileDescriptorR
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesValidationUtils;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 
 public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidator {
 
@@ -150,6 +151,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     // --------------
 
     public static void checkCreateAttributeInstance(String datasetVersionUrn, AttributeInstanceDto attributeInstanceDto, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(attributeInstanceDto, ServiceExceptionParameters.DATASET_ATTRIBUTE, exceptions);
         if (attributeInstanceDto != null) {
             StatisticalResourcesValidationUtils.checkParameterRequired(attributeInstanceDto.getValue(), ServiceExceptionParameters.DATASET_ATTRIBUTE_VALUE, exceptions);
@@ -157,6 +159,7 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkUpdateAttributeInstance(String datasetVersionUrn, AttributeInstanceDto attributeInstanceDto, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(attributeInstanceDto, ServiceExceptionParameters.DATASET_ATTRIBUTE, exceptions);
         if (attributeInstanceDto != null) {
             StatisticalResourcesValidationUtils.checkParameterRequired(attributeInstanceDto.getValue(), ServiceExceptionParameters.DATASET_ATTRIBUTE_VALUE, exceptions);
@@ -164,10 +167,37 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     }
 
     public static void checkDeleteAttributeInstance(String datasetVersionUrn, String attributeInstanceUuid, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkParameterRequired(attributeInstanceUuid, ServiceExceptionParameters.DATASET_ATTRIBUTE_UUID, exceptions);
     }
 
     public static void checkRetrieveAttributeInstances(String datasetVersionUrn, String attributeId, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
+        StatisticalResourcesValidationUtils.checkMetadataRequired(attributeId, ServiceExceptionParameters.ATTRIBUTE_VALUE__ID, exceptions);
+    }
+
+    public static void checkCreateGranularityAttributeInstance(String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(granularityAttributeInstanceDto, ServiceExceptionParameters.DATASET_ATTRIBUTE, exceptions);
+        if (granularityAttributeInstanceDto != null) {
+            StatisticalResourcesValidationUtils.checkParameterRequired(granularityAttributeInstanceDto.getValue(), ServiceExceptionParameters.DATASET_ATTRIBUTE_VALUE, exceptions);
+        }
+    }
+
+    public static void checkUpdateGranularityAttributeInstance(String datasetVersionUrn, GranularityAttributeInstanceDto granularityAttributeInstanceDto, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(granularityAttributeInstanceDto, ServiceExceptionParameters.DATASET_ATTRIBUTE, exceptions);
+        if (granularityAttributeInstanceDto != null) {
+            StatisticalResourcesValidationUtils.checkParameterRequired(granularityAttributeInstanceDto.getValue(), ServiceExceptionParameters.DATASET_ATTRIBUTE_VALUE, exceptions);
+        }
+    }
+
+    public static void checkDeleteGranularityAttributeInstance(String datasetVersionUrn, String uuid, List<MetamacExceptionItem> exceptions) {
+        StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
+        StatisticalResourcesValidationUtils.checkParameterRequired(uuid, ServiceExceptionParameters.DATASET_ATTRIBUTE_UUID, exceptions);
+    }
+
+    public static void checkRetrieveGranularityAttributeInstances(String datasetVersionUrn, String attributeId, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkMetadataRequired(datasetVersionUrn, ServiceExceptionParameters.URN, exceptions);
         StatisticalResourcesValidationUtils.checkMetadataRequired(attributeId, ServiceExceptionParameters.ATTRIBUTE_VALUE__ID, exceptions);
     }
@@ -442,4 +472,5 @@ public class DatasetServiceInvocationValidatorImpl extends BaseInvocationValidat
     public static void checkProcessDataViewAdjustmentInRepository(List<MetamacExceptionItem> exceptions) throws MetamacException {
         // NOTHING
     }
+
 }

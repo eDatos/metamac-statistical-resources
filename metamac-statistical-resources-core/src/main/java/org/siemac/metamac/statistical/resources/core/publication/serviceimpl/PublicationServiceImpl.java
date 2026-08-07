@@ -436,7 +436,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     }
 
     private Chapter fillMetadataForCreateChapter(Chapter chapter, ExternalItem statisticalOperation) {
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(chapter.getNameableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(chapter.getNameableStatisticalResource(), statisticalOperation, null);
         chapter.fillCodeAndUrn();
         return chapter;
     }
@@ -510,7 +510,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
     }
 
     private Cube fillMetadataForCreateCube(Cube cube, ExternalItem statisticalOperation) {
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(cube.getNameableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateNameableResource(cube.getNameableStatisticalResource(), statisticalOperation, null);
         cube.fillCodeAndUrn();
         return cube;
     }
@@ -591,7 +591,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
 
     private static void fillMetadataForCreatePublication(Publication publication, ExternalItem statisticalOperation) {
         publication.setIdentifiableStatisticalResource(new IdentifiableStatisticalResource());
-        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(publication.getIdentifiableStatisticalResource(), statisticalOperation);
+        FillMetadataForCreateResourceUtils.fillMetadataForCreateIdentifiableResource(publication.getIdentifiableStatisticalResource(), statisticalOperation, null);
     }
 
     private static void fillMetadataForCreatePublicationVersion(PublicationVersion publicationVersion, ExternalItem statisticalOperation, ServiceContext ctx) {
@@ -968,7 +968,7 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
             mustWaitForRelatedResourcesUpdate = true;
         }
         
-        List<PublicationVersion> lastVersionPublicatedCollections = retrievePublishedLastVersionPublications();
+        List<PublicationVersion> lastVersionPublicatedCollections = retrievePublishedLastVersionPublications(ctx);
         for (PublicationVersion publicationVersion : lastVersionPublicatedCollections) {
         updateGeographicalCacheInJob(ctx, publicationVersion, false, mustWaitForRelatedResourcesUpdate);
         }
@@ -983,7 +983,8 @@ public class PublicationServiceImpl extends PublicationServiceImplBase {
         return getTaskService().existsGeoCacheTasksByTaskName(ctx, tasksName);
     }
     
-    private List<PublicationVersion> retrievePublishedLastVersionPublications() throws MetamacException {
+    @Override
+    public List<PublicationVersion> retrievePublishedLastVersionPublications(ServiceContext ctx) throws MetamacException {
 
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(PublicationVersion.class).withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus())
                 .eq(ProcStatusEnum.PUBLISHED).and().withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull().distinctRoot().build();

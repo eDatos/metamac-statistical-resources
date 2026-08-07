@@ -165,11 +165,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:spring/statistical-resources/include/dataset-repository-mockito.xml", "classpath:spring/statistical-resources/include/task-mockito.xml",
-        "classpath:spring/statistical-resources/include/rest-services-mockito.xml", "classpath:spring/statistical-resources/applicationContext-test.xml"})
+        "classpath:spring/statistical-resources/include/rest-services-mockito.xml", "classpath:spring/statistical-resources/include/stream-messaging-service-mockito.xml",
+        "classpath:spring/statistical-resources/applicationContext-test.xml"})
 @TransactionConfiguration(transactionManager = "txManager", defaultRollback = true)
 @Transactional
 
@@ -190,6 +192,7 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
     @Autowired
     private TaskService                      taskService;
 
+    @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
         // Remove cglib from mock
@@ -1669,6 +1672,167 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
     @Override
     @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testCreateGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        GranularityAttributeInstanceDto inputDto = new GranularityAttributeInstanceDto();
+        inputDto.setAttributeId("ATTR_01");
+        Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
+        granularityCodes.put("TIME_PERIOD", Arrays.asList("A", "Q"));
+        inputDto.setGranularityCodesByDimension(granularityCodes);
+        es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto inputValue = new es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto();
+        inputValue.addText(new es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto("es", "test-value"));
+        inputDto.setValue(inputValue);
+
+        GranularityAttributeInstanceDto returnedDto = new GranularityAttributeInstanceDto();
+        returnedDto.setUuid("uuid-granularity-01");
+        returnedDto.setAttributeId("ATTR_01");
+        returnedDto.setGranularityCodesByDimension(granularityCodes);
+
+        Mockito.when(datasetRepositoriesServiceFacade.createGranularityAttributeInstance(Mockito.anyString(), Mockito.any(GranularityAttributeInstanceDto.class))).thenReturn(returnedDto);
+
+        GranularityAttributeInstanceDto result = datasetService.createGranularityAttributeInstance(getServiceContextWithoutPrincipal(), urn, inputDto);
+
+        assertNotNull(result);
+        assertEquals("uuid-granularity-01", result.getUuid());
+        assertEquals("ATTR_01", result.getAttributeId());
+        assertNotNull(result.getGranularityCodesByDimension());
+        assertEquals(Arrays.asList("A", "Q"), result.getGranularityCodesByDimension().get("TIME_PERIOD"));
+
+        Mockito.verify(datasetRepositoriesServiceFacade).createGranularityAttributeInstance(Mockito.eq(urn), Mockito.any(GranularityAttributeInstanceDto.class));
+    }
+
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testCreateGranularityAttributeInstanceOverlap() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        GranularityAttributeInstanceDto inputDto = new GranularityAttributeInstanceDto();
+        inputDto.setAttributeId("ATTR_01");
+        Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
+        granularityCodes.put("TIME_PERIOD", Arrays.asList("A", "Q"));
+        inputDto.setGranularityCodesByDimension(granularityCodes);
+        es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto value = new es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto();
+        value.addText(new es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto("es", "value"));
+        inputDto.setValue(value);
+
+        GranularityAttributeInstanceDto overlappingDto = new GranularityAttributeInstanceDto();
+        overlappingDto.setUuid("uuid-01");
+        overlappingDto.setAttributeId("ATTR_01");
+        overlappingDto.setGranularityCodesByDimension(granularityCodes);
+        overlappingDto.setValue(value);
+
+        Mockito.when(datasetRepositoriesServiceFacade.createGranularityAttributeInstance(Mockito.anyString(), Mockito.any(GranularityAttributeInstanceDto.class)))
+                .thenThrow(new ApplicationException("ILLEGAL_ARGUMENT", "Granularity attribute instance overlaps with existing instance with uuid: uuid-01"));
+        Mockito.when(datasetRepositoriesServiceFacade.findGranularityAttributesInstances(Mockito.eq(urn), Mockito.eq("ATTR_01"))).thenReturn(Arrays.asList(overlappingDto));
+
+        try {
+            datasetService.createGranularityAttributeInstance(getServiceContextWithoutPrincipal(), urn, inputDto);
+            fail("Expected overlap exception");
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED, 1, new Serializable[]{"ATTR_01"}, e.getExceptionItems().get(0));
+        }
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testUpdateGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        GranularityAttributeInstanceDto inputDto = new GranularityAttributeInstanceDto();
+        inputDto.setUuid("uuid-granularity-existing");
+        inputDto.setAttributeId("ATTR_01");
+        Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
+        granularityCodes.put("TIME_PERIOD", Arrays.asList("A"));
+        inputDto.setGranularityCodesByDimension(granularityCodes);
+        es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto inputValue = new es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto();
+        inputValue.addText(new es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto("es", "updated-value"));
+        inputDto.setValue(inputValue);
+
+        GranularityAttributeInstanceDto returnedDto = new GranularityAttributeInstanceDto();
+        returnedDto.setUuid("uuid-granularity-existing");
+        returnedDto.setAttributeId("ATTR_01");
+        returnedDto.setGranularityCodesByDimension(granularityCodes);
+
+        Mockito.when(datasetRepositoriesServiceFacade.updateGranularityAttributeInstance(Mockito.any(GranularityAttributeInstanceDto.class))).thenReturn(returnedDto);
+
+        GranularityAttributeInstanceDto result = datasetService.updateGranularityAttributeInstance(getServiceContextWithoutPrincipal(), urn, inputDto);
+
+        assertNotNull(result);
+        assertEquals("uuid-granularity-existing", result.getUuid());
+        assertEquals("ATTR_01", result.getAttributeId());
+
+        Mockito.verify(datasetRepositoriesServiceFacade).updateGranularityAttributeInstance(Mockito.any(GranularityAttributeInstanceDto.class));
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testDeleteGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        String uuid = "uuid-granularity-to-delete";
+
+        Mockito.doNothing().when(datasetRepositoriesServiceFacade).deleteGranularityAttributeInstance(uuid);
+
+        datasetService.deleteGranularityAttributeInstance(getServiceContextWithoutPrincipal(), urn, uuid);
+
+        Mockito.verify(datasetRepositoriesServiceFacade).deleteGranularityAttributeInstance(uuid);
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testRetrieveGranularityAttributeInstances() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        String attributeId = "ATTR_01";
+
+        GranularityAttributeInstanceDto dto1 = new GranularityAttributeInstanceDto();
+        dto1.setUuid("uuid-granularity-01");
+        dto1.setAttributeId(attributeId);
+        Map<String, List<String>> codes1 = new HashMap<String, List<String>>();
+        codes1.put("TIME_PERIOD", Arrays.asList("A", "Q"));
+        dto1.setGranularityCodesByDimension(codes1);
+
+        GranularityAttributeInstanceDto dto2 = new GranularityAttributeInstanceDto();
+        dto2.setUuid("uuid-granularity-02");
+        dto2.setAttributeId(attributeId);
+        Map<String, List<String>> codes2 = new HashMap<String, List<String>>();
+        codes2.put("TIME_PERIOD", Arrays.asList("M"));
+        dto2.setGranularityCodesByDimension(codes2);
+
+        List<GranularityAttributeInstanceDto> expectedList = Arrays.asList(dto1, dto2);
+
+        Mockito.when(datasetRepositoriesServiceFacade.findGranularityAttributesInstances(Mockito.eq(urn), Mockito.eq(attributeId))).thenReturn(expectedList);
+
+        List<GranularityAttributeInstanceDto> result = datasetService.retrieveGranularityAttributeInstances(getServiceContextWithoutPrincipal(), urn, attributeId);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("uuid-granularity-01", result.get(0).getUuid());
+        assertEquals("uuid-granularity-02", result.get(1).getUuid());
+
+        Mockito.verify(datasetRepositoriesServiceFacade).findGranularityAttributesInstances(Mockito.eq(urn), Mockito.eq(attributeId));
+    }
+
+    @Override
+    @Test
     public void testRetrieveCoverageForDatasetVersionAttribute() throws Exception {
         // TODO: Implement (METAMAC-2143)
 
@@ -2226,4 +2390,5 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
         // Clean up
         exportedFile.delete();
     }
+
 }

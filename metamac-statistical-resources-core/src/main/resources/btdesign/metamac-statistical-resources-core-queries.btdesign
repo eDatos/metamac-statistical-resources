@@ -53,6 +53,8 @@ Application QueriesStatisticalResources {
     		// geographical coverage cache
     		updateGeographicalCache(@QueryVersion queryVersion) throws MetamacException;
     		updateAllGeographicalCache() throws MetamacException;
+
+    		List<@QueryVersion> retrievePublishedLastVersionQueries() throws MetamacException;
 		}  
 
 
@@ -136,7 +138,7 @@ Application QueriesStatisticalResources {
 			- @Dataset dataset databaseColumn="DATASET_FK" nullable;
 			- @QueryStatusEnum status not nullable;
 			- Bag<@QuerySelectionItem> selection inverse <-> queryVersion cascade="all-delete-orphan";
-			- @QueryTypeEnum type not nullable;
+			- @QueryTypeEnum queryType not nullable;
 			//temporal granularities
 			
 			- Bag<@ExternalItem> temporalGranularities cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="tb_temporal_granularity_selection" databaseColumn="temporal_granularity_fk" databaseJoinColumn="query_fk";

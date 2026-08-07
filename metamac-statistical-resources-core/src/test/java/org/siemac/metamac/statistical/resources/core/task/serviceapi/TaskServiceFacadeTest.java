@@ -112,4 +112,45 @@ public class TaskServiceFacadeTest extends StatisticalResourcesBaseTest implemen
     public void testExecuteRecoveryGeographicalCacheTask() throws Exception {
         // No test
     }
+
+    @Override
+    public void testExecuteUpdateResourceLastUpdateTask() throws Exception {
+        // No test
+    }
+
+    @Override
+    public void testExecuteReloadKafkaTopicDatasetTask() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testExecuteReloadKafkaTopicPublicationTask() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testExecuteReloadKafkaTopicQueryTask() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testScheduleReloadTopicDatasetJob() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testScheduleReloadTopicPublicationJob() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testScheduleReloadTopicQueryJob() throws Exception {
+        // No test
+
+    }
 }

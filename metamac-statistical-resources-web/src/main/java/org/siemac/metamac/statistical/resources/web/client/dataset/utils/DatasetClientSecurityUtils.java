@@ -258,6 +258,10 @@ public class DatasetClientSecurityUtils extends LifecycleClientSecurityUtils {
         return SharedDatasetsSecurityUtils.canUpdateGeographicCoverageVariableElementsCache(getMetamacPrincipal());
     }
 
+    public static boolean canResendAllKafkaMessages() {
+        return SharedDatasetsSecurityUtils.canResendAllKafkaMessages(getMetamacPrincipal());
+    }
+
     public static boolean canUpdateGeographicCoverageVariableElementsCache(DatasetVersionDto dto) {
         if (!isPublished(dto.getProcStatus())) {
             return false;

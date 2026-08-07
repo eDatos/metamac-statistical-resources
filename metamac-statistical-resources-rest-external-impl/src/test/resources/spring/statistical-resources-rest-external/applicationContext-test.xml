@@ -13,7 +13,7 @@
     <context:annotation-config />
 
     <!-- scans for @Components, @Repositories, @Services, ... -->
-    <context:component-scan base-package="org.siemac.metamac.statistical_resources.rest.external,org.siemac.metamac.statistical.resources.core.utils.mocks">
+    <context:component-scan base-package="org.siemac.metamac.statistical_resources.rest.external,org.siemac.metamac.statistical.resources.core.utils.mocks,org.siemac.metamac.rest.interceptors">
         <context:exclude-filter type="regex" expression=".*web.*" />
     </context:component-scan>
 

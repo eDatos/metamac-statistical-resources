@@ -19,10 +19,14 @@ public class LifecycleStatisticalResourceDo2AvroMapper {
     }
 
     public static LifecycleStatisticalResourceAvro do2Avro(LifeCycleStatisticalResource source) throws MetamacException {
+        return do2Avro(source, false);
+    }
+
+    public static LifecycleStatisticalResourceAvro do2Avro(LifeCycleStatisticalResource source, boolean reload) throws MetamacException {
         String srmApiExternalEndpoint = getConfigurationService().retrieveSrmExternalApiUrlBase();
         LifecycleStatisticalResourceAvro target = null;
         if (source != null) {
-            target = LifecycleStatisticalResourceAvro.newBuilder().setVersionableStatisticalResource(VersionableStatisticalResourceDo2AvroMapper.do2Avro(source))
+            target = LifecycleStatisticalResourceAvro.newBuilder().setVersionableStatisticalResource(VersionableStatisticalResourceDo2AvroMapper.do2Avro(source, reload))
                     .setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getFeaturedUntilDate()))
                     .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getNewnessUntilDate()))
                     .setCreationDate(DateTimeDo2AvroMapper.do2Avro(source.getCreationDate())).setCreationUser(source.getCreationUser())
@@ -32,7 +36,8 @@ public class LifecycleStatisticalResourceDo2AvroMapper {
                     .setPublicationDate(DateTimeDo2AvroMapper.do2Avro(source.getPublicationDate())).setPublicationUser(source.getPublicationUser()).setLastVersion(source.getLastVersion())
                     .setProcStatus(ProcStatusEnumDo2AvroMapper.do2Avro(source.getProcStatus())).setReplacesVersion(RelatedResourceDo2AvroMapper.do2Avro(source.getReplacesVersion()))
                     .setIsReplacedByVersion(RelatedResourceDo2AvroMapper.do2Avro(source.getIsReplacedByVersion()))
-                    .setMaintainer(ExternalItemDo2AvroMapper.do2Avro(source.getMaintainer(), srmApiExternalEndpoint)).build();
+                    .setMaintainer(ExternalItemDo2AvroMapper.do2Avro(source.getMaintainer(), srmApiExternalEndpoint))
+                    .build();
         }
         return target;
     }

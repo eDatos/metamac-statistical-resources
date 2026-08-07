@@ -8,7 +8,6 @@ import static org.siemac.metamac.statistical_resources.rest.common.service.utils
 import static org.siemac.metamac.statistical_resources.rest.common.service.utils.StatisticalResourcesRestImplCommonUtils.manageException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -22,10 +21,12 @@ import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.rest.api.constants.RestApiConstants;
+import org.siemac.metamac.rest.common.annotation.CacheableMethod;
 import org.siemac.metamac.rest.exception.RestCommonServiceExceptionType;
 import org.siemac.metamac.rest.exception.RestException;
 import org.siemac.metamac.rest.exception.utils.RestExceptionUtils;
 import org.siemac.metamac.rest.search.criteria.SculptorCriteria;
+import org.siemac.metamac.rest.utils.RestCommonUtil;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Collection;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.Dataset;
 import org.siemac.metamac.rest.statistical_resources.v1_0.domain.JsonStatData;
@@ -47,6 +48,7 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalRes
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheByRelatedResource;
 import org.siemac.metamac.statistical.resources.core.geocache.domain.GeoCacheResource;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -160,12 +162,13 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @CacheableMethod(DatasetVersion.class)
     public Dataset retrieveDataset(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
             Map<String, List<String>> dimensions = parseDimensionExpression(dim, representation);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             return datasetsDo2RestMapper.toDataset(datasetVersion, dimensions, selectedLanguages, parsedFields, granularity);
         } catch (Exception e) {
             throw manageException(e);
@@ -173,6 +176,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @CacheableMethod(DatasetVersion.class)
     public JsonStatData retrieveDatasetJsonStat(Exportation exportationBody, String agencyID, String resourceID, String version, List<String> lang, String fields, String granularity) {
 
         try {
@@ -193,6 +197,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @CacheableMethod(DatasetVersion.class)
     public JsonStatData retrieveDatasetJsonStat(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             DatasetVersion datasetVersion = commonService.retrieveDatasetVersion(agencyID, resourceID, version);
@@ -206,17 +211,20 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @CacheableMethod(DatasetVersion.class)
     public Response retrieveDatasetTSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity,
             boolean isTransposed) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.TSV, granularity, isTransposed);
     }
 
     @Override
+    @CacheableMethod(DatasetVersion.class)
     public Response retrieveDatasetCSV(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.CSV, granularity, false);
     }
 
     @Override
+    @CacheableMethod(DatasetVersion.class)
     public Response retrieveDatasetXLSX(String agencyID, String resourceID, String version, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.DATASET, agencyID, resourceID, version, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity, false);
     }
@@ -349,16 +357,19 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @CacheableMethod(QueryVersion.class)
     public Response retrieveQueryTSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.TSV, granularity, false);
     }
 
     @Override
+    @CacheableMethod(QueryVersion.class)
     public Response retrieveQueryCSV(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.CSV, granularity, false);
     }
 
     @Override
+    @CacheableMethod(QueryVersion.class)
     public Response retrieveQueryXLSX(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         return retrieveResourcePlainText(StatisticalResourceTypeEnum.QUERY, agencyID, resourceID, null, lang, fields, dim, representation, ResourcesFormat.XLSX, granularity, false);
     }
@@ -425,7 +436,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             PublicationVersion publicationVersion = commonService.retrievePublicationVersion(agencyID, resourceID);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             Collection collection = collectionsDo2RestMapper.toCollection(publicationVersion, selectedLanguages, parsedFields);
             return collection;
         } catch (Exception e) {
@@ -446,6 +457,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @CacheableMethod(QueryVersion.class)
     public Query retrieveQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
@@ -454,7 +466,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             boolean includeMetadata = !containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_METADATA);
             boolean includeData = !containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_EXCLUDE_DATA);
             boolean includeKeywords = containsField(parsedFields, StatisticalResourcesRestConstants.FIELD_INCLUDE_KEYWORDS);
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             DatasetVersion relatedDataset = null;
 
             if (includeMetadata || includeData || includeKeywords) {
@@ -469,6 +481,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
     }
 
     @Override
+    @CacheableMethod(QueryVersion.class)
     public JsonStatData retrieveJsonStatQuery(String agencyID, String resourceID, List<String> lang, String fields, String dim, String representation, String granularity) {
         try {
             QueryVersion queryVersion = commonService.retrieveQueryVersion(agencyID, resourceID);
@@ -500,7 +513,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             MultidatasetVersion multidatasetVersion = commonService.retrieveMultidatasetVersion(agencyID, resourceID);
             Set<String> parsedFields = parseFieldsStatisticalResources(fields);
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             Multidataset multidataset = multidatasetsDo2RestMapper.toMultidataset(multidatasetVersion, selectedLanguages, parsedFields);
             return multidataset;
         } catch (Exception e) {
@@ -528,7 +541,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             List<String> cacheResourcesUrn = retrieveUrnResources(query, parsedFields, complexResourcesUrn);
 
             // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             return resourcesDo2RestMapper.toResources(entitiesPagedResult, query, orderBy, sculptorCriteriaCacheByRelatedResources.getLimit(), cacheResourcesUrn, selectedLanguages, parsedFields);
         } catch (Exception e) {
             throw manageException(e);
@@ -578,7 +591,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             SculptorCriteria sculptorCriteria = datasetsRest2DoMapper.getDatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
             // Add condition for specific or default locale
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             sculptorCriteria.setOrderByCaseCondition(DatasetVersion.class, DatasetVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR, orderBy);
 
             // Find
@@ -596,7 +609,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             SculptorCriteria sculptorCriteria = collectionsRest2DoMapper.getCollectionCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
             // Add condition for specific or default locale
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             sculptorCriteria.setOrderByCaseCondition(PublicationVersion.class, PublicationVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR,
                     orderBy);
 
@@ -615,7 +628,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
             SculptorCriteria sculptorCriteria = queriesRest2DoMapper.getQueryCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
             // Add condition for specific or default locale
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
             sculptorCriteria.setOrderByCaseCondition(QueryVersion.class, QueryVersionProperties.lifeCycleStatisticalResource().title().texts().locale(), selectedLanguages, OPERATOR, orderBy);
 
             // Find
@@ -633,39 +646,21 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         try {
             SculptorCriteria sculptorCriteria = multidatasetsRest2DoMapper.getMultidatasetCriteriaMapper().restCriteriaToSculptorCriteria(query, orderBy, limit, offset);
 
+            // Add condition for specific or default locale
+            List<String> selectedLanguages = RestCommonUtil.languagesRequestedToEffectiveLanguages(lang, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
+            sculptorCriteria.setOrderByCaseCondition(MultidatasetVersion.class, MultidatasetVersionProperties.siemacMetadataStatisticalResource().title().texts().locale(), selectedLanguages,
+                    OPERATOR, orderBy);
+
             // Find
             PagedResult<MultidatasetVersion> entitiesPagedResult = commonService.findMultidatasetVersions(agencyID, sculptorCriteria.getConditions(), sculptorCriteria.getPagingParameter());
 
             // Transform
-            List<String> selectedLanguages = languagesRequestedToEffectiveLanguages(lang);
             Multidatasets multidatasets = multidatasetsDo2RestMapper.toMultidatasets(entitiesPagedResult, agencyID, resourceID, query, orderBy, sculptorCriteria.getLimit(), selectedLanguages,
                     parsedFields);
             return multidatasets;
         } catch (Exception e) {
             throw manageException(e);
         }
-    }
-
-    // if sources is not empty, the user has introduced the languages. Otherwise, the common-metadata languages will be returned. The default language in common-metadata will be returned always.
-    private List<String> languagesRequestedToEffectiveLanguages(List<String> sources) throws MetamacException {
-
-        List<String> targets = null;
-        if (CollectionUtils.isEmpty(sources)) {
-            // all languages in DATA
-            targets = configurationService.retrieveLanguages();
-        } else {
-            List<String> split = splitIfCommaSeparated(sources);
-
-            targets = new ArrayList<String>();
-            if (!CollectionUtils.isEmpty(split)) {
-                targets.addAll(split);
-            }
-            String languageDefault = configurationService.retrieveLanguageDefault();
-            if (!targets.contains(languageDefault)) {
-                targets.add(languageDefault);
-            }
-        }
-        return targets;
     }
 
     // if sources is not empty, the user has introduced the languages. Otherwise, the dataset languages will be returned. The default language in common-metadata will be returned always.
@@ -681,7 +676,7 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
                 targets.add(languageDefault);
             }
         } else {
-            return languagesRequestedToEffectiveLanguages(selectedLanguages);
+            return RestCommonUtil.languagesRequestedToEffectiveLanguages(selectedLanguages, configurationService.retrieveLanguages(), configurationService.retrieveLanguageDefault());
         }
 
         return targets;
@@ -701,14 +696,6 @@ public class StatisticalResourcesRestExternalFacadeV10Impl implements Statistica
         return defaultLang;
     }
 
-    private List<String> splitIfCommaSeparated(List<String> sources) {
-        List<String> result = new ArrayList<String>();
-        for (String source : sources) {
-            String[] split = StringUtils.split(source, ",");
-            result.addAll(Arrays.asList(split));
-        }
-        return result;
-    }
     /**
      * Throws response error, logging exception When the success response is tsv or csv, a response error must be xml because a response error in tsv or csv is not desirable.
      */

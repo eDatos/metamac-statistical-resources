@@ -30,6 +30,7 @@ public interface StatisticalResourcesRestExternalCommonService {
 
     public PagedResult<MultidatasetVersion> findMultidatasetVersions(String agencyID, List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
     public MultidatasetVersion retrieveMultidatasetVersion(String agencyID, String resourceID);
+    public MultidatasetVersion retrieveMultidatasetVersionWithCubes(String agencyID, String resourceID);
 
     public PagedResult<GeoCacheResource> findResources(List<ConditionalCriteria> conditionalCriteria, PagingParameter pagingParameter);
     public List<GeoCacheResource> findResources(List<ConditionalCriteria> conditionalCriteria);

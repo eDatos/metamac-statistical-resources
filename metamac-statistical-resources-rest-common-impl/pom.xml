@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
 		<artifactId>metamac-statistical-resources-parent</artifactId>
-		<version>11.3.1-SNAPSHOT</version>
+		<version>11.6.1-SNAPSHOT</version>
 		<relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
 	</parent>
 
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>org.apache.cxf.xjc-utils</groupId>
 			<artifactId>cxf-xjc-runtime</artifactId>
-			<version>${cxf.version}</version>
+			<version>${cxf-xjc-runtime.version}</version>
 		</dependency>
 	</dependencies>
 

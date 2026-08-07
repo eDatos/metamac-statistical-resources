@@ -50,7 +50,7 @@ public class KafkaCustomProducer<K, V extends SpecificRecordBase> implements Pro
             Future<RecordMetadata> sendResult = producer.send(record);
             sendResult.get(KAFKA_TIMEOUT, TimeUnit.MILLISECONDS);
         } catch (SerializationException | InterruptedException | ExecutionException | TimeoutException e) {
-            throw MetamacExceptionBuilder.builder().withCause(e).build();
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_TO_STREAM_MESSAGING_SERVER).withCause(e).build();
         }
     }
 

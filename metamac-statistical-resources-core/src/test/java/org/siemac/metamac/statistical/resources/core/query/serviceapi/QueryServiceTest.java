@@ -629,7 +629,7 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
         expectedMetamacException(new MetamacException(ServiceExceptionType.METADATA_UNEXPECTED, ServiceExceptionParameters.QUERY_VERSION__LATEST_DATA_NUMBER));
 
         QueryVersion query = queryVersionMockFactory.retrieveMock(QUERY_VERSION_10_ACTIVE_LATEST_DATA_5_NAME);
-        query.setType(QueryTypeEnum.FIXED);
+        query.setQueryType(QueryTypeEnum.FIXED);
         query.getSelection().clear();
         query.addSelection(buildSelectionItemWithDimensionAndCodes("DIM01", "C01", "C02"));
         query.addSelection(buildSelectionItemWithDimensionAndCodes("DIM02", "C01"));
@@ -1186,5 +1186,11 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
     public void testUpdateAllGeographicalCache() throws Exception {
         // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
 
+    }
+
+    @Override
+    @Test
+    public void testRetrievePublishedLastVersionQueries() throws Exception {
+        // NOTHING TO DO
     }
 }

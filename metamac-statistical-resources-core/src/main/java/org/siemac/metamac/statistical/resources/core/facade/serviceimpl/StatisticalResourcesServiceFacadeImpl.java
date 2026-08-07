@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.specific.SpecificRecordBase;
+import org.apache.poi.ss.formula.functions.T;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -31,7 +32,10 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStr
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.RegionReference;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
+import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.utils.SecurityUtils;
+import org.siemac.metamac.statistical.operations.core.stream.messages.OperationAvro;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -67,6 +71,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepresentationMappingDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
@@ -90,6 +95,7 @@ import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestI
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -139,6 +145,7 @@ import org.springframework.stereotype.Service;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.AttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.dto.CodeDimensionDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 /**
@@ -262,6 +269,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     private QueryVersionRepository                                    queryVersionRepository;
     @Autowired
     private MultidatasetVersionRepository                             multidatasetVersionRepository;
+
+    @Autowired
+    private ResourceCacheInvalidationService                          resourceCacheInvalidationService;
 
     @Autowired
     private DatasetRepositoriesServiceFacade                          datasetRepositoriesServiceFacade;
@@ -1318,6 +1328,74 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeId);
 
         return statRepoDto2StatisticalResourcesDtoMapper.attributeDtosToDsdAttributeInstanceDtos(datasetVersionDto.getId(), dsdAttribute, instances);
+    }
+
+    @Override
+    public DsdGranularityAttributeInstanceDto createGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException {
+        // Retrieve
+        DatasetVersionDto datasetVersionDto = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
+        // Security
+        DatasetsSecurityUtils.canCreateAttributeInstance(ctx, datasetVersionDto);
+
+        // Transform
+        GranularityAttributeInstanceDto granularityAttributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper.dsdGranularityAttributeInstanceDtoToGranularityAttributeInstanceDto(dsdGranularityAttributeInstanceDto);
+
+        // Create
+        GranularityAttributeInstanceDto created = getDatasetService().createGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
+
+        DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, created.getAttributeId());
+        return statRepoDto2StatisticalResourcesDtoMapper.granularityAttributeInstanceDtoToDsdGranularityAttributeInstanceDto(datasetVersionDto.getId(), dsdAttribute, created);
+    }
+
+    @Override
+    public DsdGranularityAttributeInstanceDto updateGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException {
+        // Retrieve
+        DatasetVersionDto datasetVersionDto = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
+        // Security
+        DatasetsSecurityUtils.canUpdateAttributeInstance(ctx, datasetVersionDto);
+
+        // Transform
+        GranularityAttributeInstanceDto granularityAttributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper.dsdGranularityAttributeInstanceDtoToGranularityAttributeInstanceDto(dsdGranularityAttributeInstanceDto);
+
+        // Update
+        GranularityAttributeInstanceDto updated = getDatasetService().updateGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
+
+        if (updated != null) {
+            DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, updated.getAttributeId());
+            return statRepoDto2StatisticalResourcesDtoMapper.granularityAttributeInstanceDtoToDsdGranularityAttributeInstanceDto(datasetVersionDto.getId(), dsdAttribute, updated);
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public void deleteGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, String uuid) throws MetamacException {
+        // Retrieve
+        DatasetVersionDto datasetVersionDto = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
+        // Security
+        DatasetsSecurityUtils.canDeleteAttributeInstance(ctx, datasetVersionDto);
+
+        // Delete
+        getDatasetService().deleteGranularityAttributeInstance(ctx, datasetVersionUrn, uuid);
+    }
+
+    @Override
+    public List<DsdGranularityAttributeInstanceDto> retrieveGranularityAttributeInstances(ServiceContext ctx, String datasetVersionUrn, String attributeId) throws MetamacException {
+        // Retrieve
+        DatasetVersionDto datasetVersionDto = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
+
+        // Security
+        DatasetsSecurityUtils.canRetrieveAttributeInstances(ctx, datasetVersionDto);
+
+        // Retrieve
+        List<GranularityAttributeInstanceDto> instances = getDatasetService().retrieveGranularityAttributeInstances(ctx, datasetVersionUrn, attributeId);
+
+        DsdAttribute dsdAttribute = getDatasetVersionAttribute(ctx, datasetVersionUrn, attributeId);
+
+        return statRepoDto2StatisticalResourcesDtoMapper.granularityAttributeInstanceDtosToDsdGranularityAttributeInstanceDtos(datasetVersionDto.getId(), dsdAttribute, instances);
     }
 
     @Override
@@ -2661,4 +2739,18 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         }
     }
 
+    @Override
+    public void processSrmDsdKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
+        DataStructureDefinitionAvro dsd = (DataStructureDefinitionAvro) message;
+        String dsdUrn = dsd.getUrn();
+        resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByDsd(ctx, dsdUrn, timestamp);
+    }
+
+
+    @Override
+    public void processOperationKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
+        OperationAvro operation = (OperationAvro) message;
+        String operationUrn = operation.getUrn();
+        resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByOperation(ctx, operationUrn, timestamp);
+    }
 }

@@ -13,7 +13,7 @@ Application QueriesStatisticalResourcesDto {
 		DataTransferObject QueryVersionBaseDto extends @LifeCycleStatisticalResourceBaseDto {
 			- @RelatedResourceDto relatedDatasetVersion;
 			- @QueryStatusEnum status;
-			- @QueryTypeEnum type;
+			- @QueryTypeEnum queryType;
 			
 			// If a task related with the query is being executed in background
 			Boolean isTaskInBackground;
@@ -22,7 +22,7 @@ Application QueriesStatisticalResourcesDto {
 		DataTransferObject QueryVersionDto extends @LifeCycleStatisticalResourceDto {
 			- @RelatedResourceDto relatedDatasetVersion;
 			- @QueryStatusEnum status;
-			- @QueryTypeEnum type;
+			- @QueryTypeEnum queryType;
 			Integer latestDataNumber;
 			CodeDimensionMap selection;
 			- Bag<@ExternalItemDto> temporalGranularities;

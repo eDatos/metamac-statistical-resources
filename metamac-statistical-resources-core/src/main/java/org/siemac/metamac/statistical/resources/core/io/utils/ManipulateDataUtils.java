@@ -34,6 +34,13 @@ public class ManipulateDataUtils {
     public static Character PAIR_SEPARATOR    = ':';
     public static Character ELEMENT_SEPARATOR = ',';
 
+    public static final String HEADER_ATTRIBUTE_ID       = "ID_ATRIBUTO";
+    public static final String HEADER_INSTANCE_TYPE      = "TIPO_INSTANCIA";
+    public static final String HEADER_DIMENSIONS         = "DIMENSIONES";
+    public static final String HEADER_DIMENSION_VALUES   = "VALORES_DIMENSION";
+    public static final String HEADER_PREFIX_ATTRIBUTE_VALUE = "VALOR_ATRIBUTO";
+    public static final String HEADER_LANGUAGE_SEPARATOR = "#";
+
     /**
      * Create a data source extra identification attribute
      *

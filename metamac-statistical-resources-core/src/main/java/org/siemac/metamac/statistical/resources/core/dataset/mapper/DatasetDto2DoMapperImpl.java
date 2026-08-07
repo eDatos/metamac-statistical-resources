@@ -119,6 +119,7 @@ public class DatasetDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Dat
         if (source.getId() == null) {
             target = new DatasetVersion();
             target.setSiemacMetadataStatisticalResource(new SiemacMetadataStatisticalResource());
+            target.getSiemacMetadataStatisticalResource().setPatch(0); // must not be updated from the front
         } else {
             try {
                 target = datasetVersionRepository.findById(source.getId());

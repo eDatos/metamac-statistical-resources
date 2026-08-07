@@ -120,9 +120,9 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
     private static void checkQueryVersion(QueryVersion queryVersion, List<MetamacExceptionItem> exceptions) {
         StatisticalResourcesValidationUtils.checkMetadataRequiredIncompatible(queryVersion.getDataset(), ServiceExceptionParameters.QUERY_VERSION__DATASET, queryVersion.getFixedDatasetVersion(),
                 ServiceExceptionParameters.QUERY_VERSION__FIXED_DATASET_VERSION, exceptions);
-        StatisticalResourcesValidationUtils.checkMetadataRequired(queryVersion.getType(), ServiceExceptionParameters.QUERY_VERSION__TYPE, exceptions);
+        StatisticalResourcesValidationUtils.checkMetadataRequired(queryVersion.getQueryType(), ServiceExceptionParameters.QUERY_VERSION__TYPE, exceptions);
 
-        if (QueryTypeEnum.LATEST_DATA.equals(queryVersion.getType())) {
+        if (QueryTypeEnum.LATEST_DATA.equals(queryVersion.getQueryType())) {
             StatisticalResourcesValidationUtils.checkMetadataRequired(queryVersion.getLatestDataNumber(), ServiceExceptionParameters.QUERY_VERSION__LATEST_DATA_NUMBER, exceptions);
             if (queryVersion.getLatestDataNumber() != null && queryVersion.getLatestDataNumber() <= Integer.valueOf(0)) {
                 exceptions.add(new MetamacExceptionItem(ServiceExceptionType.METADATA_INCORRECT, ServiceExceptionParameters.QUERY_VERSION__LATEST_DATA_NUMBER));
@@ -138,7 +138,7 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
         StatisticalResourcesValidationUtils.checkMetadataRequired(queryVersion.getSelection(), ServiceExceptionParameters.QUERY_VERSION__SELECTION, exceptions);
 
         if (queryVersion.getSelection() != null) {
-            boolean mustHaveEmptyTimePeriod = QueryTypeEnum.LATEST_DATA.equals(queryVersion.getType());
+            boolean mustHaveEmptyTimePeriod = QueryTypeEnum.LATEST_DATA.equals(queryVersion.getQueryType());
             for (QuerySelectionItem selectionItem : queryVersion.getSelection()) {
                 if (mustHaveEmptyTimePeriod && selectionItem != null && StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(selectionItem.getDimension())) {
                     StatisticalResourcesValidationUtils.checkMetadataEmpty(selectionItem.getCodes(), ServiceExceptionParameters.QUERY_VERSION_SELECTION_TIME_PERIOD, exceptions);
@@ -155,6 +155,10 @@ public class QueryServiceInvocationValidatorImpl extends BaseInvocationValidator
     }
 
     public static void checkFindPurposes(List<MetamacExceptionItem> exceptions) {
+        // NOTHING
+    }
+
+    public static void checkRetrievePublishedLastVersionQueries(List<MetamacExceptionItem> exceptions) {
         // NOTHING
     }
 }

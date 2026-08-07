@@ -178,8 +178,8 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
             mockQuerySelectionFromDatasetVersion(queryVersion, getDatasetVersionInQueryVersion(queryVersion));
         }
 
-        if (queryVersion.getType() == null) {
-            queryVersion.setType(QueryTypeEnum.FIXED);
+        if (queryVersion.getQueryType() == null) {
+            queryVersion.setQueryType(QueryTypeEnum.FIXED);
         }
 
         return queryVersion;
@@ -317,6 +317,9 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
 
         datasetVersion.setKeepAllData(Boolean.TRUE);
         datasetVersion.setDataSourceType(DataSourceTypeEnum.FILE);
+        if (datasetVersion.getSiemacMetadataStatisticalResource().getPatch() == null) {
+            datasetVersion.getSiemacMetadataStatisticalResource().setPatch(0);
+        }
 
         return datasetVersion;
     }
@@ -775,6 +778,9 @@ public class StatisticalResourcesPersistedDoMocks extends StatisticalResourcesDo
     protected void setSpecialCasesVersionableStatisticalResourceMock(VersionableStatisticalResource resource) {
         if (resource.getVersionLogic() == null) {
             resource.setVersionLogic(StatisticalResourcesMockFactory.INIT_VERSION);
+        }
+        if (resource.getPatch() == null) {
+            resource.setPatch(0);
         }
     }
 

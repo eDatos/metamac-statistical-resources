@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsMetamacExceptionItem;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDate;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsDay;
 import static org.siemac.metamac.common.test.utils.MetamacAsserts.assertEqualsInternationalStringDto;
@@ -44,42 +45,10 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_04_FULL_FILLED_WITH_1_DATASET_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_05_WITH_MULTIPLE_PUBLISHED_VERSIONS_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_06_WITH_MULTIPLE_PUBLISHED_VERSIONS_AND_LATEST_NO_VISIBLE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_01_BASIC_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_02_BASIC_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_03_FOR_DATASET_03_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_AND_LAST_VERSION_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_05_FOR_DATASET_04_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_06_FOR_QUERIES_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_09_OPER_0001_CODE_000003_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_10_OPER_0002_CODE_000001_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_113_DATABASE_TYPE_BASIC_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_11_OPER_0002_CODE_000002_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_121_IN_DRAFT_WITH_DATASOURCE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_12_OPER_0002_MAX_CODE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_13_OPER_0002_CODE_000003_PROD_VAL_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_14_OPER_03_CODE_01_PUBLISHED_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_16_DRAFT_READY_FOR_PRODUCTION_VALIDATION_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_19_PRODUCTION_VALIDATION_NOT_READY_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_20_PRODUCTION_VALIDATION_READY_FOR_DIFFUSION_VALIDATION_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_26_V2_PUBLISHED_NO_VISIBLE_FOR_DATASET_06_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_27_WITH_COVERAGE_FILLED_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_29_WITHOUT_DATASOURCES_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_39_VERSION_RATIONALE_TYPE_MAJOR_NEW_RESOURCE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_40_VERSION_RATIONALE_TYPE_MAJOR_ESTIMATORS_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_41_VERSION_RATIONALE_TYPE_MINOR_ERRATAS_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_42_VERSION_RATIONALE_TYPE_MINOR_ERRATAS_AND_MAJOR_ESTIMATORS_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_43_NEXT_VERSION_NO_UPDATES_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_44_NEXT_VERSION_NON_SCHEDULED_UPDATE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_45_NEXT_VERSION_SCHEDULED_UPDATE_JANUARY_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_46_NEXT_VERSION_SCHEDULED_UPDATE_JULY_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_47_WITH_COVERAGE_FILLED_WITH_TITLES_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_48_WITH_TEMPORAL_COVERAGE_FILLED_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_49_WITH_DATASOURCE_FROM_PX_WITH_NEXT_UPDATE_IN_ONE_MONTH_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_53_IN_DIFFUSION_VALIDATION_WITH_DATASOURCE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_54_IN_VALIDATION_REJECTED_WITH_DATASOURCE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_55_PUBLISHED_WITH_DATASOURCE_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_70_PREPARED_TO_PUBLISH_EXTERNAL_ITEM_FULL_NAME;
-import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_88_PUBLISHED_WITH_CATEGORISATIONS_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetMockFactory.DATASET_30_LAST_VERSION_NOT_VISIBLE_WITH_PUBLICATION_AND_QUERIES_NOT_VISIBLE_BOTH_NOT_COMPATIBLE_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.*;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_07_VALID_CODE_000001_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory.DATASET_VERSION_08_VALID_CODE_000002_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasourceMockFactory.DATASOURCE_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DimensionRepresentationMappingMockFactory.DIMENSION_REPRESENTATION_MAPPING_01_DATASET_01_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.MultidatasetCubeMockFactory.MULTIDATASET_CUBE_01_BASIC_NAME;
@@ -138,6 +107,7 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_02_BASIC_ORDERED_01_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_03_BASIC_ORDERED_02_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_04_BASIC_ORDERED_03_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_05_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_06_BASIC_ACTIVE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_07_BASIC_ACTIVE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_08_BASIC_DISCONTINUED_NAME;
@@ -153,6 +123,8 @@ import static org.siemac.metamac.statistical.resources.core.utils.mocks.factorie
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_22_FOR_QUERY_03_AND_LAST_VERSION_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_28_V2_PUBLISHED_NO_VISIBLE_FOR_QUERY_06_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_37_PREPARED_TO_PUBLISH_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_49_NOT_VISIBLE_REQUIRES_FIXED_DATASET_VERSION_NOT_VISIBLE_NAME;
+import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.QueryVersionMockFactory.QUERY_VERSION_50_NOT_VISIBLE_REQUIRES_DATASET_NOT_VISIBLE_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticOfficialityMockFactory.STATISTIC_OFFICIALITY_01_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticOfficialityMockFactory.STATISTIC_OFFICIALITY_02_BASIC_NAME;
 import static org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDtoMocks.mockCodeItemDtosWithIdentifiers;
@@ -193,13 +165,20 @@ import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.AttributeRelationship;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Attributes;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructureComponents;
+import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
+import org.siemac.metamac.statistical.operations.core.stream.messages.OperationAvro;
+import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.TextFormat;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
+import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.common.criteria.enums.StatisticalResourcesCriteriaOrderEnum;
 import org.siemac.metamac.statistical.resources.core.common.criteria.enums.StatisticalResourcesCriteriaPropertyEnum;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
@@ -212,6 +191,7 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionMainCoveragesDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepresentationMappingDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionBaseDto;
@@ -241,7 +221,9 @@ import org.siemac.metamac.statistical.resources.core.query.domain.CodeItemReposi
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItemRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
+import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.siemac.metamac.statistical.resources.core.utils.DataMockUtils;
+import org.siemac.metamac.statistical.resources.core.utils.SrmMockUtils;
 import org.siemac.metamac.statistical.resources.core.utils.asserts.DatasetsAsserts;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.StatisticalResourcesMockFactory;
@@ -254,10 +236,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import es.gobcan.istac.edatos.dataset.repository.dto.GranularityAttributeInstanceDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.InternationalStringDto;
+import es.gobcan.istac.edatos.dataset.repository.dto.LocalisedStringDto;
 import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath:spring/statistical-resources/include/stream-messaging-service-facade-mockito.xml",
+@ContextConfiguration(locations = {"classpath:spring/statistical-resources/include/stream-messaging-service-mockito.xml",
         "classpath:spring/statistical-resources/include/dataset-repository-mockito.xml", "classpath:spring/statistical-resources/include/rest-services-mockito.xml",
         "classpath:spring/statistical-resources/include/external-item-checker-mockito.xml", "classpath:spring/statistical-resources/include/task-mockito.xml",
         "classpath:spring/statistical-resources/applicationContext-test.xml"})
@@ -284,13 +269,18 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
 
     @Autowired
-    StreamMessagingServiceFacade              streamMessagingServiceFacade;
+    private DatasetVersionRepository          datasetVersionRepository;
+
+    @Autowired
+    private TaskService taskService;
 
     @Before
     public void onBeforeTest() throws Exception {
         DataStructure emptyDsd = new DataStructure();
         emptyDsd.setDataStructureComponents(new DataStructureComponents());
-
+        taskService = (TaskService) (((org.springframework.aop.framework.Advised) taskService).getTargetSource().getTarget());
+        Mockito.reset(taskService);
+        Mockito.reset(srmRestInternalService);
         Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(emptyDsd);
     }
 
@@ -2314,6 +2304,160 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     public void testRetrieveAttributeInstances() throws Exception {
         // TODO testRetrieveAttributeInstances (METAMAC-2143)
 
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testCreateGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(buildDsdWithTextAttribute("ATTR_01"));
+
+        DsdGranularityAttributeInstanceDto inputDto = new DsdGranularityAttributeInstanceDto();
+        inputDto.setAttributeId("ATTR_01");
+        Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
+        granularityCodes.put("TIME_PERIOD", Arrays.asList("A", "Q"));
+        inputDto.setGranularityCodesByDimension(granularityCodes);
+        inputDto.setValue(new org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto());
+        inputDto.getValue().setStringValue("value");
+        Map<String, List<String>> codesByDimension = new HashMap<String, List<String>>();
+        codesByDimension.put("DIM_01", Arrays.asList("CODE_01", "CODE_02"));
+
+        GranularityAttributeInstanceDto returnedDto = buildGranularityInstanceDto("uuid-granularity-01", "ATTR_01", granularityCodes, codesByDimension, "test-value");
+        Mockito.when(datasetRepositoriesServiceFacade.createGranularityAttributeInstance(Mockito.anyString(), Mockito.any(GranularityAttributeInstanceDto.class))).thenReturn(returnedDto);
+
+        DsdGranularityAttributeInstanceDto result = statisticalResourcesServiceFacade.createGranularityAttributeInstance(getServiceContextAdministrador(), urn, inputDto);
+
+        assertNotNull(result);
+        assertEquals("ATTR_01", result.getAttributeId());
+        assertEquals("uuid-granularity-01", result.getUuid());
+        assertEquals(Arrays.asList("A", "Q"), result.getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertNotNull(result.getCodesByDimension());
+        assertEquals(1, result.getCodesByDimension().size());
+        assertEquals("CODE_01", result.getCodesByDimension().get("DIM_01").get(0).getCode());
+        assertEquals("CODE_02", result.getCodesByDimension().get("DIM_01").get(1).getCode());
+        assertNotNull(result.getValue());
+        assertEquals("test-value", result.getValue().getStringValue());
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testUpdateGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+
+        Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(buildDsdWithTextAttribute("ATTR_01"));
+
+        DsdGranularityAttributeInstanceDto inputDto = new DsdGranularityAttributeInstanceDto();
+        inputDto.setUuid("uuid-granularity-existing");
+        inputDto.setAttributeId("ATTR_01");
+        Map<String, List<String>> granularityCodes = new HashMap<String, List<String>>();
+        granularityCodes.put("TIME_PERIOD", Arrays.asList("A"));
+        inputDto.setGranularityCodesByDimension(granularityCodes);
+        inputDto.setValue(new org.siemac.metamac.statistical.resources.core.dto.datasets.AttributeValueDto());
+        inputDto.getValue().setStringValue("updated-value");
+        Map<String, List<String>> codesByDimension = new HashMap<String, List<String>>();
+        codesByDimension.put("DIM_01", Arrays.asList("CODE_01"));
+
+        GranularityAttributeInstanceDto returnedDto = buildGranularityInstanceDto("uuid-granularity-existing", "ATTR_01", granularityCodes, codesByDimension, "updated-value");
+        Mockito.when(datasetRepositoriesServiceFacade.updateGranularityAttributeInstance(Mockito.any(GranularityAttributeInstanceDto.class))).thenReturn(returnedDto);
+
+        DsdGranularityAttributeInstanceDto result = statisticalResourcesServiceFacade.updateGranularityAttributeInstance(getServiceContextAdministrador(), urn, inputDto);
+
+        assertNotNull(result);
+        assertEquals("ATTR_01", result.getAttributeId());
+        assertEquals("uuid-granularity-existing", result.getUuid());
+        assertEquals(Arrays.asList("A"), result.getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertNotNull(result.getCodesByDimension());
+        assertEquals(1, result.getCodesByDimension().size());
+        assertEquals("CODE_01", result.getCodesByDimension().get("DIM_01").get(0).getCode());
+        assertNotNull(result.getValue());
+        assertEquals("updated-value", result.getValue().getStringValue());
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testDeleteGranularityAttributeInstance() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        String uuid = "uuid-granularity-to-delete";
+
+        Mockito.doNothing().when(datasetRepositoriesServiceFacade).deleteGranularityAttributeInstance(uuid);
+
+        statisticalResourcesServiceFacade.deleteGranularityAttributeInstance(getServiceContextAdministrador(), urn, uuid);
+    }
+
+    @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_BASIC_NAME)
+    public void testRetrieveGranularityAttributeInstances() throws Exception {
+        DatasetVersion datasetVersion = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_BASIC_NAME);
+        String urn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
+        datasetVersion.setDatasetRepositoryId(urn);
+        datasetVersionRepository.save(datasetVersion);
+
+        String attributeId = "ATTR_01";
+        Mockito.when(srmRestInternalService.retrieveDsdByUrn(Mockito.anyString())).thenReturn(buildDsdWithTextAttribute(attributeId));
+
+        Map<String, List<String>> codes1 = new HashMap<String, List<String>>();
+        codes1.put("TIME_PERIOD", Arrays.asList("A", "Q"));
+        Map<String, List<String>> dimensions1 = new HashMap<String, List<String>>();
+        dimensions1.put("DIM_01", Arrays.asList("CODE_01"));
+        Map<String, List<String>> codes2 = new HashMap<String, List<String>>();
+        codes2.put("TIME_PERIOD", Arrays.asList("M"));
+        Map<String, List<String>> dimensions2 = new HashMap<String, List<String>>();
+        dimensions2.put("DIM_02", Arrays.asList("CODE_11", "CODE_12"));
+        List<GranularityAttributeInstanceDto> expectedList = Arrays.asList(
+                buildGranularityInstanceDto("uuid-granularity-01", attributeId, codes1, dimensions1, "value-01"),
+                buildGranularityInstanceDto("uuid-granularity-02", attributeId, codes2, dimensions2, "value-02"));
+
+        Mockito.when(datasetRepositoriesServiceFacade.findGranularityAttributesInstances(Mockito.anyString(), Mockito.eq(attributeId))).thenReturn(expectedList);
+
+        List<DsdGranularityAttributeInstanceDto> result = statisticalResourcesServiceFacade.retrieveGranularityAttributeInstances(getServiceContextAdministrador(), urn, attributeId);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals("uuid-granularity-01", result.get(0).getUuid());
+        assertEquals("uuid-granularity-02", result.get(1).getUuid());
+        assertEquals(Arrays.asList("A", "Q"), result.get(0).getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertEquals(Arrays.asList("M"), result.get(1).getGranularityCodesByDimension().get("TIME_PERIOD"));
+        assertEquals("CODE_01", result.get(0).getCodesByDimension().get("DIM_01").get(0).getCode());
+        assertEquals("CODE_11", result.get(1).getCodesByDimension().get("DIM_02").get(0).getCode());
+        assertEquals("CODE_12", result.get(1).getCodesByDimension().get("DIM_02").get(1).getCode());
+        assertEquals("value-01", result.get(0).getValue().getStringValue());
+        assertEquals("value-02", result.get(1).getValue().getStringValue());
+
+    }
+
+    private DataStructure buildDsdWithTextAttribute(String attributeId) {
+        DataStructure dsd = new DataStructure();
+        DataStructureComponents components = new DataStructureComponents();
+        dsd.setDataStructureComponents(components);
+        AttributeRelationship relationship = new AttributeRelationship();
+        relationship.setPrimaryMeasure("OBS_VALUE");
+        Attributes attributes = new Attributes();
+        attributes.getAttributes().add(SrmMockUtils.buildTimeAttribute(attributeId, new TextFormat(), relationship));
+        components.setAttributes(attributes);
+        return dsd;
+    }
+
+    private GranularityAttributeInstanceDto buildGranularityInstanceDto(String uuid, String attributeId, Map<String, List<String>> granularityCodes,
+            Map<String, List<String>> codesByDimension, String value) {
+        GranularityAttributeInstanceDto dto = new GranularityAttributeInstanceDto();
+        dto.setUuid(uuid);
+        dto.setAttributeId(attributeId);
+        dto.setGranularityCodesByDimension(granularityCodes);
+        dto.setCodesByDimension(codesByDimension);
+        InternationalStringDto internationalStringDto = new InternationalStringDto();
+        internationalStringDto.addText(new LocalisedStringDto("es", value));
+        dto.setValue(internationalStringDto);
+        return dto;
     }
 
     @Override
@@ -4361,6 +4505,75 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
 
     @Override
     public void testUpdateGeographicCoverageExternalPublicationCache() throws Exception {
+        // // Without test in facade
+    }
+
+    @Test
+    @MetamacMock(DATASET_30_LAST_VERSION_NOT_VISIBLE_WITH_PUBLICATION_AND_QUERIES_NOT_VISIBLE_BOTH_NOT_COMPATIBLE_NAME)
+    public void testUpdateDatasetVersionsLastUpdateByDsd() throws Exception {
+        // Dataset 30 has two versions. DV92 belongs to version with a specific relatedDsd.
+        // Query 49 is pinned to DV92 (fixedDatasetVersion path).
+        // Query 50 is linked to the parent dataset (dataset path).
+        // So querying by DV92's DSD should yield 3 affected URNs: DV92 + Q49 + Q50.
+        DatasetVersion dv92 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_92_NOT_VISIBLE_FOR_DATASET_30_NAME);
+        String dsdUrn = dv92.getRelatedDsd().getUrn();
+
+        String dv92Urn = dv92.getSiemacMetadataStatisticalResource().getUrn();
+        String query49Urn = queryVersionMockFactory.retrieveMock(QUERY_VERSION_49_NOT_VISIBLE_REQUIRES_FIXED_DATASET_VERSION_NOT_VISIBLE_NAME).getLifeCycleStatisticalResource().getUrn();
+        String query50Urn = queryVersionMockFactory.retrieveMock(QUERY_VERSION_50_NOT_VISIBLE_REQUIRES_DATASET_NOT_VISIBLE_NAME).getLifeCycleStatisticalResource().getUrn();
+
+        long timestamp = new DateTime(2020, 6, 1, 10, 0, 0, 0).getMillis();
+
+        DataStructureDefinitionAvro dsdAvro = new DataStructureDefinitionAvro();
+        dsdAvro.setUrn(dsdUrn);
+        statisticalResourcesServiceFacade.processSrmDsdKafkaMessage(getServiceContextWithoutPrincipal(), dsdAvro, timestamp);
+
+        Mockito.verify(taskService, Mockito.times(3)).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.anyString(), Mockito.anyLong(), Mockito.anyBoolean());
+        Mockito.verify(taskService).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.eq(dv92Urn), Mockito.eq(timestamp), Mockito.eq(true));
+        Mockito.verify(taskService).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.eq(query49Urn), Mockito.eq(timestamp), Mockito.eq(true));
+        Mockito.verify(taskService).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.eq(query50Urn), Mockito.eq(timestamp), Mockito.eq(true));
+    }
+
+    @Test
+    @MetamacMock({DATASET_VERSION_07_VALID_CODE_000001_NAME, DATASET_VERSION_08_VALID_CODE_000002_NAME, DATASET_VERSION_09_OPER_0001_CODE_000003_NAME})
+    public void testUpdateDatasetVersionsLastUpdateByOperation() throws Exception {
+        // DV07, DV08, DV09 all share operation OPERATION_01_CODE (C00025A). No linked queries.
+        // Cache planification only affects PUBLISHED resources,
+        // so the three versions are forced to PUBLISHED. Querying by the operation URN should yield exactly 3 affected URNs.
+        DatasetVersion dv07 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_07_VALID_CODE_000001_NAME);
+        DatasetVersion dv08 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_08_VALID_CODE_000002_NAME);
+        DatasetVersion dv09 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_09_OPER_0001_CODE_000003_NAME);
+
+        for (DatasetVersion datasetVersion : Arrays.asList(dv07, dv08, dv09)) {
+            datasetVersion.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.PUBLISHED);
+            datasetVersionRepository.save(datasetVersion);
+        }
+
+        String operationUrn = dv07.getSiemacMetadataStatisticalResource().getStatisticalOperation().getUrn();
+
+        String urn07 = dv07.getSiemacMetadataStatisticalResource().getUrn();
+        String urn08 = dv08.getSiemacMetadataStatisticalResource().getUrn();
+        String urn09 = dv09.getSiemacMetadataStatisticalResource().getUrn();
+
+        long timestamp = new DateTime(2020, 6, 1, 10, 0, 0, 0).getMillis();
+
+        OperationAvro operationAvro = new OperationAvro();
+        operationAvro.setUrn(operationUrn);
+        statisticalResourcesServiceFacade.processOperationKafkaMessage(getServiceContextWithoutPrincipal(), operationAvro, timestamp);
+
+        Mockito.verify(taskService, Mockito.times(3)).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.anyString(), Mockito.anyLong(), Mockito.anyBoolean());
+        Mockito.verify(taskService).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.eq(urn07), Mockito.eq(timestamp), Mockito.eq(true));
+        Mockito.verify(taskService).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.eq(urn08), Mockito.eq(timestamp), Mockito.eq(true));
+        Mockito.verify(taskService).planifyUpdateResourceLastUpdate(Mockito.any(), Mockito.eq(urn09), Mockito.eq(timestamp), Mockito.eq(true));
+    }
+
+    @Override
+    public void testProcessSrmDsdKafkaMessage() throws Exception {
+        // // Without test in facade
+    }
+
+    @Override
+    public void testProcessOperationKafkaMessage() throws Exception {
         // // Without test in facade
     }
 

@@ -55,7 +55,7 @@ public class QueriesRest2DoMapperImpl extends BaseRest2DoMapperV10Impl implement
                         return buildRelatedDatasetExternalProperty(propertyRestriction);
                     }
                 case TYPE:
-                    return buildSculptorPropertyCriteria(QueryVersionProperties.type(), PropertyTypeEnum.QUERY_TYPE, propertyRestriction);
+                    return buildSculptorPropertyCriteria(QueryVersionProperties.queryType(), PropertyTypeEnum.QUERY_TYPE, propertyRestriction);
                 case STATUS:
                     return buildSculptorPropertyCriteria(QueryVersionProperties.status(), PropertyTypeEnum.QUERY_STATUS, propertyRestriction);
                 case VALID_FROM:

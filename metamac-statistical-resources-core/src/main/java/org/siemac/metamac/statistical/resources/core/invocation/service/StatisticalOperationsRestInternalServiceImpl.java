@@ -42,7 +42,7 @@ public class StatisticalOperationsRestInternalServiceImpl implements Statistical
     @Override
     public Operation retrieveOperationById(String operationCode) throws MetamacException {
         try {
-            return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().retrieveOperationById(operationCode);
+            return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().retrieveOperationById(operationCode, null);
         } catch (Exception e) {
             throw manageStatisticalOperationsInternalRestException(e);
         }
@@ -166,7 +166,7 @@ public class StatisticalOperationsRestInternalServiceImpl implements Statistical
         if (StringUtils.isBlank(operationId)) {
             operationId = RestApiConstants.WILDCARD_ALL;
         }
-        return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().findInstances(operationId, query, orderBy, limit, offset);
+        return restApiLocator.getStatisticalOperationsRestInternalFacadeV10().findInstances(operationId, query, orderBy, limit, offset, null);
     }
 
     @Override

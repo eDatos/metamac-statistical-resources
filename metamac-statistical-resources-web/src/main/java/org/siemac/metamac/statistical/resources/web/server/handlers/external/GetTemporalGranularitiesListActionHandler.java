@@ -35,7 +35,9 @@ public class GetTemporalGranularitiesListActionHandler extends SecurityActionHan
         try {
             String temporalGranularityCodelistUrn = configurationService.retrieveDefaultCodelistTemporalGranularityUrn();
             if (!StringUtils.isEmpty(temporalGranularityCodelistUrn)) {
-                ExternalItemsResult result = srmRestInternalFacade.findCodesInCodelist(temporalGranularityCodelistUrn, action.getFirstResult(), action.getMaxResults(), action.getCriteria());
+                Integer firstResult = action.getFirstResult();
+                Integer maxResults = action.getMaxResults() == 0 ? null : action.getMaxResults();
+                ExternalItemsResult result = srmRestInternalFacade.findCodesInCodelist(temporalGranularityCodelistUrn, firstResult, maxResults, action.getCriteria());
                 return new GetTemporalGranularitiesListResult(result.getExternalItemDtos(), result.getFirstResult(), result.getTotalResults());
             }
             return new GetTemporalGranularitiesListResult(new ArrayList<ExternalItemDto>(), 0, 0);

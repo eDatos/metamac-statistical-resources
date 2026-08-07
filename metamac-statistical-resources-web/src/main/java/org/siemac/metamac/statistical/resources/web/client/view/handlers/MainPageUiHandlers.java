@@ -24,4 +24,6 @@ public interface MainPageUiHandlers extends UiHandlers {
     void openHelpUrl();
 
     void updateGeographicCoverageVariableElementsCache(List<StatisticalResourceTypeEnum> resourcesToUpdate, List<StatisticalResourceTypeEnum> externalResourcesToUpdate);
+
+    void reloadKafkaTopics(List<StatisticalResourceTypeEnum> resourceTypes);
 }

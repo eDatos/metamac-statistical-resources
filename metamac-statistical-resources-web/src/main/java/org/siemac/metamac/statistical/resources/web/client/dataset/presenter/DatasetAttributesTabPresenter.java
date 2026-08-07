@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.web.client.dataset.presenter;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getConstants;
 import static org.siemac.metamac.statistical.resources.web.client.StatisticalResourcesWeb.getMessages;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.siemac.metamac.core.common.util.shared.StringUtils;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersionDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.RepresentationDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.CodeItemDto;
 import org.siemac.metamac.statistical.resources.navigation.shared.NameTokens;
@@ -27,6 +29,8 @@ import org.siemac.metamac.statistical.resources.web.client.utils.CommonUtils;
 import org.siemac.metamac.statistical.resources.web.client.utils.PlaceRequestUtils;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetAttributeInstancesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteDatasetAttributeInstancesResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteGranularityAttributeInstancesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.DeleteGranularityAttributeInstancesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportAttributesAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.ExportAttributesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetAttributeInstancesAction;
@@ -37,8 +41,14 @@ import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDim
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetDimensionsCoverageResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.GetDatasetVersionResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetGranularityAttributeInstancesAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.GetGranularityAttributeInstancesResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetAttributeInstanceAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveDatasetAttributeInstanceResult;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveGranularityAttributeInstanceAction;
+import org.siemac.metamac.statistical.resources.web.shared.dataset.SaveGranularityAttributeInstanceResult;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListAction;
+import org.siemac.metamac.statistical.resources.web.shared.external.GetTemporalGranularitiesListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCodesPaginatedListAction;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetCodesPaginatedListResult;
 import org.siemac.metamac.statistical.resources.web.shared.external.GetConceptsPaginatedListAction;
@@ -82,6 +92,8 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
         void setAttributes(DatasetVersionDto datasetVersionDto, List<DsdAttributeDto> attributes);
         void setAttributeInstances(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos);
         void setAttributeInstancesForRefresh(DsdAttributeDto dsdAttributeDto, List<DsdAttributeInstanceDto> dsdAttributeInstanceDtos);
+        void setGranularityAttributeInstances(DsdAttributeDto dsdAttributeDto, List<DsdGranularityAttributeInstanceDto> instances);
+        void setTemporalGranularities(List<ExternalItemDto> granularities);
         void setDimensionsCoverageValues(Map<String, List<CodeItemDto>> dimensionsCoverages);
         void setItemsForDatasetLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults);
         void setItemsForDimensionOrGroupLevelAttributeValueSelection(List<ExternalItemDto> externalItemDtos, int firstResult, int totalResults);
@@ -199,6 +211,11 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
             @Override
             public void onWaitSuccess(GetDatasetAttributeInstancesResult result) {
                 getView().setAttributeInstances(dsdAttributeDto, result.getDsdAttributeInstanceDtos());
+                if (CommonUtils.supportsGranularityAttributeInstances(dsdAttributeDto)) {
+                    retrieveGranularityAttributeInstancesInternal(dsdAttributeDto);
+                } else {
+                    getView().setGranularityAttributeInstances(dsdAttributeDto, new ArrayList<DsdGranularityAttributeInstanceDto>());
+                }
             }
         });
     }
@@ -210,8 +227,24 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
             @Override
             public void onWaitSuccess(GetDatasetAttributeInstancesResult result) {
                 getView().setAttributeInstancesForRefresh(dsdAttributeDto, result.getDsdAttributeInstanceDtos());
+                if (CommonUtils.supportsGranularityAttributeInstances(dsdAttributeDto)) {
+                    retrieveGranularityAttributeInstancesInternal(dsdAttributeDto);
+                } else {
+                    getView().setGranularityAttributeInstances(dsdAttributeDto, new ArrayList<DsdGranularityAttributeInstanceDto>());
+                }
             }
         });
+    }
+
+    private void retrieveGranularityAttributeInstancesInternal(final DsdAttributeDto dsdAttributeDto) {
+        dispatcher.execute(new GetGranularityAttributeInstancesAction(datasetVersionUrn, dsdAttributeDto.getIdentifier()),
+                new WaitingAsyncCallbackHandlingError<GetGranularityAttributeInstancesResult>(this) {
+
+                    @Override
+                    public void onWaitSuccess(GetGranularityAttributeInstancesResult result) {
+                        getView().setGranularityAttributeInstances(dsdAttributeDto, result.getInstances());
+                    }
+                });
     }
 
     @Override
@@ -244,6 +277,39 @@ public class DatasetAttributesTabPresenter extends Presenter<DatasetAttributesTa
             @Override
             public void onWaitSuccess(DeleteDatasetAttributeInstancesResult result) {
                 retrieveAttributeInstances(dsdAttributeDto);
+            }
+        });
+    }
+
+    @Override
+    public void saveGranularityAttributeInstance(final DsdAttributeDto dsdAttributeDto, DsdGranularityAttributeInstanceDto dto) {
+        dispatcher.execute(new SaveGranularityAttributeInstanceAction(datasetVersionUrn, dto), new WaitingAsyncCallbackHandlingError<SaveGranularityAttributeInstanceResult>(this) {
+
+            @Override
+            public void onWaitSuccess(SaveGranularityAttributeInstanceResult result) {
+                retrieveAttributeInstances(dsdAttributeDto);
+            }
+        });
+    }
+
+    @Override
+    public void deleteGranularityAttributeInstances(final DsdAttributeDto dsdAttributeDto, List<String> uuids) {
+        dispatcher.execute(new DeleteGranularityAttributeInstancesAction(datasetVersionUrn, uuids), new WaitingAsyncCallbackHandlingError<DeleteGranularityAttributeInstancesResult>(this) {
+
+            @Override
+            public void onWaitSuccess(DeleteGranularityAttributeInstancesResult result) {
+                retrieveAttributeInstances(dsdAttributeDto);
+            }
+        });
+    }
+
+    @Override
+    public void retrieveTemporalGranularitiesForAttribute(String urn) {
+        dispatcher.execute(new GetTemporalGranularitiesListAction(0, 0, new MetamacWebCriteria()), new WaitingAsyncCallbackHandlingError<GetTemporalGranularitiesListResult>(this) {
+
+            @Override
+            public void onWaitSuccess(GetTemporalGranularitiesListResult result) {
+                getView().setTemporalGranularities(result.getTemporalGranularities());
             }
         });
     }

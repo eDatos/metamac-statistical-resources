@@ -3497,6 +3497,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.lang.description']}"
+               },
+               {
+                  "name":"If-Modified-Since",
+                  "in":"header",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.headers.ifModifiedSince.description']}"
                }
 
             ],
@@ -3506,9 +3512,23 @@
                      "$ref":"#/definitions/Dataset"
                   },
                   "headers":{
-
+                     "Cache-Control":{
+                        "type":"string",
+                        "description":"${msg['api.doc.swagger.paths.v1.0.headers.cacheControl.description']}"
+                     },
+                     "Last-Modified":{
+                        "type":"string",
+                        "description":"${msg['api.doc.swagger.paths.v1.0.headers.lastModified.description']}"
+                     },
+                     "Vary":{
+                        "type":"string",
+                        "description":"${msg['api.doc.swagger.paths.v1.0.headers.vary.description']}"
+                     }
                   },
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.description']}"
+               },
+               "304":{
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.304.description']}"
                },
                "404":{
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.404.description']}"
@@ -3593,6 +3613,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.parameters.lang.description']}"
+               },
+               {
+                  "name":"If-Modified-Since",
+                  "in":"header",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.headers.ifModifiedSince.description']}"
                }
                ],
                "responses":{
@@ -3601,9 +3627,23 @@
                   "$ref":"#/definitions/Dataset"
                },
                "headers":{
-
+                  "Cache-Control":{
+                     "type":"string",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.headers.cacheControl.description']}"
+                  },
+                  "Last-Modified":{
+                     "type":"string",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.headers.lastModified.description']}"
+                  },
+                  "Vary":{
+                     "type":"string",
+                     "description":"${msg['api.doc.swagger.paths.v1.0.headers.vary.description']}"
+                  }
                },
                "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.200.description']}"
+               },
+               "304":{
+                  "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.304.description']}"
                },
                "404":{
                    "description":"${msg['api.doc.swagger.paths.v1.0.datasets.agencyID.resourceID.version.get.responses.404.description']}"
@@ -3827,6 +3867,12 @@
                   "in":"query",
                   "type":"string",
                   "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.parameters.lang.description']}"
+               },
+               {
+                  "name":"If-Modified-Since",
+                  "in":"header",
+                  "type":"string",
+                  "description":"${msg['api.doc.swagger.paths.v1.0.headers.ifModifiedSince.description']}"
                }
             ],
             "responses":{
@@ -3835,9 +3881,23 @@
                      "$ref":"#/definitions/Query"
                   },
                   "headers":{
-
+                     "Cache-Control":{
+                        "type":"string",
+                        "description":"${msg['api.doc.swagger.paths.v1.0.headers.cacheControl.description']}"
+                     },
+                     "Last-Modified":{
+                        "type":"string",
+                        "description":"${msg['api.doc.swagger.paths.v1.0.headers.lastModified.description']}"
+                     },
+                     "Vary":{
+                        "type":"string",
+                        "description":"${msg['api.doc.swagger.paths.v1.0.headers.vary.description']}"
+                     }
                   },
                   "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.200.description']}"
+               },
+               "304":{
+                  "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.304.description']}"
                },
                "404":{
                   "description":"${msg['api.doc.swagger.paths.v1.0.queries.agencyID.resourceID.get.responses.404.description']}"

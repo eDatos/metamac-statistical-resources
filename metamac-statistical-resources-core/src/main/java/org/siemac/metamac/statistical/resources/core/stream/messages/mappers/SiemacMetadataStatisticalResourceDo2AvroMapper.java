@@ -23,18 +23,22 @@ public class SiemacMetadataStatisticalResourceDo2AvroMapper {
         return configurationService;
     }
     public static SiemacMetadataStatisticalResourceAvro do2Avro(SiemacMetadataStatisticalResource source) throws MetamacException {
+        return do2Avro(source, false);
+    }
+
+    public static SiemacMetadataStatisticalResourceAvro do2Avro(SiemacMetadataStatisticalResource source, boolean reload) throws MetamacException {
         String srmApiExternalEndpoint = getConfigurationService().retrieveSrmExternalApiUrlBase();
         String commonMetadataApiInternalEndpoint = getConfigurationService().retrieveCommonMetadataExternalApiUrlBase();
         SiemacMetadataStatisticalResourceAvro target = null;
         if (source != null) {
-            target = SiemacMetadataStatisticalResourceAvro.newBuilder().setLifecycleStatisticalResource(LifecycleStatisticalResourceDo2AvroMapper.do2Avro(source))
+            target = SiemacMetadataStatisticalResourceAvro.newBuilder().setLifecycleStatisticalResource(LifecycleStatisticalResourceDo2AvroMapper.do2Avro(source, reload))
                     .setResourceCreatedDate(DateTimeDo2AvroMapper.do2Avro(source.getResourceCreatedDate())).setLastUpdate(DateTimeDo2AvroMapper.do2Avro(source.getLastUpdate()))
                     .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getNewnessUntilDate())).setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getFeaturedUntilDate()))
                     .setCopyrightedDate(source.getCopyrightedDate())
                     .setLanguage(ExternalItemDo2AvroMapper.do2Avro(source.getLanguage(), srmApiExternalEndpoint)).setSubtitle(InternationalStringDo2AvroMapper.do2Avro(source.getSubtitle()))
                     .setTitleAlternative(InternationalStringDo2AvroMapper.do2Avro(source.getTitleAlternative())).setAbstractLogic(InternationalStringDo2AvroMapper.do2Avro(source.getAbstractLogic()))
                     .setKeywords(InternationalStringDo2AvroMapper.do2Avro(source.getKeywords())).setCommonMetadata(ExternalItemDo2AvroMapper.do2Avro(source.getCommonMetadata(), commonMetadataApiInternalEndpoint))
-                    .setType(StatisticalResourceTypeEnumDo2AvroMapper.do2Avro(source.getType())).setCreator(ExternalItemDo2AvroMapper.do2Avro(source.getCreator(), srmApiExternalEndpoint))
+                    .setCreator(ExternalItemDo2AvroMapper.do2Avro(source.getCreator(), srmApiExternalEndpoint))
                     .setConformsTo(InternationalStringDo2AvroMapper.do2Avro(source.getConformsTo())).setConformsToInternal(InternationalStringDo2AvroMapper.do2Avro(source.getConformsToInternal()))
                     .setReplaces(RelatedResourceDo2AvroMapper.do2Avro((source.getReplaces()))).setIsReplacedBy(RelatedResourceDo2AvroMapper.do2Avro(source.getIsReplacedBy()))
                     .setAccessRights(InternationalStringDo2AvroMapper.do2Avro(source.getAccessRights())).setLanguages(generateListOfLanguages(source))

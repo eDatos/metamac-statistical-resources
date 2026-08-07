@@ -1,3 +1,3 @@
 /target/
 **/generated/**
-sculptor-generator.properties
+spring-test-local.properties

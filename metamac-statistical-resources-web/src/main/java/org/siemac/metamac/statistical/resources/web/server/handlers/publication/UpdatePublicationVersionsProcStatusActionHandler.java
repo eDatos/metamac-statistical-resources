@@ -77,7 +77,7 @@ public class UpdatePublicationVersionsProcStatusActionHandler extends UpdateReso
                         break;
                 }
 
-                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(publicationVersionDto, StatisticalResourceTypeEnum.COLLECTION, lifeCycleAction)
+                ResourceNotificationBaseDto notification = new ResourceNotificationBaseDto.Builder(publicationVersionDto, lifeCycleAction)
                         .updatedResource(updatedPublicationVersionBaseDto).reasonOfRejection(action.getReasonOfRejection()).build();
                 notificationsToSend.add(notification);
 
