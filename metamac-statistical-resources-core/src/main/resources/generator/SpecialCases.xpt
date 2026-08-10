@@ -26,13 +26,15 @@
 «AROUND templates::db::OracleDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
   «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR(50)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
   «ENDIF-»
-  «targetDef.proceed()-»
+  «REM»patch must be NOT NULL DEFAULT 0 (EDATOS-5796); Sculptor cannot emit DEFAULT, and it cannot be declared not-nullable in btdesign because TB_STAT_RESOURCES is SINGLE_TABLE«ENDREM-»
+  «IF name == "patch"»«getDatabaseName(prefix, this)» «getDatabaseType()» NOT NULL DEFAULT 0«ELSE»«targetDef.proceed()»«ENDIF-»
 «ENDAROUND»
 
 «AROUND templates::db::CustomDDL::column(String prefix, boolean parentIsNullable) FOR Attribute-»
   «IF type == "DateTimeTZ" || name == "lastUpdated" || name == "createdDate"»«getDatabaseName()»_TZ VARCHAR(50)«parentIsNullable || nullable ? "" : getDatabaseTypeNullability()-»,
   «ENDIF-»
-  «targetDef.proceed()-»
+  «REM»patch must be NOT NULL DEFAULT 0 (EDATOS-5796); Sculptor cannot emit DEFAULT, and it cannot be declared not-nullable in btdesign because TB_STAT_RESOURCES is SINGLE_TABLE«ENDREM-»
+  «IF name == "patch"»«getDatabaseName(prefix, this)» «getDatabaseType()» NOT NULL DEFAULT 0«ELSE»«targetDef.proceed()»«ENDIF-»
 «ENDAROUND»
 
 
@@ -71,6 +73,7 @@
 	&& name != "StatisticalResource" && name != "RelatedResource" && name != "Datasource" && name != "Dataset" && name != "DatasetVersion" && name != "StatisticOfficiality" && name != "CodeDimension" && name != "AttributeValue" 
 	&& name != "TemporalCode" && name != "Publication" && name != "PublicationVersion" && name != "ElementLevel" && name != "Chapter" && name != "Cube" && name != "CodeItem"  
 	&& name != "QuerySelectionItem" && name != "Query" && name != "QueryVersion" && name != "Categorisation" && name != "CategorisationSequence" && name != "DimensionRepresentationMapping" && name != "MultidatasetVersion" && name != "Multidataset" && name != "MultidatasetCube"
+	&& name != "Purpose" && name != "GeoCacheResource" && name != "GeoCacheByRelatedResource"
 	-»
 		«targetDef.proceed() -»
 	«ENDIF -»
@@ -88,6 +91,11 @@ drop sequence SEQ_«domainObject.getHint('idSequence')»;
  	«FOREACH getDomainObjectsInCreateOrder(true).select(d | !isInheritanceTypeSingleTable(getRootExtends(d.extends)) && d.getHint('idSequence') != null) AS domainObject»
 CREATE sequence SEQ_«domainObject.getHint('idSequence')»;
  	«ENDFOREACH»
+«ENDAROUND»
+
+«REM»Skip the Cube->Publication FK constraint to match the committed schema: the PUBLICATION_FK column is kept, only the FK constraint is omitted «ENDREM»
+«AROUND generatorcommon::MetamacOracleDDL::foreignKeyConstraint FOR Reference-»
+	«IF from.getDatabaseName() == "TB_CUBES" && getForeignKeyName() == "PUBLICATION_FK"-»«ELSE-»«targetDef.proceed()-»«ENDIF-»
 «ENDAROUND»
 
 «REM»Generete tests for non generated repository methods «ENDREM»

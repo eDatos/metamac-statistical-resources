@@ -9,9 +9,9 @@ import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConfigurationConstants;
-import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -35,29 +35,38 @@ import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 public class StreamMessagingServiceKafkaImpl implements StreamMessagingService<String, SpecificRecordBase>, ApplicationListener<ContextClosedEvent> {
 
     @Autowired
-    private StatisticalResourcesConfiguration statisticalResourcesConfig;
+    private StatisticalResourcesConfiguration        statisticalResourcesConfig;
 
     @Autowired
-    private DatasetVersionRepository datasetVersionRepository;
+    private DatasetVersionRepository                 datasetVersionRepository;
 
     @Autowired
-    private PublicationVersionRepository publicationVersionRepository;
+    private PublicationVersionRepository             publicationVersionRepository;
 
     @Autowired
-    private QueryVersionRepository queryVersionRepository;
+    private QueryVersionRepository                   queryVersionRepository;
 
     @Autowired
-    private QueryVersionDo2AvroMapper queryVersionDo2AvroMapper;
+    private QueryVersionDo2AvroMapper                queryVersionDo2AvroMapper;
 
     private ProducerBase<String, SpecificRecordBase> producer;
 
-    private final String CONSUMER_QUERY_1_NAME = "statresources_producer_1";
+    private final String                             CONSUMER_QUERY_1_NAME = "statresources_producer_1";
 
     @Override
     public void sendMessage(HasLifecycle message) throws MetamacException {
-        SpecificRecordBase serialized = serializeMessage(message);
+        sendMessage(message, false);
+    }
+
+    @Override
+    public void sendReloadMessage(HasLifecycle message) throws MetamacException {
+        sendMessage(message, true);
+    }
+
+    private void sendMessage(HasLifecycle message, boolean reload) throws MetamacException {
+        SpecificRecordBase serialized = serializeMessage(message, reload);
         if (serialized == null) {
-            return; // TODO METAMAC-2715 - Realizar la notificación a Kafka de los recursos Multidataset
+            return; // TODO METAMAC-2715 - Notify Kafka about the Multidataset resources.
         }
         MessageBase<String, SpecificRecordBase> m = new AvroMessage<>(serializeKey(message), serialized);
         String topic = getTopicByType(message);
@@ -101,19 +110,19 @@ public class StreamMessagingServiceKafkaImpl implements StreamMessagingService<S
         }
     }
 
-    private SpecificRecordBase serializeMessage(HasLifecycle version) throws MetamacException {
+    private SpecificRecordBase serializeMessage(HasLifecycle version, boolean reload) throws MetamacException {
         String urlBaseExternalVisualizer = statisticalResourcesConfig.retrievePortalExternalWebApplicationUrlVisualizer();
         String urn = version.getLifeCycleStatisticalResource().getUrn();
         switch (version.getLifeCycleStatisticalResource().getType()) {
             case DATASET:
                 DatasetVersion datasetVersion = version instanceof DatasetVersion ? (DatasetVersion) version : datasetVersionRepository.retrieveByUrn(urn);
-                return DatasetVersionDo2AvroMapper.do2Avro(datasetVersion, urlBaseExternalVisualizer);
+                return DatasetVersionDo2AvroMapper.do2Avro(datasetVersion, urlBaseExternalVisualizer, reload);
             case QUERY:
                 QueryVersion queryVersion = version instanceof QueryVersion ? (QueryVersion) version : queryVersionRepository.retrieveByUrn(urn);
-                return queryVersionDo2AvroMapper.queryVersionDoToAvro(queryVersion);
+                return queryVersionDo2AvroMapper.queryVersionDoToAvro(queryVersion, reload);
             case COLLECTION:
                 PublicationVersion publicationVersion = version instanceof PublicationVersion ? (PublicationVersion) version : publicationVersionRepository.retrieveByUrn(urn);
-                return PublicationVersionDo2AvroMapper.do2Avro(publicationVersion);
+                return PublicationVersionDo2AvroMapper.do2Avro(publicationVersion, reload);
             case MULTIDATASET:
                 return null; // TODO METAMAC-2715 - Realizar la notificación a Kafka de los recursos Multidataset
             default:

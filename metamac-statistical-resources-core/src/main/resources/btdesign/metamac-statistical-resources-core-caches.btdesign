@@ -61,12 +61,12 @@ Application CacheStatisticalResources {
 
 			Long id not nullable key;
 			String code databaseColumn="code" not nullable;
-			String urn databaseColumn="urn" not nullable;
+			String urn databaseColumn="urn" not nullable length="4000";
 			String type databaseColumn="type" not nullable;
 			- @InternationalString title cascade="all" fetch="lazy" databaseColumn="title_fk" nullable;
 			String operationCode databaseColumn="operation_code";
-			String operationUrn databaseColumn="operation_urn";
-			String htmlLink databaseColumn="htmlLink";
+			String operationUrn databaseColumn="operation_urn" length="4000";
+			String htmlLink nullable databaseColumn="htmlLink" length="4000";
 			boolean isExternalSource databaseColumn="is_external_source" not nullable;
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			boolean isActivated databaseColumn="is_activated" not nullable;
@@ -94,12 +94,12 @@ Application CacheStatisticalResources {
 			
     		Long id not nullable key;
 			String code databaseColumn="code" not nullable;
-			String urn databaseColumn="urn" not nullable;
+			String urn databaseColumn="urn" not nullable length="4000";
 			String type databaseColumn="type" not nullable;
 			- @InternationalString title cascade="all" fetch="lazy" databaseColumn="title_fk" nullable;
 			String operationCode databaseColumn="operation_code";
-			String operationUrn databaseColumn="operation_urn";
-			String htmlLink databaseColumn="htmlLink";
+			String operationUrn databaseColumn="operation_urn" length="4000";
+			String htmlLink nullable databaseColumn="htmlLink" length="4000";
 			boolean isExternalSource databaseColumn="is_external_source" not nullable;
 			boolean isLastVersion databaseColumn="is_last_version" not nullable;
 			boolean isActivated databaseColumn="is_activated" not nullable;

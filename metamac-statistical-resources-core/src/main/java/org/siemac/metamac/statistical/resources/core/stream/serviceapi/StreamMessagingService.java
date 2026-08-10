@@ -8,4 +8,6 @@ public interface StreamMessagingService<K, V> {
     public static final String BEAN_ID = "StreamMessagingService";
 
     public void sendMessage(HasLifecycle message) throws MetamacException;
+
+    public void sendReloadMessage(HasLifecycle message) throws MetamacException;
 }

@@ -22,6 +22,8 @@ import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlAction
 import org.siemac.metamac.statistical.resources.web.shared.base.GetHelpUrlResult;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheAction;
 import org.siemac.metamac.statistical.resources.web.shared.dataset.UpdateGeographicCoverageVariableElementsCacheResult;
+import org.siemac.metamac.statistical.resources.web.shared.task.ReloadKafkaTopicAction;
+import org.siemac.metamac.statistical.resources.web.shared.task.ReloadKafkaTopicResult;
 import org.siemac.metamac.web.common.client.enums.MessageTypeEnum;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent;
 import org.siemac.metamac.web.common.client.events.ChangeWaitPopupVisibilityEvent.ChangeWaitPopupVisibilityHandler;
@@ -280,6 +282,27 @@ public class MainPagePresenter extends Presenter<MainPagePresenter.MainPageView,
                         ShowMessageEvent.fireSuccessMessage(MainPagePresenter.this, StatisticalResourcesWeb.getMessages().updateGeographicCoverageVariableElementsCacheSuccessful());
                     }
                 });
+    }
+
+    @Override
+    public void reloadKafkaTopics(List<StatisticalResourceTypeEnum> resourceTypes) {
+        final InformationWindow informationWindow = getView().showInformationMessage(StatisticalResourcesWeb.getMessages().reloadKafkaTopics(),
+                StatisticalResourcesWeb.getMessages().reloadKafkaTopicsInProgress());
+        dispatcher.execute(new ReloadKafkaTopicAction(resourceTypes), new AsyncCallback<ReloadKafkaTopicResult>() {
+
+            @Override
+            public void onFailure(Throwable caught) {
+                logger.log(Level.WARNING, "Could not reload Kafka topics", caught);
+                informationWindow.hide();
+                ShowMessageEvent.fireErrorMessage(MainPagePresenter.this, caught);
+            }
+
+            @Override
+            public void onSuccess(ReloadKafkaTopicResult result) {
+                logger.log(Level.INFO, "Reload Kafka topics scheduled successfully");
+                ShowMessageEvent.fireSuccessMessage(MainPagePresenter.this, StatisticalResourcesWeb.getMessages().reloadKafkaTopicsSuccessful());
+            }
+        });
     }
 
     private void hideMessages() {

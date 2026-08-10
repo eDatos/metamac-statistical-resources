@@ -2604,4 +2604,10 @@ public class PublicationServiceTest extends StatisticalResourcesBaseTest impleme
         // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
 
     }
+
+    @Override
+    @Test
+    public void testRetrievePublishedLastVersionPublications() throws Exception {
+        // NOTHING TO DO
+    }
 }

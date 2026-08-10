@@ -58,3 +58,5 @@ CREATE INDEX pk_tb_geo_cache_related_resource_urn ON tb_geo_cache_related_resour
 CREATE INDEX pk_tb_geo_cache_related_resource_title_fk ON tb_geo_cache_related_resource (title_fk);
 CREATE INDEX ix_tb_geo_cache_resource_by_related_resource ON tb_geo_cache_resource_by_related_resource (geo_cache_resource_fk);
 CREATE INDEX pk_tb_territories_by_geo_cache_resource_geo_cache_resource_fk ON tb_territories_by_geo_cache_resource (geo_cache_resource_fk);
+
+CREATE INDEX ix_tb_stat_resources_proc_status ON tb_stat_resources (proc_status);

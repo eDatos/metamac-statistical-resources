@@ -5,22 +5,16 @@ import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceE
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
-import org.jsoup.Jsoup;
-import org.jsoup.parser.Parser;
-import org.jsoup.safety.Whitelist;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
-import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
@@ -31,20 +25,17 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
-import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
-import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
+import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils.TwitterPostUtils;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
-import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
-import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
@@ -52,8 +43,6 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
-import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils.TwitterPostUtils;
-import org.siemac.metamac.statistical.resources.core.utils.TemporalDimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -410,36 +399,57 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Override
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
+        sendToAllPublishedDatasets(ctx, "resend", new DatasetSender() {
+            @Override
+            public void send(DatasetVersion datasetVersion) throws MetamacException {
+                streamMessagingServiceFacade.sendNewVersionPublished(datasetVersion);
+            }
+        });
+    }
 
+    @Override
+    public void reloadTopicStreamMessages(ServiceContext ctx) throws MetamacException {
+        sendToAllPublishedDatasets(ctx, "reload", new DatasetSender() {
+            @Override
+            public void send(DatasetVersion datasetVersion) throws MetamacException {
+                streamMessagingServiceFacade.sendReloadVersionPublished(datasetVersion);
+            }
+        });
+    }
+
+    private interface DatasetSender {
+        void send(DatasetVersion datasetVersion) throws MetamacException;
+    }
+
+    private void sendToAllPublishedDatasets(ServiceContext ctx, String operation, DatasetSender sender) throws MetamacException {
         List<DatasetVersion> datasets = datasetService.retrievePublishedLastVersionDatasets(ctx);
         List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
         int totalCount = 0;
         int partialCount = 0;
-        logger.info("resend all published last version dataset kafka messages start at {} affected datasets: {} ", new Date(), datasets != null ? datasets.size() : 0);
+        logger.info(operation + " all published last version dataset kafka messages start at {} affected datasets: {} ", new Date(), datasets != null ? datasets.size() : 0);
 
         for (DatasetVersion datasetVersion : datasets) {
             try {
-                streamMessagingServiceFacade.sendNewVersionPublished(datasetVersion);
+                sender.send(datasetVersion);
                 totalCount++;
                 partialCount++;
                 if (partialCount >= 100) {
                     partialCount = 0;
                     logger.info("processed datasets {} at {}", totalCount, new Date());
                 }
-
             } catch (MetamacException e) {
                 totalCount++;
                 partialCount++;
-                logger.info("error sending dataset {} ", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+                logger.info("error on {} for dataset {} ", operation, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
                 exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_DATASET, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()));
             }
         }
         if (!exceptionsItems.isEmpty()) {
             MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
-            createStreamMessageResendSentSomeNotifications(exception);
+            createStreamMessageResendSentSomeNotifications(exception, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_DATASETS_MESSGES);
         }
 
-        logger.info("resend all published last version dataset kafka messages end at {}", new Date());
+        logger.info("{} all published last version dataset kafka messages end at {}", operation, new Date());
     }
 
 }
