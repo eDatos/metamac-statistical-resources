@@ -260,6 +260,7 @@
         <cdomain:text xml:lang="es">title-Ac2ClaRNQL_000001 en Espanol</cdomain:text>
     </cdomain:name>
     <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=dZOg1KvXV4&amp;resourceId=Ac2ClaRNQL_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
+    <ns3:newnessUntilDate>2013-09-02T15:04:05+01:00</ns3:newnessUntilDate>
 </ns3:dataset>
                             </ns3:node>
                         </ns3:nodes>
@@ -318,6 +319,7 @@
 <cdomain:text xml:lang="es">title-fsjFr54gnw_000001 en Espanol</cdomain:text>
                             </cdomain:name>
                             <cdomain:visualizerHtmlLink>http://istac.es/portal-web/data.html?resourceType=dataset&amp;agencyId=PTzo0MJm8d&amp;resourceId=fsjFr54gnw_000001&amp;version=~latest</cdomain:visualizerHtmlLink>
+                            <ns3:newnessUntilDate>2013-09-02T15:04:05+01:00</ns3:newnessUntilDate>
                         </ns3:dataset>
                     </ns3:node>
                 </ns3:nodes>
