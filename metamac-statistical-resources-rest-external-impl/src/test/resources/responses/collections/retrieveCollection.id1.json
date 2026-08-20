@@ -513,7 +513,8 @@
 													"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/4YjFOL7RQb/ltR9IAf0QV_000001/~latest"
 												},
 												"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=4YjFOL7RQb:ltR9IAf0QV_000001(01.000)",
-												"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=4TK2U8lPxj&resourceId=ltR9IAf0QV_000001&version=~latest"
+												"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=4TK2U8lPxj&resourceId=ltR9IAf0QV_000001&version=~latest",
+												"newnessUntilDate": "2013-09-02T15:04:05+01:00"
 											},
 											"name": {
 												"text": [
@@ -648,7 +649,8 @@
 										"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/3ajN5lLT8g/7gn0UlAUJw_000001/~latest"
 									},
 									"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=3ajN5lLT8g:7gn0UlAUJw_000001(01.000)",
-									"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=QV3XfJL6tU&resourceId=7gn0UlAUJw_000001&version=~latest"
+									"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=QV3XfJL6tU&resourceId=7gn0UlAUJw_000001&version=~latest",
+									"newnessUntilDate": "2013-09-02T15:04:05+01:00"
 								},
 								"name": {
 									"text": [
