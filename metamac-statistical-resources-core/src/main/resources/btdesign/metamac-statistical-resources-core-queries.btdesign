@@ -53,6 +53,8 @@ Application QueriesStatisticalResources {
     		// geographical coverage cache
     		updateGeographicalCache(@QueryVersion queryVersion) throws MetamacException;
     		updateAllGeographicalCache() throws MetamacException;
+
+    		List<@QueryVersion> retrievePublishedLastVersionQueries() throws MetamacException;
 		}  
 
 

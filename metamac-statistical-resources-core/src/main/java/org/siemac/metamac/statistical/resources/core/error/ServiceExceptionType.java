@@ -410,6 +410,10 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "stream_message.resources.exception.config.missing_settings");
     public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_DATASET                                                             = create(
             "stream_message.resources.exception.send_dataset_message.fails");
+    public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_PUBLICATION                                                         = create(
+            "stream_message.resources.exception.send_publication_message.fails");
+    public static final CommonServiceExceptionType UNABLE_TO_SEND_STREAM_MESSAGING_QUERY                                                               = create(
+            "stream_message.resources.exception.send_query_message.fails");
     public static final CommonServiceExceptionType FILE_ENCODING_ERROR                                                                                 = create(
             "exception.resources.dataset.importation.file_encoding_error");
 

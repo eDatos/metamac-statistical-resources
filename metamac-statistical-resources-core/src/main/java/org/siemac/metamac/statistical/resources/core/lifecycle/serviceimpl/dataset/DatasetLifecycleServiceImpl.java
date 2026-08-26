@@ -5,22 +5,19 @@ import static org.siemac.metamac.statistical.resources.core.error.utils.ServiceE
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ApplicationException;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
-import org.jsoup.Jsoup;
-import org.jsoup.parser.Parser;
-import org.jsoup.safety.Whitelist;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
-import org.siemac.metamac.statistical.resources.core.base.domain.VersionRationaleType;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.domain.InternationalString;
 import org.siemac.metamac.statistical.resources.core.common.domain.LocalisedString;
@@ -31,7 +28,6 @@ import org.siemac.metamac.statistical.resources.core.constraint.api.ConstraintsS
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Categorisation;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
@@ -43,9 +39,9 @@ import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.lifecycle.LifecycleCommonMetadataChecker;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.LifecycleTemplateService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.checker.ExternalItemChecker;
+import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils.TwitterPostUtils;
+import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
-import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
-import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
@@ -53,8 +49,6 @@ import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService
 import org.siemac.metamac.statistical.resources.core.utils.DatabaseDatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.DatasetImportUtils;
 import org.siemac.metamac.statistical.resources.core.utils.StatisticalResourcesExternalItemUtils;
-import org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl.utils.TwitterPostUtils;
-import org.siemac.metamac.statistical.resources.core.utils.TemporalDimensionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +94,10 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Autowired
     private TwitterPostUtils                  twitterPostUtils;
+
+    @PersistenceContext(unitName = "StatisticalResourcesEntityManagerFactory")
+    private EntityManager                     entityManager;
+
     @Override
     protected String getResourceMetadataName() throws MetamacException {
         return ServiceExceptionParameters.DATASET_VERSION;
@@ -418,36 +416,88 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
 
     @Override
     public void resendDatasetStreamMessage(ServiceContext ctx) throws MetamacException {
+        sendToAllPublishedDatasets(ctx, "resend", new DatasetSender() {
+            @Override
+            public void send(DatasetVersion datasetVersion) throws MetamacException {
+                streamMessagingServiceFacade.sendNewVersionPublished(datasetVersion);
+            }
+        });
+    }
 
-        List<DatasetVersion> datasets = datasetService.retrievePublishedLastVersionDatasets(ctx);
+    @Override
+    public void reloadTopicStreamMessages(ServiceContext ctx) throws MetamacException {
+        sendToAllPublishedDatasets(ctx, "reload", new DatasetSender() {
+            @Override
+            public void send(DatasetVersion datasetVersion) throws MetamacException {
+                streamMessagingServiceFacade.sendReloadVersionPublished(datasetVersion);
+            }
+        });
+    }
+
+    private interface DatasetSender {
+        void send(DatasetVersion datasetVersion) throws MetamacException;
+    }
+
+    private void sendToAllPublishedDatasets(ServiceContext ctx, String operation, DatasetSender sender) throws MetamacException {
+        List<String> datasetVersionUrns = retrievePublishedLastVersionDatasetUrns(ctx);
         List<MetamacExceptionItem> exceptionsItems = new ArrayList<MetamacExceptionItem>();
         int totalCount = 0;
         int partialCount = 0;
-        logger.info("resend all published last version dataset kafka messages start at {} affected datasets: {} ", new Date(), datasets != null ? datasets.size() : 0);
+        long blockStartTime = System.currentTimeMillis();
+        logger.info(operation + " all published last version dataset kafka messages start at {} affected datasets: {} ", new Date(), datasetVersionUrns.size());
 
-        for (DatasetVersion datasetVersion : datasets) {
+        for (String datasetVersionUrn : datasetVersionUrns) {
             try {
-                streamMessagingServiceFacade.sendNewVersionPublished(datasetVersion);
+                sender.send(datasetVersionRepository.retrieveByUrn(datasetVersionUrn));
+            } catch (MetamacException e) {
+                logger.info("error on {} for dataset {} ", operation, datasetVersionUrn);
+                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_DATASET, datasetVersionUrn));
+            } finally {
+                clearPersistenceContext();
                 totalCount++;
                 partialCount++;
                 if (partialCount >= 100) {
                     partialCount = 0;
-                    logger.info("processed datasets {} at {}", totalCount, new Date());
+                    logger.info("processed datasets {} at {} (last 100 in {} ms)", new Object[] {totalCount, new Date(), System.currentTimeMillis() - blockStartTime});
+                    blockStartTime = System.currentTimeMillis();
                 }
-
-            } catch (MetamacException e) {
-                totalCount++;
-                partialCount++;
-                logger.info("error sending dataset {} ", datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
-                exceptionsItems.add(new MetamacExceptionItem(ServiceExceptionType.UNABLE_TO_SEND_STREAM_MESSAGING_DATASET, datasetVersion.getSiemacMetadataStatisticalResource().getUrn()));
             }
         }
         if (!exceptionsItems.isEmpty()) {
             MetamacException exception = MetamacExceptionBuilder.builder().withExceptionItems(exceptionsItems).build();
-            createStreamMessageResendSentSomeNotifications(exception);
+            createStreamMessageResendSentSomeNotifications(exception, ServiceNoticeAction.STREAM_MESSAGE_RESEND_KAFKA_DATASETS_MESSGES);
         }
 
-        logger.info("resend all published last version dataset kafka messages end at {}", new Date());
+        logger.info("{} all published last version dataset kafka messages end at {}", operation, new Date());
+    }
+
+    /**
+     * Keeps only the urns of the datasets to process, and releases their entities right away. Retaining the whole list of entities would
+     * keep alive the entity graph of every dataset (dimensions coverage, attributes, categorisations, coverages and their international
+     * strings) until the transaction commits, which is what exhausted the memory. Each dataset version is loaded again, one at a time,
+     * inside the loop.
+     */
+    private List<String> retrievePublishedLastVersionDatasetUrns(ServiceContext ctx) throws MetamacException {
+        List<DatasetVersion> datasetVersions = datasetService.retrievePublishedLastVersionDatasets(ctx);
+        List<String> datasetVersionUrns = new ArrayList<String>();
+        for (DatasetVersion datasetVersion : datasetVersions) {
+            datasetVersionUrns.add(datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
+        }
+        clearPersistenceContext();
+        return datasetVersionUrns;
+    }
+
+    /**
+     * Empties the persistence context so that the entity graph of the dataset just processed is released. The whole context is cleared,
+     * instead of detaching a single entity, because a detached dataset version would still be referenced by the versions collection of its
+     * parent dataset, which is not cascaded and would therefore stay managed: the next automatic flush would then fail with
+     * "detached entity passed to persist".
+     * The pending changes are flushed first because the resend operation updates the publication stream status, and clearing without
+     * flushing would silently discard it.
+     */
+    private void clearPersistenceContext() {
+        entityManager.flush();
+        entityManager.clear();
     }
 
 }

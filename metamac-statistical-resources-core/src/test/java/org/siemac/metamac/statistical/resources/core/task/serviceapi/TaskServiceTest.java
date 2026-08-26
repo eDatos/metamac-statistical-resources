@@ -232,6 +232,42 @@ public class TaskServiceTest extends StatisticalResourcesBaseTest implements Tas
     }
 
     @Override
+    public void testScheduleReloadTopicDatasetJob() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testScheduleReloadTopicPublicationJob() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testScheduleReloadTopicQueryJob() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testProcessReloadKafkaTopicDatasetTask() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testProcessReloadKafkaTopicPublicationTask() throws Exception {
+        // No test
+
+    }
+
+    @Override
+    public void testProcessReloadKafkaTopicQueryTask() throws Exception {
+        // No test
+
+    }
+    
+    @Override
     public void testPlanifyUpdateResourceBusinessLastUpdate() throws Exception {
         // No test
     }

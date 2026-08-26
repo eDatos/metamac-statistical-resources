@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.siemac.metamac.metamac-statistical-resources</groupId>
         <artifactId>metamac-statistical-resources-parent</artifactId>
-        <version>11.6.1-SNAPSHOT</version>
+        <version>11.8.1-SNAPSHOT</version>
         <relativePath>../metamac-statistical-resources-parent/pom.xml</relativePath>
     </parent>
 
@@ -622,6 +622,7 @@
                             <jvmArg>-client</jvmArg>
                             <jvmArg>-Xms256m</jvmArg>
                             <jvmArg>-Xmx512m</jvmArg>
+                            <jvmArg>-Xss16m</jvmArg>
                             <jvmArg>-Dlogback.configurationFile=generator/logback-sculptor.xml</jvmArg>
                         </jvmArgs>
                     </jvmSettings>

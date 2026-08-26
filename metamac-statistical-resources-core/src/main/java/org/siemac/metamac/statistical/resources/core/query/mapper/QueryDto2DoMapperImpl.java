@@ -163,14 +163,20 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         // DatasetVersion
         if (source.getRelatedDatasetVersion() != null && source.getRelatedDatasetVersion().getUrn() != null) {
             DatasetVersion datasetVersionTarget = datasetVersionRepository.retrieveByUrn(source.getRelatedDatasetVersion().getUrn());
-            DatasetVersion lastDatasetVersion = datasetVersionRepository.retrieveLastVersion(datasetVersionTarget.getDataset().getIdentifiableStatisticalResource().getUrn());
 
-            if (datasetVersionTarget.getSiemacMetadataStatisticalResource().getUrn().equals(lastDatasetVersion.getSiemacMetadataStatisticalResource().getUrn())) {
-                target.setDataset(datasetVersionTarget.getDataset());
-                target.setFixedDatasetVersion(null);
-            } else {
+            if (QueryTypeEnum.FIXED.equals(source.getQueryType())) {
+                // FIXED queries must always link to the specific version, never follow future versions dynamically
                 target.setDataset(null);
                 target.setFixedDatasetVersion(datasetVersionTarget);
+            } else {
+                DatasetVersion lastDatasetVersion = datasetVersionRepository.retrieveLastVersion(datasetVersionTarget.getDataset().getIdentifiableStatisticalResource().getUrn());
+                if (datasetVersionTarget.getSiemacMetadataStatisticalResource().getUrn().equals(lastDatasetVersion.getSiemacMetadataStatisticalResource().getUrn())) {
+                    target.setDataset(datasetVersionTarget.getDataset());
+                    target.setFixedDatasetVersion(null);
+                } else {
+                    target.setDataset(null);
+                    target.setFixedDatasetVersion(datasetVersionTarget);
+                }
             }
         }
 

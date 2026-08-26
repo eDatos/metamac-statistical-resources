@@ -12,6 +12,7 @@ import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatu
 import org.siemac.metamac.statistical.resources.core.task.domain.Task;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoDataset;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskInfoResources;
+import org.siemac.metamac.statistical.resources.core.security.DatasetsSecurityUtils;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskProperties;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
 import org.slf4j.Logger;
@@ -139,6 +140,39 @@ public class TaskServiceFacadeImpl extends TaskServiceFacadeImplBase {
     @Override
     public void scheduleResendKafkaDatasetMessageJob(ServiceContext ctx) {
         taskservice.scheduleResendKafkaDatasetMessageJob(ctx);
+    }
+
+    @Override
+    public void executeReloadKafkaTopicDatasetTask(ServiceContext ctx) throws MetamacException {
+        taskservice.processReloadKafkaTopicDatasetTask(ctx);
+    }
+
+    @Override
+    public void executeReloadKafkaTopicPublicationTask(ServiceContext ctx) throws MetamacException {
+        taskservice.processReloadKafkaTopicPublicationTask(ctx);
+    }
+
+    @Override
+    public void executeReloadKafkaTopicQueryTask(ServiceContext ctx) throws MetamacException {
+        taskservice.processReloadKafkaTopicQueryTask(ctx);
+    }
+
+    @Override
+    public void scheduleReloadTopicDatasetJob(ServiceContext ctx) throws MetamacException {
+        DatasetsSecurityUtils.canResendAllKafkaMessages(ctx);
+        taskservice.scheduleReloadTopicDatasetJob(ctx);
+    }
+
+    @Override
+    public void scheduleReloadTopicPublicationJob(ServiceContext ctx) throws MetamacException {
+        DatasetsSecurityUtils.canResendAllKafkaMessages(ctx);
+        taskservice.scheduleReloadTopicPublicationJob(ctx);
+    }
+
+    @Override
+    public void scheduleReloadTopicQueryJob(ServiceContext ctx) throws MetamacException {
+        DatasetsSecurityUtils.canResendAllKafkaMessages(ctx);
+        taskservice.scheduleReloadTopicQueryJob(ctx);
     }
 
     @Override

@@ -480,14 +480,15 @@ public class QueryServiceImpl extends QueryServiceImplBase {
 
     public void updateAllGeographicalCache(ServiceContext ctx) throws MetamacException {
         queryServiceInvocationValidator.checkUpdateAllGeographicalCache(ctx);
-        List<QueryVersion> lastVersionPublicatedQueries = retrievePublishedLastVersionQueries();
+        List<QueryVersion> lastVersionPublicatedQueries = retrievePublishedLastVersionQueries(ctx);
         for (QueryVersion queryVersion : lastVersionPublicatedQueries) {
             updateGeographicalCacheInJob(ctx, queryVersion, false);
         }
 
     }
 
-    private List<QueryVersion> retrievePublishedLastVersionQueries() throws MetamacException {
+    @Override
+    public List<QueryVersion> retrievePublishedLastVersionQueries(ServiceContext ctx) throws MetamacException {
 
         List<ConditionalCriteria> criteria = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus())
                 .eq(ProcStatusEnum.PUBLISHED).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().validTo()).isNull().distinctRoot().build();

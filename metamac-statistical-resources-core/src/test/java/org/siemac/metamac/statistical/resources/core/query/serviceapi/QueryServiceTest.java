@@ -1187,4 +1187,10 @@ public class QueryServiceTest extends StatisticalResourcesBaseTest implements Qu
         // NOTHING TO DO Execution in job. it will be tested in CacheServiceTest.java
 
     }
+
+    @Override
+    @Test
+    public void testRetrievePublishedLastVersionQueries() throws Exception {
+        // NOTHING TO DO
+    }
 }

@@ -31,22 +31,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvalidationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCacheInvalidationServiceImpl.class);
+    private static final Logger                                LOGGER = LoggerFactory.getLogger(ResourceCacheInvalidationServiceImpl.class);
 
     @Autowired
     private StreamMessagingService<String, SpecificRecordBase> messagingService;
 
     @Autowired
-    private TaskService taskService;
+    private TaskService                                        taskService;
 
     @Autowired
-    private StatisticalResourceRepository statisticalResourceRepository;
+    private StatisticalResourceRepository                      statisticalResourceRepository;
 
     @Autowired
-    private DatasetVersionRepository datasetVersionRepository;
+    private DatasetVersionRepository                           datasetVersionRepository;
 
     @Autowired
-    private QueryVersionRepository queryVersionRepository;
+    private QueryVersionRepository                             queryVersionRepository;
 
     @Override
     public void updateResourceLastUpdate(ServiceContext ctx, LifeCycleStatisticalResource resource, long timestamp) throws MetamacException {
@@ -55,7 +55,12 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
         resource.setLastUpdatedBy("system");
         resource.setPatch(resource.getPatch() + 1);
         statisticalResourceRepository.save(resource);
-        messagingService.sendMessage(resource);
+
+        if (resource.isLastPublishedVersion()) {
+            messagingService.sendMessage(resource);
+        } else {
+            LOGGER.info("Skipping stream message for resource {} because it is not the last published version", resource.getUrn());
+        }
     }
 
     @Override
@@ -66,13 +71,9 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
         }
 
         // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
-        //   dado que en el futuro cachearemos también la API interna y los recursos en otros estados
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-                                                                         .withProperty(DatasetVersionProperties.relatedDsd().urn()).eq(dsdUrn)
-                                                                         .and()
-                                                                         .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
-                                                                         .distinctRoot()
-                                                                         .build();
+        // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.relatedDsd().urn()).eq(dsdUrn).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
 
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
         planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
@@ -86,13 +87,10 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
         }
 
         // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
-        //   dado que en el futuro cachearemos también la API interna y los recursos en otros estados
+        // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
         List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-                                                                         .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn)
-                                                                         .and()
-                                                                         .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
-                                                                         .distinctRoot()
-                                                                         .build();
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn).and()
+                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
 
         List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
         planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
@@ -120,17 +118,11 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
 
     private List<String> getAffectedQueryUrns(String datasetUrn, String datasetVersionUrn) {
         // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
-        //   dado que en el futuro cachearemos también la API interna y los recursos en otros estados
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class)
-                                                                         .lbrace()
-                                                                         .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn)
-                                                                         .or()
-                                                                         .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn)
-                                                                         .rbrace()
-                                                                         .and()
-                                                                         .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
-                                                                         .distinctRoot()
-                                                                         .build();
+        // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
+        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).lbrace()
+                .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn).or()
+                .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn).rbrace().and()
+                .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
 
         List<QueryVersion> affectedQueries = queryVersionRepository.findByCondition(conditions);
         List<String> urns = new ArrayList<>();

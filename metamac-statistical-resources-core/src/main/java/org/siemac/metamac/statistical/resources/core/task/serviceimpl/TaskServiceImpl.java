@@ -122,6 +122,9 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ManipulateSd
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryGeographicalCacheResourceJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportAttributesJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.RecoveryImportDatasetJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ReloadTopicDatasetJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ReloadTopicPublicationJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ReloadTopicQueryJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
@@ -190,28 +193,31 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private static Logger                          logger                                                   = LoggerFactory.getLogger(TaskServiceImpl.class);
 
-    public static final String                     SCHEDULER_INSTANCE_NAME                                  = "StatisticalResourcesScheduler";
-    public static final String                     PREFIX_JOB_IMPORT_DATA                                   = "job_importdata_";
-    public static final String                     PREFIX_JOB_DATABASE_IMPORT_DATA                          = "job_databaseimportdata_";
-    public static final String                     PREFIX_JOB_RECOVERY_IMPORT_DATA                          = "job_recoveryimportdata_";
-    public static final String                     PREFIX_JOB_DUPLICATION_DATA                              = "job_duplicationdata_";
-    public static final String                     PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE                      = "job_update_geocoverage_cache_";
-    public static final String                     PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES            = "job_update_geo_cache_related_resources_";
-    public static final String                     PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE             = "job_update_external_geocoverage_cache_";
-    public static final String                     PREFIX_TRIGGER_IMPORT_DATA                               = "trigger_importdata_";
-    public static final String                     PREFIX_TRIGGER_RECOVERY_IMPORT_DATA                      = "trigger_recoveryimportdata_";
-    public static final String                     GROUP_IMPORTATION                                        = "importation";
-    public static final String                     GROUP_EXTERNAL_CACHE                                     = "externalCacheUpdate";
-    public static final String                     GROUP_GEOGRAPHICAL_CACHE                                 = "geographicalCache";
-    public static final String                     PREFIX_JOB_IMPORT_ATTRIBUTES                             = "job_import_attributes_";
-    public static final String                     PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES                    = "job_recovery_import_attributes_";
-    public static final String                     PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE                   = "job_recovery_geographical_cache_";
-    public static final String                     PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE                   = "job_update_resource_last_update_";
-    public static final String                     PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE          = "job_recovery_update_resource_last_update_";
+    public static final String                SCHEDULER_INSTANCE_NAME                       = "StatisticalResourcesScheduler";
+    public static final String                PREFIX_JOB_IMPORT_DATA                        = "job_importdata_";
+    public static final String                PREFIX_JOB_DATABASE_IMPORT_DATA               = "job_databaseimportdata_";
+    public static final String                PREFIX_JOB_RECOVERY_IMPORT_DATA               = "job_recoveryimportdata_";
+    public static final String                PREFIX_JOB_DUPLICATION_DATA                   = "job_duplicationdata_";
+    public static final String                PREFIX_JOB_UPDATE_GEOCOVERAGE_CACHE           = "job_update_geocoverage_cache_";
+    public static final String                PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES = "job_update_geo_cache_related_resources_";
+    public static final String                PREFIX_JOB_UPDATE_EXTERNAL_GEOCOVERAGE_CACHE  = "job_update_external_geocoverage_cache_";
+    public static final String                PREFIX_TRIGGER_IMPORT_DATA                    = "trigger_importdata_";
+    public static final String                PREFIX_TRIGGER_RECOVERY_IMPORT_DATA           = "trigger_recoveryimportdata_";
+    public static final String                GROUP_IMPORTATION                             = "importation";
+    public static final String                GROUP_EXTERNAL_CACHE                          = "externalCacheUpdate";
+    public static final String                GROUP_GEOGRAPHICAL_CACHE                      = "geographicalCache";
+    public static final String                PREFIX_JOB_IMPORT_ATTRIBUTES                  = "job_import_attributes_";
+    public static final String                PREFIX_JOB_RECOVERY_IMPORT_ATTRIBUTES         = "job_recovery_import_attributes_";
+    public static final String                PREFIX_JOB_RECOVERY_GEOGRAPHICAL_CACHE        = "job_recovery_geographical_cache_";
+    public static final String                PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE        = "job_update_resource_last_update_";
+    public static final String                PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE = "job_recovery_update_resource_last_update_";
+    public static final String                JOB_RELOAD_TOPIC_DATASET                      = "job_reload_topic_dataset";
+    public static final String                JOB_RELOAD_TOPIC_PUBLICATION                  = "job_reload_topic_publication";
+    public static final String                JOB_RELOAD_TOPIC_QUERY                        = "job_reload_topic_query";
     public static final String                     PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE          = "job_update_resource_business_last_update_";
     public static final String                     PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE = "job_recovery_update_resource_business_last_update_";
-    public static final int                        DEFAULT_QUARTZ_TRIGGER_DELAY                             = 10;
-    public static final int                        RECOVERY_JOB_PRIORITY                                    = 10;
+    public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
+    public static final int                   RECOVERY_JOB_PRIORITY                         = 10;
 
     @Autowired
     private TaskServiceInvocationValidator         taskServiceInvocationValidator;
@@ -253,7 +259,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private MultidatasetService                    multidatasetService;
 
     @Autowired
-    private LifecycleService<DatasetVersion>       datasetLifecycleService;
+    private LifecycleService<DatasetVersion>      datasetLifecycleService;
+
+    @Autowired
+    private LifecycleService<PublicationVersion>  publicationLifecycleService;
+
+    @Autowired
+    private LifecycleService<QueryVersion>        queryLifecycleService;
 
     @Autowired
     private ResourceCacheInvalidationService       resourceCacheInvalidationService;
@@ -2659,6 +2671,90 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling resend all published last version dataset kafka messages job", e);
+        }
+    }
+
+    @Override
+    public void processReloadKafkaTopicDatasetTask(ServiceContext ctx) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessReloadKafkaTopicDatasetTask(ctx);
+        datasetLifecycleService.reloadTopicStreamMessages(ctx);
+    }
+
+    @Override
+    public void processReloadKafkaTopicPublicationTask(ServiceContext ctx) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessReloadKafkaTopicPublicationTask(ctx);
+        publicationLifecycleService.reloadTopicStreamMessages(ctx);
+    }
+
+    @Override
+    public void processReloadKafkaTopicQueryTask(ServiceContext ctx) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessReloadKafkaTopicQueryTask(ctx);
+        queryLifecycleService.reloadTopicStreamMessages(ctx);
+    }
+
+    @Override
+    public void scheduleReloadTopicDatasetJob(ServiceContext ctx) throws MetamacException {
+        try {
+            taskServiceInvocationValidator.checkScheduleReloadTopicDatasetJob(ctx);
+
+            JobKey jobKey = new JobKey(JOB_RELOAD_TOPIC_DATASET);
+            checkSameJobNotExists(jobKey);
+
+            JobDetail job = newJob(ReloadTopicDatasetJob.class).withIdentity(jobKey).build();
+            SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+            sched.scheduleJob(job, trigger);
+
+            logger.info("reload kafka topic for datasets job scheduled at {} ", new Date());
+
+        } catch (MetamacException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling reload kafka topic for datasets job", e);
+        }
+    }
+
+    @Override
+    public void scheduleReloadTopicPublicationJob(ServiceContext ctx) throws MetamacException {
+        try {
+            taskServiceInvocationValidator.checkScheduleReloadTopicPublicationJob(ctx);
+
+            JobKey jobKey = new JobKey(JOB_RELOAD_TOPIC_PUBLICATION);
+            checkSameJobNotExists(jobKey);
+
+            JobDetail job = newJob(ReloadTopicPublicationJob.class).withIdentity(jobKey).build();
+            SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+            sched.scheduleJob(job, trigger);
+
+            logger.info("reload kafka topic for publications job scheduled at {} ", new Date());
+
+        } catch (MetamacException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling reload kafka topic for publications job", e);
+        }
+    }
+
+    @Override
+    public void scheduleReloadTopicQueryJob(ServiceContext ctx) throws MetamacException {
+        try {
+            taskServiceInvocationValidator.checkScheduleReloadTopicQueryJob(ctx);
+
+            JobKey jobKey = new JobKey(JOB_RELOAD_TOPIC_QUERY);
+            checkSameJobNotExists(jobKey);
+
+            JobDetail job = newJob(ReloadTopicQueryJob.class).withIdentity(jobKey).build();
+            SimpleTrigger trigger = (SimpleTrigger) TriggerBuilder.newTrigger().startNow().build();
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+            sched.scheduleJob(job, trigger);
+
+            logger.info("reload kafka topic for queries job scheduled at {} ", new Date());
+
+        } catch (MetamacException e) {
+            throw e;
+        } catch (Exception e) {
+            logger.error("An unexpected error has occurred scheduling reload kafka topic for queries job", e);
         }
     }
 

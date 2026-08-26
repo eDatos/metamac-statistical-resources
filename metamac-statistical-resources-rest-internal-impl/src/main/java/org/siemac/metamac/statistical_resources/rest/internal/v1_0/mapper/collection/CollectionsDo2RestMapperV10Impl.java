@@ -51,6 +51,7 @@ import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Resource
 import org.siemac.metamac.statistical_resources.rest.common.v1_0.domain.Table;
 import org.siemac.metamac.statistical_resources.rest.internal.StatisticalResourcesRestInternalConstants;
 import org.siemac.metamac.statistical_resources.rest.internal.exception.RestServiceExceptionType;
+import org.siemac.metamac.statistical_resources.rest.internal.invocation.StatisticalOperationsRestInternalFacade;
 import org.siemac.metamac.statistical_resources.rest.internal.service.utils.HtmlLinkUtil;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.base.CommonDo2RestMapperV10;
 import org.siemac.metamac.statistical_resources.rest.internal.v1_0.mapper.dataset.DatasetsDo2RestMapperV10;
@@ -89,9 +90,12 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
     private PublicationVersionRepository      publicationVersionRepository;
 
     @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private StatisticalResourcesConfiguration       configurationService;
 
-    private static final Logger               logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
+    @Autowired
+    private StatisticalOperationsRestInternalFacade statisticalOperationsRestInternalFacade;
+
+    private static final Logger                     logger = LoggerFactory.getLogger(CollectionsDo2RestMapperV10.class);
 
     @Override
     public Collections toCollections(PagedResult<PublicationVersion> sources, String agencyID, String resourceID, String query, String orderBy, Integer limit, List<String> selectedLanguages,
@@ -105,6 +109,12 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         SculptorCriteria2RestCriteria.toPagedResult(sources, targets, query, orderBy, limit, baseLink);
 
         ExternalRestObjectsMapper externalRestObjectsMapper = new ExternalRestObjectsMapper();
+
+        // Pre-fetch all operation titles in one batch HTTP call instead of one per collection
+        boolean includeStatisticalOperation = containsField(parsedFields, StatisticalResourcesRestInternalConstants.FIELD_INCLUDE_STATISTICAL_OPERATION);
+        if (includeStatisticalOperation) {
+            externalRestObjectsMapper.setOperationTitlesByCode(statisticalOperationsRestInternalFacade.getOperationTitles(null));
+        }
 
         // Values
         for (PublicationVersion source : sources.getValues()) {
@@ -348,32 +358,56 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         if (StatisticalResourcesRestInternalConstants.IS_INTERNAL_API) {
             if (source.getDataset() != null) {
                 DatasetVersion dataset = datasetVersionRepository.retrieveLastVersion(source.getDatasetUrn());
-                target.setDataset(datasetsDo2RestMapper.toResourceAsLatest(dataset, selectedLanguages));
+                ResourceStatisticalResourceBase datasetResource = datasetsDo2RestMapper.toResourceAsLatest(dataset, selectedLanguages);
+                datasetResource.setNewnessUntilDate(commonDo2RestMapper.toDate(dataset.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+                datasetResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(dataset.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
+                target.setDataset(datasetResource);
             } else if (source.getQuery() != null) {
                 QueryVersion query = queryVersionRepository.retrieveLastVersion(source.getQueryUrn());
-                target.setQuery(queriesDo2RestMapper.toResource(query, selectedLanguages, null, externalRestObjectsMapper));
+                ResourceStatisticalResourceBase queryResource = queriesDo2RestMapper.toResource(query, selectedLanguages, null, externalRestObjectsMapper);
+                queryResource.setNewnessUntilDate(commonDo2RestMapper.toDate(query.getLifeCycleStatisticalResource().getNewnessUntilDate()));
+                queryResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(query.getLifeCycleStatisticalResource().getFeaturedUntilDate()));
+                target.setQuery(queryResource);
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastVersion(source.getMultidatasetUrn());
-                target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null, externalRestObjectsMapper));
+                ResourceStatisticalResourceBase multidatasetResource = multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null, externalRestObjectsMapper);
+                multidatasetResource.setNewnessUntilDate(commonDo2RestMapper.toDate(multidatasetVersion.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+                multidatasetResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(multidatasetVersion.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
+                target.setMultidataset(multidatasetResource);
             } else if (source.getPublication() != null) {
                 PublicationVersion publicationVersion = publicationVersionRepository.retrieveLastVersion(source.getPublicationUrn());
-                target.setPublication(toResource(publicationVersion, selectedLanguages, null, externalRestObjectsMapper));
+                ResourceStatisticalResourceBase publicationResource = toResource(publicationVersion, selectedLanguages, null, externalRestObjectsMapper);
+                publicationResource.setNewnessUntilDate(commonDo2RestMapper.toDate(publicationVersion.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+                publicationResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(publicationVersion.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
+                target.setPublication(publicationResource);
             } else if (source.getUrl() != null) {
                 target.setUrl(toResource(source.getUrl(), selectedLanguages));
             }
         } else {
             if (source.getDataset() != null) {
                 DatasetVersion dataset = datasetVersionRepository.retrieveLastPublishedVersion(source.getDatasetUrn());
-                target.setDataset(datasetsDo2RestMapper.toResourceAsLatest(dataset, selectedLanguages));
+                ResourceStatisticalResourceBase datasetResource = datasetsDo2RestMapper.toResourceAsLatest(dataset, selectedLanguages);
+                datasetResource.setNewnessUntilDate(commonDo2RestMapper.toDate(dataset.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+                datasetResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(dataset.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
+                target.setDataset(datasetResource);
             } else if (source.getQuery() != null) {
                 QueryVersion query = queryVersionRepository.retrieveLastPublishedVersion(source.getQueryUrn());
-                target.setQuery(queriesDo2RestMapper.toResource(query, selectedLanguages, null, externalRestObjectsMapper));
+                ResourceStatisticalResourceBase queryResource = queriesDo2RestMapper.toResource(query, selectedLanguages, null, externalRestObjectsMapper);
+                queryResource.setNewnessUntilDate(commonDo2RestMapper.toDate(query.getLifeCycleStatisticalResource().getNewnessUntilDate()));
+                queryResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(query.getLifeCycleStatisticalResource().getFeaturedUntilDate()));
+                target.setQuery(queryResource);
             } else if (source.getMultidataset() != null) {
                 MultidatasetVersion multidatasetVersion = multidatasetVersionRepository.retrieveLastPublishedVersion(source.getMultidatasetUrn());
-                target.setMultidataset(multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null, externalRestObjectsMapper));
+                ResourceStatisticalResourceBase multidatasetResource = multidatasetsDo2RestMapper.toResource(multidatasetVersion, selectedLanguages, null, externalRestObjectsMapper);
+                multidatasetResource.setNewnessUntilDate(commonDo2RestMapper.toDate(multidatasetVersion.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+                multidatasetResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(multidatasetVersion.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
+                target.setMultidataset(multidatasetResource);
             } else if (source.getPublication() != null) {
                 PublicationVersion publicationVersion = publicationVersionRepository.retrieveLastPublishedVersion(source.getPublicationUrn());
-                target.setPublication(toResource(publicationVersion, selectedLanguages, null, externalRestObjectsMapper));
+                ResourceStatisticalResourceBase publicationResource = toResource(publicationVersion, selectedLanguages, null, externalRestObjectsMapper);
+                publicationResource.setNewnessUntilDate(commonDo2RestMapper.toDate(publicationVersion.getSiemacMetadataStatisticalResource().getNewnessUntilDate()));
+                publicationResource.setFeaturedUntilDate(commonDo2RestMapper.toDate(publicationVersion.getSiemacMetadataStatisticalResource().getFeaturedUntilDate()));
+                target.setPublication(publicationResource);
             } else if (source.getUrl() != null) {
                 target.setUrl(toResource(source.getUrl(), selectedLanguages));
             }

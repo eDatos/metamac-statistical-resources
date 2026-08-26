@@ -23,6 +23,10 @@ public class SiemacMetadataStatisticalResourceDo2AvroMapper {
         return configurationService;
     }
     public static SiemacMetadataStatisticalResourceAvro do2Avro(SiemacMetadataStatisticalResource source) throws MetamacException {
+        return do2Avro(source, false);
+    }
+
+    public static SiemacMetadataStatisticalResourceAvro do2Avro(SiemacMetadataStatisticalResource source, boolean reload) throws MetamacException {
         String srmApiExternalEndpoint = getConfigurationService().retrieveSrmExternalApiUrlBase();
         String commonMetadataApiInternalEndpoint = getConfigurationService().retrieveCommonMetadataExternalApiUrlBase();
         SiemacMetadataStatisticalResourceAvro target = null;

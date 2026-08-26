@@ -19,10 +19,14 @@ public class LifecycleStatisticalResourceDo2AvroMapper {
     }
 
     public static LifecycleStatisticalResourceAvro do2Avro(LifeCycleStatisticalResource source) throws MetamacException {
+        return do2Avro(source, false);
+    }
+
+    public static LifecycleStatisticalResourceAvro do2Avro(LifeCycleStatisticalResource source, boolean reload) throws MetamacException {
         String srmApiExternalEndpoint = getConfigurationService().retrieveSrmExternalApiUrlBase();
         LifecycleStatisticalResourceAvro target = null;
         if (source != null) {
-            target = LifecycleStatisticalResourceAvro.newBuilder().setVersionableStatisticalResource(VersionableStatisticalResourceDo2AvroMapper.do2Avro(source))
+            target = LifecycleStatisticalResourceAvro.newBuilder().setVersionableStatisticalResource(VersionableStatisticalResourceDo2AvroMapper.do2Avro(source, reload))
                     .setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getFeaturedUntilDate()))
                     .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getNewnessUntilDate()))
                     .setCreationDate(DateTimeDo2AvroMapper.do2Avro(source.getCreationDate())).setCreationUser(source.getCreationUser())
