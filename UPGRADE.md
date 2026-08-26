@@ -42,6 +42,11 @@
   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --describe retention.ms
 
+* Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+  ```shell
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --delete-config retention.ms --alter
+  ```
+
 
 ## 11.6.0 a 11.7.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
