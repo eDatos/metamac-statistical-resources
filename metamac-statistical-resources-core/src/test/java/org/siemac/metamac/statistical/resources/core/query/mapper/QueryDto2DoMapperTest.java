@@ -11,6 +11,7 @@ import org.siemac.metamac.core.common.test.utils.mocks.configuration.MetamacMock
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.factories.DatasetVersionMockFactory;
 import org.siemac.metamac.statistical.resources.core.utils.mocks.templates.StatisticalResourcesDtoMocks;
@@ -40,12 +41,24 @@ public class QueryDto2DoMapperTest extends StatisticalResourcesBaseTest {
 
     @Test
     @MetamacMock(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME)
-    public void testQueryDtoToDoLinkedToDataset() throws MetamacException {
+    public void testQueryDtoToDoNonFixedQueryLinkedToLastDatasetVersionUsesDataset() throws MetamacException {
         DatasetVersion lastVersion = datasetVersionMockFactory.retrieveMock(DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME);
 
         QueryVersionDto expected = StatisticalResourcesDtoMocks.mockQueryVersionDto(lastVersion);
+        expected.setQueryType(QueryTypeEnum.AUTOINCREMENTAL);
         QueryVersion actual = queryDto2DoMapper.queryVersionDtoToDo(expected);
         assertEqualsQueryVersion(expected, actual);
         assertTrue(lastVersion.getDataset().getIdentifiableStatisticalResource().getUrn().equals(actual.getDataset().getIdentifiableStatisticalResource().getUrn()));
+    }
+
+    @Test
+    @MetamacMock(DATASET_03_BASIC_WITH_2_C1_DATASET_VERSIONS_NAME)
+    public void testQueryDtoToDoFixedQueryLinkedToLastDatasetVersionUsesFixedVersion() throws MetamacException {
+        DatasetVersion lastVersion = datasetVersionMockFactory.retrieveMock(DatasetVersionMockFactory.DATASET_VERSION_04_FOR_DATASET_03_C1_AND_LAST_VERSION_NAME);
+
+        QueryVersionDto expected = StatisticalResourcesDtoMocks.mockQueryVersionDto(lastVersion);
+        // queryType is FIXED (set by mock) — must always use fixedDatasetVersion, even when selecting the last published version
+        QueryVersion actual = queryDto2DoMapper.queryVersionDtoToDo(expected);
+        assertTrue(expected.getRelatedDatasetVersion().getUrn().equals(actual.getFixedDatasetVersion().getSiemacMetadataStatisticalResource().getUrn()));
     }
 }
