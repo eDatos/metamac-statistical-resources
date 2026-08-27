@@ -6,7 +6,6 @@
      "fields" : [
         {"name" : "lifecycleStatisticalResource", "type" : ["null", "LifecycleStatisticalResourceAvro" ]},
         {"name" : "resourceCreatedDate" , "type" : ["null", "DatetimeAvro"]},
-        {"name" : "lastUpdate" , "type" : ["null", "DatetimeAvro"]},
         {"name" : "newnessUntilDate" , "type" : ["null", "DatetimeAvro"]},
         {"name" : "featuredUntilDate" , "type" : ["null", "DatetimeAvro"]},
         {"name" : "copyrightedDate" , "type" : ["null", "int"]},

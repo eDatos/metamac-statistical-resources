@@ -76,6 +76,7 @@ public class LifecycleFiller {
         resource.getLifeCycleStatisticalResource().setValidFrom(now);
         resource.getLifeCycleStatisticalResource().setPublicationUser(ctx.getUserId());
         resource.getLifeCycleStatisticalResource().setProcStatus(ProcStatusEnum.PUBLISHED);
+        resource.getLifeCycleStatisticalResource().setLastUpdate(now);
     }
 
     public void applySendToPublishedPreviousResourceActions(ServiceContext ctx, HasLifecycle resource, HasLifecycle previousVersion, RelatedResource currentAsRelatedResource) throws MetamacException {
@@ -114,6 +115,7 @@ public class LifecycleFiller {
         lifeCycleResource.setPublicationDate(null);
         lifeCycleResource.setPublicationUser(null);
         lifeCycleResource.setValidFrom(null);
+        lifeCycleResource.setLastUpdate(lifeCycleResource.getCreationDate());
     }
 
     public void applyVersioningPreviousResourceActions(ServiceContext ctx, HasLifecycle resource, HasLifecycle previousVersion, VersionTypeEnum versionType) throws MetamacException {

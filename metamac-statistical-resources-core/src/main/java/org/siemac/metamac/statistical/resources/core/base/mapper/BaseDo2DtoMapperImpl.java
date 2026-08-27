@@ -61,7 +61,6 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
         target.getDataProvider().addAll(externalItemDoCollectionToDtoCollection(source.getDataProvider()));
         target.setDataProviderAnnotations(internationalStringDoToDto(source.getDataProviderAnnotations()));
         target.setResourceCreatedDate(dateDoToDto(source.getResourceCreatedDate()));
-        target.setLastUpdate(dateDoToDto(source.getLastUpdate()));
         target.setConformsTo(internationalStringDoToDto(source.getConformsTo()));
         target.setConformsToInternal(internationalStringDoToDto(source.getConformsToInternal()));
 
@@ -119,6 +118,7 @@ public class BaseDo2DtoMapperImpl extends CommonDo2DtoMapperImpl implements Base
         target.setXStreamStatus(source.getXStreamStatus());
         target.setNewnessUntilDate(dateDoToDto(source.getNewnessUntilDate()));
         target.setFeaturedUntilDate(dateDoToDto(source.getFeaturedUntilDate()));
+        target.setLastUpdate(dateDoToDto(source.getLastUpdate()));
     }
 
     @Override

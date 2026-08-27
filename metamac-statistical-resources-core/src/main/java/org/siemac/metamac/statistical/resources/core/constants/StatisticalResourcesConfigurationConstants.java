@@ -18,6 +18,7 @@ public class StatisticalResourcesConfigurationConstants extends ConfigurationCon
     public static final String CRON_EXPRESSION_FOR_RESEND_DATASET_KAFKA_MESSAGE            = "metamac.statistical_resources.resend_dataset_kafka_message.cron_expression";
     public static final String QUARTZ_TRIGGER_DELAY_FOR_GEOGRAPHIC_COVERAGE_CACHE          = "metamac.statistical_resources.geo_cache_update.quartz_scheduler";
     public static final String QUARTZ_TRIGGER_DELAY_FOR_RECOVERY_GEOGRAPHIC_COVERAGE_CACHE = "metamac.statistical_resources.geo_cache_recovery.quartz_scheduler";
+    public static final String QUARTZ_TRIGGER_DELAY_FOR_RECOVERY_UPDATE_DATES             = "metamac.statistical_resources.update_dates.quartz_scheduler";
 
     // DataSources
 

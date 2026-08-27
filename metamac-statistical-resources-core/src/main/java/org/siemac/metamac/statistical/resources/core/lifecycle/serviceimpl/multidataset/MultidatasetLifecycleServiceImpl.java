@@ -9,6 +9,7 @@ import org.siemac.metamac.core.common.util.GeneratorUrnUtils;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.ProcStatusEnumUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -242,6 +243,13 @@ public class MultidatasetLifecycleServiceImpl extends LifecycleTemplateService<M
     @Override
     public void sendNewVersionPublishedStreamMessageByResource(ServiceContext ctx, MultidatasetVersion resource) {
         // TODO METAMAC-2715 - Realizar la notificación a Kafka de los recursos Multidataset
+    }
+
+    @Override
+    protected void planifyLastUpdatePropagationByResource(ServiceContext ctx, MultidatasetVersion resource) {
+        planifyLastUpdatePropagation(ctx,
+                resource.getMultidataset().getIdentifiableStatisticalResource().getUrn(),
+                StatisticalResourceTypeEnum.MULTIDATASET);
     }
 
     @Override

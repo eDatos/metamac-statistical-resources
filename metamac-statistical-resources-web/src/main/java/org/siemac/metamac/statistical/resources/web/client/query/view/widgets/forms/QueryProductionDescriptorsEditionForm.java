@@ -121,6 +121,9 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     }
     
     private void createMaintainersAndSearchDataset(List<FormItem> fields) {
+        ViewTextItem lastUpdate = new ViewTextItem(SiemacMetadataDS.LAST_UPDATE, getConstants().siemacMetadataStatisticalResourceLastUpdate());
+        fields.add(lastUpdate);
+
         maintainerItem = createMaintainerItem();
         maintainerItem.setShowIfCondition(getFormItemIfFunctionEditionMode());
         fields.add(maintainerItem);
@@ -300,6 +303,7 @@ public class QueryProductionDescriptorsEditionForm extends NavigationEnabledDyna
     public void setQueryDto(QueryVersionDto queryDto) {
         this.queryDto = queryDto;
         QueryRelatedDatasetUtils.setRelatedDataset(queryDto, getItem(QueryDS.RELATED_DATASET_VERSION));
+        setValue(SiemacMetadataDS.LAST_UPDATE, queryDto.getLastUpdate());
         setValue(LifeCycleResourceDS.MAINTAINER, queryDto.getMaintainer());
         setValue(LifeCycleResourceDS.MAINTAINER_VIEW, queryDto.getMaintainer());
 

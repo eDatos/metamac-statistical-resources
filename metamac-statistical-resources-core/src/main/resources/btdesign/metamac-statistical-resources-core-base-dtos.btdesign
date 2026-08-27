@@ -86,6 +86,8 @@ Application StatisticalResourcesDto {
 			- @RelatedResourceDto isReplacedByVersion;
 
 			- @ExternalItemDto maintainer;
+
+			JAVADATE lastUpdate;
 		}
 		
 		DataTransferObject BasicVersionableStatisticalResourceDto {
@@ -128,7 +130,6 @@ Application StatisticalResourcesDto {
 			- @InternationalStringDto dataProviderAnnotations;
 			- Bag<@ExternalItemDto> contributor;
 			JAVADATE resourceCreatedDate;
-			JAVADATE lastUpdate;
 			- @InternationalStringDto conformsTo;
 			- @InternationalStringDto conformsToInternal;
 			
