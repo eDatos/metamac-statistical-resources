@@ -493,4 +493,12 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.cache.update_last_update_resource.job_error_and_cant_mark_as_error");
     public static final CommonServiceExceptionType UPDATE_RESOURCE_LAST_UPDATE_JOB_NO_MORE_RETRIES                                           = create(
             "exception.resources.cache.update_last_update_resource.job_no_more_retries");
+            
+    // Business Last Update
+    public static final CommonServiceExceptionType BUSINESS_LAST_UPDATE_JOB_ERROR                                                                     = create(
+            "exception.resources.business_last_update.job_error");
+    public static final CommonServiceExceptionType BUSINESS_LAST_UPDATE_JOB_ERROR_AND_CANT_MARK_AS_ERROR                                              = create(
+            "exception.resources.business_last_update.job_error_and_cant_mark_as_error");
+    public static final CommonServiceExceptionType BUSINESS_LAST_UPDATE_JOB_NO_MORE_RETRIES                                                           = create(
+            "exception.resources.business_last_update.job_no_more_retries");        
 }

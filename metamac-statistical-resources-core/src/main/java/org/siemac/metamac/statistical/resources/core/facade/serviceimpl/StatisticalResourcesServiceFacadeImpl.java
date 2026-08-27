@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.poi.ss.formula.functions.T;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
@@ -22,11 +21,13 @@ import org.siemac.metamac.core.common.criteria.SculptorCriteria;
 import org.siemac.metamac.core.common.dto.ExternalItemDto;
 import org.siemac.metamac.core.common.enume.domain.TypeExternalArtefactsEnum;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
+import org.siemac.metamac.core.common.exception.ExceptionLevelEnum;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.core.common.exception.MetamacExceptionBuilder;
 import org.siemac.metamac.core.common.exception.MetamacExceptionItem;
 import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.core.common.util.CoreCommonUtil;
+import org.siemac.metamac.core.common.util.OptimisticLockingUtils;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ContentConstraint;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Key;
@@ -35,7 +36,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Resourc
 import org.siemac.metamac.srm.core.stream.message.DataStructureDefinitionAvro;
 import org.siemac.metamac.sso.utils.SecurityUtils;
 import org.siemac.metamac.statistical.operations.core.stream.messages.OperationAvro;
-import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -55,6 +56,7 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.Datasource;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DimensionRepresentationMapping;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.StatisticOfficiality;
+import org.siemac.metamac.statistical.resources.core.dataset.exception.DatasetVersionNotFoundException;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.DatasetDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.dataset.mapper.KafkaMapper;
@@ -71,8 +73,8 @@ import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasetVersion
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DatasourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DimensionRepresentationMappingDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdAttributeInstanceDto;
-import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdDimensionDto;
+import org.siemac.metamac.statistical.resources.core.dto.datasets.DsdGranularityAttributeInstanceDto;
 import org.siemac.metamac.statistical.resources.core.dto.datasets.StatisticOfficialityDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetCubeDto;
 import org.siemac.metamac.statistical.resources.core.dto.multidataset.MultidatasetVersionBaseDto;
@@ -90,12 +92,13 @@ import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalRes
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeGranularityCodeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.utils.IstacTimeUtils;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
+import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
+import org.siemac.metamac.statistical.resources.core.error.utils.ServiceExceptionParametersUtils;
 import org.siemac.metamac.statistical.resources.core.invocation.service.SrmRestInternalService;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.CodeHierarchy;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ConstraintsValidator;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
-import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetMetamacCriteria2SculptorCriteriaMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.criteria.mapper.MultidatasetSculptorCriteria2MetamacCriteriaMapper;
@@ -105,6 +108,7 @@ import org.siemac.metamac.statistical.resources.core.multidataset.domain.Multida
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
+import org.siemac.metamac.statistical.resources.core.multidataset.exception.MultidatasetVersionNotFoundException;
 import org.siemac.metamac.statistical.resources.core.multidataset.mapper.MultidatasetDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.multidataset.mapper.MultidatasetDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.publication.criteria.mapper.PublicationMetamacCriteria2SculptorCriteriaMapper;
@@ -116,6 +120,7 @@ import org.siemac.metamac.statistical.resources.core.publication.domain.Cube;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionProperties;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
+import org.siemac.metamac.statistical.resources.core.publication.exception.PublicationVersionNotFoundException;
 import org.siemac.metamac.statistical.resources.core.publication.mapper.PublicationDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.publication.mapper.PublicationDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.query.criteria.mapper.QueryMetamacCriteria2SculptorCriteriaMapper;
@@ -126,6 +131,7 @@ import org.siemac.metamac.statistical.resources.core.query.domain.Purpose;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
+import org.siemac.metamac.statistical.resources.core.query.exception.QueryVersionNotFoundException;
 import org.siemac.metamac.statistical.resources.core.query.mapper.QueryDo2DtoMapper;
 import org.siemac.metamac.statistical.resources.core.query.mapper.QueryDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.security.ConstraintsSecurityUtils;
@@ -607,14 +613,16 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public QueryVersionDto versioningQueryVersion(ServiceContext ctx, QueryVersionDto queryVersionDto, VersionTypeEnum versionType) throws MetamacException {
-        // Security
-        QueriesSecurityUtils.canVersionQueryVersion(ctx, queryVersionDto.getStatisticalOperation().getCode());
+        QueryVersion existing = findQueryVersionByIdOrFail(queryVersionDto.getId(), queryVersionDto.getUrn());
 
-        // Transform
-        QueryVersion queryVersion = queryDto2DoMapper.queryVersionDtoToDo(queryVersionDto);
+        // Security
+        QueriesSecurityUtils.canVersionQueryVersion(ctx, existing.getLifeCycleStatisticalResource().getStatisticalOperation().getCode());
+
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getLifeCycleStatisticalResource().getVersion(), queryVersionDto.getOptimisticLockingVersion());
 
         // Versioning
-        queryVersion = queryLifecycleService.versioning(ctx, queryVersion.getLifeCycleStatisticalResource().getUrn(), versionType);
+        QueryVersion queryVersion = queryLifecycleService.versioning(ctx, existing.getLifeCycleStatisticalResource().getUrn(), versionType);
         // Transform
         queryVersionDto = queryDo2DtoMapper.queryVersionDoToDto(queryVersion);
         queryVersionDto.getTemporalGranularities().addAll(commonDo2DtoMapper.externalItemDoCollectionToDtoCollection(queryVersion.getTemporalGranularities()));
@@ -1119,14 +1127,16 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public DatasetVersionDto versioningDatasetVersion(ServiceContext ctx, DatasetVersionDto datasetVersionDto, VersionTypeEnum versionType) throws MetamacException {
-        // Security
-        DatasetsSecurityUtils.canVersionDataset(ctx, datasetVersionDto.getStatisticalOperation().getCode());
+        DatasetVersion existing = findDatasetVersionByIdOrFail(datasetVersionDto.getId(), datasetVersionDto.getUrn());
 
-        // Transform
-        DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionDto);
+        // Security
+        DatasetsSecurityUtils.canVersionDataset(ctx, existing.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getSiemacMetadataStatisticalResource().getVersion(), datasetVersionDto.getOptimisticLockingVersion());
 
         // Versioning
-        datasetVersion = datasetLifecycleService.versioning(ctx, datasetVersion.getSiemacMetadataStatisticalResource().getUrn(), versionType);
+        DatasetVersion datasetVersion = datasetLifecycleService.versioning(ctx, existing.getSiemacMetadataStatisticalResource().getUrn(), versionType);
 
         // Transform
         return datasetDo2DtoMapper.datasetVersionDoToDto(ctx, datasetVersion);
@@ -1331,7 +1341,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public DsdGranularityAttributeInstanceDto createGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException {
+    public DsdGranularityAttributeInstanceDto createGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto)
+            throws MetamacException {
         // Retrieve
         DatasetVersionDto datasetVersionDto = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
@@ -1339,7 +1350,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canCreateAttributeInstance(ctx, datasetVersionDto);
 
         // Transform
-        GranularityAttributeInstanceDto granularityAttributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper.dsdGranularityAttributeInstanceDtoToGranularityAttributeInstanceDto(dsdGranularityAttributeInstanceDto);
+        GranularityAttributeInstanceDto granularityAttributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper
+                .dsdGranularityAttributeInstanceDtoToGranularityAttributeInstanceDto(dsdGranularityAttributeInstanceDto);
 
         // Create
         GranularityAttributeInstanceDto created = getDatasetService().createGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
@@ -1349,7 +1361,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
     }
 
     @Override
-    public DsdGranularityAttributeInstanceDto updateGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto) throws MetamacException {
+    public DsdGranularityAttributeInstanceDto updateGranularityAttributeInstance(ServiceContext ctx, String datasetVersionUrn, DsdGranularityAttributeInstanceDto dsdGranularityAttributeInstanceDto)
+            throws MetamacException {
         // Retrieve
         DatasetVersionDto datasetVersionDto = retrieveDatasetVersionByUrn(ctx, datasetVersionUrn);
 
@@ -1357,7 +1370,8 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         DatasetsSecurityUtils.canUpdateAttributeInstance(ctx, datasetVersionDto);
 
         // Transform
-        GranularityAttributeInstanceDto granularityAttributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper.dsdGranularityAttributeInstanceDtoToGranularityAttributeInstanceDto(dsdGranularityAttributeInstanceDto);
+        GranularityAttributeInstanceDto granularityAttributeInstanceDto = statisticalResourcesDto2StatRepoDtoMapper
+                .dsdGranularityAttributeInstanceDtoToGranularityAttributeInstanceDto(dsdGranularityAttributeInstanceDto);
 
         // Update
         GranularityAttributeInstanceDto updated = getDatasetService().updateGranularityAttributeInstance(ctx, datasetVersionUrn, granularityAttributeInstanceDto);
@@ -1891,14 +1905,16 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public PublicationVersionDto versioningPublicationVersion(ServiceContext ctx, PublicationVersionDto publicationVersionDto, VersionTypeEnum versionType) throws MetamacException {
-        // Security
-        PublicationsSecurityUtils.canVersionPublication(ctx, publicationVersionDto.getStatisticalOperation().getCode());
+        PublicationVersion existing = findPublicationVersionByIdOrFail(publicationVersionDto.getId(), publicationVersionDto.getUrn());
 
-        // Transform
-        PublicationVersion publicationVersion = publicationDto2DoMapper.publicationVersionDtoToDo(publicationVersionDto);
+        // Security
+        PublicationsSecurityUtils.canVersionPublication(ctx, existing.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getSiemacMetadataStatisticalResource().getVersion(), publicationVersionDto.getOptimisticLockingVersion());
 
         // Versioning
-        publicationVersion = publicationLifecycleService.versioning(ctx, publicationVersion.getSiemacMetadataStatisticalResource().getUrn(), versionType);
+        PublicationVersion publicationVersion = publicationLifecycleService.versioning(ctx, existing.getSiemacMetadataStatisticalResource().getUrn(), versionType);
 
         // Transform
         publicationVersionDto = publicationDo2DtoMapper.publicationVersionDoToDto(publicationVersion);
@@ -2544,14 +2560,19 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
     @Override
     public MultidatasetVersionDto versioningMultidatasetVersion(ServiceContext ctx, MultidatasetVersionDto multidatasetVersionDto, VersionTypeEnum versionType) throws MetamacException {
-        // Security
-        MultidatasetsSecurityUtils.canVersionMultidataset(ctx, multidatasetVersionDto.getStatisticalOperation().getCode());
+        MultidatasetVersion existing = findMultidatasetVersionByIdOrFail(multidatasetVersionDto.getId(), multidatasetVersionDto.getUrn());
 
-        // Transform
-        MultidatasetVersion multidatasetVersion = multidatasetDto2DoMapper.multidatasetVersionDtoToDo(multidatasetVersionDto);
+        // Security
+        MultidatasetsSecurityUtils.canVersionMultidataset(ctx, existing.getSiemacMetadataStatisticalResource().getStatisticalOperation().getCode());
+
+        // Check optimistic locking
+        OptimisticLockingUtils.checkVersion(existing.getSiemacMetadataStatisticalResource().getVersion(), multidatasetVersionDto.getOptimisticLockingVersion());
+
+        // Replaces the mapper check that validated the DTO before applying it to the entity
+        checkMultidatasetVersioningDtoMetadata(multidatasetVersionDto);
 
         // Versioning
-        multidatasetVersion = multidatasetLifecycleService.versioning(ctx, multidatasetVersion.getSiemacMetadataStatisticalResource().getUrn(), versionType);
+        MultidatasetVersion multidatasetVersion = multidatasetLifecycleService.versioning(ctx, existing.getSiemacMetadataStatisticalResource().getUrn(), versionType);
 
         // Transform
         multidatasetVersionDto = multidatasetDo2DtoMapper.multidatasetVersionDoToDto(multidatasetVersion);
@@ -2746,11 +2767,58 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByDsd(ctx, dsdUrn, timestamp);
     }
 
-
     @Override
     public void processOperationKafkaMessage(ServiceContext ctx, SpecificRecordBase message, long timestamp) throws MetamacException {
         OperationAvro operation = (OperationAvro) message;
         String operationUrn = operation.getUrn();
         resourceCacheInvalidationService.updateDatasetVersionsLastUpdateByOperation(ctx, operationUrn, timestamp);
+    }
+
+    // ------------------------------------------------------------------------
+    // PRIVATE HELPERS — load by ID to obtain trusted URN and operation code
+    // ------------------------------------------------------------------------
+
+    private QueryVersion findQueryVersionByIdOrFail(Long id, String urnForError) throws MetamacException {
+        try {
+            return queryVersionRepository.findById(id);
+        } catch (QueryVersionNotFoundException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.QUERY_NOT_FOUND).withMessageParameters(urnForError).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
+        }
+    }
+
+    private DatasetVersion findDatasetVersionByIdOrFail(Long id, String urnForError) throws MetamacException {
+        try {
+            return datasetVersionRepository.findById(id);
+        } catch (DatasetVersionNotFoundException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.DATASET_VERSION_NOT_FOUND).withMessageParameters(urnForError)
+                    .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
+    }
+
+    private PublicationVersion findPublicationVersionByIdOrFail(Long id, String urnForError) throws MetamacException {
+        try {
+            return publicationVersionRepository.findById(id);
+        } catch (PublicationVersionNotFoundException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.PUBLICATION_VERSION_NOT_FOUND).withMessageParameters(urnForError)
+                    .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
+    }
+
+    // Preserves the DTO validation previously performed by the mapper before it was bypassed
+    private void checkMultidatasetVersioningDtoMetadata(MultidatasetVersionDto multidatasetVersionDto) throws MetamacException {
+        if (multidatasetVersionDto.getFilteringDimension() == null) {
+            throw new MetamacException(ServiceExceptionType.METADATA_REQUIRED,
+                    ServiceExceptionParametersUtils.addParameter(ServiceExceptionParameters.MULTIDATASET_VERSION, ServiceExceptionSingleParameters.FILTERING_DIMENSION));
+        }
+    }
+
+    private MultidatasetVersion findMultidatasetVersionByIdOrFail(Long id, String urnForError) throws MetamacException {
+        try {
+            return multidatasetVersionRepository.findById(id);
+        } catch (MultidatasetVersionNotFoundException e) {
+            throw MetamacExceptionBuilder.builder().withCause(e).withExceptionItems(ServiceExceptionType.MULTIDATASET_VERSION_NOT_FOUND).withMessageParameters(urnForError)
+                    .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+        }
     }
 }

@@ -44,6 +44,9 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
     private List<FormItem> createElements() {
         List<FormItem> fields = new ArrayList<FormItem>();
 
+        ViewTextItem lastUpdate = new ViewTextItem(SiemacMetadataDS.LAST_UPDATE, getConstants().siemacMetadataStatisticalResourceLastUpdate());
+        fields.add(lastUpdate);
+
         ExternalItemLinkItem maintainer = new ExternalItemLinkItem(QueryDS.MAINTAINER, getConstants().siemacMetadataStatisticalResourceMaintainer());
         fields.add(maintainer);
 
@@ -114,6 +117,7 @@ public class QueryProductionDescriptorsForm extends NavigationEnabledDynamicForm
 
         QueryRelatedDatasetUtils.setRelatedDataset(queryDto, getItem(QueryDS.RELATED_DATASET_VERSION));
 
+        setValue(SiemacMetadataDS.LAST_UPDATE, queryDto.getLastUpdate());
         setValue(QueryDS.MAINTAINER, queryDto.getMaintainer());
         // Status
         setValue(QueryDS.STATUS, CommonUtils.getQueryStatusName(queryDto));

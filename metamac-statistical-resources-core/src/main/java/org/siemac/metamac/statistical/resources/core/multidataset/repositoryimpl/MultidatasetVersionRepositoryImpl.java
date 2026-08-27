@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.core.multidataset.repositoryimp
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 import static org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedResourceResultUtils.getRelatedResourceResultsFromSiemacResourceRows;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -12,6 +13,7 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -20,6 +22,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.utils.Repositor
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
@@ -253,5 +256,29 @@ public class MultidatasetVersionRepositoryImpl extends MultidatasetVersionReposi
         List<Object> rows = query.getResultList();
         List<RelatedResourceResult> resources = getRelatedResourceResultsFromSiemacResourceRows(rows);
         return resources;
+    }
+
+    @Override
+    public List<MultidatasetVersion> findPublishedContainingResource(String resourceRootUrn, StatisticalResourceTypeEnum containedResourceType) {
+        Property<MultidatasetVersion> containedUrnProperty;
+        switch (containedResourceType) {
+            case DATASET:
+                containedUrnProperty = MultidatasetVersionProperties.cubes().dataset().identifiableStatisticalResource().urn();
+                break;
+            case QUERY:
+                containedUrnProperty = MultidatasetVersionProperties.cubes().query().identifiableStatisticalResource().urn();
+                break;
+            default:
+                return Collections.emptyList();
+        }
+
+        List<ConditionalCriteria> conditions = criteriaFor(MultidatasetVersion.class)
+                .withProperty(containedUrnProperty).eq(resourceRootUrn)
+                .withProperty(MultidatasetVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull()
+                .withProperty(MultidatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
+                .distinctRoot()
+                .build();
+
+        return findByCondition(conditions);
     }
 }

@@ -2332,6 +2332,13 @@
                      "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.featuredUntilDate.description']}",
                      "type":"string"
                   },
+                  "lastUpdate":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.lastUpdate.description']}",
+                     "type":"string"
+                  },
                }
             }
          ],

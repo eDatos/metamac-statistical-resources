@@ -9,7 +9,7 @@
 		"kind": "statisticalResources#collections",
 		"href": "http://data.istac.es/apis/statistical-resources/v1.0/collections"
 	},
-	"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=lbyytD33hN/collections/collection;id=agency1:collection1(01.000)",
+	"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=0th8HphqMi/collections/collection;id=agency1:collection1(01.000)",
 	"name": {
 		"text": [
 			{
@@ -21,7 +21,7 @@
 	"description": {
 		"text": [
 			{
-				"value": "description-lbyytD33hN_000001 en Espanol",
+				"value": "description-0th8HphqMi_000001 en Espanol",
 				"lang": "es"
 			}
 		]
@@ -29,7 +29,7 @@
 	"keywords": {
 		"text": [
 			{
-				"value": "keyword1 keyword2 keyword3-lbyytD33hN_000001 en Espanol",
+				"value": "keyword1 keyword2 keyword3-0th8HphqMi_000001 en Espanol",
 				"lang": "es"
 			}
 		]
@@ -40,7 +40,7 @@
 		],
 		"total": 1
 	},
-	"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=H3ym2ftzGh&resourceId=collection1",
+	"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=QHtLRuxjl3&resourceId=collection1",
 	"metadata": {
 		"procStatus": "DRAFT",
 		"creationDate": "2013-06-20T20:00:20.021+01:00",
@@ -49,12 +49,13 @@
 		"conformsToInternal": {
 			"text": [
 				{
-					"value": "conformsToInternal-lbyytD33hN_000001 en Espanol",
+					"value": "conformsToInternal-0th8HphqMi_000001 en Espanol",
 					"lang": "es"
 				}
 			]
 		},
 		"language": {
+			"managementAppLink": "http://localhost:8080/metamac-srm-web/language01",
 			"id": "language01",
 			"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).language01",
 			"selfLink": {
@@ -69,12 +70,12 @@
 					}
 				]
 			},
-			"managementAppLink": "http://localhost:8080/metamac-srm-web/language01",
 			"kind": "structuralResources#code"
 		},
 		"languages": {
 			"resource": [
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/language01",
 					"id": "language01",
 					"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).language01",
 					"selfLink": {
@@ -89,10 +90,10 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/language01",
 					"kind": "structuralResources#code"
 				},
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/language02",
 					"id": "language02",
 					"urn": "urn:sdmx:org.sdmx.infomodel.codelist.Code=MaintainerMock:CodelistMock(1.0).language02",
 					"selfLink": {
@@ -107,18 +108,18 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/language02",
 					"kind": "structuralResources#code"
 				}
 			],
 			"total": 2
 		},
 		"statisticalOperation": {
-			"id": "lbyytD33hN",
-			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=lbyytD33hN",
+			"managementAppLink": "http://localhost:8080/statistical-operations-internal/0th8HphqMi",
+			"id": "0th8HphqMi",
+			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticaloperations.Operation=0th8HphqMi",
 			"selfLink": {
 				"kind": "statisticalOperations#operation",
-				"href": "http://data.istac.es/apis/operations/latest/lbyytD33hN"
+				"href": "http://data.istac.es/apis/operations/latest/0th8HphqMi"
 			},
 			"name": {
 				"text": [
@@ -128,13 +129,12 @@
 					}
 				]
 			},
-			"managementAppLink": "http://localhost:8080/statistical-operations-internal/lbyytD33hN",
 			"kind": "statisticalOperations#operation"
 		},
 		"subtitle": {
 			"text": [
 				{
-					"value": "subtitle-lbyytD33hN_000001 en Espanol",
+					"value": "subtitle-0th8HphqMi_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -142,13 +142,14 @@
 		"titleAlternative": {
 			"text": [
 				{
-					"value": "titleAlternative-lbyytD33hN_000001 en Espanol",
+					"value": "titleAlternative-0th8HphqMi_000001 en Espanol",
 					"lang": "es"
 				}
 			]
 		},
 		"type": "COLLECTION",
 		"creator": {
+			"managementAppLink": "http://localhost:8080/metamac-srm-web/creator",
 			"id": "creator",
 			"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).creator",
 			"selfLink": {
@@ -163,12 +164,12 @@
 					}
 				]
 			},
-			"managementAppLink": "http://localhost:8080/metamac-srm-web/creator",
 			"kind": "structuralResources#organisationUnit"
 		},
 		"contributors": {
 			"resource": [
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/contributor01",
 					"id": "contributor01",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).contributor01",
 					"selfLink": {
@@ -183,10 +184,10 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/contributor01",
 					"kind": "structuralResources#organisationUnit"
 				},
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/contributor02",
 					"id": "contributor02",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).contributor02",
 					"selfLink": {
@@ -201,7 +202,6 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/contributor02",
 					"kind": "structuralResources#organisationUnit"
 				}
 			],
@@ -212,7 +212,7 @@
 		"conformsTo": {
 			"text": [
 				{
-					"value": "conformsTo-lbyytD33hN_000001 en Espanol",
+					"value": "conformsTo-0th8HphqMi_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -220,6 +220,7 @@
 		"publishers": {
 			"resource": [
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisher01",
 					"id": "publisher01",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisher01",
 					"selfLink": {
@@ -234,10 +235,10 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisher01",
 					"kind": "structuralResources#organisationUnit"
 				},
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisher02",
 					"id": "publisher02",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisher02",
 					"selfLink": {
@@ -252,7 +253,6 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisher02",
 					"kind": "structuralResources#organisationUnit"
 				}
 			],
@@ -261,6 +261,7 @@
 		"publisherContributors": {
 			"resource": [
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisherContributor01",
 					"id": "publisherContributor01",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisherContributor01",
 					"selfLink": {
@@ -275,10 +276,10 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisherContributor01",
 					"kind": "structuralResources#organisationUnit"
 				},
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisherContributor02",
 					"id": "publisherContributor02",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).publisherContributor02",
 					"selfLink": {
@@ -293,7 +294,6 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/publisherContributor02",
 					"kind": "structuralResources#organisationUnit"
 				}
 			],
@@ -302,6 +302,7 @@
 		"mediators": {
 			"resource": [
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/mediator01",
 					"id": "mediator01",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).mediator01",
 					"selfLink": {
@@ -316,10 +317,10 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/mediator01",
 					"kind": "structuralResources#organisationUnit"
 				},
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/mediator02",
 					"id": "mediator02",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.OrganisationUnit=MaintainerMock:OrganizationUnitMock(1.0).mediator02",
 					"selfLink": {
@@ -334,7 +335,6 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/mediator02",
 					"kind": "structuralResources#organisationUnit"
 				}
 			],
@@ -351,15 +351,16 @@
 					}
 				]
 			},
-			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=Hnn4ej2yNx/collections/collection;id=agency1:replace01(01.000)",
+			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=jIUE84YjvL/collections/collection;id=agency1:replace01(01.000)",
 			"selfLink": {
 				"kind": "statisticalResources#collection",
 				"href": "http://data.istac.es/apis/statistical-resources/v1.0/collections/agency1/replace01"
 			},
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency1:replace01",
-			"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=fCQeMcZPMV&resourceId=replace01"
+			"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=Pfh2JUbfzq&resourceId=replace01"
 		},
 		"isReplacedBy": {
+			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:collection99(01.000)",
 			"id": "collection99",
 			"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Collection=agency01:collection99",
 			"selfLink": {
@@ -375,7 +376,6 @@
 				]
 			},
 			"visualizerHtmlLink": "http://istac.es/portal-web/collection.html?resourceType=collection&agencyId=agency01&resourceId=collection99",
-			"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=/collections/collection;id=agency01:collection99(01.000)",
 			"kind": "statisticalResources#collection"
 		},
 		"hasPart": {
@@ -440,10 +440,10 @@
 					}
 				]
 			},
-			"urnProvider": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY",
-			"kind": "structuralResources#agency"
+			"kind": "structuralResources#agency",
+			"urnProvider": "urn:sdmx:org.sdmx.infomodel.base.Agency=SDMX:AGENCIES(1.0).MOCKAGENCY"
 		},
-		"copyrightDate": 2023,
+		"copyrightDate": 2026,
 		"license": {
 			"text": [
 				{
@@ -455,34 +455,35 @@
 		"accessRights": {
 			"text": [
 				{
-					"value": "accessRights-lbyytD33hN_000001 en Espanol",
+					"value": "accessRights-0th8HphqMi_000001 en Espanol",
 					"lang": "es"
 				}
 			]
 		},
 		"maintainer": {
-			"id": "H3ym2ftzGh",
+			"managementAppLink": "http://localhost:8080/metamac-srm-web/QHtLRuxjl3",
+			"id": "QHtLRuxjl3",
 			"nestedId": "agency1",
-			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).H3ym2ftzGh",
+			"urn": "urn:sdmx:org.sdmx.infomodel.base.Agency=MaintainerMock:AgencySchemeMock(1.0).QHtLRuxjl3",
 			"selfLink": {
 				"kind": "structuralResources#agency",
-				"href": "http://data.istac.es/apis/srm/latest/H3ym2ftzGh"
+				"href": "http://data.istac.es/apis/srm/latest/QHtLRuxjl3"
 			},
 			"name": {
 				"text": [
 					{
-						"value": "title-H3ym2ftzGh en Espanol",
+						"value": "title-QHtLRuxjl3 en Espanol",
 						"lang": "es"
 					}
 				]
 			},
-			"managementAppLink": "http://localhost:8080/metamac-srm-web/H3ym2ftzGh",
 			"kind": "structuralResources#agency"
 		},
 		"version": "01.000",
 		"dataProviders": {
 			"resource": [
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/dataProvider01",
 					"id": "dataProvider01",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.DataProvider=MaintainerMock:DataProviderSchemeMock(1.0).dataProvider01",
 					"selfLink": {
@@ -497,10 +498,10 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/dataProvider01",
 					"kind": "structuralResources#dataProvider"
 				},
 				{
+					"managementAppLink": "http://localhost:8080/metamac-srm-web/dataProvider02",
 					"id": "dataProvider02",
 					"urn": "urn:sdmx:org.sdmx.infomodel.base.DataProvider=MaintainerMock:DataProviderSchemeMock(1.0).dataProvider02",
 					"selfLink": {
@@ -515,7 +516,6 @@
 							}
 						]
 					},
-					"managementAppLink": "http://localhost:8080/metamac-srm-web/dataProvider02",
 					"kind": "structuralResources#dataProvider"
 				}
 			],
@@ -524,7 +524,7 @@
 		"dataProviderAnnotations": {
 			"text": [
 				{
-					"value": "dataProviderAnnotations-lbyytD33hN_000001 en Espanol",
+					"value": "dataProviderAnnotations-0th8HphqMi_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -533,7 +533,7 @@
 		"abstract": {
 			"text": [
 				{
-					"value": "abstract-lbyytD33hN_000001 en Espanol",
+					"value": "abstract-0th8HphqMi_000001 en Espanol",
 					"lang": "es"
 				}
 			]
@@ -552,29 +552,29 @@
 									"node": [
 										{
 											"dataset": {
-												"id": "4FZZ53DWQe_000001",
+												"id": "V7emMZN9AI_000001",
 												"kind": "statisticalResources#dataset",
 												"name": {
 													"text": [
 														{
-															"value": "title-4FZZ53DWQe_000001 en Espanol",
+															"value": "title-V7emMZN9AI_000001 en Espanol",
 															"lang": "es"
 														}
 													]
 												},
-												"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=dSmX4l5JcP/datasets/dataset;id=aB02eNwOdC:4FZZ53DWQe_000001(01.000)",
+												"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=fehbFZRPl2/datasets/dataset;id=oe3LGWRdJY:V7emMZN9AI_000001(01.000)",
 												"selfLink": {
 													"kind": "statisticalResources#dataset",
-													"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/aB02eNwOdC/4FZZ53DWQe_000001/~latest"
+													"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/oe3LGWRdJY/V7emMZN9AI_000001/~latest"
 												},
-												"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=aB02eNwOdC:4FZZ53DWQe_000001(01.000)",
-												"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=q3pqm3MYt5&resourceId=4FZZ53DWQe_000001&version=~latest",
+												"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=oe3LGWRdJY:V7emMZN9AI_000001(01.000)",
+												"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=QRIggTKGuM&resourceId=V7emMZN9AI_000001&version=~latest",
 												"newnessUntilDate": "2013-09-02T15:04:05+01:00"
 											},
 											"name": {
 												"text": [
 													{
-														"value": "title-resource-LlENcAvYOK en Espanol",
+														"value": "title-resource-wk7lvuIko2 en Espanol",
 														"lang": "es"
 													}
 												]
@@ -582,7 +582,7 @@
 											"description": {
 												"text": [
 													{
-														"value": "description-resource-LlENcAvYOK en Espanol",
+														"value": "description-resource-wk7lvuIko2 en Espanol",
 														"lang": "es"
 													}
 												]
@@ -593,7 +593,7 @@
 								"name": {
 									"text": [
 										{
-											"value": "title-resource-dg1AcnKQT2 en Espanol",
+											"value": "title-resource-yzGFtQGXyM en Espanol",
 											"lang": "es"
 										}
 									]
@@ -601,7 +601,7 @@
 								"description": {
 									"text": [
 										{
-											"value": "description-resource-dg1AcnKQT2 en Espanol",
+											"value": "description-resource-yzGFtQGXyM en Espanol",
 											"lang": "es"
 										}
 									]
@@ -613,28 +613,28 @@
 									"node": [
 										{
 											"query": {
-												"id": "resource-hhlH3S3JKt",
+												"id": "resource-tsuJaKDpxy",
 												"kind": "statisticalResources#query",
 												"name": {
 													"text": [
 														{
-															"value": "title-resource-hhlH3S3JKt en Espanol",
+															"value": "title-resource-tsuJaKDpxy en Espanol",
 															"lang": "es"
 														}
 													]
 												},
-												"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=fYz99Qj9LH/queries/query;id=b1rFhaZf3L:resource-hhlH3S3JKt(01.000)",
+												"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=HfEx48mDQC/queries/query;id=aypGKEvV2H:resource-tsuJaKDpxy(01.000)",
 												"selfLink": {
 													"kind": "statisticalResources#query",
-													"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/b1rFhaZf3L/resource-hhlH3S3JKt"
+													"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/aypGKEvV2H/resource-tsuJaKDpxy"
 												},
-												"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=b1rFhaZf3L:resource-hhlH3S3JKt",
-												"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=1lzk8g6wYe&resourceId=resource-hhlH3S3JKt"
+												"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=aypGKEvV2H:resource-tsuJaKDpxy",
+												"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=q4BssjwCLd&resourceId=resource-tsuJaKDpxy"
 											},
 											"name": {
 												"text": [
 													{
-														"value": "title-resource-HWWikk0ss1 en Espanol",
+														"value": "title-resource-y5D38EI4xz en Espanol",
 														"lang": "es"
 													}
 												]
@@ -642,7 +642,7 @@
 											"description": {
 												"text": [
 													{
-														"value": "description-resource-HWWikk0ss1 en Espanol",
+														"value": "description-resource-y5D38EI4xz en Espanol",
 														"lang": "es"
 													}
 												]
@@ -656,7 +656,7 @@
 											"name": {
 												"text": [
 													{
-														"value": "title-resource-ba59xJGylU en Espanol",
+														"value": "title-resource-UvNnZ5FVba en Espanol",
 														"lang": "es"
 													}
 												]
@@ -664,7 +664,7 @@
 											"description": {
 												"text": [
 													{
-														"value": "description-resource-ba59xJGylU en Espanol",
+														"value": "description-resource-UvNnZ5FVba en Espanol",
 														"lang": "es"
 													}
 												]
@@ -675,7 +675,7 @@
 								"name": {
 									"text": [
 										{
-											"value": "title-resource-RhJIf8aW9q en Espanol",
+											"value": "title-resource-5yIWNGZ9ir en Espanol",
 											"lang": "es"
 										}
 									]
@@ -683,7 +683,7 @@
 								"description": {
 									"text": [
 										{
-											"value": "description-resource-RhJIf8aW9q en Espanol",
+											"value": "description-resource-5yIWNGZ9ir en Espanol",
 											"lang": "es"
 										}
 									]
@@ -691,29 +691,29 @@
 							},
 							{
 								"dataset": {
-									"id": "Uxkly075RZ_000001",
+									"id": "RPbHfYBlf0_000001",
 									"kind": "statisticalResources#dataset",
 									"name": {
 										"text": [
 											{
-												"value": "title-Uxkly075RZ_000001 en Espanol",
+												"value": "title-RPbHfYBlf0_000001 en Espanol",
 												"lang": "es"
 											}
 										]
 									},
-									"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=yGxWspS3BT/datasets/dataset;id=ogEnzfhjMn:Uxkly075RZ_000001(01.000)",
+									"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=obAxpmapFA/datasets/dataset;id=4ivsdIqh8s:RPbHfYBlf0_000001(01.000)",
 									"selfLink": {
 										"kind": "statisticalResources#dataset",
-										"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/ogEnzfhjMn/Uxkly075RZ_000001/~latest"
+										"href": "http://data.istac.es/apis/statistical-resources/v1.0/datasets/4ivsdIqh8s/RPbHfYBlf0_000001/~latest"
 									},
-									"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=ogEnzfhjMn:Uxkly075RZ_000001(01.000)",
-									"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=VY2rypncwB&resourceId=Uxkly075RZ_000001&version=~latest",
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Dataset=4ivsdIqh8s:RPbHfYBlf0_000001(01.000)",
+									"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=dataset&agencyId=BMtyJu4WRW&resourceId=RPbHfYBlf0_000001&version=~latest",
 									"newnessUntilDate": "2013-09-02T15:04:05+01:00"
 								},
 								"name": {
 									"text": [
 										{
-											"value": "title-resource-XM9zlNNDvR en Espanol",
+											"value": "title-resource-5bA1ZjrGvk en Espanol",
 											"lang": "es"
 										}
 									]
@@ -721,7 +721,7 @@
 								"description": {
 									"text": [
 										{
-											"value": "description-resource-XM9zlNNDvR en Espanol",
+											"value": "description-resource-5bA1ZjrGvk en Espanol",
 											"lang": "es"
 										}
 									]
@@ -732,7 +732,7 @@
 					"name": {
 						"text": [
 							{
-								"value": "title-resource-zx8k5honYD en Espanol",
+								"value": "title-resource-zWa5EhnDE1 en Espanol",
 								"lang": "es"
 							}
 						]
@@ -740,7 +740,7 @@
 					"description": {
 						"text": [
 							{
-								"value": "description-resource-zx8k5honYD en Espanol",
+								"value": "description-resource-zWa5EhnDE1 en Espanol",
 								"lang": "es"
 							}
 						]
@@ -752,28 +752,28 @@
 						"node": [
 							{
 								"query": {
-									"id": "resource-PXbtsuHbxe",
+									"id": "resource-6VZQHTGYi3",
 									"kind": "statisticalResources#query",
 									"name": {
 										"text": [
 											{
-												"value": "title-resource-PXbtsuHbxe en Espanol",
+												"value": "title-resource-6VZQHTGYi3 en Espanol",
 												"lang": "es"
 											}
 										]
 									},
-									"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=HxZFcRy237/queries/query;id=pQIlkHHXRi:resource-PXbtsuHbxe(01.000)",
+									"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=8k9BYuy0Pl/queries/query;id=jgsWoWeCKM:resource-6VZQHTGYi3(01.000)",
 									"selfLink": {
 										"kind": "statisticalResources#query",
-										"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/pQIlkHHXRi/resource-PXbtsuHbxe"
+										"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/jgsWoWeCKM/resource-6VZQHTGYi3"
 									},
-									"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=pQIlkHHXRi:resource-PXbtsuHbxe",
-									"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=fDMGPiWc3V&resourceId=resource-PXbtsuHbxe"
+									"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=jgsWoWeCKM:resource-6VZQHTGYi3",
+									"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=NicJBh1isW&resourceId=resource-6VZQHTGYi3"
 								},
 								"name": {
 									"text": [
 										{
-											"value": "title-resource-mWzGaBQY83 en Espanol",
+											"value": "title-resource-4UvxMbzbcw en Espanol",
 											"lang": "es"
 										}
 									]
@@ -781,7 +781,7 @@
 								"description": {
 									"text": [
 										{
-											"value": "description-resource-mWzGaBQY83 en Espanol",
+											"value": "description-resource-4UvxMbzbcw en Espanol",
 											"lang": "es"
 										}
 									]
@@ -792,7 +792,7 @@
 					"name": {
 						"text": [
 							{
-								"value": "title-resource-qKlwCHurF5 en Espanol",
+								"value": "title-resource-qQKZhlfTAM en Espanol",
 								"lang": "es"
 							}
 						]
@@ -800,7 +800,7 @@
 					"description": {
 						"text": [
 							{
-								"value": "description-resource-qKlwCHurF5 en Espanol",
+								"value": "description-resource-qQKZhlfTAM en Espanol",
 								"lang": "es"
 							}
 						]
@@ -811,7 +811,7 @@
 					"name": {
 						"text": [
 							{
-								"value": "title-resource-c6i7ESzb0Z en Espanol",
+								"value": "title-resource-wJUWk2mjtW en Espanol",
 								"lang": "es"
 							}
 						]
@@ -819,7 +819,7 @@
 					"description": {
 						"text": [
 							{
-								"value": "description-resource-c6i7ESzb0Z en Espanol",
+								"value": "description-resource-wJUWk2mjtW en Espanol",
 								"lang": "es"
 							}
 						]
@@ -827,28 +827,28 @@
 				},
 				{
 					"query": {
-						"id": "resource-Bc3JZ5NA3w",
+						"id": "resource-3L505RBvH5",
 						"kind": "statisticalResources#query",
 						"name": {
 							"text": [
 								{
-									"value": "title-resource-Bc3JZ5NA3w en Espanol",
+									"value": "title-resource-3L505RBvH5 en Espanol",
 									"lang": "es"
 								}
 							]
 						},
-						"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=dCME9ydVoX/queries/query;id=TWxORDEblI:resource-Bc3JZ5NA3w(01.000)",
+						"managementAppLink": "http://localhost:8080/statistical-resources-internal/#operations/operation;id=g9y9WmNUCL/queries/query;id=hguhecbHeU:resource-3L505RBvH5(01.000)",
 						"selfLink": {
 							"kind": "statisticalResources#query",
-							"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/TWxORDEblI/resource-Bc3JZ5NA3w"
+							"href": "http://data.istac.es/apis/statistical-resources/v1.0/queries/hguhecbHeU/resource-3L505RBvH5"
 						},
-						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=TWxORDEblI:resource-Bc3JZ5NA3w",
-						"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=JnALIF6kfV&resourceId=resource-Bc3JZ5NA3w"
+						"urn": "urn:siemac:org.siemac.metamac.infomodel.statisticalresources.Query=hguhecbHeU:resource-3L505RBvH5",
+						"visualizerHtmlLink": "http://istac.es/portal-web/data.html?resourceType=query&agencyId=rXILxuJ2u0&resourceId=resource-3L505RBvH5"
 					},
 					"name": {
 						"text": [
 							{
-								"value": "title-resource-FF14AzGxiC en Espanol",
+								"value": "title-resource-VHmUOWPf7l en Espanol",
 								"lang": "es"
 							}
 						]
@@ -856,7 +856,7 @@
 					"description": {
 						"text": [
 							{
-								"value": "description-resource-FF14AzGxiC en Espanol",
+								"value": "description-resource-VHmUOWPf7l en Espanol",
 								"lang": "es"
 							}
 						]
@@ -870,7 +870,7 @@
 					"name": {
 						"text": [
 							{
-								"value": "title-resource-3G1ApjoL1b en Espanol",
+								"value": "title-resource-FIr93Zx5RE en Espanol",
 								"lang": "es"
 							}
 						]
@@ -878,7 +878,7 @@
 					"description": {
 						"text": [
 							{
-								"value": "description-resource-3G1ApjoL1b en Espanol",
+								"value": "description-resource-FIr93Zx5RE en Espanol",
 								"lang": "es"
 							}
 						]

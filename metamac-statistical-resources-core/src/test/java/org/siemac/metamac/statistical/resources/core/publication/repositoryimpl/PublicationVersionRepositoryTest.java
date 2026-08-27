@@ -183,4 +183,9 @@ public class PublicationVersionRepositoryTest extends StatisticalResourcesBaseTe
         RelatedResource resource = publishedPublication.getSiemacMetadataStatisticalResource().getIsReplacedBy();
         assertNotNull(resource);
     }
+
+    @Override
+    public void testFindPublishedContainingResource() throws Exception {
+        // No test — tested via integration
+    }
 }

@@ -2,6 +2,7 @@ package org.siemac.metamac.statistical.resources.core.publication.repositoryimpl
 
 import static org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder.criteriaFor;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -16,6 +18,7 @@ import org.siemac.metamac.statistical.resources.core.base.domain.utils.RelatedRe
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResource;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.TypeRelatedResourceEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
@@ -188,5 +191,35 @@ public class PublicationVersionRepositoryImpl extends PublicationVersionReposito
         }
 
         return replacing;
+    }
+
+    @Override
+    public List<PublicationVersion> findPublishedContainingResource(String resourceRootUrn, StatisticalResourceTypeEnum containedResourceType) {
+        Property<PublicationVersion> containedUrnProperty;
+        switch (containedResourceType) {
+            case DATASET:
+                containedUrnProperty = PublicationVersionProperties.childrenAllLevels().cube().dataset().identifiableStatisticalResource().urn();
+                break;
+            case QUERY:
+                containedUrnProperty = PublicationVersionProperties.childrenAllLevels().cube().query().identifiableStatisticalResource().urn();
+                break;
+            case MULTIDATASET:
+                containedUrnProperty = PublicationVersionProperties.childrenAllLevels().cube().multidataset().identifiableStatisticalResource().urn();
+                break;
+            case COLLECTION:
+                containedUrnProperty = PublicationVersionProperties.childrenAllLevels().cube().publication().identifiableStatisticalResource().urn();
+                break;
+            default:
+                return Collections.emptyList();
+        }
+
+        List<ConditionalCriteria> conditions = criteriaFor(PublicationVersion.class)
+                .withProperty(containedUrnProperty).eq(resourceRootUrn)
+                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().validTo()).isNull()
+                .withProperty(PublicationVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED)
+                .distinctRoot()
+                .build();
+
+        return findByCondition(conditions);
     }
 }

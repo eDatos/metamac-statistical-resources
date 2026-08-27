@@ -85,6 +85,12 @@ public class StatisticalResourcesConfigurationImpl extends ConfigurationServiceI
     }
 
     @Override
+    public Integer retrieveQuartzTriggerDelayForRecoveryUpdateDates() throws MetamacException {
+        String delay = retrieveProperty(StatisticalResourcesConfigurationConstants.QUARTZ_TRIGGER_DELAY_FOR_RECOVERY_UPDATE_DATES);
+        return Integer.valueOf(delay);
+    }
+
+    @Override
     public String retrieveDbDataViewsRole() throws MetamacException {
         return retrieveProperty(StatisticalResourcesConfigurationConstants.DB_DATA_VIEWS_ROLE);
     }
