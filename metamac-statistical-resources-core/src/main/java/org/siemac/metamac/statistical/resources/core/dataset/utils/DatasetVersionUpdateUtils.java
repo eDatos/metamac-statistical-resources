@@ -60,6 +60,7 @@ public class DatasetVersionUpdateUtils extends CommonVersioningCopyUtils {
 
         if (source.getDateNextUpdate() != null) {
             target.setDateNextUpdate(source.getDateNextUpdate());
+            target.setUserModifiedDateNextUpdate(true);
         }
 
         if (source.getStatisticOfficiality() != null && source.getStatisticOfficiality().getId() != null) {

@@ -1312,6 +1312,7 @@ public class DatasetVersionMockFactory extends StatisticalResourcesMockFactory<D
         DatasetVersion datasetVersion = createDatasetVersionInStatusWithGeneratedDatasource(1, ProcStatusEnum.DRAFT);
         datasetVersion.getDatasources().clear();
         datasetVersion.setDataSourceType(DataSourceTypeEnum.DATABASE);
+        datasetVersion.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
         return datasetVersion;
     }
 
