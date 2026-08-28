@@ -10,7 +10,7 @@
 
 ## 11.8.0 a 11.8.1-SNAPSHOT
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
-  * Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/11.8.0/db/statistical-resources/]
+  * Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/11.8.0/db/]
 
 * Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS debido a que se han modificado las
   propiedades de los mensajes que se publican en dicho topic:
