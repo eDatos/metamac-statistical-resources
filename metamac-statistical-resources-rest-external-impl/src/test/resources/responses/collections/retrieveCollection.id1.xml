@@ -234,6 +234,7 @@
                 <ns3:description>
                     <cdomain:text xml:lang="es">description-resource-6I4iOz4XMO en Espanol</cdomain:text>
                 </ns3:description>
+                <ns3:opening>true</ns3:opening>
                 <ns3:nodes>
                     <ns3:node xsi:type="ns3:Chapter">
                         <ns3:name>
@@ -242,6 +243,7 @@
                         <ns3:description>
                             <cdomain:text xml:lang="es">description-resource-pa3VnhwtET en Espanol</cdomain:text>
                         </ns3:description>
+                        <ns3:opening>true</ns3:opening>
                         <ns3:nodes>
                             <ns3:node xsi:type="ns3:Table">
 <ns3:name>
@@ -270,6 +272,7 @@
                         <ns3:description>
                             <cdomain:text xml:lang="es">description-resource-Z0d1zvPnVa en Espanol</cdomain:text>
                         </ns3:description>
+                        <ns3:opening>true</ns3:opening>
                         <ns3:nodes>
                             <ns3:node xsi:type="ns3:Table">
 <ns3:name>
@@ -328,6 +331,7 @@
                 <ns3:description>
                     <cdomain:text xml:lang="es">description-resource-amx2Q7TEDW en Espanol</cdomain:text>
                 </ns3:description>
+                <ns3:opening>true</ns3:opening>
                 <ns3:nodes>
                     <ns3:node xsi:type="ns3:Table">
                         <ns3:name>
@@ -355,6 +359,7 @@
                 <ns3:description>
                     <cdomain:text xml:lang="es">description-resource-siRTiFP4LB en Espanol</cdomain:text>
                 </ns3:description>
+                <ns3:opening>true</ns3:opening>
             </ns3:node>
             <ns3:node xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:type="ns3:Table">
                 <ns3:name>

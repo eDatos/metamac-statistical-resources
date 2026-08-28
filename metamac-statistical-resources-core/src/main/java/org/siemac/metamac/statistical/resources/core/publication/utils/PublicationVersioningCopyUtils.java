@@ -99,6 +99,7 @@ public class PublicationVersioningCopyUtils {
         Chapter target = new Chapter();
         target.setNameableStatisticalResource(copyNameableStatisticalResource(source.getNameableStatisticalResource(), target.getNameableStatisticalResource()));
         target.fillCodeAndUrn();
+        target.setOpening(source.getOpening());
         return target;
     }
 

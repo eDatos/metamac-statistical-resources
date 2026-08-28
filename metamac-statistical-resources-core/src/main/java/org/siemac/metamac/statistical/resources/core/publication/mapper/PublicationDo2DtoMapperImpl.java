@@ -240,6 +240,7 @@ public class PublicationDo2DtoMapperImpl extends BaseDo2DtoMapperImpl implements
         // Other
         target.setParentChapterUrn(source.getElementLevel().getParentUrn());
         target.setOrderInLevel(source.getElementLevel().getOrderInLevel());
+        target.setOpening(source.getOpening());
         return target;
     }
 

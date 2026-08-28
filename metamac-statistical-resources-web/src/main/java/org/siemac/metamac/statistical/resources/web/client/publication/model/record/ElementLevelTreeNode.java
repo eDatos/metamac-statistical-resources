@@ -34,6 +34,14 @@ public class ElementLevelTreeNode extends NavigableTreeNode {
         setAttribute(ElementLevelDS.PARENT_CHAPTER_URN, value);
     }
 
+    public void setOpening(String value) {
+        setAttribute(ElementLevelDS.OPENING, value);
+    }
+
+    public String getOpening() {
+        return getAttributeAsString(ElementLevelDS.OPENING);
+    }
+
     public void setElementLevelDto(ElementLevelDto elementLevelDto) {
         setAttribute(ElementLevelDS.DTO, elementLevelDto);
     }

@@ -13,6 +13,9 @@ public class ElementLevelDS extends DataSource {
     public static final String PARENT_CHAPTER_URN    = "str-parent-chap-urn";
     public static final String URN                   = "str-urn";
 
+    // only suitable for chapters (not cubes!)
+    public static final String OPENING               = "str-opening";            // Not mapped in DTO
+
     // only suitable for cubes (not chapters!)
     public static final String RESOURCE_TYPE_TO_LINK = "str-type-link";          // Not mapped in DTO
     public static final String RESOURCE_TO_LINK      = "str-resource-link";      // Not mapped in DTO

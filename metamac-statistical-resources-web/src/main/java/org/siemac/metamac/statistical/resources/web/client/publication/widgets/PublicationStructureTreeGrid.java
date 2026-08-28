@@ -92,6 +92,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
 
     protected Tree                              tree;
     protected TreeGridField                     titleField;
+    protected TreeGridField                     openingField;
     protected TreeGridField                     urnField;
     protected TreeGridField                     resourceField;
     protected TreeGridField                     resourceTypeField;
@@ -215,6 +216,12 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
             }
         });
 
+        openingField = new TreeGridField(ElementLevelDS.OPENING, getConstants().publicationStructureElementOpening());
+        openingField.setShowHover(false);
+        openingField.setCanFilter(false);
+        openingField.setCanSort(false);
+        openingField.setWidth(100);
+
         orderField = new TreeGridField(ElementLevelDS.ORDER_IN_LEVEL, getConstants().publicationStructureElementOrderInLevel());
         orderField.setShowIfCondition(ListGridUtils.getFalseListGridFieldIfFunction());
         orderField.setCanSort(true);
@@ -227,7 +234,7 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         infoField.setCanFilter(false);
         infoField.setShowHover(true);
 
-        setFields(titleField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, orderField, infoField);
+        setFields(titleField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, openingField, orderField, infoField);
 
         // Order by ORDER field
         setCanSort(true);
@@ -551,11 +558,12 @@ public class PublicationStructureTreeGrid extends NavigableTreeGrid {
         DetailViewerField titleField = new DetailViewerField(ElementLevelDS.TITLE, getConstants().publicationStructureElementTitle());
         DetailViewerField descriptionField = new DetailViewerField(ElementLevelDS.DESCRIPTION, getConstants().publicationStructureElementDescription());
         DetailViewerField urnField = new DetailViewerField(ElementLevelDS.URN, getConstants().publicationStructureElementURN());
+        DetailViewerField openingField = new DetailViewerField(ElementLevelDS.OPENING, getConstants().publicationStructureElementOpening());
         DetailViewerField resourceTypeField = new DetailViewerField(ElementLevelDS.RESOURCE_TYPE_TO_LINK, getConstants().publicationStructureElementResourceTypeLinked());
         DetailViewerField resourceField = new DetailViewerField(ElementLevelDS.RESOURCE_TO_LINK, getConstants().publicationStructureElementResource());
         DetailViewerField queryDatasetField = new DetailViewerField(ElementLevelDS.QUERY_DATASET, getConstants().publicationStructureElementQueryDataset());
         DetailViewerField dsdField = new DetailViewerField(ElementLevelDS.DSD, getConstants().publicationStructureElementDSD());
-        return new DetailViewerField[]{titleField, descriptionField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField};
+        return new DetailViewerField[]{titleField, descriptionField, resourceTypeField, resourceField, queryDatasetField, dsdField, urnField, openingField};
     }
 
     public void addCreateChapterMenuItemClickHandler(ClickHandler clickHandler) {
