@@ -41,7 +41,8 @@
         
         {"name" : "maintainer", "type" : ["null", "ExternalItemAvro"]},
         {"name" : "newnessUntilDate" , "type" : ["null", "DatetimeAvro"]},
-        {"name" : "featuredUntilDate" , "type" : ["null", "DatetimeAvro"]}
+        {"name" : "featuredUntilDate" , "type" : ["null", "DatetimeAvro"]},
+        {"name" : "lastUpdate" , "type" : ["null", "DatetimeAvro"]}
      ]
  },
  {

@@ -293,6 +293,7 @@ public class StatisticalResourcesDtoMocks extends MetamacMocks {
 
         chapterDto.setOrderInLevel(Long.valueOf(2));
         chapterDto.setParentChapterUrn(parentChapterUrn);
+        chapterDto.setOpening(Boolean.TRUE);
 
         mockNameableStatisticalResorceDto(chapterDto, null);
 

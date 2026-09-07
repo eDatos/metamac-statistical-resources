@@ -8,6 +8,46 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 11.8.0 a 11.8.1-SNAPSHOT
+* Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión.
+  * Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: [etc/changes-from-release/11.8.0/db/]
+
+* Se debe resetear el schema registry para el topic DATASET_PUBLICATIONS, COLLECTION_PUBLICATIONS y QUERY_PUBLICATIONS debido a que se han modificado las
+  propiedades de los mensajes que se publican en dicho topic:
+  ```shell
+  curl -X DELETE http://localhost:8081/subjects/DATASET_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/COLLECTION_PUBLICATIONS-value
+  curl -X DELETE http://localhost:8081/subjects/QUERY_PUBLICATIONS-value
+  ````
+* Se han de borrar los mensajes existentes en el topic DATASET_PUBLICATIONS:
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --describe retention.ms
+  ````
+* Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+  ```shell
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name DATASET_PUBLICATIONS --delete-config retention.ms --alter
+  ```
+* Se han de borrar los mensajes existentes en el topic COLLECTION_PUBLICATIONS:
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --describe retention.ms
+  ````
+* Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+  ```shell
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name COLLECTION_PUBLICATIONS --delete-config retention.ms --alter
+  ```
+* Se han de borrar los mensajes existentes en el topic QUERY_PUBLICATIONS:
+  ```shell
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --add-config retention.ms=100 --alter
+  /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --describe retention.ms
+
+* Esperar 1 minuto antes de volver a restaurar con la siguiente sentencia
+  ```shell
+   /servers/kafka/confluent/bin/kafka-configs --bootstrap-server localhost:19092 --entity-type topics --entity-name QUERY_PUBLICATIONS --delete-config retention.ms --alter
+  ```
+
+
 ## 11.6.0 a 11.7.0
 * Se han realizado cambios en la base de datos PostgreSQL, por ello se proveen una serie de scripts SQL para adaptarse a la nueva versión. Ejecutar los scripts de la siguiente ruta en el esquema correspondiente por orden de fecha: 
   * [etc/changes-from-release/11.6.0/db](etc/changes-from-release/11.6.0/db)

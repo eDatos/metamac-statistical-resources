@@ -39,6 +39,8 @@ Application PublicationsStatisticalResourcesDto {
 			Long orderInLevel;
 			"Parent dimension"
 			String parentChapterUrn;
+			"Opening"
+			Boolean opening;
 		}
 		
 		"Dto for indicator instance"

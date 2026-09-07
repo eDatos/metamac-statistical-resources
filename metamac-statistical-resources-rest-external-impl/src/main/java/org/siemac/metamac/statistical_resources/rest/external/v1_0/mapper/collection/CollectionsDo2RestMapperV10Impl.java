@@ -288,6 +288,7 @@ public class CollectionsDo2RestMapperV10Impl implements CollectionsDo2RestMapper
         Chapter target = new Chapter();
         target.setName(commonDo2RestMapper.toInternationalString(source.getNameableStatisticalResource().getTitle(), selectedLanguages));
         target.setDescription(commonDo2RestMapper.toInternationalString(source.getNameableStatisticalResource().getDescription(), selectedLanguages));
+        target.setOpening(source.getOpening());
 
         target.setNodes(toCollectionNodes(source.getElementLevel().getChildren(), selectedLanguages));
         return target;

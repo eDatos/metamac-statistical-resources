@@ -3,6 +3,7 @@ package org.siemac.metamac.statistical.resources.core.lifecycle.serviceimpl;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.siemac.metamac.core.common.enume.domain.VersionTypeEnum;
@@ -12,7 +13,10 @@ import org.siemac.metamac.core.common.exception.utils.ExceptionUtils;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasLifecycle;
 import org.siemac.metamac.statistical.resources.core.base.domain.HasSiemacMetadata;
 import org.siemac.metamac.statistical.resources.core.base.validators.ProcStatusValidator;
+import org.siemac.metamac.statistical.resources.core.common.serviceimpl.LastUpdatePropagationService;
+import org.siemac.metamac.statistical.resources.core.common.serviceimpl.LastUpdatePropagationService.PropagationTarget;
 import org.siemac.metamac.statistical.resources.core.common.utils.RelatedResourceUtils;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.StreamMessageStatusEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -28,6 +32,8 @@ import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessag
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingServiceFacade;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class LifecycleTemplateService<E extends Object> implements LifecycleService<E> {
@@ -65,6 +71,11 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
 
     @Autowired
     private NoticesRestInternalService     noticesRestInternalService;
+
+    @Autowired
+    private LastUpdatePropagationService   lastUpdatePropagationService;
+
+    private static final Logger           LOG = LoggerFactory.getLogger(LifecycleTemplateService.class);
 
     // ------------------------------------------------------------------------------------------------------
     // >> PRODUCTION VALIDATION
@@ -268,6 +279,7 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
         }
 
         sendNewVersionPublishedStreamMessageByResource(ctx, resource);
+        planifyLastUpdatePropagationByResource(ctx, resource);
 
         return retrieveResourceByResource(resource);
     }
@@ -454,6 +466,8 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
 
     protected abstract String getResourceUrn(E resource);
 
+    protected abstract void planifyLastUpdatePropagationByResource(ServiceContext ctx, E resource);
+
     protected void createStreamMessageSentNotification(ServiceContext ctx, HasSiemacMetadata version) {
         if (version.getLifeCycleStatisticalResource().getPublicationStreamStatus() != StreamMessageStatusEnum.SENT) {
             String userId = ctx.getUserId();
@@ -492,5 +506,34 @@ public abstract class LifecycleTemplateService<E extends Object> implements Life
     protected void createStreamMessageResendSentSomeNotifications(MetamacException exceptions, String noticeAction) {
         // only for administrator users
         noticesRestInternalService.createErrorBackgroundNotification(null, noticeAction, exceptions);
+    }
+
+    protected void planifyLastUpdatePropagation(ServiceContext ctx, String resourceRootUrn, StatisticalResourceTypeEnum type) {
+        try {
+            long timestamp = System.currentTimeMillis();
+            Set<PropagationTarget> targets = lastUpdatePropagationService.findPropagationTargets(resourceRootUrn, type);
+            for (PropagationTarget target : targets) {
+                try {
+                    taskService.planifyUpdateResourceBusinessLastUpdate(ctx, target.getVersionUrn(), target.getRootUrn(), target.getType().name(), timestamp);
+                } catch (MetamacException e) {
+                    LOG.error("Failed to planify business last update for {}", target.getVersionUrn(), e);
+                }
+            }
+        } catch (Exception e) {
+            LOG.error("Failed to propagate lastUpdate for resource {}", resourceRootUrn, e);
+            sendLastUpdatePropagationFailedNotification(ctx, resourceRootUrn);
+        }
+    }
+
+    private void sendLastUpdatePropagationFailedNotification(ServiceContext ctx, String resourceRootUrn) {
+        try {
+            MetamacException metamacException = new MetamacException(ServiceExceptionType.UNKNOWN, resourceRootUrn);
+            noticesRestInternalService.createErrorBackgroundNotification(
+                    null,
+                    ServiceNoticeAction.RESOURCE_UPDATE_LAST_UPDATE_PROPAGATION_FAILED,
+                    metamacException);
+        } catch (Exception ex) {
+            LOG.error("Failed to send lastUpdate propagation failure notification for {}", resourceRootUrn, ex);
+        }
     }
 }

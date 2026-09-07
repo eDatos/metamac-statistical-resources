@@ -141,8 +141,7 @@ Application PublicationsStatisticalResources {
 				RelatedResourceResult retrieveIsReplacedByOnlyLastPublished(@PublicationVersion publicationVersion) throws MetamacException;
 				RelatedResourceResult retrieveIsReplacedByOnlyIfPublished(@PublicationVersion publicationVersion) throws MetamacException;
 				RelatedResourceResult retrieveIsReplacedBy(@PublicationVersion publicationVersion) throws MetamacException;
-				
-				
+				List<@PublicationVersion> findPublishedContainingResource(String resourceRootUrn, @StatisticalResourceTypeEnum containedResourceType);
 			}
 		}
 		
@@ -192,6 +191,9 @@ Application PublicationsStatisticalResources {
 			Long id key;
         	
         	- @NameableStatisticalResource nameableStatisticalResource databaseColumn="STATISTICAL_RESOURCE_FK" not nullable cascade="all";
+
+			"Opening"
+			Boolean opening not nullable;
 
 			// Relations
             "Element level"

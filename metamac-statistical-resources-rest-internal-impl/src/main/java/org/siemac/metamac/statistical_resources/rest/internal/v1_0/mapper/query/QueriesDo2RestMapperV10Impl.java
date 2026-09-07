@@ -206,7 +206,8 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setId(commonDo2JsonStatRestMapper.getJsonStatId(data, dsdProcessorResult));
         target.setSize(commonDo2JsonStatRestMapper.toJsonStatSize(data, dsdProcessorResult, attributes));
         target.setLabel(commonDo2JsonStatRestMapper.toI18nValue(datasetVersion.getSiemacMetadataStatisticalResource().getTitle(), selectedLanguage));
-        target.setUpdated(datasetVersion.getSiemacMetadataStatisticalResource().getLastUpdate().toString());
+        org.joda.time.DateTime queryLastUpdate = source.getLifeCycleStatisticalResource().getLastUpdate();
+        target.setUpdated(queryLastUpdate != null ? queryLastUpdate.toString() : null);
         target.setExtension(commonDo2JsonStatRestMapper.toJsonStatExtension(datasetVersion, dimensions, selectedLanguage));
         target.setNote(commonDo2JsonStatRestMapper.toJsonStatNote(datasetVersion, data, dimensions, attributes, dsdProcessorResult, selectedLanguage));
 
@@ -318,6 +319,7 @@ public class QueriesDo2RestMapperV10Impl implements QueriesDo2RestMapperV10 {
         target.setValidFrom(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getValidFrom()));
         target.setFeaturedUntilDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getFeaturedUntilDate()));
         target.setNewnessUntilDate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getNewnessUntilDate()));
+        target.setLastUpdate(commonDo2RestMapper.toDate(source.getLifeCycleStatisticalResource().getLastUpdate()));
 
         return target;
     }

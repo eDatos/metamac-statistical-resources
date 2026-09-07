@@ -28,4 +28,7 @@ public class ServiceNoticeMessage {
 
     public static final String CREATE_REPLACE_DATASET_ERROR                                          = "notice_message.resources.message.create_replace_dataset.error";
     public static final String ASSIGN_ROLE_PERMISSIONS_DATASET_ERROR                                 = "notice_message.resources.message.assign_role_permissions_dataset.error";
+
+    // Last update propagation
+    public static final String RESOURCE_UPDATE_LAST_UPDATE_PROPAGATION_FAILED                        = "notice_message.resources.message.update_last_update_propagation_failed";
 }

@@ -77,6 +77,9 @@ public class ServiceExceptionParameters extends ServiceExceptionBaseParameters {
     public static final Serializable CATEGORY_SCHEME_URN                      = "parameter.resources.rest.category_scheme_urn";
     public static final Serializable ORGANISATION_SCHEME_URN                  = "parameter.resources.rest.organisation_scheme_urn";
 
+    // Resource type
+    public static final String       STATISTICAL_RESOURCE_TYPE                = "parameter.resources.statistical_resource_type";
+
     // Misc
     public static final String       TIME                                     = "parameter.resources.time";
     public static final String       METAMAC_EXCEPTION                        = "parameter.resources.metamac_exception";

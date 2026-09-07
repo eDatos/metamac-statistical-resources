@@ -40,32 +40,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import es.gobcan.istac.edatos.dataset.repository.dto.ConditionDimensionDto;
-import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServiceFacade;
 
 @org.springframework.stereotype.Component("queryDto2DoMapper")
 public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements QueryDto2DoMapper {
 
     @Autowired
-    private QueryVersionRepository           queryVersionRepository;
+    private QueryVersionRepository       queryVersionRepository;
 
     @Autowired
-    private DatasetVersionRepository         datasetVersionRepository;
+    private DatasetVersionRepository     datasetVersionRepository;
 
     @Autowired
-    private QuerySelectionItemRepository     querySelectionItemRepository;
+    private QuerySelectionItemRepository querySelectionItemRepository;
 
     @Autowired
-    private CodeItemRepository               codeItemRepository;
+    private CodeItemRepository           codeItemRepository;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade datasetRepositoriesServiceFacade;
-
-    @Autowired
-    private PurposeRepository                purposeRepository;
+    private PurposeRepository            purposeRepository;
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
-    private CommonDto2DoMapper               dto2DoMapper;
+    private CommonDto2DoMapper           dto2DoMapper;
 
     @Override
     public void checkOptimisticLocking(QueryVersionBaseDto source) throws MetamacException {
@@ -103,7 +99,6 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         checkXTemplateLength(source);
         queryVersionDtoToDo(source, target);
         checkPurposeAndXTemplate(source, target);
-        
 
         return target;
     }
@@ -119,11 +114,11 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         if (source.getPurpose() != null) {
             if (StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && !QueryTypeEnum.LATEST_DATA.equals(source.getQueryType())) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_PURPOSE_TYPE_NOT_COMPATIBLE).withMessageParameters(source.getUrn())
-                .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+                        .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
             if (source.getId() != null && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier()) && (StringUtils.isBlank(source.getXTemplate()))) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.QUERY_SOCIAL_NETWORK_DO_NOT_HAVE_X_TEMPLATE).withMessageParameters(source.getUrn())
-                .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+                        .withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
             List<ConditionDimensionDto> conditions = generateConditions(target.getSelection());
             if (checkNumberConditions(conditions, source) && StatisticalResourcesConstants.SOCIAL_NETWORK_PURPOSE.equals(source.getPurpose().getIdentifier())) {
@@ -134,9 +129,9 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
     }
 
     private boolean checkNumberConditions(List<ConditionDimensionDto> conditions, QueryVersionDto source) {
-        for (ConditionDimensionDto condition: conditions) {
+        for (ConditionDimensionDto condition : conditions) {
             if (StatisticalResourcesConstants.TEMPORAL_DIMENSION_ID.equals(condition.getDimensionId())) {
-                List<String> codes =  new ArrayList<>();
+                List<String> codes = new ArrayList<>();
                 codes.add("");
                 condition.getCodesDimension().addAll(codes);
             }
@@ -168,14 +163,20 @@ public class QueryDto2DoMapperImpl extends BaseDto2DoMapperImpl implements Query
         // DatasetVersion
         if (source.getRelatedDatasetVersion() != null && source.getRelatedDatasetVersion().getUrn() != null) {
             DatasetVersion datasetVersionTarget = datasetVersionRepository.retrieveByUrn(source.getRelatedDatasetVersion().getUrn());
-            DatasetVersion lastDatasetVersion = datasetVersionRepository.retrieveLastVersion(datasetVersionTarget.getDataset().getIdentifiableStatisticalResource().getUrn());
 
-            if (datasetVersionTarget.getSiemacMetadataStatisticalResource().getUrn().equals(lastDatasetVersion.getSiemacMetadataStatisticalResource().getUrn())) {
-                target.setDataset(datasetVersionTarget.getDataset());
-                target.setFixedDatasetVersion(null);
-            } else {
+            if (QueryTypeEnum.FIXED.equals(source.getQueryType())) {
+                // FIXED queries must always link to the specific version, never follow future versions dynamically
                 target.setDataset(null);
                 target.setFixedDatasetVersion(datasetVersionTarget);
+            } else {
+                DatasetVersion lastDatasetVersion = datasetVersionRepository.retrieveLastVersion(datasetVersionTarget.getDataset().getIdentifiableStatisticalResource().getUrn());
+                if (datasetVersionTarget.getSiemacMetadataStatisticalResource().getUrn().equals(lastDatasetVersion.getSiemacMetadataStatisticalResource().getUrn())) {
+                    target.setDataset(datasetVersionTarget.getDataset());
+                    target.setFixedDatasetVersion(null);
+                } else {
+                    target.setDataset(null);
+                    target.setFixedDatasetVersion(datasetVersionTarget);
+                }
             }
         }
 

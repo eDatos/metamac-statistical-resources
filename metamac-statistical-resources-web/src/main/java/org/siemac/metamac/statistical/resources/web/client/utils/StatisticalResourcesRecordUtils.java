@@ -57,6 +57,7 @@ import org.siemac.metamac.statistical.resources.web.client.publication.model.ds.
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.ElementLevelTreeNode;
 import org.siemac.metamac.statistical.resources.web.client.publication.model.record.PublicationRecord;
 import org.siemac.metamac.statistical.resources.web.client.query.model.record.QueryRecord;
+import org.siemac.metamac.web.common.client.MetamacWebCommon;
 import org.siemac.metamac.web.common.client.resources.GlobalResources;
 import org.siemac.metamac.web.common.client.utils.ApplicationEditionLanguages;
 import org.siemac.metamac.web.common.client.utils.DateUtils;
@@ -285,8 +286,10 @@ public class StatisticalResourcesRecordUtils extends RecordUtils {
 
         elementLevelNode.setDescription(InternationalStringUtils.getLocalisedString(element.getDescription()));
         if (element instanceof ChapterDto) {
-            elementLevelNode.setOrderInLevel(((ChapterDto) element).getOrderInLevel());
-            elementLevelNode.setParentChapterUrn(((ChapterDto) element).getParentChapterUrn());
+            ChapterDto chapterDto = (ChapterDto) element;
+            elementLevelNode.setOrderInLevel(chapterDto.getOrderInLevel());
+            elementLevelNode.setParentChapterUrn(chapterDto.getParentChapterUrn());
+            elementLevelNode.setOpening(Boolean.TRUE.equals(chapterDto.getOpening()) ? MetamacWebCommon.getConstants().yes() : MetamacWebCommon.getConstants().no());
         } else if (element instanceof CubeDto) {
             elementLevelNode.setOrderInLevel(((CubeDto) element).getOrderInLevel());
             elementLevelNode.setParentChapterUrn(((CubeDto) element).getParentChapterUrn());

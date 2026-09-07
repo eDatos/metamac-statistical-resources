@@ -121,7 +121,9 @@ Application BaseStatisticalResources {
 			- @RelatedResource isReplacedByVersion cascade="all" fetch="lazy" databaseColumn="IS_REPLACED_BY_VERSION_FK" nullable;
 			
 			- @ExternalItem maintainer cascade="all" fetch="lazy" databaseColumn="MAINTAINER_FK" nullable;
-			
+
+			DateTimeTZ lastUpdate nullable;
+
 			Repository LifeCycleStatisticalResourceRepository {
 			    findByCondition;
 				@LifeCycleStatisticalResource retrieveByUrn(String urn) throws MetamacException;
@@ -154,7 +156,6 @@ Application BaseStatisticalResources {
 			- @ExternalItem creator cascade="all" databaseColumn="CREATOR_FK" nullable fetch="lazy";
 			- Bag<@ExternalItem> contributor cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_CONTRIBUTORS" databaseColumn="CONTRIBUTOR_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";
 			DateTimeTZ resourceCreatedDate nullable;
-			DateTimeTZ lastUpdate nullable;
 			- @InternationalString conformsTo cascade="all" fetch="lazy" databaseColumn="CONFORMS_TO_FK" nullable;
 			- @InternationalString conformsToInternal cascade="all" fetch="lazy" databaseColumn="CONFORMS_TO_INTERNAL_FK" nullable;
 			- Bag<@ExternalItem> dataProvider cascade="all-delete-orphan" fetch="lazy" databaseJoinTable="TB_EI_DATA_PROVIDERS" databaseColumn="DATA_PROVIDER_FK" databaseJoinColumn="SIEMAC_RESOURCE_FK";

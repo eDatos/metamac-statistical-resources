@@ -15,7 +15,6 @@ import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.c
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeoCacheRelatedResources;
 import static org.siemac.metamac.statistical.resources.core.task.utils.JobUtil.createJobNameForUpdateGeocoverageCache;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -81,6 +80,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Dimensi
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ResourceInternal;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResourceRepository;
+import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.common.domain.ExternalItem;
 import org.siemac.metamac.statistical.resources.core.common.mapper.CommonDto2DoMapper;
 import org.siemac.metamac.statistical.resources.core.common.utils.DsdProcessor;
@@ -128,16 +128,17 @@ import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ReloadTopicQ
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.ResendPublishedDatasetsKafkaMessageJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateExternalGeocoverageCacheJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheJob;
-import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateGeocoverageCacheRelatedResourcesJob;
+import org.siemac.metamac.statistical.resources.core.io.serviceimpl.UpdateResourceLastUpdateJob;
 import org.siemac.metamac.statistical.resources.core.io.serviceimpl.validators.ValidateDataVersusDsd;
-import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
 import org.siemac.metamac.statistical.resources.core.lifecycle.serviceapi.LifecycleService;
 import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersion;
+import org.siemac.metamac.statistical.resources.core.multidataset.domain.MultidatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.multidataset.serviceapi.MultidatasetService;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeAction;
 import org.siemac.metamac.statistical.resources.core.notices.ServiceNoticeMessage;
 import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersion;
+import org.siemac.metamac.statistical.resources.core.publication.domain.PublicationVersionRepository;
 import org.siemac.metamac.statistical.resources.core.publication.serviceapi.PublicationService;
 import org.siemac.metamac.statistical.resources.core.query.domain.CodeItem;
 import org.siemac.metamac.statistical.resources.core.query.domain.QuerySelectionItem;
@@ -190,7 +191,7 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 @Service("taskService")
 public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationListener<ContextRefreshedEvent> {
 
-    private static Logger                     logger                                        = LoggerFactory.getLogger(TaskServiceImpl.class);
+    private static Logger                          logger                                                   = LoggerFactory.getLogger(TaskServiceImpl.class);
 
     public static final String                SCHEDULER_INSTANCE_NAME                       = "StatisticalResourcesScheduler";
     public static final String                PREFIX_JOB_IMPORT_DATA                        = "job_importdata_";
@@ -213,47 +214,49 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public static final String                JOB_RELOAD_TOPIC_DATASET                      = "job_reload_topic_dataset";
     public static final String                JOB_RELOAD_TOPIC_PUBLICATION                  = "job_reload_topic_publication";
     public static final String                JOB_RELOAD_TOPIC_QUERY                        = "job_reload_topic_query";
+    public static final String                     PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE          = "job_update_resource_business_last_update_";
+    public static final String                     PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE = "job_recovery_update_resource_business_last_update_";
     public static final int                   DEFAULT_QUARTZ_TRIGGER_DELAY                  = 10;
     public static final int                   RECOVERY_JOB_PRIORITY                         = 10;
 
     @Autowired
-    private TaskServiceInvocationValidator    taskServiceInvocationValidator;
+    private TaskServiceInvocationValidator         taskServiceInvocationValidator;
 
     @Autowired
     private LifeCycleStatisticalResourceRepository lifeCycleStatisticalResourceRepository;
 
     @Autowired
-    private MetamacSdmx2StatRepoMapper        metamac2StatRepoMapper;
+    private MetamacSdmx2StatRepoMapper             metamac2StatRepoMapper;
 
     @Autowired
-    private SrmRestInternalService            srmRestInternalService;
+    private SrmRestInternalService                 srmRestInternalService;
 
     @Autowired
-    StatisticalOperationsRestInternalService  statisticalOperationsRestInternalService;
+    StatisticalOperationsRestInternalService       statisticalOperationsRestInternalService;
 
     @Autowired
-    private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
+    private DatasetRepositoriesServiceFacade       datasetRepositoriesServiceFacade;
 
     @Autowired
-    private ManipulatePxDataService           manipulatePxDataService;
+    private ManipulatePxDataService                manipulatePxDataService;
 
     @Autowired
-    private ManipulateCsvDataService          manipulateCsvDataService;
+    private ManipulateCsvDataService               manipulateCsvDataService;
 
     @Autowired
-    private ConstraintsService                constraintsService;
+    private ConstraintsService                     constraintsService;
 
     @Autowired
-    private DatasetService                    datasetService;
+    private DatasetService                         datasetService;
 
     @Autowired
-    private PublicationService                publicationService;
+    private PublicationService                     publicationService;
 
     @Autowired
-    private QueryService                      queryService;
+    private QueryService                           queryService;
 
     @Autowired
-    private MultidatasetService               multidatasetService;
+    private MultidatasetService                    multidatasetService;
 
     @Autowired
     private LifecycleService<DatasetVersion>      datasetLifecycleService;
@@ -265,38 +268,44 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     private LifecycleService<QueryVersion>        queryLifecycleService;
 
     @Autowired
-    private ResourceCacheInvalidationService resourceCacheInvalidationService;
+    private ResourceCacheInvalidationService       resourceCacheInvalidationService;
 
     @Autowired
-    private StatisticalResourcesConfiguration configurationService;
+    private StatisticalResourcesConfiguration      configurationService;
 
     @Autowired
     @Qualifier("txManager")
-    private PlatformTransactionManager        platformTransactionManager;
+    private PlatformTransactionManager             platformTransactionManager;
 
     @Autowired
-    private DatasetVersionRepository          datasetVersionRepository;
+    private DatasetVersionRepository               datasetVersionRepository;
 
     @Autowired
-    private QueryVersionRepository            queryVersionRepository;
+    private QueryVersionRepository                 queryVersionRepository;
 
     @Autowired
-    private DatabaseImportRepository          databaseImportRepository;
+    private DatabaseImportRepository               databaseImportRepository;
 
     @Autowired
-    private NoticesRestInternalService        noticesRestInternalService;
+    private NoticesRestInternalService             noticesRestInternalService;
 
     @Autowired
-    StreamConsumerServiceFacade               streamConsumerServiceFacade;
+    StreamConsumerServiceFacade                    streamConsumerServiceFacade;
 
     @Autowired
-    CacheService                              cacheService;
+    CacheService                                   cacheService;
 
     @Autowired
     @Qualifier("commonDto2DoMapper")
-    private CommonDto2DoMapper                dto2DoMapper;
+    private CommonDto2DoMapper                     dto2DoMapper;
 
-    private SchedulerFactory                  schedulerFactory                              = null;
+    @Autowired
+    private PublicationVersionRepository           publicationVersionRepository;
+
+    @Autowired
+    private MultidatasetVersionRepository          multidatasetVersionRepository;
+
+    private SchedulerFactory                       schedulerFactory                                         = null;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -1270,8 +1279,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 logger.info("Rollback importation task is trying to delete observations by attribute instance value. Dataset = {}, Datasource = {}",
                         new Object[]{effectiveDatasetVersionId, dataSourceId});
 
-                datasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(effectiveDatasetVersionId, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID,
-                        internationalStringDto);
+                datasetRepositoriesServiceFacade.deleteObservationsByAttributeInstanceValue(effectiveDatasetVersionId, StatisticalResourcesConstants.ATTRIBUTE_DATA_SOURCE_ID, internationalStringDto);
             }
 
             deleteFailedTask(task);
@@ -1742,6 +1750,11 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             String resourceUrn = extractUrnFromRecoveryUpdateResourceLastUpdateJobKey(jobKey);
             markTaskAsFinished(ctx, jobKey);
             sendUpdateResourceLastUpdateNoMoreRetriesNotification(ctx, resourceUrn);
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE)) {
+            String resourceUrn = extractUrnFromUpdateResourceBusinessLastUpdateJobKey(jobKey);
+            String resourceRootUrn = task.getExtensionPoint();
+            markTaskAsFinished(ctx, jobKey);
+            planifyRecoveryUpdateResourceBusinessLastUpdate(ctx, resourceUrn, resourceRootUrn);
         }
     }
 
@@ -1870,6 +1883,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } else if (jobKey.startsWith(PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE)) {
             markTaskAsFinished(ctx, jobKey);
             sendUpdateResourceLastUpdateNoMoreRetriesNotification(ctx, datasetVersionId);
+        } else if (jobKey.startsWith(PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE)) {
+            markTaskAsFinished(ctx, jobKey);
+            sendUpdateResourceBusinessLastUpdateNoMoreRetriesNotification(ctx, datasetVersionId);
+        } else if (jobKey.startsWith(PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE)) {
+            String resourceRootUrn = task.getExtensionPoint();
+            markTaskAsFinished(ctx, jobKey);
+            planifyRecoveryUpdateResourceBusinessLastUpdate(ctx, datasetVersionId, resourceRootUrn);
         }
     }
 
@@ -2032,10 +2052,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void sendUpdateResourceLastUpdateNoMoreRetriesNotification(ServiceContext ctx, String resourceUrn) {
-        MetamacException noMoreRetriesException = MetamacExceptionBuilder.builder()
-                .withExceptionItems(ServiceExceptionType.UPDATE_RESOURCE_LAST_UPDATE_JOB_NO_MORE_RETRIES)
-                .withMessageParameters(resourceUrn)
-                .build();
+        MetamacException noMoreRetriesException = MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.UPDATE_RESOURCE_LAST_UPDATE_JOB_NO_MORE_RETRIES)
+                .withMessageParameters(resourceUrn).build();
         getNoticesRestInternalService().createErrorBackgroundNotification(ctx.getUserId(), ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_NO_MORE_RETRIES, noMoreRetriesException);
     }
 
@@ -2057,6 +2075,33 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private String extractUrnFromUpdateGeoCacheRelatedResourceJobKey(String jobKeyName) {
         return extractResourceVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_UPDATE_GEO_CACHE_RELATED_RESOURCES);
+    }
+
+    private String extractUrnFromUpdateResourceBusinessLastUpdateJobKey(String jobKeyName) {
+        return extractResourceVersionUrnFromJobKey(jobKeyName, PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE);
+    }
+
+    private void planifyRecoveryUpdateResourceBusinessLastUpdate(ServiceContext ctx, String resourceUrn, String resourceRootUrn) {
+        try {
+            StatisticalResourceTypeEnum resourceType = StatisticalResourcesUrnParserUtils.getResourceType(resourceUrn);
+            if (resourceType != null) {
+                long timestamp = System.currentTimeMillis();
+                scheduleUpdateResourceBusinessLastUpdateJob(ctx, resourceUrn, resourceRootUrn, resourceType.name(), timestamp, PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE, true);
+            } else {
+                logger.error("planifyRecoveryUpdateResourceBusinessLastUpdate: could not determine resource type from URN {}", resourceUrn);
+            }
+        } catch (Exception e) {
+            logger.error("planifyRecoveryUpdateResourceBusinessLastUpdate: could not schedule recovery for resource " + resourceUrn, e);
+        }
+    }
+
+    private void sendUpdateResourceBusinessLastUpdateNoMoreRetriesNotification(ServiceContext ctx, String resourceUrn) {
+        try {
+            MetamacException metamacException = MetamacExceptionBuilder.builder().withPrincipalException(ServiceExceptionType.BUSINESS_LAST_UPDATE_JOB_NO_MORE_RETRIES, resourceUrn).build();
+            getNoticesRestInternalService().createErrorBackgroundNotification(null, ServiceNoticeAction.BUSINESS_LAST_UPDATE_JOB_NO_MORE_RETRIES, metamacException);
+        } catch (Exception e) {
+            logger.error("sendUpdateResourceBusinessLastUpdateNoMoreRetriesNotification: could not send notification for resource " + resourceUrn, e);
+        }
     }
 
     private String extractResourceVersionUrnFromJobKey(String jobKeyName, String prefixJob) {
@@ -2710,6 +2755,116 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             throw e;
         } catch (Exception e) {
             logger.error("An unexpected error has occurred scheduling reload kafka topic for queries job", e);
+        }
+    }
+
+    // ---------------------------------------------------------------------------------
+    // UPDATE RESOURCE BUSINESS LAST UPDATE
+    // ---------------------------------------------------------------------------------
+
+    @Override
+    public void planifyUpdateResourceBusinessLastUpdate(ServiceContext ctx, String resourceUrn, String resourceRootUrn, String resourceType, long timestamp) throws MetamacException {
+        taskServiceInvocationValidator.checkPlanifyUpdateResourceBusinessLastUpdate(ctx, resourceUrn, resourceRootUrn, resourceType, timestamp);
+        scheduleUpdateResourceBusinessLastUpdateJob(ctx, resourceUrn, resourceRootUrn, resourceType, timestamp, PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE, false);
+    }
+
+    @Override
+    public void processUpdateResourceBusinessLastUpdate(ServiceContext ctx, String taskName, String resourceUrn, String resourceRootUrn, String resourceType, long timestamp) throws MetamacException {
+        taskServiceInvocationValidator.checkProcessUpdateResourceBusinessLastUpdate(ctx, taskName, resourceUrn, resourceRootUrn, resourceType, timestamp);
+
+        DateTime lastUpdate = new DateTime(timestamp);
+        StatisticalResourceTypeEnum type = StatisticalResourceTypeEnum.valueOf(resourceType);
+
+        switch (type) {
+            case DATASET:
+                updateDatasetVersionLastUpdate(resourceUrn, lastUpdate);
+                break;
+            case QUERY:
+                updateQueryVersionLastUpdate(resourceUrn, lastUpdate);
+                break;
+            case COLLECTION:
+                updatePublicationVersionLastUpdate(resourceUrn, lastUpdate);
+                break;
+            case MULTIDATASET:
+                updateMultidatasetVersionLastUpdate(resourceUrn, lastUpdate);
+                break;
+            default:
+                logger.warn("Unsupported resource type {} for lastUpdate propagation", resourceType);
+                break;
+        }
+
+        markTaskAsFinished(ctx, taskName);
+    }
+
+    private void updateDatasetVersionLastUpdate(String urn, DateTime lastUpdate) throws MetamacException {
+        DatasetVersion version = datasetVersionRepository.retrieveByUrn(urn);
+        version.getSiemacMetadataStatisticalResource().setLastUpdate(lastUpdate);
+        datasetVersionRepository.save(version);
+        logger.info("Updated business lastUpdate for dataset {} to {}", urn, lastUpdate);
+    }
+
+    private void updateQueryVersionLastUpdate(String urn, DateTime lastUpdate) throws MetamacException {
+        QueryVersion version = queryVersionRepository.retrieveByUrn(urn);
+        version.getLifeCycleStatisticalResource().setLastUpdate(lastUpdate);
+        queryVersionRepository.save(version);
+        logger.info("Updated business lastUpdate for query {} to {}", urn, lastUpdate);
+    }
+
+    private void updatePublicationVersionLastUpdate(String urn, DateTime lastUpdate) throws MetamacException {
+        PublicationVersion version = publicationVersionRepository.retrieveByUrn(urn);
+        version.getSiemacMetadataStatisticalResource().setLastUpdate(lastUpdate);
+        publicationVersionRepository.save(version);
+        logger.info("Updated business lastUpdate for publication {} to {}", urn, lastUpdate);
+    }
+
+    private void updateMultidatasetVersionLastUpdate(String urn, DateTime lastUpdate) throws MetamacException {
+        MultidatasetVersion version = multidatasetVersionRepository.retrieveByUrn(urn);
+        version.getSiemacMetadataStatisticalResource().setLastUpdate(lastUpdate);
+        multidatasetVersionRepository.save(version);
+        logger.info("Updated business lastUpdate for multidataset {} to {}", urn, lastUpdate);
+    }
+
+    private void scheduleUpdateResourceBusinessLastUpdateJob(ServiceContext ctx, String resourceUrn, String resourceRootUrn, String resourceType, long timestamp, String prefix,
+            boolean sendNotification) throws MetamacException {
+        String taskName = prefix + resourceUrn;
+        JobKey jobKey = new JobKey(taskName);
+        TriggerKey triggerKey = new TriggerKey("trigger_" + taskName);
+
+        int delayInSeconds;
+        if (PREFIX_JOB_UPDATE_RESOURCE_BUSINESS_LAST_UPDATE.equals(prefix)) {
+            delayInSeconds = DEFAULT_QUARTZ_TRIGGER_DELAY;
+        } else {
+            delayInSeconds = configurationService.retrieveQuartzTriggerDelayForRecoveryUpdateDates();
+        }
+
+        try {
+            JobDetail job = newJob(UpdateResourceBusinessLastUpdateJob.class)
+                    .withIdentity(jobKey)
+                    .usingJobData(UpdateResourceBusinessLastUpdateJob.RESOURCE_URN, resourceUrn)
+                    .usingJobData(UpdateResourceBusinessLastUpdateJob.RESOURCE_ROOT_URN, resourceRootUrn)
+                    .usingJobData(UpdateResourceBusinessLastUpdateJob.RESOURCE_TYPE, resourceType)
+                    .usingJobData(UpdateResourceBusinessLastUpdateJob.TIMESTAMP, timestamp)
+                    .usingJobData(UpdateResourceBusinessLastUpdateJob.USER, ctx.getUserId())
+                    .usingJobData(UpdateResourceBusinessLastUpdateJob.TASK_NAME, taskName)
+                    .usingJobData(UpdateResourceBusinessLastUpdateJob.SEND_NOTIFICATION, sendNotification)
+                    .requestRecovery()
+                    .build();
+
+            Task task = new Task(taskName);
+            task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
+            task.setExtensionPoint(resourceRootUrn);
+            createTask(ctx, task);
+
+            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey)
+                    .startAt(futureDate(delayInSeconds, IntervalUnit.SECOND))
+                    .withSchedule(simpleSchedule())
+                    .build();
+
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+            sched.scheduleJob(job, trigger);
+        } catch (Exception e) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
+                    .build();
         }
     }
 

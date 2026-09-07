@@ -4,6 +4,7 @@ import static org.siemac.metamac.statistical.resources.web.client.StatisticalRes
 
 import org.siemac.metamac.statistical.resources.core.dto.RelatedResourceDto;
 import org.siemac.metamac.statistical.resources.core.dto.query.QueryVersionDto;
+import org.siemac.metamac.statistical.resources.core.enume.query.domain.QueryTypeEnum;
 import org.siemac.metamac.statistical.resources.web.client.widgets.forms.StatisticalResourcesFormUtils;
 
 import com.smartgwt.client.widgets.form.fields.FormItem;
@@ -16,7 +17,13 @@ public class QueryRelatedDatasetUtils {
 
     public static void setRelatedDataset(QueryVersionDto queryVersionDto, FormItem formItem) {
         if (queryVersionDto != null && queryVersionDto.getRelatedDatasetVersion() != null) {
-            setRelatedDataset(queryVersionDto.getRelatedDatasetVersion(), formItem);
+            if (QueryTypeEnum.FIXED.equals(queryVersionDto.getQueryType())) {
+                // FIXED queries always display the specific version, even when it is currently the last one
+                formItem.setTitle(getConstants().queryDatasetVersion());
+                StatisticalResourcesFormUtils.setVersionableRelatedResourceValue(formItem, queryVersionDto.getRelatedDatasetVersion());
+            } else {
+                setRelatedDataset(queryVersionDto.getRelatedDatasetVersion(), formItem);
+            }
         } else {
             StatisticalResourcesFormUtils.setRelatedResourceValue(formItem, null);
         }

@@ -203,6 +203,10 @@
             },
             {
                "properties":{
+                  "opening":{
+                     "description":"${msg['api.doc.swagger.definitions.chapter.properties.opening.description']}",
+                     "type":"boolean"
+                  },
                   "nodes":{
                      "description":"${msg['api.doc.swagger.definitions.chapter.properties.nodes.description']}",
                      "$ref":"#/definitions/CollectionNodes"
@@ -443,6 +447,10 @@
                   "url": {
                      "description": "${msg['api.doc.swagger.definitions.table.only.description']}",
                      "$ref":"#/definitions/Resource"
+                  },
+                  "opening": {
+                     "description": "${msg['api.doc.swagger.definitions.chapter.properties.opening.description']}",
+                     "type":"boolean"
                   },
                   "nodes": {
                      "description": "${msg['api.doc.swagger.definitions.chapter.only.description']}",
@@ -2322,6 +2330,13 @@
                         "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
                      },
                      "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.featuredUntilDate.description']}",
+                     "type":"string"
+                  },
+                  "lastUpdate":{
+                     "xml":{
+                        "namespace":"http://www.siemac.org/metamac/rest/statistical-resources/v1.0/domain"
+                     },
+                     "description":"${msg['api.doc.swagger.definitions.statisticalResource.properties.lastUpdate.description']}",
                      "type":"string"
                   },
                }

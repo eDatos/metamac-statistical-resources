@@ -160,6 +160,7 @@ public class PublicationDto2DoMapperImpl extends BaseDto2DoMapperImpl implements
             target.getElementLevel().setOrderInLevel(source.getOrderInLevel());
             target.getElementLevel().setCube(null);
             target.getElementLevel().setChapter(target);
+            target.setOpening(Boolean.TRUE);
         } else {
             target = chapterRepository.retrieveChapterByUrn(source.getUrn());
 
@@ -185,6 +186,11 @@ public class PublicationDto2DoMapperImpl extends BaseDto2DoMapperImpl implements
 
         // Hierarchy
         nameableStatisticalResourceDtoToDo(source, target.getNameableStatisticalResource(), ServiceExceptionParameters.CHAPTER);
+
+        // Attribute modifiable
+        if (source.getOpening() != null) {
+            target.setOpening(source.getOpening());
+        }
 
         // Related entities
         if (source.getParentChapterUrn() != null) {

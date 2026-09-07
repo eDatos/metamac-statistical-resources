@@ -30,6 +30,9 @@ import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersi
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.serviceapi.DatasetService;
 import org.siemac.metamac.statistical.resources.core.dataset.utils.DatasetVersioningCopyUtils;
+import org.siemac.metamac.statistical.resources.core.enume.domain.StatisticalResourceTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
+import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionSingleParameters;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
@@ -368,6 +371,13 @@ public class DatasetLifecycleServiceImpl extends LifecycleTemplateService<Datase
         } catch (MetamacException e) {
             createStreamMessageSentNotification(ctx, resource);
         }
+    }
+
+    @Override
+    protected void planifyLastUpdatePropagationByResource(ServiceContext ctx, DatasetVersion resource) {
+        planifyLastUpdatePropagation(ctx,
+                resource.getDataset().getIdentifiableStatisticalResource().getUrn(),
+                StatisticalResourceTypeEnum.DATASET);
     }
 
     @Override

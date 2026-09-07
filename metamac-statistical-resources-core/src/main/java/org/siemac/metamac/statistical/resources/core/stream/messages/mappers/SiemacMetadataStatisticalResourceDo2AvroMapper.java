@@ -31,8 +31,8 @@ public class SiemacMetadataStatisticalResourceDo2AvroMapper {
         String commonMetadataApiInternalEndpoint = getConfigurationService().retrieveCommonMetadataExternalApiUrlBase();
         SiemacMetadataStatisticalResourceAvro target = null;
         if (source != null) {
-            target = SiemacMetadataStatisticalResourceAvro.newBuilder().setLifecycleStatisticalResource(LifecycleStatisticalResourceDo2AvroMapper.do2Avro(source, reload))
-                    .setResourceCreatedDate(DateTimeDo2AvroMapper.do2Avro(source.getResourceCreatedDate())).setLastUpdate(DateTimeDo2AvroMapper.do2Avro(source.getLastUpdate()))
+            target = SiemacMetadataStatisticalResourceAvro.newBuilder().setLifecycleStatisticalResource(LifecycleStatisticalResourceDo2AvroMapper.do2Avro(source))
+                    .setResourceCreatedDate(DateTimeDo2AvroMapper.do2Avro(source.getResourceCreatedDate()))
                     .setNewnessUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getNewnessUntilDate())).setFeaturedUntilDate(DateTimeDo2AvroMapper.do2Avro(source.getFeaturedUntilDate()))
                     .setCopyrightedDate(source.getCopyrightedDate())
                     .setLanguage(ExternalItemDo2AvroMapper.do2Avro(source.getLanguage(), srmApiExternalEndpoint)).setSubtitle(InternationalStringDo2AvroMapper.do2Avro(source.getSubtitle()))
