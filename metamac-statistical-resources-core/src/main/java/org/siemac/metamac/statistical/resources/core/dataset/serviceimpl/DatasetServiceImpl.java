@@ -2414,8 +2414,9 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
     }
 
     private void checkDateNextUpdateCanBeUpdatedInGroup(DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
-        if (datasetVersionMetadataToChange.getDateNextUpdate() != null
-                && !MetadataEditionChecks.canDateNextUpdateBeEdited(datasetVersion.getSiemacMetadataStatisticalResource().getNextVersion())) {
+        NextVersionTypeEnum effectiveNextVersion = datasetVersionMetadataToChange.getSiemacMetadataStatisticalResource().getNextVersion() != null
+                ? datasetVersionMetadataToChange.getSiemacMetadataStatisticalResource().getNextVersion() : datasetVersion.getSiemacMetadataStatisticalResource().getNextVersion();
+        if (datasetVersionMetadataToChange.getDateNextUpdate() != null && !MetadataEditionChecks.canDateNextUpdateBeEdited(effectiveNextVersion)) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.DATASET_VERSION_DATE_NEXT_UPDATE_REQUIRES_SCHEDULED_UPDATE).build();
         }
     }

@@ -2310,6 +2310,8 @@ public class DatasetServiceTest extends StatisticalResourcesBaseTest implements 
 
         // metadata changes
         DatasetVersion metadataToChange = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_02_FOR_UPDATE_MULTIPLE);
+        // dateNextUpdate is only applicable when nextVersion is SCHEDULED_UPDATE
+        metadataToChange.getSiemacMetadataStatisticalResource().setNextVersion(NextVersionTypeEnum.SCHEDULED_UPDATE);
         DatasetLifecycleTestUtils.fillGranularitiesAlternative(metadataToChange);
         metadataToChange.addCategorisation(CategorisationMockFactory.createCategorisation("cat_data_1", "category01", metadataToChange));
         metadataToChange.addCategorisation(CategorisationMockFactory.createCategorisation("cat_data_2", "category02", metadataToChange));
