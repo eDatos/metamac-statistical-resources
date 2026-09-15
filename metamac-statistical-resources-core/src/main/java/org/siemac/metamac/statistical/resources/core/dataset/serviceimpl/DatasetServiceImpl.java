@@ -51,6 +51,7 @@ import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.Concept
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataStructure;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.DataType;
 import org.siemac.metamac.rest.structural_resources_internal.v1_0.domain.ItemResourceInternal;
+import org.siemac.metamac.statistical.resources.core.base.checks.MetadataEditionChecks;
 import org.siemac.metamac.statistical.resources.core.base.components.SiemacStatisticalResourceGeneratedCode;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.IdentifiableStatisticalResourceRepository;
@@ -2404,10 +2405,20 @@ public class DatasetServiceImpl extends DatasetServiceImplBase {
 
         datasetServiceInvocationValidator.checkUpdateDatasetVersionInGroup(ctx, datasetVersion, datasetVersion.getSiemacMetadataStatisticalResource().getUrn());
 
+        checkDateNextUpdateCanBeUpdatedInGroup(datasetVersion, datasetVersionMetadataToChange);
+
         DatasetVersionUpdateUtils.updateDatasetVersion(datasetVersionMetadataToChange, datasetVersion);
         updateDatasetVersion(ctx, datasetVersion);
         updateDatasetVersionCategorisations(ctx, datasetVersion, DatasetVersionUpdateUtils.copyCategorisations(datasetVersionMetadataToChange.getCategorisations()));
 
+    }
+
+    private void checkDateNextUpdateCanBeUpdatedInGroup(DatasetVersion datasetVersion, DatasetVersion datasetVersionMetadataToChange) throws MetamacException {
+        NextVersionTypeEnum effectiveNextVersion = datasetVersionMetadataToChange.getSiemacMetadataStatisticalResource().getNextVersion() != null
+                ? datasetVersionMetadataToChange.getSiemacMetadataStatisticalResource().getNextVersion() : datasetVersion.getSiemacMetadataStatisticalResource().getNextVersion();
+        if (datasetVersionMetadataToChange.getDateNextUpdate() != null && !MetadataEditionChecks.canDateNextUpdateBeEdited(effectiveNextVersion)) {
+            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.DATASET_VERSION_DATE_NEXT_UPDATE_REQUIRES_SCHEDULED_UPDATE).build();
+        }
     }
 
     private void updateDatasetVersionCategorisations(ServiceContext ctx, DatasetVersion datasetVersion,List<Categorisation> categorisations)  throws MetamacException {

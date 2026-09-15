@@ -52,6 +52,8 @@ public class ServiceExceptionType extends CommonServiceExceptionType {
             "exception.resources.dataset_version.observational_time_period_pattern");
     public static final CommonServiceExceptionType GRANULARITY_ATTRIBUTE_INSTANCE_CANT_BE_SAVED                                                         = create(
             "exception.resources.dataset_version.granularity_attribute_instance_cant_be_saved");
+    public static final CommonServiceExceptionType DATASET_VERSION_DATE_NEXT_UPDATE_REQUIRES_SCHEDULED_UPDATE                                           = create(
+            "exception.resources.dataset_version.date_next_update_requires_scheduled_update");
 
     // Datasource
     public static final CommonServiceExceptionType DATASOURCE_NOT_FOUND                                                                                = create(

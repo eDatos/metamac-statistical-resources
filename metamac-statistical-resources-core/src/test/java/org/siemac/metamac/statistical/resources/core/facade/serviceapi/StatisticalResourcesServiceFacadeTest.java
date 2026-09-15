@@ -4472,8 +4472,44 @@ public class StatisticalResourcesServiceFacadeTest extends StatisticalResourcesB
     }
 
     @Override
+    @Test
+    @MetamacMock(DATASET_VERSION_01_FOR_UPDATE_MULTIPLE)
     public void testUpdateDatasetVersionInGroup() throws Exception {
-        // // Without test in facade
+        String datasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_01_FOR_UPDATE_MULTIPLE).getSiemacMetadataStatisticalResource().getUrn();
+
+        // Check original premises are true
+        assertEquals(NextVersionTypeEnum.SCHEDULED_UPDATE, statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn).getNextVersion());
+
+        // DTO built like the group edition screen does: no id, no nextVersion, only the metadata to change
+        DatasetVersionDto datasetVersionMetadataToChangeDto = new DatasetVersionDto();
+        datasetVersionMetadataToChangeDto.setDateNextUpdate("2026-M09");
+
+        statisticalResourcesServiceFacade.updateDatasetVersionInGroup(getServiceContextAdministrador(), datasetVersionMetadataToChangeDto, datasetVersionUrn, new ArrayList<CategorisationDto>());
+
+        DatasetVersionDto updatedDataset = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn);
+        assertEquals("2026-M09", updatedDataset.getDateNextUpdate());
+    }
+
+    @Test
+    @MetamacMock(DATASET_VERSION_02_FOR_UPDATE_MULTIPLE)
+    public void testUpdateDatasetVersionInGroupDateNextUpdateRequiresScheduledUpdate() throws Exception {
+        String datasetVersionUrn = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_02_FOR_UPDATE_MULTIPLE).getSiemacMetadataStatisticalResource().getUrn();
+        String originalDateNextUpdate = statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn).getDateNextUpdate();
+
+        // Check original premises are true
+        assertEquals(NextVersionTypeEnum.NON_SCHEDULED_UPDATE, statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn).getNextVersion());
+
+        DatasetVersionDto datasetVersionMetadataToChangeDto = new DatasetVersionDto();
+        datasetVersionMetadataToChangeDto.setDateNextUpdate("2026-M09");
+
+        try {
+            statisticalResourcesServiceFacade.updateDatasetVersionInGroup(getServiceContextAdministrador(), datasetVersionMetadataToChangeDto, datasetVersionUrn, new ArrayList<CategorisationDto>());
+            Assert.fail("dateNextUpdate can't be updated in group unless nextVersion is SCHEDULED_UPDATE");
+        } catch (MetamacException e) {
+            assertEqualsMetamacExceptionItem(ServiceExceptionType.DATASET_VERSION_DATE_NEXT_UPDATE_REQUIRES_SCHEDULED_UPDATE, 0, null, e.getExceptionItems().get(0));
+        }
+
+        assertEquals(originalDateNextUpdate, statisticalResourcesServiceFacade.retrieveDatasetVersionByUrn(getServiceContextAdministrador(), datasetVersionUrn).getDateNextUpdate());
     }
 
     @Override
