@@ -2727,6 +2727,12 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
 
         DatasetVersion datasetVersion = datasetDto2DoMapper.datasetVersionDtoToDo(datasetVersionMetadataToChangeDto);
 
+        // The mapper builds "datasetVersion" as a blank patch (the group DTO has no id), so it nulls dateNextUpdate
+        // based on the patch's own (unset) nextVersion. Restore the raw DTO value here;
+        if (datasetVersionMetadataToChangeDto.getDateNextUpdate() != null) {
+            datasetVersion.setDateNextUpdate(datasetVersionMetadataToChangeDto.getDateNextUpdate());
+        }
+
         for (CategorisationDto categorisationDto : categorisationsDto) {
             datasetVersion.addCategorisation(datasetDto2DoMapper.categorisationDtoToDo(categorisationDto));
         }
