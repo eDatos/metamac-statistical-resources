@@ -87,7 +87,7 @@ public class TwitterPostUtils {
                 return result;
             }
             if (!checkVersionRationaleTypeEnum(datasetVersion)) {
-                logger.info("Dataset version {} version rationale type not eligible for Twitter posting, skipping", datasetUrn);
+                logger.debug("Dataset version {} version rationale type not eligible for Twitter posting, skipping", datasetUrn);
                 result.setSkipped(true);
                 return result;
             }
