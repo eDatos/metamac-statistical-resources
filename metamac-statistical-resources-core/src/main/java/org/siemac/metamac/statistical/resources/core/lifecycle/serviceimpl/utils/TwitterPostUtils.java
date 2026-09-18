@@ -20,6 +20,7 @@ import org.siemac.metamac.statistical.resources.core.common.serviceapi.Translati
 import org.siemac.metamac.statistical.resources.core.conf.StatisticalResourcesConfiguration;
 import org.siemac.metamac.statistical.resources.core.constants.StatisticalResourcesConstants;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.TemporalCode;
 import org.siemac.metamac.statistical.resources.core.enume.domain.VersionRationaleTypeEnum;
 import org.siemac.metamac.statistical.resources.core.enume.domain.XStreamStatusEnum;
@@ -55,6 +56,9 @@ public class TwitterPostUtils {
     private QueryVersionRepository            queryVersionRepository;
 
     @Autowired
+    private DatasetVersionRepository          datasetVersionRepository;
+
+    @Autowired
     private DatasetRepositoriesServiceFacade  datasetRepositoriesServiceFacade;
 
     @Autowired
@@ -73,14 +77,17 @@ public class TwitterPostUtils {
      */
     public TwitterPostResult postTwitterForDatasetQueries(ServiceContext ctx, DatasetVersion datasetVersion) {
         TwitterPostResult result = new TwitterPostResult();
+        String datasetUrn = datasetVersion.getSiemacMetadataStatisticalResource().getUrn();
         List<QueryVersion> queriesDataset = queryVersionRepository.findQueriesPublishedLinkedToDataset(datasetVersion.getDataset().getId());
 
         try {
             if (!configurationService.retrieveTwitterSentEnable()) {
+                logger.info("Twitter posting disabled by configuration, skipping dataset {}", datasetUrn);
                 result.setSkipped(true);
                 return result;
             }
             if (!checkVersionRationaleTypeEnum(datasetVersion)) {
+                logger.info("Dataset version {} version rationale type not eligible for Twitter posting, skipping", datasetUrn);
                 result.setSkipped(true);
                 return result;
             }
@@ -122,12 +129,14 @@ public class TwitterPostUtils {
 
         try {
             if (!configurationService.retrieveTwitterSentEnable()) {
+                logger.info("Twitter posting disabled by configuration, skipping query {}", getQueryUrn(queryVersion));
                 result.setSkipped(true);
                 return result;
             }
 
             DatasetVersion datasetVersion = resolveDatasetVersion(queryVersion);
             if (datasetVersion == null) {
+                logger.warn("No dataset version resolved for query {}: {}", getQueryUrn(queryVersion), TwitterPostErrorType.NO_DATA);
                 updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
                 result.addError(TwitterPostError.forQuery(queryVersion, TwitterPostErrorType.NO_DATA, null));
                 return result;
@@ -156,6 +165,7 @@ public class TwitterPostUtils {
 
         // Check if query has X template
         if (StringUtils.isBlank(queryVersion.getXTemplate())) {
+            logger.warn("Query {} skipped: {}", getQueryUrn(queryVersion), TwitterPostErrorType.NO_X_TEMPLATE);
             updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             return TwitterPostError.forQuery(queryVersion, TwitterPostErrorType.NO_X_TEMPLATE, null);
         }
@@ -168,6 +178,7 @@ public class TwitterPostUtils {
             throw new MetamacException(ServiceExceptionType.QUERY_SOCIAL_NETWORK_NOT_UNIQUE_RESULT, queryVersion.getLifeCycleStatisticalResource().getCode());
         }
         if (dataSize == 0) {
+            logger.warn("Query {} skipped: {} (no observations for the selection)", getQueryUrn(queryVersion), TwitterPostErrorType.NO_DATA);
             updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             return TwitterPostError.forQuery(queryVersion, TwitterPostErrorType.NO_DATA, null);
         }
@@ -189,6 +200,7 @@ public class TwitterPostUtils {
 
         String xPublication = buildXPublication(observations, queryVersion, ctx);
         if (StringUtils.isBlank(xPublication)) {
+            logger.warn("Query {} skipped: {} (empty publication text)", getQueryUrn(queryVersion), TwitterPostErrorType.NO_DATA);
             updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             return TwitterPostError.forQuery(queryVersion, TwitterPostErrorType.NO_DATA, null);
         }
@@ -202,6 +214,7 @@ public class TwitterPostUtils {
         Tweet tweet = twitterClient.postTweet(xPublication);
 
         if (tweet.getText() == null) {
+            logger.warn("Query {} X send failed: {}", getQueryUrn(queryVersion), TwitterPostErrorType.SEND_ERROR);
             updateXStreamStatus(queryVersion, XStreamStatusEnum.FAILED);
             return TwitterPostError.forQuery(queryVersion, TwitterPostErrorType.SEND_ERROR, null);
         } else {
@@ -381,6 +394,16 @@ public class TwitterPostUtils {
     }
 
     /**
+     * Get the query version urn in a null-safe way, for logging purposes.
+     */
+    private String getQueryUrn(QueryVersion queryVersion) {
+        if (queryVersion == null || queryVersion.getLifeCycleStatisticalResource() == null) {
+            return null;
+        }
+        return queryVersion.getLifeCycleStatisticalResource().getUrn();
+    }
+
+    /**
      * Update the X stream status for a query version.
      */
     private void updateXStreamStatus(QueryVersion resource, XStreamStatusEnum status) {
@@ -389,13 +412,16 @@ public class TwitterPostUtils {
     }
 
     /**
-     * Resolve the dataset version from a query version.
+     * Resolve the dataset version from a query version, falling back to the dataset last version when it is not fixed.
      */
-    private DatasetVersion resolveDatasetVersion(QueryVersion queryVersion) {
+    private DatasetVersion resolveDatasetVersion(QueryVersion queryVersion) throws MetamacException {
         if (queryVersion.getFixedDatasetVersion() != null) {
             return queryVersion.getFixedDatasetVersion();
         }
-        return null;
+        if (queryVersion.getDataset() == null) {
+            return null;
+        }
+        return datasetVersionRepository.retrieveLastVersion(queryVersion.getDataset().getIdentifiableStatisticalResource().getUrn());
     }
 
     /**
