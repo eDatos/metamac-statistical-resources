@@ -1198,7 +1198,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
                 @Override
                 protected Object doInMetamacTransaction(TransactionStatus status) throws MetamacException {
-                    datasetLifecycleService.sendToPublished(ctx, datasetVersionUrn);
+                    DatasetVersion datasetVersion = datasetLifecycleService.sendToPublished(ctx, datasetVersionUrn);
+                    datasetLifecycleService.checkTwitterPostActivatedAndPostTwit(ctx, datasetVersion);
                     return null;
                 }
             });
