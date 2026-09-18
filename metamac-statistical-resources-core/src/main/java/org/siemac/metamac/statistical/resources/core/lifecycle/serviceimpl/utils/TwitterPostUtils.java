@@ -129,7 +129,7 @@ public class TwitterPostUtils {
 
         try {
             if (!configurationService.retrieveTwitterSentEnable()) {
-                logger.info("Twitter posting disabled by configuration, skipping query {}", getQueryUrn(queryVersion));
+                logger.debug("Twitter posting disabled by configuration, skipping query {}", getQueryUrn(queryVersion));
                 result.setSkipped(true);
                 return result;
             }
