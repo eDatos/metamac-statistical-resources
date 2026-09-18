@@ -413,6 +413,8 @@ public class TwitterPostUtils {
 
     /**
      * Resolve the dataset version from a query version, falling back to the dataset last version when it is not fixed.
+     *
+     * @see org.siemac.metamac.statistical.resources.core.query.serviceimpl.QueryServiceImpl#getCurrentDatasetVersionInQuery(QueryVersion)
      */
     private DatasetVersion resolveDatasetVersion(QueryVersion queryVersion) throws MetamacException {
         if (queryVersion.getFixedDatasetVersion() != null) {
