@@ -2839,6 +2839,13 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         try {
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+
+            if (sched.checkExists(jobKey)) {
+                logger.info("UpdateResourceBusinessLastUpdateJob: the job with key {} was already planified, skipping duplicated planification", jobKey.getName());
+                return;
+            }
+
             JobDetail job = newJob(UpdateResourceBusinessLastUpdateJob.class)
                     .withIdentity(jobKey)
                     .usingJobData(UpdateResourceBusinessLastUpdateJob.RESOURCE_URN, resourceUrn)
@@ -2861,7 +2868,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .withSchedule(simpleSchedule())
                     .build();
 
-            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
             sched.scheduleJob(job, trigger);
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
