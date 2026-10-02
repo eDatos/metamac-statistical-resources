@@ -1119,6 +1119,9 @@ public class StatisticalResourcesServiceFacadeImpl extends StatisticalResourcesS
         // Send to publish and retrieve
         DatasetVersion datasetVersion = datasetLifecycleService.sendToPublished(ctx, datasetVersionDto.getUrn());
 
+        // Post to Twitter if applicable
+        datasetLifecycleService.checkTwitterPostActivatedAndPostTwit(ctx, datasetVersion);
+
         // Transform
         datasetVersionDto = datasetDo2DtoMapper.datasetVersionDoToBaseDto(ctx, datasetVersion);
 
