@@ -171,6 +171,8 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import com.arte.statistic.parser.csv.CsvWriter;
@@ -2018,6 +2020,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         try {
             checkSameJobNotExists(jobKey);
+            if (existsTask(taskName)) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR_MAX_CURRENT_JOBS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
 
             // @formatter:off
             JobDetail job = newJob(UpdateResourceLastUpdateJob.class)
@@ -2037,18 +2042,45 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             createTask(ctx, task);
 
             int defaultQuartzTriggerDelay = PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE.equals(jobPrefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 3600;
-            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(defaultQuartzTriggerDelay, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
-
-            try {
-                Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
-                sched.scheduleJob(job, trigger);
-                logger.debug("UpdateResourceLastUpdateJob: the job with key {} was planified to be executed at {}", jobKey.getName(), new DateTime(trigger.getStartTime()));
-            } catch (SchedulerException e) {
-                logger.error("UpdateResourceLastUpdateJob: the job with key {} has failed to schedule", jobKey.getName(), e);
-            }
+            scheduleJobAfterCommit(job, triggerKey, defaultQuartzTriggerDelay);
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();
+        }
+    }
+
+    private void scheduleJobAfterCommit(final JobDetail job, final TriggerKey triggerKey, final int delayInSeconds) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            // no transaction currently, you can run the job right now
+            scheduleJob(job, triggerKey, delayInSeconds);
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            // transation currently active, wait for it to finish then run the scheduling
+            @Override
+            public void afterCommit() {
+                scheduleJob(job, triggerKey, delayInSeconds);
+            }
+        });
+    }
+
+    private void scheduleJob(JobDetail job, TriggerKey triggerKey, int delayInSeconds) {
+        SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(delayInSeconds, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
+        try {
+            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+            sched.scheduleJob(job, trigger);
+            logger.debug("The job with key {} was planified to be executed at {}", job.getKey().getName(), new DateTime(trigger.getStartTime()));
+        } catch (SchedulerException e) {
+            logger.error("The job with key {} has failed to schedule", job.getKey().getName(), e);
+        }
+    }
+
+    private boolean existsTask(String taskName) {
+        try {
+            getTaskRepository().findByKey(taskName);
+            return true;
+        } catch (TaskNotFoundException e) {
+            return false;
         }
     }
 
@@ -2841,7 +2873,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
 
-            if (sched.checkExists(jobKey)) {
+            if (sched.checkExists(jobKey) || existsTask(taskName)) {
                 logger.info("UpdateResourceBusinessLastUpdateJob: the job with key {} was already planified, skipping duplicated planification", jobKey.getName());
                 return;
             }
@@ -2863,12 +2895,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             task.setExtensionPoint(resourceRootUrn);
             createTask(ctx, task);
 
-            SimpleTrigger trigger = newTrigger().withIdentity(triggerKey)
-                    .startAt(futureDate(delayInSeconds, IntervalUnit.SECOND))
-                    .withSchedule(simpleSchedule())
-                    .build();
-
-            sched.scheduleJob(job, trigger);
+            scheduleJobAfterCommit(job, triggerKey, delayInSeconds);
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();
