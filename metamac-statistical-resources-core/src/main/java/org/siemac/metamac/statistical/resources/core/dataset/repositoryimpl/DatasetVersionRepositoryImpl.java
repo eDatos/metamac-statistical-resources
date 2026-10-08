@@ -14,6 +14,7 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
@@ -178,6 +179,31 @@ public class DatasetVersionRepositoryImpl extends DatasetVersionRepositoryBase {
                 "order by code.id ");
         //@formatter:on
         query.setParameter("datasetVersionFk", datasetVersion.getId());
+        return query.getResultList();
+    }
+
+    @Override
+    public List<String> findPublishedUrnsByStatisticalOperationUrn(String operationUrn) {
+        return findPublishedUrnsBy(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn(), operationUrn);
+    }
+
+    @Override
+    public List<String> findPublishedUrnsByRelatedDsdUrn(String dsdUrn) {
+        return findPublishedUrnsBy(DatasetVersionProperties.relatedDsd().urn(), dsdUrn);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> findPublishedUrnsBy(Property<DatasetVersion> filterProperty, String filterValue) {
+        String urn = DatasetVersionProperties.siemacMetadataStatisticalResource().urn().getName();
+        String procStatus = DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus().getName();
+        //@formatter:off
+        Query query = getEntityManager().createQuery(
+                "select dv." + urn + " from DatasetVersion dv " +
+                "where dv." + filterProperty.getName() + " = :filterValue " +
+                "and dv." + procStatus + " = :procStatus");
+        //@formatter:on
+        query.setParameter("filterValue", filterValue);
+        query.setParameter("procStatus", ProcStatusEnum.PUBLISHED);
         return query.getResultList();
     }
 
