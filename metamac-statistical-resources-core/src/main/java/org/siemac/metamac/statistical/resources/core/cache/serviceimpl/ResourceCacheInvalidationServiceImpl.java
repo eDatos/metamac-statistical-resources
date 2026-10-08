@@ -65,7 +65,7 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
         // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
         Set<String> affectedUrns = new HashSet<>(datasetVersionRepository.findPublishedUrnsByRelatedDsdUrn(dsdUrn));
         affectedUrns.addAll(queryVersionRepository.findPublishedUrnsLinkedToPublishedDatasetVersionsByRelatedDsdUrn(dsdUrn));
-        planifyAffectedResourcesLastUpdate(ctx, affectedUrns, timestamp);
+        planifyAffectedResourcesLastUpdate(ctx, dsdUrn, affectedUrns, timestamp);
     }
 
     @Override
@@ -79,11 +79,16 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
         // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
         Set<String> affectedUrns = new HashSet<>(datasetVersionRepository.findPublishedUrnsByStatisticalOperationUrn(operationUrn));
         affectedUrns.addAll(queryVersionRepository.findPublishedUrnsLinkedToPublishedDatasetVersionsByStatisticalOperationUrn(operationUrn));
-        planifyAffectedResourcesLastUpdate(ctx, affectedUrns, timestamp);
+        planifyAffectedResourcesLastUpdate(ctx, operationUrn, affectedUrns, timestamp);
     }
 
-    private void planifyAffectedResourcesLastUpdate(ServiceContext ctx, Set<String> affectedUrns, long timestamp) {
-        LOGGER.info("Planning last update job for {} affected resources", affectedUrns.size());
+    private void planifyAffectedResourcesLastUpdate(ServiceContext ctx, String sourceUrn, Set<String> affectedUrns, long timestamp) {
+        if (affectedUrns.isEmpty()) {
+            LOGGER.info("No last update jobs were planified for {} because there are no resources affected", sourceUrn);
+            return;
+        }
+
+        LOGGER.info("Planning last update job for {} affected resources by {}", affectedUrns.size(), sourceUrn);
         for (String urn : affectedUrns) {
             try {
                 taskService.planifyUpdateResourceLastUpdate(ctx, urn, timestamp, true);
