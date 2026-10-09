@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -31,6 +32,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -194,6 +197,8 @@ import es.gobcan.istac.edatos.dataset.repository.service.DatasetRepositoriesServ
 public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationListener<ContextRefreshedEvent> {
 
     private static Logger                          logger                                                   = LoggerFactory.getLogger(TaskServiceImpl.class);
+
+    private final Set<String> pendingJobKeys = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     public static final String                SCHEDULER_INSTANCE_NAME                       = "StatisticalResourcesScheduler";
     public static final String                PREFIX_JOB_IMPORT_DATA                        = "job_importdata_";
@@ -2020,7 +2025,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         try {
             checkSameJobNotExists(jobKey);
-            if (existsTask(taskName)) {
+            if (existsTask(taskName) || claimPendingJobKey(taskName)) {
                 throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR_MAX_CURRENT_JOBS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
             }
 
@@ -2082,6 +2087,24 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } catch (TaskNotFoundException e) {
             return false;
         }
+    }
+
+    private boolean claimPendingJobKey(final String taskName) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            return false;
+        }
+        if (!pendingJobKeys.add(taskName)) {
+            return true; // key is going to be scheduled by another job
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+            // Spring runs afterCommit before afterCompletion, job key is released only
+            // once the job is already in memory in Quartz, and can be checked there
+            @Override
+            public void afterCompletion(int status) {
+                pendingJobKeys.remove(taskName);
+            }
+        });
+        return false;
     }
 
     private void sendUpdateResourceLastUpdateNoMoreRetriesNotification(ServiceContext ctx, String resourceUrn) {
@@ -2873,7 +2896,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
 
-            if (sched.checkExists(jobKey) || existsTask(taskName)) {
+            if (sched.checkExists(jobKey) || existsTask(taskName) || claimPendingJobKey(taskName)) {
                 logger.info("UpdateResourceBusinessLastUpdateJob: the job with key {} was already planified, skipping duplicated planification", jobKey.getName());
                 return;
             }
