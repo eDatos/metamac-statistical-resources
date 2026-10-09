@@ -2057,10 +2057,27 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         boolean inTransaction = TransactionSynchronizationManager.isSynchronizationActive();
-        if (inTransaction) {
-            if (!pendingJobKeys.add(taskName)) {
-                return false;
+        if (inTransaction && !pendingJobKeys.add(taskName)) {
+            return false;
+        }
+
+        try {
+            // Neither in Quartz nor pending, so an existing row is a leftover whose job never ran. Reuse it
+            if (!existsTask(taskName)) {
+                Task task = new Task(taskName);
+                task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
+                task.setExtensionPoint(taskExtensionPoint);
+                createTask(ctx, task);
             }
+        } catch (MetamacException | RuntimeException e) {
+            if (inTransaction) {
+                pendingJobKeys.remove(taskName);
+            }
+            throw e;
+        }
+
+        if (inTransaction) {
+            // Registered only once the row exists: a caller that catches a creation error could still commit
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 
                 @Override
@@ -2074,17 +2091,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     pendingJobKeys.remove(taskName);
                 }
             });
-        }
-
-        // Neither in Quartz nor pending, so an existing row is a leftover whose job never ran. Reuse it
-        if (!existsTask(taskName)) {
-            Task task = new Task(taskName);
-            task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
-            task.setExtensionPoint(taskExtensionPoint);
-            createTask(ctx, task);
-        }
-
-        if (!inTransaction) {
+        } else {
             scheduleJob(job, triggerKey, delayInSeconds);
         }
         return true;
