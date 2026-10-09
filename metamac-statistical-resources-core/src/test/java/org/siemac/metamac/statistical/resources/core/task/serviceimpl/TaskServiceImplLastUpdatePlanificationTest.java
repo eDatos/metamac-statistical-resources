@@ -3,9 +3,11 @@ package org.siemac.metamac.statistical.resources.core.task.serviceimpl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
@@ -15,7 +17,9 @@ import org.junit.runner.RunWith;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.impl.SchedulerRepository;
+import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
+import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
 import org.siemac.metamac.statistical.resources.core.task.domain.Task;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskProperties;
 import org.siemac.metamac.statistical.resources.core.task.domain.TaskRepository;
@@ -27,6 +31,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -100,6 +106,65 @@ public class TaskServiceImplLastUpdatePlanificationTest extends StatisticalResou
     public void testPlanifyCommitSchedulesJob() throws Exception {
         planifyInCommittedTransaction();
         assertTrue(scheduler().checkExists(JOB_KEY));
+    }
+
+    @Test
+    public void testPlanifyReusesLeftoverTaskRow() throws Exception {
+        new TransactionTemplate(txManager).execute(new TransactionCallbackWithoutResult() {
+
+            @Override
+            protected void doInTransactionWithoutResult(TransactionStatus status) {
+                Task leftover = new Task(TASK_NAME);
+                leftover.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
+                leftover.setExtensionPoint(RESOURCE_URN);
+                taskRepository.save(leftover);
+            }
+        });
+
+        planifyInCommittedTransaction();
+
+        assertTrue(scheduler().checkExists(JOB_KEY));
+        assertEquals(1, countTasksInTransaction());
+    }
+
+    @Test
+    public void testPlanifyTaskCreationErrorSchedulesNoJobAndReleasesKey() throws Exception {
+        // Exceeds the @Length of Task.job, so createTask fails before reaching the database
+        final String tooLongUrn = RESOURCE_URN + StringUtils.repeat("X", 4000);
+        try {
+            new TransactionTemplate(txManager).execute(new TransactionCallbackWithoutResult() {
+
+                @Override
+                protected void doInTransactionWithoutResult(TransactionStatus status) {
+                    assertPlanifyFails(tooLongUrn);
+                    // A key left claimed would make this second call skip silently as a duplicate
+                    assertPlanifyFails(tooLongUrn);
+                }
+            });
+        } catch (TransactionSystemException e) {
+            // The entity manager marks the transaction as rollback-only on the validation error, so the commit fails
+        }
+
+        assertFalse(scheduler().checkExists(new JobKey(TaskServiceImpl.PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE + tooLongUrn)));
+    }
+
+    private void assertPlanifyFails(String resourceUrn) {
+        try {
+            taskService.planifyUpdateResourceLastUpdate(getServiceContextAdministrador(), resourceUrn, System.currentTimeMillis(), false);
+            fail("Planification should fail when the task row cannot be created");
+        } catch (MetamacException e) {
+            // Expected
+        }
+    }
+
+    private int countTasksInTransaction() {
+        return new TransactionTemplate(txManager).execute(new TransactionCallback<Integer>() {
+
+            @Override
+            public Integer doInTransaction(TransactionStatus status) {
+                return countTasks();
+            }
+        });
     }
 
     private void planifyInCommittedTransaction() {
