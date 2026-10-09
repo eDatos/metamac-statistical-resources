@@ -791,7 +791,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public void planifyUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException {
         taskServiceInvocationValidator.checkPlanifyUpdateResourceLastUpdate(ctx, resourceUrn, timestamp, sendNotification);
         if (scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, timestamp, sendNotification, PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
-            throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR_MAX_CURRENT_JOBS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            logger.info("UpdateResourceLastUpdateJob: the job for resource {} was already planified, skipping duplicated planification", resourceUrn);
         }
     }
 
