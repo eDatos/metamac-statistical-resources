@@ -2096,7 +2096,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
             sched.scheduleJob(job, trigger);
             logger.debug("The job with key {} was planified to be executed at {}", job.getKey().getName(), new DateTime(trigger.getStartTime()));
-        } catch (SchedulerException e) {
+        } catch (Exception e) {
             logger.error("The job with key {} has failed to schedule", job.getKey().getName(), e);
         }
     }
