@@ -2052,13 +2052,21 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     // Returns false when the job is already planified: in Quartz, or by a transaction that has not ended yet
     private boolean planifyJobAfterCommit(ServiceContext ctx, final JobDetail job, final TriggerKey triggerKey, final int delayInSeconds, String taskExtensionPoint) throws SchedulerException, MetamacException {
         final String taskName = job.getKey().getName();
-        if (SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME).checkExists(job.getKey())) {
+        Scheduler scheduler = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
+        if (scheduler.checkExists(job.getKey())) {
             return false;
         }
 
         boolean inTransaction = TransactionSynchronizationManager.isSynchronizationActive();
-        if (inTransaction && !pendingJobKeys.add(taskName)) {
-            return false;
+        if (inTransaction) {
+            if (!pendingJobKeys.add(taskName)) {
+                return false;
+            }
+            // Another transaction may have released its key after the first check, once its job was already in Quartz
+            if (scheduler.checkExists(job.getKey())) {
+                pendingJobKeys.remove(taskName);
+                return false;
+            }
         }
 
         try {
