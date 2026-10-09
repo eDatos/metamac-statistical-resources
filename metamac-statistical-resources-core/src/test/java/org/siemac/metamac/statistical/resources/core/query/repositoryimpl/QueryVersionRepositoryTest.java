@@ -429,6 +429,20 @@ public class QueryVersionRepositoryTest extends StatisticalResourcesBaseTest imp
         assertEquals(expectedQueryUrnsLinkedToDatasetVersion92(), new HashSet<>(urns));
     }
 
+    @Test
+    @MetamacMock(DATASET_30_LAST_VERSION_NOT_VISIBLE_WITH_PUBLICATION_AND_QUERIES_NOT_VISIBLE_BOTH_NOT_COMPATIBLE_NAME)
+    public void testFindPublishedUrnsLinkedToPublishedDatasetVersionsExcludesUnpublishedQueries() throws Exception {
+        DatasetVersion dv92 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_92_NOT_VISIBLE_FOR_DATASET_30_NAME);
+        QueryVersion query50 = queryVersionMockFactory.retrieveMock(QUERY_VERSION_50_NOT_VISIBLE_REQUIRES_DATASET_NOT_VISIBLE_NAME);
+        query50.getLifeCycleStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);
+        queryVersionRepository.save(query50);
+
+        List<String> urns = queryVersionRepository.findPublishedUrnsLinkedToPublishedDatasetVersionsByRelatedDsdUrn(dv92.getRelatedDsd().getUrn());
+
+        String query49Urn = queryVersionMockFactory.retrieveMock(QUERY_VERSION_49_NOT_VISIBLE_REQUIRES_FIXED_DATASET_VERSION_NOT_VISIBLE_NAME).getLifeCycleStatisticalResource().getUrn();
+        assertEquals(new HashSet<>(Arrays.asList(query49Urn)), new HashSet<>(urns));
+    }
+
     private Set<String> expectedQueryUrnsLinkedToDatasetVersion92() {
         String query49Urn = queryVersionMockFactory.retrieveMock(QUERY_VERSION_49_NOT_VISIBLE_REQUIRES_FIXED_DATASET_VERSION_NOT_VISIBLE_NAME).getLifeCycleStatisticalResource().getUrn();
         String query50Urn = queryVersionMockFactory.retrieveMock(QUERY_VERSION_50_NOT_VISIBLE_REQUIRES_DATASET_NOT_VISIBLE_NAME).getLifeCycleStatisticalResource().getUrn();
