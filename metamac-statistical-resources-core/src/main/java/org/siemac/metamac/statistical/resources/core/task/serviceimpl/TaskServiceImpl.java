@@ -2024,11 +2024,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         TriggerKey triggerKey = new TriggerKey(taskName);
 
         try {
-            checkSameJobNotExists(jobKey);
-            if (existsTask(taskName) || claimPendingJobKey(taskName)) {
-                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR_MAX_CURRENT_JOBS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
-            }
-
             // @formatter:off
             JobDetail job = newJob(UpdateResourceLastUpdateJob.class)
                     .withIdentity(jobKey)
@@ -2041,32 +2036,55 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .build();
             // @formatter:on
 
-            Task task = new Task(taskName);
-            task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
-            task.setExtensionPoint(resourceUrn);
-            createTask(ctx, task);
-
             int defaultQuartzTriggerDelay = PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE.equals(jobPrefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 3600;
-            scheduleJobAfterCommit(job, triggerKey, defaultQuartzTriggerDelay);
+            if (planifyJobAfterCommit(ctx, job, triggerKey, defaultQuartzTriggerDelay, resourceUrn)) {
+                throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR_MAX_CURRENT_JOBS).withLoggedLevel(ExceptionLevelEnum.ERROR).build();
+            }
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();
         }
     }
 
-    private void scheduleJobAfterCommit(final JobDetail job, final TriggerKey triggerKey, final int delayInSeconds) {
-        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            // no transaction currently, you can run the job right now
-            scheduleJob(job, triggerKey, delayInSeconds);
-            return;
+    // Returns false when the job is already planified: in Quartz, or by a transaction that has not ended yet
+    private boolean planifyJobAfterCommit(ServiceContext ctx, final JobDetail job, final TriggerKey triggerKey, final int delayInSeconds, String taskExtensionPoint) throws SchedulerException, MetamacException {
+        final String taskName = job.getKey().getName();
+        if (SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME).checkExists(job.getKey())) {
+            return true;
         }
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            // transation currently active, wait for it to finish then run the scheduling
-            @Override
-            public void afterCommit() {
-                scheduleJob(job, triggerKey, delayInSeconds);
+
+        boolean inTransaction = TransactionSynchronizationManager.isSynchronizationActive();
+        if (inTransaction) {
+            if (!pendingJobKeys.add(taskName)) {
+                return true;
             }
-        });
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+
+                @Override
+                public void afterCommit() {
+                    scheduleJob(job, triggerKey, delayInSeconds);
+                }
+
+                // Spring runs every afterCommit before any afterCompletion, so other transactions always see either this key or the Quartz job
+                @Override
+                public void afterCompletion(int status) {
+                    pendingJobKeys.remove(taskName);
+                }
+            });
+        }
+
+        // Neither in Quartz nor pending, so an existing row is a leftover whose job never ran. Reuse it
+        if (!existsTask(taskName)) {
+            Task task = new Task(taskName);
+            task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
+            task.setExtensionPoint(taskExtensionPoint);
+            createTask(ctx, task);
+        }
+
+        if (!inTransaction) {
+            scheduleJob(job, triggerKey, delayInSeconds);
+        }
+        return false;
     }
 
     private void scheduleJob(JobDetail job, TriggerKey triggerKey, int delayInSeconds) {
@@ -2087,24 +2105,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         } catch (TaskNotFoundException e) {
             return false;
         }
-    }
-
-    private boolean claimPendingJobKey(final String taskName) {
-        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            return false;
-        }
-        if (!pendingJobKeys.add(taskName)) {
-            return true; // key is going to be scheduled by another job
-        }
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
-            // Spring runs afterCommit before afterCompletion, job key is released only
-            // once the job is already in memory in Quartz, and can be checked there
-            @Override
-            public void afterCompletion(int status) {
-                pendingJobKeys.remove(taskName);
-            }
-        });
-        return false;
     }
 
     private void sendUpdateResourceLastUpdateNoMoreRetriesNotification(ServiceContext ctx, String resourceUrn) {
@@ -2894,13 +2894,6 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
 
         try {
-            Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
-
-            if (sched.checkExists(jobKey) || existsTask(taskName) || claimPendingJobKey(taskName)) {
-                logger.info("UpdateResourceBusinessLastUpdateJob: the job with key {} was already planified, skipping duplicated planification", jobKey.getName());
-                return;
-            }
-
             JobDetail job = newJob(UpdateResourceBusinessLastUpdateJob.class)
                     .withIdentity(jobKey)
                     .usingJobData(UpdateResourceBusinessLastUpdateJob.RESOURCE_URN, resourceUrn)
@@ -2913,12 +2906,9 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .requestRecovery()
                     .build();
 
-            Task task = new Task(taskName);
-            task.setStatus(TaskStatusTypeEnum.IN_PROGRESS);
-            task.setExtensionPoint(resourceRootUrn);
-            createTask(ctx, task);
-
-            scheduleJobAfterCommit(job, triggerKey, delayInSeconds);
+            if (planifyJobAfterCommit(ctx, job, triggerKey, delayInSeconds, resourceRootUrn)) {
+                logger.info("UpdateResourceBusinessLastUpdateJob: the job with key {} was already planified, skipping duplicated planification", jobKey.getName());
+            }
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();
