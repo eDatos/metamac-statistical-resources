@@ -790,7 +790,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     @Override
     public void planifyUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException {
         taskServiceInvocationValidator.checkPlanifyUpdateResourceLastUpdate(ctx, resourceUrn, timestamp, sendNotification);
-        if (scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, timestamp, sendNotification, PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
+        if (!scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, timestamp, sendNotification, PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
             logger.info("UpdateResourceLastUpdateJob: the job for resource {} was already planified, skipping duplicated planification", resourceUrn);
         }
     }
@@ -2017,12 +2017,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     private void planifyRecoveryUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn) throws MetamacException {
-        if (scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, System.currentTimeMillis(), Boolean.TRUE, PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE)) {
+        if (!scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, System.currentTimeMillis(), Boolean.TRUE, PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE)) {
             logger.info("UpdateResourceLastUpdateJob: a recovery for resource {} was already planified, skipping duplicated planification", resourceUrn);
         }
     }
 
-    // Returns true when the job is already planified
+    // Returns false when the job is already planified
     private boolean scheduleUpdateResourceLastUpdateJob(ServiceContext ctx, String resourceUrn, long timestamp, boolean sendNotification, String jobPrefix) throws MetamacException {
         String taskName = jobPrefix + resourceUrn;
         JobKey jobKey = new JobKey(taskName);
@@ -2049,17 +2049,17 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         }
     }
 
-    // Returns true when the job is already planified: in Quartz, or by a transaction that has not ended yet
+    // Returns false when the job is already planified: in Quartz, or by a transaction that has not ended yet
     private boolean planifyJobAfterCommit(ServiceContext ctx, final JobDetail job, final TriggerKey triggerKey, final int delayInSeconds, String taskExtensionPoint) throws SchedulerException, MetamacException {
         final String taskName = job.getKey().getName();
         if (SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME).checkExists(job.getKey())) {
-            return true;
+            return false;
         }
 
         boolean inTransaction = TransactionSynchronizationManager.isSynchronizationActive();
         if (inTransaction) {
             if (!pendingJobKeys.add(taskName)) {
-                return true;
+                return false;
             }
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
 
@@ -2087,7 +2087,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
         if (!inTransaction) {
             scheduleJob(job, triggerKey, delayInSeconds);
         }
-        return false;
+        return true;
     }
 
     private void scheduleJob(JobDetail job, TriggerKey triggerKey, int delayInSeconds) {
@@ -2909,7 +2909,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .requestRecovery()
                     .build();
 
-            if (planifyJobAfterCommit(ctx, job, triggerKey, delayInSeconds, resourceRootUrn)) {
+            if (!planifyJobAfterCommit(ctx, job, triggerKey, delayInSeconds, resourceRootUrn)) {
                 logger.info("UpdateResourceBusinessLastUpdateJob: the job with key {} was already planified, skipping duplicated planification", jobKey.getName());
             }
         } catch (Exception e) {
