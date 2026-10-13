@@ -2042,7 +2042,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             // @formatter:on
 
             int defaultQuartzTriggerDelay = PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE.equals(jobPrefix) ? DEFAULT_QUARTZ_TRIGGER_DELAY : 3600;
-            return planifyJobAfterCommit(ctx, job, triggerKey, defaultQuartzTriggerDelay, resourceUrn);
+            return planifyJobAfterCommit(ctx, job, triggerKey, defaultQuartzTriggerDelay, resourceUrn, ServiceNoticeAction.UPDATE_OF_RESOURCE_LAST_UPDATE_CACHE_FAILED);
         } catch (Exception e) {
             throw MetamacExceptionBuilder.builder().withExceptionItems(ServiceExceptionType.TASKS_ERROR).withMessageParameters(e.getMessage()).withCause(e).withLoggedLevel(ExceptionLevelEnum.ERROR)
                     .build();
@@ -2050,7 +2050,8 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     }
 
     // Returns false when the job is already planified: in Quartz, or by a transaction that has not ended yet
-    private boolean planifyJobAfterCommit(ServiceContext ctx, final JobDetail job, final TriggerKey triggerKey, final int delayInSeconds, String taskExtensionPoint) throws SchedulerException, MetamacException {
+    private boolean planifyJobAfterCommit(ServiceContext ctx, final JobDetail job, final TriggerKey triggerKey, final int delayInSeconds, String taskExtensionPoint,
+            final String scheduleFailureNoticeAction) throws SchedulerException, MetamacException {
         final String taskName = job.getKey().getName();
         Scheduler scheduler = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
         if (scheduler.checkExists(job.getKey())) {
@@ -2090,7 +2091,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
                 @Override
                 public void afterCommit() {
-                    scheduleJob(job, triggerKey, delayInSeconds);
+                    scheduleJob(job, triggerKey, delayInSeconds, scheduleFailureNoticeAction);
                 }
 
                 // Spring runs every afterCommit before any afterCompletion, so other transactions always see either this key or the Quartz job
@@ -2100,12 +2101,12 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 }
             });
         } else {
-            scheduleJob(job, triggerKey, delayInSeconds);
+            scheduleJob(job, triggerKey, delayInSeconds, scheduleFailureNoticeAction);
         }
         return true;
     }
 
-    private void scheduleJob(JobDetail job, TriggerKey triggerKey, int delayInSeconds) {
+    private void scheduleJob(JobDetail job, TriggerKey triggerKey, int delayInSeconds, String failureNoticeAction) {
         SimpleTrigger trigger = newTrigger().withIdentity(triggerKey).startAt(futureDate(delayInSeconds, IntervalUnit.SECOND)).withSchedule(simpleSchedule()).build();
         try {
             Scheduler sched = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
@@ -2113,6 +2114,17 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             logger.debug("The job with key {} was planified to be executed at {}", job.getKey().getName(), new DateTime(trigger.getStartTime()));
         } catch (Exception e) {
             logger.error("The job with key {} has failed to schedule", job.getKey().getName(), e);
+            sendScheduleJobErrorNotification(job, failureNoticeAction, e);
+        }
+    }
+
+    private void sendScheduleJobErrorNotification(JobDetail job, String noticeAction, Exception cause) {
+        try {
+            MetamacException exception = MetamacExceptionBuilder.builder().withCause(cause).withExceptionItems(ServiceExceptionType.TASKS_SCHEDULER_ERROR)
+                    .withMessageParameters(job.getKey().getName() + ": " + cause.getMessage()).build();
+            getNoticesRestInternalService().createErrorBackgroundNotification(noticeAction, exception);
+        } catch (Exception e) {
+            logger.error("The notification about the job with key {} could not be sent", job.getKey().getName(), e);
         }
     }
 
@@ -2924,7 +2936,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                     .requestRecovery()
                     .build();
 
-            if (!planifyJobAfterCommit(ctx, job, triggerKey, delayInSeconds, resourceRootUrn)) {
+            if (!planifyJobAfterCommit(ctx, job, triggerKey, delayInSeconds, resourceRootUrn, ServiceNoticeAction.BUSINESS_LAST_UPDATE_JOB_FAILED)) {
                 logger.info("UpdateResourceBusinessLastUpdateJob: the job with key {} was already planified, skipping duplicated planification", jobKey.getName());
             }
         } catch (Exception e) {
