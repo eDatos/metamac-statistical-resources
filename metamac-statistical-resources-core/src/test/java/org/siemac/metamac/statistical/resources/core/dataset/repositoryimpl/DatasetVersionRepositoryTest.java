@@ -260,6 +260,18 @@ public class DatasetVersionRepositoryTest extends StatisticalResourcesBaseTest i
         assertEquals(Arrays.asList(dv92.getSiemacMetadataStatisticalResource().getUrn()), urns);
     }
 
+    @Test
+    @MetamacMock(DATASET_30_LAST_VERSION_NOT_VISIBLE_WITH_PUBLICATION_AND_QUERIES_NOT_VISIBLE_BOTH_NOT_COMPATIBLE_NAME)
+    public void testFindPublishedUrnsByRelatedDsdUrnExcludesUnpublishedVersions() throws Exception {
+        DatasetVersion dv92 = datasetVersionMockFactory.retrieveMock(DATASET_VERSION_92_NOT_VISIBLE_FOR_DATASET_30_NAME);
+        dv92.getSiemacMetadataStatisticalResource().setProcStatus(ProcStatusEnum.DRAFT);
+        datasetVersionRepository.save(dv92);
+
+        List<String> urns = datasetVersionRepository.findPublishedUrnsByRelatedDsdUrn(dv92.getRelatedDsd().getUrn());
+
+        assertTrue(urns.isEmpty());
+    }
+
     @Override
     @Test
     @MetamacMock(DATASET_10_WITH_DRAFT_VERSION__WITH_ONE_QUERY_LINKED_TO_DATASET_NAME)
