@@ -2063,14 +2063,14 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             if (!pendingJobKeys.add(taskName)) {
                 return false;
             }
-            // Another transaction may have released its key after the first check, once its job was already in Quartz
-            if (scheduler.checkExists(job.getKey())) {
-                pendingJobKeys.remove(taskName);
-                return false;
-            }
         }
 
         try {
+            // Another transaction may have released its key after the first check, once its job was already in Quartz
+            if (inTransaction && scheduler.checkExists(job.getKey())) {
+                pendingJobKeys.remove(taskName);
+                return false;
+            }
             // Neither in Quartz nor pending, so an existing row is a leftover whose job never ran. Reuse it
             if (!existsTask(taskName)) {
                 Task task = new Task(taskName);
@@ -2078,7 +2078,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
                 task.setExtensionPoint(taskExtensionPoint);
                 createTask(ctx, task);
             }
-        } catch (MetamacException | RuntimeException e) {
+        } catch (SchedulerException | MetamacException | RuntimeException e) {
             if (inTransaction) {
                 pendingJobKeys.remove(taskName);
             }
