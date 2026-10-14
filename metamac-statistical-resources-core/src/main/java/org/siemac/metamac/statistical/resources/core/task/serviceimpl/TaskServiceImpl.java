@@ -791,7 +791,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
     public void planifyUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn, long timestamp, boolean sendNotification) throws MetamacException {
         taskServiceInvocationValidator.checkPlanifyUpdateResourceLastUpdate(ctx, resourceUrn, timestamp, sendNotification);
         if (!scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, timestamp, sendNotification, PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE)) {
-            logger.info("UpdateResourceLastUpdateJob: the job for resource {} was already planified, skipping duplicated planification", resourceUrn);
+            logger.debug("UpdateResourceLastUpdateJob: the job for resource {} was already planified, skipping duplicated planification", resourceUrn);
         }
     }
 
@@ -2018,7 +2018,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
     private void planifyRecoveryUpdateResourceLastUpdate(ServiceContext ctx, String resourceUrn) throws MetamacException {
         if (!scheduleUpdateResourceLastUpdateJob(ctx, resourceUrn, System.currentTimeMillis(), Boolean.TRUE, PREFIX_JOB_RECOVERY_UPDATE_RESOURCE_LAST_UPDATE)) {
-            logger.info("UpdateResourceLastUpdateJob: a recovery for resource {} was already planified, skipping duplicated planification", resourceUrn);
+            logger.debug("UpdateResourceLastUpdateJob: a recovery for resource {} was already planified, skipping duplicated planification", resourceUrn);
         }
     }
 
