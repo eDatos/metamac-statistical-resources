@@ -12,11 +12,13 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.impl.SchedulerRepository;
+import org.quartz.impl.matchers.GroupMatcher;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.StatisticalResourcesBaseTest;
 import org.siemac.metamac.statistical.resources.core.enume.task.domain.TaskStatusTypeEnum;
@@ -55,10 +57,16 @@ public class TaskServiceImplLastUpdatePlanificationTest extends StatisticalResou
     @Qualifier("txManager")
     private PlatformTransactionManager txManager;
 
+    @Before
+    public void pauseTriggers() throws Exception {
+        // New triggers of a paused group are stored paused, so UpdateResourceLastUpdateJob never runs against the fake resource
+        scheduler().pauseTriggers(GroupMatcher.triggerGroupEquals(Scheduler.DEFAULT_GROUP));
+    }
+
     @After
     public void cleanUp() throws Exception {
-        // Must run before the 10 s trigger fires, or UpdateResourceLastUpdateJob would run against the fake resource
         scheduler().deleteJob(JOB_KEY);
+        scheduler().resumeTriggers(GroupMatcher.triggerGroupEquals(Scheduler.DEFAULT_GROUP));
         new TransactionTemplate(txManager).execute(new TransactionCallbackWithoutResult() {
 
             @Override
