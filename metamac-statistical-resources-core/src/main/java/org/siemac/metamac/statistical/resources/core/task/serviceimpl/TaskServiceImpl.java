@@ -2060,6 +2060,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
 
         boolean inTransaction = TransactionSynchronizationManager.isSynchronizationActive();
         if (inTransaction) {
+            // If the transaction that owns the key rolls back, this planification is lost too
             if (!pendingJobKeys.add(taskName)) {
                 return false;
             }
