@@ -2054,7 +2054,7 @@ public class TaskServiceImpl extends TaskServiceImplBase implements ApplicationL
             final String scheduleFailureNoticeAction) throws SchedulerException, MetamacException {
         final String taskName = job.getKey().getName();
         Scheduler scheduler = SchedulerRepository.getInstance().lookup(SCHEDULER_INSTANCE_NAME);
-        if (scheduler.checkExists(job.getKey())) {
+        if (scheduler.checkExists(job.getKey()) || pendingJobKeys.contains(taskName)) {
             return false;
         }
 
