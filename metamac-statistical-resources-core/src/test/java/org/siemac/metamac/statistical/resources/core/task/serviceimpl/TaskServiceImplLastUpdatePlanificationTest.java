@@ -6,6 +6,11 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
@@ -154,6 +159,62 @@ public class TaskServiceImplLastUpdatePlanificationTest extends StatisticalResou
         }
 
         assertFalse(scheduler().checkExists(new JobKey(TaskServiceImpl.PREFIX_JOB_UPDATE_RESOURCE_LAST_UPDATE + tooLongUrn)));
+    }
+
+    @Test(timeout = 30000)
+    public void testPlanifyWhileOtherTransactionPendingCommitSchedulesOneJob() throws Exception {
+        planifyWhileOtherTransactionPending(false);
+
+        assertTrue(scheduler().checkExists(JOB_KEY));
+        assertEquals(1, countTasksInTransaction());
+    }
+
+    @Test(timeout = 30000)
+    public void testPlanifyWhileOtherTransactionPendingRollbackSchedulesNoJob() throws Exception {
+        planifyWhileOtherTransactionPending(true);
+
+        assertFalse(scheduler().checkExists(JOB_KEY));
+        assertEquals(0, countTasksInTransaction());
+    }
+
+    private void planifyWhileOtherTransactionPending(final boolean rollbackFirst) throws Exception {
+        final CountDownLatch firstPlanified = new CountDownLatch(1);
+        final CountDownLatch releaseFirst = new CountDownLatch(1);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        try {
+            Future<?> first = executor.submit(new Runnable() {
+
+                @Override
+                public void run() {
+                    new TransactionTemplate(txManager).execute(new TransactionCallbackWithoutResult() {
+
+                        @Override
+                        protected void doInTransactionWithoutResult(TransactionStatus status) {
+                            planify();
+                            firstPlanified.countDown();
+                            try {
+                                // Bounded wait: without the pending key check the second insert blocks on UQ_TB_TASKS until this ends
+                                releaseFirst.await(10, TimeUnit.SECONDS);
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                            if (rollbackFirst) {
+                                status.setRollbackOnly();
+                            }
+                        }
+                    });
+                }
+            });
+            assertTrue(firstPlanified.await(10, TimeUnit.SECONDS));
+
+            planifyInCommittedTransaction();
+            assertFalse(scheduler().checkExists(JOB_KEY));
+
+            releaseFirst.countDown();
+            first.get(10, TimeUnit.SECONDS);
+        } finally {
+            executor.shutdownNow();
+        }
     }
 
     private void assertPlanifyFails(String resourceUrn) {
