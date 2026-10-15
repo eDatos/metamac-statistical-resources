@@ -11,11 +11,14 @@ import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
 import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.domain.PagedResult;
 import org.fornax.cartridges.sculptor.framework.domain.PagingParameter;
+import org.fornax.cartridges.sculptor.framework.domain.Property;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.criteria.utils.CriteriaUtils;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.utils.RepositoryUtils;
 import org.siemac.metamac.statistical.resources.core.common.domain.RelatedResourceResult;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
+import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
 import org.siemac.metamac.statistical.resources.core.error.ServiceExceptionType;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
@@ -117,6 +120,37 @@ public class QueryVersionRepositoryImpl extends QueryVersionRepositoryBase {
                 .eq(datasetUrn).and().withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).and()
                 .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().validTo()).isNull().build();
         return findByCondition(conditions);
+    }
+
+    @Override
+    public List<String> findPublishedUrnsLinkedToPublishedDatasetVersionsByStatisticalOperationUrn(String operationUrn) {
+        return findPublishedUrnsLinkedToPublishedDatasetVersionsBy(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn(), operationUrn);
+    }
+
+    @Override
+    public List<String> findPublishedUrnsLinkedToPublishedDatasetVersionsByRelatedDsdUrn(String dsdUrn) {
+        return findPublishedUrnsLinkedToPublishedDatasetVersionsBy(DatasetVersionProperties.relatedDsd().urn(), dsdUrn);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<String> findPublishedUrnsLinkedToPublishedDatasetVersionsBy(Property<DatasetVersion> datasetVersionFilterProperty, String filterValue) {
+        String urn = QueryVersionProperties.lifeCycleStatisticalResource().urn().getName();
+        String procStatus = QueryVersionProperties.lifeCycleStatisticalResource().procStatus().getName();
+        String dataset = QueryVersionProperties.dataset().getName();
+        String fixedDatasetVersion = QueryVersionProperties.fixedDatasetVersion().getName();
+        String datasetVersionDataset = DatasetVersionProperties.dataset().getName();
+        String datasetVersionCondition = "dv." + datasetVersionFilterProperty.getName() + " = :filterValue " +
+                "and dv." + DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus().getName() + " = :procStatus";
+        //@formatter:off
+        Query query = getEntityManager().createQuery(
+                "select distinct qv." + urn + " from QueryVersion qv " +
+                "where qv." + procStatus + " = :procStatus " +
+                "and (qv." + dataset + " in (select dv." + datasetVersionDataset + " from DatasetVersion dv where " + datasetVersionCondition + ") " +
+                "  or qv." + fixedDatasetVersion + " in (select dv from DatasetVersion dv where " + datasetVersionCondition + "))");
+        //@formatter:on
+        query.setParameter("filterValue", filterValue);
+        query.setParameter("procStatus", ProcStatusEnum.PUBLISHED);
+        return query.getResultList();
     }
 
     @Override
