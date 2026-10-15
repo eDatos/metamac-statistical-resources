@@ -8,7 +8,7 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
-## 11.9.2 a 11.9.3-SNAPSHOT
+## 11.9.2 a 11.9.3
 * En el Gestor de Operaciones de ISTAC PRO se deben relanzar las siguientes operaciones a través de Kafka:
   - C00017A
   - E58015B
