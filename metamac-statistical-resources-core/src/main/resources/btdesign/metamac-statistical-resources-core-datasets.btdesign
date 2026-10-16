@@ -299,6 +299,8 @@ Application DatasetsStatisticalResources {
 				@DatasetVersion retrieveByVersion(Long statisticalResourceId, String versionLogic) throws MetamacException;
 				boolean isLastVersion(String datasetVersionUrn) throws MetamacException;
 				List<String> retrieveDimensionsIds(@DatasetVersion datasetVersion) throws MetamacException;
+				List<String> findPublishedUrnsByStatisticalOperationUrn(String operationUrn);
+				List<String> findPublishedUrnsByRelatedDsdUrn(String dsdUrn);
                 RelatedResourceResult retrieveIsReplacedByVersionOnlyLastPublished(@DatasetVersion datasetVersion) throws MetamacException;
                 RelatedResourceResult retrieveIsReplacedByVersionOnlyIfPublished(@DatasetVersion datasetVersion) throws MetamacException;
                 RelatedResourceResult retrieveIsReplacedByVersion(@DatasetVersion datasetVersion) throws MetamacException;

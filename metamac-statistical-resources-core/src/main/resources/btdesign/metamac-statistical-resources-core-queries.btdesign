@@ -167,6 +167,8 @@ Application QueriesStatisticalResources {
 				List<@QueryVersion> findLinkedToDataset(Long datasetId);
 				List<@QueryVersion> findQueriesPublishedLinkedToDataset(Long datasetId);
 				List<@QueryVersion> findQueriesPublishedLinkedToDataset(String datasetUrn);
+				List<String> findPublishedUrnsLinkedToPublishedDatasetVersionsByStatisticalOperationUrn(String operationUrn);
+				List<String> findPublishedUrnsLinkedToPublishedDatasetVersionsByRelatedDsdUrn(String dsdUrn);
 				//Is part of
 				List<RelatedResourceResult> retrieveIsPartOf(@QueryVersion queryVersion) throws MetamacException;  
 				List<RelatedResourceResult> retrieveIsPartOfOnlyLastPublished(@QueryVersion queryVersion) throws MetamacException;

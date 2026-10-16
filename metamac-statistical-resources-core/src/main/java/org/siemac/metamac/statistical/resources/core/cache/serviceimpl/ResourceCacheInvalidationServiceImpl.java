@@ -1,25 +1,16 @@
 package org.siemac.metamac.statistical.resources.core.cache.serviceimpl;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteria;
-import org.fornax.cartridges.sculptor.framework.accessapi.ConditionalCriteriaBuilder;
 import org.fornax.cartridges.sculptor.framework.errorhandling.ServiceContext;
 import org.joda.time.DateTime;
 import org.siemac.metamac.core.common.exception.MetamacException;
 import org.siemac.metamac.statistical.resources.core.base.domain.LifeCycleStatisticalResource;
 import org.siemac.metamac.statistical.resources.core.base.domain.StatisticalResourceRepository;
 import org.siemac.metamac.statistical.resources.core.cache.serviceapi.ResourceCacheInvalidationService;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersion;
-import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionProperties;
 import org.siemac.metamac.statistical.resources.core.dataset.domain.DatasetVersionRepository;
-import org.siemac.metamac.statistical.resources.core.enume.domain.ProcStatusEnum;
-import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersion;
-import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionProperties;
 import org.siemac.metamac.statistical.resources.core.query.domain.QueryVersionRepository;
 import org.siemac.metamac.statistical.resources.core.stream.serviceapi.StreamMessagingService;
 import org.siemac.metamac.statistical.resources.core.task.serviceapi.TaskService;
@@ -72,11 +63,9 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
 
         // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
         // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class).withProperty(DatasetVersionProperties.relatedDsd().urn()).eq(dsdUrn).and()
-                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
-
-        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
+        Set<String> affectedUrns = new HashSet<>(datasetVersionRepository.findPublishedUrnsByRelatedDsdUrn(dsdUrn));
+        affectedUrns.addAll(queryVersionRepository.findPublishedUrnsLinkedToPublishedDatasetVersionsByRelatedDsdUrn(dsdUrn));
+        planifyAffectedResourcesLastUpdate(ctx, dsdUrn, affectedUrns, timestamp);
     }
 
     @Override
@@ -88,25 +77,18 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
 
         // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
         // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(DatasetVersion.class)
-                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().statisticalOperation().urn()).eq(operationUrn).and()
-                .withProperty(DatasetVersionProperties.siemacMetadataStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
-
-        List<DatasetVersion> affectedDatasets = datasetVersionRepository.findByCondition(conditions);
-        planifyAffectedResourcesLastUpdate(ctx, affectedDatasets, timestamp);
+        Set<String> affectedUrns = new HashSet<>(datasetVersionRepository.findPublishedUrnsByStatisticalOperationUrn(operationUrn));
+        affectedUrns.addAll(queryVersionRepository.findPublishedUrnsLinkedToPublishedDatasetVersionsByStatisticalOperationUrn(operationUrn));
+        planifyAffectedResourcesLastUpdate(ctx, operationUrn, affectedUrns, timestamp);
     }
 
-    private void planifyAffectedResourcesLastUpdate(ServiceContext ctx, List<DatasetVersion> affectedDatasets, long timestamp) {
-        Set<String> affectedUrns = new HashSet<>();
-        for (DatasetVersion dataset : affectedDatasets) {
-            affectedUrns.add(dataset.getSiemacMetadataStatisticalResource().getUrn());
-            String datasetUrn = dataset.getDataset().getIdentifiableStatisticalResource().getUrn();
-            String datasetVersionUrn = dataset.getSiemacMetadataStatisticalResource().getUrn();
-            List<String> queryUrns = getAffectedQueryUrns(datasetUrn, datasetVersionUrn);
-            affectedUrns.addAll(queryUrns);
+    private void planifyAffectedResourcesLastUpdate(ServiceContext ctx, String sourceUrn, Set<String> affectedUrns, long timestamp) {
+        if (affectedUrns.isEmpty()) {
+            LOGGER.info("No last update jobs were planified for {} because there are no resources affected", sourceUrn);
+            return;
         }
 
-        LOGGER.info("Planning last update job for {} affected resources", affectedUrns.size());
+        LOGGER.info("Planning last update job for {} affected resources by {}", affectedUrns.size(), sourceUrn);
         for (String urn : affectedUrns) {
             try {
                 taskService.planifyUpdateResourceLastUpdate(ctx, urn, timestamp, true);
@@ -114,21 +96,5 @@ public class ResourceCacheInvalidationServiceImpl implements ResourceCacheInvali
                 LOGGER.error("Failed to planify last update job for resource {}", urn, e);
             }
         }
-    }
-
-    private List<String> getAffectedQueryUrns(String datasetUrn, String datasetVersionUrn) {
-        // TODO EDATOS-5431 El procesamiento solo de recursos externos está pendiente de ser revisado
-        // dado que en el futuro cachearemos también la API interna y los recursos en otros estados
-        List<ConditionalCriteria> conditions = ConditionalCriteriaBuilder.criteriaFor(QueryVersion.class).lbrace()
-                .withProperty(QueryVersionProperties.dataset().identifiableStatisticalResource().urn()).eq(datasetUrn).or()
-                .withProperty(QueryVersionProperties.fixedDatasetVersion().siemacMetadataStatisticalResource().urn()).eq(datasetVersionUrn).rbrace().and()
-                .withProperty(QueryVersionProperties.lifeCycleStatisticalResource().procStatus()).eq(ProcStatusEnum.PUBLISHED).distinctRoot().build();
-
-        List<QueryVersion> affectedQueries = queryVersionRepository.findByCondition(conditions);
-        List<String> urns = new ArrayList<>();
-        for (QueryVersion query : affectedQueries) {
-            urns.add(query.getLifeCycleStatisticalResource().getUrn());
-        }
-        return urns;
     }
 }
