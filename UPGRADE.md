@@ -8,6 +8,17 @@
 
 *Se deberá realizar primero la actualización de la versión 1.0.0 a la 2.0.0 y luego desde la 2.0.0 a la 3.0.0*
 
+## 11.9.3 a 11.9.4-SNAPSHOT
+  * Para que CKAN disponga de `visualizerHtmlLink` también para los datasets ya publicados, hay que relanzar el job `ResendPublishedDatasetsKafkaMessageJob`, que reenvía el mensaje kafka de la última versión publicada de todos los datasets:
+    1. Deshabilitar previamente las notificaciones a external-users, para evitar que el reenvío masivo dispare notificaciones no deseadas.
+    2. Actualizar la property `metamac.statistical_resources.resend_dataset_kafka_message.cron_expression` (tabla `TB_DATA_CONFIGURATIONS`) con una expresión cron cuya próxima ejecución caiga poco después del reinicio previsto. Ej.:
+          ```sql
+          update tb_data_configurations set conf_value = '0 0 22 20 SEP ? 2026' --20 de septiembre de 2026 a las 22:00
+          where conf_key = 'metamac.statistical_resources.resend_dataset_kafka_message.cron_expression';
+          ```
+    3. Reiniciar `metamac-statistical-resources-web` para que relea la property y programe el job (se reprograma en cada arranque de la aplicación).
+
+
 ## 11.9.2 a 11.9.3
 * En el Gestor de Operaciones de ISTAC PRO se deben relanzar las siguientes operaciones a través de Kafka:
   - C00017A
